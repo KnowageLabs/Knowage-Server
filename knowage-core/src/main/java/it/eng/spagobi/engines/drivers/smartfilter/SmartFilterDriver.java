@@ -171,7 +171,7 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 		JSONArray parametersJSON = new JSONArray();
 		try {
 			Locale locale = getLocale();
-			List parameters = biobject.getBiObjectParameters();
+			List parameters = biobject.getDrivers();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator iter = parameters.iterator();
 				while (iter.hasNext()) {
@@ -255,9 +255,9 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 		}
 
 		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-		if (biobj.getBiObjectParameters() != null) {
+		if (biobj.getDrivers() != null) {
 			BIObjectParameter biobjPar = null;
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
+			for (Iterator it = biobj.getDrivers().iterator(); it.hasNext();) {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					String value = parValuesEncoder.encode(biobjPar);

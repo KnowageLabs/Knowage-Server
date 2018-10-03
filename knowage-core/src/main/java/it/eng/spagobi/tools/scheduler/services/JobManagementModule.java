@@ -331,7 +331,7 @@ public class JobManagementModule extends AbstractHttpModule {
 						IBIObjectParameterDAO documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
 						BIObject document = documentDAO.loadBIObjectById(documentId);
 						List documentParameters = documentParameterDAO.loadBIObjectParametersById(documentId);
-						document.setBiObjectParameters(documentParameters);
+						document.setDrivers(documentParameters);
 						newlySelectedDocuments.add(document);
 					} else {
 						logger.debug("Document whose id is equal to [" + documentId + "] is contained in previously selected documents");
@@ -354,7 +354,7 @@ public class JobManagementModule extends AbstractHttpModule {
 							IBIObjectParameterDAO documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
 							BIObject document = documentDAO.loadBIObjectById(documentId);
 							List documentParameters = documentParameterDAO.loadBIObjectParametersById(documentId);
-							document.setBiObjectParameters(documentParameters);
+							document.setDrivers(documentParameters);
 							newlySelectedDocuments.add(document);
 						}
 					}
@@ -448,7 +448,7 @@ public class JobManagementModule extends AbstractHttpModule {
 			while (iterbiobj.hasNext()) {
 				index++;
 				BIObject biobj = (BIObject) iterbiobj.next();
-				List pars = biobj.getBiObjectParameters();
+				List pars = biobj.getDrivers();
 				Iterator iterPars = pars.iterator();
 				StringBuffer fixedParameters = new StringBuffer("");
 				StringBuffer iterativeParameters = new StringBuffer("");
@@ -555,7 +555,7 @@ public class JobManagementModule extends AbstractHttpModule {
 	private float calculateCombinations(BIObject biobj) {
 		logger.debug("IN");
 		float toReturn = 1;
-		List parameters = biobj.getBiObjectParameters();
+		List parameters = biobj.getDrivers();
 		Iterator it = parameters.iterator();
 		while (it.hasNext()) {
 			BIObjectParameter parameter = (BIObjectParameter) it.next();
@@ -616,7 +616,7 @@ public class JobManagementModule extends AbstractHttpModule {
 		while (iterbiobjs.hasNext()) {
 			index++;
 			BIObject biobj = (BIObject) iterbiobjs.next();
-			List biobjpars = biobj.getBiObjectParameters();
+			List biobjpars = biobj.getDrivers();
 			List newBiobjpars = new ArrayList();
 			// iter over parameters
 			Iterator iterbiobjpars = biobjpars.iterator();
@@ -667,7 +667,7 @@ public class JobManagementModule extends AbstractHttpModule {
 				}
 				newBiobjpars.add(biobjpar);
 			}
-			biobj.setBiObjectParameters(newBiobjpars);
+			biobj.setDrivers(newBiobjpars);
 			newBiObjects.add(biobj);
 		}
 		jobInfo.setDocuments(newBiObjects);

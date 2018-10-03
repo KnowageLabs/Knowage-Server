@@ -174,7 +174,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 
 			BIObject objFromExec = instances.get(biObject.getId()).getBIObject();
 			// cycle on pars
-			List objPars = objFromExec.getBiObjectParameters();
+			List objPars = objFromExec.getDrivers();
 
 			for (Iterator iterator2 = objPars.iterator(); iterator2.hasNext();) {
 				BIObjectParameter par = (BIObjectParameter) iterator2.next();

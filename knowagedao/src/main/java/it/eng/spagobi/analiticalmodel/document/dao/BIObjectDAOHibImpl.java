@@ -196,7 +196,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tmpBIObjectParameter.setParameter(aParameter);
 				biObjectParameters.add(tmpBIObjectParameter);
 			}
-			biObject.setBiObjectParameters(biObjectParameters);
+			biObject.setDrivers(biObjectParameters);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -1688,7 +1688,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				BIObjectParameter par = toBIObjectParameter(aSbiObjPar);
 				businessObjectParameters.add(par);
 			}
-			aBIObject.setBiObjectParameters(businessObjectParameters);
+			aBIObject.setDrivers(businessObjectParameters);
 		}
 
 		List businessObjectOutputParameters = new ArrayList();
@@ -3115,7 +3115,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tmpBIObjectParameter.setParameter(aParameter);
 				biObjectParameters.add(tmpBIObjectParameter);
 			}
-			biObject.setBiObjectParameters(biObjectParameters);
+			biObject.setDrivers(biObjectParameters);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);

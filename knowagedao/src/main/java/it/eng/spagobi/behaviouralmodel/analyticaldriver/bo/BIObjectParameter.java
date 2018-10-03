@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author Zoppello This class map the SBI_OBJ_PAR table
  */
-public class BIObjectParameter extends AbstractDriverUsage implements Serializable {
+public class BIObjectParameter extends AbstractDriver implements Serializable {
 
 	/* BIOBJ_ID NUMBER N Business Intelligence Object identifier */
 	private Integer biObjectID = null;

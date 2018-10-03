@@ -533,7 +533,7 @@ public class SchedulerUtilitiesV2 {
 					String objpref = biobj.getId().toString() + "__" + new Integer(index).toString();
 					if (uniqueDispatchContextName.equals(objpref)) {
 
-						List pars = biobj.getBiObjectParameters();
+						List pars = biobj.getDrivers();
 						Iterator iterPars = pars.iterator();
 						String queryString = "";
 						while (iterPars.hasNext()) {
@@ -1228,7 +1228,7 @@ public class SchedulerUtilitiesV2 {
 				docum.put("engine", b.getEngine().getLabel());
 			}
 
-			List<BIObjectParameter> param = b.getBiObjectParameters();
+			List<BIObjectParameter> param = b.getDrivers();
 			JSONArray pararr = new JSONArray();
 			for (BIObjectParameter p : param) {
 				pararr.put(p.getLabel());

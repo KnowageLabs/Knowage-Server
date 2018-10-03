@@ -7,10 +7,10 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
 public class DocumentParameterForExecutionJSONSerializer implements Serializer {
@@ -19,12 +19,12 @@ public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof DocumentParameters)) {
+		if (!(o instanceof DocumentDriverRuntime)) {
 			throw new SerializationException("DocumentParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			DocumentParameters parameter = (DocumentParameters) o;
+			DocumentDriverRuntime parameter = (DocumentDriverRuntime) o;
 			result = new JSONObject();
 			result.put("id", parameter.getId());
 			MessageBuilder msgBuild = new MessageBuilder();
@@ -74,15 +74,15 @@ public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 				JSONArray visualDependencyConditions = new JSONArray();
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
-				List<DocumentParameters.ParameterDependency> parameterDependencies;
+				List<DocumentDriverRuntime.DriverDependencyRuntime> parameterDependencies;
 				parameterDependencies = parameter.getDependencies().get(paramUrlName);
 
 				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if (pd instanceof DocumentParameters.DataDependency) {
+					if (pd instanceof DocumentDriverRuntime.DataDependencyRuntime) {
 						dependency.put("hasDataDependency", true);
-					} else if (pd instanceof DocumentParameters.VisualDependency) {
-						ObjParview visualCondition = ((DocumentParameters.VisualDependency) pd).condition;
+					} else if (pd instanceof DocumentDriverRuntime.VisualDependencyRuntime) {
+						AbstractParview visualCondition = ((DocumentDriverRuntime.VisualDependencyRuntime) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
 						visualDependencyCondition.put("operation", visualCondition.getOperation());

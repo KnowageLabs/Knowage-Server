@@ -57,7 +57,7 @@ public class ExecutionController {
 		
 		if(biObject == null) return false;
 	    
-		List biParameters = biObject.getBiObjectParameters();
+		List biParameters = biObject.getDrivers();
         if(biParameters == null) return false;
         if(biParameters.size() == 0)return true;
         
@@ -125,7 +125,7 @@ public class ExecutionController {
 	 */
 	public void refreshParameters(BIObject obj, String userProvidedParametersStr){
 		if(userProvidedParametersStr != null) {
-			List biparameters = obj.getBiObjectParameters();
+			List biparameters = obj.getDrivers();
 			if(biparameters == null) {
 				try{
 					IBIObjectParameterDAO pardao = DAOFactory.getBIObjectParameterDAO();
@@ -164,7 +164,7 @@ public class ExecutionController {
 					setBIObjectParameterValues(biparameters, parUrlName, value);
 				}
 			}
-			obj.setBiObjectParameters(biparameters);
+			obj.setDrivers(biparameters);
 		}
 	}
 	
@@ -251,7 +251,7 @@ public class ExecutionController {
 		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 		String serviceName = "VALIDATEEXECUTEBIOBJECTPAGE";
 		String validationRulesName = "VALIDATE_PAGE_" + serviceName;
-		List tmpBIObjectParameters = obj.getBiObjectParameters();
+		List tmpBIObjectParameters = obj.getDrivers();
 		SourceBean internalValidationSourceBean = null;
 		SourceBean fieldsContainerSourceBean  = null;
 		SourceBean fieldSourceBean = null;
@@ -470,7 +470,7 @@ public class ExecutionController {
 				}
 		    }
 		    // set the parameters into the biobject
-		    biobj.setBiObjectParameters(params);
+		    biobj.setDrivers(params);
 		} finally {
 			logger.debug("OUT");
 		}

@@ -546,7 +546,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			String detail_mod, boolean initialBIObject, boolean initialBIObjectParameter) throws SourceBeanException, EMFUserError {
 
 		List biObjParams = DAOFactory.getBIObjectParameterDAO().loadBIObjectParametersById(obj.getId());
-		obj.setBiObjectParameters(biObjParams);
+		obj.setDrivers(biObjParams);
 		if (biObjPar == null) {
 			if (selectedObjParIdStr == null || "".equals(selectedObjParIdStr)) {
 				if (biObjParams == null || biObjParams.size() == 0) {

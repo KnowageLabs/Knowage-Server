@@ -98,7 +98,7 @@ public class SaveRememberMeAction extends AbstractSpagoBIAction {
 		try {
 			StringBuffer documentParametersStr = new StringBuffer();
 			BIObject obj = executionInstance.getBIObject();
-			List parametersList = obj.getBiObjectParameters();
+			List parametersList = obj.getDrivers();
 			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
 			if (parametersList != null && parametersList.size() > 0) {
 				for (int i = 0; i < parametersList.size(); i++) {

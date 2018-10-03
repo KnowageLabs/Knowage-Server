@@ -433,7 +433,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			}
 			// building a map for parameters value substitution
 			Map parametersMap = new HashMap();
-			List parameters = biobj.getBiObjectParameters();
+			List parameters = biobj.getDrivers();
 			Iterator it = parameters.iterator();
 			while (it.hasNext()) {
 				BIObjectParameter parameter = (BIObjectParameter) it.next();
@@ -468,7 +468,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			String dsParameterLabel = info.getDataSetParameterLabel();
 			logger.debug("The dataset will be filtered using the value of the parameter " + dsParameterLabel);
 			// looking for the parameter
-			List parameters = biobj.getBiObjectParameters();
+			List parameters = biobj.getDrivers();
 			BIObjectParameter parameter = null;
 			String codeValue = null;
 			Iterator parameterIt = parameters.iterator();

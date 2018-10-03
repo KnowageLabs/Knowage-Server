@@ -17,13 +17,33 @@
  */
 package it.eng.spagobi.analiticalmodel.document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversValidationAPI;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -47,25 +67,6 @@ import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.ParameterCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class DocumentExecutionUtils {
 	public static final String SELECTION_TYPE_TREE = "TREE";
@@ -98,18 +99,18 @@ public class DocumentExecutionUtils {
 		return lovProvDet;
 	}
 
-	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
-		List<DocumentParameters> toReturn = getParameters(document, executionRole, locale, modality, null, true);
+	public static List<DocumentDriverRuntime> getParameters(BIObject document, String executionRole, Locale locale, String modality, DocumentRuntime dum) {
+		List<DocumentDriverRuntime> toReturn = getParameters(document, executionRole, locale, modality, null, true, dum);
 		return toReturn;
 	}
 
-	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality, List<String> parsFromCross,
-			boolean loadAdmissible) {
+	public static List<DocumentDriverRuntime> getParameters(BIObject document, String executionRole, Locale locale, String modality, List<String> parsFromCross,
+			boolean loadAdmissible, DocumentRuntime dum) {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
-		List<DocumentParameters> parametersForExecution = null;
+		List<DocumentDriverRuntime> parametersForExecution = null;
 		try {
-			parametersForExecution = new ArrayList<DocumentParameters>();
-			List<BIObjectParameter> parameters = document.getBiObjectParameters();
+			parametersForExecution = new ArrayList<DocumentDriverRuntime>();
+			List<BIObjectParameter> parameters = document.getDrivers();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator<BIObjectParameter> it = parameters.iterator();
 				while (it.hasNext()) {
@@ -121,7 +122,7 @@ public class DocumentExecutionUtils {
 						comingFromCross = true;
 					}
 
-					parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document, comingFromCross, loadAdmissible));
+					parametersForExecution.add(new DocumentDriverRuntime(parameter, executionRole, locale, document, dum, parameters));
 				}
 			}
 		} finally {
@@ -138,7 +139,8 @@ public class DocumentExecutionUtils {
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime dum = new DocumentRuntime(profile, locale);
+		DriversValidationAPI validation = new DriversValidationAPI();
 		try {
 			List errors = null;
 			JSONObject executionInstanceJSON = null;
@@ -147,9 +149,9 @@ public class DocumentExecutionUtils {
 			} catch (JSONException e2) {
 				logger.debug("Error in handleNormalExecution", e2);
 			}
-			documentUrlManager.refreshParametersValues(executionInstanceJSON, false, obj);
+			dum.refreshParametersValues(executionInstanceJSON, false, obj);
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, dum);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
@@ -176,7 +178,7 @@ public class DocumentExecutionUtils {
 			// }else {
 			// URL
 			// there are no errors, we can proceed, so calculate the execution url and send it back to the client
-			String url = documentUrlManager.getExecutionUrl(obj, modality, role);
+			String url = dum.getExecutionUrl(obj, modality, role);
 			// url += "&isFromCross=" + (isFromCross == true ? "true" : "false");
 			// adds information about the environment
 			if (env == null) {
@@ -214,7 +216,7 @@ public class DocumentExecutionUtils {
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
 		String url = "";
 		try {
 
@@ -247,12 +249,13 @@ public class DocumentExecutionUtils {
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime dum = new DocumentRuntime(profile, locale);
+		DriversValidationAPI validation = new DriversValidationAPI();
 		List errors = null;
 		try {
 
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, dum);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
@@ -285,7 +288,7 @@ public class DocumentExecutionUtils {
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			DocumentUrlManager dum = new DocumentUrlManager(profile, req.getLocale());
+			DocumentRuntime dum = new DocumentRuntime(profile, req.getLocale());
 
 			JSONObject selectedParameterValuesJSON;
 			Map selectedParameterValues = null;
@@ -563,14 +566,14 @@ public class DocumentExecutionUtils {
 				// lov provider is present, so read the DATA in cache
 				lovResult = (String) cache.get(cacheKey);
 			} else if (retrieveIfNotcached) {
-				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
+				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), req.getLocale());
 				// insert the data in cache
 				if (lovResult != null)
 					cache.put(cacheKey, lovResult);
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
-			lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
+			lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), req.getLocale());
 		}
 
 		return lovResult;
@@ -580,7 +583,7 @@ public class DocumentExecutionUtils {
 	 * This method finds out the cache to be used for lov's result cache. This key is composed mainly by the user identifier and the lov definition. Note that,
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
-	 * 
+	 *
 	 * @param profile
 	 *            The user profile
 	 * @param lovDefinition
@@ -598,14 +601,14 @@ public class DocumentExecutionUtils {
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters()));
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getDrivers()));
 			// toReturn = userID + ";" + clone.toXML();
 
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(biObject.getBiObjectParameters());
-			String statement = queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters());
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(biObject.getDrivers());
+			String statement = queryDetail.getWrappedStatement(dependencies, biObject.getDrivers());
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(biObject.getBiObjectParameters());
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(biObject.getDrivers());
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);

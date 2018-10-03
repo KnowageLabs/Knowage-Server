@@ -112,7 +112,7 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 
         BIObject document = executionInstance.getBIObject();
 
-        List parameters = document.getBiObjectParameters();
+        List parameters = document.getDrivers();
         if (parameters != null && parameters.size() > 0) {
             Iterator it = parameters.iterator();
             while (it.hasNext()) {

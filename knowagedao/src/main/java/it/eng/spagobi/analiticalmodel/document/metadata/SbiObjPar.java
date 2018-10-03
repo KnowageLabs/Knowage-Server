@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document.metadata;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 
@@ -27,7 +26,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
  */
 public class SbiObjPar  extends SbiHibernateModel {
 
-    // Fields    
+    // Fields
 
 	private Integer objParId;
      private SbiObjects sbiObject;
@@ -42,7 +41,7 @@ public class SbiObjPar  extends SbiHibernateModel {
      private Integer priority;
      private Integer colSpan;
      private Integer ThickPerc;
-     
+
 
     // Constructors
 
@@ -53,10 +52,10 @@ public class SbiObjPar  extends SbiHibernateModel {
 		this.objParId = -1;
 
     }
-    
+
     /**
      * constructor with id.
-     * 
+     *
      * @param objParId the obj par id
      */
     public SbiObjPar(Integer objParId) {
@@ -65,10 +64,10 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 
     // Property accessors
-    
+
 	/**
      * Gets the label.
-     * 
+     *
      * @return the label
      */
     public String getLabel() {
@@ -77,7 +76,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the label.
-	 * 
+	 *
 	 * @param label the new label
 	 */
 	public void setLabel(String label) {
@@ -86,7 +85,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the mod fl.
-	 * 
+	 *
 	 * @return the mod fl
 	 */
 	public Short getModFl() {
@@ -95,7 +94,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the mod fl.
-	 * 
+	 *
 	 * @param modFl the new mod fl
 	 */
 	public void setModFl(Short modFl) {
@@ -104,7 +103,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the mult fl.
-	 * 
+	 *
 	 * @return the mult fl
 	 */
 	public Short getMultFl() {
@@ -113,7 +112,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the mult fl.
-	 * 
+	 *
 	 * @param multFl the new mult fl
 	 */
 	public void setMultFl(Short multFl) {
@@ -122,7 +121,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the obj par id.
-	 * 
+	 *
 	 * @return the obj par id
 	 */
 	public Integer getObjParId() {
@@ -131,7 +130,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the obj par id.
-	 * 
+	 *
 	 * @param objParId the new obj par id
 	 */
 	public void setObjParId(Integer objParId) {
@@ -140,7 +139,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the parurl nm.
-	 * 
+	 *
 	 * @return the parurl nm
 	 */
 	public String getParurlNm() {
@@ -149,7 +148,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the parurl nm.
-	 * 
+	 *
 	 * @param parurlNm the new parurl nm
 	 */
 	public void setParurlNm(String parurlNm) {
@@ -158,7 +157,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the prog.
-	 * 
+	 *
 	 * @return the prog
 	 */
 	public Integer getProg() {
@@ -167,7 +166,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the prog.
-	 * 
+	 *
 	 * @param prog the new prog
 	 */
 	public void setProg(Integer prog) {
@@ -176,7 +175,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the req fl.
-	 * 
+	 *
 	 * @return the req fl
 	 */
 	public Short getReqFl() {
@@ -185,7 +184,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the req fl.
-	 * 
+	 *
 	 * @param reqFl the new req fl
 	 */
 	public void setReqFl(Short reqFl) {
@@ -194,7 +193,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi object.
-	 * 
+	 *
 	 * @return the sbi object
 	 */
 	public SbiObjects getSbiObject() {
@@ -203,7 +202,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi object.
-	 * 
+	 *
 	 * @param sbiObject the new sbi object
 	 */
 	public void setSbiObject(SbiObjects sbiObject) {
@@ -212,7 +211,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi parameter.
-	 * 
+	 *
 	 * @return the sbi parameter
 	 */
 	public SbiParameters getSbiParameter() {
@@ -221,7 +220,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi parameter.
-	 * 
+	 *
 	 * @param sbiParameter the new sbi parameter
 	 */
 	public void setSbiParameter(SbiParameters sbiParameter) {
@@ -230,7 +229,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the view fl.
-	 * 
+	 *
 	 * @return the view fl
 	 */
 	public Short getViewFl() {
@@ -239,7 +238,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the view fl.
-	 * 
+	 *
 	 * @param viewFl the new view fl
 	 */
 	public void setViewFl(Short viewFl) {
@@ -248,7 +247,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Gets the priority.
-	 * 
+	 *
 	 * @return the priority
 	 */
 	public Integer getPriority() {
@@ -257,7 +256,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 
 	/**
 	 * Sets the priority.
-	 * 
+	 *
 	 * @param priority the new priority
 	 */
 	public void setPriority(Integer priority) {
@@ -280,8 +279,8 @@ public class SbiObjPar  extends SbiHibernateModel {
 	public void setThickPerc(Integer thickPerc) {
 		ThickPerc = thickPerc;
 	}
-	
-	
-	
-   
+
+
+
+
 }

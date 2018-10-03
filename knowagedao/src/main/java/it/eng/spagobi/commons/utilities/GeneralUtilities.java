@@ -157,7 +157,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 */
 	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session) throws Exception, EMFInternalError {
 		logger.trace("IN");
-		List biparams = obj.getBiObjectParameters();
+		List biparams = obj.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			// if the param is a Fixed Lov, Make the profile attribute
@@ -631,21 +631,17 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return format;
 	}
 
-	public static char getDecimalSeparator(Locale locale) {
-		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
-		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
+	public static char getDecimalSeparator() {
 		logger.debug("IN");
-		char decimals = decimalFormatSymbols.getDecimalSeparator();
+		char decimals = decSymbols.getDecimalSeparator();
 
 		logger.debug("OUT");
 		return decimals;
 	}
 
-	public static char getGroupingSeparator(Locale locale) {
-		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
-		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
+	public static char getGroupingSeparator() {
 		logger.debug("IN");
-		char thousands = decimalFormatSymbols.getGroupingSeparator();
+		char thousands = decSymbols.getGroupingSeparator();
 
 		logger.debug("OUT");
 		return thousands;

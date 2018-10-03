@@ -5,13 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.objects.Couple;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 public abstract class AbstractLOV implements ILovDetail {
 
@@ -62,14 +62,14 @@ public abstract class AbstractLOV implements ILovDetail {
 		}
 	}
 
-	public Map<String, String> getParametersNameToValueMap(List<BIObjectParameter> biObjectParameters) throws Exception {
+	public Map<String, String> getParametersNameToValueMap(List<? extends AbstractDriver> biObjectParameters) throws Exception {
 		Map<String, String> parameters = null;
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
 			if (biObjectParameters != null && !biObjectParameters.isEmpty()) {
 				parameters = new HashMap<String, String>(parameterNames.size());
 				int numberOfParametersFound = 0;
-				for (BIObjectParameter objParam : biObjectParameters) {
+				for (AbstractDriver objParam : biObjectParameters) {
 					if (parameterNames.contains(objParam.getParameter().getLabel())) {
 						logger.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");
 						numberOfParametersFound++;
@@ -107,14 +107,14 @@ public abstract class AbstractLOV implements ILovDetail {
 		return parameters;
 	}
 
-	public Map<String, String> getParametersNameToTypeMap(List<BIObjectParameter> biObjectParameters) throws Exception {
+	public Map<String, String> getParametersNameToTypeMap(List<? extends AbstractDriver> biObjectParameters) throws Exception {
 		Map<String, String> parameters = null;
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
 			if (biObjectParameters != null && !biObjectParameters.isEmpty()) {
 				parameters = new HashMap<String, String>(parameterNames.size());
 				int numberOfParametersFound = 0;
-				for (BIObjectParameter objParam : biObjectParameters) {
+				for (AbstractDriver objParam : biObjectParameters) {
 					if (parameterNames.contains(objParam.getParameter().getLabel())) {
 						String parameterType = objParam.getParameter().getType();
 						logger.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");

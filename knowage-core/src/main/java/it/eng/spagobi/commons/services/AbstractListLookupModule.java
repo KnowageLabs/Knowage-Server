@@ -371,7 +371,7 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 			// get the id of the parent parameter
 			Integer objParFatherId = objParuse.getParFatherId();
 	        // find the bi parameter for the correlation (biparameter father)
-			List biparams = obj.getBiObjectParameters();
+			List biparams = obj.getDrivers();
 			BIObjectParameter objParFather = null;
 	        Iterator iterParams = biparams.iterator();
 	        while (iterParams.hasNext()) {

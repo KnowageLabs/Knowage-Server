@@ -570,7 +570,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    String displaytab = "inline";
 		while(iterJobBiobjs.hasNext()) {
 			BIObject biobj = (BIObject)iterJobBiobjs.next();
-			List pars = biobj.getBiObjectParameters();
+			List pars = biobj.getDrivers();
 			if(index > 0) {
 				displaytab = "none";
 			} else {

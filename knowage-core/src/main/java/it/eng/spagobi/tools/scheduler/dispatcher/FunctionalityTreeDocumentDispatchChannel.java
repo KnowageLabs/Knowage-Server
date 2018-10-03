@@ -239,7 +239,7 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			String dsParameterLabel = info.getDataSetFolderParameterLabel();
 			logger.debug("The dataset will be filtered using the value of the parameter [" + dsParameterLabel + "]");
 			// looking for the parameter
-			List parameters = biobj.getBiObjectParameters();
+			List parameters = biobj.getDrivers();
 			BIObjectParameter parameter = null;
 			String codeValue = null;
 			Iterator parameterIt = parameters.iterator();

@@ -231,7 +231,7 @@ public class ExecutionProxy {
 			// get the map of parameter to send to the engine
 			Map mapPars = aEngineDriver.getParameterMap(biObject, profile, "");
 			if (defaultOutputFormat != null && !defaultOutputFormat.trim().equals("")) {
-				List params = biObject.getBiObjectParameters();
+				List params = biObject.getDrivers();
 				Iterator iterParams = params.iterator();
 				boolean findOutPar = false;
 				while (iterParams.hasNext()) {

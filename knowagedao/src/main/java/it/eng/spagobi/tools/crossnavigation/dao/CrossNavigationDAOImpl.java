@@ -17,6 +17,23 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -36,23 +53,6 @@ import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -274,8 +274,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	@Override
 	public void deleteByDocument(BIObject obj, Session session) {
 		List<Integer> inputParameters = new ArrayList<>();
-		if (obj.getBiObjectParameters() != null) {
-			for (BIObjectParameter biObjectParameter : obj.getBiObjectParameters()) {
+		if (obj.getDrivers() != null) {
+			for (BIObjectParameter biObjectParameter : obj.getDrivers()) {
 				inputParameters.add(biObjectParameter.getId());
 			}
 		}
@@ -322,7 +322,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 				// load Input Parameter
 				Map<Integer, crossNavigationParameters> documentInputParams = new HashMap<Integer, crossNavigationParameters>();
-				List docParams = document.getBiObjectParameters();
+				List docParams = document.getDrivers();
 				for (Iterator iterator = docParams.iterator(); iterator.hasNext();) {
 					BIObjectParameter docParam = (BIObjectParameter) iterator.next();
 					crossNavigationParameters cnParams = new crossNavigationParameters(docParam.getParameterUrlName(), docParam.getParameter().getType());

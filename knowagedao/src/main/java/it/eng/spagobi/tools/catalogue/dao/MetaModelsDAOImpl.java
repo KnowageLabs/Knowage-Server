@@ -30,7 +30,16 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Content;
@@ -45,6 +54,177 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 	static private Logger logger = Logger.getLogger(MetaModelsDAOImpl.class);
 	private static final String LOG_SUFFIX = ".log";
+
+	@Override
+	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		MetaModel businessModel = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			businessModel = loadMetaModelByName(name);
+			String hql = "from SbiMetaModelParameter s where s.sbiMetaModel.name = ? order by s.priority asc";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setString(0, businessModel.getName());
+			List hibMetaModelPars = hqlQuery.list();
+			SbiMetaModelParameter hibMetaModelPar = null;
+			Iterator it = hibMetaModelPars.iterator();
+			BIMetaModelParameter tmpBIMetaModelParameter = null;
+			BIMetaModelDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelDAOHibImpl();
+			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
+			List metaModelParameters = new ArrayList();
+			Parameter aParameter = null;
+			int count = 1;
+			while (it.hasNext()) {
+				hibMetaModelPar = (SbiMetaModelParameter) it.next();
+				tmpBIMetaModelParameter = aBIMetaModelParameterDAOHibImpl.toBIMetaModelParameter(hibMetaModelPar);
+
+				// *****************************************************************
+				// **************** START PRIORITY RECALCULATION
+				// *******************
+				// *****************************************************************
+				Integer priority = tmpBIMetaModelParameter.getPriority();
+				if (priority == null || priority.intValue() != count) {
+					logger.warn("The priorities of the biparameters for the business model with name = " + businessModel.getName()
+							+ " are not sorted. Priority recalculation starts.");
+					aBIMetaModelParameterDAOHibImpl.recalculateBiParametersPriority(businessModel.getId(), aSession);
+					tmpBIMetaModelParameter.setPriority(new Integer(count));
+				}
+				count++;
+				// *****************************************************************
+				// **************** END PRIORITY RECALCULATION
+				// *******************
+				// *****************************************************************
+
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role);
+				tmpBIMetaModelParameter.setParID(aParameter.getId());
+				tmpBIMetaModelParameter.setParameter(aParameter);
+				metaModelParameters.add(tmpBIMetaModelParameter);
+			}
+			businessModel.setDrivers(metaModelParameters);
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with name [" + name + "]", e);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return businessModel;
+	}
+
+	@Override
+	public MetaModel loadMetaModelForExecutionByIdAndRole(Integer id, String role) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		MetaModel businessModel = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			businessModel = loadMetaModelForDetail(id);
+			// String hql = "from SbiObjPar s where s.sbiObject.biobjId = " +
+			// biObject.getId() + " order by s.priority asc";
+			String hql = "from SbiMetaModelParameter s where s.sbiMetaModel.id = ? order by s.priority asc";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, businessModel.getId().intValue());
+			List hibMetaModelPars = hqlQuery.list();
+			SbiMetaModelParameter hibMetaModelPar = null;
+			Iterator it = hibMetaModelPars.iterator();
+			BIMetaModelParameter tmpBIMetaModelParameter = null;
+			BIMetaModelDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelDAOHibImpl();
+			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
+			List metamodelParameters = new ArrayList();
+			Parameter aParameter = null;
+			int count = 1;
+			while (it.hasNext()) {
+				hibMetaModelPar = (SbiMetaModelParameter) it.next();
+				tmpBIMetaModelParameter = aBIMetaModelParameterDAOHibImpl.toBIMetaModelParameter(hibMetaModelPar);
+
+				// *****************************************************************
+				// **************** START PRIORITY RECALCULATION
+				// *******************
+				// *****************************************************************
+				Integer priority = tmpBIMetaModelParameter.getPriority();
+				if (priority == null || priority.intValue() != count) {
+					logger.warn("The priorities of the biparameters for the business model with id = " + businessModel.getId()
+							+ " are not sorted. Priority recalculation starts.");
+					aBIMetaModelParameterDAOHibImpl.recalculateBiParametersPriority(businessModel.getId(), aSession);
+					tmpBIMetaModelParameter.setPriority(new Integer(count));
+				}
+				count++;
+				// *****************************************************************
+				// **************** END PRIORITY RECALCULATION
+				// *******************
+				// *****************************************************************
+
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role);
+				tmpBIMetaModelParameter.setParID(aParameter.getId());
+				tmpBIMetaModelParameter.setParameter(aParameter);
+				metamodelParameters.add(tmpBIMetaModelParameter);
+			}
+			businessModel.setDrivers(metamodelParameters);
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with id [" + id + "]", e);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return businessModel;
+	}
+
+	@Override
+	public MetaModel loadMetaModelForDetail(Integer id) {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.tools.catalogue.dao.MetaModelsDAOImpl.loadMetaModelForDetail(Integer id)");
+		logger.debug("IN");
+		MetaModel businessModel = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			// String hql = " from SbiMetaModel where id = " + id;
+			String hql = " from SbiMetaModel where id = ?";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, id.intValue());
+			SbiMetaModel hibObject = (SbiMetaModel) hqlQuery.uniqueResult();
+			if (hibObject != null) {
+				businessModel = toModel(hibObject);
+			} else {
+				logger.warn("Unable to load business model whose id is equal to [" + id + "]");
+			}
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with id [" + id + "]", e);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		monitor.stop();
+		return businessModel;
+	}
+
+
 
 	@Override
 	public MetaModel loadMetaModelById(Integer id) {

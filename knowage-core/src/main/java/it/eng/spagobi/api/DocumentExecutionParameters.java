@@ -8,7 +8,7 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -114,7 +114,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 		List objParameterIds;
 		int treeLovNodeLevel = 0;
 		String treeLovNodeValue = null;
-		DocumentUrlManager dum = new DocumentUrlManager(this.getUserProfile(), req.getLocale());
+		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), req.getLocale());
 		String role;
 		String label;
 		Integer start = null;
@@ -200,7 +200,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				// hashmap
 				// START get the relevant biobject parameter
 				biObjectParameter = null;
-				List parameters = obj.getBiObjectParameters();
+				List parameters = obj.getDrivers();
 				for (int i = 0; i < parameters.size(); i++) {
 					BIObjectParameter p = (BIObjectParameter) parameters.get(i);
 					if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {

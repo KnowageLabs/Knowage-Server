@@ -235,7 +235,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 			// START get the relevant biobject parameter
 			biObjectParameter = null;
-			List parameters = obj.getBiObjectParameters();
+			List parameters = obj.getDrivers();
 			for (int i = 0; i < parameters.size(); i++) {
 				BIObjectParameter p = (BIObjectParameter) parameters.get(i);
 				if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {

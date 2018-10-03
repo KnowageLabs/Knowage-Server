@@ -110,7 +110,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			List<BIObjectParameter> listBioParams = new ArrayList<BIObjectParameter>();
 			// fill parameters
 			String queryStr = "user_id=" + userId + "&ACTION_NAME=SEND_TO_ACTION&SBI_ENVIRONMENT=DOCBROWSER";
-			for (BIObjectParameter biParam : biobj.getBiObjectParameters()) {
+			for (BIObjectParameter biParam : biobj.getDrivers()) {
 				if (jsonParameters != null && !jsonParameters.isNull(biParam.getParameterUrlName())) {
 					// if LOV change ["Mexico","USA"] in "Mexico,USA"
 					Object jsonParam = jsonParameters.get(biParam.getParameterUrlName());
@@ -135,7 +135,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			}
 
 			execCtrl.refreshParameters(biobj, queryStr); // ??
-			biobj.setBiObjectParameters(listBioParams);
+			biobj.setDrivers(listBioParams);
 
 			// exec the document only if all its parameters are filled
 			// Why???? if a parameter is not mandatory and the user did not fill it????

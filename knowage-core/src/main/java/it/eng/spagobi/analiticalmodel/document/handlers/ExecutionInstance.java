@@ -224,7 +224,7 @@ public class ExecutionInstance implements Serializable {
 	private void initBIParameters() {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.ExecutionInstance.initBIParameters");
-		List tmpBIObjectParameters = object.getBiObjectParameters();
+		List tmpBIObjectParameters = object.getDrivers();
 		Iterator it = tmpBIObjectParameters.iterator();
 		BIObjectParameter aBIObjectParameter = null;
 		while (it.hasNext()) {
@@ -294,7 +294,7 @@ public class ExecutionInstance implements Serializable {
 			logger.error("No object is set into this ExecutionInstance!!");
 			return false;
 		}
-		List biParameters = object.getBiObjectParameters();
+		List biParameters = object.getDrivers();
 		if (biParameters == null) {
 			logger.error("BIParameters list cannot be null!!!");
 			return false;
@@ -339,7 +339,7 @@ public class ExecutionInstance implements Serializable {
 	public void applyViewpoint(String userProvidedParametersStr, boolean transientMode) {
 		logger.debug("IN");
 		if (userProvidedParametersStr != null) {
-			List biparameters = object.getBiObjectParameters();
+			List biparameters = object.getDrivers();
 			if (biparameters == null) {
 				logger.error("BIParameters list cannot be null!!!");
 				return;
@@ -394,7 +394,7 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("IN");
 		if (userProvidedParametersStr != null) {
 			ParameterValuesDecoder decoder = new ParameterValuesDecoder();
-			List biparameters = object.getBiObjectParameters();
+			List biparameters = object.getDrivers();
 			if (biparameters == null) {
 				logger.error("BIParameters list cannot be null!!!");
 				return;
@@ -449,7 +449,7 @@ public class ExecutionInstance implements Serializable {
 	public void refreshParametersValues(SourceBean request, boolean transientMode) {
 		logger.debug("IN");
 		String pendingDelete = (String) request.getAttribute("PENDING_DELETE");
-		List biparams = object.getBiObjectParameters();
+		List biparams = object.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -473,7 +473,7 @@ public class ExecutionInstance implements Serializable {
 	public void refreshParametersValues(JSONObject jsonObject, boolean transientMode) {
 		logger.debug("IN");
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
-		List biparams = object.getBiObjectParameters();
+		List biparams = object.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -528,7 +528,7 @@ public class ExecutionInstance implements Serializable {
 	public void refreshParametersValues(Map parametersMap, boolean transientMode) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.ExecutionInstance.refreshParametersValues");
-		List biparams = object.getBiObjectParameters();
+		List biparams = object.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -623,7 +623,7 @@ public class ExecutionInstance implements Serializable {
 	public List getParametersErrors(boolean onEditMode) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
-		List biparams = object.getBiObjectParameters();
+		List biparams = object.getDrivers();
 		if (biparams.size() == 0)
 			return toReturn;
 		Iterator iterParams = biparams.iterator();
@@ -1055,7 +1055,7 @@ public class ExecutionInstance implements Serializable {
 
 	public void eraseParametersValues() {
 		logger.debug("IN");
-		List biparams = object.getBiObjectParameters();
+		List biparams = object.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -1151,7 +1151,7 @@ public class ExecutionInstance implements Serializable {
 	public void refreshBIObjectWithSDKParameters(SDKDocumentParameter[] parameters) {
 
 		logger.debug("IN");
-		List<BIObjectParameter> listPars = object.getBiObjectParameters();
+		List<BIObjectParameter> listPars = object.getDrivers();
 
 		HashMap<String, List<Object>> parametersMap = new HashMap<String, List<Object>>();
 
@@ -1177,7 +1177,7 @@ public class ExecutionInstance implements Serializable {
 			objectParameter.setParameterValues(listVals);
 		}
 
-		object.setBiObjectParameters(listPars);
+		object.setDrivers(listPars);
 		logger.debug("OUT");
 	}
 
@@ -1282,7 +1282,7 @@ public class ExecutionInstance implements Serializable {
 			UUID uuid = uuidGen.generateRandomBasedUUID();
 			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 
-			List parameters = object.getBiObjectParameters();
+			List parameters = object.getDrivers();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator it = parameters.iterator();
 				while (it.hasNext()) {

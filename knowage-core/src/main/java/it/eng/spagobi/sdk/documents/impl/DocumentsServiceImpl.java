@@ -143,7 +143,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			// reload BIObjectParameter in execution modality
 			BIObjectParameter biParameter = null;
 			obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj.getId(), roleName);
-			List biparameters = obj.getBiObjectParameters();
+			List biparameters = obj.getDrivers();
 			Iterator biparametersIt = biparameters.iterator();
 			while (biparametersIt.hasNext()) {
 				BIObjectParameter aDocParameter = (BIObjectParameter) biparametersIt.next();
@@ -214,7 +214,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			// reload BIObjectParameter in execution modality
 			BIObjectParameter biParameter = null;
 			obj = executionInstance.getBIObject();
-			List biparameters = obj.getBiObjectParameters();
+			List biparameters = obj.getDrivers();
 			Iterator biparametersIt = biparameters.iterator();
 			while (biparametersIt.hasNext()) {
 				BIObjectParameter aDocParameter = (BIObjectParameter) biparametersIt.next();
@@ -307,7 +307,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 
 			obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj.getId(), roleName);
-			List parametersList = obj.getBiObjectParameters();
+			List parametersList = obj.getDrivers();
 			List toReturn = new ArrayList();
 			if (parametersList != null) {
 				SDKDocumentParameter aDocParameter;

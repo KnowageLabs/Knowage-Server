@@ -1,12 +1,26 @@
 package it.eng.spagobi.analiticalmodel.document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversValidationAPI;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -29,19 +43,6 @@ import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.ParameterCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class FunctionExecutionUtils {
 	public static final String SELECTION_TYPE_TREE = "TREE";
@@ -72,8 +73,8 @@ public class FunctionExecutionUtils {
 		return lovProvDet;
 	}
 
-	public static List<DocumentParameters> getParameters(BIObject obj, String executionRole, Locale locale, String modality) {
-		List<DocumentParameters> parametersForExecution = new ArrayList<DocumentParameters>();
+	public static List<DocumentDriverRuntime> getParameters(BIObject obj, String executionRole, Locale locale, String modality, DocumentRuntime dum) {
+		List<DocumentDriverRuntime> parametersForExecution = new ArrayList<DocumentDriverRuntime>();
 		BIObject document = new BIObject();
 		try {
 			document = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj.getId(), executionRole);
@@ -81,12 +82,12 @@ public class FunctionExecutionUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<BIObjectParameter> parameters = document.getBiObjectParameters();
+		List<BIObjectParameter> parameters = document.getDrivers();
 		if (parameters != null && parameters.size() > 0) {
 			Iterator<BIObjectParameter> it = parameters.iterator();
 			while (it.hasNext()) {
 				BIObjectParameter parameter = it.next();
-				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
+				parametersForExecution.add(new DocumentDriverRuntime(parameter, executionRole, locale, document, dum, parameters));
 			}
 		}
 		return parametersForExecution;
@@ -100,7 +101,9 @@ public class FunctionExecutionUtils {
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
+		DriversValidationAPI validation = new DriversValidationAPI();
+
 		try {
 			List errors = null;
 			JSONObject executionInstanceJSON = null;
@@ -112,12 +115,12 @@ public class FunctionExecutionUtils {
 			}
 			documentUrlManager.refreshParametersValues(executionInstanceJSON, false, obj);
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, documentUrlManager);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, documentUrlManager);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
@@ -184,7 +187,7 @@ public class FunctionExecutionUtils {
 		// logParam.put("NAME", obj.getName()); //metterci il functionId
 		logParam.put("ENGINE", "Data-mining Engine");
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
 		String url = "";
 		try {
 
@@ -214,17 +217,18 @@ public class FunctionExecutionUtils {
 		// logParam.put("NAME", obj.getName()); //mettere function id o function name
 		logParam.put("ENGINE", "Data-mining Engine");
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
+		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
+		DriversValidationAPI validation = new DriversValidationAPI();
 		List errors = null;
 		try {
 
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, documentUrlManager);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
 			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
+				errors = validation.getParametersErrors(obj, role, documentUrlManager);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
@@ -255,7 +259,7 @@ public class FunctionExecutionUtils {
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			DocumentUrlManager dum = new DocumentUrlManager(profile, req.getLocale());
+			DocumentRuntime dum = new DocumentRuntime(profile, req.getLocale());
 
 			JSONObject selectedParameterValuesJSON;
 			Map selectedParameterValues = null;
@@ -474,14 +478,14 @@ public class FunctionExecutionUtils {
 				// lov provider is present, so read the DATA in cache
 				lovResult = (String) cache.get(cacheKey);
 			} else if (retrieveIfNotcached) {
-				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
+				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), req.getLocale());
 				// insert the data in cache
 				if (lovResult != null)
 					cache.put(cacheKey, lovResult);
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
-			lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
+			lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), req.getLocale());
 		}
 
 		return lovResult;
@@ -508,7 +512,7 @@ public class FunctionExecutionUtils {
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters()));
+			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getDrivers()));
 			toReturn = userID + ";" + clone.toXML();
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();

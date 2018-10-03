@@ -78,7 +78,7 @@ public class DataSetExecutorForBIObject {
 		HashMap parametersMap=null;
 
 		//Search if the chart has parameters
-		List parametersList=biObject.getBiObjectParameters();
+		List parametersList=biObject.getDrivers();
 		logger.debug("Check for BIparameters and relative values");
 		if(parametersList!=null){
 			parametersMap=new HashMap();

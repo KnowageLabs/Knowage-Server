@@ -32,7 +32,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -120,7 +120,7 @@ public class JSONSerializer implements Serializer {
 
 		mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
 		// mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
-		mappings.put(DocumentParameters.class, new DocumentParameterForExecutionJSONSerializer());
+		mappings.put(DocumentDriverRuntime.class, new DocumentParameterForExecutionJSONSerializer());
 		mappings.put(SbiUdp.class, new UdpJSONSerializer());
 		mappings.put(SbiUdpValue.class, new UdpValueJSONSerializer());
 

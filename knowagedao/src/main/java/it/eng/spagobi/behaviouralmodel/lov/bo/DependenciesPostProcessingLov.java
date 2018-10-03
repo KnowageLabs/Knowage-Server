@@ -33,6 +33,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -69,14 +70,14 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	 *            The dependencies' configuration
 	 * @return the list filtered considering the dependencies
 	 */
-	public List processDependencies(List rows, Map selectedParameterValues, List<ObjParuse> dependencies) {
+	public List processDependencies(List rows, Map selectedParameterValues, List<? extends AbstractParuse> dependencies) {
 		if (selectedParameterValues != null && dependencies != null && dependencies.size() > 0) {
 			if (dependencies.size() == 1) {
-				ObjParuse biParameterExecDependency = dependencies.get(0);
+				AbstractParuse biParameterExecDependency = dependencies.get(0);
 				rows = filterForCorrelation(rows, biParameterExecDependency, selectedParameterValues);
 			} else if (dependencies.size() == 2) {
-				ObjParuse biParameterExecDependency1 = dependencies.get(0);
-				ObjParuse biParameterExecDependency2 = dependencies.get(1);
+				AbstractParuse biParameterExecDependency1 = dependencies.get(0);
+				AbstractParuse biParameterExecDependency2 = dependencies.get(1);
 				rows = evaluateSingleLogicOperation(rows, biParameterExecDependency1, biParameterExecDependency2, selectedParameterValues);
 			} else {
 				// build the expression
@@ -84,7 +85,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				String expr = "";
 				Iterator iterOps = dependencies.iterator();
 				while (iterOps.hasNext()) {
-					ObjParuse op = (ObjParuse) iterOps.next();
+					AbstractParuse op = (AbstractParuse) iterOps.next();
 					expr += op.getPreCondition() + posinlist + op.getPostCondition() + op.getLogicOperator();
 					posinlist++;
 				}
@@ -97,7 +98,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 		return rows;
 	}
 
-	private List filterForCorrelation(List list, ObjParuse objParuse, Map selectedParameterValues) {
+	private List filterForCorrelation(List list, AbstractParuse objParuse, Map selectedParameterValues) {
 		try {
 
 			Integer objParFatherId = objParuse.getParFatherId();
@@ -145,7 +146,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 		}
 	}
 
-	private List evaluateSingleLogicOperation(List list, ObjParuse obpuLeft, ObjParuse obpuRight, Map selectedParameterValues) {
+	private List evaluateSingleLogicOperation(List list, AbstractParuse obpuLeft, AbstractParuse obpuRight, Map selectedParameterValues) {
 		List listToReturn = list;
 		List listLeft = filterForCorrelation(list, obpuLeft, selectedParameterValues);
 		String lo = obpuLeft.getLogicOperator();
