@@ -1,43 +1,46 @@
 (function() {
 	angular.module('driversExecutionModule',[])
-		.service('driversExecutionService',['sbiModule_translate','sbiModule_config','$filter',function(sbiModule_translate,sbiModule_config,$filter){
+		.service('driversExecutionService',['sbiModule_translate',function(sbiModule_translate){
 			executionService = {}
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
 			executionService.jsonDatumDesc = null;
-			executionService.buildStringParameters = function (documentParameters) {
 
+			var isParameterSelectionValueLov = function(parameter) {return  parameter.valueSelection.toLowerCase() == 'lov'};
+			var isParameterSelectionTypeTree = function(parameter) {return parameter.selectionType.toLowerCase() == 'tree'};
+			var isParameterSelectionTypeLookup = function(parameter) {return parameter.selectionType.toLowerCase() == 'lookup'};
+			var isParameterSelectionValueMapIn = function(parameter) {return parameter.valueSelection.toLowerCase() == 'map_in'};
+			var isParameterTypeDate = function(parameter) {return parameter.type == 'DATE'};
+			var isParameterTypeDateRange = function(parameter) {return parameter.type == 'DATE_RANGE'};
+
+
+			executionService.buildStringParameters = function (documentParameters) {
 
 				if(documentParameters.length > 0) {
 					for(var i = 0; i < documentParameters.length; i++ ) {
 						var parameter = documentParameters[i];
 						var valueKey = parameter.urlName;
 						var descriptionKey = parameter.urlName + "_field_visible_description";
-						var isParameterSelectionValueLov = parameter.valueSelection.toLowerCase() == 'lov';
-						var isParameterSelectionTypeTreeOrLookup = parameter.selectionType.toLowerCase() == 'tree' || parameter.selectionType.toLowerCase() == 'lookup';
-						var isParameterSelectionValueMapIn = parameter.valueSelection.toLowerCase() == 'map_in';
-						var isParameterTypeDate = parameter.type =='DATE';
-						var isParameterTypeDateRange = parameter.type=='DATE_RANGE';
 
-						if(isParameterSelectionValueLov) {
+						if(isParameterSelectionValueLov(parameter)) {
 
-							if(isParameterSelectionTypeTreeOrLookup){
+							if(isParameterSelectionTypeTree(parameter) || isParameterSelectionTypeLookup(parameter)){
 								parseParameterTreeOrLookupSelectionType(parameter);
 							} else {
 								parseParameterListOrComboxSelectionType(parameter);
 							}
 
-						} else if(isParameterSelectionValueMapIn){
+						} else if(isParameterSelectionValueMapIn(parameter)){
 
 							parseParameterMapInSelectionValue(parameter);
 
 						} else {
 
-							if(isParameterTypeDate){
+							if(isParameterTypeDate(parameter)){
 								parseDateParameterType(parameter)
 							}
 
-							else if(isParameterTypeDateRange){
+							else if(isParameterTypeDateRange(parameter)){
 								parseDateRangeParameterType(parameter)
 
 							}
@@ -51,36 +54,11 @@
 					}
 				}
 				return executionService.jsonDatum;
-			}
+			};
 
 			executionService.setParameterValueResult = function(parameter) {
-				if(parameter.selectionType.toLowerCase() == 'tree'  ) {
-					if(parameter.multivalue) {
-						var toReturn = '';
-
-						parameter.parameterValue =  [];
-						parameter.parameterDescription =  {};
-						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
-						for(var i = 0; i < parameter.parameterValue.length; i++) {
-							var parameterValueItem = parameter.parameterValue[i];
-
-							if(i > 0) {
-								toReturn += ",<br/>";
-							}
-							toReturn += parameterValueItem;
-						}
-
-						return toReturn;
-
-					} else {
-						parameter.parameterValue = (parameter.parameterValue)?
-								[parameter.parameterValue] : []
-								parameter.parameterDescription = (parameter.parameterDescription)?
-										parameter.parameterDescription : {}
-
-								return (parameter.parameterValue && parameter.parameterValue.value)?
-										parameter.parameterValue.value : '';
-					}
+				if(isParameterSelectionTypeTree(parameter)) {
+					setParameterValueForTreeSelectionType(parameter)
 				}else {
 					if(parameter.multivalue) {
 						parameter.parameterValue = parameter.parameterValue || [];
@@ -91,7 +69,145 @@
 						return parameter.parameterValue;
 					}
 				}
+			};
+
+			executionService.recursiveChildrenChecks =- function(parameterValue,parameterDescription,childrenArray) {
+				childrenArray = childrenArray || [];
+				for(var i = 0; i < childrenArray.length; i++) {
+					var childItem = childrenArray[i];
+					if(childItem.checked && childItem.checked == true) {
+						parameterValue.push(childItem.value);
+						parameterDescription[childItem.value]=childItem.description;
+					}
+					if(!childItem.leaf) {
+						executionService.recursiveChildrenChecks(parameterValue,parameterDescription,childItem.children);
+					}
+				}
+			};
+
+			executionService.resetParameter = function(parameter) {
+
+				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
+					parameter.parameterValue = angular.copy(parameter.defaultValue);
+					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);
+					if(Array.isArray(parameter.parameterValue)){
+						for(var j = 0; j < parameter.parameterValue.length; j++) {
+							var val = parameter.parameterValue[j];
+							if(!parameter.parameterDescription[val] && parameter.parameterDescription[j]!= undefined){
+								parameter.parameterDescription[val]=parameter.parameterDescription[j];
+							}else{
+								parameter.parameterDescription[val]=val;
+							}
+						}
+					}
+				}else{
+					resetWithoutDefaultValues(parameter)
+				}
 			}
+
+			executionService.resetParameterInnerLovData = function(childrenArray) {
+				childrenArray = childrenArray || [];
+
+				for(var i = 0; i < childrenArray.length; i++) {
+					var childItem = childrenArray[i];
+					childItem.checked = false;
+
+					if(!childItem.leaf) {
+						driversExecutionService.resetParameterInnerLovData(childItem.children);
+					}
+				}
+			}
+
+			executionService.emptyParameter = function(parameter) {
+				if(isParameterSelectionValueLov(parameter)) {
+					if(isParameterSelectionTypeTree(parameter)) {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							executionService.resetParameterInnerLovData(parameter.children);
+						} else {
+							parameter.parameterValue = '';
+						}
+					}else {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+						} else {
+							parameter.parameterValue = '';
+						}
+					}
+				} else {
+					parameter.parameterValue = '';
+					if(isParameterTypeDateRange(parameter) && parameter.datarange){
+						parameter.datarange.opt='';
+					}
+
+				}
+			}
+
+			executionService.parseDateTemp = function(date){
+				result = "";
+				if(date == "d/m/Y"){
+					result = "dd/MM/yyyy";
+				}
+				if(date =="m/d/Y"){
+					result = "MM/dd/yyyy"
+				}
+				return result;
+			};
+
+			var resetWithoutDefaultValues = function(parameter){
+
+				if(isParameterSelectionValueLov(parameter)) {
+					if(isParameterSelectionTypeTree(parameter)) {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							driversExecutionService.resetParameterInnerLovData(parameter.children);
+						} else {
+							parameter.parameterValue = '';
+						}
+					}else {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+
+						} else {
+							parameter.parameterValue = '';
+						}
+					}
+				} else {
+					parameter.parameterValue = '';
+					if(isParameterTypeDateRange(parameter) && parameter.datarange){
+						parameter.datarange.opt='';
+					}
+
+				}
+			}
+
+			var setParameterValueForTreeSelectionType = function(parameter){
+
+				if(parameter.multivalue) {
+					var toReturn = '';
+
+					parameter.parameterValue =  [];
+					parameter.parameterDescription =  {};
+					executionService.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
+					for(var i = 0; i < parameter.parameterValue.length; i++) {
+						var parameterValueItem = parameter.parameterValue[i];
+						if(i > 0) {
+							toReturn += ",<br/>";
+						}
+						toReturn += parameterValueItem;
+					}
+					return toReturn;
+				} else {
+					parameter.parameterValue = (parameter.parameterValue)?
+							[parameter.parameterValue] : []
+							parameter.parameterDescription = (parameter.parameterDescription)?
+									parameter.parameterDescription : {}
+
+							return (parameter.parameterValue && parameter.parameterValue.value)?
+									parameter.parameterValue.value : '';
+				}
+			}
+
 
 			var parseParameterTreeOrLookupSelectionType = function(parameter){
 				var paramArrayTree = [];
@@ -101,7 +217,6 @@
 					if(z > 0) {
 						paramStrTree += ";";
 					}
-
 					paramArrayTree[z] = parameter.parameterValue[z];
 					//modify description tree
 					if(typeof parameter.parameterDescription !== 'undefined'){
@@ -138,7 +253,7 @@
 									desc+=parameter.parameterDescription[parameter.parameterValue[z]];
 								}
 								else{
-									desc+= parameter.parameterValue[z];
+									desc += parameter.parameterValue[z];
 								}
 							}
 							executionService.jsonDatumDesc = desc;
@@ -189,6 +304,23 @@
 				executionService.jsonDatumDesc=dateToSubmit;
 			};
 
+			var getRangeCharacter = function(type){
+				result = "";
+				if(type=="days"){
+					result = "D";
+				}
+				if(type=="years"){
+					result = "Y";
+				}
+				if(type=="months"){
+					result = "M";
+				}
+				if(type=="weeks"){
+					result = "W";
+				}
+				return result;
+			};
+
 			var parseDateRangeParameterType = function(parameter){
 
 				var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
@@ -206,7 +338,7 @@
 							break;
 						}
 					}
-					var rangeStr = defaultValueObj.quantity + this.getRangeCharacter(defaultValueObj.type);
+					var rangeStr = defaultValueObj.quantity + getRangeCharacter(defaultValueObj.type);
 					console.log('rangeStr ', rangeStr);
 					executionService.jsonDatumValue=dateToSubmit+"_"+rangeStr;
 					executionService.jsonDatumDesc=dateToSubmit+"_"+rangeStr;

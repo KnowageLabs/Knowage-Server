@@ -16,14 +16,15 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
-			 'driversExecutionService',documentExecutionControllerFn]);
+			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
+			 'driversExecutionService','driversDependencyService',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device,driversExecutionService) {
+			$timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices,
+			cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device,driversExecutionService,driversDependencyService) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -76,7 +77,6 @@
 		$scope.profile="";
 		$scope.selectedTab={'tab':0};
 		$scope.contentNotes = "";
-		$scope.dependenciesService = docExecute_dependencyService;
 		$scope.exportService = docExecute_exportService;
 		$scope.crossNavigationScope=$crossNavigationScope;
 		$scope.firstExecutionProcessRestV1=true;
@@ -182,25 +182,24 @@
 		/*
 		 * DEPENDENCIES
 		 */
-		$scope.dependenciesService.observableVisualParameterArray = [];
-		$scope.dependenciesService.observableDataDependenciesArray = [];
-		$scope.dependenciesService.visualCorrelationMap = {};
-		$scope.dependenciesService.dataDependenciesMap = {};
-		$scope.dependenciesService.observableLovParameterArray = [];
-		$scope.dependenciesService.lovCorrelationMap = {};
+//		driversDependencyService.parametersWithVisualDependency = [];
+//		driversDependencyService.parametersWithDataDependency = [];
+//		driversDependencyService.visualCorrelationMap = {};
+//		driversDependencyService.dataDependenciesMap = {};
+//		driversDependencyService.parametersWithLovDependeny = [];
+//		driversDependencyService.lovCorrelationMap = {};
 
 		/*
 		 * BUILD CORRELATION
 		 * Callback function from service getParameter for visual dependencies
 		 */
 		$scope.buildCorrelation = function(parameters){
-			docExecute_dependencyService.buildVisualCorrelationMap(parameters);
-			docExecute_dependencyService.buildDataDependenciesMap(parameters);
-			docExecute_dependencyService.buildLovCorrelationMap(parameters);
+			driversDependencyService.buildVisualCorrelationMap(parameters,execProperties);
+			driversDependencyService.buildDataDependenciesMap(parameters,execProperties);
+			driversDependencyService.buildLovCorrelationMap(parameters,execProperties);
 			//INIT VISUAL CORRELATION PARAMS
 			for(var i=0; i<parameters.length; i++){
-				docExecute_dependencyService.visualCorrelationWatch(parameters[i]);
-				//docExecute_dependencyService.lovCorrelationWatch(parameters[i]);
+				driversDependencyService.updateVisualDependency(parameters[i],execProperties);
 			}
 		};
 
@@ -209,13 +208,13 @@
 		  * WATCH ON LOV DEPENDENCIES PARAMETER OBJECT
 		  */
 		  $scope.$watch( function() {
-			  return $scope.dependenciesService.observableLovParameterArray;
+			  return driversDependencyService.parametersWithLovDependeny;
 			},
 			function(newValue, oldValue) {
 				if (!angular.equals(newValue, oldValue)) {
 					for(var i=0; i<newValue.length; i++){
 						if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
-							docExecute_dependencyService.lovCorrelationWatch(newValue[i]);
+							driversDependencyService.updateLovValues(newValue[i],execProperties);
 							break;
 						}
 
@@ -230,13 +229,13 @@
 	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
 	  */
 		$scope.$watch( function() {
-			return $scope.dependenciesService.observableVisualParameterArray;
+			return driversDependencyService.parametersWithVisualDependency;
 		},
 		function(newValue, oldValue) {
 			if (!angular.equals(newValue, oldValue)) {
 				for(var i=0; i<newValue.length; i++){
 					if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
-						docExecute_dependencyService.visualCorrelationWatch(newValue[i]);
+						driversDependencyService.updateVisualDependency(newValue[i],execProperties);
 						break;
 					}
 
@@ -248,7 +247,7 @@
 		  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
 		  */
 		$scope.$watch( function() {
-			return $scope.dependenciesService.observableDataDependenciesArray;
+			return driversDependencyService.parametersWithDataDependency;
 		},
 		// new value and old Value are the whole parameters
 		function(newValue, oldValue) {
@@ -264,17 +263,13 @@
 						var oldParValue = oldValPar.parameterValue;
 						var newParValue = newValPar.parameterValue;
 
-
-
 						if(oldParValue == undefined || oldParValue == "" ||
 								(oldParValue && (!angular.equals(newParValue, oldParValue)))
 								){
-							docExecute_dependencyService.dataDependenciesCorrelationWatch(newValPar);
+							driversDependencyService.updateDependencyValues(newValPar,execProperties);
 						}
 						break;
-
 					}
-
 				}
 			}
 		},true);
@@ -361,37 +356,22 @@
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
 					return;
 				}
-				
+
+				var publicStr = canExec == true ? "/public" : "";
+
 				if(host.endsWith("/")){
 					host = host.substring(0, host.length - 1);
 				}
-				
-				var url;
-				
-				if(canExec == true) {
-					// If document is public, authentication is not needed
-					url = host
-					+ context
-					+ "/public"
-					+ adapter
-					+ "?"
-					+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
-					+  "&OBJECT_LABEL="+label
-					+ "&TOOLBAR_VISIBLE=true"
-					+ "&ORGANIZATION="+tenant
-					+ "&NEW_SESSION=true";
-				} else {
-					// Document is not public, so user need to be redirected to login page firstly, then execute the document
-					url = host 
-					+ context
-					+ adapter
-					+ "?"
-					+ "PAGE=LoginPage"
-					+  "&OBJECT_LABEL="+label
-					+ "&TOOLBAR_VISIBLE=true"					
-					+ "&NEW_SESSION=true";
-				}
-				
+
+				var url = host
+				+ context
+				+ publicStr
+				+ adapter
+				+ "?"
+				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
+				+  "&OBJECT_LABEL="+label
+				+ "&TOOLBAR_VISIBLE=true"
+				+ "&ORGANIZATION="+tenant;
 
 				if(parameters != undefined && parameters != ''){
 					url += "&PARAMETERS="+parameters;
@@ -414,6 +394,7 @@
 
 				$mdDialog.show({
 					locals: {publicUrl: urlToSend, embedHTML: embedHTML, isPublic: canExec},
+					//flex: 80,
 					templateUrl: sbiModule_config.contextName+"/js/src/angular_1.4/tools/documentexecution/templates/publicExecutionUrl.html",
 					parent: angular.element(document.body),
 					clickOutsideToClose:true,
@@ -422,6 +403,11 @@
 					fullscreen: true,
 					controller: publicExecutionUrlControllerFunction
 				});
+
+//				else {
+//					sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.execution.publicUrlExecutionEnable"), sbiModule_translate.load('sbi.generic.warning'));
+//				}
+
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"error while checking if public url can be delivered")
 			});
@@ -602,9 +588,9 @@
 			if(execProperties.parametersData.documentParameters.length > 0) {
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
 					var parameter = execProperties.parametersData.documentParameters[i];
-					documentExecuteServices.resetParameter(parameter);
+					driversExecutionService.resetParameter(parameter);
 					//INIT VISUAL CORRELATION PARAMS
-					docExecute_dependencyService.visualCorrelationWatch(parameter);
+					driversDependencyService.updateVisualDependency(parameter,execProperties);
 				}
 			}
 		};

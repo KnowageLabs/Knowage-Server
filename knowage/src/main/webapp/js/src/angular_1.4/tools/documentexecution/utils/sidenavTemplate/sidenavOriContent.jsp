@@ -44,7 +44,7 @@
 				<md-list-item ng-repeat="parameter in documentParameters"
 						layout="row" aria-label="" class="md-3-line" ng-show="parameter.visible">
 
-					<document-paramenter-element parameter="parameter" 
+					<document-paramenter-element execProperties="getExecProperties()" parameter="parameter" 
 							layout="row" flex layout-align="start" />
 					
 				</md-list-item>

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule']); //ADDDD ,'driversExecutionModule'
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", "driversExecutionService", "$q", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","driversExecutionService", datasetFunction]) /// aaddd ,"driversExecutionService"
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer, driversExecutionService, $q){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer,driversExecutionService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -54,68 +54,121 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
 
-//	$scope.documentParameters = [
-//		{allowInternalNodeSelection: true,
-//		dataDependencies: [],
-//		dependsOn: {},
-//		driverLabel: "Tree inner node",
-//		driverUseLabel: "A",
-//		id: 263,
-//		label: "Tree inner node",
-//		lovDependencies: [],
-//		mandatory: true,
-//		multivalue: false,
-//		selectedLayer: null,
-//		selectedLayerProp: null,
-//		selectionType: "TREE",
-//		showOnPanel: "true",
-//		type: "STRING",
-//		typeCode: "QUERY",
-//		urlName: "par_cross2",
-//		valueSelection: "lov",
-//		visible: true,
-//		visualDependencies: []},
-//		{
-//		allowInternalNodeSelection: false,
-//		dataDependencies: [],
-//		dependsOn: {},
-//		driverLabel: "Tree",
-//		driverUseLabel: "all",
-//		id: 262,
-//		label: "tree",
-//		lovDependencies: [],
-//		mandatory: true,
-//		multivalue: false,
-//		selectedLayer: null,
-//		selectedLayerProp: null,
-//		selectionType: "TREE",
-//		showOnPanel: "true",
-//		type: "STRING",
-//		typeCode: "QUERY",
-//		urlName: "par_cross",
-//		valueSelection: "lov",
-//		visible: true,
-//		visualDependencies: []
-//		},
-//		{urlName:"outputType",
-//			visible:true,
-//			dependsOn:{},
-//			selectedLayerProp:null,
-//			dataDependencies:[],
-//			valueSelection:"man_in",
-//			showOnPanel:"true",
-//			driverUseLabel:"All",
-//			label:"outputType",
-//			selectedLayer:null,
-//			type:"STRING",
-//			driverLabel:"MANUAL_STRING",
-//			mandatory:false,
-//			allowInternalNodeSelection:false,
-//			lovDependencies:[],
-//			typeCode:"MAN_IN",
-//			multivalue:false,
-//			selectionType:"",
-//			visualDependencies:[],"id":266} ]
+	$scope.documentParameters = [
+		{allowInternalNodeSelection: true,
+		dataDependencies: [],
+		dependsOn: {},
+		driverLabel: "Tree inner node",
+		driverUseLabel: "A",
+		id: 263,
+		label: "Tree inner node",
+		lovDependencies: [],
+		mandatory: true,
+		multivalue: false,
+		selectedLayer: null,
+		selectedLayerProp: null,
+		selectionType: "TREE",
+		showOnPanel: "true",
+		type: "STRING",
+		typeCode: "QUERY",
+		urlName: "par_cross2",
+		valueSelection: "lov",
+		visible: true,
+		visualDependencies: []},
+		{
+		allowInternalNodeSelection: false,
+		dataDependencies: [],
+		dependsOn: {},
+		driverLabel: "Tree",
+		driverUseLabel: "all",
+		id: 262,
+		label: "tree",
+		lovDependencies: [],
+		mandatory: true,
+		multivalue: false,
+		selectedLayer: null,
+		selectedLayerProp: null,
+		selectionType: "TREE",
+		showOnPanel: "true",
+		type: "STRING",
+		typeCode: "QUERY",
+		urlName: "par_cross",
+		valueSelection: "lov",
+		visible: true,
+		visualDependencies: []
+		},
+		{urlName:"outputType",
+			visible:true,
+			dependsOn:{},
+			selectedLayerProp:null,
+			dataDependencies:[],
+			valueSelection:"man_in",
+			showOnPanel:"true",
+			driverUseLabel:"All",
+			label:"outputType",
+			selectedLayer:null,
+			type:"STRING",
+			driverLabel:"MANUAL_STRING",
+			mandatory:false,
+			allowInternalNodeSelection:false,
+			lovDependencies:[],
+			typeCode:"MAN_IN",
+			multivalue:false,
+			selectionType:"",
+			visualDependencies:[],"id":266} ]
+    $scope.setParametersAsDrivers = function(parameters,drivers){
+		for(var i = 0; i < parameters.length; i++){
+			if(parameters[i].type == "Number"){
+				var newDriver = {
+						urlName:parameters[i].name,
+						dependsOn:{},
+						selectedLayerProp:null,
+						dataDependencies:[],
+						valueSelection:"man_in",
+						showOnPanel:"true",
+						driverUseLabel:"parameter",
+						label : parameters[i].name,
+						selectedLayer:null,
+						type:"NUM",
+						driverLabel:"parameter",
+						mandatory:false,
+						allowInternalNodeSelection:false,
+						lovDependencies:[],
+						typeCode:"MAN_IN",
+						multivalue: parameters[i].multivalue,
+						selectionType:"",
+						visualDependencies:[],
+						"id":i,
+						defaultValues: [parameters[i].defaultValue]
+
+				}
+			}else{
+				var newDriver = {
+						urlName:parameters[i].name,
+						dependsOn:{},
+						selectedLayerProp:null,
+						dataDependencies:[],
+						valueSelection:"man_in",
+						showOnPanel:"true",
+						driverUseLabel:"parameter",
+						label : parameters[i].name,
+						selectedLayer:null,
+						type:"STRING",
+						driverLabel:"parameter",
+						mandatory:false,
+						allowInternalNodeSelection:false,
+						lovDependencies:[],
+						typeCode:"MAN_IN",
+						multivalue: parameters[i].multivalue,
+						selectionType:"",
+						visualDependencies:[],
+						"id":i,
+						defaultValues: [parameters[i].defaultValue]
+				}
+			}
+			$scope.documentParameters.push(newDriver)
+		}
+	}
 
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
@@ -238,11 +291,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
       },
 
       {
-    	  name: "SPATIAL ATTRIBUTE",
-    	  value: "SPATIAL_ATTRIBUTE"
-      },
-
-      {
     	  name: "MEASURE",
     	  value: "MEASURE"
       }
@@ -272,7 +320,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			hideTooltip: true,
 
 			transformer: function() {
-				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.value}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
 			}
 		}
 	];
@@ -1785,17 +1833,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log(datasetFieldsMetadata);
 		console.log($scope.datasetMetaWithFieldsMetaIndexes);
 
-		var numberOfSpatialAttribute = 0;
-		for (i=0; i<$scope.fieldsMetadata.length; i++) {
-			if($scope.fieldsMetadata[i].fieldType == "SPATIAL_ATTRIBUTE"){
-				numberOfSpatialAttribute++;
-				if(numberOfSpatialAttribute > 1) {
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.field.metadata.duplicateSpatialAttribute"), sbiModule_translate.load('sbi.generic.error'));
-					return;
-				}
-			}
-		}
-
 		for (i=0; i<$scope.fieldsMetadata.length; i++) {
 			//var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
 			//$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
@@ -1808,7 +1845,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		console.log("posle: ",$scope.selectedDataSet.meta.columns);
 
-		$scope.closeScript();
 	}
 
 	 /**
@@ -1838,34 +1874,26 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 
 	 // SELECT DATASET
-	 $scope.loadDataSet = function(item, index) {
+	 $scope.loadDataSet = function(item,index) {
 		 $scope.isSelected = true;
 		 $scope.step=1;
-
-		// Load the Dataset's older versions
-		if(!item.hasOwnProperty('selected') || 
-				(item.hasOwnProperty('selected') && item.selected != true)) {
-			var defer = $q.defer();
-			var olderVersionsPromise = loadOlderVersions(item.id);
-			olderVersionsPromise.then(function(response){											 		
-				item.dsVersions = response;
-				item.selected = true;
-				$scope.selectedDataSetInit = angular.copy(item);
-				$scope.selectedDataSet = angular.copy(item);
-				defer.resolve(response);				
-			}, function(error){					
-				sbiModule_messaging.showErrorMessage(error, 'Error');				
-			});			
-		}
-		 
+//		 console.log("A8");
+//		 console.log(item);
+//		 console.log($scope.dirtyForm);
+//		 console.log($scope.selectedDataSet);
+		 //$scope.selectedDataSet ? console.log("id: ",$scope.selectedDataSet.id) : console.log("UNDEFINED");
+		 // DS not yet selected
 		 if (!$scope.selectedDataSet) {
 			 //console.log("a2");
 			 $scope.setFormNotDirty();
-			 selectDataset(item, index);
+			 selectDataset(item,index);
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-
+			 //console.log("b2");
+			 //console.log(item.id);
+			 //console.log($scope.dirtyForm);
+//			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
 			 // If we move to the already existing DS and not clicking on the new DS again
 			 if (item.id) {
 
@@ -1899,7 +1927,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 }
 				 else {
 
-					 selectDataset(item, index);
+					 selectDataset(item,index);
 					 $scope.setFormNotDirty();
 				 }
 
@@ -1933,7 +1961,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					 		function() {
 
 					 			var indexOfExistingDSInAT = -1;
-
+//
 								for (i=0; i<$scope.datasetsListTemp.length; i++) {
 									if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
 										indexOfExistingDSInAT = i;
@@ -1956,18 +1984,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	};
 
-	var selectDataset = function(item, index) {
-						
+	var selectDataset = function(item,index) {
+
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
-		
+
 		if($scope.selectedDataSet.pars.length > 0) {
 			$scope.disablePersisting = true;
 		} else {
 			$scope.disablePersisting = false;
 		}
-								
+
 		// SCHEDULING
 		if ($scope.selectedDataSet.isScheduled) {
 			$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
@@ -2129,7 +2157,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		$scope.parameterItems = parameterItemsTemp;
-
+		$scope.setParametersAsDrivers($scope.parameterItems,$scope.documentParameters)
+		console.log('$scope.documentParameters')
+		console.log($scope.documentParameters)
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
 			// Cast the REST NGSI (transform from the String)
 			if($scope.selectedDataSet.restNGSI){
@@ -2244,22 +2274,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
-	
-	var loadOlderVersions = function(id) {
-		var deferred = $q.defer();
-				
-		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
-		promise.then(function(response){
-			var result = response.data.root;				
-			deferred.resolve(result);
-		}, function(error) {
-			if(error.data && error.data.errors)
-				deferred.reject(error.data.errors[0].message);
-   		});
-			
-		return deferred.promise;
-	}
-	
+
 	$scope.refactorFileDatasetConfig = function(item) {
 
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
@@ -2872,7 +2887,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	   theme:"eclipse",
 	   lineNumbers: true
 	 };
-	 
+
 	 $scope.codemirrorSparqlOptions = {
 		   mode: 'application/sparql-query',
 		   lineWrapping : true,
@@ -3134,139 +3149,21 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
 		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
-		$scope.documentParameters = [{
-//			urlName: "Famiglia",
-//			visible: true,
-//			dependsOn: {
-//			},
-//			selectedLayerProp: null,
-//			descriptionColumnNameMetadata: "PRODUCT_FAMILY",
-//			dataDependencies: [],
-//			valueSelection: "lov",
-//			showOnPanel: "true",
-//			driverUseLabel: "A",
-//			label: "Famiglia",
-//			selectedLayer: null,
-//			type: "STRING",
-//			driverLabel: "CORR_PRD_FAM",
-//			mandatory: true,
-//			allowInternalNodeSelection: false,
-//			lovDependencies: [],
-//			typeCode: "QUERY",
-//			multivalue: false,
-//			selectionType: "LIST",
-//			visualDependencies: [],
-//			valueColumnNameMetadata: "PRODUCT_FAMILY",
-//			defaultValues: [{
-//				PRODUCT_FAMILY: "Non-Consumable",
-//				isEnabled: true,
-//				description: "Non-Consumable",
-//				label: "Non-Consumable",
-//				value: "Non-Consumable"
-//			},
-//			{
-//				PRODUCT_FAMILY: "Food",
-//				isEnabled: true,
-//				description: "Food",
-//				label: "Food",
-//				value: "Food"
-//			},
-//			{
-//				PRODUCT_FAMILY: "Drink",
-//				isEnabled: true,
-//				description: "Drink",
-//				label: "Drink",
-//				value: "Drink"
-//			}],
-//			id: 234,
-//			defaultValuesMeta: ["PRODUCT_FAMILY"]
-//		},
-//		{
-//			urlName: "categoria",
-//			visible: true,
-//			dependsOn: {
-//				Famiglia: [{
-//					urlName: "Famiglia"
-//				}]
-//			},
-//			selectedLayerProp: null,
-//			descriptionColumnNameMetadata: "PRODUCT_CATEGORY",
-//			dataDependencies: [{
-//				paruseId: 71,
-//				prog: 1,
-//				filterColumn: "PRODUCT_FAMILY",
-//				filterOperation: "contains",
-//				preCondition: null,
-//				postCondition: null,
-//				logicOperator: null,
-//				objParFatherId: 234,
-//				objParFatherUrlName: "Famiglia",
-//				objParId: 235
-//			}],
-//			valueSelection: "lov",
-//			showOnPanel: "true",
-//			driverUseLabel: "A",
-//			label: "Categoria",
-//			selectedLayer: null,
-//			type: "STRING",
-//			driverLabel: "CORR_PRD_CAT",
-//			mandatory: true,
-//			allowInternalNodeSelection: false,
-//			lovDependencies: [],
-//			typeCode: "QUERY",
-//			multivalue: false,
-//			selectionType: "LOOKUP",
-//			visualDependencies: [],
-//			valueColumnNameMetadata: "PRODUCT_CATEGORY",
-//			defaultValues: [],
-//			id: 235,
-//			defaultValuesMeta: ["PRODUCT_CATEGORY",
-//			"PRODUCT_FAMILY"]
-//		},
-//		{
-//			urlName: "subcat",
-//			visible: true,
-//			dependsOn: {
-//				categoria: [{
-//					urlName: "categoria"
-//				}]
-//			},
-//			selectedLayerProp: null,
-//			descriptionColumnNameMetadata: "PRODUCT_SUBCATEGORY",
-//			dataDependencies: [{
-//				paruseId: 72,
-//				prog: 1,
-//				filterColumn: "PRODUCT_CATEGORY",
-//				filterOperation: "contains",
-//				preCondition: null,
-//				postCondition: null,
-//				logicOperator: null,
-//				objParFatherId: 235,
-//				objParFatherUrlName: "categoria",
-//				objParId: 236
-//			}],
-//			valueSelection: "lov",
-//			showOnPanel: "true",
-//			driverUseLabel: "A",
-//			label: "sub categoria",
-//			selectedLayer: null,
-//			type: "STRING",
-//			driverLabel: "CORR_PRD_SUBCAT",
-//			mandatory: true,
-//			allowInternalNodeSelection: false,
-//			lovDependencies: [],
-//			typeCode: "QUERY",
-//			multivalue: false,
-//			selectionType: "LOOKUP",
-//			visualDependencies: [],
-//			valueColumnNameMetadata: "PRODUCT_SUBCATEGORY",
-//			defaultValues: [],
-//			id: 236,
-//			defaultValuesMeta: ["PRODUCT_CATEGORY",
-//			"PRODUCT_SUBCATEGORY"]
-		}]
+		$scope.selectedDataSet.parametersData = {};
+		$scope.selectedDataSet.parametersData.documentParameters = {}
+
+$scope.getParameters = function(){			console.log( $scope.documentParameters)
+			return $scope.documentParameters;
+		}
+
+		$scope.selectedDataSet.parametersData.documentParameters = $scope.documentParameters;
+
 		if(hasParameters){
 			$scope.parameterPreviewItems = $scope.parameterItems;
+
+			console.log('$scope.parameterItems')
+			console.log($scope.parameterItems)
+			console.log( $scope.documentParameters)
 			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {
 				$scope.parameterPreviewItems[i].value = "";
 			}
@@ -3285,6 +3182,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 	}
+
+
 
 	$scope.applyValueOfParameterAndContinuePreviewExecution = function () {
 		//apply entered values for parameters
@@ -4189,7 +4088,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
         		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
         			for(i=0;i<this.dsMetaValue.length;i++){
-           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| this.dsMetaValue[i].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
+           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
            			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
            				 row.dsMetaValue.push(this.dsMetaValue[i]);
 
@@ -4374,7 +4273,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		/**
 		 * If the user just opens the Dataset wizard dialog and goes to the Step 2, the grid will be initialized with the saved (when updating/editing) or with the
 		 * default (when creating a new File dataset) data. In that situation, the 'item' and 'index' will be undefined. These two values are defined only when user
-		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE). So, this
+		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE or MEASURE). So, this
 		 * variable will be true only when just opening (entering) the Step 2.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -4400,7 +4299,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			/**
 			 * If initializing (entering) the Step 2, the expression (pname=="type") will indicate that we are dealing with the Type type of the Attribute column
-			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE) and in
+			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE or MEASURE) and in
 			 * the case it is a MEASURE, remove the String item from the current Type combobox, since the MEASURE can be only Integer/Double. Otherwise, if the
 			 * Attribute column value is the Field type, just proceed with the filtering of metadata.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -4595,7 +4494,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
-   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
+   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
    			 }
@@ -4613,7 +4512,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.metaScopeFunctions.valueChanged = function(item,index) {
 
-    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE" || item.VALUE_CD=="SPATIAL_ATTRIBUTE") {
+    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
     		$scope.prepareMetaForView(item.VALUE_CD,index);
     	}
 
@@ -4625,5 +4524,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
     $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
+
 
 };

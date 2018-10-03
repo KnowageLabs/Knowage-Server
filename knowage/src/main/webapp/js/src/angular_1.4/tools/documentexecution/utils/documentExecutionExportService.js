@@ -82,7 +82,7 @@
 								var dateParam = sbiModule_dateServices.formatDate(currParam.parameterValue, sbiModule_config.serverDateFormat);
 								if(paramsArr[i].datarange && paramsArr[i].datarange.opt){
 									var rangeArr = paramsArr[i].datarange.opt.split('_');
-									var rangeType = documentExecuteServices.getRangeCharacter(rangeArr[0]);
+									var rangeType = driversExecutionService.getRangeCharacter(rangeArr[0]);
 									var rangeQuantity = rangeArr[1];
 									paramsFilter=paramsFilter+'&'+currParam.urlName+'='+dateParam+'_'+rangeQuantity+rangeType;
 								}

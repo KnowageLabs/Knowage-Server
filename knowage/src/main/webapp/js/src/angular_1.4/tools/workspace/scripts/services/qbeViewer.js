@@ -22,11 +22,10 @@
  */
 
 angular
-	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
+	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule','driversExecutionModule'])
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
 
-		this.openQbeInterfaceFromModel = function($scope,url) {
-
+		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
 
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
@@ -37,13 +36,18 @@ angular
 					.show
 					(
 						{
+							skipHide: true,
 							scope:$scope,
 							preserveScope: true,
 							controller: openQbeInterfaceController,
 	//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url}
+							locals:{url:url,
+									execProperties:execProperties,
+									drivers:drivers,
+									driversExecutionService:driversExecutionService
+							}
 						}
 					)
 					.then(function() {
@@ -90,12 +94,16 @@ angular
 
 		};
 
-		function openQbeInterfaceController($scope,url,$timeout) {
-
-
-
+		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService) {
+			$scope.showQbe = false
+			$scope.businessModel = execProperties;
+			$scope.drivers = drivers;
+			$scope.showDrivers = true;
 			$scope.documentViewerUrl = url;
 
+			$scope.hideDrivers =function(){
+				$scope.showDrivers = !$scope.showDrivers;
+			}
 			$scope.closeDocument = function() {
 
 				$mdDialog.hide();
@@ -123,7 +131,11 @@ angular
 					}
 				}
 			}
-
+			$scope.executeParameter = function(){
+				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				$scope.showQbe = true;
+				$scope.showDrivers = false;
+			}
 			$scope.saveQbeDocument = function() {
 
 				/**

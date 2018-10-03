@@ -67,7 +67,71 @@
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
-
+			$scope.drivers = [
+				{allowInternalNodeSelection: true,
+					dataDependencies: [],
+					dependsOn: {},
+					driverLabel: "Tree inner node",
+					driverUseLabel: "A",
+					id: 263,
+					label: "Tree inner node",
+					lovDependencies: [],
+					mandatory: true,
+					multivalue: false,
+					selectedLayer: null,
+					selectedLayerProp: null,
+					selectionType: "",
+					showOnPanel: "true",
+					type: "STRING",
+					typeCode: "QUERY",
+					urlName: "par_cross2",
+					valueSelection: "lov",
+					visible: true,
+					visualDependencies: []},
+					{
+					allowInternalNodeSelection: false,
+					dataDependencies: [],
+					dependsOn: {},
+					driverLabel: "Tree",
+					driverUseLabel: "all",
+					id: 262,
+					label: "tree",
+					lovDependencies: [],
+					mandatory: true,
+					multivalue: false,
+					selectedLayer: null,
+					selectedLayerProp: null,
+					selectionType: "TREE",
+					showOnPanel: "true",
+					type: "STRING",
+					typeCode: "QUERY",
+					urlName: "par_cross",
+					valueSelection: "lov",
+					visible: true,
+					visualDependencies: []
+					},
+					{urlName:"outputType",
+						visible:true,
+						dependsOn:{},
+						selectedLayerProp:null,
+						dataDependencies:[],
+						valueSelection:"man_in",
+						showOnPanel:"true",
+						driverUseLabel:"All",
+						label:"outputType",
+						selectedLayer:null,
+						type:"STRING",
+						driverLabel:"MANUAL_STRING",
+						mandatory:false,
+						allowInternalNodeSelection:false,
+						lovDependencies:[],
+						typeCode:"MAN_IN",
+						multivalue:false,
+						selectionType:"",
+						visualDependencies:[],"id":266}
+					];
+			businessModel.parametersData={}
+			businessModel.parametersData.documentParameters = $scope.drivers;
 			var modelName= businessModel.name;
 			var dataSource=businessModel.dataSourceLabel;
 			var url = datasetParameters.qbeFromBMServiceUrl
@@ -77,28 +141,32 @@
 
 				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
 
-//			if( driversPerModel.length > 0){
-//				 $mdDialog.show({
-//	                 controller: executeDriversController,
-//	                 templateUrl:  sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/executeDrivers.html',
-//	                // targetEvent: $event,
-//	                 clickOutsideToClose: true,
-//	                 locals: {
-//	                	 businessModel: businessModel,
-//	                     drivers :  driversPerModel
-//	                 }
-//	             })
-//	             .then(
-//	                 function(answer) {
-	                	 $qbeViewer.openQbeInterfaceFromModel($scope,url);
-//	                 },
-//	                 function() {});
-//
-//		}
+			if( driversPerModel.length > 0){
+				 $mdDialog.show({
+	                 controller: executeDriversController,
+	                 templateUrl:  sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/executeDrivers.html',
+	                // targetEvent: $event,
+	                 clickOutsideToClose: true,
+	                 locals: {
+	                	 businessModel: businessModel,
+	                     drivers :   $scope.drivers
+	                 }
+	             })
+	             .then(
+	                 function(answer) {
+	                //	 url = url + driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+
+	                	 $qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers);
+	                 },
+	                 function() {});
+
+			}else{
+				 $qbeViewer.openQbeInterfaceFromModel($scope,url);
+			}
 		}
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
 		$scope.tableColumnsModels = [
-			{"label":"Name","name":"name","type":"text"}, 
+			{"label":"Name","name":"name","type":"text"},
 			{"label":"Description","name":"description","type":"text"},
 			{"type": "buttons", "buttons": [
 				{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible":function(){return true;}}
@@ -386,9 +454,10 @@
 			})
 		}
 		var executeDriversController = function(businessModel , drivers , $mdDialog, $scope, $filter,sbiModule_translate){
+			businessModel.parametersData = {}
 				$scope.drivers = drivers
 				$scope.translate = sbiModule_translate;
-				$scope.drivers = [/*
+				$scope.drivers = [
 					{allowInternalNodeSelection: true,
 						dataDependencies: [],
 						dependsOn: {},
@@ -450,7 +519,8 @@
 							multivalue:false,
 							selectionType:"",
 							visualDependencies:[],"id":266}
-					*/	];
+						];
+				businessModel.parametersData.documentParameters = $scope.drivers;
 				$scope.businessModel = businessModel;
 
 
