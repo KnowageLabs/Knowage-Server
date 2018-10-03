@@ -36,32 +36,11 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
 
 
+
 <div data-ng-controller="menuCtrl" ng-app="menuAppAdmin" id="menuAppAdmin">
-	<menu-aside md-colors="{background: 'accent'}"></menu-aside>
-	<div id="divContainer" class="overlayButtonBar ">
-	<!-- 
-		<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-		<br>
-		<a href="${pageContext.request.contextPath}" class="menuKnowage"><i class="material-icons md-24">home</i></a>
-		<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a> 
-	-->
-
-
-	    <md-button class="md-icon-button menuKnowage" aria-label="Menu" href="${pageContext.request.contextPath}" class="menuKnowage">
-	        <md-icon>home</md-icon>
-	    </md-button>
-    	
-    	<span flex></span>
-	    <div class="poweredFooter">
-            <span>powered by</span><span class="verticalAlign"></span>
-		</div>
-		<md-button class="md-icon-button menuKnowage" aria-label="Menu" data-ng-click="toggleMenu()">
-	        <md-icon>menu</md-icon>
-	    </md-button>
-
-	</div>
-
+<menu-aside></menu-aside>
+<div id="divContainer" class="overlayButtonBar ">
+	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
+	<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
 </div>
-
-
-
+</div>

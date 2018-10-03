@@ -126,6 +126,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 			dataset.hasSpatialAttributes = hasSpatialAttributes;
 		}
+	}
   
 
 	this.forceNearRealTimeValues=function(datasets, associations){

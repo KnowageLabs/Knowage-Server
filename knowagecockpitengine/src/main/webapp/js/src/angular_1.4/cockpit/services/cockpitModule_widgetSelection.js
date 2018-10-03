@@ -27,7 +27,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}else{
 					toRet[datasetLabel][col]=[];
 				}
-				}
 			}
 		}
 		return toRet;
