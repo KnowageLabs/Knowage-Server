@@ -866,6 +866,7 @@
 						{
 							y: $serieValue,
 							name: "$serieCategoryName",
+							x: "$serieCategoryName",
 							#foreach($valueKey in $dataColumnsMapper.keySet())
 							#set ($col =  $dataColumnsMapper.get($valueKey))
 							$valueKey: "$row.get($col)",
