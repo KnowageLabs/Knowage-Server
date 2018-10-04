@@ -106,6 +106,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";
 	public static final String FILE_DATE_FORMAT = "dateFormat";
+	public static final String FILE_TIMESTAMP_FORMAT = "timestampFormat";
 	public static final String FILE_TYPE = "fileType";
 
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
@@ -266,6 +267,14 @@ public class DataSetJSONSerializer implements Serializer {
 						}
 					} else {
 						result.put(FILE_DATE_FORMAT, "");
+					}
+					if (jsonConf.has(DataSetConstants.FILE_TIMESTAMP_FORMAT)) {
+						String timestampFormat = jsonConf.getString(DataSetConstants.FILE_TIMESTAMP_FORMAT);
+						if (timestampFormat != null) {
+							result.put(FILE_TIMESTAMP_FORMAT, timestampFormat);
+						}
+					} else {
+						result.put(FILE_TIMESTAMP_FORMAT, "");
 					}
 
 					// added this check for retrocompatibility
