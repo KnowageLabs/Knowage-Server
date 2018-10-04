@@ -36,7 +36,7 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 			String implementation, Boolean showDerivedDatasets);
 
 	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
-			Boolean seeTechnical, Integer[] ids);
+			Boolean seeTechnical, Integer[] ids, boolean spatialOnly);
 
 	public Integer countSbiDataSet(String search) throws EMFUserError;
 

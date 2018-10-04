@@ -1909,8 +1909,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				for (int j = 0; j < metadataArray.length(); j++) {
 					if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-						if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						if (IFieldMetaData.FieldType.MEASURE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+						} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 						} else {
 							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 						}
@@ -1926,8 +1928,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 
 		logger.debug("OUT");
-		if (dataStore == null)
-			return null;
 
 		return dataStore.getMetaData();
 	}

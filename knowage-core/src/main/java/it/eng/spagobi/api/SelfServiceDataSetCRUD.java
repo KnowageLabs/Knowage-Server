@@ -1018,6 +1018,9 @@ public class SelfServiceDataSetCRUD {
 				JSONObject metadataDataset = new JSONObject(datasetMetadata);
 				JSONArray columns = metadataDataset.getJSONArray("columns");
 
+				boolean moreThanOneSpatialAttributeFound = false;
+				int numberOfSpatialAttributes = 0;
+
 				/**
 				 * Go through all columns that the file dataset has. First go through all rows for the first column, then through all of them in the second
 				 * column and so on.
@@ -1034,21 +1037,27 @@ public class SelfServiceDataSetCRUD {
 					 */
 					int index = (int) Math.round(Math.floor(i / 2));
 
-					JSONObject jo = new JSONObject();
+					JSONObject jo = columns.getJSONObject(i);
+					String pvalue = jo.opt("pvalue").toString().toUpperCase();
+
+					if (!moreThanOneSpatialAttributeFound && pvalue.equals("SPATIAL_ATTRIBUTE")) {
+						numberOfSpatialAttributes++;
+						if (numberOfSpatialAttributes > 1) {
+							validationErrors.addError(0, i, dataStore.getRecordAt(0).getFieldAt(index), "sbi.ds.field.metadata.duplicateSpatialAttribute");
+							moreThanOneSpatialAttributeFound = true;
+						}
+					}
 
 					/**
 					 * Go through all rows for a particular (current, i-th) column.
 					 */
 					for (int j = 0; j < records && j < 1000; j++) {
 
-						jo = (JSONObject) columns.get(i);
-						String pvalue = jo.opt("pvalue").toString().toUpperCase();
-
 						/**
-						 * Check if property value is not one of those that are common for field type (MEASURE/ATTRIBUTE), since we are not validating their
-						 * values, but rather those that are specified for types (Integer, Double, String). So, skip these two.
+						 * Check if property value is not one of those that are common for field type (MEASURE/ATTRIBUTE/SPATIAL_ATTRIBUTE), since we are not
+						 * validating their values, but rather those that are specified for types (Integer, Double, String). So, skip these two.
 						 */
-						if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE")) {
+						if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE") && !pvalue.equals("SPATIAL_ATTRIBUTE")) {
 							Object obj = dataStore.getRecordAt(j).getFieldAt(index).getValue();
 							/**
 							 * Try to convert a value that current field has to the type that is set for that field. If the converting (casting) does not go
@@ -1856,6 +1865,8 @@ public class SelfServiceDataSetCRUD {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 							} else if (propertyValue.equalsIgnoreCase("ATTRIBUTE")) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+							} else if (propertyValue.equalsIgnoreCase("SPATIAL_ATTRIBUTE")) {
+								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 							} else {
 								if ("Double".equalsIgnoreCase(guessedType) || "Integer".equalsIgnoreCase(guessedType)) {
 									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);

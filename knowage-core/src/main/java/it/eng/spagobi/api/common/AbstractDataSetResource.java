@@ -239,7 +239,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         IAggregationFunction function = AggregationFunctions.get(functName);
         String functionColumnName = jsonObject.optString("functColumnName");
         Projection projection;
-        if(functionColumnName != null) {
+        if(functionColumnName != null && !functionColumnName.isEmpty()) {
             Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
             projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
         } else {

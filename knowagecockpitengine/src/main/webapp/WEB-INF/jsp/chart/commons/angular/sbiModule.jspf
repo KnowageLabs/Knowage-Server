@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	curr_language: '<%= curr_language%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
 	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
-	    	thous: '<%= GeneralUtilities.getGroupingSeparator()%>',
-	        dec: '<%= GeneralUtilities.getDecimalSeparator()%>',
+	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
+	        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
 		};
 	});
 	

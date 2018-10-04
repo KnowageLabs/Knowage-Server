@@ -378,7 +378,7 @@ public class LoginModule extends AbstractHttpModule {
 			// End writing log in the DB
 
 			List lstMenu = MenuUtilities.getMenuItems(profile);
-
+			
 			String url = "/themes/" + currTheme + "/jsp/";
 			if (UserUtilities.isTechnicalUser(profile)) {
 				url += "adminHome.jsp";
@@ -387,8 +387,6 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
-
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

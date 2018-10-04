@@ -34,13 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},
 						{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"},{"label":"bolt","className":"fa fa-bolt","unicode":"\uf0e7"},{"label":"circle","className":"fa fa-plus-circle","unicode":"\uf055"},
 						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"},{"label":"check","className":"fa fa-check","unicode":"\uf00c"},{"label":"times","className":"fa fa-times","unicode":"\uf00d"},
-						{"label":"warning","className":"fa fa-warning","unicode":"\uf071"},{"label":"exclamation","className":"fa fa-exclamation-circle","unicode":"\uf06a"}]
-				},{"name":"appliances","className":"ai",
-					"icons":[
-						{"label":"refrigerator","className":"ai-fridge","unicode":"\61"},{"label":"iron","className":"ai-iron","unicode":"\62"},{"label":"microwave","className":"ai-microwave","unicode":"\63"},
-						{"label":"oven","className":"ai-oven","unicode":"\64"},{"label":"toaster","className":"ai-toaster","unicode":"\65"},{"label":"tv","className":"ai-tv","unicode":"\66"},
-						{"label":"washer","className":"ai-washer","unicode":"\67"},{"label":"washdrier","className":"ai-washdrier","unicode":"\68"},{"label":"lightbulb","className":"ai-lightbulb","unicode":"\69"},
-						{"label":"hairdyer","className":"ai-hairdyer","unicode":"\6a"},{"label":"coffee","className":"ai-coffee","unicode":"\6b"},{"label":"cappa","className":"ai-cappa","unicode":"\6c"},
+						{"label":"warning","className":"fa fa-warning","unicode":"\uf071"},{"label":"exclamation","className":"fa fa-exclamation-circle","unicode":"\uf06a"},
 						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"aways on","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"},
 						{"label":"conditioning","className":"ai-conditioning","unicode":"\70"},{"label":"fan","className":"ai-fan","unicode":"\71"},{"label":"vacuum","className":"ai-vacuum","unicode":"\72"},
 						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\73"},{"label":"mixer","className":"ai-mixer","unicode":"\74"},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\75"},

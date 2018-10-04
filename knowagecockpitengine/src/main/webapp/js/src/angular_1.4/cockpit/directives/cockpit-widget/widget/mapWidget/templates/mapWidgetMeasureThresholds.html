@@ -1,0 +1,72 @@
+<md-dialog style="min-width:50%;" class="thresholdSelector" >
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{activeMeasure.name}} Thresholds</h2>
+        <span flex></span>
+        <md-button ng-click="addThreshold()">
+        	Add threshold
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding style="min-height:300px;">
+    	<div layout="row" layout-align="center center" ng-if="activeMeasure.properties.thresholds && activeMeasure.properties.thresholds.length > 0">
+    		<div class="kn-info" flex="80">
+    			Using threshold will override default markers behaviour for the selected measure
+    		</div>
+    	</div>
+    	<div layout="column"  ng-if="activeMeasure.properties.thresholds && activeMeasure.properties.thresholds.length > 0">
+    		<div ng-repeat="threshold in activeMeasure.properties.thresholds" layout="row" layout-align="center center">
+    			<md-input-container class="md-block flex">
+			        <label>Color</label>
+		         	<color-picker options="colorPickerOptions" ng-model="threshold.color"></color-picker> 
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex">
+			        <label>Condition</label>
+			        <md-select ng-model="threshold.operator0">
+						<md-option ng-repeat="op in availableOperators" ng-value="op.value">{{op.label}}</md-option>
+					</md-select>
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex">
+			        <label>Value</label>
+			        <input type="number" ng-model="threshold.val0" />
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex" ng-if="threshold.operator0 && threshold.operator0 != '==' && threshold.operator0 != '!='">
+			        <label>Range condition</label>
+			        <md-select ng-model="threshold.operator1">
+			        	<md-option></md-option>
+						<md-option ng-repeat="op in availableOperators" ng-value="op.value" ng-if="op.range">{{op.label}}</md-option>
+					</md-select>
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex" ng-if="threshold.operator0 && threshold.operator0 != '==' && threshold.operator0 != '!='">
+			        <label>Range value</label>
+					<input type="number" ng-model="threshold.val1" />
+	      		</md-input-container>
+	      		<md-button class="md-icon-button" ng-class="{'warning': threshold.warning}" ng-click="threshold.warning = !threshold.warning">
+	      			<md-tooltip>Selecting this option the threshold will be notified inside the detail</md-tooltip>
+	      			<md-icon md-font-icon="fa fa-warning"></md-icon>
+	      		</md-button>
+	      		<md-button class="md-icon-button" ng-click="deleteThreshold(threshold)">
+	      			<md-tooltip>Delete</md-tooltip>
+	      			<md-icon md-font-icon="fa fa-trash"></md-icon>
+	      		</md-button>
+    		</div>
+    	</div>
+    	<div layout="row" layout-align="center center" ng-if="!activeMeasure.properties.thresholds || activeMeasure.properties.thresholds.length == 0">
+    		<div class="kn-noItems" flex="80">
+    			No threshold present.
+    		</div>
+    	</div>
+      
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="set()">
+       	Set
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 		            }
 					if(newValue != oldValue && newValue.length > 0){
-						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+						scope.itemList = scope.filterDataset(angular.copy(scope.savedRows),scope.reformatSelections(newValue));
 					}else{
 						angular.copy(scope.savedRows, scope.itemList);
 					}
@@ -472,6 +472,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//using the reformatted filters
 			var filters = selection ? selection : $scope.reformatFilters();
 			for(var f in filters){
+
 				for(var d = dataset.length - 1; d >= 0; d--){
 					//if the column is an attribute check in filter
 					if (filters[f].type == 'ATTRIBUTE'){
@@ -502,6 +503,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if (eval(expression) == false){
 							dataset.splice(d,1);
 						}
+					}else if (filters[f].type == 'SPATIAL_ATTRIBUTE'){
+						var value = dataset[d][f];
+
+						if (filters[f].values.indexOf(value)==-1){
+							dataset.splice(d,1);
+						}
 					}
 				}
 			}
@@ -522,18 +529,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
 							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
-							formattedSelection[columnObject.aliasToShow] = {
-									"values":[],
-									"type": columnObject.fieldType
-							};
+							if (!columnObject){
+								columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
+							}
+
+							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, '');
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, '');
-								formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
+								if (columnObject.fieldType == "SPATIAL_ATTRIBUTE") {
+									//for spatial attribute doens't split value
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '');
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x);
+								}else{
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
+									for(var i=0; i<x.length; i++){
+										formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
+									}
+								}
 							}
 						}
-
 					}
 				}
 				return formattedSelection;
@@ -664,7 +678,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		
+
 
 		$scope.getOptions =function(){
 			var obj = {};
@@ -781,17 +795,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
-		
+
 		$scope.toggleTh = function(){
 			$scope.colorPickerPropertyTh.disabled = $scope.model.style.th.enabled;
 		}
-		
+
 		$scope.toggleSummary = function(){
 			$scope.summaryColorPickerProperty.disabled = $scope.model.settings.summary.enabled;
 		}
 		
 		$scope.colorPickerPropertyTh = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), disabled:($scope.model.style.th && $scope.model.style.th.enabled === false)}
-		
+
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
 		$scope.summaryColorPickerProperty = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.summary.enabled};
 

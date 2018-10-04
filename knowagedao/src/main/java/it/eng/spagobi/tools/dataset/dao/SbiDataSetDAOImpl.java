@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -144,7 +145,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	@Override
 	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
-			Boolean seeTechnical, Integer[] ids) {
+			Boolean seeTechnical, Integer[] ids, boolean spatialOnly) {
 		Session session = null;
 		List<SbiDataSet> list = null;
 
@@ -163,6 +164,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 			if (ids != null && ids.length > 0) {
 				c.add(Restrictions.in("id.dsId", ids));
+			}
+
+			if (spatialOnly) {
+				c.add(Restrictions.like("dsMetadata", IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString(), MatchMode.ANYWHERE));
 			}
 
 			if (finalUserProfile != null) {

@@ -1,0 +1,38 @@
+<md-dialog style="min-width:60%;" class="imagesLibrary">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Images Library</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding>
+    	<div layout="row">
+			<file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload>
+			<md-button ng-click="upload($event)" aria-label="upload Menu"
+					class="md-fab md-mini">
+				<md-icon md-font-icon="fa fa-upload"/>
+			</md-button>
+		</div>
+    	<md-grid-list md-cols="6" md-row-height="1:1" md-gutter="4px">
+	      <md-grid-tile ng-repeat="img in imagesList" class="iconContainer" ng-click="selectImg(img)" ng-class="{'selected':img == selectedImg}">
+	      	<md-button ng-click="erase($event, img)" aria-label="upload Menu" class="md-icon-button">
+				<md-icon md-font-icon="fa fa-eraser"/>
+			</md-button>
+	      	<div ng-style="{'background-image':'url('+getImageUrl(img)+')'}" ng-class="{'selected':img == selectedImg}">
+	      	</div>
+			<md-grid-tile-footer><h3>{{img.name}}</h3></md-grid-tile-footer>
+	      </md-grid-tile>
+	    </md-grid-list>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="choose()">
+      	Choose
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,19 @@
+.kn-svgIcon {
+	width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: $baseColor;
+	&.kn-svgIconTable {
+		@include custom-mask-image('../../commons/img/icons/table.svg');
+	}
+	&.kn-svgIconPieChart {
+		@include custom-mask-image('../../commons/img/icons/chart-pie.svg');
+	}
+	&.kn-svgIconLineChart {
+		@include custom-mask-image('../../commons/img/icons/chart-line.svg');
+	}
+	&.kn-svgIconBarChart {
+		@include custom-mask-image('../../commons/img/icons/chart-bar.svg');
+	}
+}

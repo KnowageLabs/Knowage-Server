@@ -340,12 +340,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 
-		logger.debug("Dialect set is " + dialect);
-
 		if (dataSource.checkIsJndi()) {
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));
-			cfg.put("hibernate.dialect", dialect);
+			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {

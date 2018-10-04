@@ -422,7 +422,6 @@
 					fullscreen: true,
 					controller: publicExecutionUrlControllerFunction
 				});
-
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"error while checking if public url can be delivered")
 			});

@@ -1,0 +1,104 @@
+<%-- LEVEL 2 --%>
+        <div id="level2A" ng-show="level2A" flex-gt-md="66" flex="99">
+          <div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+            <md-button class="md-raised md-accent" ng-click="showLevel1()">Back</md-button>
+            <!--<md-button class="md-raised md-primary">Advanced configuration</md-button>-->
+          </div>
+          <div layout="row" layout-xs="column">
+
+            <md-card class="" flex-xs="99" flex-gt-sm="33" flex-offset-gt-sm="17">
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/new.png" class="md-card-image" alt="Dashboard projects">
+              <md-card-title class="">
+                <md-card-title-text >
+                  <span class="md-headline">Create Dashboard</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content class="">
+                  <span class="md-subhead">Create nice visualizations and understand the data of your city</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <%-- <md-button class="md-accent" aria-label="New" ng-click="showLevel3A()"> --%>
+                  <md-button class="md-accent" aria-label="Create" ng-href="<%= urlCockpit%>">
+                    Create
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33">
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/view.png" class="md-card-image" alt="My Dashbords">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">My Dashbords</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Visualize and edit your dashboard</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="View" ng-href="/knowage/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE">
+                    View
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+          </div>
+          <%-- <br>
+          <md-content class="advice " layout="column" layout-sm="column" layout-align="center center" layout-wrap layout-padding>
+              <md-subheader class="md-warn" layout="column" layout-align="center center">
+                  <h4 class="md-title">NOTE</h4><br>
+                  ONLY FOR THIS ITERATION: To create a new dashboard, go to "My dashboards"  and click to the red button at up-right corner.
+                  <img src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/add_btn.png" title="Red button example image" />
+              </md-subheader>
+          </md-content> --%>
+        </div>
+
+        <div id="level3A" ng-show="level3A" flex-gt-md="66" flex="99">
+          <div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+            <md-button class="md-raised md-accent" ng-click="showLevel2A()">Back</md-button>
+          </div>
+          <div layout="row" layout-xs="column">
+
+            <md-card class="underConstruction disabled" flex-xs="99" flex-gt-sm="33" flex-offset-gt-sm="17" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/empty.png" class="md-card-image" alt="image caption">
+              <md-card-title>
+                <md-card-title-text>
+                  <span class="md-headline">Empty dashboard</span>
+                  <!--<span class="md-subhead">Create nice visualizations and understand the data of your city</span>-->
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                Create a new empty dashboard
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="Create" ng-href="" disabled>
+                    create
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33" class="disabled"  >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/template-1.png" class="md-card-image" alt="image caption">
+              <md-card-title>
+                <md-card-title-text>
+                  <span class="md-headline">Mobility dashboard template</span>
+                  <!--<span class="md-subhead">Visualize and edit your dashboard</span>-->
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                Create a simple Mobility dashboard template
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                <md-button class="md-accent" disabled>Use</md-button>
+              </md-card-actions>
+            </md-card>
+
+          </div>
+          <br>
+          <md-content class="advice " layout="column" layout-sm="column" layout-align="center center" layout-wrap layout-padding>
+              <md-subheader class="md-warn" layout="column" layout-align="center center">
+                  <h4 class="md-title">NOTE</h4><br>
+                  ONLY FOR THIS ITERATION: To create a new dashboard, go to "My dashboards"  and click to the red button at up-right corner.
+                  <img class="img_note" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/add_btn.png" title="Red button example image"/>
+              </md-subheader>
+          </md-content>
+        </div>

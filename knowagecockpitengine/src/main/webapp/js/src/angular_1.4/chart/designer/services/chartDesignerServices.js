@@ -308,7 +308,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         },
 					         "SERIE":[
 					        	 {
-					                 "axis":"",
+					                 "axis":"Y",
 					                 "color":"",
 					                 "column":"",
 					                 "groupingFunction":"SUM",

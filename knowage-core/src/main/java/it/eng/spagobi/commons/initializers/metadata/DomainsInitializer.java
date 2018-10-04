@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,7 +41,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		targetComponentName = "Domains";
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/domains.xml";
 	}
-
+	
 	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
@@ -54,7 +54,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 				writeDomains(hibernateSession);
 			} else {
 				logger.debug("Domains table is already populated, only missing domains will be populated");
-				writeMissingDomains(hibernateSession);
+				writeMissingDomains(hibernateSession);				
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Domains", t);
@@ -62,7 +62,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 			logger.debug("OUT");
 		}
 	}
-
+	
 	private void writeDomains(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean domainsSB = getConfiguration();
@@ -88,7 +88,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		}
 		logger.debug("OUT");
 	}
-
+	
 	private void writeMissingDomains(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean domainsSB = getConfiguration();
@@ -99,7 +99,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		if (domainsList == null || domainsList.isEmpty()) {
 			throw new Exception("No predefined domains found!!!");
 		}
-
+		
 		List alreadyExamined = new ArrayList();
 		Iterator it = domainsList.iterator();
 		while (it.hasNext()) {
@@ -129,30 +129,30 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		}
 		logger.debug("OUT");
 	}
-
-	private void addMissingDomains(Session aSession, List dbDomains, List xmlDomains) {
+	
+	private void addMissingDomains(Session aSession, List dbDomains, List xmlDomains){
 		logger.debug("IN");
-
+		
 		Iterator it2 = xmlDomains.iterator();
-		while (it2.hasNext()) {
+		while(it2.hasNext()){
 			boolean existsInDb = false;
 			SourceBean aDomainSB = (SourceBean) it2.next();
 			String valueCdXml = (String) aDomainSB.getAttribute("valueCd");
-			logger.debug("Retrieved valueCd of XML Domain: " + valueCdXml);
-
+			logger.debug("Retrieved valueCd of XML Domain: "+valueCdXml);
+			
 			Iterator it = dbDomains.iterator();
 			while (it.hasNext()) {
-				SbiDomains d = (SbiDomains) it.next();
+				SbiDomains d = (SbiDomains)it.next();
 				String valueCd = d.getValueCd();
-				logger.debug("Retrieved valueCd of DB Domain: " + valueCd);
-
-				if (valueCdXml.equalsIgnoreCase(valueCd)) {
+				logger.debug("Retrieved valueCd of DB Domain: "+valueCd);
+				
+				if(valueCdXml.equalsIgnoreCase(valueCd)){
 					existsInDb = true;
 					logger.debug("Domain already exists in the DB");
 					break;
-				}
-			}
-			if (!existsInDb) {
+				}				
+			}	
+			if(!existsInDb){
 				logger.debug("Domain doesn't exist in the DB");
 				SbiDomains aDomain = new SbiDomains();
 				aDomain.setDomainCd((String) aDomainSB.getAttribute("domainCd"));
@@ -166,7 +166,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 				aSession.save(aDomain);
 				logger.debug("New Domain iserted in the DB");
 			}
-		}
+		}		
 		logger.debug("OUT");
 	}
 

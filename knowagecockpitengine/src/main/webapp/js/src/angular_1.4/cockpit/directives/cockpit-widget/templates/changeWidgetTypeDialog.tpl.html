@@ -1,0 +1,101 @@
+<md-dialog >
+<form name="addDifferentWidget">
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Change widget type</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+   		
+   		<div layout="row" layout-align="center center">
+         	<div class="widgetTypeIcon" flex ng-if="ngModel.type=='map'">
+         		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':target.visualization === 'table'}" >
+         			<md-tooltip>Add table widget</md-tooltip>
+         			<div class="kn-svgIcon kn-svgIconTable"></div>
+         		</div>
+         	</div>
+         	<div class="widgetTypeIcon" flex>
+         		<div class="item selectable" ng-click="selectVisualization('bar')" ng-class="{'selected':target.visualization === 'bar'}">
+         			<md-tooltip>Add bar chart widget</md-tooltip>
+         			<div class="kn-svgIcon kn-svgIconBarChart"></div>
+         		</div>
+         	</div>
+         	<div class="widgetTypeIcon" flex>
+         		<div class="item selectable" ng-click="selectVisualization('line')" ng-class="{'selected':target.visualization === 'line'}">
+         			<md-tooltip>Add line chart widget</md-tooltip>
+         			<div class="kn-svgIcon kn-svgIconLineChart"></div>
+         		</div>
+         	</div>
+         	<div class="widgetTypeIcon" flex>
+         		<div class="item selectable" ng-click="selectVisualization('pie')" ng-class="{'selected':target.visualization === 'pie'}">
+         			<md-tooltip>Add pie chart widget</md-tooltip>
+         			<div class="kn-svgIcon kn-svgIconPieChart"></div>
+         		</div>
+         	</div>
+         </div>
+   
+      	<div layout="row" ng-if="ngModel.type=='map' && target.visualization">
+        	<md-input-container flex>
+            	<label>Select Dataset</label> 
+           		<md-select ng-model="target.dataset" ng-change="selectDataset()">
+              		<md-option ng-repeat="ds in availableDatasetToSwitch track by $index" ng-value="ds.id.dsId">
+                		{{ds.label}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
+         <div layout="row" ng-if="ngModel.type=='map' && target.visualization && target.visualization != 'table'">
+        	<md-input-container flex>
+            	<label>Attribute</label>
+           		<md-select ng-model="target.attribute">
+              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr">
+                		{{attr.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+          	<md-input-container flex>
+            	<label>Measure</label>
+           		<md-select ng-model="target.measure">
+              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
+                		{{meas.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
+         <div layout="row" ng-if="ngModel.type=='map' && target.visualization == 'table'">
+        	<md-input-container flex>
+            	<label>Attribute</label>
+           		<md-select ng-model="target.attribute"  multiple="true">
+              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr" >
+                		{{attr.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+          	<md-input-container flex>
+            	<label>Measure</label>
+           		<md-select ng-model="target.measure"  multiple="true">
+              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
+                		{{meas.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+       {{::translate.load("sbi.cockpit.editor.widget.movesheet.cancel")}}
+      </md-button>
+     <md-button ng-if="ngModel.type == 'map'" type="submit" class="md-raised md-primary" ng-click="add()" ng-disabled="!target.attribute || !target.measure || !target.visualization">
+       	Add
+      </md-button>
+      <md-button ng-if="ngModel.type == 'table'" type="submit" class="md-raised md-primary" ng-click="add()" ng-disabled="!target.visualization">
+       	Add
+      </md-button> 
+    </md-dialog-actions>
+    </form>
+</md-dialog>

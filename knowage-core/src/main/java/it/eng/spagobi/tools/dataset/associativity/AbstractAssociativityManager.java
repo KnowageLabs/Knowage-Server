@@ -147,7 +147,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				associativeDatasetContainers.put(v1, container);
 			}
 		}
-
 	}
 
 	private void initGraph(Config config) {

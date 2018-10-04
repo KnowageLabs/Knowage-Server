@@ -512,6 +512,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(calendar);
 		}
 
+
 		// if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT,
 		// funcs)) {
 		// JSONObject udpManagementTechnical = new JSONObject();
@@ -614,6 +615,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
+		}
+
+		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
+			JSONObject i18n = new JSONObject();
+			i18n.put(ICON_CLS, "flag");
+			i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
+			i18n.put(ICON_ALIGN, "top");
+			i18n.put(SCALE, "large");
+			i18n.put(TARGET, "_self");
+			i18n.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
+			i18n.put(FIRST_URL, contextName + HREF_I18N);
+			i18n.put(LINK_TYPE, "execDirectUrl");
+			tempMenuList.put(i18n);
 		}
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {

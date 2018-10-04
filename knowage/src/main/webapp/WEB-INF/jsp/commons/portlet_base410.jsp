@@ -231,7 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
-<title>Knowage</title>
+<title>Select For Cities</title>
 <meta name="viewport" content="initial-scale=1" />
 <% if (forceIE8Compatibility == true){ %>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />

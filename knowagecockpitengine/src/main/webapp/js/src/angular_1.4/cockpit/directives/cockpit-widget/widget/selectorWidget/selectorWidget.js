@@ -51,6 +51,8 @@ angular.module('cockpitModule')
 			$filter,
 			sbiModule_translate,
 			sbiModule_restServices,
+			sbiModule_dateServices,
+			sbiModule_config,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
@@ -133,10 +135,17 @@ angular.module('cockpitModule')
 					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
 						cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 					}
-					if(newValue != oldValue && newValue.length > 0){
-						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+					if($scope.isSelectedColumnTemporal()){
+						if(!newValue || newValue.length == 0){
+							$scope.clearStartDate();
+							$scope.clearEndDate();
+						}
 					}else{
-						angular.copy(scope.savedRows, scope.itemList);
+						if(newValue != oldValue && newValue.length > 0){
+							scope.itemList = scope.filterDataset(scope.datasetRecords,scope.reformatSelections(newValue));
+						}else{
+							angular.copy(scope.savedRows, scope.itemList);
+						}
 					}
 				}
 			}
@@ -421,8 +430,7 @@ angular.module('cockpitModule')
 					focusOnOpen: true,
 					preserveScope: true,
 					autoWrap:false,
-					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
-
+					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope}
 			};
 			$mdPanel.open(config);
 			return finishEdit.promise;

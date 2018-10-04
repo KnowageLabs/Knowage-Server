@@ -975,6 +975,8 @@ public class ManageDataSetsForREST {
                         if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
                             if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
                                 ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
                             } else {
                                 ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
                             }

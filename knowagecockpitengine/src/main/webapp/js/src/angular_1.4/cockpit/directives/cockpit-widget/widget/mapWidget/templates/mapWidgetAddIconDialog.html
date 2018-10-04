@@ -1,0 +1,31 @@
+<md-dialog style="min-width:40%;" class="iconSelector">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Choose Icon</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding>
+    	<div ng-repeat="family in availableIcons">
+	    	<h3>{{family.name}}</h3>
+	    	<!-- <md-grid-list md-cols="12" md-row-height="1:1" md-gutter="4px" style="font-family:'fontawesome'"> -->
+	    	<md-grid-list md-cols="12" md-row-height="1:1" md-gutter="4px" style="font-family:family.name">
+		      <md-grid-tile ng-repeat="icon in family.icons | filter: filterIcon" class="iconContainer" ng-class="{'selected':icon==activeLayer.markerConf.icon}" ng-click="setIcon(family,icon)">
+		      	<i ng-class="[family.className, icon.className]" ></i>
+		      </md-grid-tile>
+		    </md-grid-list>
+	    	</div>
+      
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="choose()">
+       Choose
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
