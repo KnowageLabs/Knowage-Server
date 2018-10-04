@@ -333,5 +333,73 @@
 			</build>
 		</profile>
 		
+		<profile>
+			<id>postgres</id>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
+						</excludes>
+						<filtering>true</filtering>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+			<profile>
+			<id>mssql</id>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.SQLServerDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.MSSQLDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
+						</excludes>
+						<filtering>true</filtering>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
 	</profiles>
 </project>
