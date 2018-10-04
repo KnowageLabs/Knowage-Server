@@ -631,17 +631,21 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return format;
 	}
 
-	public static char getDecimalSeparator() {
+	public static char getDecimalSeparator(Locale locale) {
+		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
+		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
 		logger.debug("IN");
-		char decimals = decSymbols.getDecimalSeparator();
+		char decimals = decimalFormatSymbols.getDecimalSeparator();
 
 		logger.debug("OUT");
 		return decimals;
 	}
 
-	public static char getGroupingSeparator() {
+	public static char getGroupingSeparator(Locale locale) {
+		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
+		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
 		logger.debug("IN");
-		char thousands = decSymbols.getGroupingSeparator();
+		char thousands = decimalFormatSymbols.getGroupingSeparator();
 
 		logger.debug("OUT");
 		return thousands;
