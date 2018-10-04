@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -24,19 +34,14 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.*;
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
+import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -105,6 +110,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";
 	public static final String FILE_DATE_FORMAT = "dateFormat";
+	public static final String FILE_TIMESTAMP_FORMAT = "timestampFormat";
 	public static final String FILE_TYPE = "fileType";
 
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
@@ -267,6 +273,14 @@ public class DataSetJSONSerializer implements Serializer {
 						}
 					} else {
 						result.put(FILE_DATE_FORMAT, "");
+					}
+					if (jsonConf.has(DataSetConstants.FILE_TIMESTAMP_FORMAT)) {
+						String timestampFormat = jsonConf.getString(DataSetConstants.FILE_TIMESTAMP_FORMAT);
+						if (timestampFormat != null) {
+							result.put(FILE_TIMESTAMP_FORMAT, timestampFormat);
+						}
+					} else {
+						result.put(FILE_TIMESTAMP_FORMAT, "");
 					}
 
 					// added this check for retrocompatibility

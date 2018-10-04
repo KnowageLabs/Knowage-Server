@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -250,21 +251,21 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 		return dataStore;
 	}
-	
+
 	private boolean checkIfRowIsEmpty(Row row) {
-	    if (row == null) {
-	        return true;
-	    }
-	    if (row.getLastCellNum() <= 0) {
-	        return true;
-	    }
-	    for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
-	        Cell cell = row.getCell(cellNum);
-	        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
-	            return false;
-	        }
-	    }
-	    return true;
+		if (row == null) {
+			return true;
+		}
+		if (row.getLastCellNum() <= 0) {
+			return true;
+		}
+		for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+			Cell cell = row.getCell(cellNum);
+			if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private HSSFSheet getSheet(HSSFWorkbook workbook) {
@@ -309,7 +310,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			FieldMetadata fieldMeta = new FieldMetadata();
 			if (valueField instanceof String) {
-				String fieldName = StringUtils.escapeForSQLColumnName((String)valueField);
+				String fieldName = StringUtils.escapeForSQLColumnName((String) valueField);
 				fieldMeta.setName(fieldName);
 				fieldMeta.setType(String.class);
 			}
@@ -348,7 +349,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				}
 			}
 			if (valueField instanceof Date) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
+				if (valueField instanceof Timestamp) {
+					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Timestamp.class);
+				} else {
+					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
+				}
 			}
 
 			IField field = new Field(valueField);
@@ -371,20 +376,31 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			break;
 
 		case HSSFCell.CELL_TYPE_NUMERIC:
-			 if (DateUtil.isCellDateFormatted(cell)) {
+			if (DateUtil.isCellDateFormatted(cell)) {
+				/**
+				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
+				 * that is DIFFERENT from Java's
+				 */
+				// String formatString = cell.getCellStyle().getDataFormatString();
 				Date date = cell.getDateCellValue();
-				return date;
-             } else {
-     			Double numericValue = cell.getNumericCellValue();
-    			// testing if the double is an integer value
-    			if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-    				// the number is an integer, this will remove the .0 trailing zeros
-    				int numericInt = numericValue.intValue();
-    				valueField = String.valueOf(numericInt);
-    			} else {
-    				valueField = String.valueOf(cell.getNumericCellValue());
-    			}
-             }
+
+				// If date object doesn't contain Hours, Minutes and Seconds return Date object, otherwise create Timestamp
+				if (date.getHours() == 0 && date.getMinutes() == 0 && date.getSeconds() == 0) {
+					return date;
+				} else {
+					return new Timestamp(date.getTime());
+				}
+			} else {
+				Double numericValue = cell.getNumericCellValue();
+				// testing if the double is an integer value
+				if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+					// the number is an integer, this will remove the .0 trailing zeros
+					int numericInt = numericValue.intValue();
+					valueField = String.valueOf(numericInt);
+				} else {
+					valueField = String.valueOf(cell.getNumericCellValue());
+				}
+			}
 			break;
 
 		case HSSFCell.CELL_TYPE_STRING:

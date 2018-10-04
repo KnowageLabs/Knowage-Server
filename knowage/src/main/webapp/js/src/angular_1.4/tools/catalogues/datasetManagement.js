@@ -53,6 +53,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
+	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 
 //	$scope.documentParameters = [
 //		{allowInternalNodeSelection: true,
@@ -430,6 +431,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
 
 		 ];
+	
+	$scope.timestampFormatTypes = [
+		{ value:"dd/MM/yyyy HH:mm:ss", name:"dd/MM/yyyy HH:mm:ss" },
+	 	{ value:"MM/dd/yyyy hh:mm:ss a", name:"MM/dd/yyyy hh:mm:ss a" },
+	 	{ value:"dd-MM-yyyy hh:mm:ss a", name:"dd-MM-yyyy hh:mm:ss a" },
+	 	{ value:"MM-dd-yyyy hh:mm:ss a", name:"MM-dd-yyyy hh:mm:ss a" },
+		{ value:"yyyy-MM-dd hh:mm:ss a", name:"yyyy-MM-dd hh:mm:ss a" },
+	 	{ value:"yyyy:MM:dd hh:mm:ss a", name:"yyyy:MM:dd hh:mm:ss a" },
+	 	{ value:"dd.MM.yyyy HH:mm:ss", name:"dd.MM.yyyy HH:mm:ss" },
+	 	{ value:"MM.dd.yyyy HH:mm:ss", name:"MM.dd.yyyy HH:mm:ss" }
+	];
 
 	// Dataset preview
 	$scope.previewDatasetModel=[];
@@ -461,7 +473,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.chooseDateFormat = function(dateFormat) {
 		$scope.selectedDataSet.dateFormat = dateFormat;
 	}
-
+	
+	$scope.chooseTimestampFormat = function(timestampFormat) {
+		$scope.selectedDataSet.timestampFormat = timestampFormat;
+	}
 
 	/**
 	 * Scope variables (properties) for the REST dataset.
@@ -2256,6 +2271,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
 		$scope.selectedDataSet.dateFormat = (item!=undefined && item.dateFormat!=undefined) ? item.dateFormat : $scope.dateFormatDefault;
+		$scope.selectedDataSet.timestampFormat = (item!=undefined && item.timestampFormat!=undefined) ? item.timestampFormat : $scope.timestampFormatDefault;
 
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -2748,6 +2764,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.csvEncoding = $scope.csvEncodingDefault;
 						$scope.selectedDataSet.csvDelimiter = $scope.csvDelimiterDefault;
 						$scope.selectedDataSet.dateFormat = $scope.dateFormatDefault;
+						$scope.selectedDataSet.timestampFormat = $scope.timestampFormatDefault;
 						$scope.selectedDataSet.csvQuote = $scope.csvQuoteDefault;
 						$scope.selectedDataSet.skipRows = ($scope.skipRowsDefault != null) ? $scope.skipRowsDefault : null;
 						$scope.selectedDataSet.limitRows = ($scope.limitRowsDefault !=null) ? $scope.limitRowsDefault : null;
@@ -2766,6 +2783,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							$scope.selectedDataSet.limitRows = "";
 							$scope.selectedDataSet.csvDelimiter = "";
 							$scope.selectedDataSet.dateFormat = "";
+							$scope.selectedDataSet.timestampFormat = "";
 							$scope.selectedDataSet.csvQuote = "";
 						}
 
