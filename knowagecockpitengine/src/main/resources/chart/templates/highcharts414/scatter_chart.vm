@@ -525,12 +525,7 @@
 			align: 'high',
 			#end
 		 },
-		#if($chart.dateTime!="true")    
-   	
-            
 
-            
-		#end 
 		labels:{
 		#if($xAxis.step)
 			#if($xAxis.step!="")
@@ -610,13 +605,10 @@
 		 	showLastLabel: $xAxis.showLastLabel,
 		 #end		 
 		#if($chart.dateTime=="true")
-		ordinal:false,
+			ordinal:false,
 			type: 'datetime',
 		#end 
-		#if($chart.dateTime!="true")
-			type: 'category',
-			 
-		#end
+
 	 },
 	 #end
     
