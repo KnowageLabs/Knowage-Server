@@ -307,6 +307,10 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
+  	
+  	$scope.filterIcon = function (item) { 
+  	    return item.className.startsWith('fa'); 
+  	};
 
   	$scope.chooseImg = function(ev, layer) {
 

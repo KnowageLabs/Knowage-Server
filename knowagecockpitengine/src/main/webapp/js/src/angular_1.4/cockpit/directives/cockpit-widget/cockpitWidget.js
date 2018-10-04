@@ -463,7 +463,8 @@ function cockpitWidgetControllerFunction(
 			)
 		){
 					
-						 
+			var options = {};						
+			options.label = label;				 
 			$scope.refreshWidget(options,'filters');
 										   
 

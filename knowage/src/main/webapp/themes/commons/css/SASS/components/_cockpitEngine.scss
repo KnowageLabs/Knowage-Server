@@ -25,6 +25,367 @@
     	}
     }
     
+        .cockpit-map-widget {
+    	overflow: hidden;
+		.ol-popup {
+		    position: absolute;
+		    background-color: white;
+		    -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+		    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+		    padding: 8px;
+		    border: 1px solid #cccccc;
+		    bottom: 12px;
+		    left: -50px;
+		    min-width: 200px;
+			border-radius: 10px;
+		    &:after, &:before {
+		        top: 100%;
+		        border: solid transparent;
+		        content: " ";
+		        height: 0;
+		        width: 0;
+		        position: absolute;
+		        pointer-events: none;
+	      	}
+	      	&:after {
+	      		border-top-color: white;
+		        border-width: 10px;
+		        left: 48px;
+		        margin-left: -10px;
+	      	}
+	      	&:before {
+	      		border-top-color: #cccccc;
+		        border-width: 11px;
+		        left: 48px;
+		        margin-left: -11px;
+	      	}
+		}
+		.popup-content {
+			h2 {
+				margin-top: 0;
+				font-size: 1rem;
+				text-transform: uppercase;
+				font-family: 'Roboto';
+				font-weight: 100;
+			}
+			ul {
+				list-style: none;
+				padding: 0;
+				p {
+					margin: 0;
+					span {
+						padding-left: 10px;
+					}
+					&.warningMessage{
+						color: $negativeColor;
+						font-size: $smallFontSize;
+						padding-bottom: 5px;
+					}
+				}
+			}
+		}
+			
+		.ol-popup-closer {
+			text-decoration: none;
+			position: absolute;
+			top: 8px;
+			right: 8px;
+		}
+
+		md-sidenav { 
+			transition: 0.2s linear all;
+			md-radio-button {
+				margin-bottom: 8px;
+				outline: none;
+				._md-container {
+					width: 15px;
+					height: 15px;
+					._md-off, ._md-on {
+						width: 15px;
+						height: 15px;
+					}
+				}
+				
+			}
+		}
+    	.map {
+    		position: relative;
+    		.optionsController {
+			    position: absolute;
+			    right: 7px;
+			    top: 40px;
+			    padding: 5px;
+			    background-color: #6690B9;
+			    border: 3px solid rgba(white,.7);
+			    color: white;
+			    border-radius:2px;
+			    z-index: 99;
+			    &:hover {
+			    	background-color: darken(#6690B9,15%);
+			    }
+	    	}
+    	}
+		
+		.mapWidgetLegend{
+			position:absolute;
+			display:block;
+			min-width:240px;
+			width:auto;
+			height:auto;
+			bottom:0;
+			z-index:999;
+			background-color:white;
+			opacity:0.9;
+			border-radius:5px;
+			.legendLayerLabel{
+				font-size:.7rem;
+				font-weight:bold;
+			}
+			.legendStartLimit{
+				left:0%;
+				position:relative;
+				font-size:.7rem;
+				width:50px;
+				text-align: right;
+			}
+			.legendEndLimit{
+				right:0%;
+				position:relative;
+				font-size:.7rem;
+				width:50px;
+				text-align: left;
+			}
+		}
+		.mapOptionsSidenav {
+	    	.indicatorOptions {
+	    		.indicatorLabel {
+	    			padding:8px;
+	    			outline: none;
+		    		cursor:pointer;
+		    		background-color: #f1f1f1;
+		    		font-size: $baseFontSize;
+		    		border-bottom: 1px solid #ccc;
+	    		}
+	    	}
+	    }
+    }
+    .imagesLibrary {
+    	file-upload {
+			md-content {
+				background-color: transparent;
+			}
+		}
+		md-grid-tile {
+			figure {
+				.md-icon-button {
+					position: absolute;
+					top: 4px;
+					right: 0;
+					z-index: 9;
+					opacity: 0;
+					background-color: rgba($baseColor, .6);
+					md-icon {
+						color: white;
+					}
+				}
+				&>div {
+					width: 100%;
+					height: 100%;
+				    background-size: contain;
+				    background-repeat: no-repeat;
+				    background-position: center;
+				    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    				filter: grayscale(100%);
+				    
+				    &.selected {
+				    	
+				    	-webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */
+    					filter: grayscale(0%);
+				    }
+				}
+				md-grid-tile-footer {
+			    	background: rgba(0,0,0,.5);
+			    }
+			}
+			&:hover {
+		    	outline: 2px solid $baseColor;
+			    	.md-icon-button {
+					opacity: 1;
+					&:hover {
+						background-color: rgba($baseColor, 1);
+					}
+				}
+		    }
+			&.selected {
+				outline: 4px solid $baseColor;
+				md-grid-tile-footer {
+			    	background: rgba($baseColor,.5);
+			    }
+			}
+		}
+		
+	}
+
+    .cockpit-map-widget-edit {
+    	.md-subheader {
+    		._md-subheader-inner {
+    			padding: 8px;
+    		}
+    	}
+    	.visTypes {
+    		.outerIcon {
+    			padding: 0 8px;
+    			border: 1px solid $ternaryColor;
+    			cursor: pointer;
+    			margin-right: 8px;
+    			&.selected {
+    				background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    		&:hover, &.selected {
+	    			.visTypeIcon {
+    					background-color: $lightTextColor;
+    				}
+	    		}
+    		}
+    		.visTypeIcon {
+    			width: 100px;
+    			height: 60px;
+    			background-repeat: no-repeat;
+    			background-size: cover;
+    			background-position: 0 0;
+    			background-color: $baseColor;
+    			&.clusters {
+    				mask-image: url('../img/cockpit/mapWidget/clusters.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/clusters.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    			&.markers {
+    				mask-image: url('../img/cockpit/mapWidget/markers.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/markers.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    			&.heatmap {
+    				mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    			&.choropleth {
+    				mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    		}
+    	}
+
+    	.buttonBarSquared {
+    		.markerTypeIcon {
+    			border: 1px solid $ternaryColor;
+    			padding: 8px;
+    			cursor: pointer;
+    			margin-right: 4px;
+    			md-icon {
+    				color: $baseColor;
+    			}
+    			&.selected {
+    				background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    		&.selected, &:hover {
+	    			md-icon {
+	    				color: $lightTextColor;
+	    			}
+	    		}
+    		}
+    	}
+
+    	.markersExpander {
+    		.color-picker-wrapper {
+    			z-index: 11;
+    			width: 100%;
+    		}
+    		file-upload {
+    			md-content {
+    				background-color: transparent;
+    			}
+    		}
+    		.preview {
+    			position: relative;
+    			width: 76px;
+    			height: 76px;
+    			display: flex;
+    			align-items: center;
+    			justify-content: center;
+    			padding: 8px;
+    			margin-top: 1rem;
+    			margin-left: 10px;
+    			border: 1px solid #ccc;
+    			box-shadow: 0px 3px 3px #ccc;
+    			overflow: hidden;
+    			.defaultIcon {
+    				font-size: 1.5rem;
+    			}
+    			img, .clusterExample {
+    				position: absolute;
+    			}
+    			label {
+    				position: absolute;
+    				top: -1rem;
+    				left: 0;
+    				font-size: $smallFontSize;
+    				color: $secondaryColor;
+
+    			}
+    			.clusterExample {
+    				border-radius: 50px;
+    				display: flex;
+				    align-items: center;
+				    justify-content: center;
+    			}
+    		}
+    	}
+    	.iconSelector {
+	    	h3 {
+	    		margin-bottom: .5rem;
+	    		margin-top: 0;
+	    		font-size: $baseFontSize;
+	    	}
+	    	.iconContainer {
+	    		border: 1px solid #ccc;
+	    		&.selected {
+	    			background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    	}
+	    }
+    }
+    
     
     cockpit-discovery-widget {
     	height: 100%;
