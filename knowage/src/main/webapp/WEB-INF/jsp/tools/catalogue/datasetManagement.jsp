@@ -400,7 +400,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     		<md-input-container class="md-block">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 						                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
-						                        				step="1" min="0" value="{{dataset.limitRows}}"
+						                        				step="1" min="0" value="{{selectedDataSet.limitRows}}"
 						                        				ng-change="setFormDirty()">
 							                     	</md-input-container>
 							                  	</div>
@@ -510,6 +510,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                           			<md-option 	ng-repeat="dateFormatItem in dateFormatTypes" 
 						                           						value="{{dateFormatItem.value}}">
 				                          						{{dateFormatItem.name}}
+				                     						</md-option>
+						                        		</md-select>
+						                        		
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+												<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		
+						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.timestampFormat")}}</label> 
+						                        		
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.timestampFormat"
+						                        					ng-change="setFormDirty()">
+						                           			<md-option 	ng-repeat="timestampFormatItem in timestampFormatTypes" 
+						                           						value="{{timestampFormatItem.value}}">
+				                          						{{timestampFormatItem.name}}
 				                     						</md-option>
 						                        		</md-select>
 						                        		
