@@ -4083,6 +4083,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.dataset.csvDelimiter = $scope.selectedDataSet.csvDelimiter;
 		$scope.dataset.csvQuote = $scope.selectedDataSet.csvQuote;
 		$scope.dataset.dateFormat = $scope.selectedDataSet.dateFormat;
+		$scope.dataset.timestampFormat = $scope.selectedDataSet.timestampFormat;
 		$scope.dataset.description = $scope.selectedDataSet.description;
 		$scope.dataset.exportToHdfs = $scope.selectedDataSet.isPersistedHDFS;
 		$scope.dataset.fileName = $scope.selectedDataSet.fileName;
@@ -4200,7 +4201,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase())
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
         				 row.dsMetaValue.push(this.dsMetaValue[i]);
 
         			}
@@ -4536,6 +4538,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				typeValue = values[i].pvalue;
 				typeValue = typeValue!=null ? typeValue.replace("java.lang.","") : null;
 				typeValue = typeValue!=null ? typeValue.replace("java.util.","") : null;
+				typeValue = typeValue!=null ? typeValue.replace("java.sql.","") : null;
 				values[i].pvalue = typeValue;
 			}
 		}
@@ -4606,7 +4609,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString ||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase()){
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="timestamp".toLowerCase()){
 					 filteredMetaValues.push($scope.dsMetaValue[j]);
 				 }
 			}
