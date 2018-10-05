@@ -449,6 +449,7 @@ public class ManageDataSetsForREST {
 			String csvDelimiter = json.optString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
 			String csvQuote = json.optString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
 			String dateFormat = json.optString(DataSetConstants.FILE_DATE_FORMAT);
+			String timestampFormat = json.optString(DataSetConstants.FILE_TIMESTAMP_FORMAT);
 			String csvEncoding = json.optString(DataSetConstants.CSV_FILE_ENCODING);
 
 			String skipRows = json.optString(DataSetConstants.XSL_FILE_SKIP_ROWS);
@@ -474,6 +475,7 @@ public class ManageDataSetsForREST {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 
 			dataSet.setResourcePath(DAOConfig.getResourcePath());
 			String fileName = json.getString(DataSetConstants.FILE_NAME);

@@ -8,17 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MetaDataMapping {
-	
+
 	private static Map<String, Class> metaDataTypes;
-	
-	static	{
+
+	static {
 		metaDataTypes = new HashMap<>();
 		metaDataTypes.put("Double", Double.class);
 		metaDataTypes.put("Date", Date.class);
 		metaDataTypes.put("String", String.class);
 		metaDataTypes.put("Integer", Integer.class);
 		metaDataTypes.put("BigDecimal", BigDecimal.class);
-		metaDataTypes.put("timestamp", Timestamp.class);
+		metaDataTypes.put("Timestamp", Timestamp.class);
 		metaDataTypes.put("Time", Time.class);
 		metaDataTypes.put("Byte", Byte.class);
 		metaDataTypes.put("Short", Short.class);
@@ -39,9 +39,9 @@ public class MetaDataMapping {
 		metaDataTypes.put("java.lang.Float", Float.class);
 		metaDataTypes.put("java.lang.Long", Long.class);
 		metaDataTypes.put("java.lang.Boolean", Boolean.class);
-		
+
 	}
-	
+
 	public static Class getMetaDataType(String value) {
 		return metaDataTypes.get(value);
 	}
