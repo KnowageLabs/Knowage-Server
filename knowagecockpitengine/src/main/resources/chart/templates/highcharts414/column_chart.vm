@@ -704,7 +704,7 @@
 
     ## Axes selection
     #set($axisList = $chart.AXES_LIST.AXIS)
-
+	
     #set($xAxisList = {}) ## X Axises list container
     #set($yAxisList = {}) ## Y Axises list container
     #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
@@ -712,6 +712,7 @@
     #set($xAxisCounter = 0) 
     #set($yAxisCounter = 0) 
     #set($axisFactorScale = $axisList.get(0).scaleFactor)
+  
     #foreach($axis in $axisList)
 	 	#if($axis.type == 'Category')
 	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
@@ -731,13 +732,30 @@
 	#end
 	
     xAxis:[
+    
+ 
     #foreach($a in $xAxisMap)
     	#foreach($xAxisKey in $xAxisList.keySet())
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
-	
+
 	{
-	
-		
+		#if($xAxis.plotBands)
+		plotBands: [
+    	{
+    		color: "$xAxis.plotBands.get(0).color",
+    		from : $xAxis.plotBands.get(0).from,
+    		to : $xAxis.plotBands.get(0).to,
+    	},			
+    	],
+   		plotLines : [
+   		{
+   			color: "$xAxis.plotLines.get(0).color",
+   			dashStyle: "$xAxis.plotLines.get(0).dashStyle",
+   			value: $xAxis.plotLines.get(0).value,
+   			width: $xAxis.plotLines.get(0).width,
+   		},			
+   		],
+		#end
 			type: "$a.type",
 			#if(!$exportWebApp) 
 			id: $a.id,
@@ -986,6 +1004,26 @@
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         {
+        #if($yAxis.plotBands)
+        
+		plotBands: [
+    	{
+    		color: "$yAxis.plotBands.get(0).color",
+    		from : $yAxis.plotBands.get(0).from,
+    		to : $yAxis.plotBands.get(0).to,
+    	},			
+    	],
+   		plotLines : [
+   		{
+   			color: "$yAxis.plotLines.get(0).color",
+   			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
+   			value: $yAxis.plotLines.get(0).value,
+   			width: $yAxis.plotLines.get(0).width,
+   		},			
+   		],
+		#end
+        
+        
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	linkedTo:0,
         	#end
@@ -2168,7 +2206,7 @@
             	
             	We will increase this value in order to display series that contain a data array bigger
             	than 1000 (default), because it is most likely that we will have this situation very 
-            	often. newcomment
+            	often. 
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#
