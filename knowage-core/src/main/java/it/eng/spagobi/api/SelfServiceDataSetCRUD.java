@@ -20,6 +20,7 @@ package it.eng.spagobi.api;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -40,6 +41,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
@@ -131,6 +133,7 @@ public class SelfServiceDataSetCRUD {
 	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
 	static private int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
@@ -1899,7 +1902,7 @@ public class SelfServiceDataSetCRUD {
 	/**
 	 * This is an heuristic to guess the column type of a column in a datastore created with a file dataset. The method analyses just a portion of the entire
 	 * datastore so the result is not guaranteed at 100%.
-	 * 
+	 *
 	 * @param dataStore
 	 *            the datastore to scan
 	 * @param columnIndex

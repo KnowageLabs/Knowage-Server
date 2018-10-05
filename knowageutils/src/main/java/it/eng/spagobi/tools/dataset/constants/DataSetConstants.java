@@ -148,6 +148,7 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
 
 	public static final String FILE_DATE_FORMAT = "dateFormat";
+	public static final String FILE_TIMESTAMP_FORMAT = "timestampFormat";
 
 	// CKAN dataset constants
 
@@ -179,13 +180,12 @@ public class DataSetConstants {
 	public static final String REST_OFFSET = "restOffset";
 	public static final String REST_FETCH_SIZE = "restFetchSize";
 	public static final String REST_MAX_RESULTS = "restMaxResults";
-	public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_REQUEST_BODY, REST_HTTP_METHOD,
-			REST_JSON_PATH_ITEMS, REST_JSON_DIRECTLY_ATTRIBUTES, REST_NGSI, REST_OFFSET, REST_FETCH_SIZE,
-			REST_MAX_RESULTS };
+	public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_REQUEST_BODY, REST_HTTP_METHOD, REST_JSON_PATH_ITEMS,
+			REST_JSON_DIRECTLY_ATTRIBUTES, REST_NGSI, REST_OFFSET, REST_FETCH_SIZE, REST_MAX_RESULTS };
 	public static final String[] REST_JSON_OBJECT_ATTRIBUTES = { REST_REQUEST_HEADERS };
 	public static final String[] REST_JSON_ARRAY_ATTRIBUTES = { REST_JSON_PATH_ATTRIBUTES };
-	public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length
-			+ REST_JSON_OBJECT_ATTRIBUTES.length + REST_JSON_ARRAY_ATTRIBUTES.length];
+	public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length + REST_JSON_OBJECT_ATTRIBUTES.length
+			+ REST_JSON_ARRAY_ATTRIBUTES.length];
 
 	// SOLR dataset constants
 	public static final String SOLR_TYPE = "solrType";
@@ -200,13 +200,11 @@ public class DataSetConstants {
 	public static final String SPARQL_QUERY = "sparqlQuery";
 	public static final String SPARQL_DEFAULT_GRAPH_IRI = "sparqlDefaultGraphIri";
 	public static final String SPARQL_EXECUTION_TIMEOUT = "sparqlExecutionTimeout";
-	public static final String[] SPARQL_ATTRIBUTES = { SPARQL_ENDPOINT, SPARQL_QUERY, SPARQL_DEFAULT_GRAPH_IRI, SPARQL_EXECUTION_TIMEOUT};
+	public static final String[] SPARQL_ATTRIBUTES = { SPARQL_ENDPOINT, SPARQL_QUERY, SPARQL_DEFAULT_GRAPH_IRI, SPARQL_EXECUTION_TIMEOUT };
 
-	public static final String[] SOLR_STRING_ATTRIBUTES = { SOLR_TYPE, SOLR_FACET_QUERY, SOLR_FACET_FIELD,
-			SOLR_FACET_PREFIX };
+	public static final String[] SOLR_STRING_ATTRIBUTES = { SOLR_TYPE, SOLR_FACET_QUERY, SOLR_FACET_FIELD, SOLR_FACET_PREFIX };
 	public static final String[] SOLR_JSON_ARRAY_ATTRIBUTES = { SOLR_ADDITIONAL_PARAMETERS };
-	public static final String[] SOLR_ALL_ATTRIBUTES = new String[SOLR_STRING_ATTRIBUTES.length
-			+ SOLR_JSON_ARRAY_ATTRIBUTES.length];
+	public static final String[] SOLR_ALL_ATTRIBUTES = new String[SOLR_STRING_ATTRIBUTES.length + SOLR_JSON_ARRAY_ATTRIBUTES.length];
 
 	public static final Map<String, String> name2Code;
 
@@ -226,8 +224,7 @@ public class DataSetConstants {
 
 		// add all REST attributes
 		int curr = 0;
-		for (String[] a : new String[][] { REST_STRING_ATTRIBUTES, REST_JSON_OBJECT_ATTRIBUTES,
-				REST_JSON_ARRAY_ATTRIBUTES }) {
+		for (String[] a : new String[][] { REST_STRING_ATTRIBUTES, REST_JSON_OBJECT_ATTRIBUTES, REST_JSON_ARRAY_ATTRIBUTES }) {
 			System.arraycopy(a, 0, REST_ALL_ATTRIBUTES, curr, a.length);
 			curr += a.length;
 		}
