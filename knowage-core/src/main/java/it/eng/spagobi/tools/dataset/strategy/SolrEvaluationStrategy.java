@@ -39,6 +39,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,11 +56,11 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
         SolrQuery solrQuery;
         try {
-            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).facets(groups).jsonFacets(groups);
+            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
         } catch (JsonProcessingException e) {
             throw new SpagoBIRuntimeException(e);
         }
-        solrDataSet.setSolrQuery(solrQuery);
+        solrDataSet.setSolrQuery(solrQuery, getFacetsWithAggregation(groups));
         dataSet.loadData(offset, fetchSize, maxRowCount);
         IDataStore dataStore = dataSet.getDataStore();
         dataStore.setCacheDate(getDate());
@@ -105,5 +106,13 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
         if(AggregationFunctions.SUM.equals(aggregationFunction.getName())) { return fieldStats.getSum(); }
         if(AggregationFunctions.AVG.equals(aggregationFunction.getName())) { return fieldStats.getMean(); }
         throw new IllegalArgumentException("The function " + aggregationFunction.getName() + " is not valid here");
+    }
+
+    private Map<String, String> getFacetsWithAggregation(List<Projection> groups) {
+        Map<String, String> facets = new HashMap<>(groups.size());
+        for(Projection facet : groups) {
+            facets.put(facet.getName(), facet.getAggregationFunction().getName().toLowerCase());
+        }
+        return facets;
     }
 }
