@@ -316,7 +316,7 @@ private static String getValue(String value, String defaultValue) {
 }
 
 
-// convert arg to an int or return the default
+// convert arg to an int or return the default
 private static int getNum(String value, String defaultValue) {
 
   String retValue=getValue(value, defaultValue);
@@ -328,9 +328,9 @@ private static int getNum(String value, String defaultValue) {
   }
 
   if (!isDigit)
-    retValue=defaultValue;
-
-  return Integer.parseInt(retValue);
+    retValue=defaultValue;
+
+  return Integer.parseInt(retValue);
 }
 
 

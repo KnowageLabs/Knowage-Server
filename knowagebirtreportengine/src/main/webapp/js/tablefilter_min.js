@@ -1,4 +1,4 @@
-﻿/*------------------------------------------------------------------------
+/*------------------------------------------------------------------------
     - HTML Table Filter Generator v2.5.1
     - By Max Guglielmi (tablefilter.free.fr)
     - Licensed under the MIT License

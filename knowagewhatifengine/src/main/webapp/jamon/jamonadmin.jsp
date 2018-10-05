@@ -71,7 +71,7 @@ map.put("rootElement", "JAMonXML");
 String outputText;
 MonitorComposite mc=MonitorFactory.getComposite(rangeName);
 session.setAttribute("monitorComposite",mc);
-
+
 
 if (!MonitorFactory.isEnabled())
   outputText="<div align='center'><br><br><b>JAMon is currently disabled.  To enable monitoring you must select 'Enable'</b></div>";

@@ -291,8 +291,8 @@ Object[][] formatBody= {
                       };
 
 
-String[] bufferSizeHeader={"bufferSize","bufferSizeDisplay"};
-Object[][] bufferSizeBody={
+String[] bufferSizeHeader={"bufferSize","bufferSizeDisplay"};
+Object[][] bufferSizeBody={
                  {"No Action", "No Action"},                  {"50", "50 rows"}, 
                  {"100", "100 rows"},                  {"250", "250 rows"}, 	             {"500","500 rows"}, 	             {"1000","1000 rows"}, 	             {"2000","2000 rows"},            };
 
@@ -302,7 +302,7 @@ private static void setBufferSize(JAMonBufferListener listener, String bufferSiz
 
   if ("50".equals(bufferSize))
 	listener.getBufferList().setBufferSize(50);
-  else if ("100".equals(bufferSize))    listener.getBufferList().setBufferSize(100);  else if ("250".equals(bufferSize))     listener.getBufferList().setBufferSize(250);  else if ("500".equals(bufferSize))    listener.getBufferList().setBufferSize(500);  else if ("1000".equals(bufferSize))    listener.getBufferList().setBufferSize(1000);  else if ("2000".equals(bufferSize))    listener.getBufferList().setBufferSize(2000);
+  else if ("100".equals(bufferSize))    listener.getBufferList().setBufferSize(100);  else if ("250".equals(bufferSize))     listener.getBufferList().setBufferSize(250);  else if ("500".equals(bufferSize))    listener.getBufferList().setBufferSize(500);  else if ("1000".equals(bufferSize))    listener.getBufferList().setBufferSize(1000);  else if ("2000".equals(bufferSize))    listener.getBufferList().setBufferSize(2000);
 
 }
 
