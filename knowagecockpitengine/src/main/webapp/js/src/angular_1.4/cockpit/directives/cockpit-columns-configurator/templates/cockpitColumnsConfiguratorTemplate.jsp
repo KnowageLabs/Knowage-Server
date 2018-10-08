@@ -71,7 +71,7 @@
 				columns-search='["name"]' show-search-bar=true
 				no-pagination=true  scope-functions="functionsCockpitColumn"
 				speed-menu-option= actionsOfCockpitColumns>
-			</angular-table--> 
+			</angular-table-->
 			 
 			
 	    	
