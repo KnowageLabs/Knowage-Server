@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.tools.dataset.solr.SolrConfiguration;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
@@ -172,19 +173,20 @@ public class SolrDataSet extends RESTDataSet {
         return sb.toString();
     }
 
-    public void setSolrQuery(SolrQuery solrQuery) {
+    public void setSolrQuery(SolrQuery solrQuery, Map<String, String> facets) {
+        Assert.assertNotNull(facets, "Facets cannot be null, at least empty");
         solrConfiguration.setSolrQuery(solrQuery);
         try {
             JSONObject jsonConfiguration = new JSONObject(configuration);
             initDataProxy(jsonConfiguration, true);
             initDataReader(jsonConfiguration, true);
-            String[] facets = solrQuery.getFacetFields();
-            if(facets != null) {
+            if(!facets.isEmpty()) {
                 CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);
 
-                for(int i = 0; i < facets.length; i++) {
-                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facets.facet_fields." + facets[i] + ".buskets.[*]");
-                    facetSolrDataReader.setFacetField(facets[i]);
+                for(String facet : facets.keySet()) {
+                    String aggregation = facets.get(facet);
+                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facets." + facet + ".buckets.[*].['val','" + aggregation + "']", true);
+                    facetSolrDataReader.setFacetField(facet);
                     facetSolrDataReader.setCalculateResultNumberEnabled(true);
                     compositeSolrDataReader.addFacetSolrDataReader(facetSolrDataReader);
                 }

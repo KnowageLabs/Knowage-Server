@@ -304,7 +304,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof SolrDataSet) {
+				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
 					isNearRealtimeSupported = true;
 				}
 				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);

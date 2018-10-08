@@ -10,7 +10,7 @@
 				<md-input-container flex class="noPadding"> 
 					<label>Aggregation Function</label>
 					<md-select ng-model="selectedColumn.aggregationSelected">
-		              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation.name}}" ng-if="aggregation.available.indexOf(selectedColumn.fieldType) != -1">
+		              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation.name}}">
 		                {{aggregation.name}}
 		              </md-option>
 		            </md-select>
@@ -19,8 +19,8 @@
 			<div layout="row">
 				<md-input-container flex class="noPadding"> 
 					<label>Aggregation Column</label>
-					<md-select aria-label="aria-label" ng-model="selectedColumn.aggregationColumn">
-						<md-option ng-repeat="col in columns" value="{{col.name}}">{{col.alias}}</md-option>
+					<md-select aria-label="aria-label" ng-model="selectedColumn.aggregationColumn"  ng-disabled="selectedColumn.aggregationSelected == 'COUNT'">
+						<md-option ng-repeat="col in columns" value="{{col.name}}" ng-if="col.fieldType == 'MEASURE'">{{col.alias}}</md-option>
 					</md-select>
 				</md-input-container>
 			</div>

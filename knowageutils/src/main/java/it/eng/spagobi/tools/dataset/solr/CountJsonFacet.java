@@ -17,24 +17,28 @@
  *
  */
 
-package it.eng.spagobi.tools.dataset.metasql.query.item;
+package it.eng.spagobi.tools.dataset.solr;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import org.apache.log4j.Logger;
 
-public class CoupledProjection extends Projection {
+class CountJsonFacet {
 
-    private static final Logger logger = Logger.getLogger(CoupledProjection.class);
+    private static final Logger logger = Logger.getLogger(CountJsonFacet.class);
 
-    private Projection aggregatedProjection;
+    protected final String type = "terms";
+    protected String field;
 
-    public CoupledProjection(IAggregationFunction aggregationFunction, Projection aggregatedProjection, IDataSet dataSet, String columnName, String alias) {
-        super(aggregationFunction, dataSet, columnName, alias);
-        this.aggregatedProjection = aggregatedProjection;
+    public CountJsonFacet(String field) {
+        this.field = field;
+
     }
 
-    public Projection getAggregatedProjection() {
-        return aggregatedProjection;
+    public String getType() {
+        return type;
     }
+
+    public String getField() {
+        return field;
+    }
+
 }

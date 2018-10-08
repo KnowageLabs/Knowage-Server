@@ -86,7 +86,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				// SUM is default but for attribute is meaningless
-				if((col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
+				if(ngModel.type != "discovery" && (col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
 				}
 				else{

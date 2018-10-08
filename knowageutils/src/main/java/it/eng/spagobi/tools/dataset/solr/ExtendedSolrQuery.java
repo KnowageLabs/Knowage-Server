@@ -19,8 +19,11 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -28,7 +31,9 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExtendedSolrQuery extends SolrQuery {
 
@@ -59,16 +64,24 @@ public class ExtendedSolrQuery extends SolrQuery {
         return this;
     }
 
-    public ExtendedSolrQuery jsonFacets(List<Projection> groups) {
-        /*if (!groups.isEmpty()) {
-            String[] facetFields = new String[groups.size()];
-            for(int i = 0; i < groups.size(); i++) {
-                facetFields[i] = groups.get(i).getName();
+    public ExtendedSolrQuery jsonFacets(List<Projection> groups) throws JsonProcessingException {
+        if (!groups.isEmpty()) {
+            Map<String, CountJsonFacet> jsonFacetMap = new HashMap<>(groups.size());
+            for(Projection group : groups) {
+                CountJsonFacet jsonFacet;
+                if(group instanceof CoupledProjection) {
+                    jsonFacet = new JsonFacet(group.getName(), group.getAggregationFunction(), ((CoupledProjection)group).getAggregatedProjection().getName());
+                } else {
+                    jsonFacet = new CountJsonFacet(group.getName());
+                }
+                jsonFacetMap.put(group.getName(), jsonFacet);
             }
-            add("json.facet", "...");
+            add("json.facet", new ObjectMapper().writeValueAsString(jsonFacetMap));
         }
-        return this;*/
-        return facets(groups);
+
+
+
+        return this;
     }
 
     public ExtendedSolrQuery facets(List<Projection> groups) {
@@ -112,4 +125,5 @@ public class ExtendedSolrQuery extends SolrQuery {
         }
         return this;
     }
+
 }

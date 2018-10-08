@@ -60,8 +60,8 @@
 					$scope.model.content.columnSelectedOfDataset  = [];
 					for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
 						var obj = $scope.local.metadata.fieldsMeta[i];
-						obj["aggregationSelected"] = "SUM";
-						obj["funcSummary"] = "SUM";
+						obj["aggregationSelected"] = "NONE";
+						obj["funcSummary"] = "NONE";
 						obj["aliasToShow"] = obj.alias;
 						$scope.model.content.columnSelectedOfDataset.push(obj);
 					}
@@ -502,8 +502,8 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 
 		for(var i=0;i<$scope.columnSelected.length;i++){
 			var obj = $scope.columnSelected[i];
-			obj.aggregationSelected = 'SUM';
-			obj["funcSummary"] = "SUM";
+			obj.aggregationSelected = 'NONE';
+			obj["funcSummary"] = "NONE";
 			obj.typeSelected = $scope.columnSelected[i].type;
 			obj.label = $scope.columnSelected[i].alias;
 			obj.aliasToShow = $scope.columnSelected[i].alias;
@@ -761,8 +761,8 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		$scope.result.alias = $scope.column.alias != undefined ? $scope.column.alias : "NewCalculatedField";
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
-		$scope.result.aggregationSelected = 'SUM';
-		$scope.result["funcSummary"] = "SUM";
+		$scope.result.aggregationSelected = 'NONE';
+		$scope.result["funcSummary"] = "NONE";
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
 		$scope.result.isCalculated = true;
