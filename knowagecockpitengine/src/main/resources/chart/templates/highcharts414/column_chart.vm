@@ -736,7 +736,23 @@
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	
 	{
-	
+		#if($xAxis.plotBands)
+		plotBands: [
+    	{
+    		color: "$xAxis.plotBands.get(0).color",
+    		from : $xAxis.plotBands.get(0).from,
+    		to : $xAxis.plotBands.get(0).to,
+    	},			
+    	],
+   		plotLines : [
+   		{
+   			color: "$xAxis.plotLines.get(0).color",
+   			dashStyle: "$xAxis.plotLines.get(0).dashStyle",
+   			value: $xAxis.plotLines.get(0).value,
+   			width: $xAxis.plotLines.get(0).width,
+   		},			
+   		],
+		#end
 		
 			type: "$a.type",
 			#if(!$exportWebApp) 
@@ -986,6 +1002,25 @@
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         {
+	        #if($yAxis.plotBands)
+	        
+			plotBands: [
+	    	{
+	    		color: "$yAxis.plotBands.get(0).color",
+	    		from : $yAxis.plotBands.get(0).from,
+	    		to : $yAxis.plotBands.get(0).to,
+	    	},			
+	    	],
+	   		plotLines : [
+	   		{
+	   			color: "$yAxis.plotLines.get(0).color",
+	   			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
+	   			value: $yAxis.plotLines.get(0).value,
+	   			width: $yAxis.plotLines.get(0).width,
+	   		},			
+	   		],
+			#end
+        
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	linkedTo:0,
         	#end
