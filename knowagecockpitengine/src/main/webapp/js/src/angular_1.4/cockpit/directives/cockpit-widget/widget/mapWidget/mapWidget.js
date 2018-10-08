@@ -653,6 +653,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		  })
 
 	    		});
+	    		console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
 
 	    		//just for refresh
 	    		if (!$scope.map.getSize()){
