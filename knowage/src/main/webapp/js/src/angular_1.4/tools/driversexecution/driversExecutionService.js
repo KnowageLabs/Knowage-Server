@@ -72,7 +72,7 @@
 				}
 			};
 
-			executionService.recursiveChildrenChecks =- function(parameterValue,parameterDescription,childrenArray) {
+			executionService.recursiveChildrenChecks = function(parameterValue,parameterDescription,childrenArray) {
 				childrenArray = childrenArray || [];
 				for(var i = 0; i < childrenArray.length; i++) {
 					var childItem = childrenArray[i];
