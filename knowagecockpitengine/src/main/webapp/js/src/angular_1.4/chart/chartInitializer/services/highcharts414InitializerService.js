@@ -376,7 +376,7 @@ angular.module('chartInitializer')
 					var drillValue = e.point.name;
 
 					var highchartsDrilldownHelperDone = false;
-					if(chart.jsonData ){						
+					if(chart.jsonData ){
 						params.jsonMetaData = chart.jsonData.metaData;
 						try {
 							var fields = chart.jsonData.metaData.fields;
@@ -454,7 +454,7 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
+		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2]
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
@@ -572,12 +572,8 @@ angular.module('chartInitializer')
 						}
 					}
 					else{
-						var date = data[j][column].split("/");
-						var day = date[0];
-						var month = date[1]-1;
-						var year = date[2];
 						pointOptions = [];
-						pointOptions.push(Date.UTC(year, month, day));
+						pointOptions.push(Date.parse(data[j][column]));
 
 						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
 
@@ -590,8 +586,8 @@ angular.module('chartInitializer')
 							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
 
 						}
-						
-						
+
+
 					}
 					newDataSerie.push(pointOptions);
 					if(Object.prototype.toString.call(pointOptions) === '[object Array]')
