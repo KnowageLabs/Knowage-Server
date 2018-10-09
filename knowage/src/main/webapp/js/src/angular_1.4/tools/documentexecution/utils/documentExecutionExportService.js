@@ -429,18 +429,18 @@
 			};
 
 			if(exportType.toLowerCase() != 'xlsx') {
-				requestConf.transformResponse = function (data) {
-					var blob;
-					if (data) {
-						blob = new Blob([data], {
-							type: mimeType
-						});
-					}
-					return blob;
-				};
-			}
-			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
-				dee.getCockpitCsvData(documentFrame).then(function(csvData){
+                                                  				requestConf.transformResponse = function (data) {
+                                                  					var blob;
+                                                  					if (data) {
+                                                  						blob = new Blob([data], {
+                                                  							type: mimeType
+                                                  						});
+                                                  					}
+                                                  					return blob;
+                                                  				};
+                                                  			}
+                                                  			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+                                                  				dee.getCockpitCsvData(documentFrame).then(function(csvData){
 					if(csvData != null) {
 						data.csvData = csvData;
 					}
@@ -469,6 +469,13 @@
 			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
 			    }
 			}
+
+			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
+			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
+			var cockpitSelections = {};
+			cockpitSelections.aggregations = aggregations;
+			cockpitSelections.filters = filters;
+            requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
 
 			var requestConf = {
 					method: 'GET',

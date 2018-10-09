@@ -42,7 +42,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		OUTPUT_PARAMETERS: <%=outputParameters%>,
 		DS_IN_CACHE:[],
 		HAVE_SELECTIONS_OR_FILTERS:false,
-		STARTING_SELECTIONS:[],
+		STARTING_SELECTIONS: [],
 		STARTING_FILTERS:[],
 		CURRENT_SHEET: <%=initialSheet%>,
 		EXPORT_MODE: <%=exportMode%>
@@ -96,6 +96,14 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.filters==undefined){
 		template.configuration.filters={};
 	}
+
+    var cockpitSelections = JSON.parse('<%=initialSelections%>');
+	if(cockpitSelections.aggregations && cockpitSelections.aggregations.length > 0) {
+	    template.configuration.aggregations = cockpitSelections.aggregations;
+	}
+	if(cockpitSelections.filters && !angular.equals(cockpitSelections.filters, {})) {
+    	template.configuration.filters = cockpitSelections.filters;
+    }
 	
 	function filterForInitialSelection(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
@@ -120,45 +128,45 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	}	
 	
 	template.getSelections=function(){
-		
 		template.selections=[];
-		var tmpFilters = {};
-		var tmpSelection=[];
-				
-		angular.copy(template.configuration.filters, tmpFilters);
-		for(var ds in tmpFilters){
-			for(var col in tmpFilters[ds]){
-				var tmpObj={
-						ds :ds,
-						columnName : col,
-						value : tmpFilters[ds][col],
-						aggregated:false
-				}
-				 
-				if(!filterForInitialFilter(tmpObj)){
-					template.selections.push(tmpObj);
-				}
-			}
-		}
-		
-		angular.copy(template.configuration.aggregations, tmpSelection);
-		if(tmpSelection.length >0){
-			for(var i=0;i<tmpSelection.length;i++){
-				selection = tmpSelection[i].selection;
-				for(var key in selection){
-					var string = key.split(".");
-					var obj = {
-							ds : string[0],
-							columnName : string[1],
-							value : selection[key],
-							aggregated:true
-					};
-					if(!filterForInitialSelection(obj)){
-						template.selections.push(obj);
-					}
-				}
-			}
-		}
+
+            var tmpFilters = {};
+            var tmpSelection=[];
+
+            angular.copy(template.configuration.filters, tmpFilters);
+            for(var ds in tmpFilters){
+                for(var col in tmpFilters[ds]){
+                    var tmpObj={
+                            ds :ds,
+                            columnName : col,
+                            value : tmpFilters[ds][col],
+                            aggregated:false
+                    }
+
+                    if(!filterForInitialFilter(tmpObj)){
+                        template.selections.push(tmpObj);
+                    }
+                }
+            }
+
+            angular.copy(template.configuration.aggregations, tmpSelection);
+            if(tmpSelection.length >0){
+                for(var i=0;i<tmpSelection.length;i++){
+                    selection = tmpSelection[i].selection;
+                    for(var key in selection){
+                        var string = key.split(".");
+                        var obj = {
+                                ds : string[0],
+                                columnName : string[1],
+                                value : selection[key],
+                                aggregated:true
+                        };
+                        if(!filterForInitialSelection(obj)){
+                            template.selections.push(obj);
+                        }
+                    }
+                }
+            }
 		return template.selections;	
 	}
 	
