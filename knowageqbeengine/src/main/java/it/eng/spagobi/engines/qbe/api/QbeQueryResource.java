@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -207,55 +208,56 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	}
 
 	private void addParameters(JSONArray parsListJSON) {
-	try {
+		try {
 			if (parsListJSON != null) {
-		
-			for (int i = 0; i < parsListJSON.length(); i++) {
-				JSONObject obj = (JSONObject) parsListJSON.get(i);
-				String name = obj.getString("name");
-				String type = null;
-				if (obj.has("type")) {
-					type = obj.getString("type");
-				}
 
-				// check if has value, if has not a valid value then use default
-				// value
-				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
-				String tempVal = "";
-				if (hasVal) {
-					tempVal = obj.getString(PARAM_VALUE_NAME);
-				} else {
-					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
-					if (hasDefaultValue) {
-						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-						logger.debug("Value of param not present, use default value: " + tempVal);
+				for (int i = 0; i < parsListJSON.length(); i++) {
+					JSONObject obj = (JSONObject) parsListJSON.get(i);
+					String name = obj.getString("name");
+					String type = null;
+					if (obj.has("type")) {
+						type = obj.getString("type");
 					}
-				}
 
-				boolean multivalue = false;
-				if (tempVal != null && tempVal.contains(",")) {
-					multivalue = true;
-				}
+					// check if has value, if has not a valid value then use default
+					// value
+					boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+					String tempVal = "";
+					if (hasVal) {
+						tempVal = obj.getString(PARAM_VALUE_NAME);
+					} else {
+						boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
+						if (hasDefaultValue) {
+							tempVal = obj.getString(DEFAULT_VALUE_PARAM);
+							logger.debug("Value of param not present, use default value: " + tempVal);
+						}
+					}
 
-				String value = "";
-				if (multivalue) {
-					value = getMultiValue(tempVal, type);
-				} else {
-					value = getSingleValue(tempVal, type);
-				}
+					boolean multivalue = false;
+					if (tempVal != null && tempVal.contains(",")) {
+						multivalue = true;
+					}
 
-				logger.debug("name: " + name + " / value: " + value);
-				getEnv().put(name, value);
+					String value = "";
+					if (multivalue) {
+						value = getMultiValue(tempVal, type);
+					} else {
+						value = getSingleValue(tempVal, type);
+					}
+
+					logger.debug("name: " + name + " / value: " + value);
+					getEnv().put(name, value);
+				}
 			}
+
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
 		}
-			
-	} catch (Throwable t) {
-		if (t instanceof SpagoBIServiceException) {
-			throw (SpagoBIServiceException) t;
-		}
-		throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
 	}
-	}
+
 	private String getMultiValue(String value, String type) {
 		String toReturn = "";
 
@@ -271,6 +273,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		return toReturn;
 	}
+
 	private String getSingleValue(String value, String type) {
 		String toReturn = "";
 		value = value.trim();
@@ -302,6 +305,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		return toReturn;
 	}
+
 	private void updateQueryGraphInQuery(Query filteredQuery, boolean b, Set<IModelEntity> modelEntities) {
 		boolean isTheOldQueryGraphValid = false;
 		logger.debug("IN");
@@ -809,4 +813,27 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		}
 		return parametersString;
 	}
+
+	@GET
+	@Path("/getCategories")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getCategories() {
+		logger.debug("IN");
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		QbeExecutionClient qbeExecutionClient;
+		String categoryDomains = null;
+		try {
+			qbeExecutionClient = new QbeExecutionClient();
+			categoryDomains = qbeExecutionClient.geCategoryDomain(userId);
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getCategories", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getCategories", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return categoryDomains;
+
+	}
+
 }
