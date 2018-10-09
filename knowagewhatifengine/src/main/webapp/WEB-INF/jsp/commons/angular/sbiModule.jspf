@@ -428,6 +428,9 @@ sbiM.service('sbiModule_restServices', function($http, $q, $timeout, sbiModule_c
 		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
 		
 		deferred.notify('About to call async function');
+		
+		if(conf == undefined) conf = {};
+		if(conf.data == undefined) conf.data = "";
 
 		$http.delete(getBaseUrl(endP_path) + "" + req_Path, conf)
 			.then(
