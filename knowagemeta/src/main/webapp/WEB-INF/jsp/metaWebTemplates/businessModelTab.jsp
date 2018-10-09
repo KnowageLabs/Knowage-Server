@@ -221,6 +221,14 @@
 					 </angular-table>
 				</md-content>
 			</md-tab>
+			
+			<md-tab id="filtersTab" md-active="tabResource.selectedBusinessTab=='filtersTab'" md-on-select="tabResource.selectedBusinessTab='filtersTab'" label="{{translate.load('sbi.meta.model.business.filter')}}">
+				<md-content ng-if="tabResource.selectedBusinessTab=='filtersTab'" ng-controller="metaDefinitionController" layout layout-fill>
+					<md-input-container>
+						<textarea ng-model="testService.obj.input" placeholder="SQL expression"></textarea>
+					</md-input-container>
+				</md-content>
+			</md-tab>
 		
 			<md-tab id="joinRelationshipTab" md-active="tabResource.selectedBusinessTab=='joinRelationshipTab'" md-on-select="tabResource.selectedBusinessTab='joinRelationshipTab'" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
 				<md-content  ng-if="tabResource.selectedBusinessTab=='joinRelationshipTab'" layout="column"  layout-fill >
