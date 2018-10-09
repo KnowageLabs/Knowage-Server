@@ -25,7 +25,7 @@ angular.module('chartInitializer')
 	var chartConfConf = null;
 
 	this.renderChart = function(renderObj, jsonData){
-		
+
 		var chartConf = renderObj.chartConf;
 		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
 			for (var i = 0; i < chartConf.series.length; i++) {
@@ -40,9 +40,9 @@ angular.module('chartInitializer')
 						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
 					}
 				}
-			}	
+			}
 		}
-		
+
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
@@ -319,12 +319,12 @@ angular.module('chartInitializer')
 
 
 	this.handleDrilldown = function(e){
-		var drillable = this.drillable != undefined ? 
+		var drillable = this.drillable != undefined ?
 				this.drillable : (this.options.chart.additionalData.isCockpit ?
 						this.options.chart.additionalData.drillable: this.options.chart.additionalData.drillableChart);
 		if(!drillable){
 			console.log("chart is not drillable")
-			return;		
+			return;
 		}
 		var chart = this;
 		if(!chart.breadcrumb)chart.breadcrumb=[];
@@ -403,11 +403,11 @@ angular.module('chartInitializer')
 					        } else {
 					          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
 					        }
-							
+
 						}
 
 						chart.options.drilledCategories.push(series.category);
-						
+
 						var xAxisTitle={
 							text:series.category
 			            };
@@ -428,8 +428,8 @@ angular.module('chartInitializer')
 			            } else {
 			            	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
 			            }
-			            
-			
+
+
 			            chart.drillUpButton.textSetter(backText);
 
 						chart.hideLoading();
@@ -578,12 +578,8 @@ angular.module('chartInitializer')
 						}
 					}
 					else{
-						var date = data[j][column].split("/");
-						var day = date[0];
-						var month = date[1]-1;
-						var year = date[2];
 						pointOptions = [];
-						pointOptions.push(Date.UTC(year, month, day));
+						pointOptions.push(Date.parse(data[j][column]));
 
 						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
 
@@ -596,8 +592,8 @@ angular.module('chartInitializer')
 							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
 
 						}
-						
-						
+
+
 					}
 					newDataSerie.push(pointOptions);
 					if(Object.prototype.toString.call(pointOptions) === '[object Array]')
