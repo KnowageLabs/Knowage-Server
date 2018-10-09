@@ -1,12 +1,13 @@
 package it.eng.spagobi.commons.utilities;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.SingletonConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.SingletonConfig;
 
 public class DateRangeDAOUtilities {
 
@@ -14,8 +15,8 @@ public class DateRangeDAOUtilities {
 
 	public static final String DATE_RANGE_PARAMETER_SUFFIX = "_dateRange";
 
-	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
-		return biObjectParameter != null && isDateRange(biObjectParameter.getParameter());
+	public static boolean isDateRange(AbstractDriver driver) {
+		return driver != null && isDateRange(driver.getParameter());
 	}
 
 	public static boolean isDateRange(Parameter parameter) {

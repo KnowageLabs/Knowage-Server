@@ -12,10 +12,11 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
@@ -26,6 +27,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.objects.Couple;
 
 public class DriversValidationAPI {
@@ -37,32 +39,32 @@ public class DriversValidationAPI {
 	private final Locale locale = null;
 
 	// Thanks to Emanuele Granieri of osmosit.com
-		private List normalizeList(List l) {
-			Iterator i = l.iterator();
-			while (i.hasNext()) {
-				Object el = i.next();
-				if (el instanceof String) {
-					String elString = ((String) el);
-					if (elString == null || elString.length() == 0) {
-						i.remove();
-					}
+	private List normalizeList(List l) {
+		Iterator i = l.iterator();
+		while (i.hasNext()) {
+			Object el = i.next();
+			if (el instanceof String) {
+				String elString = ((String) el);
+				if (elString == null || elString.length() == 0) {
+					i.remove();
 				}
 			}
-			return l;
 		}
+		return l;
+	}
 
 	/*
 	 * ERRORS HANDLER
 	 */
-	public List getParametersErrors(BIObject object, String role, DocumentRuntime dum) throws Exception {
+	public List getParametersErrors(IDrivableBIResource object, String role, AbstractBIResourceRuntime dum) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
-		List biparams = object.getDrivers();
-		if (biparams.size() == 0)
+		List drivers = object.getDrivers();
+		if (drivers.size() == 0)
 			return toReturn;
-		Iterator iterParams = biparams.iterator();
+		Iterator iterParams = drivers.iterator();
 		while (iterParams.hasNext()) {
-			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
+			AbstractDriver driver = (AbstractDriver) iterParams.next();
 			// internalization of the label for display
 			// String viewLabel = biparam.getLabel();
 			// String oldViewLabel = viewLabel;
@@ -70,22 +72,22 @@ public class DriversValidationAPI {
 			// viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
 			// logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
 			// biparam.setLabel(viewLabel);
-			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
-			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
-			List values = biparam.getParameterValues();
-			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
+			logger.debug("Evaluating errors for driver " + driver.getLabel() + " ...");
+			List errorsOnChecks = getValidationErrorsOnChecks(driver);
+			List values = driver.getParameterValues();
+			if (driver.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
+				EMFValidationError error = SpagoBIValidationImpl.validateField(driver.getParameterUrlName(), driver.getLabel(), null, "MANDATORY", null, null,
 						null);
 				errorsOnChecks.add(error);
 			}
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
-				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for biparameter " + biparam.getLabel());
+				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for driver " + driver.getLabel());
 			}
 			toReturn.addAll(errorsOnChecks);
 			if (values != null && values.size() >= 1 && !(values.size() == 1 && (values.get(0) == null || values.get(0).toString().trim().equals("")))) {
-				List errorsOnValues = getValidationErrorsOnValues(biparam, object, role, dum);
+				List errorsOnValues = getValidationErrorsOnValues(driver, object, role, dum);
 				if (errorsOnValues != null && errorsOnValues.size() > 0) {
-					logger.warn("Found " + errorsOnValues.size() + " errors on values for biparameter " + biparam.getLabel());
+					logger.warn("Found " + errorsOnValues.size() + " errors on values for driver " + driver.getLabel());
 				}
 				toReturn.addAll(errorsOnValues);
 			}
@@ -94,18 +96,17 @@ public class DriversValidationAPI {
 			if (values != null && values.size() > 0 && toReturn.isEmpty()) {
 				hasValidValues = true;
 			}
-			biparam.setHasValidValues(hasValidValues);
+			driver.setHasValidValues(hasValidValues);
 		}
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-
-	private List getValidationErrorsOnChecks(BIObjectParameter biparameter) throws Exception {
+	private List getValidationErrorsOnChecks(AbstractDriver driver) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
-		List checks = biparameter.getParameter().getChecks();
-		String label = biparameter.getLabel();
+		List checks = driver.getParameter().getChecks();
+		String label = driver.getLabel();
 		if (checks == null || checks.size() == 0) {
 			logger.debug("OUT. No checks associated for biparameter [" + label + "].");
 			return toReturn;
@@ -117,7 +118,7 @@ public class DriversValidationAPI {
 				if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY"))
 					continue;
 				logger.debug("Applying check [" + check.getLabel() + "] to biparameter [" + label + "] ...");
-				List errors = getValidationErrorOnCheck(biparameter, check);
+				List errors = getValidationErrorOnCheck(driver, check);
 				if (errors != null && errors.size() > 0) {
 					Iterator errorsIt = errors.iterator();
 					while (errorsIt.hasNext()) {
@@ -134,12 +135,12 @@ public class DriversValidationAPI {
 		}
 	}
 
-	private List getValidationErrorOnCheck(BIObjectParameter biparameter, Check check) throws Exception {
+	private List getValidationErrorOnCheck(AbstractDriver driver, Check check) throws Exception {
 		logger.debug("IN: Examining check with name " + check.getName() + " ...");
 		List toReturn = new ArrayList();
-		String urlName = biparameter.getParameterUrlName();
-		String label = biparameter.getLabel();
-		List values = biparameter.getParameterValues();
+		String urlName = driver.getParameterUrlName();
+		String label = driver.getLabel();
+		List values = driver.getParameterValues();
 		if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY")) {
 			if (values == null || values.isEmpty()) {
 				EMFValidationError error = SpagoBIValidationImpl.validateField(urlName, label, null, "MANDATORY", null, null, null);
@@ -180,15 +181,15 @@ public class DriversValidationAPI {
 					} else if (check.getValueTypeCd().equalsIgnoreCase("DECIMALS")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DECIMALS", check.getFirstValue(), check.getSecondValue(), null);
 					} else if (check.getValueTypeCd().equalsIgnoreCase("RANGE")) {
-						if (biparameter.getParameter().getType().equalsIgnoreCase("DATE")) {
+						if (driver.getParameter().getType().equalsIgnoreCase("DATE")) {
 							// In a Parameter where parameterType == DATE the mask represent the date format
 							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DATERANGE", check.getFirstValue(), check.getSecondValue(),
-									biparameter.getParameter().getMask());
-						} else if (biparameter.getParameter().getType().equalsIgnoreCase("NUM")) {
+									driver.getParameter().getMask());
+						} else if (driver.getParameter().getType().equalsIgnoreCase("NUM")) {
 							// In a Parameter where parameterType == NUM the mask represent the decimal format
 							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "NUMERICRANGE", check.getFirstValue(), check.getSecondValue(),
-									biparameter.getParameter().getMask());
-						} else if (biparameter.getParameter().getType().equalsIgnoreCase("STRING")) {
+									driver.getParameter().getMask());
+						} else if (driver.getParameter().getType().equalsIgnoreCase("STRING")) {
 							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "STRINGRANGE", check.getFirstValue(), check.getSecondValue(),
 									null);
 						}
@@ -210,46 +211,56 @@ public class DriversValidationAPI {
 		return toReturn;
 	}
 
-	private List getValidationErrorsOnValues(BIObjectParameter biparam, BIObject object, String role, DocumentRuntime dum) throws Exception {
+	private List getValidationErrorsOnValues(AbstractDriver driver, IDrivableBIResource object, String role, AbstractBIResourceRuntime dum) throws Exception {
 		logger.debug("IN");
-		String biparamLabel = biparam.getLabel();
+		String biparamLabel = driver.getLabel();
 		// outputType parameter is not validated
-		String urlName = biparam.getParameterUrlName();
+		String urlName = driver.getParameterUrlName();
 		if ("outputType".equals(urlName)) {
 			logger.debug("Parameter is outputType parameter, it is not validated");
 			return new ArrayList();
 		}
 		// manual inputs are not validated
-		ModalitiesValue lov = biparam.getParameter().getModalityValue();
+		ModalitiesValue lov = driver.getParameter().getModalityValue();
 		if (lov.getITypeCd().equals("MAN_IN")) {
 			logger.debug("Modality in use for biparameter [" + biparamLabel + "] is manual input");
 			return new ArrayList();
 		}
 		// patch for default date value
-		if (biparam.getParameter().getType().equalsIgnoreCase("DATE")) {
+		if (driver.getParameter().getType().equalsIgnoreCase("DATE")) {
 			logger.debug("Parameter [" + biparamLabel + "] has lov defined just for default value: any other chose allowed");
 			return new ArrayList();
 		}
 		// we need to process default values and non-default values separately: default values do not require validation,
 		// non-default values instead require validation
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
-		DefaultValuesList allDefaultValues = retriever.getDefaultValuesDum(biparam, object, this.userProfile, this.locale, role);
+		DefaultValuesList allDefaultValues = retriever.getDefaultValuesDum(driver, object, this.userProfile, this.locale, role);
 		// from the complete list of values, get the values that are default values
-		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(biparam, allDefaultValues);
+		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(driver, allDefaultValues);
 		// validation must proceed only with non-default values
 		// from the complete list of values, get the values that are not default values
 		List nonDefaultValues = null;
 		if (lov.getITypeCd().equalsIgnoreCase("QUERY")) {
-			DefaultValuesList allDefaultQueryValues = retriever.getDefaultQueryValuesDum(biparam, dum, this.userProfile, object, this.locale, role);
-			nonDefaultValues = this.getNonDefaultQueryValues(biparam, allDefaultQueryValues);
+			DefaultValuesList allDefaultQueryValues = retriever.getDefaultQueryValuesDum(driver, dum, this.userProfile, object, this.locale, role);
+			nonDefaultValues = this.getNonDefaultQueryValues(driver, allDefaultQueryValues);
 		} else {
-			nonDefaultValues = this.getNonDefaultValues(biparam, allDefaultValues);
+			nonDefaultValues = this.getNonDefaultValues(driver, allDefaultValues);
 		}
 		if (nonDefaultValues.isEmpty()) {
 			logger.debug("All selected values are default values; no need to validate them");
 			return new ArrayList();
 		}
-		BIObjectParameter clone = biparam.clone();
+		AbstractDriver clone;
+		if (driver instanceof BIObjectParameter) {
+			BIObjectParameter biParam = (BIObjectParameter) driver;
+			biParam.clone();
+			clone = biParam;
+		} else {
+			BIMetaModelParameter biMetaParam = (BIMetaModelParameter) driver;
+			biMetaParam.clone();
+			clone = biMetaParam;
+		}
+		// BIObjectParameter clone = driver.clone();
 		clone.setParameterValues(nonDefaultValues);
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
@@ -264,43 +275,44 @@ public class DriversValidationAPI {
 			lovResult = executionCacheManager.getLovResultDum(this.userProfile, lovProvDet, dum.getDependencies(clone, role), object, true, this.locale);
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet, role);
 		}
-		mergeDescriptions(biparam, selectedDefaultValue, clone);
+		mergeDescriptions(driver, selectedDefaultValue, clone);
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam, BIObject object, String role, DocumentRuntime dum) throws Exception {
+	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, AbstractDriver driver, IDrivableBIResource object, String role,
+			AbstractBIResourceRuntime dum) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		// if query is not in cache, do not execute it as it is!!!
-		String lovResult = executionCacheManager.getLovResultDum(this.userProfile, dum.getLovDetail(biparam), dum.getDependencies(biparam, role), object,
-				false, this.locale);
+		String lovResult = executionCacheManager.getLovResultDum(this.userProfile, dum.getLovDetail(driver), dum.getDependencies(driver, role), object, false,
+				this.locale);
 		if (lovResult == null) {
 			// lov is not in cache: we must validate values
-			toReturn = queryDetail.validateValues(this.userProfile, biparam);
+			toReturn = queryDetail.validateValues(this.userProfile, driver);
 		} else {
-			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, biparam, queryDetail, role);
+			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, driver, queryDetail, role);
 			if (toReturn.isEmpty()) {
 				// values are ok, this should be most often the case
 			} else {
 				// if there are dependencies, we should not consider them since they are not mandatory
-				List<ObjParuse> dependencies = dum.getDependencies(biparam, role);
+				List<ObjParuse> dependencies = dum.getDependencies(driver, role);
 				if (!dependencies.isEmpty()) {
-					toReturn = queryDetail.validateValues(this.userProfile, biparam);
+					toReturn = queryDetail.validateValues(this.userProfile, driver);
 				}
 			}
 		}
 		return toReturn;
 	}
 
-	private List getValidationErrorsOnValuesByLovResult(String lovResult, BIObjectParameter biparam, ILovDetail lovProvDet, String role) throws Exception {
+	private List getValidationErrorsOnValuesByLovResult(String lovResult, AbstractDriver driver, ILovDetail lovProvDet, String role) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
 		boolean valueFound = false;
 		List parameterValuesDescription = new ArrayList();
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-		List values = biparam.getParameterValues();
+		List values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				// String value = values.get(i).toString();
@@ -332,10 +344,10 @@ public class DriversValidationAPI {
 				if (valueFound) {
 					description = lovResultHandler.getValueDescription(value, lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
 				} else {
-					logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" + " for user '"
+					logger.error("Parameter '" + driver.getLabel() + "' cannot assume value '" + value + "'" + " for user '"
 							+ ((UserProfile) this.userProfile).getUserId().toString() + "' with role '" + role + "'.");
 					List l = new ArrayList();
-					l.add(biparam.getLabel());
+					l.add(driver.getLabel());
 					l.add(value);
 					EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1077, l);
 					toReturn.add(userError);
@@ -344,19 +356,19 @@ public class DriversValidationAPI {
 				parameterValuesDescription.add(description);
 			}
 		}
-		biparam.setParameterValuesDescription(parameterValuesDescription);
+		driver.setParameterValuesDescription(parameterValuesDescription);
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-	private DefaultValuesList getSelectedDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+	private DefaultValuesList getSelectedDefaultValues(AbstractDriver driver, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		DefaultValuesList toReturn = new DefaultValuesList();
 		if (defaultValues == null || defaultValues.isEmpty()) {
 			logger.debug("No default values in input");
 			return toReturn;
 		}
-		List values = analyticalDocumentParameter.getParameterValues();
+		List values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
@@ -371,10 +383,10 @@ public class DriversValidationAPI {
 		return toReturn;
 	}
 
-	private List getNonDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+	private List getNonDefaultValues(AbstractDriver driver, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		List toReturn = new ArrayList<String>();
-		List values = analyticalDocumentParameter.getParameterValues();
+		List values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
@@ -388,17 +400,17 @@ public class DriversValidationAPI {
 		return toReturn;
 	}
 
-	private List<String> getNonDefaultQueryValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+	private List<String> getNonDefaultQueryValues(AbstractDriver driver, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		List<String> toReturn = new ArrayList<String>();
-		List<String> values = analyticalDocumentParameter.getParameterValues();
+		List<String> values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				// Removes the single quotes from each single parameter value
 				String value = values.get(i).toString().replaceAll("^'(.*)'$", "$1");
 				if (!defaultValues.contains(value)) {
 					// if is multivalue the values come as a single string value
-					if (analyticalDocumentParameter.isMultivalue()) {
+					if (driver.isMultivalue()) {
 						String[] singleLineValues = value.split("','");
 
 						for (String singleValue : singleLineValues) {
@@ -419,11 +431,11 @@ public class DriversValidationAPI {
 		return toReturn;
 	}
 
-	private void mergeDescriptions(BIObjectParameter biparam, DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {
+	private void mergeDescriptions(AbstractDriver driver, DefaultValuesList selectedDefaultValue, AbstractDriver cloned) {
 		int valuePosition;
 		List nonDefaultValues = cloned.getParameterValues();
 		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
-		List parameterValues = biparam.getParameterValues();
+		List parameterValues = driver.getParameterValues();
 		List parameterDescriptions = new ArrayList<String>();
 		if (parameterValues != null) {
 			for (int i = 0; i < parameterValues.size(); i++) {
@@ -439,7 +451,7 @@ public class DriversValidationAPI {
 				}
 			}
 		}
-		biparam.setParameterValuesDescription(parameterDescriptions);
+		driver.setParameterValuesDescription(parameterDescriptions);
 	}
 
 }

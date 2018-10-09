@@ -54,11 +54,12 @@
 		}else /*if($scope.execProperties.meta.dataset.hasOwnProperty('dataset'))*/{
 			adaptExecutionProperties();
 			/*  TODO : For Behairoval Model
-			$scope.executionPath =
-			$scope.valuesPath =
-			$scope.executionParameters =
-			$scope.parametersPath =
-			*/
+			 */
+			$scope.executionPath = "1.0/businessModelOpening";
+			$scope.valuesPath = "parametervalues";
+			$scope.executionParameters = "1.0/businessModelOpening";
+			$scope.parametersPath = "getParameters";
+
 		}
 
 		}

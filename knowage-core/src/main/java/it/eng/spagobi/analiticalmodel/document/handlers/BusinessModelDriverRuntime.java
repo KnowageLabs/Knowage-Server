@@ -24,18 +24,15 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 
 	private static Logger logger = Logger.getLogger(BusinessModelDriverRuntime.class);
 
-
 	// DAOs
-		private IParameterUseDAO ANALYTICAL_DRIVER_USE_MODALITY_DAO;
-		private IMetaModelParuseDAO DATA_DEPENDENCIES_BM_DAO;
-		private IMetaModelParviewDAO VISUAL_DEPENDENCIES_BM_DAO;
-		private IBIMetaModelParameterDAO DRIVER_BM_DAO;
-		private IParameterDAO ANALYTICAL_DRIVER_DAO;
+	private IParameterUseDAO ANALYTICAL_DRIVER_USE_MODALITY_DAO;
+	private IMetaModelParuseDAO DATA_DEPENDENCIES_BM_DAO;
+	private IMetaModelParviewDAO VISUAL_DEPENDENCIES_BM_DAO;
+	private IBIMetaModelParameterDAO DRIVER_BM_DAO;
+	private IParameterDAO ANALYTICAL_DRIVER_DAO;
 
-		BIMetaModelParameter driver;
-
-
-	public BusinessModelDriverRuntime(BIMetaModelParameter biParam, String exeRole, Locale loc, MetaModel doc, BusinessModelRuntime dum, List<BIMetaModelParameter> objParameters) {
+	public BusinessModelDriverRuntime(BIMetaModelParameter biParam, String exeRole, Locale loc, MetaModel doc, BusinessModelRuntime dum,
+			List<BIMetaModelParameter> objParameters) {
 		super(biParam, exeRole, loc, doc, dum, objParameters);
 		// TODO Auto-generated constructor stub
 	}
@@ -60,9 +57,8 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 	public void initDependencies(BIMetaModelParameter driver) {
 		super.initDataDependencies(driver);
 		super.initVisualDependencies(driver);
-		super.initLovDependencies(driver,  DRIVER_BM_DAO.loadBIMetaModelParameterByMetaModelId(driver.getBiMetaModelID()));
+		super.initLovDependencies(driver, DRIVER_BM_DAO.loadBIMetaModelParameterByMetaModelId(driver.getBiMetaModelID()));
 	}
-
 
 	public void initVisualDependencies(BIMetaModelParameter driver) {
 		super.initVisualDependencies(driver);
@@ -90,7 +86,6 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 			}
 		}
 	}
-
 
 	public void initDataDependencies(BIMetaModelParameter driver) {
 		super.initDataDependencies(driver);
@@ -124,13 +119,7 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 
 	@Override
 	public BIMetaModelParameter getDriver() {
-        return driver;
-    }
-
-    public void setDriver(BIMetaModelParameter driver) {
-        this.driver = driver;
-    }
-
-
+		return (BIMetaModelParameter) driver;
+	}
 
 }

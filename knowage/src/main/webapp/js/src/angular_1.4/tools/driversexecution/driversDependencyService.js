@@ -189,9 +189,10 @@
 					}else /*if($scope.execProperties.meta.dataset.hasOwnProperty('dataset'))*/{
 						//adaptExecutionProperties();
 						/*  TODO : For Behairoval Model and datasets preview
-						$scope.executionParameters
-						$scope.parametersPath =
-						*/
+						 */
+						$scope.executionParameters = "1.0/businessModelOpening";
+						$scope.parametersPath = "getParameters";
+
 					}
 
 				if(dependencyService.dataDependenciesMap[newDependencyValue.urlName]){
