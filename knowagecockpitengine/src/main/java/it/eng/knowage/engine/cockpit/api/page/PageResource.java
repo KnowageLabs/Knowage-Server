@@ -178,16 +178,16 @@ public class PageResource extends AbstractCockpitEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 				}
 			} else if ("edit".equals(pageName)) {
-				JSONObject template = null;
-				template = buildBaseTemplate();
-				// create a new engine instance
-				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnvForWidget());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
-			} else if ("test".equals(pageName)) {
-				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
+					JSONObject template = null;
+					template = buildBaseTemplate();
+					// create a new engine instance
+					engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
+							getIOManager().getEnvForWidget());
+					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
+				} else if ("test".equals(pageName)) {
+					dispatchUrl = "/WEB-INF/jsp/test4.jsp";
 			} else {
 				// error
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
