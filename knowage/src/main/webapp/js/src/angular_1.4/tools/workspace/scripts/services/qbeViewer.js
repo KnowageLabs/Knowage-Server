@@ -23,7 +23,7 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule','driversExecutionModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log,driversExecutionService) {
 
 		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
 
@@ -95,14 +95,21 @@ angular
 		};
 
 		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService) {
-			$scope.showQbe = false
+
 			$scope.businessModel = execProperties;
 			$scope.drivers = drivers;
+			if($scope.businessModel.parametersData.documentParameters){
 			$scope.showDrivers = true;
+			$scope.showQbe = false;
+			}else{
+				$scope.showDrivers = false;
+				$scope.showQbe = true;
+			}
 			$scope.documentViewerUrl = url;
 
 			$scope.hideDrivers =function(){
-				$scope.showDrivers = !$scope.showDrivers;
+				$scope.showDrivers = true;
+				$scope.businessModel.executed = !$scope.businessModel.executed;
 			}
 			$scope.closeDocument = function() {
 
@@ -134,7 +141,7 @@ angular
 			$scope.executeParameter = function(){
 				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 				$scope.showQbe = true;
-				$scope.showDrivers = false;
+				$scope.businessModel.executed = true;
 			}
 			$scope.saveQbeDocument = function() {
 
