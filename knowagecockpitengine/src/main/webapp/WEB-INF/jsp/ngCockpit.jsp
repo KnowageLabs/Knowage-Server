@@ -96,6 +96,14 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.filters==undefined){
 		template.configuration.filters={};
 	}
+
+    var cockpitSelections = JSON.parse('<%=initialSelections%>');
+	if(cockpitSelections.aggregations && cockpitSelections.aggregations.length > 0) {
+	    template.configuration.aggregations = cockpitSelections.aggregations;
+	}
+	if(cockpitSelections.filters && !angular.equals(cockpitSelections.filters, {})) {
+    	template.configuration.filters = cockpitSelections.filters;
+    }
 	
 	function filterForInitialSelection(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
