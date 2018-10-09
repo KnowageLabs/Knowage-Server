@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	}
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
-    <title>Select for Cities</title>
+    <title>Knowage</title>
     <style>
       body {
 	       padding: 0;
