@@ -470,6 +470,13 @@
 			    }
 			}
 
+			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
+			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
+			var cockpitSelections = {};
+			cockpitSelections.aggregations = aggregations;
+			cockpitSelections.filters = filters;
+            requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
+
 			var requestConf = {
 					method: 'GET',
 					url: requestUrl,

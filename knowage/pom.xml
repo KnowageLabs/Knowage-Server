@@ -23,6 +23,7 @@
 	                <classesClassifier>classes</classesClassifier>
 	            </configuration>
 	        </plugin>
+
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
 				<artifactId>cargo-maven2-plugin</artifactId>
@@ -31,11 +32,11 @@
 					<container>
 						<containerId>tomcat8x</containerId>
 						<type>installed</type>
-						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32\</home>
+						<home>${application-62-home}</home>
 					</container>
 					<configuration>
 						<type>existing</type>
-						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32</home>
+						<home>${application-62-home}</home>
 					</configuration>
 				</configuration>
 			</plugin>
