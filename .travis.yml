@@ -1,0 +1,55 @@
+language: java
+
+addons:
+  sonarcloud:
+    organization: "knowagelabs"
+    token: ${SONAR_TOKEN}
+
+jdk:
+  - oraclejdk8
+
+script:
+  - mvn -f knowage-ce-parent/pom.xml clean compile
+
+after_success:
+  - mvn -f cas/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f jdbccore/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowage-core/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowage-e2e-testing/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowage/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagebirtreportengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagecockpitengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagecommonjengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagedao/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagedataminingengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagegeoreportengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagejasperreportengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagekpiengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageldapsecurityprovider/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagemeta/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagenetworkengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageoauth2securityprovider/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageqbeengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageqbeengine2/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageqbeengine3/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagesdk/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagesvgviewerengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagetalendenginclientapi/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagetalendengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagetest/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageutils/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowageutilsjson/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f knowagewhatifengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f qbecore/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f qbecore2/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f slimerjs-wrapper/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f spagobi-commons-core/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f spagobi-cwm/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f spagobi-metamodel-core/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f spagobi-metamodel-utils/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+  - mvn -f spagobi.birt.oda/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
+
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.sonar/cache
