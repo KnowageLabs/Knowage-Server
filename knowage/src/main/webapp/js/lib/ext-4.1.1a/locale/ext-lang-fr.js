@@ -1,4 +1,4 @@
-﻿
+
 /**
  * France (France) translation
  * By Thylia
