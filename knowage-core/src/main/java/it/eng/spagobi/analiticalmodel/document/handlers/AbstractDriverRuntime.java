@@ -133,7 +133,8 @@ public abstract class AbstractDriverRuntime {
 	public class LovDependencyRuntime extends DriverDependencyRuntime {
 	}
 
-	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
+	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, AbstractBIResourceRuntime dum,
+			List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
@@ -149,7 +150,8 @@ public abstract class AbstractDriverRuntime {
 		objParameterIds = new ArrayList<Integer>();
 	}
 
-	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible, AbstractBIResourceRuntime dum, List<AbstractDriver> objParameters) {
+	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible,
+			AbstractBIResourceRuntime dum, List<AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
@@ -322,8 +324,7 @@ public abstract class AbstractDriverRuntime {
 					driver.setParameterValues(new ArrayList<>(Arrays.asList(value)));
 				}
 
-				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows,
-						DocumentExecutionUtils.MODE_SIMPLE);
+				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows, DocumentExecutionUtils.MODE_SIMPLE);
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
@@ -342,21 +343,26 @@ public abstract class AbstractDriverRuntime {
 								&& !driver.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
-								if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.opt("description") != null
-											&& defVal.get("description").equals(item.get("description"))) {
-										defaultParameterAlreadyExist = true;
-										break;
-									} else {
-										HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
-										itemErrorMap.put("error", true);
-										itemErrorMap.put("value", defVal.get("value"));
-										itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-										itemErrorMap.put("labelSameValue", item.get("label"));
-										defaultErrorValues.add(itemErrorMap);
-										// return defaultErrorValues;
-										admissibleValues = defaultErrorValues;
+								if (item.has("value") && item.has("description")) {
+									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
+										if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
+												&& item.opt("description") != null && defVal.get("description").equals(item.get("description"))) {
+											defaultParameterAlreadyExist = true;
+											break;
+										} else {
+											HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+											itemErrorMap.put("error", true);
+											itemErrorMap.put("value", defVal.get("value"));
+											itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+											itemErrorMap.put("labelSameValue", item.get("label"));
+											defaultErrorValues.add(itemErrorMap);
+											// return defaultErrorValues;
+											admissibleValues = defaultErrorValues;
+										}
 									}
+								} else {
+									defaultParameterAlreadyExist = true;
+									continue;
 								}
 							}
 						}
@@ -481,8 +487,7 @@ public abstract class AbstractDriverRuntime {
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			defaultValues = retriever.getDefaultValuesDum(driver, this.biResource, profile, this.locale, this.executionRole);
 
-			if (defaultValues.size() > 0
-					&& (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
+			if (defaultValues.size() > 0 && (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
 				// if parameter has no values set, but it has default values, those values are considered as values
 				defaultValues = buildDefaultValueList();
 				if (defaultValues != null) {
@@ -554,9 +559,8 @@ public abstract class AbstractDriverRuntime {
 
 //			DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
 
-
-			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(driver),
-					dum.getDependencies(driver, this.executionRole), this.biResource, true, this.locale);
+			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(driver), dum.getDependencies(driver, this.executionRole),
+					this.biResource, true, this.locale);
 			// get all the rows of the result
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 			rows = lovResultHandler.getRows();
@@ -607,251 +611,251 @@ public abstract class AbstractDriverRuntime {
 	}
 
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getTypeCode() {
-        return typeCode;
-    }
+	public String getTypeCode() {
+		return typeCode;
+	}
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+	public void setTypeCode(String typeCode) {
+		this.typeCode = typeCode;
+	}
 
-    public Parameter getPar() {
-        return analyticalDriver;
-    }
+	public Parameter getPar() {
+		return analyticalDriver;
+	}
 
-    public void setPar(Parameter par) {
-        this.analyticalDriver = par;
-    }
+	public void setPar(Parameter par) {
+		this.analyticalDriver = par;
+	}
 
-    public ParameterUse getAnalyticalDriverExecModality() {
-        return analyticalDriverExecModality;
-    }
+	public ParameterUse getAnalyticalDriverExecModality() {
+		return analyticalDriverExecModality;
+	}
 
-    public void setAnalyticalDriverExecModality(ParameterUse modality) {
-        this.analyticalDriverExecModality = modality;
-    }
+	public void setAnalyticalDriverExecModality(ParameterUse modality) {
+		this.analyticalDriverExecModality = modality;
+	}
 
-    public String getParType() {
-        return parType;
-    }
+	public String getParType() {
+		return parType;
+	}
 
-    public void setParType(String parType) {
-        this.parType = parType;
-    }
+	public void setParType(String parType) {
+		this.parType = parType;
+	}
 
-    public String getLabel() {
-        return label;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
-    public boolean isMandatory() {
-        return mandatory;
-    }
+	public boolean isMandatory() {
+		return mandatory;
+	}
 
-    public void setMandatory(boolean mandatory) {
-        this.mandatory = mandatory;
-    }
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
 
-    public boolean isMultivalue() {
-        return multivalue;
-    }
+	public boolean isMultivalue() {
+		return multivalue;
+	}
 
-    public void setMultivalue(boolean multivalue) {
-        this.multivalue = multivalue;
-    }
+	public void setMultivalue(boolean multivalue) {
+		this.multivalue = multivalue;
+	}
 
-    public boolean isVisible() {
-        return visible;
-    }
+	public boolean isVisible() {
+		return visible;
+	}
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
 
-    public String getSelectionType() {
-        return selectionType;
-    }
+	public String getSelectionType() {
+		return selectionType;
+	}
 
-    public void setSelectionType(String selectionType) {
-        this.selectionType = selectionType;
-    }
+	public void setSelectionType(String selectionType) {
+		this.selectionType = selectionType;
+	}
 
-    public String getValueSelection() {
-        return valueSelection;
-    }
+	public String getValueSelection() {
+		return valueSelection;
+	}
 
-    public void setValueSelection(String valueSelection) {
-        this.valueSelection = valueSelection;
-    }
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
 
-    public String getSelectedLayer() {
-        return selectedLayer;
-    }
+	public String getSelectedLayer() {
+		return selectedLayer;
+	}
 
-    public void setSelectedLayer(String selectedLayer) {
-        this.selectedLayer = selectedLayer;
-    }
+	public void setSelectedLayer(String selectedLayer) {
+		this.selectedLayer = selectedLayer;
+	}
 
-    public String getSelectedLayerProp() {
-        return selectedLayerProp;
-    }
+	public String getSelectedLayerProp() {
+		return selectedLayerProp;
+	}
 
-    public void setSelectedLayerProp(String selectedLayerProp) {
-        this.selectedLayerProp = selectedLayerProp;
-    }
+	public void setSelectedLayerProp(String selectedLayerProp) {
+		this.selectedLayerProp = selectedLayerProp;
+	}
 
-    public boolean isEnableMaximizer() {
-        return enableMaximizer;
-    }
+	public boolean isEnableMaximizer() {
+		return enableMaximizer;
+	}
 
-    public void setEnableMaximizer(boolean enableMaximizer) {
-        this.enableMaximizer = enableMaximizer;
-    }
+	public void setEnableMaximizer(boolean enableMaximizer) {
+		this.enableMaximizer = enableMaximizer;
+	}
 
-    public int getValuesCount() {
-        return valuesCount;
-    }
+	public int getValuesCount() {
+		return valuesCount;
+	}
 
-    public void setValuesCount(int valuesCount) {
-        this.valuesCount = valuesCount;
-    }
+	public void setValuesCount(int valuesCount) {
+		this.valuesCount = valuesCount;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public Map<String, List<DriverDependencyRuntime>> getDependencies() {
-        return dependencies;
-    }
+	public Map<String, List<DriverDependencyRuntime>> getDependencies() {
+		return dependencies;
+	}
 
-    public void setDependencies(Map<String, List<DriverDependencyRuntime>> dependencies) {
-        this.dependencies = dependencies;
-    }
+	public void setDependencies(Map<String, List<DriverDependencyRuntime>> dependencies) {
+		this.dependencies = dependencies;
+	}
 
-    public Integer getBiObjectId() {
-        return biObjectId;
-    }
+	public Integer getBiObjectId() {
+		return biObjectId;
+	}
 
-    public void setBiObjectId(Integer biObjectId) {
-        this.biObjectId = biObjectId;
-    }
+	public void setBiObjectId(Integer biObjectId) {
+		this.biObjectId = biObjectId;
+	}
 
-    public Integer getParameterUseId() {
-        return parameterUseId;
-    }
+	public Integer getParameterUseId() {
+		return parameterUseId;
+	}
 
-    public void setParameterUseId(Integer parameterUseId) {
-        this.parameterUseId = parameterUseId;
-    }
+	public void setParameterUseId(Integer parameterUseId) {
+		this.parameterUseId = parameterUseId;
+	}
 
-    public List<Integer> getObjParameterIds() {
-        return objParameterIds;
-    }
+	public List<Integer> getObjParameterIds() {
+		return objParameterIds;
+	}
 
-    public void setObjParameterIds(List<Integer> objParameterIds) {
-        this.objParameterIds = objParameterIds;
-    }
+	public void setObjParameterIds(List<Integer> objParameterIds) {
+		this.objParameterIds = objParameterIds;
+	}
 
-    public List getVisualDependencies() {
-        return visualDependencies;
-    }
+	public List getVisualDependencies() {
+		return visualDependencies;
+	}
 
-    public void setVisualDependencies(List visualDependencies) {
-        this.visualDependencies = visualDependencies;
-    }
+	public void setVisualDependencies(List visualDependencies) {
+		this.visualDependencies = visualDependencies;
+	}
 
-    public List getDataDependencies() {
-        return dataDependencies;
-    }
+	public List getDataDependencies() {
+		return dataDependencies;
+	}
 
-    public void setDataDependencies(List dataDependencies) {
-        this.dataDependencies = dataDependencies;
-    }
+	public void setDataDependencies(List dataDependencies) {
+		this.dataDependencies = dataDependencies;
+	}
 
-    public List getLovDependencies() {
-        return lovDependencies;
-    }
+	public List getLovDependencies() {
+		return lovDependencies;
+	}
 
-    public void setLovDependencies(List lovDependencies) {
-        this.lovDependencies = lovDependencies;
-    }
+	public void setLovDependencies(List lovDependencies) {
+		this.lovDependencies = lovDependencies;
+	}
 
-    public DefaultValuesList getDefaultValues() {
-        return defaultValues;
-    }
+	public DefaultValuesList getDefaultValues() {
+		return defaultValues;
+	}
 
-    public void setDefaultValues(DefaultValuesList defaultValues) {
-        this.defaultValues = defaultValues;
-    }
+	public void setDefaultValues(DefaultValuesList defaultValues) {
+		this.defaultValues = defaultValues;
+	}
 
-    public int getColspan() {
-        return colspan;
-    }
+	public int getColspan() {
+		return colspan;
+	}
 
-    public void setColspan(int colspan) {
-        this.colspan = colspan;
-    }
+	public void setColspan(int colspan) {
+		this.colspan = colspan;
+	}
 
-    public Integer getThickPerc() {
-        return thickPerc;
-    }
+	public Integer getThickPerc() {
+		return thickPerc;
+	}
 
-    public void setThickPerc(Integer thickPerc) {
-        this.thickPerc = thickPerc;
-    }
+	public void setThickPerc(Integer thickPerc) {
+		this.thickPerc = thickPerc;
+	}
 
-    public AbstractDriver getDriver() {
-        return driver;
-    }
+	public AbstractDriver getDriver() {
+		return driver;
+	}
 
-    public void setDriver(AbstractDriver driver) {
-        this.driver = driver;
-    }
+	public void setDriver(AbstractDriver driver) {
+		this.driver = driver;
+	}
 
-    public String getLovValueColumnName() {
-        return lovValueColumnName;
-    }
+	public String getLovValueColumnName() {
+		return lovValueColumnName;
+	}
 
-    public void setLovValueColumnName(String lovValueColumnName) {
-        this.lovValueColumnName = lovValueColumnName;
-    }
+	public void setLovValueColumnName(String lovValueColumnName) {
+		this.lovValueColumnName = lovValueColumnName;
+	}
 
-    public String getLovDescriptionColumnName() {
-        return lovDescriptionColumnName;
-    }
+	public String getLovDescriptionColumnName() {
+		return lovDescriptionColumnName;
+	}
 
-    public void setLovDescriptionColumnName(String lovDescriptionColumnName) {
-        this.lovDescriptionColumnName = lovDescriptionColumnName;
-    }
+	public void setLovDescriptionColumnName(String lovDescriptionColumnName) {
+		this.lovDescriptionColumnName = lovDescriptionColumnName;
+	}
 
-    public List<String> getLovColumnsNames() {
-        return lovColumnsNames;
-    }
+	public List<String> getLovColumnsNames() {
+		return lovColumnsNames;
+	}
 
-    public void setLovColumnsNames(List<String> lovColumnsNames) {
-        this.lovColumnsNames = lovColumnsNames;
-    }
+	public void setLovColumnsNames(List<String> lovColumnsNames) {
+		this.lovColumnsNames = lovColumnsNames;
+	}
 
-    public ArrayList<HashMap<String, Object>> getAdmissibleValues() {
-        return admissibleValues;
-    }
+	public ArrayList<HashMap<String, Object>> getAdmissibleValues() {
+		return admissibleValues;
+	}
 
-    public void setAdmissibleValues(ArrayList<HashMap<String, Object>> admissibleValues) {
-        this.admissibleValues = admissibleValues;
-    }
+	public void setAdmissibleValues(ArrayList<HashMap<String, Object>> admissibleValues) {
+		this.admissibleValues = admissibleValues;
+	}
 
 }
