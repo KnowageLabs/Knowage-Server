@@ -105,7 +105,7 @@
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
 		
-		<!--<module>../knowagecommonjengine</module>
+		<module>../knowagecommonjengine</module>
 		<module>../knowagedataminingengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
@@ -117,7 +117,7 @@
 		<module>../knowagewhatifengine</module>
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
-		<module>../knowagebirtreportengine</module>-->
+		<module>../knowagebirtreportengine</module>
 	</modules>
 
 	<build>
