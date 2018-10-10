@@ -1,4 +1,4 @@
-﻿
+
 /**
  * Traditional Chinese translation
  * By hata1234

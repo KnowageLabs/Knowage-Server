@@ -361,7 +361,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 		
 		throw new RuntimeException("The levelName is not a name valid for this hierarchy");
 
-	}
+	}
 	/**
 	 * columnName1 must is in a lower level of the hierarchy
 	 */

@@ -1,4 +1,4 @@
-﻿CREATE TABLE hibernate_sequences (
+CREATE TABLE hibernate_sequences (
   sequence_name VARCHAR(200) NOT NULL,
   next_val INTEGER NOT NULL,
   PRIMARY KEY (sequence_name)
