@@ -1,4 +1,4 @@
-﻿
+
 /**
  * Serbian Cyrillic Translation
  * by Čolovic Vladan (cyrillic, utf8 encoding)

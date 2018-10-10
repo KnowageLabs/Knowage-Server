@@ -1,4 +1,4 @@
-﻿
+
 /**
  * France (Canadian) translation
  * By BernardChhun
