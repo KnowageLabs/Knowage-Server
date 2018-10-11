@@ -90,8 +90,30 @@
 			}
 		}
 
-		$scope.categoryList = save_service.getDomainTypeCategory();
-		$scope.scopeList = save_service.getDomainTypeScope();
+		save_service.getDomainTypeCategory().then(function(response) {
+			$scope.categoryList = response.data;
+		}, function(response) {
+			var message = "";
+			if (response.status == 500) {
+				message = response.data.RemoteException.message;
+			} else {
+				message = response.data.errors[0].message;
+			}
+			sbiModule_messaging.showErrorMessage(message, 'Error');
+		});
+
+		save_service.getDomainTypeScope().then(function(response) {
+			$scope.scopeList = response.data;
+		}, function(response) {
+			var message = "";
+			if (response.status == 500) {
+				message = response.data.RemoteException.message;
+			} else {
+				message = response.data.errors[0].message;
+			}
+			sbiModule_messaging.showErrorMessage(message, 'Error');
+		});
+
 		$scope.closeSaving = function() {
 			$scope.ngModel.mdPanelRef.close();
 		}

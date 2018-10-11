@@ -815,9 +815,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	}
 
 	@GET
-	@Path("/getCategories")
+	@Path("/domainCategories")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getCategories() {
+	public String getCategoriesDomain() {
 		logger.debug("IN");
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		QbeExecutionClient qbeExecutionClient;
@@ -826,13 +826,35 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			qbeExecutionClient = new QbeExecutionClient();
 			categoryDomains = qbeExecutionClient.geCategoryDomain(userId);
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service: QbeQueryResource.getCategories", t);
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainCategories", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
-					"An unexpected error occured while executing service: JsonChartTemplateService.getCategories", t);
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainCategories", t);
 		} finally {
 			logger.debug("OUT");
 		}
 		return categoryDomains;
+
+	}
+
+	@GET
+	@Path("/domainScope")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getScopessDomain() {
+		logger.debug("IN");
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		QbeExecutionClient qbeExecutionClient;
+		String scopeDomains = null;
+		try {
+			qbeExecutionClient = new QbeExecutionClient();
+			scopeDomains = qbeExecutionClient.geScopeDomain(userId);
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return scopeDomains;
 
 	}
 
