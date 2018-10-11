@@ -345,8 +345,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					      "AXES_LIST":{
 					    	  "AXIS":[
 					    		  {
-					    		   "plotBands":[{"color":"blue","from":0,"to":0}],
-						    	   "plotLines": [{"color": "green","dashStyle": "","value":0,"width":0}],
+					    		   "plotBands":[{"label":{"text": "","align": "center"},"color":"blue","from":0,"to":0}],
+						    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "green","dashStyle": "","value":0,"width":0}],
 					               "id":"Y",
 					               "alias":"Y",
 					               "type":"Serie",
@@ -400,8 +400,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						               }
 					            },
 					            {
-					               "plotBands":[{"color":"blue","from":0,"to":0}],
-						    	   "plotLines": [{"color": "green","dashStyle": "","value":0,"width":0}],
+					               "plotBands":[{"label":{"text": "","align": "center"},"color":"blue","from":0,"to":0}],
+						    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "green","dashStyle": "","value":0,"width":0}],
 					               "id":"X",
 					               "alias":"X",
 					               "type":"Category",
@@ -1349,8 +1349,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"type": "SCATTER",
 				"AXES_LIST": {
 					"AXIS": [{
-						"plotBands":[{"color":"blue","from":0,"to":0}],
-			    	    "plotLines": [{"color": "green","dashStyle": "","value":0,"width":0}],
+						"plotBands":[{"label":{"text": "","align": "left"},"color":"blue","from":0,"to":0}],
+			    	    "plotLines": [{"label":{"text": "","align": "center"},"color": "green","dashStyle": "","value":0,"width":0}],
 						"alias": "Y",
 						"type": "Serie",
 						"position": "",
@@ -1391,8 +1391,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						}
 					},
 					{
-						"plotBands":[{"color":"blue","from":0,"to":0}],
-			    		"plotLines": [{"color": "green","dashStyle": "","value":0,"width":0}],
+						"plotBands":[{"label":{"text": "","align": "center"},"color":"blue","from":0,"to":0}],
+			    		"plotLines": [{"label":{"text": "","align": "center"},"color": "green","dashStyle": "","value":0,"width":0}],
 						"alias": "X",
 						"type": "Category",
 						"position": "",

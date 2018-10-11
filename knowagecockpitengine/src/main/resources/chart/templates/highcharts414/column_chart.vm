@@ -737,15 +737,25 @@
 	
 	{
 		#if($xAxis.plotBands)
-		plotBands: [
+		plotBands : [
     	{
+    		label:
+			{
+				text :"$xAxis.plotBands.get(0).label.text",
+				align :"$xAxis.plotBands.get(0).label.align",  					
+			},
     		color: "$xAxis.plotBands.get(0).color",
     		from : $xAxis.plotBands.get(0).from,
     		to : $xAxis.plotBands.get(0).to,
     	},			
     	],
    		plotLines : [
-   		{
+   		{	
+   			label:
+			{
+				text :"$xAxis.plotLines.get(0).label.text",
+				align :"$xAxis.plotLines.get(0).label.align",  					
+			},
    			color: "$xAxis.plotLines.get(0).color",
    			dashStyle: "$xAxis.plotLines.get(0).dashStyle",
    			value: $xAxis.plotLines.get(0).value,
@@ -1006,6 +1016,11 @@
 	        
 			plotBands: [
 	    	{
+	    		label:
+   				{
+   					text :"$yAxis.plotBands.get(0).label.text",
+   					align :"$yAxis.plotBands.get(0).label.align",  					
+   				},
 	    		color: "$yAxis.plotBands.get(0).color",
 	    		from : $yAxis.plotBands.get(0).from,
 	    		to : $yAxis.plotBands.get(0).to,
@@ -1013,6 +1028,11 @@
 	    	],
 	   		plotLines : [
 	   		{
+	   			label:
+   				{
+   					text :"$yAxis.plotLines.get(0).label.text",
+   					align :"$yAxis.plotLines.get(0).label.align",  					
+   				},
 	   			color: "$yAxis.plotLines.get(0).color",
 	   			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
 	   			value: $yAxis.plotLines.get(0).value,
