@@ -1,5 +1,8 @@
 language: java
 
+notifications:
+  webhooks: https://outlook.office.com/webhook/5bf4d308-5cf2-465a-a4e4-09d30d758129@f2d7d6c5-1bee-41ff-9e79-b372a5cce71d/TravisCI/6c06ac7971244e6fb05a8f8822cf2cf7/faadc2e7-4761-4a5d-bbf2-1aeed9239575
+
 addons:
   sonarcloud:
     organization: "knowagelabs"
