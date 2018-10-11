@@ -382,8 +382,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 								</md-card>
 								
-								<!-- ELEMENTS FOR SETTING THE 'XLS' FILE CONFIGURATION -->
-								<md-card ng-if="selectedDataSet.fileType=='XLS'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">          
+								<!-- ELEMENTS FOR SETTING THE 'XLS'/'XLSX' FILE CONFIGURATION -->
+								<md-card ng-if="selectedDataSet.fileType=='XLS' || selectedDataSet.fileType=='XLSX'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">          
 					        
 							        <div layout="row" class="threeCombosLayout">	
 								        

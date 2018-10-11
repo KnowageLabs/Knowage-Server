@@ -2796,7 +2796,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.changingFile = false;
 						$scope.initialUpload = true;
 
-						if($scope.selectedDataSet.fileType=="XLS"){
+						if($scope.selectedDataSet.fileType=="XLS" || $scope.selectedDataSet.fileType=="XLSX"){
 							$scope.selectedDataSet.limitRows = "";
 							$scope.selectedDataSet.csvDelimiter = "";
 							$scope.selectedDataSet.dateFormat = "";

@@ -1,24 +1,5 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -26,13 +7,13 @@ import java.util.Date;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,14 +27,11 @@ import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.StringUtils;
 
-/**
- * @author Marco Cortella marco.cortella@eng.it
- */
-public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
+public class FileDatasetXlsxDataReader extends AbstractExcelDataReader {
 
-	private static transient Logger logger = Logger.getLogger(FileDatasetXlsDataReader.class);
+	private static transient Logger logger = Logger.getLogger(FileDatasetXlsxDataReader.class);
 
-	public FileDatasetXlsDataReader(JSONObject jsonConf) {
+	public FileDatasetXlsxDataReader(JSONObject jsonConf) {
 		super();
 
 		// Get File Dataset Configuration Options
@@ -80,36 +58,32 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
 			}
 		} else {
-			logger.error("Error jsonConf is not present for FileDatasetXlsDataReader");
-			throw new RuntimeException("Error jsonConf is not present for FileDatasetXlsDataReader");
+			logger.error("Error jsonConf is not present for FileDatasetXlsxDataReader");
+			throw new RuntimeException("Error jsonConf is not present for FileDatasetXlsxDataReader");
 		}
 	}
 
 	@Override
 	public IDataStore read(Object data) {
-		DataStore dataStore = null;
-
-		InputStream inputDataStream;
-
 		logger.debug("IN");
+		DataStore dataStore = null;
+		InputStream inputDataStream;
 
 		inputDataStream = (InputStream) data;
 
 		try {
-			dataStore = readXls(inputDataStream);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			dataStore = readXlsx(inputDataStream);
+		} catch (RuntimeException ex) {
+			throw ex;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Can not read XLSX file", e);
 		}
-
+		logger.debug("OUT");
 		return dataStore;
 	}
 
-	private DataStore readXls(InputStream inputDataStream) throws Exception {
+	private DataStore readXlsx(InputStream inputDataStream) throws Exception {
+		logger.debug("IN");
 
 		DataStore dataStore = null;
 		int maxResults = this.getMaxResults();
@@ -118,13 +92,11 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 			checkMaxResults = true;
 		}
 
-		logger.debug("IN");
-
 		dataStore = new DataStore();
 
 		try {
-			HSSFWorkbook wb = new HSSFWorkbook(inputDataStream);
-			HSSFSheet sheet = getSheet(wb);
+			XSSFWorkbook wb = new XSSFWorkbook(inputDataStream);
+			XSSFSheet sheet = getSheet(wb);
 
 			int initialRow = 0;
 
@@ -135,18 +107,6 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 
 			int rowsLimit;
 			if ((getLimitRows() != null) && (!(getLimitRows().isEmpty()))) {
-
-				/**
-				 * This line is commented, since we need an absolute value of the last row that should be taken while now the 0th row is always taken into count
-				 * and always as a header, not as an effective data row. In terms of the existing implementation: number of rows to take from an XLS file should
-				 * be an offset of value 'limitRows' relative to the 'initialRow' that is now the real effective row (data, not header) from which we start
-				 * counting.
-				 *
-				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// ORIGINAL CODE (danristo)
-				// rowsLimit = initialRow + Integer.parseInt(limitRows) - 1;
-				// MODIFIED CODE (danristo)
 				rowsLimit = initialRow + Integer.parseInt(getLimitRows());
 
 				// if the calculated limit exceed the physical number of rows or is equal to zero, just read all the rows
@@ -168,40 +128,15 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 
 			int rowFetched = 0;
 
-			/**
-			 * Starting point when picking rows from the XLS file is ALWAYS the 0th row - the header of the file (metadata - the names of the columns of the
-			 * file dataset). Inside the for-loop we will check if the row is the header (0th) and if it is, treat it accordingly. Otherwise, skip all rows that
-			 * are between this one and the one that we get as a final row ('rowsLimit').
-			 *
-			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			// ORIGINAL CODE (danristo)
-			// for (int r = initialRow; r <= rowsLimit; r++) {
-			// MODIFIED CODE (danristo)
 			for (int r = 0; r <= rowsLimit; r++) {
 				// check if there is a limit for the rows to fetch in preview
-
-				/**
-				 * If we are in between 0th and final row of the XLS file, while skipping all rows that user specified as the ones that should be skipped, take
-				 * all metadata (for initial, zeroth) and data available in their columns.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
 				if (r > initialRow || r == 0) {
 
-					HSSFRow row = sheet.getRow(r);
+					XSSFRow row = sheet.getRow(r);
 					if (checkIfRowIsEmpty(row)) {
 						continue;
 					}
 
-					/**
-					 * The zeroth row will always be the header of the XLS file.
-					 *
-					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					// ORIGINAL CODE (danristo)
-					// if (r == initialRow) {
-					// MODIFIED CODE (danristo)
 					if (r == 0) {
 						try {
 							MetaData dataStoreMeta = parseHeader(dataStore, row);
@@ -227,22 +162,35 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 				}
 
 			}
-			logger.debug("Read [" + rowFetched + "] records");
-			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
+		} catch (Exception e) {
+			logger.error("Error while reading XLSX file", e);
+			throw new RuntimeException("Impossible to parse XLSX file", e);
+		}
+		logger.debug("OUT");
+		return dataStore;
+	}
 
-			if (this.isCalculateResultNumberEnabled()) {
-				logger.debug("Calculation of result set number is enabled");
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
-			} else {
-				logger.debug("Calculation of result set number is NOT enabled");
+	private XSSFSheet getSheet(XSSFWorkbook workbook) {
+		XSSFSheet sheet;
+
+		int numberOfSheets = workbook.getNumberOfSheets();
+		if ((getXslSheetNumber() != null) && (!(getXslSheetNumber().isEmpty()))) {
+
+			int sheetNumber = Integer.parseInt(getXslSheetNumber()) - 1;
+			if (sheetNumber > numberOfSheets) {
+				logger.error("[XLSX] Wrong sheet number, using first sheet as default");
+				// if not specified take first sheet
+				sheet = workbook.getSheetAt(0);
 			}
-		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to parse XLS file", t);
-		} finally {
-			logger.debug("OUT");
+			sheet = workbook.getSheetAt(sheetNumber);
+
+		} else {
+			// if not specified take first sheet
+			sheet = workbook.getSheetAt(0);
+
 		}
 
-		return dataStore;
+		return sheet;
 	}
 
 	private boolean checkIfRowIsEmpty(Row row) {
@@ -261,38 +209,15 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return true;
 	}
 
-	private HSSFSheet getSheet(HSSFWorkbook workbook) {
-		HSSFSheet sheet;
-
-		int numberOfSheets = workbook.getNumberOfSheets();
-		if ((getXslSheetNumber() != null) && (!(getXslSheetNumber().isEmpty()))) {
-
-			int sheetNumber = Integer.parseInt(getXslSheetNumber()) - 1;
-			if (sheetNumber > numberOfSheets) {
-				logger.error("Wrong sheet number, using first sheet as default");
-				// if not specified take first sheet
-				sheet = workbook.getSheetAt(0);
-			}
-			sheet = workbook.getSheetAt(sheetNumber);
-
-		} else {
-			// if not specified take first sheet
-			sheet = workbook.getSheetAt(0);
-
-		}
-
-		return sheet;
-	}
-
-	private MetaData parseHeader(DataStore dataStore, HSSFRow row) {
+	private MetaData parseHeader(DataStore dataStore, XSSFRow row) {
 		MetaData dataStoreMeta = new MetaData();
 
 		int cells = row.getPhysicalNumberOfCells();
-		this.setNumberOfColumns(cells);
+		setNumberOfColumns(cells);
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			XSSFCell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -315,18 +240,18 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return dataStoreMeta;
 	}
 
-	private IRecord parseRow(DataStore dataStore, HSSFRow row) {
+	private IRecord parseRow(DataStore dataStore, XSSFRow row) {
 
 		IRecord record = new Record(dataStore);
 
 		int cells = row.getPhysicalNumberOfCells();
-		// int lastColumn = row.getLastCellNum();
-		int lastColumn = this.getNumberOfColumns();
+
+		int lastColumn = getNumberOfColumns();
 
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < lastColumn; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			XSSFCell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -357,21 +282,21 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return record;
 	}
 
-	private Object parseCell(HSSFCell cell) {
+	private Object parseCell(XSSFCell cell) {
 		Object valueField = null;
 
 		if (cell == null)
 			return "";
 
 		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_FORMULA:
+		case XSSFCell.CELL_TYPE_FORMULA:
 			valueField = cell.getCellFormula().toString();
 			break;
 
-		case HSSFCell.CELL_TYPE_NUMERIC:
+		case XSSFCell.CELL_TYPE_NUMERIC:
 			if (DateUtil.isCellDateFormatted(cell)) {
 				/**
-				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
+				 * XSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
 				 * that is DIFFERENT from Java's
 				 */
 				// String formatString = cell.getCellStyle().getDataFormatString();
@@ -396,11 +321,11 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 			}
 			break;
 
-		case HSSFCell.CELL_TYPE_STRING:
+		case XSSFCell.CELL_TYPE_STRING:
 			valueField = cell.getStringCellValue();
 			break;
 
-		case HSSFCell.CELL_TYPE_BLANK:
+		case XSSFCell.CELL_TYPE_BLANK:
 			valueField = "";
 			break;
 
