@@ -565,7 +565,7 @@ angular.module('chartInitializer')
 					if(this.chart.options.xAxis[0].type!="datetime"){
 							pointOptions.low = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);
 							pointOptions.high = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i+1].name]]);
-						pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
+						pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);
 						pointOptions.name=data[j][column];
 						if(this.chart.options.chart.type!= "pie"){
 							pointOptions.drilldown = drill;
@@ -583,7 +583,7 @@ angular.module('chartInitializer')
 
 						} else {
 
-							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]));
 
 						}
 
