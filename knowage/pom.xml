@@ -32,11 +32,11 @@
 					<container>
 						<containerId>tomcat8x</containerId>
 						<type>installed</type>
-						<home>${application-62-home}</home>
+						<home>${application-home}</home>
 					</container>
 					<configuration>
 						<type>existing</type>
-						<home>${application-62-home}</home>
+						<home>${application-home}</home>
 					</configuration>
 				</configuration>
 			</plugin>
