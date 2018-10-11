@@ -98,12 +98,13 @@ angular
 
 			$scope.businessModel = execProperties;
 			$scope.drivers = drivers;
-			if($scope.businessModel.parametersData.documentParameters){
+
 			$scope.showDrivers = true;
-			$scope.showQbe = false;
+			if($scope.businessModel.parametersData.documentParameters){
+			$scope.businessModel.executed = false;
 			}else{
 				$scope.showDrivers = false;
-				$scope.showQbe = true;
+				$scope.businessModel.executed = true;
 			}
 			$scope.documentViewerUrl = url;
 
