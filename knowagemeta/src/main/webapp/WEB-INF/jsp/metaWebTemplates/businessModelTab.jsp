@@ -224,7 +224,7 @@
 			
 			<md-tab id="filtersTab" md-active="tabResource.selectedBusinessTab=='filtersTab'" md-on-select="tabResource.selectedBusinessTab='filtersTab'" label="{{translate.load('sbi.meta.model.business.filter')}}">
 				<md-content ng-if="tabResource.selectedBusinessTab=='filtersTab'" ng-controller="metaDefinitionController" layout layout-fill>
-					<md-input-container>
+					<md-input-container flex="70">
 						<textarea ng-model="testService.obj.input" placeholder="SQL expression"></textarea>
 					</md-input-container>
 				</md-content>

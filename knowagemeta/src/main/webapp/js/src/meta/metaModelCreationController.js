@@ -619,3 +619,4 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 		   });
 	}
 }
+

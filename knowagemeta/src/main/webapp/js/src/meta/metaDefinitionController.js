@@ -186,6 +186,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		var dataToSend={};
 		dataToSend.name=bmName;
 		dataToSend.id=bmId;
+		dataToSend.inputField=businessViewFilterService.obj.input;
 		
 		var flag = false;
 		
