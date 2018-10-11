@@ -716,6 +716,18 @@ public class UserUtilities {
 				roleFunctionalities.add(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE);
 			}
 
+			if(virtualRole.isAbleToCreateSelfServiceCockpit()) {
+				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_COCKPIT);
+			}
+
+			if(virtualRole.isAbleToCreateSelfServiceGeoreport()) {
+				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_GEOREPORT);
+			}
+
+			if(virtualRole.isAbleToCreateSelfServiceKpi()) {
+				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_KPI);
+			}
+
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -773,29 +785,6 @@ public class UserUtilities {
 	private static Role getVirtualRole(String[] roles, String organization) throws Exception {
 		logger.debug("IN");
 		Role virtualRole = new Role("", "");
-		virtualRole.setIsAbleToSaveSubobjects(false);
-		virtualRole.setIsAbleToSeeSubobjects(false);
-		virtualRole.setIsAbleToSeeSnapshots(false);
-		virtualRole.setIsAbleToRunSnapshots(false);
-		virtualRole.setIsAbleToSeeViewpoints(false);
-		virtualRole.setIsAbleToSeeMetadata(false);
-		virtualRole.setIsAbleToSaveMetadata(false);
-		virtualRole.setIsAbleToSendMail(false);
-		virtualRole.setIsAbleToSeeNotes(false);
-		virtualRole.setIsAbleToSaveRememberMe(false);
-		virtualRole.setIsAbleToSaveIntoPersonalFolder(false);
-		virtualRole.setIsAbleToBuildQbeQuery(false);
-		virtualRole.setIsAbleToDoMassiveExport(false);
-		virtualRole.setIsAbleToManageUsers(false);
-		virtualRole.setIsAbleToManageUsers(false);
-		virtualRole.setAbleToDeleteKpiComm(false);
-		virtualRole.setAbleToEditAllKpiComm(false);
-		virtualRole.setAbleToEditMyKpiComm(false);
-		virtualRole.setIsAbleToCreateSocialAnalysis(false);
-		virtualRole.setIsAbleToViewSocialAnalysis(false);
-		virtualRole.setIsAbleToHierarchiesManagement(false);
-		virtualRole.setIsAbleToEnableDatasetPersistence(false);
-		virtualRole.setIsAbleToEnableFederatedDataset(false);
 
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
@@ -940,6 +929,18 @@ public class UserUtilities {
 					if (anotherRole.isAbleToUseFunctionsCatalog()) {
 						logger.debug("User has role " + roleName + " that is able to use functions catalog.");
 						virtualRole.setAbleToUseFunctionsCatalog(true);
+					}
+					if(anotherRole.isAbleToCreateSelfServiceCockpit()) {
+						logger.debug("User has role " + roleName + " that is able to create self service cockpit.");
+						virtualRole.setAbleToCreateSelfServiceCockpit(true);
+					}
+					if(anotherRole.isAbleToCreateSelfServiceGeoreport()) {
+						logger.debug("User has role " + roleName + " that is able to create self service geographic report.");
+						virtualRole.setAbleToCreateSelfServiceGeoreport(true);
+					}
+					if(anotherRole.isAbleToCreateSelfServiceKpi()) {
+						logger.debug("User has role " + roleName + " that is able to create self service kpi.");
+						virtualRole.setAbleToCreateSelfServiceKpi(true);
 					}
 				}
 			}
