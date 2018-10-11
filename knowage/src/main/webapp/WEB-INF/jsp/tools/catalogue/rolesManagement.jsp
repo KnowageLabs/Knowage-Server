@@ -439,15 +439,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createDocument')">
-				  <md-input-container class="small counter"> 
-			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" name="createDocument">
-			        </md-checkbox> 
-			       </md-input-container>
-			       <div >
-			        <label>{{translate.load("sbi.roles.createDocument")}}</label>
-			       </div> 
-			   </div>
+                      <md-input-container class="small counter">
+                        <md-checkbox
+                         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" name="createDocument">
+                        </md-checkbox>
+                       </md-input-container>
+                       <div >
+                        <label>{{translate.load("sbi.roles.createDocument")}}</label>
+                       </div>
+			     </div>
+			     <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createSelfSelviceCockpit')">
+                     <md-input-container class="small counter">
+                          <md-checkbox ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSelfServiceCockpit" aria-label="check" name="createSelfSelviceCockpit">
+                          </md-checkbox>
+                     </md-input-container>
+                     <div >
+                        <label>{{translate.load("sbi.roles.createSelfSelviceCockpit")}}</label>
+                     </div>
+                 </div>
+                 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createSelfSelviceGeoreport')">
+                     <md-input-container class="small counter">
+                          <md-checkbox ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSelfServiceGeoreport" aria-label="check" name="createSelfSelviceGeoreport">
+                          </md-checkbox>
+                     </md-input-container>
+                     <div >
+                        <label>{{translate.load("sbi.roles.createSelfSelviceGeoreport")}}</label>
+                     </div>
+                 </div>
+                 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createSelfSelviceKpi')">
+                     <md-input-container class="small counter">
+                          <md-checkbox ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSelfServiceKpi" aria-label="check" name="createSelfSelviceKpi">
+                          </md-checkbox>
+                     </md-input-container>
+                     <div >
+                        <label>{{translate.load("sbi.roles.createSelfSelviceKpi")}}</label>
+                     </div>
+                 </div>
 			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createSocialAnalysis')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox

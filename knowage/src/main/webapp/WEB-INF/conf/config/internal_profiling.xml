@@ -82,6 +82,8 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageBD" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageSI -->
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -102,6 +104,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
@@ -128,6 +131,8 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SELF_SERVICE_KPI" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageLI -->
 		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
@@ -147,6 +152,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowagePA -->
 		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
