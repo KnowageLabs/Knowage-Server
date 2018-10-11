@@ -568,7 +568,7 @@ angular.module('chartInitializer')
 
 						} else {
 
-							pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
+							pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);
 
 						}
 
@@ -589,7 +589,7 @@ angular.module('chartInitializer')
 
 						} else {
 
-							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]));
 
 						}
 
