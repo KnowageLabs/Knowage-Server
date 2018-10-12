@@ -1476,6 +1476,7 @@ public class SelfServiceDataSetCRUD {
 			String limitRows = req.getParameter("limitRows");
 			String xslSheetNumber = req.getParameter("xslSheetNumber");
 			String dateFormat = req.getParameter("dateFormat");
+			String timestampFormat = req.getParameter("timestampFormat");
 
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
@@ -1495,6 +1496,7 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());

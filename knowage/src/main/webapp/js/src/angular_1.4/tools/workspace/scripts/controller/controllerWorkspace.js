@@ -179,6 +179,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
+	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 
 	// The configuration for the message displayed inside the toaster. (danristo)
 	$scope.toasterConfig = {
@@ -206,6 +207,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 
 		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : Number($scope.skipRowsDefault);
 		$scope.dataset.dateFormat = (dataset!=undefined && dataset.dateFormat!=undefined) ? dataset.dateFormat : $scope.dateFormatDefault;
+		$scope.dataset.timestampFormat = (dataset!=undefined && dataset.timestampFormat!=undefined) ? dataset.timestampFormat : $scope.timestampFormatDefault;
 
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -281,7 +283,16 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 
 	];
 
-
+	$scope.timestampFormatTypes = [
+		{ value:"dd/MM/yyyy HH:mm:ss", name:"dd/MM/yyyy HH:mm:ss" },
+	 	{ value:"MM/dd/yyyy hh:mm:ss a", name:"MM/dd/yyyy hh:mm:ss a" },
+	 	{ value:"dd-MM-yyyy hh:mm:ss a", name:"dd-MM-yyyy hh:mm:ss a" },
+	 	{ value:"MM-dd-yyyy hh:mm:ss a", name:"MM-dd-yyyy hh:mm:ss a" },
+		{ value:"yyyy-MM-dd hh:mm:ss a", name:"yyyy-MM-dd hh:mm:ss a" },
+	 	{ value:"yyyy:MM:dd hh:mm:ss a", name:"yyyy:MM:dd hh:mm:ss a" },
+	 	{ value:"dd.MM.yyyy HH:mm:ss", name:"dd.MM.yyyy HH:mm:ss" },
+	 	{ value:"MM.dd.yyyy HH:mm:ss", name:"MM.dd.yyyy HH:mm:ss" }
+	];
 
 	/**
 	 * Keep and change the values for three comboboxes that appear when user uploads a CSV file when creating a new Dataset.
@@ -303,6 +314,10 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 		$scope.dataset.dateFormat = dateFormat;
 	}
 
+	$scope.chooseTimestampFormat = function(timestampFormat) {
+		$scope.dataset.timestampFormat = timestampFormat;
+	}
+	
 	/**
 	 * Function for toggling the state of the checkbox for the 'Limit preview' option (Step 1).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
