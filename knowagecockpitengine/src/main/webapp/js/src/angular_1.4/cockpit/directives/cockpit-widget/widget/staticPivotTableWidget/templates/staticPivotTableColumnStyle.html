@@ -13,10 +13,17 @@
 		       	
 				<div flex>
 				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">
-
-				 	<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader">
-								{{translate.load("sbi.cockpit.table.showHeader")}}
-					</md-checkbox>
+					<div flex layout="row" layout-align="start center">
+					 	<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader" >
+									{{translate.load("sbi.cockpit.table.showHeader")}}
+						</md-checkbox>
+						<div class="kn-info" layout="row" flex layout-align="start center" ng-if="selectedColumn.showSortingAlert" >
+							ATTENTION: Were saved manual sortings that are different by the next configuration set. The system will use the first ones.</br>
+									   Click on the reset icon to revert the template configuration. </div>
+						 <md-icon md-font-icon="fa fa-undo" ng-if="selectedColumn.showSortingAlert" ng-click="resetTemplateSortOptions()">
+						  	<md-tooltip md-direction="top">Revert configuration</md-tooltip>
+						 </md-icon>
+					</div>
 				 	<div layout-margin layout="row" flex class="relative"> 
 						<md-input-container flex=30>
 						  <label>{{translate.load('sbi.cockpit.table.columnname')}}</label>
@@ -26,14 +33,22 @@
 						  <label>{{translate.load('sbi.cockpit.table.title')}}</label>
 						  <input ng-model="selectedColumn.alias">
 						</md-input-container>	
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
-					       		<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order">
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block" >
+					       		<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order" ng-disabled="selectedColumn.showSortingAlert">
 							        	{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
 							    </md-checkbox>
 					    </md-input-container>
 					    <md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
+			       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.orderByColumnValue");}}</label>
+			          		<md-select ng-model="selectedColumn.sortingId" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
+			           			<md-option ng-repeat="sortCol in selectedColumn.sorterByColumns" ng-value="sortCol" >							
+								{{sortCol}}
+								</md-option>
+			       			</md-select>
+					    </md-input-container>
+					    <md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
 			       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
-			          		<md-select ng-model="selectedColumn.sortingOrder" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting==''">
+			          		<md-select ng-model="selectedColumn.sortingOrder" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
 			           			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
 			          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
 			       			</md-select>

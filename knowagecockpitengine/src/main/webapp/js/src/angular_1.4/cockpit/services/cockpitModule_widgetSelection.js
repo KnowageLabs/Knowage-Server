@@ -162,6 +162,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				categories.push(obj);
+				//add associate column for sorting (if set)
+				if (col.sortingId && col.sortingId != ""){
+					var sortObj = this.createSortingCategory(col.sortingId, obj["orderType"]);
+					categories.push(sortObj);
+				}
 			}
 
 			// create aggregations from rows
@@ -180,6 +185,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				categories.push(obj);
+				//add associate column for sorting (if set)
+				if (row.sortingId && row.sortingId != ""){
+					var sortObj = this.createSortingCategory(row.sortingId, obj["orderType"]);
+					categories.push(sortObj);
+				}
 			}
 
 			// create aggregations from measures
@@ -211,6 +221,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 
+	this.createSortingCategory=function(id, orderType){
+		var obj = {};
+		obj["id"] = id;
+		obj["alias"] = id;
+		obj["columnName"] = id;
+		obj["orderType"] = orderType;
+		return obj;
+	}
 
 	this.getAssociations=function(reloadSelection,tmpObj,deferred){
 		var payload = {};

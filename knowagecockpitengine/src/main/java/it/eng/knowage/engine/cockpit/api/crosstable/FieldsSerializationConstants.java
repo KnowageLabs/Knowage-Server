@@ -24,6 +24,7 @@ public class FieldsSerializationConstants {
 
 	public static final String ID = "id";
 	public static final String ALIAS = "alias";
+	public static final String SORTING_ID = "sortingId";
 	public static final String ICON_CLS = "iconCls";
 	public static final String NATURE = "nature";
 	public static final String STYLE = "style";
