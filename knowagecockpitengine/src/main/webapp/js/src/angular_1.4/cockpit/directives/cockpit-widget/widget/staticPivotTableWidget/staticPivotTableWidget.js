@@ -117,21 +117,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 		$scope.showWidgetSpinner();
 
-//		$scope.ngModel.content.sortOptions =  $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {};
-
 		var dataToSend={
 				 config: {
 				        type: "pivot"
 				    },
 				metadata: datasetRecords.metaData,
 				jsonData: datasetRecords.rows,
-//				sortOptions: $scope.ngModel.content.sortOptions //initialization with template version
 				sortOptions: $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {} //initialization with template version
 		};
 
 		$scope.ngModel.content.sortOptions = $scope.manageSortCompatibility($scope.ngModel.content.sortOptions);
-		angular.merge(dataToSend,$scope.ngModel.content);
-
+		angular.merge(dataToSend,$scope.ngModel.content); //(dest, src)
+		$scope.ngModel.content.sortOptions = $scope.manageSortCompatibility(dataToSend.sortOptions);
 
 		if( dataToSend.crosstabDefinition==undefined ||
 			dataToSend.crosstabDefinition.measures==undefined||dataToSend.crosstabDefinition.measures.length==0 ||
@@ -268,7 +265,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var measuresSortKeys = [];
 
 		if (!oldSortOptions) return toReturn;
-		
+
 		if (oldSortOptions.columnsSortKeys && !Array.isArray(oldSortOptions.columnsSortKeys)){
 			for (var c in oldSortOptions.columnsSortKeys){
 				var cSort = {};
@@ -384,6 +381,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				totalsItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
 				subtotalsItem 		= angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
 				dataItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
+				dataItemNoStd 		= angular.element($scope.subCockpitWidget[0].querySelectorAll(".dataNoStandardStyle"));
 				memberItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
 				measureHeaderItem 	= angular.element($scope.subCockpitWidget[0].querySelectorAll(".measures-header-text"));
 				crossItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
@@ -392,6 +390,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						totalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
 						subtotalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
 						dataItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+						dataItemNoStd.css(prop,$scope.ngModel.content.style.generic[prop]);
 						memberItem.css(prop,$scope.ngModel.content.style.generic[prop]);
 						crossItem.css(prop,$scope.ngModel.content.style.generic[prop]);
 					}
@@ -399,7 +398,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			}
 
 			//altrnateRow & grid border
-			if($scope.ngModel.content.style.measuresRow!=undefined && Object.keys($scope.ngModel.content.style.measuresRow).length>0 ){
+			if($scope.ngModel.content.style.showAlternateRows && $scope.ngModel.content.style.measuresRow!=undefined && Object.keys($scope.ngModel.content.style.measuresRow).length>0 ){
 				var rowList=angular.element($scope.subCockpitWidget[0].querySelectorAll("tr"));
 				var tmpOddRow=false;
 				angular.forEach(rowList,function(row,index){
@@ -581,9 +580,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  $scope.originalCurrentDataset={};
 			    	  $scope.dragUtils={dragObjectType:undefined};
 			    	  $scope.tabsUtils={selectedIndex:0};
-
-
-
+			    	  $scope.sorterByColumns=[];
 
 			    	  $scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 			    	  $scope.bordersSize=[{
@@ -619,7 +616,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			  		    	value:"1em"
 			  		    },
 			  		];
-			    	  angular.copy(model,$scope.localModel);
+			    	  angular.copy(model,$scope.localModel); //src, dest
 
 
 			    	  if($scope.localModel.content==undefined){
@@ -734,8 +731,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    					   }
 
 			    				  }
-
-
 			    			  }else{
 			    				  //containerType == MEASURE or ATTRIBUTE
 			    				  //load element from dataset field
@@ -746,35 +741,32 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    					  }
 			    				  }
 			    			  }
-
-
 			    			  list.splice(index,0,tmpItem)
 			    			  return true;
 			    		  }
 
 			    	  }
 
+		    	    $scope.saveConfiguration=function(){
+		    		  if($scope.localModel.dataset == undefined){
+		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
+		    			return;
+		    		  }
+		    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
+		    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
+		    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
+		    		  ){
+		    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
+		    			  return;
+		    		  }
+		    		  if ($scope.localModel.content.crosstabDefinition)
+		    			  $scope.localModel.content.sortOptions =  fnOrder($scope.localModel.content.crosstabDefinition.columns, $scope.localModel.content.crosstabDefinition.rows) || {}; //update sorting
+		    		  angular.copy($scope.localModel,model);//src, dest
+		    		  mdPanelRef.close();
+		    		  $scope.$destroy();
+		    		  finishEdit.resolve();
 
-			    	  $scope.saveConfiguration=function(){
-			    		  if($scope.localModel.dataset == undefined){
-			  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
-			    			return;
-			    		  }
-			    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
-			    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
-			    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
-			    		  ){
-			    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
-			    			  return;
-			    		  }
-			    		  if (model.content.crosstabDefinition)
-			    			  $scope.localModel.content.sortOptions =  fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows) || {}; //update sorting
-			    		  angular.copy($scope.localModel,model);
-			    		  mdPanelRef.close();
-			    		  $scope.$destroy();
-			    		  finishEdit.resolve();
-
-			    	  }
+		    	    }
 
 			  		$scope.showAction = function(text) {
 						var toast = $mdToast.simple()
@@ -789,16 +781,53 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 							}
 						});
 					}
-			    	  $scope.cancelConfiguration=function(){
+
+			  		$scope.cancelConfiguration=function(){
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
+			    	}
 
-			    	  }
+			    	$scope.getSorterByColumns = function(dataset){
+			      		var sorterByColumns = [];
+			      		sorterByColumns.push("");
+			      		 for (m in dataset.metadata.fieldsMeta){
+			      			 if (dataset.metadata.fieldsMeta[m].fieldType == 'ATTRIBUTE' && !$scope.isSelectedAttribute(dataset.metadata.fieldsMeta[m].name)){
+			      				 sorterByColumns.push(dataset.metadata.fieldsMeta[m].name);
+			      			 }
+			      		 }
+			      		 return sorterByColumns;
+			      	 }
 
-			    	  $scope.editFieldsProperty=function(selectedColumn){
+			    	$scope.isSelectedAttribute=function(attrName){
+			    		for (c in $scope.localModel.content.crosstabDefinition.columns){
+			    			if ($scope.localModel.content.crosstabDefinition.columns[c].id == attrName){
+			    				return true;
+			    			}
+			    		}
+
+			    		for (r in $scope.localModel.content.crosstabDefinition.rows){
+			    			if ($scope.localModel.content.crosstabDefinition.rows[r].id == attrName){
+			    				return true;
+			    			}
+			    		}
+			    		return false;
+			    	}
+
+			    	 $scope.editFieldsProperty=function(selectedColumn){
+			    		  selectedColumn.sorterByColumns = $scope.getSorterByColumns($scope.currentDataset); //load all columns to manage external sort column
+			    		  var guiSortOptions = fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows);
+			    		  var templateSortOptions = model.content.sortOptions;
+			    		  if (!angular.equals(guiSortOptions, templateSortOptions)){
+			    			  selectedColumn.showSortingAlert = true;
+			    			  console.log("ATTENTION: The user had save sortings manually that are different by the configuration set. The system are using the first ones.");
+			    			  console.log("templateSortOptions:", templateSortOptions);
+			    			  console.log("guiSortOptions:", guiSortOptions);
+			    		  }else{
+			    				selectedColumn.showSortingAlert = false;
+			    		  }
+			    		  selectedColumn.fnOrder = fnOrder;
 			    		  $mdDialog.show({
-//								templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
 								templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableColumnStyle.html',
 								parent : angular.element(document.body),
 								clickOutsideToClose:true,
@@ -840,10 +869,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdToast,sbiModule_messaging){
 		$scope.translate=sbiModule_translate;
+//		$scope.localModel = angular.copy(model);
 		$scope.selectedColumn = angular.copy(selectedColumn);
 		$scope.selectedColumn.fieldType = selectedColumn.nature.toUpperCase();
 		$scope.selectedColumn.widgetType = "staticPivotTable";
 		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined)?true:selectedColumn.showHeader;
+
+
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
@@ -957,7 +989,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			}
 			$scope.checkPrecision();
 			$scope.selectedColumn = $scope.cleanObjectConfiguration($scope.selectedColumn, 'style', false);
+			$scope.selectedColumn = $scope.cleanObjectConfigurationForSaving($scope.selectedColumn);
 			angular.copy($scope.selectedColumn,selectedColumn);
+//			angular.copy($scope.localModel,model);
 
 			$mdDialog.cancel();
 		}
@@ -984,6 +1018,15 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}else
 					toReturn[c] = config[c];
 			}
+			return toReturn;
+		}
+
+		$scope.cleanObjectConfigurationForSaving = function (config){
+			var toReturn;
+			//add all necessaries deletes for obj that don't want save (ex.. array of all columns for sorting by value, ...)
+			if (config.sorterByColumns) delete config.sorterByColumns;
+
+			toReturn = config;
 			return toReturn;
 		}
 
@@ -1015,12 +1058,37 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			}
 			return false;
 		}
+
+		 $scope.resetTemplateSortOptions=function(){
+			 model.content.sortOptions=$scope.selectedColumn.fnOrder(model.content.crosstabDefinition.columns,model.content.crosstabDefinition.rows) || {};
+	    		$scope.selectedColumn.showSortingAlert = false;
+	     }
+
+		 $scope.updateSortOptions=function(item){
+			 console.log(item);
+			 if (item.containerType == "ROWS"){
+				 for (r in  model.content.crosstabDefinition.rows){
+					 if (model.content.crosstabDefinition.rows[r].id == item.id){
+						 model.content.crosstabDefinition.rows[r] = item;
+						 break;
+					 }
+				 }
+			 }
+
+			 if (item.containerType == "COLUMNS"){
+				 for (c in  model.content.crosstabDefinition.columns){
+					 if (model.content.crosstabDefinition.columns[c].id == item.id){
+						 model.content.crosstabDefinition.columns[c] = item;
+						 break;
+					 }
+				 }
+			 }
+		 }
 	}
 
 
 	$scope.orderPivotTable=function(column, axis, globalId, measureLabel, parentValue){
 		if($scope.ngModel.content.sortOptions==undefined){
-//			$scope.ngModel.content.sortOptions={};
 			$scope.ngModel.content.sortOptions = $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {} //initialization with template version
 		}
 		var axisConfig;
@@ -1038,7 +1106,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				if (!exists) $scope.ngModel.content.sortOptions.measuresSortKeys.push(colDef);
 				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
 			}else{
-//				column = column/2;
 				if($scope.ngModel.content.sortOptions.columnsSortKeys==undefined){
 					$scope.ngModel.content.sortOptions.columnsSortKeys=[];
 				}

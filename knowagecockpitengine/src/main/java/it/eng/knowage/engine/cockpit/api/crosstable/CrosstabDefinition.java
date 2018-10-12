@@ -132,22 +132,22 @@ public class CrosstabDefinition {
 
 	public class Row extends Attribute {
 
-		public Row(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
-			super(entityId, alias, iconCls, nature, values, config);
+		public Row(String entityId, String alias, String sortingId, String iconCls, String nature, String values, JSONObject config) {
+			super(entityId, alias, sortingId, iconCls, nature, values, config);
 		}
 
 		public Row(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
 		}
 	}
 
 	public class Column extends Attribute {
-		public Column(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
-			super(entityId, alias, iconCls, nature, values, config);
+		public Column(String entityId, String alias, String sortingId, String iconCls, String nature, String values, JSONObject config) {
+			super(entityId, alias, sortingId, iconCls, nature, values, config);
 		}
 
 		public Column(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
 		}
 	}
 

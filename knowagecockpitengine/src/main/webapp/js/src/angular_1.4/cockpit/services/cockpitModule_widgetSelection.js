@@ -24,6 +24,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					} else {
 						toRet[datasetLabel][col]=["('"+values+"')"];
 					}
+				}else{
+					toRet[datasetLabel][col]=[];
 				}
 			}
 		}
@@ -34,7 +36,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		var categories = [];
 		var ds = dataset.label;
 
-		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
+//		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
+		var columns = (ngModel==undefined || !ngModel.content.columnSelectedOfDataset) ? undefined :(Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dataset.id.dsId] ;
 		if(columns != undefined){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){
@@ -68,8 +71,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 									obj["orderColumn"] = col.orderColumn;
 									newCategArray.push(obj)
 								}
+								}
 							}
-						}
 						else {
 							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
 								obj["orderColumn"] = col.name;
@@ -83,8 +86,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				// SUM is default but for attribute is meaningless
-
-				if(col.fieldType=="ATTRIBUTE" && col.aggregationSelected && col.aggregationSelected === 'SUM'){
+				if(ngModel.type != "discovery" && (col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
 				}
 				else{
@@ -108,17 +110,19 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 
-				if(col.fieldType=="ATTRIBUTE"){
+				if(col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE"){
 					if(newCategArray.length >0 ){
 						for (var m = 0; m < newCategArray.length; m++) {
 							categories.push(newCategArray[m])
 						}
 					}
 					else {
+						if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 						categories.push(obj)
 					}
-				}else{
+				}else if (col.fieldType=="MEASURE"){
 					//it is measure
+					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 					obj["orderColumn"] = col.name;
 					measures.push(obj);
 				}
@@ -158,6 +162,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				categories.push(obj);
+				//add associate column for sorting (if set)
+				if (col.sortingId && col.sortingId != ""){
+					var sortObj = this.createSortingCategory(col.sortingId, obj["orderType"]);
+					categories.push(sortObj);
+				}
 			}
 
 			// create aggregations from rows
@@ -176,6 +185,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				categories.push(obj);
+				//add associate column for sorting (if set)
+				if (row.sortingId && row.sortingId != ""){
+					var sortObj = this.createSortingCategory(row.sortingId, obj["orderType"]);
+					categories.push(sortObj);
+				}
 			}
 
 			// create aggregations from measures
@@ -207,6 +221,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 
+	this.createSortingCategory=function(id, orderType){
+		var obj = {};
+		obj["id"] = id;
+		obj["alias"] = id;
+		obj["columnName"] = id;
+		obj["orderType"] = orderType;
+		return obj;
+	}
 
 	this.getAssociations=function(reloadSelection,tmpObj,deferred){
 		var payload = {};
@@ -485,10 +507,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var selection = cockpitModule_template.configuration.aggregations[i].selection;
 				if(selection.hasOwnProperty(key)){
 					delete selection[key]; // force creation of new key in order to get it as last key during iteration
-				}
-				selection[key] = copyOfValue;
 			}
+				selection[key] = copyOfValue;
 		}
+	}
 	}
 
 	this.refreshAllWidgetWhithSameDataset=function(dsLabel){
@@ -511,7 +533,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					ws.refreshAllAssociatedWidget(isInit);
 				}
 			})
-		})
+			})
 	}
 
 	this.refreshAllAssociations = function(){
@@ -682,8 +704,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if(widget.dataset && widget.dataset.dsId){
 					var datasetLabel = datasetMap[""+widget.dataset.dsId];
 					if(datasetLabel != undefined){
-						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
-							var widgetColumn = widget.content.columnSelectedOfDataset[widgetColumnIndex];
+//						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
+						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset[widget.dataset.dsId]){
+							var widgetColumn = widget.content.columnSelectedOfDataset[widget.dataset.dsId][widgetColumnIndex];
 
 							if(widgetColumn && widgetColumn.name){
 								var columnName = widgetColumn.name;
@@ -726,35 +749,35 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		for(var i=0;i<tmpSelections.length;i++){
 			var selections = tmpSelections[i].selection;
 			if(selections!=undefined){
-				var selectionKeys = Object.keys(selections);
-				if(selectionKeys.length > 0){
-					var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
-					var lastSelectionValue = selections[lastSelectionKey];
+			var selectionKeys = Object.keys(selections);
+			if(selectionKeys.length > 0){
+				var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
+				var lastSelectionValue = selections[lastSelectionKey];
 
-					var result = {}
-					var keySplit = lastSelectionKey.split(".");
-					result[keySplit[0]]={};
-					result[keySplit[0]][keySplit[1]] = lastSelectionValue;
-					return result;
-				}
+				var result = {}
+				var keySplit = lastSelectionKey.split(".");
+				result[keySplit[0]]={};
+				result[keySplit[0]][keySplit[1]] = lastSelectionValue;
+				return result;
 			}
+		}
 		}
 
 		var selections = {};
 		angular.copy(cockpitModule_template.configuration.filters,selections);
 		if(selections!=undefined){
-			var selectionKeys = Object.keys(selections);
-			if(selectionKeys.length > 0){
-				var lastDataset = selectionKeys[selectionKeys.length - 1];
-				var lastColumns = selections[lastDataset];
-				var lastColumnKeys = Object.keys(lastColumns);
-				var lastColumn = lastColumnKeys[lastColumnKeys.length - 1];
+		var selectionKeys = Object.keys(selections);
+		if(selectionKeys.length > 0){
+			var lastDataset = selectionKeys[selectionKeys.length - 1];
+			var lastColumns = selections[lastDataset];
+			var lastColumnKeys = Object.keys(lastColumns);
+			var lastColumn = lastColumnKeys[lastColumnKeys.length - 1];
 
-				var result = {}
-				result[lastDataset] = {};
-				result[lastDataset][lastColumn] = selections[lastDataset][lastColumn];
-				return result;
-			}
+			var result = {}
+			result[lastDataset] = {};
+			result[lastDataset][lastColumn] = selections[lastDataset][lastColumn];
+			return result;
+		}
 		}
 
 		return null;

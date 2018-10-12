@@ -17,13 +17,13 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.qbe.serializer.IDeserializer;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.qbe.serializer.IDeserializer;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -72,6 +72,7 @@ public class MeasureJSONDeserializer implements IDeserializer {
 
 	private Measure deserializeMeasure(JSONObject obj) throws JSONException {
 		return new Measure(obj.getString(FieldsSerializationConstants.ID), obj.getString(FieldsSerializationConstants.ALIAS),
+				null,
 				obj.getString(FieldsSerializationConstants.ICON_CLS), obj.getString(FieldsSerializationConstants.NATURE),
 				obj.getString(FieldsSerializationConstants.FUNCTION), obj);
 	}

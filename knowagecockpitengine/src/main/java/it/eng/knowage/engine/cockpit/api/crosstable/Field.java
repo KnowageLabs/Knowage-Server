@@ -22,16 +22,30 @@ import org.json.JSONObject;
 public class Field {
 	String entityId = null;
 	String alias = null;
+	String sortingId = null;
 	String iconCls = null;
 	String nature = null;
 	JSONObject config = null;
 
-	public Field(String entityId, String alias, String iconCls, String nature, JSONObject config) {
+	public Field(String entityId, String alias, String sortingId, String iconCls, String nature, JSONObject config) {
 		this.entityId = entityId;
 		this.alias = alias;
+		this.sortingId = sortingId;
 		this.iconCls = iconCls;
 		this.nature = nature;
 		this.config = config;
+	}
+
+	public String getSortingId() {
+		return sortingId;
+	}
+
+	public void setSortingId(String sortingId) {
+		this.sortingId = sortingId;
+	}
+
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
 	}
 
 	public String getEntityId() {

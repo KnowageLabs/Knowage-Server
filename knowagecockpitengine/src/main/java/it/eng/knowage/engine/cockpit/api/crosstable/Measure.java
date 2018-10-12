@@ -17,16 +17,16 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
+import org.json.JSONObject;
+
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-
-import org.json.JSONObject;
 
 public class Measure extends Field {
 	IAggregationFunction function = null;
 
-	public Measure(String entityId, String alias, String iconCls, String nature, String function, JSONObject config) {
-		super(entityId, alias, iconCls, nature, config);
+	public Measure(String entityId, String alias, String sortingId, String iconCls, String nature, String function, JSONObject config) {
+		super(entityId, alias, sortingId, iconCls, nature, config);
 		this.function = AggregationFunctions.get(function);
 	}
 
