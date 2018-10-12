@@ -22,8 +22,8 @@
  */
 
 angular
-	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule','driversExecutionModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log,driversExecutionService) {
+	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule','driversExecutionModule', 'businessModelOpeningModule'])
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
 
 		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
 
@@ -94,17 +94,16 @@ angular
 
 		};
 
-		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService) {
+		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
 
 			$scope.businessModel = execProperties;
-			$scope.drivers = drivers;
-
-			$scope.showDrivers = true;
+			$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
 			if($scope.businessModel.parametersData.documentParameters){
-			$scope.businessModel.executed = false;
+			$scope.showDrivers = true;
+			$scope.showQbe = false;
 			}else{
 				$scope.showDrivers = false;
-				$scope.businessModel.executed = true;
+				$scope.showQbe = true;
 			}
 			$scope.documentViewerUrl = url;
 

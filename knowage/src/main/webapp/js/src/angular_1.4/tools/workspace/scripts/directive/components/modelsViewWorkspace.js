@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 	angular
-	.module('models_view_workspace', ['driversExecutionModule'])
+	.module('models_view_workspace', ['driversExecutionModule', 'businessModelOpeningModule','componentTreeModule'])
 
 	/**
 	 * The HTML content of the Recent view (recent documents).
@@ -39,7 +39,7 @@
 	});
 
 	function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window,
-			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter,driversExecutionService){
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversExecutionService, bmOpen_urlViewPointService, bmOpen_sessionParameterService){
 
 		$scope.businessModelsInitial=[];
 		$scope.federationDefinitionsInitial=[];
@@ -67,72 +67,9 @@
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
-			$scope.drivers ;
-
-//				{allowInternalNodeSelection: true,
-//					dataDependencies: [],
-//					dependsOn: {},
-//					driverLabel: "Tree inner node",
-//					driverUseLabel: "A",
-//					id: 263,
-//					label: "Tree inner node",
-//					lovDependencies: [],
-//					mandatory: true,
-//					multivalue: false,
-//					selectedLayer: null,
-//					selectedLayerProp: null,
-//					selectionType: "",
-//					showOnPanel: "true",
-//					type: "STRING",
-//					typeCode: "QUERY",
-//					urlName: "par_cross2",
-//					valueSelection: "lov",
-//					visible: true,
-//					visualDependencies: []},
-//					{
-//					allowInternalNodeSelection: false,
-//					dataDependencies: [],
-//					dependsOn: {},
-//					driverLabel: "Tree",
-//					driverUseLabel: "all",
-//					id: 262,
-//					label: "tree",
-//					lovDependencies: [],
-//					mandatory: true,
-//					multivalue: false,
-//					selectedLayer: null,
-//					selectedLayerProp: null,
-//					selectionType: "TREE",
-//					showOnPanel: "true",
-//					type: "STRING",
-//					typeCode: "QUERY",
-//					urlName: "par_cross",
-//					valueSelection: "lov",
-//					visible: true,
-//					visualDependencies: []
-//					},
-//					{urlName:"outputType",
-//						visible:true,
-//						dependsOn:{},
-//						selectedLayerProp:null,
-//						dataDependencies:[],
-//						valueSelection:"man_in",
-//						showOnPanel:"true",
-//						driverUseLabel:"All",
-//						label:"outputType",
-//						selectedLayer:null,
-//						type:"STRING",
-//						driverLabel:"MANUAL_STRING",
-//						mandatory:false,
-//						allowInternalNodeSelection:false,
-//						lovDependencies:[],
-//						typeCode:"MAN_IN",
-//						multivalue:false,
-//						selectionType:"",
-//						visualDependencies:[],"id":266}
-//					];
+			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel);
 			businessModel.parametersData={}
-			businessModel.parametersData.documentParameters = $scope.drivers;
+			businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;
 			var modelName= businessModel.name;
 			var dataSource=businessModel.dataSourceLabel;
 			var url = datasetParameters.qbeFromBMServiceUrl
@@ -143,7 +80,7 @@
 				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
 
 			if( driversPerModel.length > 0){
-				$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers);
+				$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
 			}else{
 				 $qbeViewer.openQbeInterfaceFromModel($scope,url);
 			}

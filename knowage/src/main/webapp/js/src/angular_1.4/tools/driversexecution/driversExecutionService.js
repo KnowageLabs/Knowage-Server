@@ -1,7 +1,7 @@
 
 (function() {
-	angular.module('driversExecutionModule',[])
-		.service('driversExecutionService',['sbiModule_translate',function(sbiModule_translate){
+	angular.module('driversExecutionModule')
+		.service('driversExecutionService',['sbiModule_translate', 'driversDependencyService',function(sbiModule_translate, driversDependencyService){
 			var executionService = {}
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
@@ -153,6 +153,16 @@
 					result = "MM/dd/yyyy"
 				}
 				return result;
+			};
+
+			executionService.buildCorrelation = function(parameters, execProperties){
+				driversDependencyService.buildVisualCorrelationMap(parameters,execProperties);
+				driversDependencyService.buildDataDependenciesMap(parameters,execProperties);
+				driversDependencyService.buildLovCorrelationMap(parameters,execProperties);
+				//INIT VISUAL CORRELATION PARAMS
+				for(var i=0; i<parameters.length; i++){
+					driversDependencyService.updateVisualDependency(parameters[i],execProperties);
+				}
 			};
 
 			var resetWithoutDefaultValues = function(parameter){

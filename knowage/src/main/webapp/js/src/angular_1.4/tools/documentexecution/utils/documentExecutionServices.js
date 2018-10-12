@@ -596,7 +596,7 @@
 									sbiModule_i18n.loadI18nMap().then(function() {
 
 										//correlation
-										buildCorrelation(execProperties.parametersData.documentParameters);
+										buildCorrelation(execProperties.parametersData.documentParameters, execProperties);
 
 										//setting default value
 										serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);

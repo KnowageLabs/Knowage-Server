@@ -74,9 +74,13 @@
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 
 			var params = {};
-			params.label = $scope.execProperties.executionInstance.OBJECT_LABEL;
+			if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+				params.label = $scope.execProperties.executionInstance.OBJECT_LABEL;
+			} else {
+				params.name = $scope.execProperties.executionInstance.OBJECT_NAME;
+			}
 			params.role=$scope.execProperties.selectedRole.name;
-			params.biparameterId=$scope.parameter.urlName;
+			params.parameterId=$scope.parameter.urlName;
 			params.mode='complete';
 			params.treeLovNode=treeLovNode;
 			params.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
@@ -497,7 +501,11 @@
 						};
 						// BACKEND FILTERING
 						var objPost = {};
-						objPost.OBJECT_LABEL = $scope.execProperties.executionInstance.OBJECT_LABEL;
+						if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+							objPost.OBJECT_LABEL = $scope.execProperties.executionInstance.OBJECT_LABEL;
+						} else {
+							objPost.OBJECT_NAME = $scope.execProperties.executionInstance.OBJECT_NAME;
+						}
 						objPost.ROLE = $scope.execProperties.selectedRole.name;
 						objPost.PARAMETER_ID = paramDialogCtrl.tempParameter.urlName;
 						objPost.MODE = 'extra';

@@ -61,12 +61,12 @@ public class BusinessModelOpenUtils {
 
 	public static List<BusinessModelDriverRuntime> getParameters(MetaModel businessModel, String executionRole, Locale locale, String modality,
 			BusinessModelRuntime dum) {
-		List<BusinessModelDriverRuntime> toReturn = getParameters(businessModel, executionRole, locale, modality, null, true, dum);
+		List<BusinessModelDriverRuntime> toReturn = getParameters(businessModel, executionRole, locale, modality, true, dum);
 		return toReturn;
 	}
 
 	public static List<BusinessModelDriverRuntime> getParameters(MetaModel businessModel, String executionRole, Locale locale, String modality,
-			List<String> parsFromCross, boolean loadAdmissible, BusinessModelRuntime dum) {
+			boolean loadAdmissible, BusinessModelRuntime dum) {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
 		List<BusinessModelDriverRuntime> parametersForExecution = null;
 		try {
@@ -78,10 +78,10 @@ public class BusinessModelOpenUtils {
 					BIMetaModelParameter parameter = it.next();
 
 					// check if coming from cross
-					boolean comingFromCross = false;
-					if (parsFromCross != null && parsFromCross.contains(parameter.getParameterUrlName())) {
-						comingFromCross = true;
-					}
+					// boolean comingFromCross = false;
+					// if (parsFromCross != null && parsFromCross.contains(parameter.getParameterUrlName())) {
+					// comingFromCross = true;
+					// }
 
 					parametersForExecution.add(new BusinessModelDriverRuntime(parameter, executionRole, locale, businessModel, dum, parameters));
 				}

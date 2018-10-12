@@ -1,6 +1,6 @@
 (function() {
 	var driversExecutionModule = angular.module('driversExecutionModule');
-		driversExecutionModule.service('driversDependencyService',[function(){
+		driversExecutionModule.service('driversDependencyService', [function(){
 			var dependencyService = {};
 			dependencyService.parametersWithVisualDependency = [];
 			dependencyService.parametersWithDataDependency = [];

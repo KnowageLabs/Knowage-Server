@@ -509,18 +509,18 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		// decode requestVal parameters
-		JSONObject requestValParams = requestVal.getJSONObject("parameters");
-		if (requestValParams != null && requestValParams.length() > 0)
-			requestVal.put("parameters", decodeRequestParameters(requestValParams));
+		// JSONObject requestValParams = requestVal.getJSONObject("parameters");
+		// if (requestValParams != null && requestValParams.length() > 0)
+		// requestVal.put("parameters", decodeRequestParameters(requestValParams));
 		String name = requestVal.getString("name");
 		String role = requestVal.getString("role");
-		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
+		// JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
 		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
 			sessionParametersMap = getSessionParameters(requestVal);
 
 		// keep track of par coming from cross to get descriptions from admissible values
-		List<String> parsFromCross = new ArrayList<String>();
+		// List<String> parsFromCross = new ArrayList<String>();
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
@@ -530,12 +530,11 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
-		applyRequestParameters(businessModel, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
+		// applyRequestParameters(businessModel, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), locale);
-		List<BusinessModelDriverRuntime> parameters = BusinessModelOpenUtils.getParameters(businessModel, role, req.getLocale(), null, parsFromCross, true,
-				dum);
+		List<BusinessModelDriverRuntime> parameters = BusinessModelOpenUtils.getParameters(businessModel, role, req.getLocale(), null, true, dum);
 		for (BusinessModelDriverRuntime objParameter : parameters) {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
@@ -731,8 +730,8 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				DefaultValuesList valueList = null;
 				// check if the parameter is really valorized (for example if it isn't an empty list)
 				List lstValues = (List) parameterAsMap.get("parameterValue");
-				if (lstValues.size() == 0)
-					jsonCrossParameters.remove(objParameter.getId());
+				// if (lstValues.size() == 0)
+				// jsonCrossParameters.remove(objParameter.getId());
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
@@ -742,13 +741,13 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 				valueList = objParameter.getDefaultValues();
 
-				if (jsonCrossParameters.isNull(objParameter.getId())
-						// && !sessionParametersMap.containsKey(objParameter.getId())) {
-						&& !sessionParametersMap.containsKey(sessionKey)) {
-					if (valueList != null) {
-						parameterAsMap.put("parameterValue", valueList);
-					}
-				}
+				// if (jsonCrossParameters.isNull(objParameter.getId())
+				// // && !sessionParametersMap.containsKey(objParameter.getId())) {
+				// && !sessionParametersMap.containsKey(sessionKey)) {
+				// if (valueList != null) {
+				// parameterAsMap.put("parameterValue", valueList);
+				// }
+				// }
 
 				// in every case fill default values!
 				parameterAsMap.put("driverDefaultValue", valueList);
@@ -1137,7 +1136,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		role = (String) requestVal.opt("role");
 		name = (String) requestVal.opt("name");
-		driverId = (String) requestVal.opt("driverId");
+		driverId = (String) requestVal.opt("parameterId");
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
 

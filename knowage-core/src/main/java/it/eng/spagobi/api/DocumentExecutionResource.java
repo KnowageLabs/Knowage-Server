@@ -391,8 +391,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
 							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
-						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
-								objParameter.getDriver(), req);
+						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj, objParameter.getDriver(), req);
 
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
@@ -969,7 +968,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		role = (String) requestVal.opt("role");
 		label = (String) requestVal.opt("label");
-		biparameterId = (String) requestVal.opt("biparameterId");
+		biparameterId = (String) requestVal.opt("parameterId");
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
 
