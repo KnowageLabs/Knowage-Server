@@ -17,7 +17,7 @@
 		   </generator>
         </id>
         
-        <property name="name" type="string" column="NAME" length="40" not-null="true"/>
+        <property name="name" type="string" column="NAME" unique="true" length="40" not-null="true"/>
         
         <property name="type" type="int" column="TYPE" />
         
