@@ -115,7 +115,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.showSaveAndCancelButtons = false;
 
 	$scope.scheduling = {};
-	
+
 	$scope.disablePersisting = false;
 
 	// The current date for data pickers for Scheduling
@@ -811,7 +811,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.parametersCounter = 0;
 
 	$scope.parametersAddItem = function(event) {
-		
+
 		if($scope.selectedDataSet.isPersisted == true) {
 			var confirm = $mdDialog.confirm()
 				         .title($scope.translate.load("sbi.ds.parameters.dialog.title"))
@@ -820,14 +820,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				         .ariaLabel("Add dataset parameter")
 				         .ok($scope.translate.load("sbi.general.yes"))
 				         .cancel($scope.translate.load("sbi.general.No"));
-			
+
 			$mdDialog.show(confirm).then(
 					function() {
 						$scope.selectedDataSet.isPersisted = false;
 						$scope.selectedDataSet.persistTableName = '';
 						$scope.disablePersisting = true;
 						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
-						
+
 						$timeout(
 									function() {
 										var page = $scope.tableLastPage("datasetParametersTable");
@@ -839,10 +839,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 								);
 					}
 			);
-		} else {			
+		} else {
 			$scope.disablePersisting = true;
 			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
-			
+
 			$timeout(
 						function() {
 							var page = $scope.tableLastPage("datasetParametersTable");
@@ -853,7 +853,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						300
 					);
 		}
-		
+
 	}
 
 	$scope.parameterDelete =
@@ -887,13 +887,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 				break;
 						 			}
 						 		}
-								
+
 								if($scope.parameterItems.length == 0) {
 									$scope.disablePersisting = false;
 								}
-								
+
 					 		}
-						);								
+						);
 	 		}
 
 	 	}
@@ -1764,21 +1764,21 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 $scope.step=1;
 
 		 // Load the Dataset's older versions
-		 if(!item.hasOwnProperty('selected') || 
+		 if(!item.hasOwnProperty('selected') ||
 			(item.hasOwnProperty('selected') && item.selected != true)) {
 			var defer = $q.defer();
 			var olderVersionsPromise = loadOlderVersions(item.id);
-			olderVersionsPromise.then(function(response){											 		
+			olderVersionsPromise.then(function(response){
 				item.dsVersions = response;
 				item.selected = true;
 				$scope.selectedDataSetInit = angular.copy(item);
 				$scope.selectedDataSet = angular.copy(item);
-				defer.resolve(response);				
-			}, function(error){					
-				sbiModule_messaging.showErrorMessage(error, 'Error');				
-			});			
+				defer.resolve(response);
+			}, function(error){
+				sbiModule_messaging.showErrorMessage(error, 'Error');
+			});
 		 }
-		
+
 		 // DS not yet selected
 		 if (!$scope.selectedDataSet) {
 			 //console.log("a2");
@@ -1847,7 +1847,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.then(
 							function() {
 
-								
+
 								selectDataset(item,index);
 								$scope.setFormNotDirty();
 					 		},
@@ -1889,7 +1889,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		} else {
 			$scope.disablePersisting = false;
 		}
-		
+
 		// SCHEDULING
 		if ($scope.selectedDataSet.isScheduled) {
 			$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
@@ -2166,22 +2166,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
-	
+
 	var loadOlderVersions = function(id) {
 		var deferred = $q.defer();
-				
+
 		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
 		promise.then(function(response){
-			var result = response.data.root;				
+			var result = response.data.root;
 			deferred.resolve(result);
 		}, function(error) {
 			if(error.data && error.data.errors)
 				deferred.reject(error.data.errors[0].message);
    		});
-			
+
 		return deferred.promise;
 	}
-	
+
 	$scope.refactorFileDatasetConfig = function(item) {
 
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
@@ -2359,7 +2359,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					sparqlExecutionTimeout: 30
 
 			}
-						
+
 			$scope.datasetsListTemp.push(object);
 			$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
 			$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]); // Reset the selection (none dataset item will be selected) (danristo)
@@ -2367,7 +2367,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			$scope.transformDatasetState = false;
 			$scope.disablePersisting = false;
-			
+
 			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
 			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
 			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
@@ -2379,6 +2379,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.saveDataset = function() {
 
+		//If original dataSet is not changed , there is no need to continue with this funcion
+		for(var i = 0; i < $scope.datasetsListTemp.length; i++){
+			if(angular.equals($scope.selectedDataSet,$scope.datasetsListTemp[i])){
+				return;
+			}
+		}
+		//**************************
 		// Transformation refactoring (if the transformation is not checked, clean all the data that bind to the model for this option)
 		if ($scope.transformDatasetState==false) {
 			$scope.selectedDataSet.trasfTypeCd ? $scope.selectedDataSet.trasfTypeCd="" : null;
