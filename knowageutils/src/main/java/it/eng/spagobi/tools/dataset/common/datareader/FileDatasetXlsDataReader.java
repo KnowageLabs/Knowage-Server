@@ -26,13 +26,11 @@ import java.util.Date;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,9 +47,20 @@ import it.eng.spagobi.utilities.StringUtils;
 /**
  * @author Marco Cortella marco.cortella@eng.it
  */
-public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
+public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 	private static transient Logger logger = Logger.getLogger(FileDatasetXlsDataReader.class);
+
+	private static final String EXCEL_FILE_TYPE = "fileType";
+	public static final String EXCEL_FILE_SKIP_ROWS = "skipRows";
+	public static final String EXCEL_FILE_LIMIT_ROWS = "limitRows";
+	public static final String EXCEL_FILE_SHEET_NUMBER = "xslSheetNumber";
+
+	private String skipRows;
+	private String limitRows;
+	private String xslSheetNumber;
+	private int numberOfColumns = 0;
+	private String fileType;
 
 	public FileDatasetXlsDataReader(JSONObject jsonConf) {
 		super();
@@ -75,6 +84,11 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 					setXslSheetNumber(jsonConf.get(EXCEL_FILE_SHEET_NUMBER).toString());
 				} else {
 					setXslSheetNumber("");
+				}
+				if (jsonConf.get(EXCEL_FILE_TYPE) != null) {
+					setFileType(jsonConf.get(EXCEL_FILE_TYPE).toString());
+				} else {
+					setFileType("");
 				}
 			} catch (JSONException e) {
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
@@ -123,8 +137,9 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		dataStore = new DataStore();
 
 		try {
-			HSSFWorkbook wb = new HSSFWorkbook(inputDataStream);
-			HSSFSheet sheet = getSheet(wb);
+			ExcelDataReaderFactory excelFactory = new ExcelDataReaderFactory();
+			Workbook wb = excelFactory.getWorkookInstance(getFileType(), inputDataStream);
+			Sheet sheet = getSheet(wb);
 
 			int initialRow = 0;
 
@@ -189,7 +204,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 				 */
 				if (r > initialRow || r == 0) {
 
-					HSSFRow row = sheet.getRow(r);
+					Row row = sheet.getRow(r);
 					if (checkIfRowIsEmpty(row)) {
 						continue;
 					}
@@ -261,8 +276,8 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return true;
 	}
 
-	private HSSFSheet getSheet(HSSFWorkbook workbook) {
-		HSSFSheet sheet;
+	private Sheet getSheet(Workbook workbook) {
+		Sheet sheet;
 
 		int numberOfSheets = workbook.getNumberOfSheets();
 		if ((getXslSheetNumber() != null) && (!(getXslSheetNumber().isEmpty()))) {
@@ -284,7 +299,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return sheet;
 	}
 
-	private MetaData parseHeader(DataStore dataStore, HSSFRow row) {
+	private MetaData parseHeader(DataStore dataStore, Row row) {
 		MetaData dataStoreMeta = new MetaData();
 
 		int cells = row.getPhysicalNumberOfCells();
@@ -292,7 +307,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			Cell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -313,7 +328,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return dataStoreMeta;
 	}
 
-	private IRecord parseRow(DataStore dataStore, HSSFRow row) {
+	private IRecord parseRow(DataStore dataStore, Row row) {
 
 		IRecord record = new Record(dataStore);
 
@@ -324,7 +339,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < lastColumn; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			Cell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -355,18 +370,18 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		return record;
 	}
 
-	private Object parseCell(HSSFCell cell) {
+	private Object parseCell(Cell cell) {
 		Object valueField = null;
 
 		if (cell == null)
 			return "";
 
 		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_FORMULA:
+		case Cell.CELL_TYPE_FORMULA:
 			valueField = cell.getCellFormula().toString();
 			break;
 
-		case HSSFCell.CELL_TYPE_NUMERIC:
+		case Cell.CELL_TYPE_NUMERIC:
 			if (DateUtil.isCellDateFormatted(cell)) {
 				/**
 				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
@@ -394,7 +409,7 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 			}
 			break;
 
-		case HSSFCell.CELL_TYPE_STRING:
+		case Cell.CELL_TYPE_STRING:
 			valueField = cell.getStringCellValue();
 			break;
 
@@ -402,6 +417,46 @@ public class FileDatasetXlsDataReader extends AbstractExcelDataReader {
 		}
 
 		return valueField;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getSkipRows() {
+		return skipRows;
+	}
+
+	public void setSkipRows(String skipRows) {
+		this.skipRows = skipRows;
+	}
+
+	public String getLimitRows() {
+		return limitRows;
+	}
+
+	public void setLimitRows(String limitRows) {
+		this.limitRows = limitRows;
+	}
+
+	public String getXslSheetNumber() {
+		return xslSheetNumber;
+	}
+
+	public void setXslSheetNumber(String xslSheetNumber) {
+		this.xslSheetNumber = xslSheetNumber;
+	}
+
+	public int getNumberOfColumns() {
+		return numberOfColumns;
+	}
+
+	public void setNumberOfColumns(int numberOfColumns) {
+		this.numberOfColumns = numberOfColumns;
 	}
 
 	@Override

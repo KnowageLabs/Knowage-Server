@@ -28,7 +28,6 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsxDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -115,12 +114,9 @@ public class FileDataSet extends ConfigurableDataSet {
 		if ("CSV".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [CSV]");
 			setDataReader(new FileDatasetCsvDataReader(jsonConf));
-		} else if ("XLS".equalsIgnoreCase(fileType)) {
-			logger.info("File format: [XLS Office 2003]");
+		} else if ("XLS".equalsIgnoreCase(fileType) || "XLSX".equalsIgnoreCase(fileType)) {
+			logger.info("File format: [XLS Office 2003] or [XLSX Office 2007+]");
 			setDataReader(new FileDatasetXlsDataReader(jsonConf));
-		} else if ("XLSX".equalsIgnoreCase(fileType)) {
-			logger.info("File format: [XLSX Office 2007+]");
-			setDataReader(new FileDatasetXlsxDataReader(jsonConf));
 		} else {
 			throw new IllegalArgumentException("[" + fileExtension + "] is not a supported file type");
 		}
