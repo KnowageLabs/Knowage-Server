@@ -2031,6 +2031,12 @@
 	}
 
 	.cockpitSelectorWidget{
+	    .cockpitSelectorWidgetCombobox {
+	        md-input-container {
+	            width: 100%;
+	            font-size: $baseFontSize;
+	        }
+	    }
 		.grid {
 			.cSelWCheckContainer, md-radio-group {
 				display: flex;
