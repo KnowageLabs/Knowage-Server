@@ -978,7 +978,12 @@
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')
 						dataLabels: {
+		                    
+		                    #if(!$chart.LEGEND.show)
 		                    enabled: $relatedSerieShowValue,
+		                    #elseif($chart.LEGEND.show)
+		                    enabled: false,
+		                    #end
 		                    
 		                    #set ($postfixValueAsString = '')
 		                    #if ($relatedSerie.postfixChar != '')
@@ -1313,6 +1318,36 @@
             	@author: danristo (danilo.ristovski@mht.net)
             *#
         series:{
+
+        	events: {
+
+				checkboxClick: function (event){
+
+					if(event.checked){
+
+						this.update({
+							dataLabels:{
+								enabled: true
+							}
+						});
+
+					return true; 
+					}else{
+
+						this.update({
+							dataLabels:{
+								enabled: false
+							}
+						});
+
+						return false; 
+					}
+
+				},
+
+			},   
+			showCheckbox: true,
+        
         	turboThreshold: 15000
 		},
     	scatter: {
