@@ -1689,7 +1689,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:left" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
-		            											md-min-date="minStartDate" md-max-date="maxStartDate" 
 		            											ng-change="setFormDirty();checkPickedStartDate();"
 		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>
@@ -1702,7 +1701,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:right" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
-		            											md-min-date="minEndDate" md-max-date="maxEndDate" 
 		            											ng-change="setFormDirty();checkPickedEndDate();"
 		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>

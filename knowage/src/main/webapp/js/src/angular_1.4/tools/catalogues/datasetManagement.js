@@ -119,17 +119,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.disablePersisting = false;
 
-	// The current date for data pickers for Scheduling
-	var currentDate = new Date();
-
-	$scope.minStartDate = new Date(
-		currentDate.getFullYear(),
-		currentDate.getMonth(),
-		currentDate.getDate()
-	);
-
-	$scope.minEndDate = $scope.minStartDate;
-
 	$scope.checkPickedEndDate = function() {
 
 		if (new Date($scope.selectedDataSet.endDate) < new Date($scope.selectedDataSet.startDate)) {
