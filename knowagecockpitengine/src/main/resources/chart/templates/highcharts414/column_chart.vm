@@ -1435,8 +1435,12 @@
 					
 						dataLabels: 
 						{
-		                    enabled: $relatedSerieShowValue,
-		                   
+							#if(!$chart.LEGEND.show)
+							enabled: $relatedSerieShowValue,
+							#elseif($chart.LEGEND.show)
+							enabled: false,
+							#end
+
 		                    #set ($postfixValueAsString = '')
 		                     
 		                    #if ($relatedSerie.postfixChar != '')
@@ -1631,7 +1635,12 @@
 			], 
 						dataLabels: 
 						{
-		                    enabled: $enableValues,
+		                   
+							#if(!$chart.LEGEND.show)
+							enabled: $relatedSerieShowValue,
+							#elseif($chart.LEGEND.show)
+							enabled: false,
+							#end
 		                    
 		                    #set ($postfixValueAsString = '')
 		                    
@@ -2210,6 +2219,36 @@
 	        },
       	#end
         series: {
+        	
+        	events: {
+
+				checkboxClick: function (event){
+
+					if(event.checked){
+
+						this.update({
+							dataLabels:{
+								enabled: true
+							}
+						});
+
+					return true; 
+					}else{
+
+						this.update({
+							dataLabels:{
+								enabled: false
+							}
+						});
+
+						return false; 
+					}
+
+				},
+
+			},   
+			showCheckbox: true,
+        
             cursor: 'pointer', 
             #if(!$exportWebApp)
             point: {
