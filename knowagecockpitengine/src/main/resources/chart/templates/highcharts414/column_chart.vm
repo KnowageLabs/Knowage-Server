@@ -744,7 +744,10 @@
     	{
     		label:
     		{
-	    		text :"$xAxis.plotBands.get(0).label.text",
+	    		text:"",
+				#if($xAxis.plotBands.get(0).label)
+				text :"$xAxis.plotBands.get(0).label.text",
+				#end
 	    		align :"$xAxis.plotBands.get(0).label.align",
     		},
     		color: "$xAxis.plotBands.get(0).color",
@@ -756,7 +759,10 @@
    		{
    			label:
    			{
-   				text :"$xAxis.plotLines.get(0).label.text",
+   				text:"",
+				#if($xAxis.plotLines.get(0).label)
+				text :"$xAxis.plotLines.get(0).label.text",
+				#end
    				align :"$xAxis.plotLines.get(0).label.align", 
    			},
    			color: "$xAxis.plotLines.get(0).color",
@@ -1020,7 +1026,10 @@
     	{	
     		label:
     		{
-    			text :"$yAxis.plotBands.get(0).label.text",
+    			text:"",
+   				#if($yAxis.plotBands.get(0).label)
+   				text :"$yAxis.plotBands.get(0).label.text",
+   				#end
     			align :"$yAxis.plotBands.get(0).label.align",
     		},
     		color: "$yAxis.plotBands.get(0).color",
@@ -1032,7 +1041,10 @@
    		{
    			label:
    			{
+   				text:"",
+   				#if($yAxis.plotLines.get(0).label)
    				text :"$yAxis.plotLines.get(0).label.text",
+   				#end
    				align :"$yAxis.plotLines.get(0).label.align",
    			},
    			color: "$yAxis.plotLines.get(0).color",
