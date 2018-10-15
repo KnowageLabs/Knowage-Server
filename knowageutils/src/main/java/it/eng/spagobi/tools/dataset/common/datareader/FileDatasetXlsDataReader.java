@@ -415,7 +415,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			valueField = cell.getStringCellValue();
 			break;
 
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 			valueField = "";
 			break;
 
