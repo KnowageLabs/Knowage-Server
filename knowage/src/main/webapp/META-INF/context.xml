@@ -10,5 +10,5 @@
 	<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 	<ResourceLink global="host_url" name="host_url" type="java.lang.String" />
 	<ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
-	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="commonj.work.WorkManager" />
+	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="commonj.work.WorkManager" factory="de.myfoo.commonj.work.FooWorkManagerFactory"/>
 </Context>

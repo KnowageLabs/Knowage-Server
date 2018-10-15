@@ -9,5 +9,4 @@
 	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String" />
 	<ResourceLink global="hmacKey" name="hmacKey" type="java.lang.String"/>
 	<ResourceLink global="service_url" name="service_url" type="java.lang.String" />
-	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="commonj.work.WorkManager" />
 </Context>
