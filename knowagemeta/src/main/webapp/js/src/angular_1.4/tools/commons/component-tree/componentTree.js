@@ -84,6 +84,7 @@
 								interceptor : "=?",
 								expandOnClick : "=?",
 								treeRootName : "=?"
+								, forceVisibility: "=?" //boolean value
 							},
 							controller : componentTreeControllerFunction,
 							controllerAs : 'ctrl',
