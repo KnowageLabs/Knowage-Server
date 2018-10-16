@@ -55,7 +55,8 @@
 				, expandOnClick :"=?"
 				, removeEmptyFolder :  '='
 				, serverLoading : "=?"
-					, isInternalSelectionAllowed:"=?"
+				, isInternalSelectionAllowed: "=?"
+				, forceVisibility: "=?" //boolean value
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',

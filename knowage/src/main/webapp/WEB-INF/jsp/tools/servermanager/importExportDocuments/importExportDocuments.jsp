@@ -125,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</document-tree>
 								-->
 								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true"
-									selected-item="selected" multi-select="true" show-files="true">
+									selected-item="selected" multi-select="true" show-files="true" force-visibility="true">
 								</component-tree>
 							</div>
 						</div>

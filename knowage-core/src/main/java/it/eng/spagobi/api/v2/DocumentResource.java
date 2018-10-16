@@ -34,15 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -440,7 +432,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
 			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope,
-			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelIn") String objLabelIn, @QueryParam("objLabelNotIn") String objLabelNotIn)
+			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelIn") String objLabelIn, @QueryParam("objLabelNotIn") String objLabelNotIn,
+			@QueryParam("forceVis") @DefaultValue("false") Boolean forceVisibility)
 			throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
@@ -494,7 +487,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 		// hide if user is not admin or devel and visible is false
-		if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+		if (!forceVisibility && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
 				&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			restritions.add(new CriteriaParameter("visible", Short.valueOf("1"), Match.EQ));
 		}
@@ -505,7 +498,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			JSONArray jarr = new JSONArray();
 			if (filterObj != null) {
 				for (BIObject sbiob : filterObj) {
-					if (ObjectsAccessVerifier.canSee(sbiob, profile)) {
+					if (forceVisibility || ObjectsAccessVerifier.canSee(sbiob, profile)) {
 						JSONObject tmp = fromDocumentLight(sbiob);
 						if (loadObjPar != null && loadObjPar == true) {
 							tmp.put("objParameter", fromObjectParameterListLight(sbiob.getBiObjectParameters()));

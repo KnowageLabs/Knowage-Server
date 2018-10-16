@@ -53,6 +53,7 @@
 				, notHideOnLoad : "=?"
 				, interceptor : "=?"
 				, expandOnClick :"=?"
+				, forceVisibility: "=?" //boolean value
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
