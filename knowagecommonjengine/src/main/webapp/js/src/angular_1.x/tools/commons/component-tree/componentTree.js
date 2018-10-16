@@ -42,6 +42,7 @@
 				, isDocumentFn : '&?'
 				, showNodeCheckBoxFn : '&?'
 				, dynamicTree : '@?'
+				, forceVisibility: "=?" //boolean value
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
