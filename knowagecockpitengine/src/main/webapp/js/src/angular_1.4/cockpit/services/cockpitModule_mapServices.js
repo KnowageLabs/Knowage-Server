@@ -72,7 +72,6 @@
 
 										tmpJsonConf.coordinates = jsonConf.coordinates[f];
 										geometry = ms.getGeometry(null, tmpJsonConf, geoFieldConfig);
-										feature = ms.createSingleFeature(geometry)
 										//set ol objects
 										feature = new ol.Feature(geometry)
 
