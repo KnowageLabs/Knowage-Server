@@ -72,6 +72,11 @@
       <type id="structural.tabletype" name="Type"
       description="The role played by this table in the data model (generic, cube or dimension)"
       category="Structural" defaultValue="generic" />
+      
+      <type id="structural.sqlFilter" name="SqlFilter"
+      description="Sql expression for filtering data"
+      category="Structural" defaultValue="" />
+      
     </types>
     
     <typesValues>
