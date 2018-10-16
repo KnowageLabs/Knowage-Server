@@ -1627,7 +1627,6 @@ public class SelfServiceDataSetCRUD {
 			String ckanUrl = req.getParameter("ckanUrl");
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 			String dateFormat = req.getParameter("dateFormat");
-			String timestampFormat = req.getParameter("timestampFormat");
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			if (savingDataset) {
@@ -1641,7 +1640,6 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
