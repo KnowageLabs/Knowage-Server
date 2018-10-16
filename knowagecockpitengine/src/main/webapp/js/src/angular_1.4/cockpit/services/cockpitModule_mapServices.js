@@ -63,7 +63,36 @@
 									isSimpleMarker = false;
 
 								jsonConf.properties = geoFieldConfig.properties;
-								geometry = ms.getGeometry(null, jsonConf, geoFieldConfig);
+								var isComplexFeature = false;
+								if (jsonConf.coordinates.length > 1){
+									//more features within the managed one: it loops on subfeature definition
+									isComplexFeature = true;
+									var tmpJsonConf = angular.copy(jsonConf);
+									for (var f=0; f < jsonConf.coordinates.length; f++){
+
+										tmpJsonConf.coordinates = jsonConf.coordinates[f];
+										geometry = ms.getGeometry(null, tmpJsonConf, geoFieldConfig);
+										feature = ms.createSingleFeature(geometry)
+										//set ol objects
+										feature = new ol.Feature(geometry)
+
+										if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+										//get config for thematize
+										if (selectedMeasure){
+											if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+												cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+											}
+										}
+								        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+
+								       //at least add the layer owner
+								        feature.set("parentLayer",  config.layerID);
+								        feature.set("isSimpleMarker", isSimpleMarker);
+								        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+								        featuresSource.addFeature(feature);
+									}
+								}else
+									geometry = ms.getGeometry(null, jsonConf, geoFieldConfig);
 							}else{
 								console.log("Location got from dataset hasn't a valid json format. Please check it: ["+geoFieldValue+"]");
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
@@ -78,23 +107,26 @@
 							isSimpleMarker = true;
 						    geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
 						}
-						//set ol objects
-						feature = new ol.Feature(geometry)
 
-						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-						//get config for thematize
-						if (selectedMeasure){
-							if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
-								cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+						if (!isComplexFeature){
+							//set ol objects
+							feature = new ol.Feature(geometry)
+
+							if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+							//get config for thematize
+							if (selectedMeasure){
+								if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+									cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+								}
 							}
-						}
-				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+					        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 
-				       //at least add the layer owner
-				        feature.set("parentLayer",  config.layerID);
-				        feature.set("isSimpleMarker", isSimpleMarker);
-				        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-				        featuresSource.addFeature(feature);
+					       //at least add the layer owner
+					        feature.set("parentLayer",  config.layerID);
+					        feature.set("isSimpleMarker", isSimpleMarker);
+					        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+					        featuresSource.addFeature(feature);
+						}
 					}
 
 					return featuresSource;
