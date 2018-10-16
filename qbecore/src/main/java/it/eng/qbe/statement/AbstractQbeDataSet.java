@@ -29,6 +29,10 @@ import java.util.Scanner;
 
 import javax.script.ScriptEngineManager;
 
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
@@ -433,13 +437,29 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
-		UserProfile profile = getUserProfile();
-		LogMF.debug(logger, "User profile is {0}", profile);
-		String datasourceSignature = this.getDataSource().getSignature(profile);
-		String querySignature = getSQLQuery(true);
-		String toReturn = datasourceSignature + "_" + querySignature;
-		LogMF.debug(logger, "Dataset signature is {0}", toReturn);
-		return toReturn;
+		Map paramsMap = getParamsMap();
+		if (paramsMap == null) {
+			paramsMap = new HashMap();
+		}
+
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant is not set");
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(getConfiguration());
+		sb.append("_");
+		sb.append(paramsMap);
+		sb.append("_");
+		sb.append(getSQLQuery(true));
+		sb.append("_");
+		if(getDataSource() != null &&  getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
+			sb.append(getDataSource().getJNDIRunTime(getUserProfile()));
+			sb.append("_");
+		}
+		sb.append(tenant.getName());
+		return sb.toString();
 	}
 
 	@Override

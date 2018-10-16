@@ -137,14 +137,6 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			if (hasBehaviour(QuerableBehaviour.class.getName())) {
 				QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 				String stm = querableBehaviour.getStatement();
-				// stm = stm.replaceAll("''", "'"); why????
-				// This line transforms, for example:
-				// .... where column = 'rock ''n'' roll'
-				// that is correct into
-				// .... where column = 'rock 'n' roll'
-				// THAT IS NOT CORRECT!!!
-				// Commenting out this line solves https://spagobi.eng.it/jira/browse/SPAGOBI-1697 Error in Smart Filter: an error occurs when a static open
-				// filter contains a single quote
 				dataProxy.setStatement(stm);
 			}
 
@@ -162,33 +154,6 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	@Override
 	public IDataStore getDataStore() {
 		return this.dataStore;
-	}
-
-	/**
-	 * Gets the list of names of the profile attributes required.
-	 *
-	 * @return list of profile attribute names
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
-	public List getProfileAttributeNames() throws Exception {
-		List names = new ArrayList();
-		String query = (String) getQuery();
-		while (query.indexOf("${") != -1) {
-			int startind = query.indexOf("${");
-			int endind = query.indexOf("}", startind);
-			String attributeDef = query.substring(startind + 2, endind);
-			if (attributeDef.indexOf("(") != -1) {
-				int indroundBrack = query.indexOf("(", startind);
-				String nameAttr = query.substring(startind + 2, indroundBrack);
-				names.add(nameAttr);
-			} else {
-				names.add(attributeDef);
-			}
-			query = query.substring(endind);
-		}
-		return names;
 	}
 
 	public IDataReader getDataReader() {
@@ -276,8 +241,15 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		sb.append("_");
 		sb.append(paramsMap);
 		sb.append("_");
-		sb.append(getUserParametersAsString());
-		sb.append("_");
+		if (hasBehaviour(QuerableBehaviour.class.getName())) {
+			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
+			sb.append(querableBehaviour.getStatement());
+			sb.append("_");
+		}
+		if(getDataSource() != null &&  getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
+			sb.append(getDataSource().getJNDIRunTime(getUserProfile()));
+			sb.append("_");
+		}
 		sb.append(tenant.getName());
 		return sb.toString();
 	}
@@ -290,17 +262,6 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		throw new UnreachableCodeException("getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
-	}
-
-	protected String getUserParametersAsString() {
-		StringBuilder res = new StringBuilder();
-		for (Entry<String, Object> entry : new TreeMap<String, Object>(userProfileParameters).entrySet()) {
-			res.append(",");
-			res.append(entry.getKey());
-			res.append(":");
-			res.append(entry.getValue());
-		}
-		return res.toString();
 	}
 
 }
