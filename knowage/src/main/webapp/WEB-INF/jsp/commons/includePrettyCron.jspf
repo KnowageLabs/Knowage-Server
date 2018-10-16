@@ -6,4 +6,4 @@
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/prettyCron/moment-with-locales.min.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/prettyCron/later.min.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/prettyCron/prettycron.min.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/prettyCron/prettycron.js")%>'></script>
