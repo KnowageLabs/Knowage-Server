@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ALERT>
-	<ACTION name="Send mail" className="it.eng.spagobi.tools.alert.action.SendMail"
+	<ACTION name="Send mail" className="it.eng.knowage.enterprise.tools.alert.action.SendMail"
 		template="js/src/angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html" />
-	<ACTION name="Execute ETL Document" className="it.eng.spagobi.tools.alert.action.ExecuteETLDocument"
+	<ACTION name="Execute ETL Document" className="it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument"
 		template="js/src/angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html" />
-	<ACTION name="Context Broker" className="it.eng.spagobi.tools.alert.action.ContextBroker"
+	<ACTION name="Context Broker" className="it.eng.spagobi.tools.alert.action.NotifyContextBroker"
         template="js/src/angular_1.4/tools/alert/actions/contextBroker/templates/contextBroker.html" />
 	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener"
 		template="js/src/angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html" />

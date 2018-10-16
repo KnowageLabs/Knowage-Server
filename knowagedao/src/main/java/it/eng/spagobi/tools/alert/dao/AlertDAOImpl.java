@@ -20,8 +20,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.hibernate.Session;
 
 import java.util.*;
+import org.apache.log4j.Logger;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
+
+	private static Logger logger = Logger.getLogger(AlertDAOImpl.class);
 
     @Override
     public List<AlertListener> listListener() {
@@ -55,7 +58,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
                         ret.add(action);
                     }
                 } catch (ClassNotFoundException e) {
-                    // nothing to do here...
+                    logger.info("Class [" + action.getClassName() + "] not loaded.");
                 }
             }
         } catch (Exception e) {
