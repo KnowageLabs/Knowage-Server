@@ -6,7 +6,6 @@ angular.module('metaManager').controller('businessModelAttributeController', [ '
 angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config','metaModelServices',calculatedBusinessColumnsControllerFunction ]);
 angular.module('metaManager').controller('businessViewJoinRelationshipsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',businessViewJoinRelationshipsControllerFunction ]);
 
-
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
 $scope.tabResource={selectedBusinessTab:"propertiestab"};
 
@@ -619,4 +618,3 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 		   });
 	}
 }
-

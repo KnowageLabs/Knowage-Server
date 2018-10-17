@@ -125,11 +125,11 @@ function checkModelControllerFunction($scope, sbiModule_translate,sbiModule_rest
 
 }
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','sbiModule_user', 'businessViewFilterService', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','sbiModule_config','sbiModule_user', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,sbiModule_user, businessViewFilterService) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,sbiModule_user) {
 	$scope.translate = sbiModule_translate;
 	$scope.physicalModelTreeInterceptor = {};
 	$scope.businessModelTreeInterceptor = {};
@@ -177,80 +177,45 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	}
 	$window.parent.document.getElementById('loadMask').style.display='none';
 
-	$scope.testService = businessViewFilterService;
-	
-	var listBmDrivers = [];
-	
-	
+
 	$scope.saveModel=function(){
 		var dataToSend={};
 		dataToSend.name=bmName;
 		dataToSend.id=bmId;
-		dataToSend.inputField=businessViewFilterService.obj.input;
 		
-		var flag = false;
 		
-		var pattern = /\$p{(.+)}/g;
-		$scope.result = $scope.testService.obj.input.match(pattern);
-		$scope.res = pattern.exec($scope.testService.obj.input);
-		$scope.result = $scope.res[1];
-		
-		var promise = $scope.testService.getBusinessModelDrivers();
-		promise.then(function(response) {
-			
-			listBmDrivers = response;
-			
-			if($scope.result && listBmDrivers.length != 0) {
-				//var bmDrivers = $scope.testService.getBusinessModelDrivers();
-				for(var i=0; i<listBmDrivers.length; i++) {
-					if(listBmDrivers[i].parameterUrlName == $scope.result) {
-						flag = true;
-						sbiModule_restServices.promisePost("1.0/metaWeb", "checkRelationships", metaModelServices.createRequestRest(dataToSend))
-							.then(
+		sbiModule_restServices.promisePost("1.0/metaWeb", "checkRelationships", metaModelServices.createRequestRest(dataToSend))
+		.then(
+				function(response) {
+					//check if any error was found during the validation
+					if (response.data.incorrectRelationships !== undefined && response.data.incorrectRelationships.length > 0) {
+						//show the warning dialog
+						$mdDialog.show({
+							controller: 'checkModelController',
+							preserveScope: true,
+							locals: {incorrectRelationships:response.data.incorrectRelationships, dataToSend: dataToSend},
+							templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/checkModel.jsp',
+							clickOutsideToClose:false,
+							escapeToClose :false,
+							fullscreen: true
+						});
+					} else {
+						//After the check if there aren't warnings, let's continue saving
+						sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
+						.then(
 								function(response) {
-									//check if any error was found during the validation
-									if (response.data.incorrectRelationships !== undefined && response.data.incorrectRelationships.length > 0) {
-									//show the warning dialog
-										$mdDialog.show({
-										controller: 'checkModelController',
-										preserveScope: true,
-										locals: {incorrectRelationships:response.data.incorrectRelationships, dataToSend: dataToSend},
-										templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/checkModel.jsp',
-										clickOutsideToClose:false,
-										escapeToClose :false,
-										fullscreen: true
-										});
-									} else {
-										//After the check if there aren't warnings, let's continue saving
-										sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
-											.then(
-												function(response) {
-													sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
-
-												},function(response) {
-													sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
-												});
-									}
+									sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
 
 								},function(response) {
-									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.checkmodel.error"));
+									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
 								});
-						
 					}
-					
-				}
-				if(flag == false) {
-					sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.business.filter.errorMessage"), "");
-				}
-			} else {
-				sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.business.filter.errorMessage"), "");
-				
-			}
-			
-		}, function(response) {
-			sbiModule_restServices.errorHandler(response.data, sbiModule_translate.load("sbi.meta.model.business.filter.failureMessage"));
-		});
-		
+
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.checkmodel.error"));
+				});
+
+
 	}
 
 	$scope.closeMetaDefinition = function() {

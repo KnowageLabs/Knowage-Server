@@ -113,7 +113,8 @@
 						<div layout="row" ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp" layout-align="start center">
 							<md-input-container class="md-block" flex
 							ng-class=" {'md-icon-right' : (getPropertyAttributes(prop).value=='temporal dimension' || getPropertyAttributes(prop).value=='time dimension')  }"
-							ng-init="getPropertyAttributes(prop).value= (getPropertyAttributes(prop).value==undefined || getPropertyAttributes(prop).value==null) ? getPropertyAttributes(prop).propertyType.defaultValue : getPropertyAttributes(prop).value">
+							ng-init="getPropertyAttributes(prop).value= (getPropertyAttributes(prop).value==undefined || getPropertyAttributes(prop).value==null) ? getPropertyAttributes(prop).propertyType.defaultValue : getPropertyAttributes(prop).value"
+							ng-if="getPropertyKey(prop)!='structural.sqlFilter'">
 								<label>{{getPropertyAttributes(prop).propertyType.name}}</label>
 								<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length!=0">
 									<md-option ng-repeat="admissibleValue in getPropertyAttributes(prop).propertyType.admissibleValues | filterByProductType:prop " value="{{admissibleValue}}" >
@@ -122,7 +123,8 @@
 								</md-select>
 								
 								<input ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length==0 
-								&& getPropertyKey(prop)!='structural.attribute' 
+								&& getPropertyKey(prop)!='structural.attribute'
+								&& getPropertyKey(prop)!='structural.sqlFilter'
 								&& getPropertyKey(prop)!='behavioural.notEnabledRoles'" ng-model="getPropertyAttributes(prop).value" ng-disabled="getPropertyKey(prop)=='physical.physicaltable'">
 								<!--profile attributes visibility -->
 								<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >	
@@ -222,13 +224,15 @@
 				</md-content>
 			</md-tab>
 			
-			<md-tab id="filtersTab" label="{{translate.load('sbi.meta.model.business.filter')}}">
-				<md-content ng-controller="metaDefinitionController" layout layout-fill>
-					<md-input-container flex="70">
-						<textarea ng-model="testService.obj.input" placeholder="SQL expression"></textarea>
-					</md-input-container>
-				</md-content>
-			</md-tab>
+<!-- 			<md-tab id="filters-Tab" md-active="tabResource.selectedBusinessTab=='sqlFilterTab'" md-on-select="tabResource.selectedBusinessTab='sqlFilterTab'" label="{{translate.load('sbi.meta.model.business.filter')}}"> -->
+<!-- 				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill> -->
+<!-- <!--  					<div ng-repeat="bmProperty in selectedBusinessModel.properties" > --> -->
+<!-- 						<md-input-container flex="70" ng-if="getPropertyKey(prop) == structural.sqlFilter"> -->
+<!-- 							<textarea ng-model="sqlExpression" placeholder="SQL expression"></textarea> -->
+<!-- 						</md-input-container> -->
+<!-- <!--  					</div> --> -->
+<!-- 				</md-content> -->
+<!-- 			</md-tab> -->
 		
 			<md-tab id="joinRelationshipTab" md-active="tabResource.selectedBusinessTab=='joinRelationshipTab'" md-on-select="tabResource.selectedBusinessTab='joinRelationshipTab'" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
 				<md-content  ng-if="tabResource.selectedBusinessTab=='joinRelationshipTab'" layout="column"  layout-fill >
@@ -247,7 +251,7 @@
 						<md-button type="button" class="md-knowage-theme md-raised"  ng-click="addBusinessView(true);">{{translate.load("sbi.meta.business.joinRelationship.edit")}}</md-button>
 					</div>
 							
-					
+
 				</md-content>				
 				
 			</md-tab>

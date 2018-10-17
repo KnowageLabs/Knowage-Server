@@ -59,6 +59,7 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/bvPhisicalTablesController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/editTemporalHierarchyController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/services/businessViewFilterService.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/controllers/businessViewSqlFilterController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" class="kn-metaWeb" ng-switch on="steps.current">
 
