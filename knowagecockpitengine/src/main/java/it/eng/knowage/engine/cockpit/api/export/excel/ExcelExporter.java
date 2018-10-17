@@ -55,7 +55,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
- *
  */
 
 public class ExcelExporter {
@@ -65,7 +64,10 @@ public class ExcelExporter {
 	private final String outputType;
 	private final String userUniqueIdentifier;
 	private final Map<String, String[]> parameterMap;
-	private Map<String, String> i18nMessages;
+
+	private final Map<String, String> i18nMessages;
+
+	private final Map<String, JSONObject> actualSelectionMap;
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
@@ -79,6 +81,8 @@ public class ExcelExporter {
 		} catch (EMFUserError e) {
 			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
 		}
+
+		this.actualSelectionMap = new HashMap<>();
 	}
 
 	private Locale getLocale(Map<String, String[]> parameterMap) {
@@ -238,11 +242,13 @@ public class ExcelExporter {
 		return aggregations;
 	}
 
-	private List<ExcelSheet> getCsvsFromWidgets(JSONObject template) throws JSONException, EMFUserError, UnsupportedEncodingException {
+	private List<ExcelSheet> getCsvsFromWidgets(JSONObject template) throws JSONException, EMFUserError {
 		logger.debug("IN");
 
 		JSONObject configuration = template.getJSONObject("configuration");
 		JSONArray sheets = template.getJSONArray("sheets");
+
+		loadCockpitSelections(configuration);
 
 		List<ExcelSheet> excelSheets = new ArrayList<>();
 
@@ -313,6 +319,94 @@ public class ExcelExporter {
 		return excelSheets;
 	}
 
+	private void loadCockpitSelections(JSONObject configuration) throws JSONException {
+		String[] cockpitSelections = parameterMap.get("COCKPIT_SELECTIONS");
+		if (cockpitSelections != null && cockpitSelections.length == 1) {
+			JSONArray configDatasets = configuration.getJSONArray("datasets");
+
+			JSONObject paramDatasets = new JSONObject();
+			JSONArray paramNearRealtime = new JSONArray();
+			for (int i = 0; i < configDatasets.length(); i++) {
+				JSONObject dataset = configDatasets.getJSONObject(i);
+				String label = dataset.getString("dsLabel");
+				JSONObject parameters = dataset.getJSONObject("parameters");
+				paramDatasets.put(label, parameters);
+
+				if (!dataset.getBoolean("useCache")) {
+					paramNearRealtime.put(label);
+				}
+			}
+
+			JSONObject cs = new JSONObject(cockpitSelections[0]);
+			loadAggregationsFromCockpitSelections(paramDatasets, paramNearRealtime, cs);
+			loadFiltersFromCockpitSelections(cs);
+		} else {
+			logger.warn("Unable to load cockpit selections");
+		}
+	}
+
+	private void loadAggregationsFromCockpitSelections(JSONObject paramDatasets, JSONArray paramNearRealtime, JSONObject cs) throws JSONException {
+		JSONArray aggregations = cs.getJSONArray("aggregations");
+		for (int i = 0; i < aggregations.length(); i++) {
+			JSONObject aggregation = aggregations.getJSONObject(i);
+			JSONObject selections = aggregation.getJSONObject("selection");
+			if (selections != null && selections.names() != null && selections.names().length() > 0) {
+				aggregation.remove("selection");
+
+				JSONObject associativeSelectionsPayload = new JSONObject();
+				associativeSelectionsPayload.put("associationGroup", aggregation);
+				associativeSelectionsPayload.put("selections", selections);
+				associativeSelectionsPayload.put("datasets", paramDatasets);
+				associativeSelectionsPayload.put("nearRealtime", paramNearRealtime);
+
+				AssociativeSelectionsClient client = new AssociativeSelectionsClient();
+				try {
+					JSONObject associativeSelections = client.getAssociativeSelections(new HashMap<String, Object>(), userUniqueIdentifier,
+							associativeSelectionsPayload.toString());
+
+					JSONArray datasetLabels = aggregation.getJSONArray("datasets");
+					for (int j = 0; j < datasetLabels.length(); j++) {
+						String label = datasetLabels.getString(j);
+						actualSelectionMap.put(label, associativeSelections.getJSONObject(label));
+					}
+				} catch (Exception e) {
+					logger.error("Unable to load associative selection", e);
+				}
+			}
+		}
+	}
+
+	private void loadFiltersFromCockpitSelections(JSONObject cs) throws JSONException {
+		JSONObject filters = cs.getJSONObject("filters");
+		if (filters != null) {
+			JSONArray datasets = filters.names();
+			if (datasets != null) {
+				for (int i = 0; i < datasets.length(); i++) {
+					String dataset = datasets.getString(i);
+					JSONObject selection = filters.getJSONObject(dataset);
+					Iterator<String> columns = selection.keys();
+					while (columns.hasNext()) {
+						String column = columns.next();
+						Object values = selection.get(column);
+						if (values instanceof JSONArray) {
+							JSONArray array = (JSONArray) values;
+							for (int j = 0; j < array.length(); j++) {
+								array.put(j, "('" + array.getString(j) + "')");
+							}
+						} else if (values instanceof String) {
+							JSONArray array = new JSONArray();
+							array.put("('" + values + "')");
+							selection.put(column, array);
+						} else {
+							throw new SpagoBIRuntimeException("Not recognised values [" + values + "]");
+						}
+					}
+					actualSelectionMap.put(dataset, selection);
+				}
+			}
+		}
+	}
+
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
 		ExcelExporterClient client = new ExcelExporterClient();
 		try {
@@ -363,7 +457,7 @@ public class ExcelExporter {
 
 		JSONObject content = widget.getJSONObject("content");
 		String widgetName = content.getString("name");
-		String[] titleRow = { widgetName };
+		String[] titleRow = {widgetName};
 		table.add(titleRow);
 
 		JSONArray columns = content.getJSONArray("columnSelectedOfDataset");
@@ -488,9 +582,9 @@ public class ExcelExporter {
 	private JSONObject getReplacedParameters(JSONObject parameters, Integer datasetId) throws JSONException {
 		JSONObject newParameters = new JSONObject(parameters.toString());
 		Map<String, String> newValues = new HashMap<>();
-		Iterator<String> keys = newParameters.keys();
-		while (keys.hasNext()) {
-			String parameter = keys.next();
+		Iterator<String> newParameterKeys = newParameters.keys();
+		while (newParameterKeys.hasNext()) {
+			String parameter = newParameterKeys.next();
 			String value = newParameters.getString(parameter);
 			String parameterRegex = "\\$P\\{(.*)\\}";
 			Matcher parameterMatcher = Pattern.compile(parameterRegex).matcher(value);
@@ -598,6 +692,18 @@ public class ExcelExporter {
 		return null;
 	}
 
+	private JSONObject getDataset(String dsLabel, JSONObject configuration) throws JSONException {
+		JSONArray datasets = configuration.getJSONArray("datasets");
+		for (int i = 0; i < datasets.length(); i++) {
+			JSONObject dataset = (JSONObject) datasets.get(i);
+			String label = dataset.getString("dsLabel");
+			if (label.equals(dsLabel)) {
+				return dataset;
+			}
+		}
+		return null;
+	}
+
 	private JSONObject getDatasetFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 		JSONObject widgetDataset = widget.optJSONObject("dataset");
 		if (widgetDataset != null) {
@@ -668,13 +774,33 @@ public class ExcelExporter {
 				JSONArray filterVals = widgetFilter.getJSONArray("filterVals");
 				if (filterVals.length() > 0) {
 					String colName = widgetFilter.getString("colName");
-					JSONArray array = new JSONArray();
+
+					JSONArray values = new JSONArray();
 					for (int j = 0; j < filterVals.length(); j++) {
 						Object filterVal = filterVals.get(j);
-						array.put("('" + filterVal + "')");
+						values.put("('" + filterVal + "')");
 					}
-					datasetFilters.put(colName, array);
+
+					String filterOperator = widgetFilter.getString("filterOperator");
+					if (filterOperator != null) {
+						JSONObject filter = new JSONObject();
+						filter.put("filterOperator", filterOperator);
+						filter.put("filterVals", values);
+						datasetFilters.put(colName, filter);
+					} else {
+						datasetFilters.put(colName, values);
+					}
 				}
+			}
+		}
+
+		if (actualSelectionMap.containsKey(datasetName)) {
+			JSONObject actualSelections = actualSelectionMap.get(datasetName);
+			Iterator<String> actualSelectionKeys = actualSelections.keys();
+			while (actualSelectionKeys.hasNext()) {
+				String key = actualSelectionKeys.next();
+				Object values = actualSelections.get(key);
+				datasetFilters.put(key, values);
 			}
 		}
 
