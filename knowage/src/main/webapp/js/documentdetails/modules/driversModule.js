@@ -212,7 +212,7 @@
 	      	       		var filterColumnsForDataDependency=[];
 	      	       		parusesForDataDependency = dataDependency.persist;
 	      	       		for(var j = 0 ; j < persistances.length;j++){
-	      	       			if(persistances[j] != "undefined" && parusesForDataDependency[persistances[j]]){
+	      	       			if(persistances[j] != "undefined" &&  parusesForDataDependency[persistances[j]]){
 	      	       			var newDataDependency = {};
 	      	       			if(prog == dataDependency.prog){
 	      	       				newDataDependency = dataDependency;
@@ -223,7 +223,7 @@
 	      	       		var paruse = [];
             			for(var k = 0; k < driversResource.driverParuses.length;k++){
             				if(driversResource.driverParuses[k].useID == persistances[j])
-            					paruse.push(driversResource.driverParuses[j]);
+            					paruse.push(driversResource.driverParuses[k]);
             			}
 
 	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
