@@ -584,7 +584,7 @@
 					EDIT_MODE:execProperties.executionInstance.EDIT_MODE
 			};
 
-			if (!!(execProperties.executionInstance.IS_FOR_EXPORT)) {
+			if (!(execProperties.executionInstance.IS_FOR_EXPORT)) {
 				dataPost.IS_FOR_EXPORT = true;
 
 				if(execProperties.executionInstance.COCKPIT_SELECTIONS
