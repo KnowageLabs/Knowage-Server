@@ -641,6 +641,20 @@
 			}
 		};
 
+		$scope.hasValidOutputTypeParameter = function() {
+		    var url = new URL(location.origin + execProperties.documentUrl);
+            if(url.searchParams.has("outputType")) {
+            	var outputType = url.searchParams.get("outputType").toUpperCase();
+            	for(var i=0; i<docExecute_urlViewPointService.exportation.length; i++) {
+            		var exportType = docExecute_urlViewPointService.exportation[i];
+            		if(exportType.description.toUpperCase() === outputType) {
+            		    return true;
+            		}
+            	}
+            }
+            return false;
+		};
+
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, otherOutputParameters){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 //			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
