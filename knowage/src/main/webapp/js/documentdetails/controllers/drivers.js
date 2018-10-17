@@ -404,12 +404,12 @@ angular
 
                  var selectedParuse = [];
      			for(var j = 0; j < $scope.driversService.driverParuses.length;j++){
-     				if($scope.driversService.driverParuses[j].id == $scope.selectedDriver.parID)
+     				if($scope.driversService.driverParuses[j].useID == $scope.selectedDriver.parID)
      					selectedParuse.push($scope.driversService.driverParuses[j]);
      			}
                 // var selectedParuse = driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID);
 
-
+     			if($scope.selectedDataCondition.useModeId)
                  $scope.paruseColumns[$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
                  $scope.driversService.paruseColumns = $scope.paruseColumns;
 
@@ -469,7 +469,7 @@ angular
                 			 dataProgram = i+1;
                 	 }
                 	 dataDependency.prog = dataProgram;
-                	 dataDependency.useModeId = selectedDriver.parID;
+                //	 dataDependency.useModeId = selectedDriver.parID;
 	                 dataDependency.parId = selectedDriver.id;
 	                 dataDependency.parFatherUrlName = selectedDriver.parameterUrlName;
                  }
@@ -495,7 +495,7 @@ angular
                 	 	 return true;
                 	 }else if (!paruseIndex && index == 0){
                 		  $scope.selectedDataCondition.persist[(selectedParuse)[0].useID] = true;
-                		  $scope.paruseColumns[(selectedParuse)[0].useID] = ($scope.getLovColumnsForParuse((selectedParuse)[0]))[0];
+                	//	  $scope.paruseColumns[(selectedParuse)[0].useID] = ($scope.getLovColumnsForParuse((selectedParuse)[0]))[0];
                 	 	return true;
                 	 }else return false;
 
