@@ -39,6 +39,13 @@
 		            	{{translate.load('sbi.workspace.dataset.preview')}}
 		          	</md-tooltip>
 		        </md-button>
+		        
+		        <md-button id="cloneDataset" ng-if="dataset.dsTypeCd=='Qbe'" class="md-icon-button" aria-label="cloneDataset" ng-click="cloneDatasetAction({ds:dataset});">
+		          	<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
+		          	<md-tooltip md-delay="1000">
+		            	{{translate.load('sbi.workspace.dataset.clone')}}
+		          	</md-tooltip>
+		        </md-button>
 	      	 
 		        <md-button class="md-icon-button" aria-label="detailDataset" ng-click="showDetailDatasetAction({ds:dataset});" ng-show="showDetailDatasetEnabled && dataset.dsTypeCd=='File'" >
 		          	<md-icon md-font-icon="fa fa-pencil-square-o fa-2x fa-2x"></md-icon>
@@ -47,7 +54,7 @@
 		           	</md-tooltip>
 		        </md-button>
 	         	
-	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="editQbeDatasetAction({ds:dataset});" ng-show="(dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Qbe') && sbiUser.userName==dataset.owner">
+	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="editQbeDatasetAction({ds:dataset});" ng-show="(dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Qbe') && sbiUser.userId==dataset.owner">
 	           		<md-icon md-font-icon="fa fa-pencil-square-o fa-2x"></md-icon>
 	           		<md-tooltip md-delay="1000">
 	              		{{translate.load('sbi.workspace.dataset.qbe.edit')}}
