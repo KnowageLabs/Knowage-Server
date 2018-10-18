@@ -414,7 +414,7 @@
 									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.useFixedRecipients==true">
 										<label>{{translate.load("scheduler.mailto", "component_scheduler_messages")}}:</label>
-										<input ng-model="activityEventCtrl.selectedDocument.mailtos" maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+										<input ng-model="activityEventCtrl.selectedDocument.mailtos" maxlength="1000" ng-maxlength="1000" md-maxlength="1000">
 									</md-input-container>
 							
 									<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
