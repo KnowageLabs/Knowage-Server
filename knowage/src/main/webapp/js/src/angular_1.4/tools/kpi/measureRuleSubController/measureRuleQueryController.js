@@ -126,7 +126,7 @@ $scope.isPlaceholderCM=function(cm){
 	
 	
 	$scope.loadDatasources=function(){
-		sbiModule_restServices.promiseGet("datasources","")
+		sbiModule_restServices.promiseGet("datasources","","onlySqlLike=true")
 		.then(function(response){
 			angular.copy(response.data.root,$scope.datasourcesList);
 		},function(response){
