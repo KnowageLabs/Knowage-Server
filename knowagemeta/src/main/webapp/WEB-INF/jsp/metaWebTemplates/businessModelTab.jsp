@@ -224,15 +224,15 @@
 				</md-content>
 			</md-tab>
 			
-<!-- 			<md-tab id="filters-Tab" md-active="tabResource.selectedBusinessTab=='sqlFilterTab'" md-on-select="tabResource.selectedBusinessTab='sqlFilterTab'" label="{{translate.load('sbi.meta.model.business.filter')}}"> -->
-<!-- 				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill> -->
-<!-- <!--  					<div ng-repeat="bmProperty in selectedBusinessModel.properties" > --> -->
-<!-- 						<md-input-container flex="70" ng-if="getPropertyKey(prop) == structural.sqlFilter"> -->
-<!-- 							<textarea ng-model="sqlExpression" placeholder="SQL expression"></textarea> -->
-<!-- 						</md-input-container> -->
-<!-- <!--  					</div> --> -->
-<!-- 				</md-content> -->
-<!-- 			</md-tab> -->
+			<md-tab id="filters-Tab" md-active="tabResource.selectedBusinessTab=='sqlFilterTab'" md-on-select="tabResource.selectedBusinessTab='sqlFilterTab'" label="{{translate.load('sbi.meta.model.business.filter')}}">
+				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill>
+  					<div ng-repeat="bmProperty in selectedBusinessModel.properties" ng-if="bmProperty['structural.sqlFilter']">
+						<md-input-container flex="70">
+							<textarea ng-model="bmProperty['structural.sqlFilter'].value" placeholder="SQL expression"></textarea>
+						</md-input-container>
+  					</div> 
+				</md-content>
+			</md-tab>
 		
 			<md-tab id="joinRelationshipTab" md-active="tabResource.selectedBusinessTab=='joinRelationshipTab'" md-on-select="tabResource.selectedBusinessTab='joinRelationshipTab'" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
 				<md-content  ng-if="tabResource.selectedBusinessTab=='joinRelationshipTab'" layout="column"  layout-fill >
