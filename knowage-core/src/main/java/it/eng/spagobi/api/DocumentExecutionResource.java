@@ -384,7 +384,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Monitor lovSingleMandatoryParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.singleLovMandatoryParameter");
 			try {
-				if (objParameter.isMandatory()) {
+				if (jsonParameters.isNull(objParameter.getId()) && objParameter.isMandatory()) {
 					Integer paruseId = objParameter.getParameterUseId();
 					parameterUse = parameterUseDAO.loadByUseID(paruseId);
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
@@ -1141,12 +1141,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
 	 *
-	 * @param id
-	 *            of document
-	 * @param id
-	 *            of subObject
-	 * @param id
-	 *            of a metaData
+	 * @param id          of document
+	 * @param id          of subObject
+	 * @param id          of a metaData
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError
