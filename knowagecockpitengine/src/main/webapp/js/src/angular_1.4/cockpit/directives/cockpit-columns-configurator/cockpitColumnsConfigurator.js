@@ -182,6 +182,7 @@
 		$scope.$watchCollection('model.content.columnSelectedOfDataset',function(newValue,oldValue){
 			if($scope.columnsGrid.api && newValue){
 				$scope.columnsGrid.api.setRowData(newValue);
+				$scope.columnsGrid.api.sizeColumnsToFit();
 			}
 		})
 		
