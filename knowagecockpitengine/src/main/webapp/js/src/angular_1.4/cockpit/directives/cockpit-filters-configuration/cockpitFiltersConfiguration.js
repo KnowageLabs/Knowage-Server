@@ -535,5 +535,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if($scope.ngModelShared.limitRows == undefined){
 			$scope.ngModelShared.limitRows = {enable: false, rows: 10};
 		}
+
+		$scope.isSolrDataset = function(dataset) {
+		    if(dataset && dataset.dsId) {
+		        var datasetConfiguration = cockpitModule_datasetServices.getDatasetById(dataset.dsId);
+		        if(datasetConfiguration.type == 'SbiSolrDataSet') {
+		            return true;
+		        }
+		    }
+		    return false;
+		}
 	};
 })();
