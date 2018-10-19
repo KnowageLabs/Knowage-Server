@@ -604,7 +604,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "'" + escapeString(value) + "'";
 		} else if (parameterType.equals(SpagoBIConstants.DATE_TYPE_FILTER)) {
 			validateDate(value);
-			String dialect = getDataSourceDialect();
+			DatabaseDialect dialect = getDataSourceDialect();
 			String toReturn = composeStringToDt(dialect, value);
 			return toReturn;
 		} else {
