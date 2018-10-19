@@ -35,6 +35,10 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
@@ -86,7 +90,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
-	private String databaseDialect = null;
+	private DatabaseDialect databaseDialect = null;
 	// private List treeLevelsColumns = null;
 	// each entry of the list contains the name of the column to be considered
 	// as value column as first item, and the name of the column to be
@@ -99,17 +103,6 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static String ALIAS_DELIMITER = null;
 	private static String VALUE_ALIAS = "VALUE";
 	private static String DESCRIPTION_ALIAS = "DESCRIPTION";
-
-	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
-	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
-	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
-	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
-	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
-	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
-	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
-	public static final String DIALECT_ORACLE_SPATIAL = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
-
 	/**
 	 * constructor.
 	 */
@@ -119,11 +112,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * constructor.
 	 *
-	 * @param dataDefinition
-	 *            the xml representation of the lov
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @param dataDefinition the xml representation of the lov
+	 * @throws SourceBeanException the source bean exception
 	 */
+
 	public QueryDetail(String dataDefinition) throws SourceBeanException {
 		loadFromXML(dataDefinition);
 	}
@@ -131,10 +123,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * loads the lov from an xml string.
 	 *
-	 * @param dataDefinition
-	 *            the xml definition of the lov
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @param dataDefinition the xml definition of the lov
+	 * @throws SourceBeanException the source bean exception
 	 */
 	@Override
 	public void loadFromXML(String dataDefinition) throws SourceBeanException {
@@ -200,46 +190,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			invisColNames = Arrays.asList(invisColArr);
 		}
 		setInvisibleColumnNames(invisColNames);
-		// compatibility control (versions till 3.6 does not have
-		// TREE-LEVELS-COLUMN definition)
-		// SourceBean treeLevelsColumnsBean = (SourceBean)
-		// source.getAttribute("TREE-LEVELS-COLUMNS");
-		// String treeLevelsColumnsString = null;
-		// if (treeLevelsColumnsBean != null) {
-		// treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
-		// }
-		// if ((treeLevelsColumnsString != null) &&
-		// !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
-		// String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-		// this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
-		// }
+
 		try {
 			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
 			if (treeLevelsColumnsBean != null) {
-				// compatibility control (versions till 5.1.0 does not have
-				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
-
-				// SVN 27/05/2016
-				// String treeLevelsColumnsString =
-				// treeLevelsColumnsBean.getCharacters();
-				// if (treeLevelsColumnsString != null) {
-				// String[] treeLevelsColumnArr =
-				// treeLevelsColumnsString.split(",");
-				// List<Couple<String, String>> levelsMap = new
-				// ArrayList<Couple<String, String>>();
-				// for (int i = 0; i < treeLevelsColumnArr.length; i++) {
-				// String aValueColumn = treeLevelsColumnArr[i];
-				// if (i == treeLevelsColumnArr.length - 1) {
-				// levelsMap.add(new Couple<String, String>(aValueColumn,
-				// descriptionColumn));
-				// } else {
-				// levelsMap.add(new Couple<String, String>(aValueColumn,
-				// aValueColumn));
-				// }
-				// }
-				// this.setValueColumnName(null);
-				// this.setDescriptionColumnName(null);
-				// }
 
 				// COMPATIBILITY OLD TREE LOV
 				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
@@ -319,21 +273,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 	@Override
 	public String toXML() {
-		// String XML = "<QUERY>" + "<CONNECTION>" + this.getDataSource() +
-		// "</CONNECTION>" + "<STMT>" + this.getQueryDefinition() + "</STMT>" +
-		// "<VALUE-COLUMN>"
-		// + this.getValueColumnName() + "</VALUE-COLUMN>" +
-		// "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() +
-		// "</DESCRIPTION-COLUMN>"
-		// + "<VISIBLE-COLUMNS>" +
-		// GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")
-		// + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
-		// + GeneralUtilities.fromListToString(this.getInvisibleColumnNames(),
-		// ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType()
-		// + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" +
-		// GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") +
-		// "</TREE-LEVELS-COLUMNS>"
-		// + "</QUERY>";
+
 		String XML = "<QUERY>" + "<CONNECTION>" + this.getDataSource() + "</CONNECTION>" + "<STMT>" + this.getQueryDefinition() + "</STMT>"
 				+ "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType()
@@ -551,8 +491,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @param dataSourceDialect
 	 * @return
 	 */
-	private boolean isDateFormat(String dataSourceDialect) {
-		return DIALECT_TERADATA.equals(dataSourceDialect) || DIALECT_INGRES.equals(dataSourceDialect) || DIALECT_HSQL.equals(dataSourceDialect);
+    private boolean isDateFormat(DatabaseDialect dialect) {
+        return DatabaseDialect.TERADATA.equals(dialect);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -660,7 +600,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "'" + escapeString(value) + "'";
 		} else if (parameterType.equals(SpagoBIConstants.DATE_TYPE_FILTER)) {
 			validateDate(value);
-			String dialect = getDataSourceDialect();
+            DatabaseDialect dialect = getDataSourceDialect();
 			String toReturn = composeStringToDt(dialect, value);
 			return toReturn;
 		} else {
@@ -673,7 +613,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (!notValidate) {
 			validateDate(value);
 		}
-		String dialect = getDataSourceDialect();
+        DatabaseDialect dialect = getDataSourceDialect();
 		String toReturn = composeStringToDt(dialect, value);
 		return toReturn;
 	}
@@ -694,37 +634,22 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 	}
 
-	private String getDataSourceDialect() {
+    private DatabaseDialect getDataSourceDialect() {
 		return databaseDialect;
 	}
 
 	private void setDataSourceDialect() {
-		SpagoBiDataSource ds = getDataSourceByLabel(dataSource);
+        IDataSource ds;
+        try {
+            ds = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSource);
+
 		if (ds != null) {
-			databaseDialect = ds.getHibDialectClass();
-			if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
-				ALIAS_DELIMITER = "`";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_HSQL)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_INGRES)) {
-				ALIAS_DELIMITER = "\""; // TODO check it!!!!
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE_SPATIAL)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
-				ALIAS_DELIMITER = ""; // TODO check it!!!!
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_TERADATA)) {
-				ALIAS_DELIMITER = "\"";
-			} else {
-				logger.error(
-						"Cannot determine alias delimiter since the database dialect is not set or not recognized!! Using empty string as alias delimiter");
-				ALIAS_DELIMITER = "";
+                IDataBase dataBase = DataBaseFactory.getDataBase(ds);
+                databaseDialect = dataBase.getDatabaseDialect();
+                ALIAS_DELIMITER = dataBase.getAliasDelimiter();
 			}
+        } catch (EMFUserError | DataBaseException e) {
+            throw new SpagoBIRuntimeException(e);
 		}
 	}
 
@@ -735,64 +660,41 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		return StringEscapeUtils.escapeSql(value);
 	}
 
-	private String composeStringToDt(String dialect, String date) {
+    private String composeStringToDt(DatabaseDialect dialect, String date) {
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
 		if (dialect != null) {
-			if (dialect.equalsIgnoreCase(DIALECT_MYSQL)) {
+            if (dialect.equals(DatabaseDialect.MYSQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
 				} else {
 					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %h:%i:%s') ";
 				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_HSQL)) {
-				try {
-					DateFormat df;
-					if (date.startsWith("'") && date.endsWith("'")) {
-						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
-					} else {
-						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
-					}
-
-					Date myDate = df.parse(date);
-					df = new SimpleDateFormat("yyyy-MM-dd");
-					toReturn = "'" + df.format(myDate) + "'";
-
-				} catch (Exception e) {
-					toReturn = "'" + date + "'";
-				}
-
-			} else if (dialect.equalsIgnoreCase(DIALECT_INGRES)) {
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y') ";
-				} else {
-					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y') ";
-				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE)) {
+            } else if (dialect.equals(DatabaseDialect.ORACLE)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
+            } else if (dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
+            } else if (dialect.equals(DatabaseDialect.POSTGRESQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
+            } else if (dialect.equals(DatabaseDialect.SQLSERVER)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = date;
 				} else {
 					toReturn = "'" + date + "'";
 				}
-			} else if (dialect.equalsIgnoreCase(DIALECT_TERADATA)) {
+            } else if (dialect.equals(DatabaseDialect.TERADATA)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " CAST(" + date + " AS DATE FORMAT 'dd/mm/yyyy') ";
 				} else {
@@ -823,6 +725,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "LIKE";
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 			BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
+            Assert.assertNotNull(fatherPar, "Parent parameter cannot be null");
 			List values = fatherPar.getParameterValues();
 			if (values != null && values.size() > 1) {
 				return "IN";
@@ -988,31 +891,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		StringBuffer buffer = new StringBuffer();
 
-		if (this.lovType.equals("treeinner")) {
-			// for (int i = 0; i < this.treeLevelsColumns.size(); i++) {
-			// String levelColumn = (String) this.treeLevelsColumns.get(i);
-			//
-			// buffer.append("SELECT ");
-			// buffer.append(getColumnSQLName(levelColumn) + " AS \"" +
-			// VALUE_ALIAS + "\" ");
-			// buffer.append("FROM (");
-			// buffer.append(statement);
-			// buffer.append(") " + getRandomAlias() + " WHERE ");
-			//
-			// if (values.size() == 1) {
-			// buffer.append(getColumnSQLName(levelColumn) + " = ");
-			// buffer.append(getSQLValue(biparam, values.get(0)));
-			// } else {
-			// buffer.append(getColumnSQLName(levelColumn) + " IN (");
-			// buffer.append(concatenateValues(biparam, values));
-			// buffer.append(")");
-			// }
-			//
-			// if (i + 1 < this.treeLevelsColumns.size()) {
-			// buffer.append(" UNION ");
-			// }
-			// }
-		} else {
+        if (!lovType.equals("treeinner")) {
 			buffer.append("SELECT ");
 			buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
 			buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
@@ -1041,7 +920,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-	public List getProfileAttributeNames() throws Exception {
+    public List getProfileAttributeNames() {
 		List names = new ArrayList();
 		String query = getQueryDefinition();
 		while (query.indexOf("${") != -1) {
@@ -1075,29 +954,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-	public boolean requireProfileAttributes() throws Exception {
+    public boolean requireProfileAttributes() {
 		boolean contains = false;
 		String query = getQueryDefinition();
 		if (query.indexOf("${") != -1) {
 			contains = true;
 		}
 		return contains;
-	}
-
-	/**
-	 * Builds a simple sourcebean
-	 *
-	 * @param name
-	 *            name of the sourcebean
-	 * @param value
-	 *            value of the sourcebean
-	 * @return the sourcebean built
-	 * @throws SourceBeanException
-	 */
-	private SourceBean buildSourceBean(String name, String value) throws SourceBeanException {
-		SourceBean sb = null;
-		sb = SourceBean.fromXMLString("<" + name + ">" + (value != null ? value : "") + "</" + name + ">");
-		return sb;
 	}
 
 	/**
@@ -1259,16 +1122,6 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		this.lovType = lovType;
 	}
 
-	// @Override
-	// public List getTreeLevelsColumns() {
-	// return treeLevelsColumns;
-	// }
-	//
-	// @Override
-	// public void setTreeLevelsColumns(List treeLevelsColumns) {
-	// this.treeLevelsColumns = treeLevelsColumns;
-	// }
-
 	@Override
 	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return this.treeLevelsColumns;
@@ -1394,7 +1247,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-	public Set<String> getParameterNames() throws Exception {
+    public Set<String> getParameterNames(){
 		Set<String> names = new HashSet<String>();
 		String query = getQueryDefinition();
 		while (query.indexOf(StringUtilities.START_PARAMETER) != -1) {
@@ -1415,7 +1268,6 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	@Override
 	public boolean isSimpleLovType() {
-		// TODO Auto-generated method stub
 		return this.getLovType() == null || this.getLovType().equalsIgnoreCase("simple");
 	}
 }
