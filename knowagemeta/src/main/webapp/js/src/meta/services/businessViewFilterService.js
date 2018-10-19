@@ -30,6 +30,17 @@
 					return deferred.promise;
 			}
 			
+			objToReturn.checkIfDriversExist = function(sqlExpression) {
+				
+				var pattern = /\$p{(.+)}/g;
+				var result = sqlExpression.match(pattern);
+				var res = pattern.exec(sqlExpression);
+				result = res[1];
+				
+				var listDrivers = bmDrivers;
+				
+			}
+			
 			return objToReturn;
 	}]);
 	
