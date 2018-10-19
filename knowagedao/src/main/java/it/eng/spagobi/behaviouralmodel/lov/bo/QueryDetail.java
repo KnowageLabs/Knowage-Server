@@ -35,7 +35,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
