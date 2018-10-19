@@ -388,7 +388,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							        <div layout="row" class="threeCombosLayout">	
 								        
 								        <!-- XLS file is uploaded --> 
-										<div layout="row" flex >
+										<div layout="row" flex layout-align="center center">
 											
 											<div layout="row" layout-wrap flex=30>
 						                  		<div flex=90 layout-align="center center">
@@ -435,9 +435,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					         		<div layout="row" class="threeCombosLayout">								
 								              
 								        <!-- CSV file is uploaded --> 
-										<div layout="row" flex >
+										<div layout="row" flex layout-align="center center">
 							                 	
-						                 	<div layout="row" layout-wrap flex=30>
+						                 	<div layout="row" layout-wrap flex=20>
 						                  		<div flex=90 layout-align="center center">
 						                     		 <md-input-container class="md-block">
 						                        		
@@ -462,7 +462,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  	
 											</div>
 						                 	
-					                		<div layout="row" layout-wrap flex=30>
+					                		<div layout="row" layout-wrap flex=20>
 						                  		
 						                  		<div flex=90 layout-align="center center">
 						                     		
@@ -522,7 +522,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                     	</md-input-container>
 							                  	</div>
 											</div>
-												<div layout="row" layout-wrap flex=30>
+												<div layout="row" layout-wrap flex=40>
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block">
 						                        		
