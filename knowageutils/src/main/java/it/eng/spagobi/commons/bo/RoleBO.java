@@ -57,7 +57,7 @@ public class RoleBO implements Serializable {
 	@Size(max = 20)
 	private String roleTypeCD;
 
-	@Alphanumeric
+	@ExtendedAlphanumeric
 	@Size(max = 20)
 	private String code;
 
