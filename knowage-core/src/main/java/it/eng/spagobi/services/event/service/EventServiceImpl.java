@@ -36,7 +36,7 @@ public class EventServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Fire event.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
@@ -49,7 +49,7 @@ public class EventServiceImpl extends AbstractServiceImpl {
 	 *            the roles handler
 	 * @param presentationHandler
 	 *            the presentation handler
-	 * 
+	 *
 	 * @return the string
 	 */
 	public String fireEvent(String token, String user, String description, String parameters, String rolesHandler, String presentationHandler) {
@@ -59,7 +59,7 @@ public class EventServiceImpl extends AbstractServiceImpl {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
 			UserProfile profile = (UserProfile) UserUtilities.getUserProfile(user);
-			return fireEvent(profile.getUserId().toString(), description, parameters, rolesHandler, presentationHandler);
+			return fireEvent(profile, description, parameters, rolesHandler, presentationHandler);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -74,16 +74,15 @@ public class EventServiceImpl extends AbstractServiceImpl {
 
 	}
 
-	private String fireEvent(String user, String description, String parameters, String rolesHandler, String presentationHandler) {
+	private String fireEvent(UserProfile profile, String description, String parameters, String rolesHandler, String presentationHandler) {
 		logger.debug("IN");
 		String returnValue = null;
 
 		try {
-			if (user != null) {
+			if (profile != null) {
 
 				IRolesHandler rolesHandlerClass = (IRolesHandler) Class.forName(rolesHandler).newInstance();
 				List roles = rolesHandlerClass.calculateRoles(parameters);
-				UserProfile profile = (UserProfile) UserUtilities.getUserProfile(user);
 				Integer id = EventsManager.getInstance().registerEvent(profile.getUserId().toString(), description, parameters, roles, presentationHandler);
 				returnValue = id.toString();
 				logger.debug("Service executed succesfully");
