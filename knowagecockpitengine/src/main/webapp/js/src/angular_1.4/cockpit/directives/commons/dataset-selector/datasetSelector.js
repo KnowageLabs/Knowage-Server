@@ -84,15 +84,18 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	
 	$scope.isDatasetAvailable = function(ds){
 		if($scope.datasetTypeExclusion){
+		    var excluded = false;
 			for(var e in $scope.datasetTypeExclusion){
 				if($scope.datasetTypeExclusion[e].type == ds.type){
 					if($scope.datasetTypeExclusion[e].configuration){
 						if(ds.configuration[$scope.datasetTypeExclusion[e].configuration.property] == $scope.datasetTypeExclusion[e].configuration.value) return false;
-						else return true;
-					}	
-					return false;
-				}else return true;
+					} else {
+					    return false;
+					}
+
+				}
 			}
+			return true;
 		}
 		if($scope.datasetTypeAvailable){
 			for(var a in $scope.datasetTypeAvailable){

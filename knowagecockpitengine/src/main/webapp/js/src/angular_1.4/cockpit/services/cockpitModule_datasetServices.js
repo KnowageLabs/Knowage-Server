@@ -1009,7 +1009,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							datasetList = specificDatasets;
 						}
 						if(typeExclusion){
-							for(var y=0; y<datasetList.length; y++){
+							for(var y=datasetList.length-1; y>0; y--){
 								for(var k in typeExclusion){
 									if(datasetList[y].type == typeExclusion[k].type){
 										if(typeExclusion[k].configuration){

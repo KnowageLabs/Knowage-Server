@@ -89,7 +89,7 @@
 		        </md-tab>
 		        
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)">  	
+		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]">
 		   			</multi-dataset-selector>
 		     	</md-tab>
 		     	

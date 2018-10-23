@@ -1,7 +1,7 @@
 <md-content layout-fill>
     <md-card>
      	<md-card-content layout="row" layout-align="space-around center">
-     		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>  	
+     		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
 		   	<md-input-container flex class="md-block"> 
 				<md-switch ng-model="model.settings.pagination.enabled" aria-label="Fixed rows per page" layout-align="center center">
 					 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.fixedrowsperpage')}}

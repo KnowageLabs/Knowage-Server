@@ -31,6 +31,8 @@ angular.module('cockpitModule').directive('multiDatasetSelector',function($compi
 		   scope:{
 			   ngModel:"=",
 			   onChange:"&",
+			   datasetTypeAvailable:"=?",
+               datasetTypeExclusion:"=?"
 		   },
 		   compile: function (tElement, tAttrs, transclude) {
                 return {
@@ -55,7 +57,7 @@ function multiDatasetSelectorControllerFunction($scope,cockpitModule_datasetServ
 	}
 
 	$scope.addNewDataset=function(){
-		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,true,true)
+		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,true,true,$scope.datasetTypeAvailable || undefined,$scope.datasetTypeExclusion || undefined)
 		 .then(function(data){
 			$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
@@ -74,6 +76,35 @@ function multiDatasetSelectorControllerFunction($scope,cockpitModule_datasetServ
 			 $scope.onChange({dsIdArray:newIdArray});
 		 });
 	}
+
+	$scope.isDatasetAvailable = function(ds){
+    		if($scope.datasetTypeExclusion){
+    		    var excluded = false;
+    			for(var e in $scope.datasetTypeExclusion){
+    				if($scope.datasetTypeExclusion[e].type == ds.type){
+    					if($scope.datasetTypeExclusion[e].configuration){
+    						if(ds.configuration[$scope.datasetTypeExclusion[e].configuration.property] == $scope.datasetTypeExclusion[e].configuration.value) return false;
+    					} else {
+    					    return false;
+    					}
+
+    				}
+    			}
+    			return true;
+    		}
+    		if($scope.datasetTypeAvailable){
+    			for(var a in $scope.datasetTypeAvailable){
+    				if($scope.datasetTypeAvailable[a].type == ds.type){
+    					if($scope.datasetTypeAvailable[a].configuration){
+    						if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
+    						else return false;
+    					}
+    					return true;
+    				}else return false;
+    			}
+    		}
+    		return true;
+    }
 };
 
 })();
