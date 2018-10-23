@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.drivers.handlers.IRolesHandler;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.events.bo.EventType;
@@ -58,9 +60,13 @@ public class EventServiceImpl extends AbstractServiceImpl {
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return fireEvent(user, description, parameters, rolesHandler, type);
+			UserProfile profile = (UserProfile) UserUtilities.getUserProfile(user);
+			return fireEvent(profile, description, parameters, rolesHandler, type);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
+			return null;
+		} catch (Exception e) {
+			logger.error("Error while firing event", e);
 			return null;
 		} finally {
 			this.unsetTenant();
@@ -70,14 +76,14 @@ public class EventServiceImpl extends AbstractServiceImpl {
 
 	}
 
-	private String fireEvent(String user, String description, String parameters, String rolesHandler, String type) {
+	private String fireEvent(UserProfile profile, String description, String parameters, String rolesHandler, String type) {
 		logger.debug("IN");
 		String returnValue = null;
 		try {
-			if (user != null) {
+			if (profile != null) {
 				IRolesHandler rolesHandlerClass = (IRolesHandler) Class.forName(rolesHandler).newInstance();
 				List roles = rolesHandlerClass.calculateRoles(parameters);
-				Integer id = EventsManager.getInstance().registerEvent(user, description, parameters, roles, EventType.valueOf(type));
+				Integer id = EventsManager.getInstance().registerEvent(profile.getUserId().toString(), description, parameters, roles, EventType.valueOf(type));
 				returnValue = id.toString();
 				logger.debug("Service executed succesfully");
 			} else {
