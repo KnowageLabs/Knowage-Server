@@ -1,4 +1,4 @@
-Insert in this file the history of DB Schema, only for PostgreSQL
+﻿Insert in this file the history of DB Schema, only for PostgreSQL
 Every items must have:
 - The Developer who has made the change
 - The SQL script that updates the schema ( schema, index and FK )
@@ -4044,3 +4044,6 @@ DROP TABLE SBI_OBJ_PARVIEW_OLD;
 -- 07/09/2018 Antonella Giachino
 DELETE FROM SBI_ROLE_TYPE_USER_FUNC WHERE ROLE_TYPE_ID = (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'TEST_ROLE') AND USER_FUNCT_ID IN (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC  WHERE  NAME IN ('TIMESPAN', 'FUNCTIONSCATALOGMANAGEMENT','MANAGECROSSNAVIGATION','EVENTSMANAGEMENT'));
 COMMIT;
+
+-- 12.10.2018. Predrag Josipovic
+ALTER TABLE SBI_CROSS_NAVIGATION ADD CONSTRAINT CROSS_NAVIGATION_NAME_UNIQUE UNIQUE("NAME");

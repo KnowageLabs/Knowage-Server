@@ -1627,7 +1627,6 @@ public class SelfServiceDataSetCRUD {
 			String ckanUrl = req.getParameter("ckanUrl");
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 			String dateFormat = req.getParameter("dateFormat");
-			String timestampFormat = req.getParameter("timestampFormat");
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			if (savingDataset) {
@@ -1641,7 +1640,6 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
@@ -1817,23 +1815,26 @@ public class SelfServiceDataSetCRUD {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 
 				String guessedType = guessColumnType(dataStore, i);
-				boolean isDate = false;
 				boolean isTimestamp = false;
+				boolean isDate = false;
 				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer")) {
-					isDate = isADate(dataSet, dataStore, i);
-					isTimestamp = isATimestamp(dataSet, dataStore, i);
+					String dsConfiguration = dataSet.getConfiguration();
+					JSONObject jsonConf = new JSONObject(dsConfiguration);
+					isTimestamp = isATimestamp(jsonConf, dataStore, i);
+					isDate = isADate(jsonConf, dataStore, i);
 				}
 
 				// Setting mandatory property to defaults, if specified they
 				// will be overridden
-				if (isDate) {
-					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
-					Class type = Class.forName("java.util.Date");
-					ifmd.setType(type);
-				} else if (isTimestamp) {
+				if (isTimestamp) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 					Class type = Class.forName("java.sql.Timestamp");
 					ifmd.setType(type);
+				} else if (isDate) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					Class type = Class.forName("java.util.Date");
+					ifmd.setType(type);
+					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 				} else if ("Integer".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Integer");
@@ -1979,15 +1980,16 @@ public class SelfServiceDataSetCRUD {
 
 	}
 
-	private boolean isADate(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
-		String dsConfiguration = dataSet.getConfiguration();
-		JSONObject jsonConf = new JSONObject(dsConfiguration);
+	private boolean isADate(JSONObject jsonConf, IDataStore dataStore, int columnIndex) throws JSONException {
 		String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
 		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
 			IRecord record = dataStore.getRecordAt(i);
 			IField field = record.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if (value instanceof Date) {
+				if (value instanceof Timestamp)
+					return false;
+
 				// it's already a Date, skip the check
 				continue;
 			}
@@ -2009,14 +2011,16 @@ public class SelfServiceDataSetCRUD {
 		return true;
 	}
 
-	private boolean isATimestamp(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
-		String dsConfiguration = dataSet.getConfiguration();
-		JSONObject jsonConf = new JSONObject(dsConfiguration);
+	private boolean isATimestamp(JSONObject jsonConf, IDataStore dataStore, int columnIndex) throws JSONException {
 		String timestampFormat = jsonConf.get(DataSetConstants.FILE_TIMESTAMP_FORMAT).toString();
 		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
 			IRecord record = dataStore.getRecordAt(i);
 			IField field = record.getFieldAt(columnIndex);
 			Object value = field.getValue();
+			if (value instanceof Timestamp) {
+				continue;
+			}
+
 			try {
 				DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
 				LocalDateTime localDatetime = LocalDateTime.parse(value.toString(), formatter);

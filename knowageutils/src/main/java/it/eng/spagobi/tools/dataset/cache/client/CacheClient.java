@@ -24,8 +24,8 @@ public class CacheClient extends SimpleRestClient {
 				new JSONDataWriter().write(dataStore));
 		if (response.getStatusInfo() != Status.OK) {
 			logger.error("Impossible to apply updates. Error while executing dataset with signature [" + signature + "] in cache for user [" + userId + "]");
-			logger.debug("Response status " + response.getStatus());
-			logger.debug("Response reason " + response.getStatusInfo().getReasonPhrase());
+			logger.error("Response status " + response.getStatus());
+			logger.error("Response reason " + response.getStatusInfo().getReasonPhrase());
 			return null;
 		}
 		String responseString = response.readEntity(String.class);

@@ -37,7 +37,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			shareDatasetAction:"&",
 			shareDatasetEnabled:"=?",
 			previewDatasetAction:"&",
-			//cloneDocumentAction:"&",
+			cloneDatasetAction:"&",
 			showQbeDatasetAction:"&",
 			editQbeDatasetAction:"&",
 			showQbeEnabled:"=?",

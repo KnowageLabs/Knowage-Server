@@ -42,14 +42,83 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
     return numbers.join(', ') + ' and ' + moment()._locale.ordinal(last_val);
   };
 
+  var stepSize = function(numbers) {
+    if( !numbers || numbers.length <= 1 ) return 0;
+
+    var expectedStep = numbers[1] - numbers[0];
+    if( numbers.length == 2 ) return expectedStep;
+
+    // Check that every number is the previous number + the first number
+    return numbers.slice(1).every(function(n,i,a){
+      return (i === 0 ? n : n-a[i-1]) === expectedStep;
+    }) ? expectedStep : 0;
+  };
+
+  var isEveryOther = function(stepsize, numbers) {
+    return numbers.length === 30 && stepsize === 2;
+  };
+  var isTwicePerHour = function(stepsize, numbers) {
+    return numbers.length === 2 && stepsize === 30;
+  };
+  var isOnTheHour = function(numbers) {
+    return numbers.length === 1 && numbers[0] === 0;
+  };
+  var isStepValue = function(stepsize, numbers) {
+    // Value with slash (https://en.wikipedia.org/wiki/Cron#Non-Standard_Characters)
+    return numbers.length > 2 && stepsize > 0;
+  };
+  /*
+   * For an array of numbers of seconds, return a string
+   * listing all the values unless they represent a frequency divisible by 60:
+   * /2, /3, /4, /5, /6, /10, /12, /15, /20 and /30
+   */
+  var getMinutesTextParts = function(numbers) {
+    var stepsize = stepSize(numbers);
+    if(!numbers) {
+      return { beginning: 'minute', text: '' };
+    }
+
+    var minutes = { beginning: '', text: '' };
+    if( isOnTheHour( numbers ) ) {
+      minutes.text = 'hour, on the hour';
+    } else if( isEveryOther( stepsize, numbers ) ) {
+      minutes.beginning = 'other minute';
+    } else if( isStepValue( stepsize, numbers ) ) {
+      minutes.text = stepsize + ' minutes';
+    } else if( isTwicePerHour( stepsize, numbers ) ) {
+      minutes.text = 'first and 30th minute';
+    } else {
+      minutes.text = numberList(numbers) + ' minute';
+    }
+    return minutes;
+  };
+  /*
+   * For an array of numbers of seconds, return a string
+   * listing all the values unless they represent a frequency divisible by 60:
+   * /2, /3, /4, /5, /6, /10, /12, /15, /20 and /30
+   */
+  var getSecondsTextParts = function(numbers) {
+    var stepsize = stepSize(numbers);
+    if( !numbers ) {
+      return { beginning: 'second', text: '' };
+    }
+    if( isEveryOther( stepsize, numbers ) ) {
+      return { beginning: '', text: 'other second' };
+    } else if( isStepValue( stepsize, numbers ) ) {
+      return { beginning: '', text: stepsize + ' seconds' };
+    } else {
+      return { beginning: 'minute', text: 'starting on the ' + (numbers.length === 2 && stepsize === 30 ? 'first and 30th second' : numberList(numbers) + ' second') };
+    }
+  };
+
   /*
    * Parse a number into day of week, or a month name;
    * used in dateList below.
    */
   var numberToDateName = function(value, type) {
-    if (type == 'dow') {
+    if (type === 'dow') {
       return moment().day(value - 1).format('ddd');
-    } else if (type == 'mon') {
+    } else if (type === 'mon') {
       return moment().month(value - 1).format('MMM');
     }
   };
@@ -83,78 +152,145 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
     return (x < 10) ? '0' + x : x;
   };
 
+  var removeFromSchedule = function( schedule, member, length ) {
+    if( schedule[member] && schedule[member].length === length ) {
+      delete schedule[member];
+    }
+  }
+
   //----------------
 
   /*
    * Given a schedule from later.js (i.e. after parsing the cronspec),
    * generate a friendly sentence description.
    */
-  var scheduleToSentence = function(schedule) {
-    var output_text = 'Every ';
+  var scheduleToSentence = function(schedule, useSeconds) {
+    var textParts = [];
 
-    if (schedule['h'] && schedule['m'] && schedule['h'].length <= 2 && schedule['m'].length <= 2) {
+    // A later.js schedules contains no member for time units where an asterisk is used,
+    // but schedules that means the same (e.g 0/1 is essentially the same as *) are
+    // returned with populated members.
+    // Remove all members that are fully populated to reduce complexity of code
+    removeFromSchedule( schedule, 'M', 12 );
+    removeFromSchedule( schedule, 'D', 31 );
+    removeFromSchedule( schedule, 'd', 7 );
+    removeFromSchedule( schedule, 'h', 24 );
+    removeFromSchedule( schedule, 'm', 60 );
+    removeFromSchedule( schedule, 's', 60 );
+
+    var everySecond = useSeconds && schedule['s'] === undefined,
+        everyMinute = schedule['m'] === undefined,
+        everyHour = schedule['h'] === undefined
+        everyWeekday = schedule['d'] === undefined
+        everyDayInMonth = schedule['D'] === undefined,
+        everyMonth = schedule['M'] === undefined;
+
+    var oneOrTwoSecondsPerMinute = schedule['s'] && schedule['s'].length <= 2;
+    var oneOrTwoMinutesPerHour = schedule['m'] && schedule['m'].length <= 2;
+    var oneOrTwoHoursPerDay = schedule['h'] && schedule['h'].length <= 2;
+    var onlySpecificDaysOfMonth = schedule['D'] && schedule['D'].length !== 31;
+    if ( oneOrTwoHoursPerDay && oneOrTwoMinutesPerHour && oneOrTwoSecondsPerMinute ) {
       // If there are only one or two specified values for
-      // hour or minute, print them in HH:MM format
+      // hour or minute, print them in HH:MM format, or HH:MM:ss if seconds are used
+      // If seconds are not used, later.js returns one element for the seconds (set to zero)
 
       var hm = [];
+      var m = moment();
       for (var i=0; i < schedule['h'].length; i++) {
         for (var j=0; j < schedule['m'].length; j++) {
-          hm.push(zeroPad(schedule['h'][i]) + ':' + zeroPad(schedule['m'][j]));
+          for (var k=0; k < schedule['s'].length; k++) {
+            m.hour(schedule['h'][i]);
+            m.minute(schedule['m'][j]);
+            m.second(schedule['s'][k]);
+            hm.push(m.format( useSeconds ? 'HH:mm:ss' : 'HH:mm'));
+          }
         }
       }
       if (hm.length < 2) {
-        output_text = hm[0];
+        textParts.push( hm[0] );
       } else {
         var last_val = hm.pop();
-        output_text = hm.join(', ') + ' and ' + last_val;
+        textParts.push( hm.join(', ') + ' and ' + last_val );
       }
-      if (!schedule['d'] && !schedule['D']) {
-        output_text += ' every day';
+      if (everyWeekday && everyDayInMonth) {
+        textParts.push('every day');
       }
 
     } else {
+      var seconds = getSecondsTextParts(schedule['s']);
+      var minutes = getMinutesTextParts(schedule['m']);
+      var beginning = '';
+      var end = '';
+
+      textParts.push('Every');
+
       // Otherwise, list out every specified hour/minute value.
+      var hasSpecificSeconds = schedule['s'] && (
+          schedule['s'].length > 1 && schedule['s'].length < 60 ||
+          schedule['s'].length === 1 && schedule['s'][0] !== 0 );
+      if(hasSpecificSeconds) {
+        beginning = seconds.beginning;
+        end = seconds.text;
+      }
 
       if(schedule['h']) { // runs only at specific hours
+        if( hasSpecificSeconds ) {
+          end += ' on the ';
+        }
         if (schedule['m']) { // and only at specific minutes
-          output_text += numberList(schedule['m']) + ' minute past the ' + numberList(schedule['h']) + ' hour';
+          var hours = numberList(schedule['h']) + ' hour';
+          if( !hasSpecificSeconds && isOnTheHour(schedule['m']) ) {
+            textParts = [ 'On the' ];
+            end += hours;
+          } else {
+            beginning = minutes.beginning;
+            end += minutes.text + ' past the ' + hours;
+          }
         } else { // specific hours, but every minute
-          output_text += 'minute of ' + numberList(schedule['h']) + ' hour';
+          end += 'minute of ' + numberList(schedule['h']) + ' hour';
         }
       } else if(schedule['m']) { // every hour, but specific minutes
-        if (schedule['m'].length == 1 && schedule['m'][0] == 0) {
-          output_text += 'hour, on the hour';
-        } else {
-          output_text += numberList(schedule['m']) + ' minute past every hour';
+        beginning = minutes.beginning;
+        end += minutes.text;
+        if( !isOnTheHour(schedule['m']) && ( onlySpecificDaysOfMonth || schedule['d'] || schedule['M'] ) ) {
+          end += ' past every hour';
         }
-      } else { // cronspec has "*" for both hour and minute
-        output_text += 'minute';
+      } else if( !schedule['s'] && !schedule['m'] ) {
+        beginning = seconds.beginning;
+      } else if( !useSeconds || !hasSpecificSeconds) { // cronspec has "*" for both hour and minute
+        beginning += minutes.beginning;
       }
+      textParts.push(beginning);
+      textParts.push(end);
     }
 
-    if (schedule['D']) { // runs only on specific day(s) of month
-      output_text += ' on the ' + numberList(schedule['D']);
+    if (onlySpecificDaysOfMonth) { // runs only on specific day(s) of month
+      textParts.push('on the ' + numberList(schedule['D']));
       if (!schedule['M']) {
-        output_text += ' of every month';
+        textParts.push('of every month');
       }
     }
 
     if (schedule['d']) { // runs only on specific day(s) of week
       if (schedule['D']) {
         // if both day fields are specified, cron uses both; superuser.com/a/348372
-        output_text += ' and every ';
+        textParts.push('and every');
       } else {
-        output_text += ' on ';
+        textParts.push('on');
       }
-      output_text += dateList(schedule['d'], 'dow');
+      textParts.push(dateList(schedule['d'], 'dow'));
     }
 
     if (schedule['M']) {
-      // runs only in specific months; put this output last
-      output_text += ' in ' + dateList(schedule['M'], 'mon');
+      if( schedule['M'].length === 12 ) {
+        textParts.push('day of every month');
+      } else {
+        // runs only in specific months; put this output last
+        textParts.push('in ' + dateList(schedule['M'], 'mon'));
+      }
     }
 
-    return output_text;
+    return textParts.filter(function(p) { return p; }).join(' ');
   };
 
   //----------------
@@ -164,7 +300,7 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
    */
   var toString = function(cronspec, sixth) {
     var schedule = later.parse.cron(cronspec, sixth);
-    return scheduleToSentence(schedule['schedules'][0]);
+    return scheduleToSentence(schedule['schedules'][0], sixth);
   };
 
   /*
@@ -172,6 +308,7 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
    * (This is just a wrapper for later.js)
    */
   var getNextDate = function(cronspec, sixth) {
+    later.date.localTime();
     var schedule = later.parse.cron(cronspec, sixth);
     return later.schedule(schedule).next();
   };
@@ -184,6 +321,23 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
     return moment( getNextDate( cronspec, sixth ) ).calendar();
   };
 
+  /*
+   * Given a cronspec and numDates, return a list of formatted dates
+   * of the next set of runs.
+   * (This is just a wrapper for later.js and moment.js)
+   */
+  var getNextDates = function(cronspec, numDates, sixth) {
+    var schedule = later.parse.cron(cronspec, sixth);
+    var nextDates = later.schedule(schedule).next(numDates);
+
+    var nextPrettyDates = []
+    for (var i = 0; i < nextDates.length; i++) {
+      nextPrettyDates.push(moment(nextDates[i]).calendar());
+    }
+
+    return nextPrettyDates;
+  };
+
   //----------------
 
   // attach ourselves to window in the browser, and to exports in Node,
@@ -193,5 +347,6 @@ if ((!moment || !later) && (typeof require !== 'undefined')) {
   global_obj.toString = toString;
   global_obj.getNext = getNext;
   global_obj.getNextDate = getNextDate;
+  global_obj.getNextDates = getNextDates;
 
 }).call(this);

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +51,22 @@ public class UserProfile implements IEngUserProfile {
 
 	private static transient Logger logger = Logger.getLogger(UserProfile.class);
 
+	private enum PREDEFINED_PROFILE_ATTRIBUTES {
+		USER_ID("user_id"), 
+		USER_ROLES("user_roles"), 
+		TENANT_ID("TENANT_ID");
+	
+		private String name;
+		
+		PREDEFINED_PROFILE_ATTRIBUTES(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return this.name;
+		}
+	};	
+	
 	private static String SCHEDULER_USER_NAME = "scheduler";
 	private static String SCHEDULER_USER_ID_PREFIX = "scheduler - ";
 
@@ -117,14 +134,21 @@ public class UserProfile implements IEngUserProfile {
 			userAttributes = new HashMap();
 			logger.debug("NO USER ATTRIBUTES");
 		}
-		// putting tenant id on user attributes (for Spago modules' queries) :
-		userAttributes.put(SpagoBIConstants.TENANT_ID, this.organization);
-		// putting user id as a predefined profile attribute:
-		userAttributes.put(SsoServiceInterface.USER_ID, this.userId);
+		
+		setPredefinedProfileAttributes();
 
 		logger.debug("OUT");
 	}
 
+	private void setPredefinedProfileAttributes() {
+		// putting user id as a predefined profile attribute:
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ID.getName(), this.userId);
+		// putting user roles as a predefined profile attribute:
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ROLES.getName(), StringUtils.join(this.roles, ";"));
+		// putting tenant id as a predefined profile attribute:
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.TENANT_ID.getName(), this.organization);
+	}
+	
 	public UserProfile(String userUniqueIdentifier, String userId, String userName, String organization) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.userId = userId;

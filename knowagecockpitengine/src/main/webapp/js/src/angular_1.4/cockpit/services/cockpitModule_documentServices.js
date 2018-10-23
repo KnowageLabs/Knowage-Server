@@ -92,6 +92,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 		if(excludeItems!=undefined && excludeItems.length>0){
 			item += "&objLabelNotIn="+excludeItems.join(",");
 		}
+		item += "&forceVis=true";
 
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promiseGet("2.0/documents", "listDocument",item).then(

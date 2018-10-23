@@ -956,6 +956,12 @@ color-picker {
   overflow: hidden;
 }
 
+.warning {
+  &>md-icon {
+    color: $negativeColor;
+  }
+}
+
 .kn-select {
   border-bottom: 1px solid $bordersColor; 
   width: 100%; 

@@ -2,7 +2,14 @@
 <img src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png">
 </p>
 
+[![FIWARE Visualization](https://nexus.lab.fiware.org/static/badges/chapters/visualization.svg)](https://www.fiware.org/developers/catalogue/)
+[![License: APGL](https://img.shields.io/github/license/KnowageLabs/Knowage-Server.svg)](https://opensource.org/licenses/AGPL-3.0)
+[![Docker badge](https://img.shields.io/docker/pulls/fiware/knowage-server-docker.svg)](https://hub.docker.com/r/fiware/knowage-server-docker)
+[![Support badge](https://nexus.lab.fiware.org/static/badges/stackoverflow/knowage.svg)](https://stackoverflow.com/questions/tagged/fiware-knowage)
+<br>
+[![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 [![Build Status](https://travis-ci.com/KnowageLabs/Knowage-Server.svg?branch=master)](https://travis-ci.com/KnowageLabs/Knowage-Server)
+![Status](https://nexus.lab.fiware.org/static/badges/statuses/knowage.svg)
 
 Knowage is the full capabilities open source suite for modern business analytics over traditional sources and big data systems. Its features, such as data federation, mash-up, data/text mining and advanced data visualization, give comprehensive support to rich and multi-source data analysis. The suite is composed of several modules, each one conceived for a specific analytical domain. They can be used individually as complete solution for a certain task, or combined with one another to ensure full coverage of user’ requirements.
 
@@ -27,13 +34,19 @@ Knowage is available on two versions:
 
 This repository contains the source code of the Community Edition.
 
-# Contributions
+## Contributions
 
 Before start to contribute, please read and sign the [Contributor License Agreement](https://www.clahub.com/agreements/KnowageLabs/Knowage-Server).
 
-# Documentation
+## Documentation
 
 The official documentantion is available at [Read the Docs](http://knowage-suite.readthedocs.io/).
 
-# More
+## More
 Please visit [the project website](http://www.knowage-suite.com) for information about the Enterprise Edition.
+
+---
+
+## License
+
+[AGPL](LICENSE) © 2018 Engineering Ingegneria Informatica S.p.A.

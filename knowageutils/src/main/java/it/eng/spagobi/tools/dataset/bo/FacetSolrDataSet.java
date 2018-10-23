@@ -84,4 +84,14 @@ public class FacetSolrDataSet extends SolrDataSet {
     protected boolean isFacet() {
         return true;
     }
+
+    @Override
+    public boolean isCachingSupported() {
+        return true;
+    }
+
+    @Override
+    public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+        return DatasetEvaluationStrategyType.CACHED;
+    }
 }

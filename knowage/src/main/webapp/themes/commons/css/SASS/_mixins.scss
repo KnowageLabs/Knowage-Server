@@ -58,3 +58,14 @@
 	background: -ms-linear-gradient(top, $color1 0%,$stopColor $stopPerc,$color2 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  $color1 0%,$stopColor $stopPerc,$color2 100%); /* W3C */
 }
+
+@mixin custom-mask-image($imgUrl){
+	mask-image: url($imgUrl);
+	mask-size: cover;
+	mask-repeat: no-repeat;
+	mask-position: 0 0;
+	-webkit-mask-image: url($imgUrl);
+	-webkit-mask-size: cover;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: 0 0;
+}

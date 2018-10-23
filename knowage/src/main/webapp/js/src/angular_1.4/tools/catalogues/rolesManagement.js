@@ -54,8 +54,10 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"MANAGE_KPI_VALUE",label:"manageKpiValue",visible:false, category:"MANAGE"},
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"},
-	               {dbname:"MANAGE_INTERNATIONALIZATION",label:"manageInternationalization",visible:false, category:"MANAGE"}
-	               
+	               {dbname:"MANAGE_INTERNATIONALIZATION",label:"manageInternationalization",visible:false, category:"MANAGE"},
+	               {dbname:"CREATE_SELF_SERVICE_COCKPIT",label:"createSelfSelviceCockpit",visible:false, category:"ITEMS"},
+	               {dbname:"CREATE_SELF_SERVICE_GEOREPORT",label:"createSelfSelviceGeoreport",visible:false, category:"ITEMS"},
+	               {dbname:"CREATE_SELF_SERVICE_KPI",label:"createSelfSelviceKpi",visible:false, category:"ITEMS"}
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
@@ -161,6 +163,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToEnableRate = false;
 		$scope.selectedRole.ableToEnablePrint = false;
 		$scope.selectedRole.ableToEnableCopyAndEmbed = false;
+		$scope.selectedRole.ableToCreateSelfServiceCockpit = true;
+		$scope.selectedRole.ableToCreateSelfServiceGeoreport = true;
+		$scope.selectedRole.ableToCreateSelfServiceKpi = true;
 	}
 
 	$scope.setDirty = function () {

@@ -25,7 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.spagobi.tools.dataset.bo.*;
+import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
+import it.eng.spagobi.utilities.assertion.Assert;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.dataset.FederatedDataSet;
@@ -41,25 +45,6 @@ import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
-import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
@@ -1114,7 +1099,7 @@ public class DataSetFactory {
 		return res;
 	}
 
-	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf, List<DataSetParameterItem> parameters) {
+	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf, List<DataSetParameterItem> parameters) throws JSONException {
 		HashMap<String, String> parametersMap = new HashMap<String, String>();
 		if (parameters != null) {
 			for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
@@ -1122,7 +1107,11 @@ public class DataSetFactory {
 				parametersMap.put(dataSetParameterItem.getDefaultValue(), dataSetParameterItem.getName());
 			}
 		}
-		SolrDataSet res = new SolrDataSet(jsonConf, parametersMap);
+
+		String solrType = jsonConf.getString(SolrDataSetConstants.SOLR_TYPE);
+		Assert.assertNotNull(solrType, "Solr type cannot be null");
+		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(jsonConf, parametersMap)
+				: new FacetSolrDataSet(jsonConf, parametersMap);
 		res.setDsType(DataSetConstants.DS_SOLR_NAME);
 		return res;
 	}

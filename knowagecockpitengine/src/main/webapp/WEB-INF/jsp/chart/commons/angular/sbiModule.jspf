@@ -397,6 +397,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
 			
 			deferred.notify('About to call async function');
+			
+			if(conf == undefined) conf = {};
+			if(conf.data == undefined) conf.data = "";
 	
 			$http.delete(getBaseUrl(endP_path) + "" + req_Path, conf)
 				.then(

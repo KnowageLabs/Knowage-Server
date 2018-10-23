@@ -117,6 +117,6 @@
 		$scope.closeSaving = function() {
 			$scope.ngModel.mdPanelRef.close();
 		}
+		}
 	}
-}
 })();

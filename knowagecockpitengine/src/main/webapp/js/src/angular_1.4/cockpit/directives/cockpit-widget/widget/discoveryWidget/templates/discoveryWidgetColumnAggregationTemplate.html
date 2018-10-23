@@ -1,0 +1,39 @@
+<md-dialog>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Column Aggregation</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+		<div layout="column" layout-padding flex>
+			<div layout="row">
+				<md-input-container flex class="noPadding"> 
+					<label>Aggregation Function</label>
+					<md-select ng-model="selectedColumn.aggregationSelected">
+		              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation.name}}">
+		                {{aggregation.name}}
+		              </md-option>
+		            </md-select>
+				</md-input-container>
+			</div>
+			<div layout="row">
+				<md-input-container flex class="noPadding"> 
+					<label>Aggregation Column</label>
+					<md-select aria-label="aria-label" ng-model="selectedColumn.aggregationColumn"  ng-disabled="selectedColumn.aggregationSelected == 'COUNT'">
+						<md-option ng-repeat="col in columns" value="{{col.name}}" ng-if="col.fieldType == 'MEASURE'">{{col.alias}}</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+		</div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()" >
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="save()" >
+        Save
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

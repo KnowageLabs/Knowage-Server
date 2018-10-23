@@ -17,13 +17,13 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.qbe.serializer.IDeserializer;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.qbe.serializer.IDeserializer;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -71,9 +71,10 @@ public class AttributeJSONDeserializer implements IDeserializer {
 	}
 
 	private Attribute deserializeAttribute(JSONObject obj) throws JSONException {
-		return new Attribute(obj.getString(FieldsSerializationConstants.ID), obj.getString(FieldsSerializationConstants.ALIAS),
-				obj.getString(FieldsSerializationConstants.ICON_CLS), obj.getString(FieldsSerializationConstants.NATURE),
-				obj.getString(FieldsSerializationConstants.VALUES), obj);
+		return new Attribute(obj.optString(FieldsSerializationConstants.ID), obj.optString(FieldsSerializationConstants.ALIAS),
+				obj.optString(FieldsSerializationConstants.SORTING_ID),
+				obj.optString(FieldsSerializationConstants.ICON_CLS), obj.optString(FieldsSerializationConstants.NATURE),
+				obj.optString(FieldsSerializationConstants.VALUES), obj);
 	}
 
 }

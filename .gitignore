@@ -51,6 +51,19 @@ Temporary Items
 .classpath
 .project
 .gitignore
+.eclipse
+
+# IntelliJ Idea files
+.idea/
+*.iml
+
+# Maven based files
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.logs
 
 # ant folders
 ant-build/

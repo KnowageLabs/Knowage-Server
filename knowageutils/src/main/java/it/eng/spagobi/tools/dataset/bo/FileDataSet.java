@@ -114,8 +114,8 @@ public class FileDataSet extends ConfigurableDataSet {
 		if ("CSV".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [CSV]");
 			setDataReader(new FileDatasetCsvDataReader(jsonConf));
-		} else if ("XLS".equalsIgnoreCase(fileType)) {
-			logger.info("File format: [XLS Office 2003]");
+		} else if ("XLS".equalsIgnoreCase(fileType) || "XLSX".equalsIgnoreCase(fileType)) {
+			logger.info("File format: [XLS Office 2003] or [XLSX Office 2007+]");
 			setDataReader(new FileDatasetXlsDataReader(jsonConf));
 		} else {
 			throw new IllegalArgumentException("[" + fileExtension + "] is not a supported file type");

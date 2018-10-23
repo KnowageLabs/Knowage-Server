@@ -87,6 +87,10 @@ public class Role implements Serializable {
 
 	private boolean isAbleToManageInternationalization;
 
+	private boolean ableToCreateSelfServiceCockpit;
+	private boolean ableToCreateSelfServiceGeoreport;
+	private boolean ableToCreateSelfServiceKpi;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -724,4 +728,27 @@ public class Role implements Serializable {
 		this.isAbleToManageInternationalization = isAbleToManageInternationalization;
 	}
 
+	public boolean isAbleToCreateSelfServiceCockpit() {
+		return ableToCreateSelfServiceCockpit;
+	}
+
+	public void setAbleToCreateSelfServiceCockpit(boolean ableToCreateSelfServiceCockpit) {
+		this.ableToCreateSelfServiceCockpit = ableToCreateSelfServiceCockpit;
+	}
+
+	public boolean isAbleToCreateSelfServiceGeoreport() {
+		return ableToCreateSelfServiceGeoreport;
+	}
+
+	public void setAbleToCreateSelfServiceGeoreport(boolean ableToCreateSelfServiceGeoreport) {
+		this.ableToCreateSelfServiceGeoreport = ableToCreateSelfServiceGeoreport;
+	}
+
+	public boolean isAbleToCreateSelfServiceKpi() {
+		return ableToCreateSelfServiceKpi;
+	}
+
+	public void setAbleToCreateSelfServiceKpi(boolean ableToCreateSelfServiceKpi) {
+		this.ableToCreateSelfServiceKpi = ableToCreateSelfServiceKpi;
+	}
 }

@@ -38,8 +38,8 @@ angular
 	  	};
 	})
 
-function datasetsController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_messaging,$mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n){
+function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -868,6 +868,77 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     }
 
+    $scope.cloneDataset = function(dataset) { 	
+    	var clonedDataset = angular.copy(dataset);
+    	
+    	clonedDataset.id = "";    	
+    	clonedDataset.dsVersions = [];
+    	clonedDataset.usedByNDocs = 0;
+    	    	
+		clonedDataset.name = "CLONE_" + clonedDataset.name;
+		clonedDataset.label = "CLONE_" + clonedDataset.label;
+		clonedDataset.description = "CLONED " + clonedDataset.description;
+    	
+		clonedDataset.scopeCd = "USER";
+		
+    	if(sbiModule_user.userId != clonedDataset.owner){
+    		clonedDataset.owner = sbiModule_user.userId;
+    	}
+    	
+    	if(clonedDataset.catTypeId) 
+    		delete clonedDataset.catTypeId;
+    	
+    	$mdDialog.show({
+    		controller: cloneQbeDatasetDialogController,
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
+			parent: angular.element(document.body),
+			locals: {
+				clonedLabel: clonedDataset.label,
+				clonedName: clonedDataset.name,
+				clonedDescription: clonedDataset.description
+			},
+			clickOutsideToClose: false
+    	}).then(function(result){    	
+    		clonedDataset.name = result.name;
+    		clonedDataset.label = result.label;
+    		clonedDataset.description = result.description;
+    		    					
+    		sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
+    		.then(function(response){
+    			clonedDataset.id = response.data.id;
+				toastr.success(sbiModule_translate.load("sbi.ds.saved"),
+						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+				$scope.activateMyDatasetsTab = true;
+	    		$scope.myDatasets.push(clonedDataset);
+	    		$scope.datasets.push(clonedDataset);
+    		}, function(postErr){
+    			toastr.error(postErr.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+    		});
+    	}, function(response){
+    		// canceled mdDialog
+    	});
+    	    	
+    }
+    
+    function cloneQbeDatasetDialogController($scope, $mdDialog, sbiModule_translate, kn_regex, clonedLabel, clonedName, clonedDescription) {
+    	 $scope.translate = sbiModule_translate;
+    	 $scope.regex = kn_regex;
+    	 
+    	 $scope.dataset = {
+			 label: clonedLabel,
+			 name: clonedName,
+			 description: clonedDescription
+    	 };
+    	 
+    	 $scope.cancel = function() {
+    		 $mdDialog.cancel();
+    	 }
+    	 
+    	 $scope.save = function(result){
+    		 $mdDialog.hide(result);
+    	 }
+    }
+    
     $scope.addNewFileDataset=function(){
 
       console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");

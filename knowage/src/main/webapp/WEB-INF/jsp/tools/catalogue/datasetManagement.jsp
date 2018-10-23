@@ -382,13 +382,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 								</md-card>
 								
-								<!-- ELEMENTS FOR SETTING THE 'XLS' FILE CONFIGURATION -->
-								<md-card ng-if="selectedDataSet.fileType=='XLS'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">          
+								<!-- ELEMENTS FOR SETTING THE 'XLS'/'XLSX' FILE CONFIGURATION -->
+								<md-card ng-if="selectedDataSet.fileType=='XLS' || selectedDataSet.fileType=='XLSX'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">          
 					        
 							        <div layout="row" class="threeCombosLayout">	
 								        
 								        <!-- XLS file is uploaded --> 
-										<div layout="row" flex >
+										<div layout="row" flex layout-align="center center">
 											
 											<div layout="row" layout-wrap flex=30>
 						                  		<div flex=90 layout-align="center center">
@@ -406,7 +406,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     		<md-input-container class="md-block">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 						                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
-						                        				step="1" min="0" value="{{dataset.limitRows}}"
+						                        				step="1" min="0" value="{{selectedDataSet.limitRows}}"
 						                        				ng-change="setFormDirty()">
 							                     	</md-input-container>
 							                  	</div>
@@ -435,9 +435,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					         		<div layout="row" class="threeCombosLayout">								
 								              
 								        <!-- CSV file is uploaded --> 
-										<div layout="row" flex >
+										<div layout="row" flex layout-align="center center">
 							                 	
-						                 	<div layout="row" layout-wrap flex=30>
+						                 	<div layout="row" layout-wrap flex=20>
 						                  		<div flex=90 layout-align="center center">
 						                     		 <md-input-container class="md-block">
 						                        		
@@ -462,7 +462,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  	
 											</div>
 						                 	
-					                		<div layout="row" layout-wrap flex=30>
+					                		<div layout="row" layout-wrap flex=20>
 						                  		
 						                  		<div flex=90 layout-align="center center">
 						                     		
@@ -516,6 +516,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                           			<md-option 	ng-repeat="dateFormatItem in dateFormatTypes" 
 						                           						value="{{dateFormatItem.value}}">
 				                          						{{dateFormatItem.name}}
+				                     						</md-option>
+						                        		</md-select>
+						                        		
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+												<div layout="row" layout-wrap flex=40>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		
+						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.timestampFormat")}}</label> 
+						                        		
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.timestampFormat"
+						                        					ng-change="setFormDirty()">
+						                           			<md-option 	ng-repeat="timestampFormatItem in timestampFormatTypes" 
+						                           						value="{{timestampFormatItem.value}}">
+				                          						{{timestampFormatItem.name}}
 				                     						</md-option>
 						                        		</md-select>
 						                        		
@@ -1703,7 +1720,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:left" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
-		            											md-min-date="minStartDate" md-max-date="maxStartDate" 
 		            											ng-change="setFormDirty();checkPickedStartDate();"
 		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>
@@ -1716,7 +1732,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:right" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
-		            											md-min-date="minEndDate" md-max-date="maxEndDate" 
 		            											ng-change="setFormDirty();checkPickedEndDate();"
 		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>

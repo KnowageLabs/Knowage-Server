@@ -20,12 +20,15 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
@@ -56,11 +59,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";
 	public static final String CSV_FILE_DATE_FORMAT = "dateFormat";
+	public static final String CSV_FILE_TIMESTAMP_FORMAT = "timestampFormat";
 
 	private String csvDelimiter;
 	private String csvQuote;
 	private String csvEncoding;
 	private String dateFormat;
+	private String timestampFormat;
 
 	public FileDatasetCsvDataReader(JSONObject jsonConf) {
 		super();
@@ -93,6 +98,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 						dateFormat = jsonConf.get(CSV_FILE_DATE_FORMAT).toString();
 					} else {
 						dateFormat = "";
+					}
+				}
+				if (jsonConf.has(CSV_FILE_TIMESTAMP_FORMAT)) {
+					if (jsonConf.get(CSV_FILE_TIMESTAMP_FORMAT) != null) {
+						timestampFormat = jsonConf.get(CSV_FILE_TIMESTAMP_FORMAT).toString();
+					} else {
+						timestampFormat = "";
 					}
 				}
 
@@ -216,6 +228,17 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 									field.setValue(date);
 								} catch (Exception ex) {
 									logger.debug((String) field.getValue() + " is not a date");
+								}
+
+								try {
+									DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
+									LocalDateTime localDateTime = LocalDateTime.parse(field.getValue().toString(), formatter);
+									DateTime datetime = localDateTime.toDateTime();
+									Timestamp timestamp = new Timestamp(datetime.getMillis());
+									dataStore.getMetaData().getFieldMeta(i).setType(Timestamp.class);
+									field.setValue(timestamp);
+								} catch (Exception e) {
+									logger.debug(field.getValue().toString() + " is not a timestamp");
 								}
 							}
 						}

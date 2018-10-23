@@ -6,7 +6,7 @@
 		  		
 		  		<md-tabs flex layout-fill class="rightPanelDocuments-datasets">
 			  
-				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
+				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')" md-active="activateMyDatasetsTab">
 				       
 				       <md-tab-body>
 					 	  <dataset-view flex style='overflow: auto;' ng-model="myDatasets"
@@ -20,6 +20,7 @@
 							show-qbe-dataset-action="showQbeDataset(ds);"
 							edit-qbe-dataset-action="editQbeDataset(ds);"
 							preview-dataset-action= "previewDataset(ds);"
+							clone-dataset-action="cloneDataset(ds);"
 							show-detail-dataset-action="editFileDataset(ds);"
 							delete-dataset-action="deleteDataset(ds);"
 							table-columns="tableDatasets"
@@ -41,7 +42,7 @@
 								edit-qbe-dataset-action="editQbeDataset(ds);"
 								show-qbe-dataset-action="showQbeDataset(ds);"
 								preview-dataset-action= "previewDataset(ds);"
-								table-columns="tableDatasets"
+								clone-dataset-action="cloneDataset(ds);"
 					 	  	></dataset-view>		
 				 	    </md-tab-body>
 				 	</md-tab> 
@@ -58,7 +59,7 @@
 								edit-qbe-dataset-action="editQbeDataset(ds);"
 								show-qbe-dataset-action="showQbeDataset(ds);"
 								preview-dataset-action= "previewDataset(ds);"
-								table-columns="tableDatasets"
+								clone-dataset-action="cloneDataset(ds);"
 					 	  	></dataset-view>	
 				 	 	</md-tab-body>
 				 	</md-tab>  
@@ -166,6 +167,10 @@
 <!-- 							<md-button title="{{translate.load('sbi.workspace.dataset.preview')}}" aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)"> -->
 <!-- 									<md-icon md-font-icon="fa fa-eye"></md-icon> -->
 <!-- 							</md-button> -->
+							
+							<md-button title="{{translate.load('sbi.workspace.dataset.clone')}}" ng-show="selectedDataset.dsTypeCd=='Qbe' && (currentDatasetsTab=='myDataSet' || currentDatasetsTab=='enterpriseDataSet' || currentDatasetsTab=='sharedDataSet')" class="md-icon-button" aria-label="Clone Dataset" ng-click="cloneDataset(selectedDataset)">
+					          	<md-icon md-font-icon="fa fa-clone"></md-icon>					          
+					        </md-button>
 							
 							<md-button title="{{translate.load('sbi.workspace.dataset.export.xlsx')}}" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataset,'XLSX')">
 									<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>

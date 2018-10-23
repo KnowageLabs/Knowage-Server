@@ -84,8 +84,8 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		delete copyOfcurrentAss.id;
 		
 
-		for(var i=0;i<$scope.tmpAssociations.length;i++){
-			var tmpAss= angular.copy($scope.tmpAssociations[i]);
+		for(var k=0; i<$scope.tmpAssociations.length; k++){
+			var tmpAss= angular.copy($scope.tmpAssociations[k]);
 			delete tmpAss.$$hashKey;
 			delete tmpAss.description;
 			delete tmpAss.id;

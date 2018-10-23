@@ -105,19 +105,19 @@
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
 		
-		<!--<module>../knowagecommonjengine</module>
+		<module>../knowagecommonjengine</module>
 		<module>../knowagedataminingengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowagenetworkengine</module>
-		<module>../knowageqbeengine3</module>
+		<module>../knowageqbeengine</module>
 		<module>../knowagesvgviewerengine</module>
 		<module>../knowagetalendenginclientapi</module>
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
-		<module>../knowagebirtreportengine</module>-->
+		<module>../knowagebirtreportengine</module>
 	</modules>
 
 	<build>
@@ -304,6 +304,74 @@
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
+						</excludes>
+						<filtering>true</filtering>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>postgres</id>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
+						</excludes>
+						<filtering>true</filtering>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+			<profile>
+			<id>mssql</id>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.SQLServerDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.MSSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
 
 			<build>

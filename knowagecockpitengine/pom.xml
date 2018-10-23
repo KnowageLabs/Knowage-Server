@@ -31,11 +31,11 @@
 					<container>
 						<containerId>tomcat8x</containerId>
 						<type>installed</type>
-						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32\</home>
+						<home>${application-home}</home>
 					</container>
 					<configuration>
 						<type>existing</type>
-						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32</home>
+						<home>${application-home}</home>
 					</configuration>
 				</configuration>
 			</plugin>
@@ -86,13 +86,6 @@
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>3.7</version>
 			<scope>compile</scope>
 		</dependency>
 		

@@ -196,10 +196,9 @@ function discoveryWidgetEditControllerFunction(
   		if(!$scope.selectedColumn.aggregationColumn) $scope.selectedColumn.aggregationColumn = $scope.selectedColumn.name;
   		$scope.availableAggregations = [
   			{name:'COUNT',available:['MEASURE','ATTRIBUTE']},
-  			{name:'SUM',available:['MEASURE']},
-  			{name:'AVG',available:['MEASURE']},
-  			{name:'MIN',available:['MEASURE','ATTRIBUTE']},
-  			{name:'MAX',available:['MEASURE','ATTRIBUTE']}];
+  			{name:'SUM',available:['MEASURE','ATTRIBUTE']},
+  			{name:'AVG',available:['MEASURE','ATTRIBUTE']}
+  		];
   		
   		$scope.cancel = function(){
   			$mdDialog.cancel();

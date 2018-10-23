@@ -198,7 +198,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Select for Cities</title>
+<title>Knowage</title>
 <link rel="shortcut icon"
 	href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
 </head>

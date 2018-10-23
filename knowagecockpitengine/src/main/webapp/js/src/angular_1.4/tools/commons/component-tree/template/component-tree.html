@@ -41,7 +41,7 @@
 <ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}"
 		ui-tree-nodes="" ng-model="node[subfoldersId]"
 		ng-if="node.expanded">
-	<li layout="column" layout-align="start stretch" ng-show="node.visible"
+	<li layout="column" layout-align="start stretch" ng-show="forceVisibility || node.visible"
 			ng-repeat="node in node[subfoldersId]"
 			ui-tree-node ng-include="'componentTreeHtmlScript'"></li>
 	<!--
@@ -51,7 +51,7 @@
 	-->
 	<li ng-if="showLeafSubNodes(node)"
 			layout="column" layout-align="start stretch" ng-repeat="node in node[leafKey]" 
-			ng-show="node.visible" ui-tree-node ng-include="'componentTreeHtmlScript'" >
+			ng-show="forceVisibility || node.visible" ui-tree-node ng-include="'componentTreeHtmlScript'" >
 	</li>
 </ol>
 </script>

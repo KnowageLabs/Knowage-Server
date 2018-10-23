@@ -21,17 +21,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,13 +50,17 @@ import it.eng.spagobi.utilities.StringUtils;
 public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 	private static transient Logger logger = Logger.getLogger(FileDatasetXlsDataReader.class);
-	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
-	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
-	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
+
+	private static final String EXCEL_FILE_TYPE = "fileType";
+	public static final String EXCEL_FILE_SKIP_ROWS = "skipRows";
+	public static final String EXCEL_FILE_LIMIT_ROWS = "limitRows";
+	public static final String EXCEL_FILE_SHEET_NUMBER = "xslSheetNumber";
+
 	private String skipRows;
 	private String limitRows;
 	private String xslSheetNumber;
 	private int numberOfColumns = 0;
+	private String fileType;
 
 	public FileDatasetXlsDataReader(JSONObject jsonConf) {
 		super();
@@ -65,22 +68,27 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		// Get File Dataset Configuration Options
 		if (jsonConf != null) {
 			try {
-				if (jsonConf.get(XSL_FILE_SKIP_ROWS) != null) {
-					skipRows = jsonConf.get(XSL_FILE_SKIP_ROWS).toString();
+				if (jsonConf.get(EXCEL_FILE_SKIP_ROWS) != null) {
+					setSkipRows(jsonConf.get(EXCEL_FILE_SKIP_ROWS).toString());
 				} else {
-					skipRows = "";
+					setSkipRows("");
 				}
 
-				if (jsonConf.get(XSL_FILE_LIMIT_ROWS) != null) {
-					limitRows = jsonConf.get(XSL_FILE_LIMIT_ROWS).toString();
+				if (jsonConf.get(EXCEL_FILE_LIMIT_ROWS) != null) {
+					setLimitRows(jsonConf.get(EXCEL_FILE_LIMIT_ROWS).toString());
 				} else {
-					limitRows = "";
+					setLimitRows("");
 				}
 
-				if (jsonConf.get(XSL_FILE_SHEET_NUMBER) != null) {
-					xslSheetNumber = jsonConf.get(XSL_FILE_SHEET_NUMBER).toString();
+				if (jsonConf.get(EXCEL_FILE_SHEET_NUMBER) != null) {
+					setXslSheetNumber(jsonConf.get(EXCEL_FILE_SHEET_NUMBER).toString());
 				} else {
-					xslSheetNumber = "";
+					setXslSheetNumber("");
+				}
+				if (jsonConf.get(EXCEL_FILE_TYPE) != null) {
+					setFileType(jsonConf.get(EXCEL_FILE_TYPE).toString());
+				} else {
+					setFileType("");
 				}
 			} catch (JSONException e) {
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
@@ -129,18 +137,19 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		dataStore = new DataStore();
 
 		try {
-			HSSFWorkbook wb = new HSSFWorkbook(inputDataStream);
-			HSSFSheet sheet = getSheet(wb);
+			ExcelDataReaderFactory excelFactory = new ExcelDataReaderFactory();
+			Workbook wb = excelFactory.getWorkookInstance(getFileType(), inputDataStream);
+			Sheet sheet = getSheet(wb);
 
 			int initialRow = 0;
 
-			if ((skipRows != null) && (!skipRows.isEmpty())) {
-				initialRow = Integer.parseInt(skipRows);
-				logger.debug("Skipping first " + skipRows + " rows");
+			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty()))) {
+				initialRow = Integer.parseInt(getSkipRows());
+				logger.debug("Skipping first " + getSkipRows() + " rows");
 			}
 
 			int rowsLimit;
-			if ((limitRows != null) && (!limitRows.isEmpty())) {
+			if ((getLimitRows() != null) && (!(getLimitRows().isEmpty()))) {
 
 				/**
 				 * This line is commented, since we need an absolute value of the last row that should be taken while now the 0th row is always taken into count
@@ -153,7 +162,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				// ORIGINAL CODE (danristo)
 				// rowsLimit = initialRow + Integer.parseInt(limitRows) - 1;
 				// MODIFIED CODE (danristo)
-				rowsLimit = initialRow + Integer.parseInt(limitRows);
+				rowsLimit = initialRow + Integer.parseInt(getLimitRows());
 
 				// if the calculated limit exceed the physical number of rows or is equal to zero, just read all the rows
 				if ((rowsLimit > sheet.getPhysicalNumberOfRows()) || rowsLimit == 0) {
@@ -195,7 +204,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				 */
 				if (r > initialRow || r == 0) {
 
-					HSSFRow row = sheet.getRow(r);
+					Row row = sheet.getRow(r);
 					if (checkIfRowIsEmpty(row)) {
 						continue;
 					}
@@ -250,30 +259,30 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 		return dataStore;
 	}
-	
+
 	private boolean checkIfRowIsEmpty(Row row) {
-	    if (row == null) {
-	        return true;
-	    }
-	    if (row.getLastCellNum() <= 0) {
-	        return true;
-	    }
-	    for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
-	        Cell cell = row.getCell(cellNum);
-	        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
-	            return false;
-	        }
-	    }
-	    return true;
+		if (row == null) {
+			return true;
+		}
+		if (row.getLastCellNum() <= 0) {
+			return true;
+		}
+		for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+			Cell cell = row.getCell(cellNum);
+			if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	private HSSFSheet getSheet(HSSFWorkbook workbook) {
-		HSSFSheet sheet;
+	private Sheet getSheet(Workbook workbook) {
+		Sheet sheet;
 
 		int numberOfSheets = workbook.getNumberOfSheets();
-		if ((xslSheetNumber != null) && (!xslSheetNumber.isEmpty())) {
+		if ((getXslSheetNumber() != null) && (!(getXslSheetNumber().isEmpty()))) {
 
-			int sheetNumber = Integer.parseInt(xslSheetNumber) - 1;
+			int sheetNumber = Integer.parseInt(getXslSheetNumber()) - 1;
 			if (sheetNumber > numberOfSheets) {
 				logger.error("Wrong sheet number, using first sheet as default");
 				// if not specified take first sheet
@@ -290,7 +299,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		return sheet;
 	}
 
-	private MetaData parseHeader(DataStore dataStore, HSSFRow row) {
+	private MetaData parseHeader(DataStore dataStore, Row row) {
 		MetaData dataStoreMeta = new MetaData();
 
 		int cells = row.getPhysicalNumberOfCells();
@@ -298,7 +307,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			Cell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -309,7 +318,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			FieldMetadata fieldMeta = new FieldMetadata();
 			if (valueField instanceof String) {
-				String fieldName = StringUtils.escapeForSQLColumnName((String)valueField);
+				String fieldName = StringUtils.escapeForSQLColumnName((String) valueField);
 				fieldMeta.setName(fieldName);
 				fieldMeta.setType(String.class);
 			}
@@ -321,7 +330,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		return dataStoreMeta;
 	}
 
-	private IRecord parseRow(DataStore dataStore, HSSFRow row) {
+	private IRecord parseRow(DataStore dataStore, Row row) {
 
 		IRecord record = new Record(dataStore);
 
@@ -332,7 +341,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < lastColumn; c++) {
 			// get single cell
-			HSSFCell cell = row.getCell(c);
+			Cell cell = row.getCell(c);
 
 			Object valueField = null;
 			try {
@@ -348,7 +357,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				}
 			}
 			if (valueField instanceof Date) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
+				if (valueField instanceof Timestamp) {
+					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Timestamp.class);
+				} else {
+					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
+				}
 			}
 
 			IField field = new Field(valueField);
@@ -359,39 +372,50 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		return record;
 	}
 
-	private Object parseCell(HSSFCell cell) {
+	private Object parseCell(Cell cell) {
 		Object valueField = null;
 
 		if (cell == null)
 			return "";
 
 		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_FORMULA:
+		case Cell.CELL_TYPE_FORMULA:
 			valueField = cell.getCellFormula().toString();
 			break;
 
-		case HSSFCell.CELL_TYPE_NUMERIC:
-			 if (DateUtil.isCellDateFormatted(cell)) {
+		case Cell.CELL_TYPE_NUMERIC:
+			if (DateUtil.isCellDateFormatted(cell)) {
+				/**
+				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
+				 * that is DIFFERENT from Java's
+				 */
+				// String formatString = cell.getCellStyle().getDataFormatString();
 				Date date = cell.getDateCellValue();
-				return date;
-             } else {
-     			Double numericValue = cell.getNumericCellValue();
-    			// testing if the double is an integer value
-    			if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-    				// the number is an integer, this will remove the .0 trailing zeros
-    				int numericInt = numericValue.intValue();
-    				valueField = String.valueOf(numericInt);
-    			} else {
-    				valueField = String.valueOf(cell.getNumericCellValue());
-    			}
-             }
+
+				// If date object doesn't contain Hours, Minutes and Seconds return Date object, otherwise create Timestamp
+				if (date.getHours() == 0 && date.getMinutes() == 0 && date.getSeconds() == 0) {
+					return date;
+				} else {
+					return new Timestamp(date.getTime());
+				}
+			} else {
+				Double numericValue = cell.getNumericCellValue();
+				// testing if the double is an integer value
+				if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+					// the number is an integer, this will remove the .0 trailing zeros
+					int numericInt = numericValue.intValue();
+					valueField = String.valueOf(numericInt);
+				} else {
+					valueField = String.valueOf(cell.getNumericCellValue());
+				}
+			}
 			break;
 
-		case HSSFCell.CELL_TYPE_STRING:
+		case Cell.CELL_TYPE_STRING:
 			valueField = cell.getStringCellValue();
 			break;
 
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 			valueField = "";
 			break;
 
@@ -401,17 +425,42 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		return valueField;
 	}
 
-	/**
-	 * @return the numberOfColumns
-	 */
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getSkipRows() {
+		return skipRows;
+	}
+
+	public void setSkipRows(String skipRows) {
+		this.skipRows = skipRows;
+	}
+
+	public String getLimitRows() {
+		return limitRows;
+	}
+
+	public void setLimitRows(String limitRows) {
+		this.limitRows = limitRows;
+	}
+
+	public String getXslSheetNumber() {
+		return xslSheetNumber;
+	}
+
+	public void setXslSheetNumber(String xslSheetNumber) {
+		this.xslSheetNumber = xslSheetNumber;
+	}
+
 	public int getNumberOfColumns() {
 		return numberOfColumns;
 	}
 
-	/**
-	 * @param numberOfColumns
-	 *            the numberOfColumns to set
-	 */
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
 	}

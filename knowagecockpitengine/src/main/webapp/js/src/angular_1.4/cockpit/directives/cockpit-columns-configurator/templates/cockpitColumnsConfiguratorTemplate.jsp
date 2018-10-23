@@ -63,7 +63,7 @@
      		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
       			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
    			 </div>
-   			 <div ng-if="model.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
+   			 <div ng-show="model.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
 	  		<!--  angular-table flex
 		  		ng-show="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value"
 				id='metadataTable' ng-model="model.content.columnSelectedOfDataset"
@@ -71,7 +71,7 @@
 				columns-search='["name"]' show-search-bar=true
 				no-pagination=true  scope-functions="functionsCockpitColumn"
 				speed-menu-option= actionsOfCockpitColumns>
-			</angular-table--> 
+			</angular-table-->
 			 
 			
 	    	

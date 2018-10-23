@@ -36,10 +36,12 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -54,6 +56,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -72,7 +75,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String getAllDataSources(@Context HttpServletRequest req) {
+	public String getAllDataSources(@Context HttpServletRequest req, @QueryParam("onlySqlLike") boolean onlySqlLike) {
 		IDataSourceDAO dataSourceDao = null;
 		IDomainDAO domaindao = null;
 		List<IDataSource> dataSources;
@@ -88,6 +91,17 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			} else {
 				dataSourceDao.setUserProfile(profile);
 				dataSources = dataSourceDao.loadAllDataSources();
+			}
+
+			if(onlySqlLike) {
+				Iterator<IDataSource> dataSourceIterator = dataSources.iterator();
+				while (dataSourceIterator.hasNext()) {
+					DatabaseDialect dialect = DataBaseFactory.getDataBase(dataSourceIterator.next()).getDatabaseDialect();
+					if(!dialect.isSqlLike()) {
+						dataSourceIterator.remove();
+					}
+
+				}
 			}
 
 			domaindao = DAOFactory.getDomainDAO();

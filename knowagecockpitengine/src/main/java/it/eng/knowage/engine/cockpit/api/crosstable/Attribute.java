@@ -17,14 +17,14 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class Attribute extends Field {
 
@@ -37,8 +37,8 @@ public class Attribute extends Field {
 		return values;
 	}
 
-	public Attribute(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
-		super(entityId, alias, iconCls, nature, config);
+	public Attribute(String entityId, String alias, String sortingId, String iconCls, String nature, String values, JSONObject config) {
+		super(entityId, alias, sortingId, iconCls, nature, config);
 		this.values = values;
 	}
 
@@ -62,7 +62,7 @@ public class Attribute extends Field {
 
 	@Override
 	public Attribute clone() {
-		return new Attribute(entityId, alias, iconCls, nature, values, config);
+		return new Attribute(entityId, alias, sortingId, iconCls, nature, values, config);
 	}
 
 	public void setValues(List<String> values) {

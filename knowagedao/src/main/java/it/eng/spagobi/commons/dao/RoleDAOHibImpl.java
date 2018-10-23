@@ -537,44 +537,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 				SbiAuthorizations authI = (SbiAuthorizations) allFunIt.next();
 
-				if ((authI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())
-						|| (authI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())
-						|| (authI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())
-						|| (authI.getName().equals("RUN_SNAPSHOTS") && aRole.isAbleToRunSnapshots())
-						|| (authI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())
-						|| (authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())
-						|| (authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())
-						|| (authI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())
-						|| (authI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())
-						|| (authI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())
-						|| (authI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())
-						|| (authI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())
-						|| (authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())
-						|| (authI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())
-						|| (authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())
-						|| (authI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())
-						|| (authI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())
-						|| (authI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())
-						|| (authI.getName().equals("SEE_MY_WORKSPACE") && aRole.isAbleToSeeMyWorkspace())
-						|| (authI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())
-						|| (authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())
-						|| (authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())
-						|| (authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())
-						|| (authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())
-						|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
-						|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
-						|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
-						|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence())
-						|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
-						|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.isAbleToEnableRate())
-						|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.isAbleToEnablePrint())
-						|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.isAbleToEnableCopyAndEmbed())
-						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
-						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
-						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
-						|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())
-						|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())
-						|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION") && aRole.isAbleToManageInternationalization())) {
+				if (isAbleTo(aRole, authI))
+				{
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -611,6 +575,50 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 
+	}
+
+	private boolean isAbleTo(Role aRole, SbiAuthorizations authI) {
+		return (authI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())
+				|| (authI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())
+				|| (authI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())
+				|| (authI.getName().equals("RUN_SNAPSHOTS") && aRole.isAbleToRunSnapshots())
+				|| (authI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())
+				|| (authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())
+				|| (authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())
+				|| (authI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())
+				|| (authI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())
+				|| (authI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())
+				|| (authI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())
+				|| (authI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())
+				|| (authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())
+				|| (authI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())
+				|| (authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())
+				|| (authI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())
+				|| (authI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())
+				|| (authI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())
+				|| (authI.getName().equals("SEE_MY_WORKSPACE") && aRole.isAbleToSeeMyWorkspace())
+				|| (authI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())
+				|| (authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())
+				|| (authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())
+				|| (authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())
+				|| (authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())
+				|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
+				|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
+				|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
+				|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence())
+				|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
+				|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.isAbleToEnableRate())
+				|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.isAbleToEnablePrint())
+				|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.isAbleToEnableCopyAndEmbed())
+				|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
+				|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
+				|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
+				|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())
+				|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())
+				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION") && aRole.isAbleToManageInternationalization())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.isAbleToCreateSelfServiceCockpit())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_KPI") && aRole.isAbleToCreateSelfServiceKpi())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT") && aRole.isAbleToCreateSelfServiceGeoreport());
 	}
 
 	/**
@@ -888,6 +896,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("MANAGE_INTERNATIONALIZATION")) {
 				role.setAbleToManageInternationalization(true);
 			}
+			if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
+				role.setAbleToCreateSelfServiceCockpit(true);
+			}
+			if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
+				role.setAbleToCreateSelfServiceGeoreport(true);
+			}
+			if (name.equals("CREATE_SELF_SERVICE_KPI")) {
+				role.setAbleToCreateSelfServiceKpi(true);
+			}
 
 		}
 
@@ -1037,44 +1054,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 				SbiAuthorizations functI = (SbiAuthorizations) allFunIt.next();
 
-				if ((functI.getName().equals("SAVE_SUBOBJECTS") && role.isAbleToSaveSubobjects())
-						|| (functI.getName().equals("SEE_SUBOBJECTS") && role.isAbleToSeeSubobjects())
-						|| (functI.getName().equals("SEE_SNAPSHOTS") && role.isAbleToSeeSnapshots())
-						|| (functI.getName().equals("RUN_SNAPSHOTS") && role.isAbleToRunSnapshots())
-						|| (functI.getName().equals("SEE_VIEWPOINTS") && role.isAbleToSeeViewpoints())
-						|| (functI.getName().equals("SEE_NOTES") && role.isAbleToSeeNotes())
-						|| (functI.getName().equals("SEE_METADATA") && role.isAbleToSeeMetadata())
-						|| (functI.getName().equals("SAVE_METADATA") && role.isAbleToSaveMetadata())
-						|| (functI.getName().equals("SEND_MAIL") && role.isAbleToSendMail())
-						|| (functI.getName().equals("SAVE_REMEMBER_ME") && role.isAbleToSaveRememberMe())
-						|| (functI.getName().equals("SAVE_INTO_FOLDER") && role.isAbleToSaveIntoPersonalFolder())
-						|| (functI.getName().equals("BUILD_QBE_QUERY") && role.isAbleToBuildQbeQuery())
-						|| (functI.getName().equals("DO_MASSIVE_EXPORT") && role.isAbleToDoMassiveExport())
-						|| (functI.getName().equals("MANAGE_USERS") && role.isAbleToManageUsers())
-						|| (functI.getName().equals("SEE_DOCUMENT_BROWSER") && role.isAbleToSeeDocumentBrowser())
-						|| (functI.getName().equals("SEE_FAVOURITES") && role.isAbleToSeeFavourites())
-						|| (functI.getName().equals("SEE_SUBSCRIPTIONS") && role.isAbleToSeeSubscriptions())
-						|| (functI.getName().equals("SEE_MY_DATA") && role.isAbleToSeeMyData())
-						|| (functI.getName().equals("SEE_MY_WORKSPACE") && role.isAbleToSeeMyWorkspace())
-						|| (functI.getName().equals("SEE_TODO_LIST") && role.isAbleToSeeToDoList())
-						|| (functI.getName().equals("KPI_COMMENT_EDIT_ALL") && role.isAbleToEditAllKpiComm())
-						|| (functI.getName().equals("KPI_COMMENT_EDIT_MY") && role.isAbleToEditMyKpiComm())
-						|| (functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())
-						|| (functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())
-						|| (functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
-						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())
-						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
-						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())
-						|| (functI.getName().equals("ENABLE_FEDERATED_DATASET") && role.isAbleToEnableFederatedDataset())
-						|| (functI.getName().equals("ENABLE_TO_RATE") && role.isAbleToEnableRate())
-						|| (functI.getName().equals("ENABLE_TO_PRINT") && role.isAbleToEnablePrint())
-						|| (functI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && role.isAbleToEnableCopyAndEmbed())
-						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
-						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())
-						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())
-						|| (functI.getName().equals("MANAGE_CALENDAR") && role.isAbleToManageCalendar())
-						|| (functI.getName().equals("FUNCTIONS_CATALOG_USAGE") && role.isAbleToUseFunctionsCatalog())
-						|| (functI.getName().equals("MANAGE_INTERNATIONALIZATION") && role.isAbleToManageInternationalization())) {
+				if (isAbleTo(role, functI)) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());

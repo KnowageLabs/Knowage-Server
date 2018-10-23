@@ -39,6 +39,12 @@ function toolbarController($scope,$mdSidenav,sbiModule_translate,sbiModule_user)
 	
 	$scope.showOrganizeFolder = (sbiModule_user.functionalities.indexOf("SelfServiceFolderManagement")>-1)? true:false;
 
+	$scope.showCockpitAnalysisButton = (sbiModule_user.functionalities.indexOf("CreateSelfSelviceCockpit")>-1)? true:false;
+    $scope.showGeoreportAnalysisButton = (sbiModule_user.functionalities.indexOf("CreateSelfSelviceGeoreport")>-1)? true:false;
+    $scope.showKpiAnalysisButton = (sbiModule_user.functionalities.indexOf("CreateSelfSelviceKpi")>-1)? true:false;
+
+    $scope.showCreateDocumentButton = $scope.showCockpitAnalysisButton || $scope.showGeoreportAnalysisButton || $scope.showKpiAnalysisButton;
+
 	//$scope.openedSidebar = $mdSidenav('leftWorkspaceSideNav').isOpen();
 	$scope.translate = sbiModule_translate;
 	

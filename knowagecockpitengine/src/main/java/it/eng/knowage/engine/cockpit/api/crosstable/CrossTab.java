@@ -129,6 +129,8 @@ public class CrossTab {
 	private List<String> columnsHeaderIdList = new ArrayList<String>();
 	private List<String> rowsHeaderIdList = new ArrayList<String>();
 	private List<String> measuresHeaderIdList = new ArrayList<String>();
+	private List<String> orderingHeaderList = new ArrayList<String>();
+
 
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -256,6 +258,7 @@ public class CrossTab {
 		List<String> columnsNameList = new ArrayList<String>();
 		List<String> rowsNameList = new ArrayList<String>();
 		List<String> measuresNameList = new ArrayList<String>();
+		List<String> orderingNameList = new ArrayList<String>(); //list with external sorting columns (just associated column)
 
 		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
 			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
@@ -265,11 +268,17 @@ public class CrossTab {
 		for (int i = 0; i < crosstabDefinition.getColumns().size(); i++) {
 			columnsHeaderList.add(crosstabDefinition.getColumns().get(i).getAlias());
 			columnsHeaderIdList.add(crosstabDefinition.getColumns().get(i).getEntityId());
+			if (crosstabDefinition.getColumns().get(i).getSortingId() != null && !crosstabDefinition.getColumns().get(i).getSortingId().equals("")) {
+				orderingHeaderList.add(crosstabDefinition.getColumns().get(i).getSortingId()  + "|" + crosstabDefinition.getColumns().get(i).getEntityId());
+			}
 		}
 
 		for (int i = 0; i < crosstabDefinition.getRows().size(); i++) {
 			rowsHeaderList.add(crosstabDefinition.getRows().get(i).getAlias());
 			rowsHeaderIdList.add(crosstabDefinition.getRows().get(i).getEntityId());
+			if (crosstabDefinition.getRows().get(i).getSortingId() != null && !crosstabDefinition.getRows().get(i).getSortingId().equals("")) {
+				orderingHeaderList.add(crosstabDefinition.getRows().get(i).getSortingId()  + "|" + crosstabDefinition.getRows().get(i).getAlias());
+			}
 		}
 
 		for (int i = 0; i < dataStoreMetadataFields.length(); i++) {
@@ -287,6 +296,19 @@ public class CrossTab {
 			}
 		}
 
+		//check association for external field sorting
+		if (orderingHeaderList != null && orderingHeaderList.size() > 0) {
+			String orderingHeadersNames = "";
+			for (int i=0; i < orderingHeaderList.size(); i++) {
+				String orderingHeader = orderingHeaderList.get(i);
+				String[] orderingHeaderEl = orderingHeader.split("\\|");
+				if (orderingHeaderEl.length == 2) {
+					orderingHeadersNames = getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[0]) + "|" + getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[1]) ;
+					orderingNameList.add(orderingHeadersNames);
+				}
+			}
+		}
+
 		int cellCount = 0;
 		int actualRows = 0;
 		int actualColumns = 0;
@@ -294,8 +316,8 @@ public class CrossTab {
 		for (index = 0; index < dataStoredata.length() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
 
-			boolean columnInserted = addRecord(columnsRoot, valueRecord, columnsNameList);
-			boolean rowInserted = addRecord(rowsRoot, valueRecord, rowsNameList);
+			boolean columnInserted = addRecord(columnsRoot, valueRecord, columnsNameList, orderingNameList);
+			boolean rowInserted = addRecord(rowsRoot, valueRecord, rowsNameList, orderingNameList);
 			actualRows += rowInserted ? 1 : 0;
 			actualColumns += columnInserted ? 1 : 0;
 			cellCount = actualRows * actualColumns * measuresCount;
@@ -310,7 +332,7 @@ public class CrossTab {
 			for (index = 0; index < dataStoredata.length(); index++) {
 				valueRecord = dataStoredata.getJSONObject(index);
 
-				addRecord(completeColumnsRoot, valueRecord, columnsNameList);
+				addRecord(completeColumnsRoot, valueRecord, columnsNameList, orderingNameList);
 			}
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
@@ -597,6 +619,24 @@ public class CrossTab {
 
 	}
 
+	private String getMetaColumnName(JSONArray metaFields, String name) throws JSONException  {
+		String toReturn = "";
+
+		if (!name.equals(""))  {
+
+			for (int i = 0; i < metaFields.length(); i++) {
+				if (metaFields.get(i) instanceof String) {
+					continue;
+				}
+				if (name.equalsIgnoreCase(metaFields.getJSONObject(i).getString("header"))) {
+					toReturn = metaFields.getJSONObject(i).getString("name");
+						break;
+				}
+			}
+		}
+		return toReturn;
+	}
+
 	private <T extends Attribute> void addHeaderTitles(List<T> lines, int linesIndex, Node node) {
 		if (linesIndex < lines.size()) {
 			Node descriptionNode;
@@ -829,6 +869,60 @@ public class CrossTab {
 	 * @param startPosition
 	 * @param endPosition
 	 */
+	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName, List<String> orderingList ) {
+		boolean toReturn = false;
+		String valueField;
+		String descriptionField;
+		Node node;
+		Node nodeToCheck = root;
+		int nodePosition;
+
+		for (int indexFields = 0; indexFields < attributeFieldsName.size(); indexFields++) {
+			try {
+				String valueColumn = getValueFromOrderingId (orderingList, attributeFieldsName.get(indexFields));
+				if (valueColumn == null || valueColumn.equals("")) valueColumn = attributeFieldsName.get(indexFields); //value = description
+				valueField = datasetRecords.getString(valueColumn);
+				descriptionField = datasetRecords.getString(attributeFieldsName.get(indexFields));
+			} catch (JSONException e) {
+				logger.error("Error getting the values from the dataset");
+				throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset");
+			}
+			node = new Node(valueField, descriptionField);
+
+			nodePosition = nodeToCheck.getChilds().indexOf(node);
+			if (nodePosition < 0) {
+				toReturn = true;
+				nodeToCheck.addChild(node);
+				nodeToCheck = node;
+			} else {
+				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+			}
+		}
+		return toReturn;
+	}
+
+	private String getValueFromOrderingId(List<String> orderingList, String name) {
+		for (int i=0; i<orderingList.size(); i++) {
+			 String orderingName = orderingList.get(i);
+			 String[] ordering = orderingName.split("\\|");
+			 if (ordering.length == 2 && ordering[1].equalsIgnoreCase(name)) {
+				 return ordering[0];
+			 }
+		}
+		return null;
+	}
+
+	/**
+	 * Add to the root (columnRoot or rowRoot) a path from the root to a leaf. A record contains both the columns definition and the rows definition: (it may be
+	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need
+	 * need a start and end position in the record (in this case 0,3)
+	 *
+	 * @param root
+	 *            : the node in witch add the record
+	 * @param record
+	 * @param startPosition
+	 * @param endPosition
+	 */
 	private boolean addRecord(Node root, IRecord valueRecord, int startPosition, int endPosition) {
 		boolean toReturn = false;
 		IField valueField;
@@ -883,17 +977,21 @@ public class CrossTab {
 		List<String> toReturn = new ArrayList<String>();
 		if (n.getChilds().size() == 0) {
 			if (prefix.equals(PATH_SEPARATOR)) {
-				toReturn.add(prefix + (n.getValue()));
+//				toReturn.add(prefix + (n.getValue()));
+				toReturn.add(prefix + (n.getDescription()));
 			} else {
-				toReturn.add(prefix + PATH_SEPARATOR + (n.getValue()));
+//				toReturn.add(prefix + PATH_SEPARATOR + (n.getValue()));
+				toReturn.add(prefix + PATH_SEPARATOR + (n.getDescription()));
 			}
 			return toReturn;
 		} else {
 			for (int i = 0; i < n.getChilds().size(); i++) {
 				if (prefix.equals(PATH_SEPARATOR)) {
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + (n.getValue())));
+//					toReturn.addAll(visit(n.getChilds().get(i), prefix + (n.getValue())));
+					toReturn.addAll(visit(n.getChilds().get(i), prefix + (n.getDescription())));
 				} else {
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + (n.getValue())));
+//					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + (n.getValue())));
+					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + (n.getDescription())));
 				}
 			}
 			return toReturn;
@@ -1585,7 +1683,7 @@ public class CrossTab {
 	}
 
 	/**
-	 * Sum the values of the columns (the bottom pannel)
+	 * Sum the values of the columns (the bottom panel)
 	 *
 	 * @param measuresOnRow
 	 * @return
@@ -1593,7 +1691,7 @@ public class CrossTab {
 	private List<String[]> getTotalsOnColumns(boolean measuresOnRow) {
 		List<String[]> result = new ArrayList<String[]>();
 		double[] st;
-		int measures = 1;
+		int measures = 1; //default for measures on column : it sums 1 column at a time
 		if (measuresOnRow) {
 			measures = this.measures.size();
 		}
@@ -1604,9 +1702,8 @@ public class CrossTab {
 			for (int i = 0; i < iteration; i++) {
 				for (int j = 0; j < dataMatrix[0].length; j++) {
 					try {
-						if (getCellType(i * measures + measureId, j).equals(CellType.DATA) || getCellType(i * measures + measureId, j).equals(CellType.TOTAL)) {
+						if (getCellType(i * measures + measureId, j).equals(CellType.DATA) || getCellType(i * measures + measureId, j).equals(CellType.SUBTOTAL) || getCellType(i * measures + measureId, j).equals(CellType.TOTAL)) {
 							String value = dataMatrix[i * measures + measureId][j];
-
 							if (!value.equals(DATA_MATRIX_NA)) {
 								if (valuesMap.containsKey(j)) {
 									valuesMap.get(j).add( new Double(value));
@@ -1684,17 +1781,12 @@ public class CrossTab {
 
 		double sum = 0;
 		int nrows = (type.getValue().equalsIgnoreCase("partialsum")) ? dataMatrix.length - 1 : dataMatrix.length; //  if subtotal doesn't sum that partial total
-//		for (int y = 0; y < dataMatrix.length; y++) { ORIG
 		for (int y = 0; y < nrows; y++) {
 			if (celltypeOfColumns.get(column).equals(type)) {
-				//se la colonna precedente è di tipo SUBTOTAL non sommare il valore perchè lo raddoppierebbe!!
-				//just if previous column is of DATA type sum  the value
 				CellType prevCellType = getCellType(y,column-1);
-				if (prevCellType.equals(CellType.DATA)) {
-					String value = dataMatrix[y][column];
-					if (!value.equals(DATA_MATRIX_NA)) {
-						sum = sum + new Double(value);
-					}
+				String value = dataMatrix[y][column];
+				if (!value.equals(DATA_MATRIX_NA)) {
+					sum = sum + new Double(value);
 				}
 			}
 		}

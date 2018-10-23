@@ -19,6 +19,7 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.*;
@@ -29,6 +30,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -37,6 +39,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +54,13 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
     @Override
     protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
-        SolrQuery solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
-        solrDataSet.setSolrQuery(solrQuery);
+        SolrQuery solrQuery;
+        try {
+            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
+        } catch (JsonProcessingException e) {
+            throw new SpagoBIRuntimeException(e);
+        }
+        solrDataSet.setSolrQuery(solrQuery, getFacetsWithAggregation(groups));
         dataSet.loadData(offset, fetchSize, maxRowCount);
         IDataStore dataStore = dataSet.getDataStore();
         dataStore.setCacheDate(getDate());
@@ -98,5 +106,13 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
         if(AggregationFunctions.SUM.equals(aggregationFunction.getName())) { return fieldStats.getSum(); }
         if(AggregationFunctions.AVG.equals(aggregationFunction.getName())) { return fieldStats.getMean(); }
         throw new IllegalArgumentException("The function " + aggregationFunction.getName() + " is not valid here");
+    }
+
+    private Map<String, String> getFacetsWithAggregation(List<Projection> groups) {
+        Map<String, String> facets = new HashMap<>(groups.size());
+        for(Projection facet : groups) {
+            facets.put(facet.getName(), facet.getAggregationFunction().getName().toLowerCase());
+        }
+        return facets;
     }
 }

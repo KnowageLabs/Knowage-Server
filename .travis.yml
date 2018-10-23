@@ -38,8 +38,6 @@ after_success:
   - mvn -f knowagenetworkengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowageoauth2securityprovider/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowageqbeengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
-  - mvn -f knowageqbeengine2/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
-  - mvn -f knowageqbeengine3/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowagesdk/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowagesvgviewerengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowagetalendenginclientapi/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
@@ -49,7 +47,6 @@ after_success:
   - mvn -f knowageutilsjson/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowagewhatifengine/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f qbecore/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
-  - mvn -f qbecore2/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f slimerjs-wrapper/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f spagobi-commons-core/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f spagobi-cwm/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**

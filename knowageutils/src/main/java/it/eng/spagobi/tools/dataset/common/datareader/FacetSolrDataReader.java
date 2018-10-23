@@ -79,15 +79,14 @@ public class FacetSolrDataReader extends SolrDataReader {
 
             for (int j = 0; j < parsedData.size(); j++) {
                 if (maxResults <= 0 || rowFetched < maxResults) {
+                    IRecord record = new Record(dataStore);
                     Map<Object, Object> aMap = (Map<Object, Object>) parsedData.get(j);
-                    for (Iterator iterator = aMap.keySet().iterator(); iterator.hasNext(); ) {
-                        IRecord record = new Record(dataStore);
-                        Object key = iterator.next();
-                        record.appendField(new Field(key));
-                        record.appendField(new Field(aMap.get(key)));
-                        dataStore.appendRecord(record);
-                        rowFetched++;
+                    for (Object key : aMap.keySet()) {
+                        Object value = aMap.get(key);
+                        record.appendField(new Field(value));
                     }
+                    dataStore.appendRecord(record);
+                    rowFetched++;
                 }
             }
         } else {// facet field

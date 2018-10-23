@@ -53,7 +53,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
-
+	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 	$scope.documentParameters = [
 		{allowInternalNodeSelection: true,
 		dataDependencies: [],
@@ -291,6 +291,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
       },
 
       {
+    	  name: "SPATIAL ATTRIBUTE",
+    	  value: "SPATIAL_ATTRIBUTE"
+      },
+
+      {
     	  name: "MEASURE",
     	  value: "MEASURE"
       }
@@ -320,7 +325,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			hideTooltip: true,
 
 			transformer: function() {
-				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.value}}">{{col.name}}</md-option></md-select>';
 			}
 		}
 	];
@@ -483,6 +488,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
 
 		 ];
+	
+	$scope.timestampFormatTypes = [
+		{ value:"dd/MM/yyyy HH:mm:ss", name:"dd/MM/yyyy HH:mm:ss" },
+	 	{ value:"MM/dd/yyyy hh:mm:ss a", name:"MM/dd/yyyy hh:mm:ss a" },
+	 	{ value:"dd-MM-yyyy hh:mm:ss a", name:"dd-MM-yyyy hh:mm:ss a" },
+	 	{ value:"MM-dd-yyyy hh:mm:ss a", name:"MM-dd-yyyy hh:mm:ss a" },
+		{ value:"yyyy-MM-dd hh:mm:ss a", name:"yyyy-MM-dd hh:mm:ss a" },
+	 	{ value:"yyyy:MM:dd hh:mm:ss a", name:"yyyy:MM:dd hh:mm:ss a" },
+	 	{ value:"dd.MM.yyyy HH:mm:ss", name:"dd.MM.yyyy HH:mm:ss" },
+	 	{ value:"MM.dd.yyyy HH:mm:ss", name:"MM.dd.yyyy HH:mm:ss" }
+	];
 
 	// Dataset preview
 	$scope.previewDatasetModel=[];
@@ -514,7 +530,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.chooseDateFormat = function(dateFormat) {
 		$scope.selectedDataSet.dateFormat = dateFormat;
 	}
-
+	
+	$scope.chooseTimestampFormat = function(timestampFormat) {
+		$scope.selectedDataSet.timestampFormat = timestampFormat;
+	}
 
 	/**
 	 * Scope variables (properties) for the REST dataset.
@@ -1833,6 +1852,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log(datasetFieldsMetadata);
 		console.log($scope.datasetMetaWithFieldsMetaIndexes);
 
+		var numberOfSpatialAttribute = 0;
+		for (i=0; i<$scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType == "SPATIAL_ATTRIBUTE"){
+				numberOfSpatialAttribute++;
+				if(numberOfSpatialAttribute > 1) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.field.metadata.duplicateSpatialAttribute"), sbiModule_translate.load('sbi.generic.error'));
+					return;
+				}
+			}
+		}
+
 		for (i=0; i<$scope.fieldsMetadata.length; i++) {
 			//var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
 			//$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
@@ -1845,6 +1875,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		console.log("posle: ",$scope.selectedDataSet.meta.columns);
 
+		$scope.closeScript();
 	}
 
 	 /**
@@ -1877,12 +1908,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.loadDataSet = function(item,index) {
 		 $scope.isSelected = true;
 		 $scope.step=1;
-//		 console.log("A8");
-//		 console.log(item);
-//		 console.log($scope.dirtyForm);
-//		 console.log($scope.selectedDataSet);
-		 //$scope.selectedDataSet ? console.log("id: ",$scope.selectedDataSet.id) : console.log("UNDEFINED");
-		 // DS not yet selected
+
+		// Load the Dataset's older versions
+		if(!item.hasOwnProperty('selected') || 
+				(item.hasOwnProperty('selected') && item.selected != true)) {
+			var defer = $q.defer();
+			var olderVersionsPromise = loadOlderVersions(item.id);
+			olderVersionsPromise.then(function(response){											 		
+				item.dsVersions = response;
+				item.selected = true;
+				$scope.selectedDataSetInit = angular.copy(item);
+				$scope.selectedDataSet = angular.copy(item);
+				defer.resolve(response);				
+			}, function(error){					
+				sbiModule_messaging.showErrorMessage(error, 'Error');				
+			});			
+		}
+		 
 		 if (!$scope.selectedDataSet) {
 			 //console.log("a2");
 			 $scope.setFormNotDirty();
@@ -1890,10 +1932,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-			 //console.log("b2");
-			 //console.log(item.id);
-			 //console.log($scope.dirtyForm);
-//			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+
 			 // If we move to the already existing DS and not clicking on the new DS again
 			 if (item.id) {
 
@@ -1927,7 +1966,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 }
 				 else {
 
-					 selectDataset(item,index);
+					 selectDataset(item, index);
 					 $scope.setFormNotDirty();
 				 }
 
@@ -1961,7 +2000,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					 		function() {
 
 					 			var indexOfExistingDSInAT = -1;
-//
+
 								for (i=0; i<$scope.datasetsListTemp.length; i++) {
 									if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
 										indexOfExistingDSInAT = i;
@@ -2274,7 +2313,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
-
+	
+	var loadOlderVersions = function(id) {
+		var deferred = $q.defer();
+				
+		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
+		promise.then(function(response){
+			var result = response.data.root;				
+			deferred.resolve(result);
+		}, function(error) {
+			if(error.data && error.data.errors)
+				deferred.reject(error.data.errors[0].message);
+   		});
+			
+		return deferred.promise;
+	}
+	
 	$scope.refactorFileDatasetConfig = function(item) {
 
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
@@ -2288,6 +2342,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
 		$scope.selectedDataSet.dateFormat = (item!=undefined && item.dateFormat!=undefined) ? item.dateFormat : $scope.dateFormatDefault;
+		$scope.selectedDataSet.timestampFormat = (item!=undefined && item.timestampFormat!=undefined) ? item.timestampFormat : $scope.timestampFormatDefault;
 
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -2668,69 +2723,74 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.startDate ? $scope.selectedDataSet.startDate.setHours($scope.selectedDataSet.startDate.getHours() - $scope.selectedDataSet.startDate.getTimezoneOffset() / 60) : null;
 			$scope.selectedDataSet.endDate ? $scope.selectedDataSet.endDate.setHours($scope.selectedDataSet.endDate.getHours() - $scope.selectedDataSet.endDate.getTimezoneOffset() / 60) : null;
 
-			sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
-				.then(
-						function(response) {
-							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+            var datasetAsString = JSON.stringify($scope.selectedDataSet);
+            if($scope.selectedDataSet.isPersisted && datasetAsString.includes("${")) {
+                sbiModule_messaging.showErrorMessage("You cannot persist a dataset that uses profile attributes. Please verify your dataset configuration");
+            } else {
 
-							if($scope.selectedDataSet.isPersistedHDFS) {
-								sbiModule_restServices.promisePost('1.0/hdfs',response.data.id)
-								.then(
-										function(responseHDFS) {
-											sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.ds.hdfs.request.work"), 'Success!');
-										},
+                sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
+                    .then(
+                            function(response) {
+                                sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 
-										function(responseHDFS) {
-											sbiModule_messaging.showErrorMessage(responseHDFS.data.errors[0].message, 'Error');
-										}
-									);
-							}
+                                if($scope.selectedDataSet.isPersistedHDFS) {
+                                    sbiModule_restServices.promisePost('1.0/hdfs',response.data.id)
+                                    .then(
+                                            function(responseHDFS) {
+                                                sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.ds.hdfs.request.work"), 'Success!');
+                                            },
 
-							if( $scope.showDatasetScheduler){
-								if($scope.selectedDataSet.isScheduled) {
-									sbiModule_restServices.promisePost('scheduleree/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
-									.then(
+                                            function(responseHDFS) {
+                                                sbiModule_messaging.showErrorMessage(responseHDFS.data.errors[0].message, 'Error');
+                                            }
+                                        );
+                                }
 
-											function(responseDS) {
-												console.log("[POST]: SUCCESS!");
-												getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
-												$scope.setFormNotDirty();
-											},
+                                if( $scope.showDatasetScheduler){
+                                    if($scope.selectedDataSet.isScheduled) {
+                                        sbiModule_restServices.promisePost('scheduleree/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
+                                        .then(
 
-											function(responseDS) {
-												sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
-												$log.warn("An error occured while trying to save a dataset persistence schedulation");
-											}
-									);
-								} else {
-									sbiModule_restServices.promiseDelete('scheduleree/persistence/dataset/label', $scope.selectedDataSet.label, "/")
-									.then(
-											function(responseDS) {
-												console.log("[DELETE]: SUCCESS!");
-												getDatasetFromId($scope, indexOfExistingDSInAT,response.data.id);
-												$scope.setFormNotDirty();
-											},
+                                                function(responseDS) {
+                                                    console.log("[POST]: SUCCESS!");
+                                                    getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
+                                                    $scope.setFormNotDirty();
+                                                },
 
-											function(responseDS) {
-												sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
-												$log.warn("An error occured while trying to delete a dataset persistence schedulation");
-											}
-									);
-								}
-							}else{
-								console.log("[POST]: SUCCESS!");
-								getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
-								$scope.setFormNotDirty();
-							}
+                                                function(responseDS) {
+                                                    sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
+                                                    $log.warn("An error occured while trying to save a dataset persistence schedulation");
+                                                }
+                                        );
+                                    } else {
+                                        sbiModule_restServices.promiseDelete('scheduleree/persistence/dataset/label', $scope.selectedDataSet.label, "/")
+                                        .then(
+                                                function(responseDS) {
+                                                    console.log("[DELETE]: SUCCESS!");
+                                                    getDatasetFromId($scope, indexOfExistingDSInAT,response.data.id);
+                                                    $scope.setFormNotDirty();
+                                                },
+
+                                                function(responseDS) {
+                                                    sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
+                                                    $log.warn("An error occured while trying to delete a dataset persistence schedulation");
+                                                }
+                                        );
+                                    }
+                                }else{
+                                    console.log("[POST]: SUCCESS!");
+                                    getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
+                                    $scope.setFormNotDirty();
+                                }
 
 
-						},
+                            },
 
-						function(response) {
-							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-						}
-					);
-
+                            function(response) {
+                                sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+                            }
+                        );
+            }
 		}
 		else {
 			// TODO: translate
@@ -2780,6 +2840,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.csvEncoding = $scope.csvEncodingDefault;
 						$scope.selectedDataSet.csvDelimiter = $scope.csvDelimiterDefault;
 						$scope.selectedDataSet.dateFormat = $scope.dateFormatDefault;
+						$scope.selectedDataSet.timestampFormat = $scope.timestampFormatDefault;
 						$scope.selectedDataSet.csvQuote = $scope.csvQuoteDefault;
 						$scope.selectedDataSet.skipRows = ($scope.skipRowsDefault != null) ? $scope.skipRowsDefault : null;
 						$scope.selectedDataSet.limitRows = ($scope.limitRowsDefault !=null) ? $scope.limitRowsDefault : null;
@@ -2794,10 +2855,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.changingFile = false;
 						$scope.initialUpload = true;
 
-						if($scope.selectedDataSet.fileType=="XLS"){
+						if($scope.selectedDataSet.fileType=="XLS" || $scope.selectedDataSet.fileType=="XLSX"){
 							$scope.selectedDataSet.limitRows = "";
 							$scope.selectedDataSet.csvDelimiter = "";
 							$scope.selectedDataSet.dateFormat = "";
+							$scope.selectedDataSet.timestampFormat = "";
 							$scope.selectedDataSet.csvQuote = "";
 						}
 
@@ -3160,10 +3222,6 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
 
 		if(hasParameters){
 			$scope.parameterPreviewItems = $scope.parameterItems;
-
-			console.log('$scope.parameterItems')
-			console.log($scope.parameterItems)
-			console.log( $scope.documentParameters)
 			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {
 				$scope.parameterPreviewItems[i].value = "";
 			}
@@ -3964,6 +4022,7 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
 		$scope.dataset.csvDelimiter = $scope.selectedDataSet.csvDelimiter;
 		$scope.dataset.csvQuote = $scope.selectedDataSet.csvQuote;
 		$scope.dataset.dateFormat = $scope.selectedDataSet.dateFormat;
+		$scope.dataset.timestampFormat = $scope.selectedDataSet.timestampFormat;
 		$scope.dataset.description = $scope.selectedDataSet.description;
 		$scope.dataset.exportToHdfs = $scope.selectedDataSet.isPersistedHDFS;
 		$scope.dataset.fileName = $scope.selectedDataSet.fileName;
@@ -4081,14 +4140,15 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
         			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase())
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
         				 row.dsMetaValue.push(this.dsMetaValue[i]);
 
         			}
 
         		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
         			for(i=0;i<this.dsMetaValue.length;i++){
-           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| this.dsMetaValue[i].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
            			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
            				 row.dsMetaValue.push(this.dsMetaValue[i]);
 
@@ -4417,6 +4477,7 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
 				typeValue = values[i].pvalue;
 				typeValue = typeValue!=null ? typeValue.replace("java.lang.","") : null;
 				typeValue = typeValue!=null ? typeValue.replace("java.util.","") : null;
+				typeValue = typeValue!=null ? typeValue.replace("java.sql.","") : null;
 				values[i].pvalue = typeValue;
 			}
 		}
@@ -4487,14 +4548,15 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
 				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString ||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase()){
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="timestamp".toLowerCase()){
 					 filteredMetaValues.push($scope.dsMetaValue[j]);
 				 }
 			}
 
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
-   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
    			 }
@@ -4512,7 +4574,7 @@ $scope.getParameters = function(){			console.log( $scope.documentParameters)
 
 	$scope.metaScopeFunctions.valueChanged = function(item,index) {
 
-    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
+    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE" || item.VALUE_CD=="SPATIAL_ATTRIBUTE") {
     		$scope.prepareMetaForView(item.VALUE_CD,index);
     	}
 

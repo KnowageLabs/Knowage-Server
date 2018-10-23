@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,11 +35,11 @@ import it.eng.spagobi.container.IContainer;
  *
  */
 public class ParametersDecoder {
-
 	static private Logger logger = Logger.getLogger(ParametersDecoder.class);
 
 	private String openBlockMarker;
 	private String closeBlockMarker;
+	private String multiValueRegex;
 
 	public static final String DEFAULT_OPEN_BLOCK_MARKER = "{";
 	public static final String DEFAULT_CLOSE_BLOCK_MARKER = "}";
@@ -65,6 +66,7 @@ public class ParametersDecoder {
 	public ParametersDecoder(String openBlockMarker, String closeBlockMarker) {
 		this.openBlockMarker = openBlockMarker;
 		this.closeBlockMarker = closeBlockMarker;
+		this.multiValueRegex = String.format("%s.+%s.+%s.+%s", openBlockMarker, openBlockMarker, closeBlockMarker, closeBlockMarker);
 	}
 
 	/////////////////////////////////////////////////////////////
@@ -122,14 +124,14 @@ public class ParametersDecoder {
 	 * @return true, if is multi values
 	 */
 	public boolean isMultiValues(String value) {
-		return (value.trim().startsWith(openBlockMarker));
+		return value.trim().matches(Pattern.quote(multiValueRegex));
 	}
 
 	/**
 	 * Creates MultiValue String
 	 *
-	 * @param Object
-	 *            paramaterValue
+	 * @param paramaterValue
+	 *            the parameter value
 	 *
 	 * @return String, if is multi values
 	 */

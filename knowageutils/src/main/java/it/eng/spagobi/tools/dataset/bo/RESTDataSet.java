@@ -96,13 +96,15 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		super.loadData(offset, fetchSize, maxResults);
 
-		// notify for all listeners (also for not NGSI datasets)
-		notifyListeners();
+		if(isNgsi()) {
+			// notify for all listeners
+			notifyListeners();
 
-		// after the first datastore initialization
-		if (isNgsi() && NotifierServlet.isNotifiable()) {
-			logger.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
-			subscribeNGSI();
+			// after the first datastore initialization
+			if (NotifierServlet.isNotifiable()) {
+				logger.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
+				subscribeNGSI();
+			}
 		}
 	}
 

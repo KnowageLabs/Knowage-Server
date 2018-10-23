@@ -34,7 +34,7 @@ public class CoupledProjection extends Projection {
         this.aggregatedProjection = aggregatedProjection;
     }
 
-    public Projection getAggregatednProjection() {
+    public Projection getAggregatedProjection() {
         return aggregatedProjection;
     }
 }
