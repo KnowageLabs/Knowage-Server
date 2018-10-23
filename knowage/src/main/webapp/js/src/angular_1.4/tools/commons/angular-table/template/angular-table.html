@@ -96,14 +96,14 @@
 		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		
 		<span ng-switch-when="--STATIC--" ng-if="column.template==undefined" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
-			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="100" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
 		</span>
 		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" ng-class="getChangedValueStyle(row,column.name)" build-template="column.template" ></span>
 
 		<span ng-switch-default ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
 	 		<!--dynamic cell (default)-->
 			<span  ng-switch-when="false"  ng-class="getChangedValueStyle(row,column.name)"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   >
-				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"><span dynamichtml="getColumnValue(row,column.name,column.transformer)"></span></md-tooltip>
+				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="100" md-direction="bottom"><span dynamichtml="getColumnValue(row,column.name,column.transformer)"></span></md-tooltip>
 			</span>
 			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		</span>

@@ -152,7 +152,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				"label" : sbiModule_translate.load("sbi.folder.columns.roles"),
 				"name" : "name",
 				"size" : "50px",
-				hideTooltip : true
+				hideTooltip : false
 			},
 			{
 				"label" : sbiModule_translate
