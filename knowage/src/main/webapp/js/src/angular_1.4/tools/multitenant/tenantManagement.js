@@ -6,10 +6,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', '$timeout','sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', '$timeout','sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', '$filter', manageTenantFunction ])
 
 
-function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log, $mdDialog, $filter) {
 
 
     Array.prototype.find = function (predicate, thisValue) {  //IE11 does not support find method
@@ -48,7 +48,9 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 	$scope.loadinMessage = false;
 	$scope.selectedIndex = {idx : 0};
 	$scope.showMe = false;
-
+	
+	var licenses = [];
+	
 	/********************************************************
 	 * Get tenants, product types, data-sources and themes	*
 	 ********************************************************/
@@ -104,7 +106,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 			}
 			$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg'));
 	});
-
+	
 	sbiModule_restServices.promiseGet($scope.path, "producttypes")
 		.then(function(response) {
 			if (response.data.errors != undefined){
@@ -113,8 +115,22 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 			}
 			var data = response.data;
 			if (data.root !== undefined && data.root.length > 0){
-				$scope.productTypes = data.root;
-				$scope.productTypesDefault = angular.copy($scope.productTypes);
+				
+				getLicenses()
+				.then(function(response){
+					var host = response.data.hosts[0].hostName;
+					licenses = response.data.licenses[host];
+					
+					//filter productTypes Array by available Licenses
+					data.root = filterArrayByTargetArr(data.root, licenses); 
+					
+					$scope.productTypes = data.root;
+					$scope.productTypesDefault = angular.copy($scope.productTypes);
+				}, function(response){
+					if(response.data.erros)
+						sbiModule_restServices.errorHandler(response.data, $scope.translate.load('sbi.generic.error.msg'));
+				});
+
 			}
 		}, function(response, status, headers, config){
 			if (response.data.errors != undefined){
@@ -126,7 +142,24 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 	/************************
 	 * Functions			*
 	 ************************/
-
+	
+	//GET LICENSES
+	var getLicenses = function() {
+		var promise = sbiModule_restServices.promiseGet("1.0/license", "");
+		return promise;
+	};
+	
+	//Filter Array by Target Array
+	var filterArrayByTargetArr = function(sourceArr, targetArr){
+		var newArr = sourceArr.filter(function(elem){						
+			if(targetArr.find(function(target){
+				return elem.LABEL == target.product;
+			})) return true;
+			else return false;											 
+		});
+		return newArr;
+	}
+	
 	//SPEED MENU TRASH ITEM
 	$scope.tenantSpeedMenu= [{
 		                    	label:'delete',
@@ -190,6 +223,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 						return;
 					}
 					$scope.item.productTypes = response.data.root;
+					$scope.item.productTypes = filterArrayByTargetArr($scope.item.productTypes, licenses);
 					$scope.copySelectedElement($scope.item.productTypes,$scope.productsSelected);
 					$scope.productTypes = $scope.item.productTypes;
 				}, function(response, status, headers, config){
