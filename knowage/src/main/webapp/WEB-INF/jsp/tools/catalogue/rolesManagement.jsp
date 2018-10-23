@@ -98,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerCode")}}</label>
-						<input name="code" ng-model="selectedRole.code" ng-maxlength="20" ng-change="setDirty()"  ng-pattern="regex.alphanumeric">
+						<input name="code" ng-model="selectedRole.code" ng-maxlength="20" ng-change="setDirty()"  ng-pattern="regex.extendedAlphanumeric">
 						<div ng-messages="attributeForm.code.$error" role="alert" ng-messages-multiple>
 							<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
 							<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
