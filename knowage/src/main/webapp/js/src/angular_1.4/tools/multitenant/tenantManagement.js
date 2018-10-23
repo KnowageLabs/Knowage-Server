@@ -6,10 +6,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', '$timeout','sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', '$filter', manageTenantFunction ])
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', '$timeout','sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
 
 
-function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log, $mdDialog, $filter) {
+function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log, $mdDialog) {
 
 
     Array.prototype.find = function (predicate, thisValue) {  //IE11 does not support find method
