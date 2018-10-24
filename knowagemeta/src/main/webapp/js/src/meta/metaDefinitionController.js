@@ -183,8 +183,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.name=bmName;
 		dataToSend.id=bmId;
 		
-		$scope.marko = "a";
-		
 		sbiModule_restServices.promisePost("1.0/metaWeb", "checkRelationships", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
