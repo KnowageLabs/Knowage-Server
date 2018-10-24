@@ -17,19 +17,6 @@
  */
 package it.eng.knowage.meta.generator.jpamapping;
 
-import it.eng.knowage.meta.generator.GenerationException;
-import it.eng.knowage.meta.generator.IGenerator;
-import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
-import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
-import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaModel;
-import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
-import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
-import it.eng.knowage.meta.generator.utils.StringUtils;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.business.BusinessModel;
-import it.eng.knowage.meta.model.olap.OlapModel;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -45,6 +32,19 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.knowage.meta.generator.GenerationException;
+import it.eng.knowage.meta.generator.IGenerator;
+import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
+import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
+import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaModel;
+import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
+import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
+import it.eng.knowage.meta.generator.utils.StringUtils;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.olap.OlapModel;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -266,10 +266,8 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	/**
 	 * Generate the JPA Mapping of one BusinessModel in one outputFile
 	 *
-	 * @param model
-	 *            BusinessModel
-	 * @param outputFile
-	 *            File
+	 * @param model      BusinessModel
+	 * @param outputFile File
 	 */
 	public void generateJpaMapping(BusinessModel model, boolean isUpdatableMapping) {
 
@@ -353,7 +351,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		VelocityContext velocityContext;
 
 		velocityContext = new VelocityContext();
-		velocityContext.put("jpaTable", jpaTable); //$NON-NLS-1$
+		velocityContext.put("jpaTable", jpaTable);
 		if (jpaTable.getPhysicalType().equalsIgnoreCase("View")) {
 			velocityContext.put("isUpdatable", false); //$NON-NLS-1$
 		} else {

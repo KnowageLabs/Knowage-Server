@@ -233,6 +233,15 @@ public class JpaTable extends AbstractJpaTable {
 		return tableType;
 	}
 
+	public String getSqlFilter() {
+		String sqlFilter = getAttribute("structural.sqlFilter");
+		if (sqlFilter != null) {
+			return sqlFilter.replaceAll("\\$P\\{(.+?)\\}", ":$1");
+		} else {
+			return sqlFilter;
+		}
+	}
+
 	@Override
 	public List<IJpaSubEntity> getSubEntities() {
 		// List<IJpaSubEntity> subEntities = new ArrayList<IJpaSubEntity>();
@@ -301,6 +310,32 @@ public class JpaTable extends AbstractJpaTable {
 		BusinessModel businessModel = businessTable.getModel();
 		ModelProperty property = businessModel.getProperties().get("structural.mapping.useCatalog");
 		return property != null ? property.getValue() : "";
+	}
+
+	public List<String> getParamResources() {
+		List<String> listToReturn = JpaOuterResource.getParamName(getAttribute("structural.sqlFilter"));
+		return listToReturn;
+	}
+
+	@Override
+	public String getParamType(String name) {
+		String type = JpaOuterResource.getParameterByName(name).getParameterTypeCode();
+		String result = "";
+		switch (type) {
+
+		case "STRING":
+			result = "java.lang.String";
+			break;
+		case "NUM":
+			result = "java.lang.Integer";
+			break;
+		case "DATE":
+			result = "java.sql.Date";
+			break;
+		}
+
+		return result;
+
 	}
 
 }

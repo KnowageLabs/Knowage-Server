@@ -5,6 +5,9 @@ package ${jpaTable.package};
 import java.io.Serializable;
 import javax.persistence.*;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 ${jpaTable.importStatements}
 
@@ -12,7 +15,18 @@ ${jpaTable.importStatements}
  * This class refers to the ${jpaTable.sqlName} table.
  * 
  */
+ 
+#set($count = 0)
 @Entity
+@FilterDef(name="sqlFilter", parameters = {
+#foreach ($param in $jpaTable.getParamResources())
+	@ParamDef(name = "${param}", type = "$jpaTable.getParamType($param)")
+	#if($jpaTable.getParamResources().size() > 1 && $count != $jpaTable.getParamResources().size() - 1)
+	,
+	#end
+	#set($count = $count + 1)
+#end
+})
 #if( !${table.defaultname} )
 @Table(name="${jpaTable.quotedMappingTableName}"
 #if( $jpaTable.getSchema() )
@@ -23,7 +37,7 @@ ${jpaTable.importStatements}
 #end
 )
 #end
-
+@Filter(name = "sqlFilter", condition = "$jpaTable.getSqlFilter()")
 
 public class ${jpaTable.className} implements Serializable {
 

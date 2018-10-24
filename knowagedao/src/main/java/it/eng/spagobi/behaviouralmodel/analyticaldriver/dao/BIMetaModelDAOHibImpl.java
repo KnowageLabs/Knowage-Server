@@ -385,4 +385,40 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		metaModel.setParameter(parameter);
 		return metaModel;
 	}
+
+	@Override
+	public SbiParameters getParameterByDriverName(String name) {
+
+		String hqlQuery = "from SbiMetaModelParameter s where s.parurlNm =? ";
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+			Query query = session.createQuery(hqlQuery);
+			query.setString(0, name);
+			SbiMetaModelParameter sbiMetaModelParam = (SbiMetaModelParameter) query.uniqueResult();
+
+			Integer paramId = null;
+
+			paramId = sbiMetaModelParam.getSbiParameter().getParId();
+
+			String hQuery = "from SbiParameters sp where sp.parId = " + paramId;
+			Query q = session.createQuery(hQuery);
+			SbiParameters sbiParam = (SbiParameters) q.uniqueResult();
+
+			return sbiParam;
+
+		} catch (Exception e) {
+			logger.error("Error getting parameters");
+			throw new SpagoBIRuntimeException(e.getMessage(), e);
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+
+	}
 }
