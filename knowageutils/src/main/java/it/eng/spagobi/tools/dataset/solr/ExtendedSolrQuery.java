@@ -66,11 +66,11 @@ public class ExtendedSolrQuery extends SolrQuery {
 
     public ExtendedSolrQuery jsonFacets(List<Projection> groups) throws JsonProcessingException {
         if (!groups.isEmpty()) {
-            Map<String, CountJsonFacet> jsonFacetMap = new HashMap<>(groups.size());
+            Map<String, JsonFacet> jsonFacetMap = new HashMap<>(groups.size());
             for(Projection group : groups) {
-                CountJsonFacet jsonFacet;
+                JsonFacet jsonFacet;
                 if(group instanceof CoupledProjection) {
-                    jsonFacet = new JsonFacet(group.getName(), group.getAggregationFunction(), ((CoupledProjection)group).getAggregatedProjection().getName());
+                    jsonFacet = new AggregationJsonFacet(group.getName(), group.getAggregationFunction(), ((CoupledProjection)group).getAggregatedProjection().getName());
                 } else {
                     jsonFacet = new CountJsonFacet(group.getName());
                 }
