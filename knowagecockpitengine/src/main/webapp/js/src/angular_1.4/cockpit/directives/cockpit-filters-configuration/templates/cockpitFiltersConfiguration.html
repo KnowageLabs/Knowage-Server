@@ -1,5 +1,5 @@
 <md-content class="filters" layout="column" layout-fill ng-cloak>
-	<md-card ng-if="ngModelShared.filters!=undefined && !isSolrDataset(ngModelShared.dataset)" >
+	<md-card ng-if="ngModelShared.filters!=undefined && canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" >
 		<md-card-content layout="column" class="noPadding">
 			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true" layout-padding>
 				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
@@ -130,9 +130,9 @@
 
 		</md-card-content>
 	</md-card>
-	<div layout="row" ng-if="!ngModelShared.filters || isSolrDataset(ngModelShared.dataset)" layout-align="center center">
+	<div layout="row" ng-if="!ngModelShared.filters || !canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" layout-align="center center">
 		<div ng-if="!ngModelShared.filters" class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>
-		<div ng-if="isSolrDataset(ngModelShared.dataset)" class="kn-noItems">{{translate.load('sbi.cockpit.table.filters.unusable')}}</div>
+		<div ng-if="!canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" class="kn-noItems">{{translate.load('sbi.cockpit.table.filters.unusable')}}</div>
 	</div>
 	
 </md-content>
