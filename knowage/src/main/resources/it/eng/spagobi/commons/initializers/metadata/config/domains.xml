@@ -366,7 +366,9 @@
 	<DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Date" valueNm="Date" domainCd="DS_META_VALUE"
-		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />		
+		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
+	<DOMAIN valueCd="Timestamp" valueNm="Timestamp" domainCd="DS_META_VALUE"
+		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />				
 	<DOMAIN valueCd="Default Model Category" valueNm="Default Model Category"
 		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 
