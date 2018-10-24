@@ -14,7 +14,7 @@
             <div>
 	                <md-input-container   ng-if='!document.category'flex>
 	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.parFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
+	                    <md-select ng-required = "'true'" ng-model="driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].parFatherId" ng-change="addToChangedDataDepedencies(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])" >
 	                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>
@@ -22,7 +22,7 @@
 	                </md-input-container>
 	                <md-input-container   ng-if='document.category'flex>
 	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.parFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
+	                    <md-select ng-required = "'true'" ng-model="driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].parFatherId" ng-change="addToChangedDataDepedencies(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])" >
 	                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>
@@ -31,10 +31,10 @@
 	                <p>  {{translate.load("sbi.documentdetails.datadependency.operator")}}</p>
 	                  <h5>
 	                    {{translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} 
-	                    {{getDriverNameById(selectedDataCondition)}} 
+	                    {{getDriverNameById(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])}} 
 	                    {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}} </h5>
 	                <md-input-container>
-	                    <md-select ng-model="selectedDataCondition.filterOperation" ng-change="addToChangedDataDepedencies(selectedDataCondition)">
+	                    <md-select ng-model="driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].filterOperation" ng-change="addToChangedDataDepedencies(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])">
 	                        <md-option ng-value="option" ng-repeat="option in availableOperators track by $index">
 	                            {{ option }}
 	                        </md-option>
@@ -45,13 +45,13 @@
 					<div  ng-repeat="paruse in paruses | filter:{id:selectedDriver.parID} ">	
 						<div>		  
 						<label> {{translate.load("sbi.documentdetails.datadependency.check")}}</label>
-						<input type="checkbox" ng-checked="isItChecked($index)"  ng-model="selectedDataCondition.persist[paruse.useID]">
-						{{selectedDataCondition.persist[paruse.useID]}}
+						<input type="checkbox" ng-checked="isItChecked($index)"  ng-model="driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].persist[paruse.useID]">
+						{{driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].persist[paruse.useID]}}
                       <h3>{{translate.load("sbi.documentdetails.datadependency.usename")}}</h3>
 	                   <p><h4>{{paruse.name}} : {{paruse.description}} </h4></p>
-                   {{paruseColumns}}{{Filip}}{{paruse}}
+            
                       <h3>{{translate.load("sbi.documentdetails.datadependency.columns")}}</h3>
-           		<md-select ng-model="paruseColumns[paruse.useID]" ng-change="addToChangedDataDepedencies(selectedDataCondition)">	           
+           		<md-select ng-model="paruseColumns[selectedDriver.id][paruse.useID]" ng-change="addToChangedDataDepedencies(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])">	           
 	                        <md-option ng-value="option" ng-repeat="option in getLovColumnsForParuse(paruse) track by $index">
 	                            {{ option }}
 	                        </md-option>
