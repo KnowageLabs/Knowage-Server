@@ -19,30 +19,26 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class JsonFacet extends CountJsonFacet {
+abstract class JsonFacet {
 
     private static final Logger logger = Logger.getLogger(JsonFacet.class);
 
-    private final String sort;
-    private final Map<String,String> facet = new HashMap<>(1);
+    protected final String type = "terms";
+    protected String field;
 
-    public JsonFacet(String field, IAggregationFunction function, String columnToAggregate) {
-        super(field);
-        facet.put(function.getName().toLowerCase(), function.getName().toLowerCase() + "(" + columnToAggregate + ")");
-        this.sort = function.getName().toLowerCase() + " desc";
+    public JsonFacet(String field) {
+        this.field = field;
+
     }
 
-    public Map<String, String> getFacet() {
-        return facet;
+    public String getType() {
+        return type;
     }
 
-    public String getSort() {
-        return sort;
+    public String getField() {
+        return field;
     }
+
 }
