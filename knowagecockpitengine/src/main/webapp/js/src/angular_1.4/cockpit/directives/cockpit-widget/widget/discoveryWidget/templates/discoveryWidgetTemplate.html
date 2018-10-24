@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	</md-card>
 </div>
 <div layout="row" class="discoveryCardsContainer">
-	<md-card class="discoveryFiltersCard" ng-class="{'sidenav':dimensions.width<600 && ngModel.settings.table.enabled, 'open': sidemenuOpened, 'flex-100':!ngModel.settings.table.enabled, 'flex-30':ngModel.settings.table.enabled}" style="margin-top:0;">
+	<md-card class="discoveryFiltersCard" ng-if="hasFacets()" ng-class="{'sidenav':dimensions.width<600 && ngModel.settings.table.enabled, 'open': sidemenuOpened, 'flex-100':!ngModel.settings.table.enabled, 'flex-30':ngModel.settings.table.enabled}" style="margin-top:0;">
 		<md-card-content class="noPadding discoveryFiltersList">
 			<div class="md-dense noPadding noSelect">
         		<md-subheader ng-repeat-start="(key,facet) in facets" ng-if="isFacetVisible(key)" ng-click="facet.closed=!facet.closed" class="noPadding">

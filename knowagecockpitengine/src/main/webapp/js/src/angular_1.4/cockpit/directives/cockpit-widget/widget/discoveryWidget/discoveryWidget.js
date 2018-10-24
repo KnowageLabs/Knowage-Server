@@ -275,6 +275,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return false;
 		}
 
+		$scope.hasFacets = function() {
+		    for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+            	if($scope.ngModel.content.columnSelectedOfDataset[k].facet) {
+            	    return true;
+            	}
+            }
+            return false;
+		}
+
 		$scope.toggleMenu = function() {
 			$scope.sidemenuOpened = !$scope.sidemenuOpened;
 		}
