@@ -627,9 +627,9 @@ function cockpitWidgetControllerFunction(
 			$scope.ngModel.cliccable = true;
 			$scope.ngModel.drillable = false;
 		}
-		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});;
+		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
-	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh, dsId){
+	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -900,7 +900,7 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 
-			var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
+			var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 			if(sel!=undefined){
 				if(!cockpitModule_template.configuration.aliases){
 					cockpitModule_template.configuration.aliases = [];

@@ -212,7 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1){
 					$scope.deleteFilterSelection(group, item.column_1);
 				}else{
-					$scope.doSelection(group,item.column_1,null,null,item, null);
+					$scope.doSelection(group, item.column_1, null, null, item, null, undefined, !$scope.ngModel.settings.facets.selection);
 				}
 //			}else{
 //				$scope.showWidgetSpinner();
