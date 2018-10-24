@@ -144,9 +144,13 @@ public class UserProfile implements IEngUserProfile {
 		// putting user id as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ID.getName(), this.userId);
 		// putting user roles as a predefined profile attribute:
-		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ROLES.getName(), StringUtils.join(this.roles, ";"));
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ROLES.getName(), concatenateRolesForINClause());
 		// putting tenant id as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.TENANT_ID.getName(), this.organization);
+	}
+	
+	private String concatenateRolesForINClause() {
+		return "'" + StringUtils.join(this.roles, "','") + "'";
 	}
 	
 	public UserProfile(String userUniqueIdentifier, String userId, String userName, String organization) {
