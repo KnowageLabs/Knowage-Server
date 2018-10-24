@@ -206,7 +206,12 @@ angular.module('cockpitModule')
                     		};
 
                     		scope.refreshWidget=function(options,nature,changedChartType){
-                    			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
+                    		    var finOptions;
+                    		    if(options) {
+                    		        finOptions = scope.getOptions == undefined ? options : angular.merge({}, scope.getOptions(), options);
+                    		    } else {
+                    		        finOptions = scope.getOptions == undefined ? {} :  scope.getOptions();
+                    		    }
                     			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions, undefined, changedChartType);
                     		};
                     	}
