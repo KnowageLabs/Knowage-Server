@@ -536,10 +536,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModelShared.limitRows = {enable: false, rows: 10};
 		}
 
-		$scope.isSolrDataset = function(dataset) {
+		$scope.canUseSolrDataset = function(dataset, widgetType) {
 		    if(dataset && dataset.dsId) {
 		        var datasetConfiguration = cockpitModule_datasetServices.getDatasetById(dataset.dsId);
-		        if(datasetConfiguration.type == 'SbiSolrDataSet') {
+		        if(datasetConfiguration.type == 'SbiSolrDataSet' && widgetType == 'discovery') {
 		            return true;
 		        }
 		    }
