@@ -20,17 +20,9 @@ package it.eng.spagobi.tools.dataset.notifier.fiware;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.ok;
 import static com.xebialabs.restito.semantics.Condition.post;
-import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSetTest;
-import it.eng.spagobi.utilities.HelperForTest;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.httpclient.HttpException;
 import org.json.JSONArray;
@@ -41,6 +33,15 @@ import com.xebialabs.restito.semantics.Call;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.semantics.Predicate;
 import com.xebialabs.restito.server.StubServer;
+
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSetTest;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.HelperForTest;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import junit.framework.TestCase;
 
 /**
  * To run these tests you need another machine with Orion Context Broker installed)
@@ -66,7 +67,7 @@ public class OrionContextSubscriberTest extends TestCase {
 		RESTDataSet dataSet = getRestDataSetOrion();
 		dataSet.setUserIn("u1");
 		dataSet.setLabel("lab1");
-		subscriber = new OrionContextSubscriber(dataSet, LOCAL_URL_NOTIFY);
+		subscriber = new OrionContextSubscriber(dataSet, UserProfileManager.getProfile(), LOCAL_URL_NOTIFY);
 	}
 
 	@Override

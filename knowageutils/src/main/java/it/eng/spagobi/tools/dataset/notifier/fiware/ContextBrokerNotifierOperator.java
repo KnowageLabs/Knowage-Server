@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.notifier.fiware;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,24 +40,23 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 
 	private static final String SUBSCRIPTION_ID = "subscriptionId";
 	private final String subscriptionId;
-	private final String uuid;
+	private final UserProfile profile;
 	private final String dataSetLabel;
 	private final String dataSetSignature;
 	private boolean realtimeNgsiConsumer;
 	private final DataSetListenerManager manager;
 	private final JSONPathDataReader reader;
 
-	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
+	public ContextBrokerNotifierOperator(String subscriptionId, UserProfile profile, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
 			DataSetListenerManager manager, JSONPathDataReader reader) {
 		Helper.checkNotNullNotTrimNotEmpty(subscriptionId, "subscriptionId");
-		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetSignature, "dataSetSignature");
 		Helper.checkNotNull(manager, "manager");
 		Helper.checkNotNull(reader, "reader");
 
 		this.subscriptionId = subscriptionId;
-		this.uuid = uuid;
+		this.profile = profile;
 		this.dataSetLabel = dataSetLabel;
 		this.dataSetSignature = dataSetSignature;
 		this.realtimeNgsiConsumer = realtimeNgsiConsumer;
@@ -65,9 +65,9 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 
 	}
 
-	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
+	public ContextBrokerNotifierOperator(String subscriptionId, UserProfile profile, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
 			JSONPathDataReader reader) {
-		this(subscriptionId, uuid, dataSetLabel, dataSetSignature, realtimeNgsiConsumer, DataSetListenerManagerFactory.getManager(), reader);
+		this(subscriptionId, profile, dataSetLabel, dataSetSignature, realtimeNgsiConsumer, DataSetListenerManagerFactory.getManager(), reader);
 	}
 
 	private IDataStore getUpdatedOrAddedRecords(HttpServletRequest req, String body) {
@@ -131,7 +131,7 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 		int idFieldIndex = reader.getIdFieldIndex();
 		Assert.assertTrue(idFieldIndex != -1, "idFieldIndex!=-1");
 		try {
-			manager.changedDataSet(uuid, realtimeNgsiConsumer, dataSetLabel, dataSetSignature, updatedOrAdded, idFieldIndex);
+			manager.changedDataSet(profile, realtimeNgsiConsumer, dataSetLabel, dataSetSignature, updatedOrAdded, idFieldIndex);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}

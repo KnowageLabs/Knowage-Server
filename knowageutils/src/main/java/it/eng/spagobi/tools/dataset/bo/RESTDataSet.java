@@ -63,7 +63,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	private boolean notifiable;
 
 	public RESTDataSet() {
-	};
+	}
 
 	public RESTDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
@@ -74,7 +74,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 	/**
 	 * protected for testing purpose
 	 *
-	 * @param resolveParams
 	 */
 	protected void initConf(boolean resolveParams) {
 		// config alread set
@@ -130,7 +129,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	public void subscribeNGSI() {
 		try {
-			OrionContextSubscriber subscriber = new OrionContextSubscriber(this);
+			OrionContextSubscriber subscriber = new OrionContextSubscriber(this, getCurrentUserProfile());
 			subscriber.subscribeNGSI();
 			notifiable = true;
 		} catch (Exception e) {
@@ -394,13 +393,17 @@ public class RESTDataSet extends ConfigurableDataSet {
 	}
 
 	public String getUserId() {
-		UserProfile up = getUserProfile() != null ? getUserProfile() : UserProfileManager.getProfile();
+		UserProfile up = getCurrentUserProfile();
 		if (up == null) {
 			return null;
 		}
 
 		String uuid = (String) up.getUserId();
 		return uuid;
+	}
+
+	private UserProfile getCurrentUserProfile() {
+		return getUserProfile() != null ? getUserProfile() : UserProfileManager.getProfile();
 	}
 
 	@Override

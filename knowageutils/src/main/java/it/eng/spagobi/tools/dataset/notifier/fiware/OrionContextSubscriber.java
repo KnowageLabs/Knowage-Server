@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
@@ -74,7 +75,7 @@ public class OrionContextSubscriber {
 	private String spagoBInotifyAddress;
 	private boolean realtimeNgsiConsumer;
 
-	private final String user;
+	private final UserProfile profile;
 
 	private final String label;
 
@@ -82,13 +83,10 @@ public class OrionContextSubscriber {
 
 	private final String authToken;
 
-	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
+	public OrionContextSubscriber(RESTDataSet dataSet, UserProfile profile, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getUserId();
-		if (user == null || user.isEmpty()) {
-			throw new NGSISubscribingException("No user associated with dataset");
-		}
+		this.profile = profile;
 
 		label = dataSet.getLabel();
 		if (label == null || label.isEmpty()) {
@@ -120,8 +118,8 @@ public class OrionContextSubscriber {
 	 * @param user
 	 * @param label
 	 */
-	public OrionContextSubscriber(RESTDataSet dataSet) {
-		this(dataSet, null);
+	public OrionContextSubscriber(RESTDataSet dataSet, UserProfile profile) {
+		this(dataSet, profile, null);
 
 		initSpagoBInotifyAddress();
 	}
@@ -133,7 +131,7 @@ public class OrionContextSubscriber {
 	public synchronized void subscribeNGSI() {
 		NotifierManager manager = NotifierManagerFactory.getManager();
 
-		UserSignatureId subscriptionKey = new UserSignatureId(user, signature);
+		UserSignatureId subscriptionKey = new UserSignatureId(profile.getUserId().toString(), signature);
 		if (manager.containsOperator(subscriptionKey)) {
 			log.debug("Subscription already available");
 			ContextBrokerNotifierOperator op = (ContextBrokerNotifierOperator) manager.getOperator(subscriptionKey);
@@ -144,7 +142,8 @@ public class OrionContextSubscriber {
 		} else {
 			String subscriptionId = sendSubscription();
 			// In this mode (listening after subscription) I lose the first notification with all context elements
-			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, user, label, signature, realtimeNgsiConsumer,
+			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, profile, label, signature,
+					realtimeNgsiConsumer,
 					dataReader);
 			manager.addOperatorIfAbsent(subscriptionKey, newOperator);
 		}
@@ -274,7 +273,7 @@ public class OrionContextSubscriber {
 		}
 
 		Subscription subscription = new Subscription();
-		subscription.setDescription("A subscription Knowage app. Requested by user [" + user + "] for dataset [" + label + "]");
+		subscription.setDescription("A subscription Knowage app. Requested by user [" + profile.getUserId().toString() + "] for dataset [" + label + "]");
 
 		Subject subject = new Subject();
 		Entity entity = new Entity();

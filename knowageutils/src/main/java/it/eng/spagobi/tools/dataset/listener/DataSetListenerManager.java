@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -112,32 +113,26 @@ public class DataSetListenerManager {
 		}
 	}
 
-	public void changedDataSet(String uuid, boolean realtimeNgsiConsumer, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded,
-			int idFieldIndex) throws Exception {
-		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
+	public void changedDataSet(UserProfile profile, boolean realtimeNgsiConsumer, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded,
+							   int idFieldIndex) throws Exception {
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetSignature, "dataSetSignature");
 		Helper.checkNotNull(updatedOrAdded, "updatedOrAdded");
 		Helper.checkNotNegative(idFieldIndex, "idFieldIndex");
 
-		IDataStore dataStore = updateDataSetInCache(uuid, dataSetLabel, dataSetSignature, updatedOrAdded, realtimeNgsiConsumer);
+		IDataStore dataStore = updateDataSetInCache(profile, dataSetLabel, dataSetSignature, updatedOrAdded, realtimeNgsiConsumer);
 		if (realtimeNgsiConsumer) {
 			Assert.assertNotNull(dataStore, "Datastore from cache cannot be null");
-			changedDataSet(uuid, dataSetLabel, dataStore, idFieldIndex);
+			changedDataSet(profile.getUserId().toString(), dataSetLabel, dataStore, idFieldIndex);
 		}
 	}
 
-	private IDataStore updateDataSetInCache(String uuid, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded, boolean realtimeNgsiConsumer)
+	private IDataStore updateDataSetInCache(UserProfile profile, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded, boolean realtimeNgsiConsumer)
 			throws Exception {
-		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
-		String userId = op.getDataSet().getOwner();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR, 10);
-		Date expiresAt = calendar.getTime();
-		String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
-
+		String userId = profile.getUserId().toString();
+		DataStoreListenerOperator op = getOperator(userId, dataSetLabel);
 		CacheClient client = new CacheClient();
-		IDataStore result = client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, jwtToken);
+		IDataStore result = client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, profile.getUserUniqueIdentifier().toString());
 		if (result == null) {
 			log.debug("Impossible to apply updates. Error while executing dataset with label [" + op.getDataSet().getLabel() + "] in cache for user [" + userId
 					+ "]");
