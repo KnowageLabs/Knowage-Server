@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.listener.*;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.HelperForTest;
 import junit.framework.TestCase;
 
@@ -66,7 +67,8 @@ public class ContextBrokerNotifierOperatorTest extends TestCase {
 		}, "1");
 
 		JSONPathDataReader reader = dataset.getDataReader();
-		ContextBrokerNotifierOperator operator = new ContextBrokerNotifierOperator("55dae93ff23205eb4241ccd0", "user1", "label1", dataset.getSignature(),
+		ContextBrokerNotifierOperator operator = new ContextBrokerNotifierOperator("55dae93ff23205eb4241ccd0", UserProfileManager.getProfile(), "label1",
+				dataset.getSignature(),
 				dataset.isRealtimeNgsiConsumer(), manager, reader);
 		String body = HelperForTest.readFile("notification.json", getClass());
 		operator.notify(new HttpServletRequestMock(body), null, body);
