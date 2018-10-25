@@ -110,17 +110,10 @@ public class PostgreSQLDataBase extends AbstractDataBase implements CacheDataBas
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		String query = " SELECT " + " CASE count(*) " + " WHEN 0 THEN 0 "
 				+ " ELSE SUM(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) " + " END AS size "
-				+ " FROM information_schema.tables " + " WHERE " + " table_name like '" + tableNamePrefix + "%' ";
+				+ " FROM information_schema.tables " + " WHERE " + " table_name like '" + tableNamePrefix + "%'";
 		if ((schema != null) && (!schema.isEmpty())) {
-			query += " AND table_schema = '" + schema + "';";
-		} else {
-			query += ";";
+			query += " AND table_schema = '" + schema + "'";
 		}
-
-		// String query = "SELECT " +
-		// " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
-		// " FROM information_schema.tables " +
-		// " where table_name like '"+ tableNamePrefix +"%'";
 		return query;
 	}
 
