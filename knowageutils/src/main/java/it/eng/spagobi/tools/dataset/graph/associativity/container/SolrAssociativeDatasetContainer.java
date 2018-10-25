@@ -28,6 +28,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -106,11 +107,16 @@ public class SolrAssociativeDatasetContainer extends AssociativeDatasetContainer
 	}
 
 	private SolrClient getSolrClient(String url) {
-		CredentialsProvider provider = new BasicCredentialsProvider();
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				PROXY_USER, PROXY_PASSWORD);
-		provider.setCredentials(AuthScope.ANY, credentials);
-		HttpClient client = HttpClientBuilder.create().useSystemProperties().setDefaultCredentialsProvider(provider).build();
+
+		HttpClientBuilder httpBuilder = HttpClientBuilder.create().useSystemProperties();
+		if(!StringUtils.isBlank(PROXY_USER) && !StringUtils.isBlank(PROXY_PASSWORD)) {
+			CredentialsProvider provider = new BasicCredentialsProvider();
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+					PROXY_USER, PROXY_PASSWORD);
+			provider.setCredentials(AuthScope.ANY, credentials);
+			httpBuilder.setDefaultCredentialsProvider(provider);
+		}
+		HttpClient client = httpBuilder.build();
 
 		return new HttpSolrClient.Builder(url)
 				.withConnectionTimeout(1000)
