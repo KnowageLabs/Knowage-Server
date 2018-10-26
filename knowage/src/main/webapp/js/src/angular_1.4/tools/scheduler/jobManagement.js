@@ -518,9 +518,12 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		sbiModule_restServices.get("1.0/documents", selectedDocumentName)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
+					ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].loaded = false;
 					console.log("unable to get document");
-					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+					var documentName = config.url.substr(config.url.lastIndexOf("/")+1);
+					ctrl.showToastError(sbiModule_translate.load("scheduler.unabletogetdocument").replace("{0}", documentName));
 				} else {
+					ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].loaded = true;
 					ctrl.selectedDocument = data;
 					ctrl.loadSelectedDocumentRolesAndParameters();
 				}
