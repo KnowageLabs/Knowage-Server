@@ -1701,8 +1701,27 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				 * if user delete Datasource that is used by some of older versions of that Dataset
 				 */
 				String type = dataSet.getDsType();
-				if (type.equalsIgnoreCase(DataSetConstants.DS_QUERY) || type.equalsIgnoreCase(DataSetConstants.DS_QBE)
-						|| type.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
+				boolean shouldUpdateOlderVersions = false;
+				String dataSource = "";
+
+				switch (type) {
+				case DataSetConstants.DS_QUERY:
+					shouldUpdateOlderVersions = true;
+					dataSource = DataSetConstants.DATA_SOURCE;
+					break;
+				case DataSetConstants.DS_QBE:
+					shouldUpdateOlderVersions = true;
+					dataSource = DataSetConstants.QBE_DATA_SOURCE;
+					break;
+				case DataSetConstants.DS_FLAT:
+					shouldUpdateOlderVersions = true;
+					dataSource = DataSetConstants.DATA_SOURCE_FLAT;
+					break;
+				default:
+					logger.debug("Dataset type is [" + type + "], so no need to update older versions cause Datasource can not be ambiguous.");
+				}
+
+				if (shouldUpdateOlderVersions) {
 					List<SbiDataSet> olderVersions = getDatasetOlderVersions(dataSet.getId());
 					Iterator<SbiDataSet> it = olderVersions.iterator();
 					String dataSourceLabel = dataSet.getDataSource().getLabel();
@@ -1710,8 +1729,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					while (it.hasNext()) {
 						SbiDataSet ds = it.next();
 						JSONObject jsonConf = ObjectUtils.toJSONObject(ds.getConfiguration());
-						if (!dataSourceLabel.equals(jsonConf.get(DataSetConstants.DATA_SOURCE))) {
-							jsonConf.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+						if (!dataSourceLabel.equals(jsonConf.get(dataSource))) {
+							jsonConf.put(dataSource, dataSourceLabel);
 							ds.setConfiguration(JSONUtils.escapeJsonString(jsonConf.toString()));
 							updateDatasetOlderVersion(ds, session);
 						}
