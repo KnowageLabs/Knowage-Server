@@ -22,7 +22,7 @@
  */
 
 angular
-	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule','driversExecutionModule', 'businessModelOpeningModule'])
+	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
 
 		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
@@ -57,8 +57,24 @@ angular
 
 		};
 
-		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
+		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived,execProperties) {
 
+			if(execProperties){
+				$scope.dataset = execProperties;
+				$scope.drivers = $scope.dataset.drivers;
+				$scope.showDrivers = true;
+
+				if($scope.drivers){
+					$scope.businessModel.executed = false;
+				}else{
+					$scope.showDrivers = false;
+					$scope.businessModel.executed = true;
+				}
+			}else{
+				$scope.showDrivers = false;
+				$scope.businessModel = {};
+				$scope.businessModel.executed = true;
+			}
 
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
@@ -82,7 +98,10 @@ angular
 							controller: openQbeInterfaceController,
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url}
+							locals:{url:url,
+								   execProperties:execProperties,
+								   drivers:$scope.dataset.drivers,
+								   }
 						}
 					)
 					.then(function() {
@@ -90,19 +109,31 @@ angular
 					});
 
 			}
-
+			$scope.executeParameter = function(){
+				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				$scope.showQbe = true;
+				$scope.businessModel.executed = true;
+			}
 
 		};
 
 		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
-
-			$scope.businessModel = execProperties;
-			$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
-			$scope.showDrivers = true;
-
-			if($scope.businessModel.parametersData.documentParameters){
-				$scope.businessModel.executed = false;
+			if(execProperties)
+				$scope.businessModel = execProperties;
+			if(execProperties.dsTypeCd){
+				$scope.drivers = execProperties.drivers
 			}else{
+				$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
+			}
+			for(var i = 0; i < $scope.drivers.length;i++){
+				$scope.businessModel.executed = true;
+				if($scope.drivers[i].mandatory){
+					$scope.businessModel.executed = false;
+					break;
+				}
+			}
+			$scope.showDrivers = true;
+			if($scope.drivers.length == 0){
 				$scope.showDrivers = false;
 				$scope.businessModel.executed = true;
 			}

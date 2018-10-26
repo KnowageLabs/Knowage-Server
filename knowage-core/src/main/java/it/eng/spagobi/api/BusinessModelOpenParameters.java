@@ -1011,7 +1011,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		return valueList;
 	}
 
-	private void checkIfValuesAreAdmissible(Object values, ArrayList<HashMap<String, Object>> admissibleValues) {
+	public void checkIfValuesAreAdmissible(Object values, ArrayList<HashMap<String, Object>> admissibleValues) {
 		if (values instanceof List) {
 			List<String> valuesList = (List) values;
 			for (int k = 0; k < valuesList.size(); k++) {
@@ -1035,7 +1035,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		}
 	}
 
-	private ArrayList<HashMap<String, Object>> manageDataRange(MetaModel businessModel, String executionRole, String biparameterId)
+	public ArrayList<HashMap<String, Object>> manageDataRange(MetaModel businessModel, String executionRole, String biparameterId)
 			throws EMFUserError, SerializationException, JSONException, IOException {
 
 		BIMetaModelParameter biMetaModelParameter = null;
@@ -1102,7 +1102,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		return defaultValues;
 	}
 
-	private boolean isReadyForExecution(List<BusinessModelDriverRuntime> parameters) {
+	public boolean isReadyForExecution(List<BusinessModelDriverRuntime> parameters) {
 		for (BusinessModelDriverRuntime parameter : parameters) {
 			List values = parameter.getDriver().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically

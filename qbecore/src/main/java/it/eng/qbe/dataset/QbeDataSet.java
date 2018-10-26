@@ -354,8 +354,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	/**
 	 * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml in the META-INF folder
 	 *
-	 * @param jarFile
-	 *            a jar file with the model definition
+	 * @param jarFile a jar file with the model definition
 	 * @return jpa if the persistence provder is JPA o hibernate otherwise
 	 */
 	private static String getDriverName(File jarFile) {
@@ -517,5 +516,15 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 
 		return result;
+	}
+
+	@Override
+	public HashMap<String, Object> getDrivers() {
+		return super.getDrivers();
+	}
+
+	@Override
+	public void setDrivers(HashMap<String, Object> drivers) {
+		super.setDrivers(drivers);
 	}
 }

@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 /*
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
  */
@@ -33,9 +38,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 public class CkanDataSet extends ConfigurableDataSet {
 
@@ -103,8 +105,7 @@ public class CkanDataSet extends ConfigurableDataSet {
 	/**
 	 * try to guess the proper dataReader to use depending on the file extension
 	 *
-	 * @param fileName
-	 *            the target filename
+	 * @param fileName the target filename
 	 */
 	public void setDataReader(String fileName) {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());
@@ -212,8 +213,7 @@ public class CkanDataSet extends ConfigurableDataSet {
 	}
 
 	/**
-	 * @param fileType
-	 *            the fileType to set
+	 * @param fileType the fileType to set
 	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
@@ -246,5 +246,25 @@ public class CkanDataSet extends ConfigurableDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDrivers()
+	 */
+	@Override
+	public HashMap<String, Object> getDrivers() {
+		return getDrivers();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDrivers(java.util.HashMap)
+	 */
+	@Override
+	public void setDrivers(HashMap<String, Object> drivers) {
+		setDrivers(drivers);
 	}
 }

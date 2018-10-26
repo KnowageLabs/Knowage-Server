@@ -46,21 +46,19 @@
 		$scope.execProperties = $scope.execproperties
 		$scope.driversExecutionService = driversExecutionService;
 		var initalize = function(){
-		if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
-			$scope.executionPath = "1.0/documentexecution";
-			$scope.valuesPath = "parametervalues";
-			$scope.executionParameters = "1.0/documentExeParameters";
-			$scope.parametersPath = "getParameters";
-		}else /*if($scope.execProperties.meta.dataset.hasOwnProperty('dataset'))*/{
-			adaptExecutionProperties();
-			/*  TODO : For Behairoval Model
-			 */
-			$scope.executionPath = "1.0/businessModelOpening";
-			$scope.valuesPath = "parametervalues";
-			$scope.executionParameters = "1.0/businessModelOpening";
-			$scope.parametersPath = "getParameters";
+			if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+				$scope.executionPath = "1.0/documentexecution";
+				$scope.valuesPath = "parametervalues";
+				$scope.executionParameters = "1.0/documentExeParameters";
+				$scope.parametersPath = "getParameters";
+			}else{
+				adaptExecutionProperties();
 
-		}
+				$scope.executionPath = "1.0/businessModelOpening";
+				$scope.valuesPath = "parametervalues";
+				$scope.executionParameters = "1.0/businessModelOpening";
+				$scope.parametersPath = "getParameters";
+			}
 
 		}
 
@@ -704,5 +702,5 @@
 
 		initalize();
 
-	};
+	}
 })();

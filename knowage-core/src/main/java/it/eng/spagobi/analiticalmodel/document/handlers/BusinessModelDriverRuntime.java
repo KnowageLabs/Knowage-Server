@@ -37,6 +37,9 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 		// TODO Auto-generated constructor stub
 	}
 
+	public BusinessModelDriverRuntime() {
+	}
+
 	@Override
 	public void initDAO() {
 		super.initDAO();

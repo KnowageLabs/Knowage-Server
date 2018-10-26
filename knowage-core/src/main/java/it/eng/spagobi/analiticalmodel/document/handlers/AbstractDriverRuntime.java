@@ -133,6 +133,9 @@ public abstract class AbstractDriverRuntime {
 	public class LovDependencyRuntime extends DriverDependencyRuntime {
 	}
 
+	public AbstractDriverRuntime() {
+	}
+
 	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, AbstractBIResourceRuntime dum,
 			List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
