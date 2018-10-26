@@ -653,11 +653,15 @@ public class DatasetManagementAPI {
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
 		if (filters.size() > 0) {
-			AndFilter andFilter = new AndFilter(filters);
-			if (likeFilters.size() > 0) {
-				andFilter.and(new OrFilter(likeFilters));
+			if(filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
+				where = filters.get(0);
+			} else {
+				AndFilter andFilter = new AndFilter(filters);
+				if (likeFilters.size() > 0) {
+					andFilter.and(new OrFilter(likeFilters));
+				}
+				where = andFilter;
 			}
-			where = andFilter;
 		} else if (likeFilters.size() > 0) {
 			where = new OrFilter(likeFilters);
 		}
