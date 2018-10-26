@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 
 import it.eng.spagobi.tools.dataset.common.datastore.*;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
@@ -59,6 +60,7 @@ public class FacetSolrDataReader extends SolrDataReader {
         fm.setAlias(VALUE_HEADER);
         fm.setName(VALUE_HEADER);
         fm.setType(Double.class);
+        fm.setFieldType(IFieldMetaData.FieldType.MEASURE);
         dataStoreMeta.addFiedMeta(fm);
     }
 
