@@ -153,7 +153,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 								</md-toolbar>
 								<md-tabs class="mozScroll hideTabs h100" md-selected="ctrl.selectedDocumentIndex" md-border-bottom md-dynamic-height flex>
 									<md-tab ng-repeat="document in ctrl.selectedJob.documents track by $index" label="{{document.name}}">
-										<md-list>
+										<div layout="column" flex layout-align="center center" ng-hide="ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].loaded" layout-padding>
+											<span class="kn-info">{{::translate.load('scheduler.jobhasnodocument')}}</span>
+										</div>
+										<md-list ng-show="ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].loaded">
 											<md-list-item ng-repeat="parameter in document.parameters | orderBy:'parameter.name'" layout="row" layout-align="start">
 												<md-subheader flex="40">{{parameter.name}}</md-subheader>
 												<md-content layout="column" flex>
