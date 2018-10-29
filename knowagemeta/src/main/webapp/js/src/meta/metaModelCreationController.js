@@ -239,6 +239,14 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			listOfColumns[index] = tmp;
 		}
 	};
+	$scope.moveProperty = function(origin, destination) {
+		
+		var tmp = $scope.meta.businessModels[destination];
+		$scope.meta.businessModels[destination] = $scope.meta.businessModels[origin];
+		$scope.meta.businessModels[origin] = tmp;
+		//console.log($scope.meta.businessModels);
+		
+	};
 	
 	$scope.moveDown = function(index, bmColumns) {
 		
