@@ -119,7 +119,6 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		String nature;
 		Boolean inlineCalculatedField;
 		String expression;
-		String expressionSimple;
 		ModelCalculatedField calculatedField;
 		List calculatedFieldNodes;
 		Iterator it;
@@ -150,8 +149,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					nature = calculatedFieldNode.valueOf("@" + FIELD_TAG_NATURE_ATTR);
 					inlineCalculatedField = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));
 					expression = loadExpression(calculatedFieldNode);
-					expressionSimple = loadExpressionSimple(calculatedFieldNode);
-					calculatedField = new ModelCalculatedField(name, type, expression, expressionSimple, inlineCalculatedField.booleanValue());
+					calculatedField = new ModelCalculatedField(name, type, expression, inlineCalculatedField.booleanValue());
 					calculatedField.setNature(nature);
 
 					// parse slots
@@ -215,21 +213,6 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		}
 
 		return expression;
-	}
-
-	private String loadExpressionSimple(Node calculatedFieldNode) {
-		String expressionSimple;
-
-		expressionSimple = null;
-
-		Node expressionNode = calculatedFieldNode.selectSingleNode(EXPRESSION_SIMPLE_TAG);
-		if (expressionNode != null) {
-			expressionSimple = expressionNode.getStringValue();
-		} else { // for back compatibility
-			expressionSimple = calculatedFieldNode.getStringValue();
-		}
-
-		return expressionSimple;
 	}
 
 	private List<ModelCalculatedField.Slot> loadSlots(Node calculatedFieldNode) {
@@ -376,8 +359,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 							.addAttribute(FIELD_TAG_NATURE_ATTR, modelCalculatedField.getNature())
 							.addAttribute(FIELD_TAG_IN_LINE_ATTR, "" + modelCalculatedField.isInLine());
 
-					fieldElement.addElement(EXPRESSION_TAG).addCDATA(modelCalculatedField.getExpression()).addElement(EXPRESSION_SIMPLE_TAG)
-							.addCDATA(modelCalculatedField.getExpressionSimple());
+					fieldElement.addElement(EXPRESSION_TAG).addCDATA(modelCalculatedField.getExpression());
 
 					List<Slot> slots = modelCalculatedField.getSlots();
 					if (slots != null && slots.size() > 0) {

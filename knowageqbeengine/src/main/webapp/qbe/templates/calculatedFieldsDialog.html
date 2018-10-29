@@ -2,15 +2,14 @@
     <form ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>{{translate.load("kn.qbe.calculatedfield.new")}} --> </h2> <h2>{{cfSelectedEntity.text}}</h2>
+                <h2>{{translate.load("kn.qbe.calculatedfield.new")}} </h2>
             </div>
         </md-toolbar>
 
         <md-dialog-content style="height:516px">
-            <qbe-calculated-field-editor entities="entityModel.entities" 
+            <qbe-calculated-field-editor fields="editQueryObj.fields" 
             functions="filteredFormulas" 
-            calculated-field="calculatedFieldOutput" 
-            selected-entity="cfSelectedEntity"></qbe-calculated-field-editor>
+            calculated-field="calculatedFieldOutput"></qbe-calculated-field-editor>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">

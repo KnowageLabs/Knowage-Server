@@ -1,21 +1,30 @@
 /*
 * Knowage, Open Source Business Intelligence suite
 * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-* 
+*
 * Knowage is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
+*
 * Knowage is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package it.eng.spagobi.engines.qbe.services.core;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -28,38 +37,30 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-
 /**
  * The Class ExecuteQueryAction.
  */
-public class AddCalculatedFieldAction extends AbstractQbeEngineAction {	
-	
+public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
+
 	public static final String SERVICE_NAME = "ADD_CALCULATED_FIELD_ACTION";
-	public String getActionName(){return SERVICE_NAME;}
-	
-	
+
+	@Override
+	public String getActionName() {
+		return SERVICE_NAME;
+	}
+
 	// INPUT PARAMETERS
 	public static final String EDITING_MODE = "editingMode";
 	public static final String FIELD_NAME = "fieldId";
 	public static final String PARENT_ENTITY_UNIQUE_NAME = "entityId";
 	public static final String FIELD = "field";
-	
+
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(AddCalculatedFieldAction.class);
-   
-    
-	
-	public void service(SourceBean request, SourceBean response)  {				
-			
+	public static transient Logger logger = Logger.getLogger(AddCalculatedFieldAction.class);
+
+	@Override
+	public void service(SourceBean request, SourceBean response) {
+
 		String editingMode;
 		String fieldName;
 		String parentEntityUniqueName;
@@ -126,7 +127,6 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		String type;
 		String nature;
 		String expression;
-		String expressionSimple;
 		String slots;
 
 		try {
@@ -137,14 +137,13 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			nature = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_NATURE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
-			expressionSimple = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION_SIMPLE);
 			slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
 
 			fieldType = fieldJSON.getString("filedType");
 			if (fieldType.equals("calculatedField")) {
-				field = new ModelCalculatedField(alias, type, expression, expressionSimple);
+				field = new ModelCalculatedField(alias, type, expression);
 			} else {
-				field = new ModelCalculatedField(alias, type, expression, expressionSimple, true);
+				field = new ModelCalculatedField(alias, type, expression, true);
 			}
 			field.setNature(nature);
 

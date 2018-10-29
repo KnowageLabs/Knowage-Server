@@ -151,6 +151,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			"visible" : !visible
 		});
 	}
+	$scope.modifyCalculatedField = function (row) {
+		$rootScope.$broadcast('showCalculatedField',row);
+	}
 
 	$scope.removeColumn = function(field) {
 		$rootScope.$emit('removeColumn', {
@@ -356,15 +359,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	    	});
 		}
 	},true)
-	
+
 	$scope.treeSpeedMenu= [
-       
+
         {
             label:sbiModule_translate.load("kn.qbe.custom.table.move.up"),
             icon:'fa fa-angle-up',
             color:'#a3a5a6',
             action:function(row,event){
-                
+
             	$scope.basicViewScopeFunctions.moveUp(row)
             }
          },
@@ -373,7 +376,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
              icon:'fa fa-angle-down',
              color:'#a3a5a6',
              action:function(row,event){
-                 
+
             	 $scope.basicViewScopeFunctions.moveDown(row)
              }
           }
@@ -383,27 +386,38 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
       		icon:'fa fa-filter',
       		color:'#a3a5a6',
       		action:function(row,event){
-                
+
               	 $scope.basicViewScopeFunctions.openFilters(row)
                }
-          	
+
       	},
       	{
       		"label":$scope.translate.load("kn.qbe.general.havings"),
       		 icon:'fa fa-check-square-o',
       		 color:'#a3a5a6',
       		 action:function(row,event){
-                
+
            	 $scope.basicViewScopeFunctions.openHavings(row)
             }
-          	
+
       	},
+      	{
+    		"label": sbiModule_translate.load("kn.qbe.custom.table.modified.field"),
+    		"icon": "fa fa-calculator",
+    		"visible": function (item){
+    			if(item.id.alias) return true;
+    			else return false
+    		},
+    		"action": function(item, event) {
+    			$scope.basicViewScopeFunctions.modifyCalculatedField(item);
+    		}
+    	},
         {
             label:sbiModule_translate.load("kn.qbe.custom.table.delete.field"),
             icon:'fa fa-trash',
             color:'#a3a5a6',
             action:function(row,event){
-                
+
            	 $scope.basicViewScopeFunctions.deleteField(row)
             }
          }
@@ -446,6 +460,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		setVisibility : function (row) {
 			$scope.setVisible(row.id, row.entity, row.visible);
+		},
+		modifyCalculatedField : function (row){
+			$scope.modifyCalculatedField(row);
 		}
 	};
 
@@ -506,7 +523,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.showSQLQuery = function () {
 		$rootScope.$broadcast('showSQLQuery', true);
+	};
+
+	$scope.showCalculatedField = function () {
+		$rootScope.$broadcast('showCalculatedField');
 	}
-	
+
 }
 })();

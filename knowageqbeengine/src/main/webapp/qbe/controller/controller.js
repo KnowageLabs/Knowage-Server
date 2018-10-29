@@ -55,8 +55,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulas();
-	
-	
+
+
 
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
 		$scope.meta.length = 0;
@@ -89,7 +89,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 	},true)
-	
+
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 		if(query.fields.length>0){
 			return query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
@@ -220,7 +220,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
 				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
 				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
-				$scope.editQueryObj.fields[i].order = data.fields[i].ordering;
+				$scope.editQueryObj.fields[i].order = data.fields[i].order;
 			}
 		}
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
@@ -249,6 +249,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				 $scope.editQueryObj.fields[i].order = "NONE";
 			 }
 		}
+	});
+
+	$scope.$on('showCalculatedField', function (event, data) {
+		$scope.showCalculatedField(data);
 	});
 
 	$scope.$on('showSQLQuery', function (event, data) {
@@ -345,7 +349,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	    return -1;
 	}
 
-	$scope.addField = function (field) {
+	$scope.addField = function (field,calcField) {
 
 		if($scope.queryModel != undefined  && !query_service.smartView && $scope.queryModel.length>0){
 			for (var i = 0; i < $scope.queryModel.length; i++) {
@@ -356,26 +360,26 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				$scope.editQueryObj.fields[i].iconCls = $scope.queryModel[i].visible;
 			}
 		}
+		if(!calcField){
+			var newField  = {
+				   "id":field.attributes.type === "inLineCalculatedField" ? field.attributes.formState : field.id,
+				   "alias":field.attributes.field,
+				   "type":field.attributes.type === "inLineCalculatedField" ? "inline.calculated.field" : "datamartField",
+				   "fieldType":field.attributes.iconCls,
+				   "entity":field.attributes.entity,
+				   "field":field.attributes.field,
+				   "funct":isColumnType(field,"measure")? "SUM":"",
+				   "color":field.color,
+				   "group":isColumnType(field,"attribute"),
 
-		var newField  = {
-			   "id":field.attributes.type === "inLineCalculatedField" ? field.attributes.formState : field.id,
-			   "alias":field.attributes.field,
-			   "type":field.attributes.type === "inLineCalculatedField" ? "inline.calculated.field" : "datamartField",
-			   "fieldType":field.attributes.iconCls,
-			   "entity":field.attributes.entity,
-			   "field":field.attributes.field,
-			   "funct":isColumnType(field,"measure")? "SUM":"",
-			   "color":field.color,
-			   "group":isColumnType(field,"attribute"),
-
-			   "order":"NONE",
-			   "include":true,
-			   "visible":true,
-			   "iconCls":field.iconCls,
-			   "longDescription":field.attributes.longDescription,
-			   "distinct":$scope.editQueryObj.distinct,
-			}
-
+				   "order":"NONE",
+				   "include":true,
+				   "visible":true,
+				   "iconCls":field.iconCls,
+				   "longDescription":field.attributes.longDescription,
+				   "distinct":$scope.editQueryObj.distinct,
+				}
+		}
 		if(!field.hasOwnProperty('id')){
 			newField.id=field.alias;
 			newField.alias=field.text;
@@ -383,20 +387,19 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			newField.temporal=field.temporal;
 		}
 
-		
-		
-
-		$scope.editQueryObj.fields.push(newField);
+		if(!calcField){
+			$scope.editQueryObj.fields.push(newField);
+		}
 	}
-	
+
 	var isColumnType = function(field,columnType){
 		return field.iconCls==columnType || isCalculatedFieldColumnType(field,columnType)
 	}
-	
+
 	var isInLineCalculatedField = function(field){
 		return field.attributes.type === "inLineCalculatedField"
 	}
-	
+
 	var isCalculatedFieldColumnType = function(inLineCalculatedField,columnType){
 		return isInLineCalculatedField(inLineCalculatedField) && inLineCalculatedField.attributes.formState.nature === columnType
 	}
@@ -412,12 +415,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "icon": "fa fa-info",
         "action": function(item, event) {
         	$scope.showInfo(item, event);
-        }
-    	},{
-        "label": "add calculated field",
-        "icon": "fa fa-calculator",
-        "action": function(item, event) {
-        	$scope.showCalculatedField(item,event);
         }
     }];
 
@@ -438,48 +435,26 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         }
     }];
 
-    $scope.fieldsFunctions = [
-    	{
-    		"label": "delete",
-    		"icon": "fa fa-trash",
-    		"visible": function (item){
-    			if(item.iconCls =='calculation') return true;
-    			else return false
-    		},
-    		"action": function(item, event) {
-    			$scope.deleteCalculatedField(item);
-    		}
-    	},{
-    		"label": "modify",
-    		"icon": "fa fa-calculator",
-    		"visible": function (item){
-    			if(item.iconCls =='calculation') return true;
-    			else return false
-    		},
-    		"action": function(item, event) {
-    			$scope.showCalculatedField($scope.entityModel.entities[0],event,item);
-    		}
-    	},{
-    		"label": "havings",
-    		"icon": "fa fa-check-square-o",
-    		"visible": function (item){
-    			return true;
-    		},
-    		"action": function(item, event) {
-         		$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
-    		}
-    	}, 
-    	{
-    		"label": "filters",
-    		"icon": "fa fa-filter",
-    		"visible": function (item){
-    			return true;
-    		},
-    		"action": function(item, event) {
-    			$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
-    		}
-    	}    	
-    ];
+    $scope.fieldsFunctions = [{
+    	"label": "havings",
+    	"icon": "fa fa-check-square-o",
+    	"visible": function (item){
+    		return true;
+    	},
+    	"action": function(item, event) {
+        	$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+    	}
+    },
+    {
+    	"label": "filters",
+    	"icon": "fa fa-filter",
+    	"visible": function (item){
+    		return true;
+    	},
+    	"action": function(item, event) {
+    		$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
+    	}
+    }];
 
     $scope.query = new Query(1);
     $scope.query.name = $scope.translate.load("kn.qbe.custom.table.toolbar.main");
@@ -731,18 +706,18 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             );
         }
     };
-    
+
     $scope.deleteCalculatedField = function (selectedField){
-    	
+
     	var field = {};
     	field.id = selectedField.attributes.formState;
     	field.alias = selectedField.text;
     	field.type =selectedField.attributes.formState.type;
     	field.expression = selectedField.attributes.formState.expressionSimple;
     	field.calculationDescriptor= field.id;
-    	
+
     	var deleteCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
-    	deleteCalclatedFieldAction.actionName = "DELETE_CALCULATED_FIELD_ACTION"; 
+    	deleteCalclatedFieldAction.actionName = "DELETE_CALCULATED_FIELD_ACTION";
     	deleteCalclatedFieldAction.formParams.entityId = selectedField.id.substring(0,selectedField.id.indexOf(":"))+"::"+selectedField.attributes.entity;
     	deleteCalclatedFieldAction.formParams.field = field ;
     	deleteCalclatedFieldAction.executeAction().then(function(){
@@ -753,41 +728,52 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		})
 	}
-    
 
-	$scope.showCalculatedField = function(item,ev,cf){
-    	$scope.cfSelectedEntity = item;
+
+	$scope.showCalculatedField = function(cf,ev){
     	$scope.cfSelectedField= angular.copy(cf);
+    	$scope.originalCFname = "";
     	$mdDialog.show({
             controller: function ($scope, $mdDialog) {
-        		$scope.modifyCF = false;
+
             	$scope.calculatedFieldOutput = new Object;
             	if($scope.cfSelectedField){
             		$scope.modifyCF = true;
-            		$scope.originalCFname = angular.copy($scope.cfSelectedField.text);
-            		$scope.calculatedFieldOutput.id = $scope.cfSelectedField.attributes.formState;
-
-            		delete $scope.calculatedFieldOutput.id.slots;
-                	$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.text;
-                	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.attributes.formState.type;
-                	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.attributes.formState.expressionSimple;
-                	$scope.calculatedFieldOutput.calculationDescriptor= $scope.calculatedFieldOutput.id;
+            		$scope.originalCFname = angular.copy($scope.cfSelectedField.name);
+            		$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.name;
+                   	$scope.calculatedFieldOutput.formula = $scope.cfSelectedField.id.expression;
+                   	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
+                	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
+                	$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;
             	}
                 $scope.hide = function() {
-
+                	if($scope.originalCFname!=""){
+                		for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname) $scope.editQueryObj.fields.splice(i);
+						}
+                	}
                 	//parameters to add in the calculatedFieldOutput object to prepare it for the sending
                 	$scope.addedParameters = {
             			"alias":$scope.calculatedFieldOutput.alias,
-            			"type":$scope.calculatedFieldOutput.type,
-            			"nature":"ATTRIBUTE",
+            			"type":angular.copy($scope.calculatedFieldOutput.type),
+            			"nature":angular.copy($scope.calculatedFieldOutput.nature),
             			"expression":$scope.calculatedFieldOutput.formula,
-            			"expressionSimple": $scope.calculatedFieldOutput.expression,
+            			"expressionSimple":$scope.calculatedFieldOutput.expression,
                 	}
+
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
-                	$scope.calculatedFieldOutput.alias = $scope.calculatedFieldOutput.alias;
-                	$scope.calculatedFieldOutput.expression = $scope.calculatedFieldOutput.formula;
-                	$scope.calculatedFieldOutput.expressionSimple = $scope.calculatedFieldOutput.expression;
-                	$scope.calculatedFieldOutput.calculationDescriptor= $scope.addedParameters;
+                	$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
+                	$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
+                	$scope.calculatedFieldOutput.entity = "";
+                	$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
+                	$scope.calculatedFieldOutput.funct = "";
+                	$scope.calculatedFieldOutput.group = false;
+                	$scope.calculatedFieldOutput.order = "";
+                	$scope.calculatedFieldOutput.include = true;
+                	$scope.calculatedFieldOutput.visible = true;
+                	$scope.calculatedFieldOutput.longDescription = $scope.addedParameters.expression;
+                	$scope.editQueryObj.fields.push($scope.calculatedFieldOutput);
+                	$scope.addField($scope.calculatedFieldOutput, true);
 
                 	$mdDialog.hide()};
                 $scope.cancel = function() {$mdDialog.cancel()};
@@ -799,12 +785,12 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             preserveScope: true
         })
         .then(function() {
-        	$scope.saveCC($scope.cfSelectedEntity.id,$scope.calculatedFieldOutput);
+
         },function() {
         	$scope.calculatedFieldOutput={};
         });
     };
-    
+
     $scope.getEntityTree = function(){
     	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
    			$scope.entityModel = response.data;
@@ -813,7 +799,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
    		});
     }
-    
+
     $scope.saveCC = function(selectedEntity,cc){
     	var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
 
@@ -827,7 +813,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	addCalclatedFieldAction.formParams.fieldId = $scope.originalCFname;
     	}
     	addCalclatedFieldAction.formParams.entityId = selectedEntity;
-    	
+
     	addCalclatedFieldAction.executeAction().then(function(){
     		$scope.getEntityTree();
      		sbiModule_messaging.showSuccessMessage("Calculated field is added", $scope.translate.load("kn.qbe.general.success"));

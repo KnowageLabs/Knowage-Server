@@ -29,6 +29,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         restrict: 'E',
         scope: {
             entities: "=",
+            fields: "=",
             functions: "=",
             selectedEntity: "=?",
             calculatedField: "=?"
@@ -39,14 +40,15 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         	$scope.translate = sbiModule_translate;
             $scope.availableFormulaTypes = [];
             $scope.availableTypes = ['NUMBER','STRING'];
-            $scope.calculatedField.filedType = "inLineCalculatedField";
-            
+            $scope.availableNatures = ['MEASURE','ATTRIBUTE'];
+            $scope.calculatedField.fieldType = "inline.calculated.field";
+
             //fix for codemirror to refresh when opened
             $timeout(function() {
                 $scope.reloadCodemirror = true;
             }, 500)
 
-            if (!$scope.selectedEntity) $scope.selectedEntity = $scope.entities[0];
+         //   if (!$scope.selectedEntity) $scope.selectedEntity = $scope.entities[0];
 
             angular.forEach($scope.functions, function(value, key) {
                 if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
@@ -83,9 +85,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             //add text to the editor
             $scope.addField = function(field) {
                 var text = field.html;
-                if (field.leaf) {
-                    text = '$F{' + field.text + '}';
-                }
+                text = '$F{' + field.field + '}';
                 var suffix = "";
                 var prefix = "";
                 $scope._editor.focus();
@@ -128,14 +128,14 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             }
 
             //change selected entity for the fields list
-            $scope.changeSelectedEntity = function() {
+          /*  $scope.changeSelectedEntity = function() {
                 $scope.calculatedField.expression = "";
-            }
-            
+            }*/
+
             //watch the expression values to set id instead of fields names
             $scope.$watch('calculatedField.expression',function(newValue,oldValue){
             	if($scope.calculatedField && newValue!=oldValue){
-            		if($scope.calculatedField.formula != "" && $scope.calculatedField.formula != newValue){
+            		if( $scope.calculatedField.formula != newValue){
             			$scope.calculatedField.formula = newValue;
             			//regex to get the number of fields occurrencies
             			var fullRegex = /(\$F\{[a-zA-Z0-9\s\-\>]*\}){1}/g;
@@ -150,17 +150,14 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             				var tempReplace = "";
             				var match = regExGroups.exec($scope.calculatedField.formula);
             				//get the id of the field from the label
-                			angular.forEach($scope.selectedEntity.children, function(value, key) {
-                				if(value.text==match[2]){
+                			angular.forEach($scope.fields, function(value, key) {
+                				if(value.field==match[2]){
                 					tempReplace = value.id;
                 					return;
                 				}
                 			});
                 			$scope.calculatedField.formula = $scope.calculatedField.formula.replace(regEx,tempReplace);
             			}
-            			
-            		}else{
-            			$scope.calculatedField.formula = "";
             		}
             	}
             });

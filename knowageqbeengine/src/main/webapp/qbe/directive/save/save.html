@@ -81,10 +81,10 @@
 	</md-content>
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="closeSaving()" >
+	      <md-button ng-click="closeSaving()" class="md-raised">
 	       {{translate.load("kn.qbe.general.cancel")}}
 	      </md-button>
-	      <md-button ng-click="saveQbeDataSet()"  ng-disabled=!datasetForm.$valid>
+	      <md-button ng-click="saveQbeDataSet()"  ng-disabled=!datasetForm.$valid  class="md-primary md-raised">
 		    {{translate.load("kn.qbe.general.save")}}
 	      </md-button>
 	</md-card-actions>
