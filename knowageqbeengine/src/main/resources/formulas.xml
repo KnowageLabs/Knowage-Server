@@ -120,7 +120,7 @@
 	<formula >
 		<name>Length</name>
 		<syntax>Length(string)</syntax>
-			<body>Concat(string)</body>
+			<body>Length(string)</body>
 			<argument>
 				<name>String</name>
 				<expected_value></expected_value>

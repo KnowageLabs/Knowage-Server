@@ -104,7 +104,6 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 		JSONObject fieldClaculationDescriptor;
 		String type;
 		String expression;
-		String expressionSimple;
 
 		boolean visible;
 		boolean included;
@@ -116,9 +115,8 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 			fieldClaculationDescriptor = fieldJSON.getJSONObject("calculationDescriptor");
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
-			expressionSimple = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION_SIMPLE);
 
-			field = new ModelCalculatedField(alias, type, expression, expressionSimple);
+			field = new ModelCalculatedField(alias, type, expression);
 		} catch (Throwable t) {
 			throw new SpagoBIEngineServiceException(getActionName(), "impossible to deserialize calculated field [" + fieldJSON.toString() + "]", t);
 		}

@@ -36,13 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			font-icons="fa" 
 			entities-actions="entitiesFunctions" 
 			fields-actions="fieldsFunctions" 
-			colors="colors"
-			
-			>
-				<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="saveEntityTree()">
-		      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.general.save")}}</md-tooltip>
-		        	<md-icon md-menu-origin class="fa fa-floppy-o"></md-icon>
-		      	</md-button>
+			colors="colors">
         	</qbe-expander-list>
         	
         	<qbe-expander-list 

@@ -28,36 +28,32 @@ import java.util.Set;
 public class ModelCalculatedField extends ModelField {
 
 	String expression;
-	String expressionSimple;
 	boolean inLine;
 	String nature;
 	List<Slot> slots;
 	String defaultSlotValue;
 
-	public ModelCalculatedField(String name, String type, String expression, String expressionSimple) {
+	public ModelCalculatedField(String name, String type, String expression) {
 		setName(name);
 		setType(type);
 		setExpression(expression);
-		setExpressionSimple(expressionSimple);
 		inLine = false;
 		slots = new ArrayList<Slot>();
 		initProperties();
 	}
 
-	public ModelCalculatedField(String name, String type, String expression, String expressionSimple, boolean inLine) {
+	public ModelCalculatedField(String name, String type, String expression, boolean inLine) {
 		setName(name);
 		setType(type);
 		setExpression(expression);
-		setExpressionSimple(expressionSimple);
 		this.inLine = inLine;
 		slots = new ArrayList<Slot>();
 	}
 
-	public ModelCalculatedField(String name, IModelEntity parent, String type, String expression, String expressionSimple) {
+	public ModelCalculatedField(String name, IModelEntity parent, String type, String expression) {
 		super(name, parent);
 		setType(type);
 		setExpression(expression);
-		setExpressionSimple(expressionSimple);
 		slots = new ArrayList<Slot>();
 	}
 
@@ -97,16 +93,8 @@ public class ModelCalculatedField extends ModelField {
 		return expression;
 	}
 
-	public String getExpressionSimple() {
-		return expressionSimple;
-	}
-
 	public void setExpression(String expression) {
 		this.expression = expression;
-	}
-
-	public void setExpressionSimple(String expressionSimple) {
-		this.expressionSimple = expressionSimple;
 	}
 
 	public boolean isBoundToDataMart() {
@@ -123,7 +111,7 @@ public class ModelCalculatedField extends ModelField {
 
 	@Override
 	public IModelField clone(IModelEntity newParent) {
-		IModelField field = new ModelCalculatedField(expression, newParent, getType(), expression, expressionSimple);
+		IModelField field = new ModelCalculatedField(expression, newParent, getType(), expression);
 		field.setProperties(properties);
 		return field;
 	}
