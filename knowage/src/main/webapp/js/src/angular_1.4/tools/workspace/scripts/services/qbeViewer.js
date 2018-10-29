@@ -118,22 +118,27 @@ angular
 		};
 
 		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
-			if(execProperties)
+			if(execProperties){
 				$scope.businessModel = execProperties;
-			if(execProperties.dsTypeCd){
-				$scope.drivers = execProperties.drivers
-			}else{
-				$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
-			}
-			for(var i = 0; i < $scope.drivers.length;i++){
-				$scope.businessModel.executed = true;
-				if($scope.drivers[i].mandatory){
-					$scope.businessModel.executed = false;
-					break;
+				if(execProperties.dsTypeCd){
+					$scope.drivers = execProperties.drivers
+				}else{
+					$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
 				}
-			}
-			$scope.showDrivers = true;
-			if($scope.drivers.length == 0){
+				for(var i = 0; i < $scope.drivers.length;i++){
+					$scope.businessModel.executed = true;
+					if($scope.drivers[i].mandatory){
+						$scope.businessModel.executed = false;
+						break;
+					}
+				}
+
+				$scope.showDrivers = true;
+				if($scope.drivers.length == 0){
+					$scope.showDrivers = false;
+					$scope.businessModel.executed = true;
+				}
+			}else{
 				$scope.showDrivers = false;
 				$scope.businessModel.executed = true;
 			}
