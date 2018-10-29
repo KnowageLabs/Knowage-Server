@@ -229,6 +229,35 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			return true
 		}
 	};
+	
+	//$scope.meta.businessModels.priority = $scope.meta.businessModels.length == 0 ? 1 : $scope.meta.businessModels.length;
+	
+	$scope.moveProperty = function(origin, destination) {
+		
+		var tmp = $scope.meta.businessModels[destination];
+		$scope.meta.businessModels[destination] = $scope.meta.businessModels[origin];
+		$scope.meta.businessModels[origin] = tmp;
+		//console.log($scope.meta.businessModels);
+		
+	};
+	
+	$scope.moveUp = function(index) {
+		//$scope.moveProperty(index, index-1);
+		console.log($scope.meta.businessModels)
+//		for(var i=0; i<$scope.meta.businessModels.length; i++) {
+//			for(var j=0; j<$scope.meta.businessModels[i]['simpleBusinessColumns'].length; j++) {
+//				if(index > -1 && index < $scope.meta.businessModels[j]['simpleBusinessColumns'].length - 1) {
+//					var tmp = $scope.meta.businessModels[j]['simpleBusinessColumns'][index + 1];
+//					$scope.meta.businessModels[j]['simpleBusinessColumns'][index + 1] = $scope.meta.businessModels[j]['simpleBusinessColumns'][index];
+//					$scope.meta.businessModels[j]['simpleBusinessColumns'][index] = tmp;
+//				}
+//			}
+//		}
+	};
+	
+	$scope.moveDown = function(index) {
+		$scope.moveProperty(index, index+1);
+	};
 
 	$scope.addBusinessModel=function(){
 		$mdDialog.show({
