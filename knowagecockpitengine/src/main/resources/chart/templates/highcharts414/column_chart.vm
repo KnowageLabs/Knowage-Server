@@ -1431,13 +1431,12 @@
 							#set($relatedSerieShowValue = true)
 						#end
 					
+						selected:$relatedSerieShowValue,
+						
 						dataLabels: 
 						{
-		                    #if(!$chart.LEGEND.show)
+
 		                    enabled: $relatedSerieShowValue,
-		                    #elseif($chart.LEGEND.show)
-		                    enabled: false,
-		                    #end
 		                   
 		                    #set ($postfixValueAsString = '')
 		                     
@@ -1579,9 +1578,17 @@
 	#end
 	
 	#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
+		
+		#if($counter==0)
+		#set($selectedValue = true)
+		#elseif($counter!=0)
+		#set($selectedValue = false)
+		#end
+		
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		{
+			selected: $selectedValue,
 			name: '$valueKey',
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
@@ -1610,12 +1617,8 @@
 			], 
 						dataLabels: 
 						{
-		                    #if(!$chart.LEGEND.show)
-		                    enabled: $relatedSerieShowValue,
-		                    #elseif($chart.LEGEND.show)
-		                    enabled: false,
-		                    #end
-		                    
+		                    enabled: $selectedValue,
+
 		                    #set ($postfixValueAsString = '')
 		                    
 		                    #if ($relatedSerie.postfixChar != '')
@@ -2195,32 +2198,18 @@
         series: {
 
         	events: {
+            checkboxClick: function(event) {
 
-				checkboxClick: function (event){
+              this.points.forEach(function(point) {
+                point.update({
+                  dataLabels: {
+                    enabled: event.checked
+                  }
+                });
+              });
 
-					if(event.checked){
-
-						this.update({
-							dataLabels:{
-								enabled: true
-							}
-						});
-
-					return true; 
-					}else{
-
-						this.update({
-							dataLabels:{
-								enabled: false
-							}
-						});
-
-						return false; 
-					}
-
-				},
-
-			},   
+            }
+          },  
 			showCheckbox: true,
 
             cursor: 'pointer', 
