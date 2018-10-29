@@ -140,6 +140,7 @@ angular
 				}
 			}else{
 				$scope.showDrivers = false;
+				$scope.businessModel = {};
 				$scope.businessModel.executed = true;
 			}
 			$scope.documentViewerUrl = url;

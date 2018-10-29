@@ -39,7 +39,7 @@
 	});
 
 	function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window,
-			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversExecutionService, bmOpen_urlViewPointService, bmOpen_sessionParameterService){
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversExecutionService, bmOpen_urlViewPointService){
 
 		$scope.businessModelsInitial=[];
 		$scope.federationDefinitionsInitial=[];
@@ -49,6 +49,8 @@
 		$scope.sbiUser = sbiModule_user;
 		$scope.i18n = sbiModule_i18n;
 		$scope.businessModelsDrivers = [];
+		$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
+
 		/**
 		 * The Business Model interface is improved: when models are set to be viewed as a list - the 'Label' column is removed (since there
 		 * is no 'label' property of this object) and the 'Description' column is provided instead. Columns for Federation models remain the
@@ -67,23 +69,23 @@
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
-			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel);
-			businessModel.parametersData={}
-			businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;
-			var modelName= businessModel.name;
-			var dataSource=businessModel.dataSourceLabel;
-			var url = datasetParameters.qbeFromBMServiceUrl
-			+'&MODEL_NAME='+modelName
-			+'&DATA_SOURCE_LABEL='+ dataSource
-			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel)
+			.then(function(){
+				businessModel.parametersData={}
+				businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;
+				var modelName= businessModel.name;
+				var dataSource=businessModel.dataSourceLabel;
+				var url = datasetParameters.qbeFromBMServiceUrl
+				+'&MODEL_NAME='+modelName
+				+'&DATA_SOURCE_LABEL='+ dataSource
+				+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
-				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
-
-			if( driversPerModel.length > 0){
-				$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
-			}else{
-				 $qbeViewer.openQbeInterfaceFromModel($scope,url);
-			}
+				if( $scope.drivers.length > 0){
+					$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
+				}else{
+					 $qbeViewer.openQbeInterfaceFromModel($scope,url);
+				}
+			})
 		}
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
 		$scope.tableColumnsModels = [

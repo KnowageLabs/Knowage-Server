@@ -21,6 +21,7 @@
 
 	serviceScope.getParametersForExecution = function(role, buildCorrelation, businessModel) {
 
+		var promise = null;
 		bmOpen_sessionParameterService.getParametersState(
 				function(ok, val, scope){
 					if(ok === true){
@@ -37,14 +38,15 @@
 							params.sessionParameters = val;
 						}
 
-						sbiModule_restServices.promisePost("1.0/businessModelOpening", "filters", params)
-						.then(function(response, status, headers, config) {
+						promise = sbiModule_restServices.promisePost("1.0/businessModelOpening", "filters", params);
+						promise.then(function(response, status, headers, config) {
 							console.log('getParametersForExecution response OK -> ', response);
+							angular.copy(response.data.filterStatus, serviceScope.listOfDrivers);
+							businessModel.parametersData = {};
+							businessModel.parametersData.documentParameters = [];
+							angular.copy(response.data.filterStatus, businessModel.parametersData.documentParameters);
 							//check if document has parameters
 							if(response && response.data.filterStatus && response.data.filterStatus.length>0) {
-								serviceScope.listOfDrivers = response.data.filterStatus;
-								//build documentParameters
-								angular.copy(response.data.filterStatus, businessModel.parametersData.documentParameters);
 
 								sbiModule_i18n.loadI18nMap().then(function() {
 									// keep track of start value for reset!
@@ -82,7 +84,6 @@
 														param.defaultValueDescription.push(descriptionD);
 													}
 												}
-
 											}
 										}
 									}
@@ -95,6 +96,7 @@
 					}
 				}
 		);
+		return promise;
 	};
 
 });
