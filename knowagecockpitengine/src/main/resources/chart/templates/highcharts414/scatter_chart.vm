@@ -977,14 +977,11 @@
 			#end 
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')
+						selected: $relatedSerieShowValue,
 						dataLabels: {
 		                    
-		                    #if(!$chart.LEGEND.show)
 		                    enabled: $relatedSerieShowValue,
-		                    #elseif($chart.LEGEND.show)
-		                    enabled: false,
-		                    #end
-		                    
+		                      
 		                    #set ($postfixValueAsString = '')
 		                    #if ($relatedSerie.postfixChar != '')
 			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
@@ -1320,32 +1317,18 @@
         series:{
 
         	events: {
+            checkboxClick: function(event) {
 
-				checkboxClick: function (event){
+              this.points.forEach(function(point) {
+                point.update({
+                  dataLabels: {
+                    enabled: event.checked
+                  }
+                });
+              });
 
-					if(event.checked){
-
-						this.update({
-							dataLabels:{
-								enabled: true
-							}
-						});
-
-					return true; 
-					}else{
-
-						this.update({
-							dataLabels:{
-								enabled: false
-							}
-						});
-
-						return false; 
-					}
-
-				},
-
-			},   
+            }
+          },  
 			showCheckbox: true,
         
         	turboThreshold: 15000
