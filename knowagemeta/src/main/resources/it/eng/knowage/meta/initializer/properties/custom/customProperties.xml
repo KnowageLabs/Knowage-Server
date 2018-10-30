@@ -75,7 +75,7 @@
       
       <type id="structural.sqlFilter" name="SqlFilter"
       description="Sql expression for filtering data"
-      category="Structural" defaultValue="sql" />
+      category="Structural" defaultValue="" />
       
     </types>
     
