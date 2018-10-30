@@ -37,6 +37,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -65,7 +66,9 @@ public class CacheResource extends AbstractSpagoBIResource {
 				IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
 				JSONObject params = jsonObject.getJSONObject(label);
 				logger.debug("Dataset with label [" + label + "] has the following parameters [" + params + "].");
-				dataSet.setParamsMap(DataSetUtilities.getParametersMap(params));
+				Map<String, String> parametersValues = DataSetUtilities.getParametersMap(params);
+				dataSet.setParametersMap(parametersValues);
+				dataSet.resolveParameters();
 				ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 				if (cache.delete(dataSet)) {
 					logger.debug("Dataset with label [" + label + "] found in cache and deleted.");
