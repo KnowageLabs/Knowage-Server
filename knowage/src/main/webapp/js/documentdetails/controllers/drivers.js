@@ -275,12 +275,12 @@ angular
 
              self.editDataCondition = function(ev, selectedDriver, selectedDataCondition) {
                  if (!selectedDataCondition && selectedDataCondition != 0) {
-                     if (driversService.dataDependencyObjects) {
+                     if (driversService.dataDependencyObjects[selectedDriver.id]) {
                     	 driversService.dataDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
                          self.dataConditions = driversService.dataDependencyObjects;
 
                      } else {
-                    	 driversService.dataDependencyObjects = [];
+                    	 driversService.dataDependencyObjects[selectedDriver.id] = [];
                     	 driversService.dataDependencyObjects[selectedDriver.id].push({})
 
                      }
@@ -307,18 +307,18 @@ angular
                          function() {});
              };
 
-             self.deleteVisualCondition = function(index,name) {
+             self.deleteVisualCondition = function(index,name,driver) {
 //            	 self.confirmDelete(index,name);
 
-            	 driversService.visualDependenciesForDeleting.push(self.visibilityConditions[index]);
-            	 self.visibilityConditions.splice(index, 1);
+            	 driversService.visualDependenciesForDeleting.push(self.visibilityConditions[driver.id][index]);
+            	 self.visibilityConditions[driver.id].splice(index, 1);
              }
 
-             self.deleteDataCondition = function(index,name) {
+             self.deleteDataCondition = function(index,name,driver) {
             //	 self.confirmDelete(index,name);
 
-            	driversService.dataDependenciesForDeleting.push(self.dataConditions[index]);
-           	  	self.dataConditions.splice(index, 1);
+            	driversService.dataDependenciesForDeleting.push(self.dataConditions[driver.id][index]);
+           	  	self.dataConditions[driver.id].splice(index, 1);
 
              }
 
