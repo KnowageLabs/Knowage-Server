@@ -58,15 +58,14 @@ public class ParametersDecoder {
 	/**
 	 * Instantiates a new parameters decoder.
 	 *
-	 * @param openBlockMarker
-	 *            the open block marker
-	 * @param closeBlockMarker
-	 *            the close block marker
+	 * @param openBlockMarker  the open block marker
+	 * @param closeBlockMarker the close block marker
 	 */
 	public ParametersDecoder(String openBlockMarker, String closeBlockMarker) {
 		this.openBlockMarker = openBlockMarker;
 		this.closeBlockMarker = closeBlockMarker;
-		this.multiValueRegex = String.format("%s.+%s.+%s.+%s", openBlockMarker, openBlockMarker, closeBlockMarker, closeBlockMarker);
+		this.multiValueRegex = String.format("%s.%s.+%s.+%s", Pattern.quote(openBlockMarker), Pattern.quote(openBlockMarker), Pattern.quote(closeBlockMarker),
+				Pattern.quote(closeBlockMarker));
 	}
 
 	/////////////////////////////////////////////////////////////
@@ -85,8 +84,7 @@ public class ParametersDecoder {
 	/**
 	 * Sets the close block marker.
 	 *
-	 * @param closeBlockMarker
-	 *            the new close block marker
+	 * @param closeBlockMarker the new close block marker
 	 */
 	public void setCloseBlockMarker(String closeBlockMarker) {
 		this.closeBlockMarker = closeBlockMarker;
@@ -104,8 +102,7 @@ public class ParametersDecoder {
 	/**
 	 * Sets the open block marker.
 	 *
-	 * @param openBlockMarker
-	 *            the new open block marker
+	 * @param openBlockMarker the new open block marker
 	 */
 	public void setOpenBlockMarker(String openBlockMarker) {
 		this.openBlockMarker = openBlockMarker;
@@ -118,20 +115,18 @@ public class ParametersDecoder {
 	/**
 	 * Checks if is multi values.
 	 *
-	 * @param value
-	 *            the value
+	 * @param value the value
 	 *
 	 * @return true, if is multi values
 	 */
 	public boolean isMultiValues(String value) {
-		return value.trim().matches(Pattern.quote(multiValueRegex));
+		return value.trim().matches(multiValueRegex);
 	}
 
 	/**
 	 * Creates MultiValue String
 	 *
-	 * @param paramaterValue
-	 *            the parameter value
+	 * @param paramaterValue the parameter value
 	 *
 	 * @return String, if is multi values
 	 */
@@ -159,8 +154,7 @@ public class ParametersDecoder {
 	/**
 	 * Decode.
 	 *
-	 * @param value
-	 *            the value
+	 * @param value the value
 	 *
 	 * @return the list
 	 */
@@ -206,8 +200,7 @@ public class ParametersDecoder {
 	/**
 	 * Get the original values (without adding the quotes)
 	 *
-	 * @param value
-	 *            the value
+	 * @param value the value
 	 *
 	 * @return the list
 	 */
@@ -282,8 +275,7 @@ public class ParametersDecoder {
 	 * parameters' names as key; for each parameter, the value will be a String if it has a single value, it will be a List if it is multi value (each element
 	 * of the List being a String).
 	 *
-	 * @param servletRequest
-	 *            The http request
+	 * @param servletRequest The http request
 	 * @return an HashMap containing all decoded parameters defined on http request. Multivalue parameters are converted into List
 	 */
 	public static HashMap getDecodedRequestParameters(HttpServletRequest servletRequest) {
@@ -345,8 +337,7 @@ public class ParametersDecoder {
 	/**
 	 * Just for test purpose ;-).
 	 *
-	 * @param args
-	 *            the args
+	 * @param args the args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
