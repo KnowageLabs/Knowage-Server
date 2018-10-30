@@ -18,6 +18,7 @@
 package it.eng.spagobi.api;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -26,6 +27,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -63,7 +65,9 @@ public class CacheResource extends AbstractSpagoBIResource {
 				IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
 				JSONObject params = jsonObject.getJSONObject(label);
 				logger.debug("Dataset with label [" + label + "] has the following parameters [" + params + "].");
-				dataSet.setParamsMap(DataSetUtilities.getParametersMap(params));
+				Map<String, String> parametersValues = DataSetUtilities.getParametersMap(params);
+				DatasetManagementAPI datasetAPI = new DatasetManagementAPI();
+				datasetAPI.setDataSetParameters(dataSet, parametersValues);
 				ICache cache = SpagoBICacheManager.getCache();
 				if (cache.delete(dataSet)) {
 					logger.debug("Dataset with label [" + label + "] found in cache and deleted.");
