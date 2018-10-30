@@ -141,7 +141,8 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		var datasets = cockpitModule_template.configuration.datasets;
 		for (i = 0; i < datasets.length; i++) {
 			var dataset = datasets[i];
-    		requestBody[dataset.dsLabel] = dataset.parameters;
+			var parameters = cockpitModule_datasetServices.getDatasetParameters(dataset.dsId);
+    		requestBody[dataset.dsLabel] = cockpitModule_datasetServices.getParametersAsString(parameters);;
 		}
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("1.0/cache","clean-datasets", angular.toJson(requestBody))

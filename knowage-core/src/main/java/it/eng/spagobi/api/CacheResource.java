@@ -57,14 +57,16 @@ public class CacheResource extends AbstractSpagoBIResource {
 			IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 			dataSetDAO.setUserProfile(getUserProfile());
 
-			JSONObject jsonObject = new JSONObject(body);
-			Iterator<String> it = jsonObject.keys();
+			JSONObject jsonBody = new JSONObject(body);
+			Iterator<String> it = jsonBody.keys();
 			while (it.hasNext()) {
 				String label = it.next();
 				logger.debug("Dataset with label [" + label + "] must be deleted from cache.");
 				IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
-				JSONObject params = jsonObject.getJSONObject(label);
+
+				String params = jsonBody.optString(label, null);
 				logger.debug("Dataset with label [" + label + "] has the following parameters [" + params + "].");
+
 				Map<String, String> parametersValues = DataSetUtilities.getParametersMap(params);
 				DatasetManagementAPI datasetAPI = new DatasetManagementAPI();
 				datasetAPI.setDataSetParameters(dataSet, parametersValues);
