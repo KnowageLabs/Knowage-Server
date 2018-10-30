@@ -230,33 +230,28 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		}
 	};
 	
-	//$scope.meta.businessModels.priority = $scope.meta.businessModels.length == 0 ? 1 : $scope.meta.businessModels.length;
-	
-	$scope.moveProperty = function(origin, destination) {
+	$scope.moveUp = function(index, bmColumns) {
 		
-		var tmp = $scope.meta.businessModels[destination];
-		$scope.meta.businessModels[destination] = $scope.meta.businessModels[origin];
-		$scope.meta.businessModels[origin] = tmp;
-		//console.log($scope.meta.businessModels);
+		var listOfColumns = bmColumns;
+		
+		if(index > -1 && index < listOfColumns.length - 1) {
+			var tmp = listOfColumns[index - 1];
+			listOfColumns[index - 1] = listOfColumns[index];
+			listOfColumns[index] = tmp;
+		}
 		
 	};
 	
-	$scope.moveUp = function(index) {
-		//$scope.moveProperty(index, index-1);
-		console.log($scope.meta.businessModels)
-//		for(var i=0; i<$scope.meta.businessModels.length; i++) {
-//			for(var j=0; j<$scope.meta.businessModels[i]['simpleBusinessColumns'].length; j++) {
-//				if(index > -1 && index < $scope.meta.businessModels[j]['simpleBusinessColumns'].length - 1) {
-//					var tmp = $scope.meta.businessModels[j]['simpleBusinessColumns'][index + 1];
-//					$scope.meta.businessModels[j]['simpleBusinessColumns'][index + 1] = $scope.meta.businessModels[j]['simpleBusinessColumns'][index];
-//					$scope.meta.businessModels[j]['simpleBusinessColumns'][index] = tmp;
-//				}
-//			}
-//		}
-	};
-	
-	$scope.moveDown = function(index) {
-		$scope.moveProperty(index, index+1);
+	$scope.moveDown = function(index, bmColumns) {
+		
+		var listOfColumns = bmColumns;
+		
+		if(index > -1 && index < listOfColumns.length - 1) {
+			var tmp = listOfColumns[index + 1];
+			listOfColumns[index + 1] = listOfColumns[index];
+			listOfColumns[index] = tmp;
+		}
+		
 	};
 
 	$scope.addBusinessModel=function(){
