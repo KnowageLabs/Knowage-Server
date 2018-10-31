@@ -240,9 +240,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
-	$scope.openHavings = function (field){
-		$rootScope.$broadcast('openHavings', field);
-	}
+	
 	$scope.checkDescription = function (field){
 		var desc = 0;
 
@@ -392,16 +390,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
       	},
       	{
-      		"label":$scope.translate.load("kn.qbe.general.havings"),
-      		 icon:'fa fa-check-square-o',
-      		 color:'#a3a5a6',
-      		 action:function(row,event){
-
-           	 $scope.basicViewScopeFunctions.openHavings(row)
-            }
-
-      	},
-      	{
     		"label": sbiModule_translate.load("kn.qbe.custom.table.modified.field"),
     		"icon": "fa fa-calculator",
     		"visible": function (item){
@@ -440,9 +428,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		openFilters : function (row) {
 			$scope.openFilters(row);
-		},
-		openHavings : function (row) {
-			$scope.openHavings(row);
 		},
 		isGrouped : function (row){
 			for (var i = 0; i < $scope.ngModel.length; i++) {
