@@ -70,9 +70,11 @@
 
 			var modelName= businessModel.name;
 			var dataSource=businessModel.dataSourceLabel;
+			var dataSourceId=businessModel.dataSourceId;
 			var url = datasetParameters.qbeFromBMServiceUrl
 			+'&MODEL_NAME='+modelName
 			+'&DATA_SOURCE_LABEL='+ dataSource
+			+'&DATA_SOURCE_ID='+ dataSourceId
 			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
@@ -98,7 +100,7 @@
 		}
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
 		$scope.tableColumnsModels = [
-			{"label":"Name","name":"name","type":"text"}, 
+			{"label":"Name","name":"name","type":"text"},
 			{"label":"Description","name":"description","type":"text"},
 			{"type": "buttons", "buttons": [
 				{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible":function(){return true;}}

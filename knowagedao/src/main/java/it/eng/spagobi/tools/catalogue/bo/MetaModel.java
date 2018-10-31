@@ -45,6 +45,8 @@ public class MetaModel {
 	@ExtendedAlphanumeric
 	private String dataSourceLabel;
 
+	private Integer dataSourceId;
+
 	private Boolean modelLocked;
 
 	@Size(max = 100)
@@ -102,6 +104,14 @@ public class MetaModel {
 
 	public void setDataSourceLabel(String dataSourceLabel) {
 		this.dataSourceLabel = dataSourceLabel;
+	}
+
+	public Integer getDataSourceId() {
+		return dataSourceId;
+	}
+
+	public void setDataSourceId(Integer dataSourceId) {
+		this.dataSourceId = dataSourceId;
 	}
 
 	/**

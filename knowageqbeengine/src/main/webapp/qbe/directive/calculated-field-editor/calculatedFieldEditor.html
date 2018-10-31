@@ -63,11 +63,11 @@
             <div class="kn-info">{{selectedFunction.description}}</div>
             <md-input-container ng-repeat="argument in selectedFunction.arguments" class="noPadding">
                 <label>{{argument.name}}</label>
-                <input name="argument.name" type="text" ng-model="selectedFunction.temp[argument.name]" ng-if="!argument.type || argument.type=='string'">
-                <input name="argument.name" type="number" ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='integer'">
+                <input name="argument.name" type="text" ng-model="selectedFunction.temp[argument.name]" ng-if="!argument.type || argument.type=='String'">
+                <input name="argument.name" type="number" ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='int'">
                 <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='field'">
-                    <md-option ng-value="fie.text" ng-repeat="fie in editQueryObj.fields">
-                        {{ fie.text }}
+                    <md-option ng-value="fie.alias" ng-repeat="fie in fields">
+                        {{ fie.alias }}
                     </md-option>
                 </md-select>
                 <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='list'">

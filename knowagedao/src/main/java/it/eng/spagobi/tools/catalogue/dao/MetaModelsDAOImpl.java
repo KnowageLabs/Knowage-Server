@@ -537,6 +537,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setCategory(hibModel.getCategory());
 			if (hibModel.getDataSource() != null) {
 				toReturn.setDataSourceLabel(DataSourceDAOHibImpl.toDataSource(hibModel.getDataSource()).getLabel());
+				toReturn.setDataSourceId(DataSourceDAOHibImpl.toDataSource(hibModel.getDataSource()).getDsId());
 			}
 			toReturn.setModelLocked(hibModel.getModelLocked());
 			toReturn.setModelLocker(hibModel.getModelLocker());
@@ -1054,13 +1055,13 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			query.executeUpdate();
 
 			// set to active the new active template
-            hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.id = ? and mmc.model.id = ? ";
-            query = session.createQuery(hql);
-            query.setBoolean(0, true);
-            query.setInteger(1, contentId);
-            query.setInteger(2, modelId.intValue());
-            logger.debug("Updates the current content " + contentId + " of model " + modelId + " with active = true.");
-            query.executeUpdate();
+			hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.id = ? and mmc.model.id = ? ";
+			query = session.createQuery(hql);
+			query.setBoolean(0, true);
+			query.setInteger(1, contentId);
+			query.setInteger(2, modelId.intValue());
+			logger.debug("Updates the current content " + contentId + " of model " + modelId + " with active = true.");
+			query.executeUpdate();
 
 			transaction.commit();
 

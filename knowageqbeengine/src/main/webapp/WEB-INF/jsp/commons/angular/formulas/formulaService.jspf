@@ -18,14 +18,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 angular.module('formulas')
 
-.factory('formulaService',function(){
+.factory('formulaService',function($http,sbiModule_config){
 	var formulas = angular.fromJson('<%= formulasJson%>');
-		return {
-			
-	    	getFormulas: function(){
-	    		return formulas;
-	    	}
-		};
-	});
+	debugger;
+	var dataSourceId = <%= datasourceId%>;
+	function Formula(formula){
+		this.type = formula.type;
+		this.name = formula.name;
+		this.description = formula.name;
+		this.syntax = formula.value;
+		this.body = formula.value;
+		this.arguments = [];
+		for (var i = 0; i < formula.parameters.length; i++) {
+			this.arguments.push(new Argument(formula.parameters[i]))
+		}
+	}
+	function Argument(arg){
+		this.type = arg.type;
+		this.name = arg.name;
+		this.placeholder = "";
+		this.argument_description= arg.name;
+
+	}
+	var customFormulas = [];
+	var customTransformedFormulas = [];
+	/*$http.get(sbiModule_config.externalBasePath+"/restful-services/2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId)
+	.then(function(response) {
+		customFormulas = response.data.data;
+		for (var i = 0; i < customFormulas.length; i++) {
+			customTransformedFormulas.push(new Formula(customFormulas[i]))
+		}
+	});*/
+	
+	return {	
+	   	getFormulasFromXml: function(){
+	   		return formulas;
+	   	},
+		
+	   	createFormula: function(formula) {
+	   		return new Formula(formula)
+		},
+		
+		getCustomFormulas: function(){
+   			return $http.get(sbiModule_config.externalBasePath+"/restful-services/2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
+   		}
+	};
+});
 	
 </script>
