@@ -1053,7 +1053,13 @@
    			width: $yAxis.plotLines.get(0).width,
    		},			
    		],
-		#end
+   		
+			#end
+			
+        	min:$yAxis.min,
+        	#if($yAxis.min != $yAxis.max)
+        	max:$yAxis.max,
+        	#end
         
         
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
