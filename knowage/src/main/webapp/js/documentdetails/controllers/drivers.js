@@ -25,8 +25,6 @@ angular
         	 var driversService = DriversService;
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;
-          //   self.confirmDelete = DocumentService.confirmDelete;   // ******************
-						console.log(self.driverRelatedObject);											// TODO: ...
              var crudService = resourceService;
              var requiredPath = "";
              var id = self.driverRelatedObject.id;
@@ -184,10 +182,10 @@ angular
 			                         basePath = self.driverRelatedObject.id + "/" + basePath + querryParams;
 			                         baseDataPath = self.driverRelatedObject.id + "/" + baseDataPath + querryParams;
 
-			                         if (!driversService.visusalDependencyObjects[self.selectedDriver.id] ) //&& driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0
+			                         //if (driversService.visusalDependencyObjects[self.selectedDriver.id] ) //&& driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0
 			                         getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
 
-			                         if(!driversService.dataDependencyObjects[self.selectedDriver.id]) // && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0
+			                        // if(driversService.dataDependencyObjects[self.selectedDriver.id]) // && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0
 			                         getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
 			                         break;
 	                            }
@@ -245,12 +243,12 @@ angular
 
              self.editCondition = function(ev, selectedDriver, selectedCondition) {
                  if (!selectedCondition && selectedCondition != 0) {
-                     if (driversService.visusalDependencyObjects) {
+                     if (driversService.visusalDependencyObjects[selectedDriver.id]) {
                     	 driversService.visusalDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
                          self.visibilityConditions = driversService.visusalDependencyObjects;
                      } else {
                     	 driversService.visusalDependencyObjects[selectedDriver.id] = [];
-                    	 driversService.visusalDependencyObjects[selectedDriver.id].push({})
+                    	 driversService.visusalDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
                      }
                      if(driversService.visusalDependencyObjects[selectedDriver.id].length >0){
                          selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id].length - 1;
@@ -274,21 +272,18 @@ angular
              };
 
              self.editDataCondition = function(ev, selectedDriver, selectedDataCondition) {
-                 if (!selectedDataCondition && selectedDataCondition != 0) {
-                     if (driversService.dataDependencyObjects[selectedDriver.id]) {
+                 if (!(angular.isNumber(selectedDataCondition))) {
+                     if (!driversService.dataDependencyObjects[selectedDriver.id] || driversService.dataDependencyObjects[selectedDriver.id].length == 0) {
+                    	 driversService.dataDependencyObjects[selectedDriver.id] = [];
                     	 driversService.dataDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
                          self.dataConditions = driversService.dataDependencyObjects;
-
-                     } else {
-                    	 driversService.dataDependencyObjects[selectedDriver.id] = [];
-                    	 driversService.dataDependencyObjects[selectedDriver.id].push({})
-
-                     }
-                     if(driversService.dataDependencyObjects.length >0){
-                     selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id].length - 1;
-                     }else{
                     	 selectedDataCondition = 0;
+                     }else if(driversService.dataDependencyObjects.length >0){
+                    	 driversService.dataDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
+                     selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id].length - 1;
                      }
+                 }else{
+                	 selectedDataCondition = selectedDataCondition;
                  }
 
              $mdDialog.show({
@@ -299,7 +294,8 @@ angular
                          locals: {
                         	 columns:$scope.paruseColumns,
                              selectedDriver: selectedDriver,
-                             selectedDataCondition: selectedDataCondition
+                             selectedDataCondition: selectedDataCondition,
+                             getLovColumns:$scope.getLovColumnsForParuse
                          }
                      })
                      .then(
@@ -337,7 +333,7 @@ angular
                  $scope.drivers = driversService.driversOnObject;
                  $scope.selectedDriver = selectedDriver;
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
-                 $scope.availableOperators = ['>', '<', '=', 'contains','notcontains'];
+                 $scope.availableOperators = ['greater', 'less', 'equal', 'contains','notcontains'];
                  driversService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.visusalDependencyObjects.length;i++){
@@ -373,12 +369,6 @@ angular
 	                 visualDependency.parId = selectedDriver.id;
 	                 visualDependency.parFatherUrlName = $filter('filter')($scope.driversService.driversOnObject,{id:visualDependency.parFatherId})[0].parameterUrlName;
                  }
-                 $scope.getDriverNameById = function(visualDependency){
-	            	  for(var i = 0; i< drivers.length;i++){
-	            	  if(visualDependency.objParId == drivers[i].id)
-	            		  return drivers[i].label;
-	            	  }
-	               }
              }
 
              $scope.getLovColumnsForParuse = function(paruse){
@@ -388,8 +378,8 @@ angular
             	 }
 
              }
-             function CorrelationDataDialogController($scope,columns,DriversService, selectedDriver, selectedDataCondition, $mdDialog) {
-            	$scope.paruseColumns = columns;
+             function CorrelationDataDialogController($scope,columns,DriversService, selectedDriver, selectedDataCondition,getLovColumns, $mdDialog) {
+
             	 $scope.translate = sbiModule_translate;
             	 var selectedConditionIndex = selectedDataCondition;
             	 $scope.conditionIndex = selectedDataCondition;
@@ -404,30 +394,35 @@ angular
                  $scope.paruses = driversService.driverParuses;
                  $scope.dataDependencyModel = {};
                  $scope.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
-                 if(!$scope.selectedDataCondition.paruseId){
-                 $scope.selectedDataCondition.useModeId=selectedDriver.parID;
-                 }
-                 $scope.selectedDataCondition.persist ={};
+
+                 if(columns.length > 0){
+                	 $scope.paruseColumns = columns;
+                }else
+                	$scope.paruseColumns = {};
+                	$scope.paruseColumns[selectedDriver.id] = {};
 
                  var selectedParuse = [];
      			for(var j = 0; j < $scope.driversService.driverParuses.length;j++){
-     				if($scope.driversService.driverParuses[j].useID == $scope.selectedDriver.parID)
+     				if($scope.driversService.driverParuses[j].id == $scope.selectedDriver.parID)
      					selectedParuse.push($scope.driversService.driverParuses[j]);
      			}
+     			$scope.dependencyParuses = selectedParuse;
                 // var selectedParuse = driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID);
 
-     			if($scope.selectedDataCondition.useModeId && !$scope.paruseColumns[selectedDriver.id]  ){
-     				$scope.paruseColumns[selectedDriver.id]={}
-                 $scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
-                 $scope.driversService.paruseColumns = $scope.paruseColumns;
-     			}else if($scope.selectedDataCondition.useModeId && $scope.paruseColumns[selectedDriver.id] && !$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId]){
-     				 $scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
+     			if($scope.selectedDataCondition.useModeId){
+     				$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
      				$scope.driversService.paruseColumns = $scope.paruseColumns;
+     				$scope.selectedDataCondition.persist = {};
+     				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
+     			}else{
+     				$scope.selectedDataCondition.useModeId = selectedParuse[0].useID;
+     				$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] =  getLovColumns(selectedParuse[0])[0];
+     				$scope.driversService.paruseColumns = $scope.paruseColumns;
+     				$scope.selectedDataCondition.persist = {};
+     				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
      			}
 
-
-                 $scope.availableOperators = ['>','>=','<','<=','=', 'contains','notcontains','starts with','ends with'];
-                 driversService.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
+     			$scope.availableOperators = ['greater','greaterequal','less','lessequal','equal', 'contains','notcontains','starts with','ends with'];                 driversService.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
                 	 var counter = 0;
@@ -444,14 +439,18 @@ angular
                 	 }
                  }
                  $scope.close = function(selectedCondition) {
-                	 for(var i = 0; i < driversService.dataDependencyObjects.length;i++){
+                	 for(var i = 0; i < driversService.dataDependencyObjects[selectedDriver.id].length;i++){
 	                	 if( $scope.selectedDataCondition.newDependency && selectedConditionIndex == i)
 	                		 driversService.dataDependencyObjects[selectedDriver.id].splice(i, 1);
 
                 	 }
                 	 $mdDialog.cancel();
                 }
-                 $scope.hide = function() { setDataDependencyProperties($scope.selectedDataCondition); $mdDialog.hide(); }
+                 $scope.hide = function() {
+                	 if(!$scope.selectedDataCondition.newDependency)
+                	 setDataDependencyProperties($scope.selectedDataCondition);
+                	 $mdDialog.hide();
+                	 }
                  $scope.addToChangedDataDepedencies = function(dataDependency,driver){
                 	 setDataDependencyProperties(dataDependency)
                 	 if(driversService.changedDataDependencies.indexOf(dataDependency) == -1)
@@ -482,29 +481,18 @@ angular
                 			 dataProgram = i+1;
                 	 }
                 	 dataDependency.prog = dataProgram;
-                //	 dataDependency.useModeId = selectedDriver.parID;
 	                 dataDependency.parId = selectedDriver.id;
-	                 dataDependency.parFatherUrlName = selectedDriver.parameterUrlName;
+	                 dataDependency.parFatherUrlName = $filter('filter')($scope.drivers,{id:dataDependency.parFatherId})[0].parameterUrlName
 	                 dataDependency.filterColumn
                  }
-                 $scope.getDriverNameById = function(dataDependency){
-                  	  for(var i = 0; i< $scope.drivers.length;i++){
-                  	  if(dataDependency.parId == $scope.drivers[i].id)
-                  		  return  $scope.drivers[i].name;
-                  	  }
-                  }
-                 var paruseIndex;
+
                  $scope.isItChecked = function(index){
                  var itIsChecked = false;
-                 	if($scope.selectedDataCondition.useModeId && $scope.selectedDataCondition.useModeId == ($filter('filter')($scope.paruses,{id:$scope.selectedDriver.parID}))[index].useID ){
-                 		 $scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
-                 		itIsChecked = true;
+                 if(index == selectedParuse.indexOf(($filter('filter')(selectedParuse,{useID:$scope.selectedDataCondition.useModeId}))[0])){
+                		return !$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId];
+                	 }
+                 }
 
-                 }else if(index == 0 && !$scope.selectedDataCondition.useModeId ){
-              		itIsChecked = true;
-                	 }
-                	return itIsChecked;
-                	 }
 
                  $scope.hasParuseColumns = function(){
                 	 var hasColumns = false;

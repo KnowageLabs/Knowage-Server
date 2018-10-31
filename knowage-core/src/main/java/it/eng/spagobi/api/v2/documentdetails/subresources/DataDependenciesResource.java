@@ -76,7 +76,7 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 		Assert.assertNotNull(parameterUseObject, "Data Dependencies can not be null");
 		try {
 			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			parameterUseDAO.insertObjParuse(parameterUseObject);
+			parameterUseObject.setId(parameterUseDAO.insertObjParuse(parameterUseObject));
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be created", e);
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + " in Data Dependency", buildLocaleFromSession(), e);

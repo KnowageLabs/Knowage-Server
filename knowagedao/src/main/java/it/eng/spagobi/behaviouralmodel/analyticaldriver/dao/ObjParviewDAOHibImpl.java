@@ -121,8 +121,8 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public void insertObjParview(ObjParview aObjParview) throws HibernateException {
-
+	public Integer insertObjParview(ObjParview aObjParview) throws HibernateException {
+		SbiObjParview view = new SbiObjParview();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -135,7 +135,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 						"the BIObjectParameter with " + "id=" + aObjParview.getParFatherId() + " does not exist.");
 
 			}
-			SbiObjParview view = new SbiObjParview();
+
 			view.setSbiObjPar(sbiObjPar);
 			view.setSbiObjParFather(sbiObjParFather);
 			view.setOperation(aObjParview.getOperation());
@@ -143,7 +143,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			view.setProg(aObjParview.getProg());
 			view.setViewLabel(aObjParview.getViewLabel());
 			updateSbiCommonInfo4Insert(view);
-			aSession.save(view);
+			view.setId((Integer) aSession.save(view));
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -156,6 +156,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 					aSession.close();
 			}
 		}
+		return view.getId();
 	}
 
 	/**
