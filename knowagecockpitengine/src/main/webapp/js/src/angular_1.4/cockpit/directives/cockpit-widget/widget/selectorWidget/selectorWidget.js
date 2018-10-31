@@ -86,12 +86,20 @@ angular.module('cockpitModule')
 
 			var tempValue;
 			if(e.target.attributes.value && e.target.attributes.value.value){
-				$scope.toggleParameter(e.target.attributes.value.value);
-			}else {
-				if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
-					$scope.toggleParameter(e.target.parentNode.attributes.value.value);
-				}
-			}
+				$scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
+			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
+                $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+            }
+		}
+
+		var getValueFromString = function(s){
+		    for(i in $scope.datasetRecords.rows){
+		        var value = $scope.datasetRecords.rows[i].column_1;
+		        if("" + value == s){
+		            return value;
+		        }
+		    }
+		    return null;
 		}
 
 		$scope.gridWidth = function() {
@@ -144,6 +152,11 @@ angular.module('cockpitModule')
 
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = {};
+		}
+
+		if($scope.ngModel.settings.staticValue){
+		    $scope.ngModel.settings.staticValues = $scope.ngModel.settings.staticValue.split(",");
+		    delete $scope.ngModel.settings.staticValue;
 		}
 
 		if(!$scope.ngModel.style){
@@ -233,7 +246,7 @@ angular.module('cockpitModule')
 					applyDefaultValues = true;
 					break;
 				case 'STATIC':
-					$scope.defaultValues.push($scope.ngModel.settings.staticValues)
+					angular.copy($scope.ngModel.settings.staticValues, $scope.defaultValues);
 					applyDefaultValues = true;
 					break;
 				}

@@ -464,11 +464,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		if (!Array.isArray(columnName)){
 			arColumnName.push(columnName);
 			arOriginalColumnName.push(originalColumnName);
-			if (!Array.isArray(column)){
-				arColumn.push(column);
-			}else{
-				arColumn = column;
-			}
+			arColumn.push(column);
 		}else{
 			arColumnName = columnName;
 			arOriginalColumnName = originalColumnName;
@@ -478,8 +474,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		for (var c=0; c<arColumnName.length; c++){
 			var key = datasetLabel+"."+arColumnName[c];
 			var originalKey = datasetLabel+"."+arOriginalColumnName[c];
-			var array = [];
-			array.push(arColumn[c]);
+			var array = Array.isArray(arColumn[c]) ? arColumn[c] : [arColumn[c]];
 			ws.addValueToSelection(key , array, datasetLabel, originalKey);
 		}
 //		var key = datasetLabel+"."+columnName;
@@ -743,49 +738,73 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 	}
 
-	this.getLastCurrentSelection = function(){
-		var tmpSelections = [];
-		angular.copy(cockpitModule_template.configuration.aggregations,tmpSelections);
-		for(var i=0;i<tmpSelections.length;i++){
-			var selections = tmpSelections[i].selection;
-			if(selections!=undefined){
-			var selectionKeys = Object.keys(selections);
-			if(selectionKeys.length > 0){
-				var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
-				var lastSelectionValue = selections[lastSelectionKey];
+	this.updateSelections = function (tmpSelection, tmpFilters){
+        var reloadAss = false;
+        var reloadFilt = [];
 
-				var result = {}
-				var keySplit = lastSelectionKey.split(".");
-				result[keySplit[0]]={};
-				result[keySplit[0]][keySplit[1]] = lastSelectionValue;
-				return result;
-			}
-		}
-		}
+        if(!angular.equals(tmpSelection, cockpitModule_template.configuration.aggregations)){
+            var oldSelections = Object.keys(cockpitModule_template.configuration.aggregations[0].selection);
+            var newSelections = Object.keys(tmpSelection[0].selection);
+            var removedSelections = oldSelections.filter(function(x) {return newSelections.indexOf(x) < 0;});
+            for(i in removedSelections){
+                var s = removedSelections[i].split(".");
+                removeTimestampedSelection(s[0], s[1]);
+            }
 
-		var selections = {};
-		angular.copy(cockpitModule_template.configuration.filters,selections);
-		if(selections!=undefined){
-		var selectionKeys = Object.keys(selections);
-		if(selectionKeys.length > 0){
-			var lastDataset = selectionKeys[selectionKeys.length - 1];
-			var lastColumns = selections[lastDataset];
-			var lastColumnKeys = Object.keys(lastColumns);
-			var lastColumn = lastColumnKeys[lastColumnKeys.length - 1];
+            angular.copy(tmpSelection, cockpitModule_template.configuration.aggregations);
+            reloadAss = true;
+        }
 
-			var result = {}
-			result[lastDataset] = {};
-			result[lastDataset][lastColumn] = selections[lastDataset][lastColumn];
-			return result;
-		}
-		}
+        if(!angular.equals(tmpFilters, cockpitModule_template.configuration.filters )){
+            var oldDsLabels = Object.keys(cockpitModule_template.configuration.filters);
+            var newDsLabels = Object.keys(tmpFilters);
+            var removedDsLabels = oldDsLabels.filter(function(x) {return newDsLabels.indexOf(x) < 0;});
+            for(i in removedDsLabels){
+                var removedDsLabel = removedDsLabels[i];
+                var removedColNames = Object.keys(cockpitModule_template.configuration.filters[removedDsLabel]);
+                for(j in removedColNames){
+                    removeTimestampedSelection(removedDsLabel, removedColNames[j]);
+                }
+            }
+            var dsLabels = oldDsLabels.filter(function(x) {return newDsLabels.indexOf(x) >= 0;});
+            for(i in dsLabels){
+                var dsLabel = dsLabels[i];
+                var removedColNames =
+                        Object.keys(cockpitModule_template.configuration.filters[dsLabel]).filter(function(x) {
+                            return Object.keys(tmpFilters[dsLabel]).indexOf(x) < 0;
+                        });
+                for(j in removedColNames){
+                    removeTimestampedSelection(dsLabel, removedColNames[j]);
+                }
+            }
 
-		return null;
-	}
+            angular.forEach(cockpitModule_template.configuration.filters, function(val,dsLabel){
+                if(tmpFilters[dsLabel] == undefined || !angular.equals(tmpFilters[dsLabel],val)){
+                    reloadFilt.push(dsLabel)
+                }
+            });
+            angular.copy(tmpFilters, cockpitModule_template.configuration.filters);
+        }
 
-	this.isLastCurrentSelection = function(datasetLabel, columnName){
-		var lastSel = ws.getLastCurrentSelection();
-		return lastSel && lastSel[datasetLabel] && lastSel[datasetLabel][columnName];
+        if(reloadAss){
+            ws.getAssociations(true);
+        }
+
+        if(!reloadAss && reloadFilt.length!=0){
+            ws.refreshAllWidgetWhithSameDataset(reloadFilt);
+        }
+
+        var hs=false;
+        for(var i=0; i<tmpSelection.length; i++){
+            if(Object.keys(tmpSelection[i].selection).length > 0){
+                hs = true;
+                break;
+            }
+        }
+
+        if(hs == false && Object.keys(tmpFilters).length == 0){
+            cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS = false;
+        }
 	}
 
 	this.getSelectionValues = function(datasetLabel, columnName){
@@ -816,4 +835,50 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return null;
 	}
+
+	this.timestampedSelections = [];
+
+    this.addTimestampedSelection = function(dsLabel, colName, values, widgetId){
+        var selection = {
+            creationTime: new Date().getTime(),
+            dsLabel: dsLabel,
+            colName: colName,
+            values: values,
+            widgetId: widgetId
+        };
+        var i = getTimestampedSelectionIndex(dsLabel, colName);
+        if(i > -1){
+            ws.timestampedSelections[i] = selection;
+        }else{
+            ws.timestampedSelections.push(selection);
+            ws.timestampedSelections.sort(function(x,y){return x.creationTime - y.creationTime});
+        }
+    }
+
+    var removeTimestampedSelection = function(dsLabel, colName){
+        var i = getTimestampedSelectionIndex(dsLabel, colName);
+        if(i > -1){
+            ws.timestampedSelections.splice(i, 1);
+        }
+    }
+
+    var getTimestampedSelectionIndex = function(dsLabel, colName){
+        for(i in ws.timestampedSelections){
+            var selection = ws.timestampedSelections[i]
+            if(selection.dsLabel == dsLabel && selection.colName == colName){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    this.getLastTimestampedSelection = function(){
+        return ws.timestampedSelections.length > 0 ? ws.timestampedSelections[ws.timestampedSelections.length - 1] : null;
+    }
+
+    this.isLastTimestampedSelection = function(dsLabel, colName){
+        var last = ws.getLastTimestampedSelection();
+        return last && last.dsLabel == dsLabel && last.colName == colName;
+    }
+
 })
