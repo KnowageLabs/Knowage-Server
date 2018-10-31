@@ -1073,17 +1073,11 @@
         	##min: 0,
         	#if($chartType=="line")
         	
-        		#if($yAxis.min)
-        			#if($yAxis.min!=0)
-    		    		min: $yAxis.min,
-        			#end
-        		#end
-        		
-        		#if($yAxis.max)
-	        		#if($yAxis.max!=0)
-     		   			max: $yAxis.max,
-        			#end
-        		#end
+        	min: $yAxis.min,
+        	#if($yAxis.max>$yAxis.min)
+        	max: $yAxis.max,
+        	#end
+        	
         	#end
         	#if($chartType=="radar")
         		min: 0,
