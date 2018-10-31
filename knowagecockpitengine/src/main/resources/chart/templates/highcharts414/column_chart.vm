@@ -1052,7 +1052,12 @@
 	   		},			
 	   		],
 			#end
-        
+			
+        	min:$yAxis.min,
+        	#if($yAxis.min != $yAxis.max)
+        	max:$yAxis.max,
+        	#end
+        	
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	linkedTo:0,
         	#end
