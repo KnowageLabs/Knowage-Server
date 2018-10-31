@@ -405,7 +405,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
     		"label": sbiModule_translate.load("kn.qbe.custom.table.modified.field"),
     		"icon": "fa fa-calculator",
     		"visible": function (item){
-    			if(item.id.alias) return true;
+    			if(item.id.alias && item.id.expressionSimple) return true;
     			else return false
     		},
     		"action": function(item, event) {
