@@ -31,7 +31,9 @@
 						
 				sqlExpression:"",
 				
-				areDriversFromExpressionValid: function() {		
+				areDriversFromExpressionValid: function() {
+					if(this.sqlExpression.length == 0)
+						return true;
 					var expressionDrivers = this.extractDriversFromExpression(this.sqlExpression);
 					return this.contains(expressionDrivers);
 					
