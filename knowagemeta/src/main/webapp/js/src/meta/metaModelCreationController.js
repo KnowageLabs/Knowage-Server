@@ -234,12 +234,11 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		
 		var listOfColumns = bmColumns;
 		
-		if(index > -1 && index < listOfColumns.length - 1) {
+		if(index > -1 && index < listOfColumns.length) {
 			var tmp = listOfColumns[index - 1];
 			listOfColumns[index - 1] = listOfColumns[index];
 			listOfColumns[index] = tmp;
 		}
-		
 	};
 	
 	$scope.moveDown = function(index, bmColumns) {
@@ -251,7 +250,6 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			listOfColumns[index + 1] = listOfColumns[index];
 			listOfColumns[index] = tmp;
 		}
-		
 	};
 
 	$scope.addBusinessModel=function(){
