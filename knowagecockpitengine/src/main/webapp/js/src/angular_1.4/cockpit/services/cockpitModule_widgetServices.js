@@ -346,8 +346,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 					dsRecords.then(function(data){
 						if(config.type == "selector"){
-							var lastSelection = cockpitModule_widgetSelection.getLastCurrentSelection();
-							if(lastSelection && (!lastSelection[config.dataset.label] || !lastSelection[config.dataset.label][config.content.selectedColumn.name])){
+							if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
 								data.activeValues = wi.loadDatasetRecords(config, options, false);
 							}
 						}
