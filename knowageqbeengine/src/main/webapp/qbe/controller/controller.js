@@ -52,10 +52,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.meta = [];
 	$scope.editQueryObj = new Query("");
 	$scope.advancedFilters = [];
+	$scope.customTransformedFormulas = [];
 	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
-	$scope.formulas = formulaService.getFormulas();
-
+	$scope.formulas = formulaService.getFormulasFromXml();
+	formulaService.getCustomFormulas().then(function(response) {
+		$scope.customFormulas = response.data.data;
+		for (var i = 0; i < $scope.customFormulas.length; i++) {
+			$scope.customTransformedFormulas.push(formulaService.createFormula($scope.customFormulas[i]))
+		}
+		Array.prototype.push.apply($scope.formulas, $scope.customTransformedFormulas);
+	});
 
 
 	$scope.$watch('editQueryObj',function(newValue,oldValue){

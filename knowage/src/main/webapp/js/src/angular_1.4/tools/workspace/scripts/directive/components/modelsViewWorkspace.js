@@ -80,6 +80,17 @@
 				+'&DATA_SOURCE_LABEL='+ dataSource
 				+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
+			var modelName= businessModel.name;
+			var dataSource=businessModel.dataSourceLabel;
+			var dataSourceId=businessModel.dataSourceId;
+			var url = datasetParameters.qbeFromBMServiceUrl
+			+'&MODEL_NAME='+modelName
+			+'&DATA_SOURCE_LABEL='+ dataSource
+			+'&DATA_SOURCE_ID='+ dataSourceId
+			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+
+				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
+
 				if( $scope.drivers.length > 0){
 					$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
 				}else{
