@@ -265,44 +265,8 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	}
 
 	$scope.saveConfiguration = function(){
-		var reloadAss=false;
-		var reloadFilt=[];
-
-		if(!angular.equals($scope.tmpSelection,cockpitModule_template.configuration.aggregations)){
-			angular.copy($scope.tmpSelection,cockpitModule_template.configuration.aggregations);
-			reloadAss=true;
-		}
-
-		if(!angular.equals($scope.tmpFilters,cockpitModule_template.configuration.filters)){
-			angular.forEach(cockpitModule_template.configuration.filters,function(val,dsLabel){
-				if($scope.tmpFilters[dsLabel]==undefined || !angular.equals($scope.tmpFilters[dsLabel],val)){
-					reloadFilt.push(dsLabel)
-				}
-			});
-			angular.copy($scope.tmpFilters,cockpitModule_template.configuration.filters);
-		}
-
-		if(reloadAss){
-			cockpitModule_widgetSelection.getAssociations(true);
-		}
-
-		if(!reloadAss && reloadFilt.length!=0){
-			cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
-		}
-
-		var hs=false;
-		for(var i=0;i<$scope.tmpSelection.length;i++){
-			if(Object.keys($scope.tmpSelection[i].selection).length>0){
-				hs= true;
-				break;
-			}
-		}
-
-		if(hs==false && Object.keys($scope.tmpFilters).length==0 ){
-			cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
-		}
-
-		$mdDialog.cancel();
+	    cockpitModule_widgetSelection.updateSelections($scope.tmpSelection, $scope.tmpFilters);
+	    $mdDialog.cancel();
 	}
 
 	// general widget event  'WIDGET_EVENT' without ID

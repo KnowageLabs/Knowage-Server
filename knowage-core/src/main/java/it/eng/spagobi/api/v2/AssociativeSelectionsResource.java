@@ -203,9 +203,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				Projection projection = new Projection(dataSet, column);
 				List<Object> valueObjects = new ArrayList<>();
 
-				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
+				Object object = selectionsObject.getJSONArray(datasetDotColumn);
 				if (object instanceof JSONArray) {
-
 					JSONArray jsonArray = (JSONArray) object;
 					for (int i = 0; i < jsonArray.length(); i++) {
 						Object valueForQuery = DataSetUtilities.getValue(jsonArray.get(i).toString(), projection.getType());
