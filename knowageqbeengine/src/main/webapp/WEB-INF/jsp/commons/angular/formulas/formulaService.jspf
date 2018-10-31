@@ -22,6 +22,7 @@ angular.module('formulas')
 	var formulas = angular.fromJson('<%= formulasJson%>');
 	debugger;
 	var dataSourceId = <%= datasourceId%>;
+	
 	function Formula(formula){
 		this.type = formula.type;
 		this.name = formula.name;
@@ -42,14 +43,6 @@ angular.module('formulas')
 	}
 	var customFormulas = [];
 	var customTransformedFormulas = [];
-	/*$http.get(sbiModule_config.externalBasePath+"/restful-services/2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId)
-	.then(function(response) {
-		customFormulas = response.data.data;
-		for (var i = 0; i < customFormulas.length; i++) {
-			customTransformedFormulas.push(new Formula(customFormulas[i]))
-		}
-	});*/
-	
 	return {	
 	   	getFormulasFromXml: function(){
 	   		return formulas;
