@@ -34,9 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/parameters/parameter.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/group/group.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/save/save.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/having/having.js"></script>
-
-
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
