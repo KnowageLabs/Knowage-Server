@@ -63,8 +63,7 @@
                     <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-if="$event.stopPropagation();fieldAction.visible(field,$event)" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
                         <md-icon ng-class="{'temporal-filter-avaliable':field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' , 
                         '':field.iconCls!='the_date'||fieldAction.icon!='fa fa-filter', 
-                        'filterColor':countFilters(field)>0 && fieldAction.icon=='fa fa-filter', 
-                        'havingColor':countHavings(field)>0 && fieldAction.icon=='fa fa-check-square-o'}" md-font-icon="{{fieldAction.icon}}"></md-icon>
+                        'filterColor':countFilters(field)>0 && fieldAction.icon=='fa fa-filter'}" md-font-icon="{{fieldAction.icon}}"></md-icon>
                         <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
                     </md-button>
                 </li>
