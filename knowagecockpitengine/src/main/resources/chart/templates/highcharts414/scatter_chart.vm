@@ -977,7 +977,7 @@
 			#end 
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
 	    	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
-	    	$datasettransformer.print($styleOfDataLabels)
+
 						#if ($relatedSerieShowValue != '')
 						selected: $relatedSerieShowValue,
 						dataLabels: {
