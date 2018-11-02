@@ -976,9 +976,20 @@
 	    	
 			#end 
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+	    	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
+	    	$datasettransformer.print($styleOfDataLabels)
 						#if ($relatedSerieShowValue != '')
 						selected: $relatedSerieShowValue,
 						dataLabels: {
+						
+							style:{
+	    			
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    					},
 		                    
 		                    enabled: $relatedSerieShowValue,
 		                      

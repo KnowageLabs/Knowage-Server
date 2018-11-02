@@ -598,6 +598,7 @@
 		        	#else
 		        		fontWeight: '$chart.LEGEND.style.fontWeight',
 		        	#end
+		        	
 		        },
 		        #if('$!chart.LEGEND.TITLE' != "" && '$chart.LEGEND.TITLE'!='')
 		        title:
@@ -739,6 +740,7 @@
 		#if($xAxis.plotBands)
 		plotBands : [
     	{
+    		
     		label:
 			{
 				text:"",
@@ -1198,6 +1200,7 @@
 	        		style:{
 		        	#foreach($styleName in $yAxis.style.keySet())
 		        		#set ($axisStyle = $yAxis.style[$styleName])
+
 		        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
 		        			fontStyle: '$axisStyle',
 						#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
@@ -1282,8 +1285,9 @@
     ],
     
     #foreach($valueKey in $seriesMap.keySet())
+
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	    
+
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	   	#if($chart.isCockpitEngine != 'true')
 	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1298,6 +1302,7 @@
     	#end		
 	#end
     #foreach($element in $seriesMap)
+
     #set($relatedSerieColName = "$element.name"+"_#if($element.groupingFunction)$element.groupingFunction.toLowerCase()#{else}sum#end")
 	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 		#if($chart.isCockpitEngine != 'true')
@@ -1308,12 +1313,14 @@
     		 #set($seriesMap = $datasettransformer.seriesMapTransformedMethod($seriesMap))
            	 #break
     	#end
+
     #end
   	#set ($counter = 0)
 	#set ($count = $count+1)
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
+
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 		#foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
@@ -1363,11 +1370,12 @@
 				#end		
 		    	type: '$relatedSerieType',
 		    #end
-	       
+	       #set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 	    	## makes the datalabels overlapping
-	    	
 	    	dataLabels: {
-	    		allowOverlap: true
+
+
+	    		allowOverlap: true,
 	    	},
 	    	#set ($countXvalues = 0)
 	    	data: [
@@ -1432,8 +1440,15 @@
 					
 						selected:$relatedSerieShowValue,
 						
-						dataLabels: 
-						{
+						dataLabels:{
+							style:{
+	    			
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    					},
 
 		                    enabled: $relatedSerieShowValue,
 		                   
