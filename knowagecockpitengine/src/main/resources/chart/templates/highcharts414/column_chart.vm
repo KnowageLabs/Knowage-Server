@@ -1367,7 +1367,7 @@
 				#end		
 		    	type: '$relatedSerieType',
 		    #end
-	       
+	       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 	    	## makes the datalabels overlapping
 	    	
 	    	dataLabels: {
@@ -1435,6 +1435,15 @@
 						selected:$relatedSerieShowValue,
 						dataLabels: 
 						{
+							style:{
+	    			
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    					},
+							
 							enabled: $relatedSerieShowValue,
 
 		                    #set ($postfixValueAsString = '')

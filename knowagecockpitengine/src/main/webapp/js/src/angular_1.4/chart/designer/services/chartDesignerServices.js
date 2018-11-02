@@ -323,6 +323,13 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 "showCategoryValue":false,
 					                 "scaleFactor":"empty",
 					                 "type":"",
+					                 "style": {
+				                		 "color":"",
+				                		 "fontFamily":"",
+				                		 "fontWeight":"",
+				                		 "fontSize":"",
+				                		 "fontStyle":"",
+					                 	},
 					                 "TOOLTIP":{
 					                    "backgroundColor":"",
 					                    "borderWidth":0,
@@ -1329,6 +1336,13 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showPercentage": false,
 						"scaleFactor": "empty",
 						"type": "",
+						"style": {
+	                		 "color":"",
+	                		 "fontFamily":"",
+	                		 "fontWeight":"",
+	                		 "fontSize":"",
+	                		 "fontStyle":"",
+	                	},
 						"TOOLTIP":{
 		                    "backgroundColor":"",
 		                    "style":{
