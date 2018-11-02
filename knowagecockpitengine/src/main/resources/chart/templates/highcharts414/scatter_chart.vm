@@ -978,9 +978,19 @@
 	    		    	
 			#end 
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+	    	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 						#if ($relatedSerieShowValue != '')
 						dataLabels: {
-						
+							
+							style:{
+	    			
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    					},
+							
 		                	#if(!$chart.LEGEND.show)
 		                	enabled: $relatedSerieShowValue,
 		                	#elseif($chart.LEGEND.show)
