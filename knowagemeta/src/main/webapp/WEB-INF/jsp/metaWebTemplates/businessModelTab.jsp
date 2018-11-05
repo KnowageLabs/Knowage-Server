@@ -19,20 +19,24 @@
 						<md-card>
 							<md-card-content class="noPadding">
 								<ul>
-					  		<li ng-repeat-start="col in bm.columns" class="selectable" ng-click="selectBusinessModel(col)" ng-class="{'selected':col == selectedBusinessModel}">
-					  			<md-icon md-font-icon="{{::businesslModel_getlevelIcon(col)}}"></md-icon>
-					  			<span>{{col.name}}</span>
-					  			
-					  			<md-button class="md-secondary md-icon-button" ng-if="!$first" ng-click="moveUp($index, bm.columns)" aria-label="Move up property" >
-					  				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
-					  			</md-button>
-					  			<md-button class="md-secondary md-icon-button" ng-if="!$last" ng-click="moveDown($index, bm.columns)" aria-label="Move down property" >
-					  				<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
-					  			</md-button>
-					  			
-					  		</li>
-					  		<md-divider ng-repeat-end ng-if="!$last"></md-divider>
-					  	</ul>
+					  				<li ng-repeat-start="col in bm.columns" class="selectable" ng-click="selectBusinessModel(col)" ng-class="{'selected':col == selectedBusinessModel}">
+					  					<div layout="row">
+						  					<div flex="70">
+							  					<md-icon md-font-icon="{{::businesslModel_getlevelIcon(col)}}"></md-icon>
+							  					<span>{{col.name}}</span>
+						  					</div>
+						  					<div flex="30">
+									  			<md-button class="md-secondary md-icon-button" ng-if="!$first" ng-click="moveUp($index, bm.columns)" aria-label="Move up property" >
+									  				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+									  			</md-button>
+									  			<md-button class="md-secondary md-icon-button" ng-if="!$last" ng-click="moveDown($index, bm.columns)" aria-label="Move down property" >
+									  				<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+									  			</md-button>
+						  					</div>
+					  					</div>
+					  				</li>
+					  			<md-divider ng-repeat-end ng-if="!$last"></md-divider>
+					  			</ul>
 							</md-card-content>
 						</md-card>
 						<md-divider></md-divider>
