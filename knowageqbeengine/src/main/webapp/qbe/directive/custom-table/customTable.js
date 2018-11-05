@@ -324,7 +324,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":$scope.translate.load("kn.qbe.custom.table.function"),
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.aggregation"),
 	                            	"name":"function",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
