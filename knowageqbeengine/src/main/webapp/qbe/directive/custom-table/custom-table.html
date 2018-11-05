@@ -8,14 +8,14 @@
 	   			
 	   			<span flex></span>
 	   			<md-button class="md-icon-button" ng-click="showSQLQuery()">
-					<md-icon md-font-icon="fa fa-database"></md-icon>
+					<md-icon md-font-icon="fas fa fa-database"></md-icon>
 				</md-button>
 	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
 	   			<md-button class="md-icon-button" ng-click="openDialogForParams(ngModel)">
 					<md-icon md-font-icon="fa fa-product-hunt"></md-icon>
 				</md-button>
 				<md-button class="md-icon-button" ng-if="!smartPreview" ng-click="showCalculatedField(ngModel)">
-					<md-icon md-font-icon="fa fa-calculator"></md-icon>
+					<md-icon md-font-icon="fa fa-database"></md-icon>
 				</md-button>
 				<md-button class="md-icon-button" ng-click="openFiltersAdvanced()">
 					<md-icon md-font-icon="fa fa-cogs"></md-icon>
@@ -146,7 +146,7 @@
          			<md-menu>		
 	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
-		            		<span>{{translate.load("kn.qbe.custom.table.function")}}</span>
+		            		<span>{{translate.load("kn.qbe.custom.table.aggregation")}}</span>
 		          		</md-button>
 		          			      
 			      		<md-menu-content class="qbeMenuContent">
