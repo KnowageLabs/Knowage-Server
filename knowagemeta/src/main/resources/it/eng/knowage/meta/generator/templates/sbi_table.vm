@@ -16,8 +16,11 @@ ${jpaTable.importStatements}
  * 
  */
  
+
+ 
 #set($count = 0)
 @Entity
+#if($jpaTable.getSqlFilter().length() != 0)
 @FilterDef(name="sqlFilter", parameters = {
 #foreach ($param in $jpaTable.getParamResources())
 	@ParamDef(name = "${param}", type = "$jpaTable.getParamType($param)")
@@ -28,17 +31,18 @@ ${jpaTable.importStatements}
 #end
 })
 #if( !${table.defaultname} )
-@Table(name="${jpaTable.quotedMappingTableName}"
-#if( $jpaTable.getSchema() )
-, schema="${jpaTable.schema}"
-#end
-#if( $jpaTable.getCatalog() )
-, catalog="${jpaTable.catalog}"
-#end
-)
+	@Table(name="${jpaTable.quotedMappingTableName}"
+	#if( $jpaTable.getSchema() )
+		, schema="${jpaTable.schema}"
+	#end
+	#if( $jpaTable.getCatalog() )
+		, catalog="${jpaTable.catalog}"
+	#end
+	)
 #end
 @Filter(name = "sqlFilter", condition = "$jpaTable.getSqlFilter()")
 
+#end
 public class ${jpaTable.className} implements Serializable {
 
 private static final long serialVersionUID = 1L;
