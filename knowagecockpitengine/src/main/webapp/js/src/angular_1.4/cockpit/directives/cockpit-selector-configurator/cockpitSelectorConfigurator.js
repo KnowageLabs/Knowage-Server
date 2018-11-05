@@ -42,17 +42,6 @@
 		
 		$scope.lastId = -1;
 
-		if($scope.model.dataset && $scope.model.dataset.dsId){
-			$scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
-		}
-
-		$scope.$watch('model.content.selectedColumn',function(newValue,oldValue){
-			if($scope.model.content.columnSelectedOfDataset){
-				$scope.model.content.columnSelectedOfDataset.length = 0;
-				$scope.model.content.columnSelectedOfDataset.push(newValue);
-			}
-		},true)
-		
 		$scope.showCircularcolumns = {value :false};
 		$scope.modalityValue = [{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value')},{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue')}];
 		$scope.modalityView = [
@@ -63,16 +52,17 @@
 		$scope.modalityPresent = [{value: "LIST",name: $scope.translate.load('sbi.cockpit.widgets.selector.list')},{value :"COMBOBOX",name: $scope.translate.load('sbi.cockpit.widgets.selector.combobox')}];
 		$scope.defaultValues = [{value: "FIRST",name: "Main column's first item"},{value: "LAST",name: "Main columns's last item"},{value: "STATIC",name: "Static"}]
 
-		$scope.resetValue = function(dsId){
+		$scope.resetValue = function(dsId, forceFlag){
 			if($scope.model.dataset && $scope.model.dataset.dsId){
 				$scope.lastId = $scope.model.dataset.dsId;
 			}else{
 				$scope.model.dataset = {};
 			}
 
-			if($scope.lastId==-1 || $scope.lastId!=dsId){
+			if($scope.lastId==-1 || $scope.lastId!=dsId || forceFlag){
 				$scope.showCircularcolumns = {value : true};
 				$scope.safeApply();
+
 				$scope.model.dataset.dsId = dsId;
 				$scope.local = {};
 				if($scope.model.dataset.dsId !=-1){
@@ -86,14 +76,20 @@
 						$scope.model.content.columnSelectedOfDataset.push(obj);
 					}
 					$scope.lastId=$scope.model.dataset.dsId;
-					$scope.showCircularcolumns ={value : false};
-					$scope.safeApply();
 				}else{
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
+
+				for(i in $scope.model.content.columnSelectedOfDataset){
+				    if($scope.model.content.columnSelectedOfDataset[i].alias == $scope.model.content.selectedColumn.alias){
+				        $scope.model.content.columnSelectedOfDataset[i] = $scope.model.content.selectedColumn;
+				        break;
+				    }
+				}
+
+				$scope.showCircularcolumns ={value : false};
+                $scope.safeApply();
 			}
-			$scope.copyColumnSelectedOfDataset =angular.copy($scope.model.content.columnSelectedOfDataset);
-			$scope.model.content.copyColumnSelectedOfDataset = $scope.copyColumnSelectedOfDataset;
 		}
 
 		$scope.safeApply=function(){
@@ -102,6 +98,10 @@
 			}
 		}
 
+		if($scope.model.dataset && $scope.model.dataset.dsId && $scope.model.dataset.dsId != -1){
+            $scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
+            $scope.resetValue($scope.model.dataset.dsId, true);
+        }
 	}
 })();
 

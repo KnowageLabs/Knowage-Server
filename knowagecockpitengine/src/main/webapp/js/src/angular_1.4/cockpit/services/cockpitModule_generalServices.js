@@ -86,6 +86,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 							}
 						} else if(widget.type == "selector"){
 							delete widget.activeValues;
+							if(widget.content && widget.content.copyColumnSelectedOfDataset){
+							    delete widget.content.copyColumnSelectedOfDataset;
+							}
 						}
 					});
 				}

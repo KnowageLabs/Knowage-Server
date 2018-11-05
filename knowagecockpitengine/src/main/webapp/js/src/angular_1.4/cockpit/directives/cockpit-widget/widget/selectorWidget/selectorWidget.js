@@ -475,6 +475,9 @@ angular.module('cockpitModule')
 				return;
 			}
 
+			$scope.model.content.columnSelectedOfDataset.length = 0;
+			$scope.model.content.columnSelectedOfDataset.push($scope.model.content.selectedColumn);
+
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();

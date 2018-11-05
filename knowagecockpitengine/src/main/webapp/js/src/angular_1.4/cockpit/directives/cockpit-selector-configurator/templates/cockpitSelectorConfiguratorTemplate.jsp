@@ -1,11 +1,11 @@
 <md-content layout-fill class="cockpitSelectorWidgetSettings">
     <md-card>
      	<md-card-content layout="row" layout-align="space-around center">
-     		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  	
+     		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
      		<md-input-container class="md-block" flex>
 				<label>{{::translate.load("sbi.cockpit.widgets.selector.column");}}</label>
          		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" ng-disabled="!model.dataset.dsId">
-          			<md-option ng-repeat="column in model.content.copyColumnSelectedOfDataset | filter : {fieldType:'ATTRIBUTE'}" ng-value="column" >
+          			<md-option ng-repeat="column in model.content.columnSelectedOfDataset | filter : {fieldType:'ATTRIBUTE'}" ng-value="column" >
                			{{column.alias}}
           			</md-option>
       			</md-select>
