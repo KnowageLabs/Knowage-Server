@@ -1371,7 +1371,7 @@
 	    	## makes the datalabels overlapping
 	    	
 	    	dataLabels: {
-	    		allowOverlap: true
+	    		allowOverlap: true,
 	    	},
 	    	#set ($countXvalues = 0)
 	    	data: [

@@ -323,6 +323,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 "showCategoryValue":false,
 					                 "scaleFactor":"empty",
 					                 "type":"",
+					                 "dataLabels":{
 					                 "style": {
 				                		 "color":"",
 				                		 "fontFamily":"",
@@ -330,6 +331,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				                		 "fontSize":"",
 				                		 "fontStyle":"",
 					                 	},
+					                 },
 					                 "TOOLTIP":{
 					                    "backgroundColor":"",
 					                    "borderWidth":0,
@@ -342,8 +344,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 							            	   "fontFamily":"",
 							            	   "fontSize":"",
 							            	   "fontWeight":""
-							               }
-					                 }
+							               },
+					                 },
 					              }
 					         ]
 					      },
@@ -1336,6 +1338,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showPercentage": false,
 						"scaleFactor": "empty",
 						"type": "",
+						"dataLabels":{
 						"style": {
 	                		 "color":"",
 	                		 "fontFamily":"",
@@ -1343,6 +1346,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                		 "fontSize":"",
 	                		 "fontStyle":"",
 	                	},
+						},
 						"TOOLTIP":{
 		                    "backgroundColor":"",
 		                    "style":{
