@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-messages/angular-messages.min.js"></script>
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-material/angular-material.min.js"></script>
 <link rel="stylesheet" href="<%=spagoBiContext%>/node_modules/angular-material/angular-material.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <!-- ngdraggable -->
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/ngdraggable/ngDraggable.js"></script>
