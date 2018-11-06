@@ -42,9 +42,10 @@
     "angular-xregexp": "1.0.0",
     "codemirror": "5.32.0",
     "font-awesome": "4.7.0",
+    "html2canvas": "^1.0.0-alpha.12",
     "jsonformatter": "^0.6.0",
     "ngdraggable": "^0.1.10",
-    "npm": "^6.2.0",
+    "npm": "^6.4.1",
     "xregexp": "4.2.0"
   },
   "author": "knowage labs <knowage@eng.it>",

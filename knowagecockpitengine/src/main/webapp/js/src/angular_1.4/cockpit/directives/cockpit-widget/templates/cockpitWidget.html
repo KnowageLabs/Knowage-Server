@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		<div layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
+		<div id="viewModeMenu" layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
 			
 			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
@@ -179,13 +179,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
+			
+			
+			<md-button class="md-icon-button" ng-click="captureScreenShot($event,ngModel.id);$event.stopPropagation();" ng-if="!ngModel.loadingScreen" >
+				<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
+				<md-icon md-font-icon="fa fa-camera-retro"></md-icon>
+			</md-button>
+			<md-button class="md-icon-button" ng-if="ngModel.loadingScreen" >
+				<md-tooltip md-direction="bottom" md-delay="1000">Loading</md-tooltip>
+				<md-icon md-font-icon="fa fa-spinner fa-spin"></md-icon>
+			</md-button>
+			<a href="{{ngModel.screenBase64}}" ng-show="false" class="md-icon-button downloadScreenshot" download="{{extendedStyle.title.label || 'new_widget'}}">
+				<md-tooltip md-direction="bottom" md-delay="1000">Download Screenshot</md-tooltip>
+				<md-icon md-font-icon="fa fa-download"></md-icon>
+			</a>
 		</div>
 		
 		
 			
 		</div>
-		<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
-		</md-card-content>
+			<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
+			</md-card-content>
 	</md-card>
 	
 	

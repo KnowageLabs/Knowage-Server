@@ -140,6 +140,10 @@ END-PRODUCTION -->
 <!-- mathjs for quantil thematization -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
 
+<!-- html2canvas -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
+
+
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

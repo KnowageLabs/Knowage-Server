@@ -26,6 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('cockpitModule')
+.config( ['$compileProvider', function( $compileProvider ){   
+        	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
+    	}
+])
 .directive('autoCompileWidget', function ($compile) {
             return {
                 restrict: 'A',
@@ -242,13 +246,14 @@ function cockpitWidgetControllerFunction(
 		sbiModule_i18n,
 		sbiModule_config,
 		$filter,
+		$sce,
 		$mdDialog)
 	{
 
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
-
+	    
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
@@ -1349,6 +1354,24 @@ function cockpitWidgetControllerFunction(
 	      locals: {ngModel:$scope.ngModel}
 	    })
 	}
+	
+	$scope.captureScreenShot = function(ev,elId){
+		$scope.ngModel.loadingScreen = true;
+		var element = document.querySelector('#w'+elId);
+		html2canvas(element,{
+			width: element.clientWidth,
+		    height: element.clientHeight
+		    }
+		).then(function(canvas) {
+		    var imageType = 'image/png';
+		    var imageData = canvas.toDataURL(imageType);
+		    document.location.href = imageData.replace(imageType, 'image/octet-stream;name=document.png');
+		    //$scope.ngModel.screenBase64 = imageData;
+		    //delete $scope.ngModel.loadingScreen;
+		    //angular.element(element).find('a').triggerHandler('click');
+		});
+	};
+	
 };
 
 })();
