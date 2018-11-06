@@ -3,10 +3,13 @@
 		<md-toolbar class="secondaryToolbar" >
 			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}}
 				<span flex></span>
-			<md-button class="md-icon-button" aria-label="Close" ng-click="closePanel()" 
+				<md-button title="Filters">
+					<md-icon md-font-icon="fa fa-filter">  {{translate.load("kn.qbe.custom.table.filters.on.aggregations")}}</md-icon>
+				</md-button>
+				<md-button class="md-icon-button" aria-label="Close" ng-click="closePanel()" 
 					title="Close">
-				<md-icon md-font-icon="fa fa-times" ></md-icon>
-			</md-button>
+					<md-icon md-font-icon="fa fa-times" ></md-icon>
+				</md-button>
 			</div>
 		</md-toolbar>
 		<angular-table
