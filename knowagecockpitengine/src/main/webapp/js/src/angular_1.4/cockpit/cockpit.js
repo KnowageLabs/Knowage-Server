@@ -43,10 +43,11 @@ var cockpitApp= angular.module("cockpitModule",[
 	'knModule',
 	'agGrid'
 	]);
-cockpitApp.config(['$mdThemingProvider','$mdGestureProvider', function($mdThemingProvider,$mdGestureProvider) {
+cockpitApp.config(['$mdThemingProvider','$mdGestureProvider','$compileProvider', function($mdThemingProvider,$mdGestureProvider,$compileProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
     $mdGestureProvider.skipClickHijack();
+    $compileProvider.debugInfoEnabled(false);
 }]);
 
 
