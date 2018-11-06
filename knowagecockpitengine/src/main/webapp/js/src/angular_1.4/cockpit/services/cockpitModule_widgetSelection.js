@@ -675,6 +675,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			var aggregation = cockpitModule_template.configuration.aggregations[aggregationIndex];
 			if(angular.equals(cockpitModule_template.configuration.aggregations[aggregationIndex].datasets, datasets)){
 				var selections = angular.copy(aggregation.selection);
+
+                var dsLabels = Object.keys(cockpitModule_template.configuration.filters);
+				for(i in dsLabels){
+				    var dsLabel = dsLabels[i]
+				    var sel = cockpitModule_template.configuration.filters[dsLabel];
+				    var columns = Object.keys(sel);
+				    for (j in columns){
+				        var column = columns[j]
+				        selections[dsLabel + "." + column] = sel[column];
+				    }
+				}
+
 				ws.resolveAliasesOnSelections(selections);
 				return selections;
 			}

@@ -697,10 +697,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var filtersToSend = {};
 		if(!loadDomainValues && ngModel.updateble){
-			 filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
-			if( Object.keys(filtersToSend).length == 0){
-				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
-			}
+			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
+			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(dataset.label));
+			angular.merge(filtersToSend, filters);
 		}
 		if(ngModel.type=="selector"){
 			var datasetLabel = ngModel.dataset.label;
