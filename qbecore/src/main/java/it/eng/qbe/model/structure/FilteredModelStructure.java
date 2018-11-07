@@ -345,5 +345,15 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.qbe.model.structure.IModelStructure#getEntities()
+	 */
+	@Override
+	public Map<String, IModelEntity> getEntities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

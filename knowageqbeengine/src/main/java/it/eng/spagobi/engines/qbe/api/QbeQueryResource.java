@@ -39,6 +39,7 @@ import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -153,6 +154,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			}
 
+			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 			logger.debug("Parameter [" + "limit" + "] is equals to [" + limit + "]");
@@ -168,6 +170,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
 			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
+			modelEntities.addAll(sqlModality.getSqlFilterEntities(query, getEngineInstance().getDataSource()));
 			updateQueryGraphInQuery(filteredQuery, true, modelEntities);
 
 			Map<String, Map<String, String>> inlineFilteredSelectFields = filteredQuery.getInlineFilteredSelectFields();
@@ -325,6 +328,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("UndirectedGraph retrieved");
 			Set<IModelEntity> entities = filteredQuery.getQueryEntities(getEngineInstance().getDataSource());
 			if (entities.size() > 0) {
+				entities.addAll(modelEntities);
 				queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph, entities);
 			}
 
@@ -455,7 +459,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
-			// logQueryInAudit(qbeDataSet);
+			logQueryInAudit(qbeDataSet);
 
 			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
 			dataStore = dataSet.getDataStore();
