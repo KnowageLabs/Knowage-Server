@@ -239,47 +239,44 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 
-				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
-				if(dsRecords == null){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
-				}else{
-					/*
-						author: rselakov, Radmila Selakovic,
-						radmila.selakovic@mht.net
-						checking type of widget because of removing load spinner
-						in case of updating charts
-					*/
-					if (options.type && options.type!="chart"){
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
-					} else if (options.type && options.type=="chart" && options.chartInit && options.chartInit==true){
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
-					}
+                if(config.type != "selector" || nature == 'init'){
+                    var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
+                    if(dsRecords == null){
+                        $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
+                    }else{
+                        /*
+                            author: rselakov, Radmila Selakovic,
+                            radmila.selakovic@mht.net
+                            checking type of widget because of removing load spinner
+                            in case of updating charts
+                        */
+                        if (options.type && (options.type!="chart" || options.chartInit)){
+                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
+                        }
 
-					dsRecords.then(function(data){
-						if(config.type == "selector"){
-							if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
-								var activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
-								activeValues.then(function(values){
-									var activeValues = [];
-									for(var i in values.rows){
-										activeValues.push(values.rows[i].column_1);
-									}
-									config.activeValues = activeValues;
-								}, function(){
-									console.log("Error retry data");
-								});
-							}else{
-								config.activeValues = null;
-							}
-						}
+                        dsRecords.then(function(data){
+                            if(config.type == "selector"){
+                                if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                                    data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+                                }else{
+                                    config.activeValues = null;
+                                }
+                            }
 
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data});
-					}, function(){
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						console.log("Error retry data");
-					});
-				}
+                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data});
+                        }, function(){
+                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+                            console.error("Unable to load data");
+                        });
+                    }
+                }else{
+                    var data = {};
+                    if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                        data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+                    }
+                    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+                }
 			}
 		}else {
 			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
