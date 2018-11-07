@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Filter;
+import org.hibernate.Session;
 import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +29,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -414,6 +418,28 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet dataSet = getActiveQueryAsDataSet(q);
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
 		IStatement statement = qbeDataSet.getStatement();
+
+		EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+		Session session = (Session) entityManager.getDelegate();
+		Filter filter = session.enableFilter("sqlFilter");
+
+		Map envs = getEnv();
+		String driverName = null;
+		Map filterNames = filter.getFilterDefinition().getParameterTypes();
+		String env = null;
+
+		HashMap<String, Object> drivers = new HashMap<String, Object>();
+		for (Object key : filterNames.keySet()) {
+			driverName = key.toString();
+			for (Object key2 : envs.keySet()) {
+				env = key2.toString();
+				if (driverName.equals(env)) {
+					drivers.put(driverName, getEnv().get(driverName));
+				}
+			}
+		}
+		qbeDataSet.setDrivers(drivers);
+
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 				statement.getQuery().getQueryEntities(getEngineInstance().getDataSource()));

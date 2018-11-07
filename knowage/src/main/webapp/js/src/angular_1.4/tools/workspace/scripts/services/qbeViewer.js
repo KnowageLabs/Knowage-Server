@@ -23,7 +23,7 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer) {
 
 		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
 
@@ -177,7 +177,8 @@ angular
 				}
 			}
 			$scope.executeParameter = function(){
-				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				$scope.documentViewerUrl = url + '&' + $httpParamSerializer(drivers);
 				$scope.showQbe = true;
 				$scope.businessModel.executed = true;
 			}

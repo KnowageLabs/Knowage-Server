@@ -19,6 +19,7 @@ package it.eng.qbe.statement.jpa;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.hibernate.Session;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -83,8 +85,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = -1;
 
 		EntityManager entityManager = getEntityMananger();
-//
-//		enableFilters();
+		Session session = (Session) entityManager.getDelegate();
+		enableFilters(session);
+
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
 		logger.debug("Compiling query statement [" + statementStr + "]");
@@ -137,13 +140,18 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @param session
 	 * @param runtimeDrivers
 	 */
-	private void enableFilters() {
+	private void enableFilters(Session session) {
 
 		EntityManager entityManager = getEntityMananger();
-		HashMap<String, Object> drivers = getDrivers();
-		Session session = (Session) entityManager.getDelegate();
+		IModelStructure structure = this.statement.getDataSource().getModelStructure();
 		Filter filter = session.enableFilter("sqlFilter");
-		filter.setParameter("name", "Sheri");
+
+		HashMap<String, Object> drivers = this.getDrivers();
+		Iterator it = drivers.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			filter.setParameter(pair.getKey().toString(), pair.getValue());
+		}
 	}
 
 	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
@@ -262,7 +270,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	@Override
 	public HashMap<String, Object> getDrivers() {
-		return getDrivers();
+		return super.getDrivers();
 	}
 
 	/*
@@ -272,7 +280,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	@Override
 	public void setDrivers(HashMap<String, Object> drivers) {
-		setDrivers(drivers);
+		super.setDrivers(drivers);
 	}
 
 }
