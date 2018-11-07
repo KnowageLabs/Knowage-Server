@@ -322,11 +322,14 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		Projection projection = item.getProjection();
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
-		String name = aliasDelimiter + projection.getName() + aliasDelimiter;
+		String name = projection.getName();
+		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+				: aliasDelimiter + name + aliasDelimiter;
+
 		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-			queryBuilder.append(name);
+			queryBuilder.append(columnName);
 		} else {
-			queryBuilder.append(aggregationFunction.apply(name));
+			queryBuilder.append(aggregationFunction.apply(columnName));
 		}
 
 		queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
