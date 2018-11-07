@@ -863,8 +863,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
             ws.timestampedSelections[i] = selection;
         }else{
             ws.timestampedSelections.push(selection);
-            ws.timestampedSelections.sort(function(x,y){return x.creationTime - y.creationTime});
         }
+        ws.timestampedSelections.sort(function(x,y){return x.creationTime - y.creationTime});
     }
 
     var removeTimestampedSelection = function(dsLabel, colName){
