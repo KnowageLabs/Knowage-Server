@@ -105,7 +105,7 @@ angular.module('cockpitModule')
 		}
 
 		$scope.gridWidth = function() {
-			var tempStyle = {};
+			var tempStyle = $scope.ngModel.style ? $scope.ngModel.style : {};
 			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
 				tempStyle.width = $scope.ngModel.settings.gridColumnsWidth;
 			}
@@ -459,9 +459,10 @@ angular.module('cockpitModule')
 			mdPanelRef,
 			getMetadata,
 			scopeFather,
-			$mdToast){
+			$mdToast,
+			cockpitModule_generalOptions){
 		$scope.translate=sbiModule_translate;
-
+		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.getMetadata = getMetadata;
 
 		$scope.model = {};

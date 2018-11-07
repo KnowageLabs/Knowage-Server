@@ -11,6 +11,7 @@
 	    	<h3>{{family.name}}</h3>
 	    	<md-grid-list md-cols="6" md-row-height="1:1" md-gutter="4px" ng-style="{'font-family':family.name}">
 		      <md-grid-tile ng-repeat="icon in family.icons" class="iconContainer selectable" ng-class="{'selected':(family.className+' '+icon.className)==currentRange.icon}" ng-click="setIcon(family,icon)">
+		      	<md-tooltip md-delay="500">{{icon.label}}</md-tooltip>
 		      	<i ng-class="[family.className, icon.className]" ></i>
 		      </md-grid-tile>
 		    </md-grid-list>

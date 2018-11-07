@@ -13,6 +13,39 @@
 				</md-tab>
 				
 				<md-tab label="{{::translate.load('sbi.cockpit.style')}}">
+					<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<h2>Label</h2>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content >
+							<div flex layout="row" >
+								<md-input-container flex class="md-block" >
+									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontsize')}}</label>
+									 <input ng-model="model.style['font-size']" type="text">
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontweight')}}</label>
+									<md-select aria-label="aria-label" ng-model="model.style['font-weight']">
+										<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" value="{{fw.value}}">{{fw.label}}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							<div flex layout="row" >
+								<md-input-container flex class="md-block" >
+									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontcolor')}}</label>
+									<color-picker options="{format:'rgb'}" ng-model="model.style.color"/>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.widget.selector.label.height')}}</label>
+									<input ng-model="model.style['height']" type="text">
+								</md-input-container>
+							</div>
+						</md-card-content>
+					</md-card>
+					
 					<cockpit-style-configurator widget ng-model="model.style"></cockpit-style-configurator>
 				</md-tab>
 

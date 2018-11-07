@@ -195,10 +195,10 @@
    
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="cancelcolumnStyleConfiguration()" >
+      <md-button class="md-raised" ng-click="cancelcolumnStyleConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveColumnStyleConfiguration()" ng-disabled="checkIfDisable()" >
+      <md-button class="md-raised md-primary" ng-click="saveColumnStyleConfiguration()" ng-disabled="checkIfDisable()" >
         {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-dialog-actions>
