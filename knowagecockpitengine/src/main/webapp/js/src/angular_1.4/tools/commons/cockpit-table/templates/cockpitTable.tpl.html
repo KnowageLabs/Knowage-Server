@@ -69,9 +69,9 @@
 			</tr>
 			<tr ng-if="settings.summary.enabled" class="summary">
 	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn" >
-		            <div ng-if="isNumber(settings.summary.row[column.aliasToShow])">
-		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}</md-tooltip>
-	            			{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}
+		            <div ng-if="::hasPrecision(column)">
+		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}</md-tooltip>
+	            			{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}
 		            </div>
 	            </td>
 	        </tr>
