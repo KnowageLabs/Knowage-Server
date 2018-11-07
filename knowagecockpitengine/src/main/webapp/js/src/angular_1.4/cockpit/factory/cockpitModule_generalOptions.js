@@ -59,8 +59,8 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 									value:''
 								},
 								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.normal"),
-									value:'normal'
+									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.regular"),
+									value:'regular'
 								},
 								{
 									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.bold"),
