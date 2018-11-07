@@ -206,9 +206,11 @@ angular.module('cockpitModule')
 			}
 
 			$scope.datasetRecords.activeValues = datasetRecords.activeValues;
-			$scope.datasetRecords.metaData = datasetRecords.metaData;
-			if(!angular.equals($scope.datasetRecords.rows, datasetRecords.rows)){
-				$scope.datasetRecords.rows = datasetRecords.rows;
+			if(datasetRecords.rows){
+			    $scope.datasetRecords.metaData = datasetRecords.metaData;
+                if(!angular.equals($scope.datasetRecords.rows, datasetRecords.rows)){
+                    $scope.datasetRecords.rows = datasetRecords.rows;
+                }
 			}
 
 			checkForSavedSelections(nature);
@@ -222,10 +224,14 @@ angular.module('cockpitModule')
 					for(var k in activeValues.rows){
 						tempActs.push(activeValues.rows[k].column_1);
 					}
-					updateActiveValues(tempActs);
+					$scope.ngModel.activeValues = tempActs;
 					$scope.showSelection = true;
-				},function(error){})
+				},function(error){
+				    console.error("Unable to load active values");
+				    $scope.showSelection = true;
+				})
 			}else{
+			    $scope.ngModel.activeValues = null;
 				$timeout(function(){
 					$scope.showSelection = true;
 				}, 0);
@@ -283,12 +289,6 @@ angular.module('cockpitModule')
 			var columnName = $scope.ngModel.content.selectedColumn.name;
 			var values = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
 			updateValues(values);
-		}
-
-		var updateActiveValues = function(activeValues){
-			if(activeValues){
-				$scope.ngModel.activeValues = activeValues;
-			}
 		}
 
 		var updateValues = function(values){
