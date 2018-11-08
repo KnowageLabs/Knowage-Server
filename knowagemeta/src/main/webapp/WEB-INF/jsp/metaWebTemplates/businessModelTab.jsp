@@ -233,8 +233,8 @@
 			
 			<md-tab id="filters-Tab" md-active="tabResource.selectedBusinessTab=='sqlFilterTab'" md-on-select="tabResource.selectedBusinessTab='sqlFilterTab'" label="{{translate.load('sbi.meta.model.business.filter')}}">
 				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill>
-  					<div ng-repeat="bmProperty in selectedBusinessModel.properties" ng-if="bmProperty['structural.sqlFilter']">
-						<md-input-container >
+  					<div flex ng-repeat="bmProperty in selectedBusinessModel.properties" ng-if="bmProperty['structural.sqlFilter']">
+						<md-input-container class="md-block">
 							<textarea ng-model="bmProperty['structural.sqlFilter'].value" placeholder="SQL expression"></textarea>
 						</md-input-container>
   					</div> 
