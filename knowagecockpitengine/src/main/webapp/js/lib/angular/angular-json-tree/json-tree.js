@@ -98,11 +98,11 @@ angular.module('angular-json-tree', ['ajs.RecursiveDirectiveHelper'])
                 return ajsRecursiveDirectiveHelper.compile(elem, this);
             },
             template: ' <span class="key" ng-click="toggleExpanded()">{{key}}</span>' +
-                '       <span class="leaf-value" ng-if="!isExpandable"> ' +
+                '       <span class="leaf-value" ng-if="!isExpandable">' +
             	'				<md-checkbox ng-if="isBoolean(value)" ng-model="parent[key]"></md-checkbox>'+
             	'				<md-input-container ng-if="isString(value) && value.length<=10"> <input  ng-model="parent[key]"></input> </md-input-container>'+
-            	'				<md-input-container ng-if="isNumber(value)" > <input type="number" ng-model="parent[key]"></input> </md-input-container>'+
-            	'     			 <md-input-container style="width: 100%;" ng-if="isString(value) && value.length>10" > <textarea ng-model="parent[key]"></textarea> </md-input-container>'+
+            	'				<md-input-container ng-if="isNumber(value) || value == null" > <input type="number" ng-model="parent[key]"></input> </md-input-container>'+
+            	'				<md-input-container style="width: 100%;" ng-if="isString(value) && value.length>10" > <textarea ng-model="parent[key]"></textarea> </md-input-container>'+
             	'		</span>' +
                 '       <span class="branch-preview" ng-if="isExpandable" ng-show="!isExpanded" ng-click="toggleExpanded()"></span>' +
                 '       <ul class="branch-value" ng-if="isExpandable && shouldRender" ng-show="isExpanded">' +
