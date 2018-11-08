@@ -52,7 +52,7 @@
 	            		</li>
 	            	   </ul>
 	            	</div>
-            	</div>            	
+            	</div>
             		
                 <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>

@@ -443,16 +443,27 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }];
 
     $scope.fieldsFunctions = [
-    {
-    	"label": "filters",
-    	"icon": "fa fa-filter",
-    	"visible": function (item){
-    		return true;
-    	},
-    	"action": function(item, event) {
-    		$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
-    	}
-    }];
+    	{
+        	"label": "havings",
+        	"icon": "fa fa-check-square-o",
+        	"visible": function (item){
+        		return true;
+        	},
+        	"action": function(item, event) {
+            	$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+        	}
+        },
+        {
+        	"label": "filters",
+        	"icon": "fa fa-filter",
+        	"visible": function (item){
+        		return true;
+        	},
+        	"action": function(item, event) {
+        		$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
+        	}
+        }
+    ];
 
     $scope.query = new Query(1);
     $scope.query.name = $scope.translate.load("kn.qbe.custom.table.toolbar.main");
@@ -469,6 +480,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	"meta": $scope.meta,
         	"schedulingCronLine":"0 * * * * ?"
     };
+    
+    $scope.$on('openHavings',function(event,field){
+		$scope.openHavings(field,$scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+	});
 
     $scope.$on('openFilters',function(event,field){
 		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
@@ -587,6 +602,40 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries, "expression":expression, "advancedFilters":advancedFilters};
 				},
 				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters, subqueries: subqueries, expression : expression, advancedFilters : advancedFilters},
+				hasBackdrop: true,
+				clickOutsideToClose: true,
+				escapeToClose: true,
+				focusOnOpen: true,
+				preserveScope: true,
+		};
+		$mdPanel.open(config);
+		return finishEdit.promise;
+	};
+	
+	$scope.openHavings = function(field, havings, tree, subqueries) {
+		if(field.hasOwnProperty('attributes')){
+			field_copy = angular.copy(field);
+			field={};
+			field = {}
+			field.id = field_copy.id;
+			field.name = field_copy.text;
+			field.entity = field_copy.attributes.entity;
+			field.iconCls = field_copy.attributes.iconCls;
+			field.color = field_copy.color;
+			field.visible= true;
+			field.group= false;
+			field.order= 1;
+		}
+		var finishEdit=$q.defer();
+		var config = {
+				attachTo:  angular.element(document.body),
+				templateUrl: sbiModule_config.contextName +'/qbe/templates/havingTemplate.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				controller: function($scope,havings,mdPanelRef){
+					$scope.model ={"havings": havings, "field": field, "tree": tree,"mdPanelRef":mdPanelRef, "subqueries":subqueries};
+				},
+				locals: {"havings": havings, "field": field, "tree": tree, "subqueries":subqueries},
 				hasBackdrop: true,
 				clickOutsideToClose: true,
 				escapeToClose: true,
