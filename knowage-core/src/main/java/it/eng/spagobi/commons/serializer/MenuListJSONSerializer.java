@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -655,7 +656,7 @@ public class MenuListJSONSerializer implements Serializer {
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
 						+ "', '" + path + "' )");
-			} else if (childElem.getFunctionality() != null) {
+			} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
 				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
 				temp2.put(HREF, finalUrl);
 			} else if (childElem.getExternalApplicationUrl() != null) {
