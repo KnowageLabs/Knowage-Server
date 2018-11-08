@@ -23,7 +23,7 @@
        					<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     				</div>
  		     	 	<post-iframe iframe-id="chartConfigurationIframe" ng-if="localModel.datasetId" dataset-label="localModel.datasetLabel"  dataset-id="localModel.datasetId" is-cockpit-eng=true local-mod=localModel></post-iframe> 
-					<div layout="row" layout-align="center center">
+					<div layout="row" layout-align="center center" ng-if="!localModel.datasetId">
 						<div class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>
 					</div>
 			    </md-tab>
