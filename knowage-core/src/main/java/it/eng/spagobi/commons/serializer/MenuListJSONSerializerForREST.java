@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -796,7 +797,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						+ "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
 				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
-			} else if (childElem.getFunctionality() != null) {
+			} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
 				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
 				temp2.put(HREF, finalUrl);
 				temp2.put(LINK_TYPE, "execDirectUrl");
