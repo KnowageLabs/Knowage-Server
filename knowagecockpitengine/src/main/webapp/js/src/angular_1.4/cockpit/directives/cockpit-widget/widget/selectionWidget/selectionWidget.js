@@ -212,10 +212,10 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
     ];
 
 	$scope.$on('DELETE_SELECTION',function(event, data){
-		$scope.deleteSelection(data, true, true);
+		$scope.deleteSelection(data);
 	});
 
-	$scope.deleteSelection=function(item, saveConfiguration, isSelector){
+	$scope.deleteSelection=function(item, saveConfiguration){
 		cockpitModule_widgetSelection.setWidgetOfType("selection");
 		cockpitModule_widgetSelection.setColumnName(item.columnName);
 
