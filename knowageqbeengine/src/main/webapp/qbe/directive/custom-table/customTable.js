@@ -85,6 +85,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	};
 	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
 	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
+	
+	$scope.openFilters = function(ngModell) {
+		//var t = ngModell;
+		console.log("sadas");
+	}
 
 	$scope.moveRight = function(currentOrder, column) {
 
