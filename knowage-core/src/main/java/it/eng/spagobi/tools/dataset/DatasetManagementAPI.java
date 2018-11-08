@@ -109,6 +109,7 @@ import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.InlineViewUtility;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
@@ -116,7 +117,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -948,10 +948,8 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryJDBCDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
 			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-		IDataSource dataSource = dataSet.getDataSource();
-		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String subQueryAlias = DataBaseFactory.getDataBase(dataSource).getSubQueryAlias();
-		String tableName = "(\n" + querableBehaviour.getStatement().replace(";", "") + "\n) " + subQueryAlias;
+		IDataSource dataSource = InlineViewUtility.getDataSource(dataSet);
+		String tableName = InlineViewUtility.getTableName(dataSet);
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 

@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -304,7 +305,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonSbiDataSet.put("isCachingSupported", dataSet.isCachingSupported());
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
 				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-				if (dataSet instanceof AbstractJDBCDataset) {
+				if (dataSet instanceof AbstractJDBCDataset || dataSet instanceof QbeDataSet) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
 				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted()) {

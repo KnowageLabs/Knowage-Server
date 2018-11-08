@@ -42,6 +42,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
@@ -50,7 +51,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
@@ -355,7 +355,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 	/**
 	 * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml in the META-INF folder
 	 *
-	 * @param jarFile a jar file with the model definition
+	 * @param jarFile
+	 *            a jar file with the model definition
 	 * @return jpa if the persistence provder is JPA o hibernate otherwise
 	 */
 	private static String getDriverName(File jarFile) {
@@ -492,16 +493,9 @@ public class QbeDataSet extends ConfigurableDataSet {
 		return getQbeDataSource() instanceof JPADataSource;
 	}
 
-	@Override
-	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
-		DatasetEvaluationStrategy strategy;
-
-		if (isPersisted()) {
-			strategy = DatasetEvaluationStrategy.PERSISTED;
-		} else {
-			strategy = DatasetEvaluationStrategy.CACHED;
-		}
-
-		return strategy;
+	public IStatement getStatement() {
+		init();
+		return ((AbstractQbeDataSet) ds).getStatement();
 	}
+
 }
