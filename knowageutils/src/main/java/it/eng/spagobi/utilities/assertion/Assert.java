@@ -47,4 +47,9 @@ public class Assert {
 		if (input.isEmpty())
 			throw new AssertionException(message);
 	}
+
+	public static void assertNotBlank(String input, String message) {
+		assertNotNull(input, message);
+		assertNotEmpty(input, message);
+	}
 }
