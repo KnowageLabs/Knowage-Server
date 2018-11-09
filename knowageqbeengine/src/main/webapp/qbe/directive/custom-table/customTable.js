@@ -83,13 +83,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		originatorEv = ev;
 		$mdOpenMenu(ev);
 	};
+	
 	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
 	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
-	
-	$scope.openFilters = function(ngModell) {
-		//var t = ngModell;
-		console.log("sadas");
-	}
 
 	$scope.moveRight = function(currentOrder, column) {
 
@@ -242,6 +238,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		return finishEdit.promise;
 
 	}
+	
+	$scope.openFiltersOnAggregations = function(ngModel) {
+		console.log("fasdfasd");
+	}
+	
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}

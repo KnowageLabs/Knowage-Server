@@ -7,7 +7,7 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
-	   			<md-button aria-label="Filters on aggregations" ng-click="openFilters()">{{translate.load("kn.qbe.custom.table.toolbar.filters")}}
+	   			<md-button aria-label="Filters on aggregations" ng-if="!smartPreview" ng-click="openFiltersOnAggregations(ngModel)">{{translate.load("kn.qbe.custom.table.toolbar.filters")}}
 	   				<md-tooltip md-delay="500">{{translate.load("kn.qbe.custom.table.toolbar.filters.on.aggregations")}}</md-tooltip>
 	   				<md-icon md-font-icon="fa fa-filter"></md-icon>
 	   			</md-button>
@@ -97,7 +97,7 @@
 							<md-icon class="fa fa-puzzle-piece" style="display:inline"></md-icon>
 		            		<span>{{translate.load("kn.qbe.custom.table.function.temporal")}}</span>
 		          		</md-button>
-		          			      
+
 			      		<md-menu-content class="qbeMenuContent">
 				      
 					      	<md-menu-item>
