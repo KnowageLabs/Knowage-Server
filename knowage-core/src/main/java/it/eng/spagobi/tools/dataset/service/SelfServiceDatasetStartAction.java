@@ -161,7 +161,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			}
 			logger.trace("Output parameter succesfully copied to response");
 
-		} catch (CacheException ex) {
+		} catch (Exception ex) {
 			try {
 				logger.error(ex);
 				EMFErrorHandler errorHandler = getErrorHandler();
@@ -219,21 +219,9 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		}
 		if (datasource != null) {
 			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+			parametersMap.put(EngineConstants.ENV_DATASOURCE_FOR_CACHE, datasource.getLabel());
 		} else {
 			logger.debug("There is no default datasource for writing");
-		}
-
-		logger.debug("Getting the cache data source");
-		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-		if (cache instanceof SQLDBCache) {
-			logger.debug("The cache is a SQL cache so we have the datasource");
-			label = ((SQLDBCache) cache).getDataSource().getLabel();
-			logger.debug("The datasource is " + label);
-		}
-		if (label != null) {
-			parametersMap.put(EngineConstants.ENV_DATASOURCE_FOR_CACHE, label);
-		} else {
-			logger.error("There is no default datasource for writing");
 		}
 
 		try {
@@ -290,7 +278,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	}
 
 	// QBE from dataset
-	protected String buildQbeEditFromFederationServiceUrl(String executionId) {
+	protected String buildQbeEditFromFederationServiceUrl(String executionId) throws Exception {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 		String label = null;

@@ -25,6 +25,7 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 
@@ -46,11 +47,10 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
 	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
-	private static final String JNDI_THREAD_MANAGER = "JNDI_THREAD_MANAGER";
 
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
 
-	public static ICacheConfiguration getInstance() {
+	public static ICacheConfiguration getInstance() throws Exception {
 		SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
 		cacheConfiguration.setCacheDataSource(getCacheDataSource());
 		cacheConfiguration.setTableNamePrefix(getTableNamePrefix());
@@ -64,18 +64,14 @@ public class SpagoBICacheConfiguration {
 		return cacheConfiguration;
 	}
 
-	private static IDataSource getCacheDataSource() {
-		try {
+	private static IDataSource getCacheDataSource() throws Exception {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 			if (dataSource == null) {
-				throw new SpagoBIRuntimeException(
+				throw new Exception(
 						"Cannot configure cache: Data source for writing is not defined. Please select one in the data sources definition panel.");
 			}
 			return dataSource;
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache datasource", t);
-		}
 	}
 
 	private static String getTableNamePrefix() {

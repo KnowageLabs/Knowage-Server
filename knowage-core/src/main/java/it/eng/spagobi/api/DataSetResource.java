@@ -1112,7 +1112,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					logger.debug("Impossible to get dataset with label [" + label + "]");
 				}
-			} catch (JSONException e) {
+			} catch (Exception e) {
 				logger.error("error in persisting dataset with label: " + label, e);
 				throw new RuntimeException("error in persisting dataset with label " + label);
 			}

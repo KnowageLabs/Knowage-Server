@@ -47,8 +47,14 @@ public abstract class AssociativeDatasetContainerFactory {
 		case INLINE_VIEW:
 			return new InlineViewAssociativeDatasetContainer(dataSet, parametersValues);
 		case CACHED:
-			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+			IDataSource cacheDataSource = null;
+			ICache cache = null;
+			try {
+				cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+				cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+			} catch (Exception e) {
+				throw new CacheException(e);
+			}
 			String signature = dataSet.getSignature();
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 			cacheItem = cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
