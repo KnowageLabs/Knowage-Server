@@ -86,7 +86,7 @@
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
-				"operator": "EQUALS TO",
+				"operator": "GREATER THAN",
 				"rightOperandAggregator": "",
 				"rightOperandValue": [],
 				"rightOperandDescription": "",

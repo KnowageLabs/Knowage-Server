@@ -240,7 +240,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	}
 	
 	$scope.openFiltersOnAggregations = function(ngModel) {
-		console.log("fasdfasd");
+		$rootScope.$broadcast('openHavings', {"ngModel": ngModel});
 	}
 	
 	$scope.openFilters = function (field){
