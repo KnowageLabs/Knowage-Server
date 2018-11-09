@@ -57,7 +57,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 			for (SbiTenant tenant : tenants) {
 				initCleanForTenant(tenant);
 			}
-		} catch (SpagoBIRuntimeException e) {
+		} catch (Exception e) {
 			logger.debug("NO WRITE DATASOURCE AVAILABLE.", e);
 		} finally {
 			logger.debug("OUT");

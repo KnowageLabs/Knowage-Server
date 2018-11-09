@@ -22,6 +22,7 @@ package it.eng.spagobi.tools.dataset.strategy;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
@@ -52,11 +53,21 @@ public class DatasetEvaluationStrategyFactory {
                 return new InlineViewEvaluationStrategy(dataSet);
             case CACHED:
                 Assert.assertNotNull(userProfile, "User profile cannot be null to build " + CachedEvaluationStrategy.class);
-                ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+                ICache cache = null;
+                try {
+                    cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+                } catch (Exception e) {
+                    throw new CacheException(e);
+                }
                 return new CachedEvaluationStrategy(userProfile, dataSet, cache);
             case REALTIME:
                 Assert.assertNotNull(userProfile, "User profile cannot be null to build " + RealtimeEvaluationStrategy.class);
-                ICache cacheRT = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+                ICache cacheRT = null;
+                try {
+                    cacheRT = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+                } catch (Exception e) {
+                    throw new CacheException(e);
+                }
                 return new RealtimeEvaluationStrategy(userProfile, dataSet, cacheRT);
             case SOLR:
                 return new SolrEvaluationStrategy(dataSet);

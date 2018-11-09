@@ -43,7 +43,9 @@ public class CachingInitializer implements InitializerIFace {
 		logger.debug("IN");
 		_config = config;
 
-		ICacheConfiguration cacheConfiguration = SpagoBICacheConfiguration.getInstance();
+		ICacheConfiguration cacheConfiguration = null;
+		try {
+			cacheConfiguration = SpagoBICacheConfiguration.getInstance();
 		ICache cache = CacheFactory.getCache(cacheConfiguration);
 		cache.deleteAll();
 
@@ -53,7 +55,11 @@ public class CachingInitializer implements InitializerIFace {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
 			persistedTableManager.dropTablesWithPrefix(dataSource, prefix);
 		}
+		} catch (Exception e) {
+			logger.error("Cannot initialize cache", e);
+		} finally {
 		logger.debug("OUT");
+		}
 
 	}
 

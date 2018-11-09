@@ -212,7 +212,7 @@ public class DatasetManagementAPI {
 	/*
 	 * Refresh cache for a specific dataset
 	 */
-	public String persistDataset(String label) {
+	public String persistDataset(String label) throws Exception {
 		logger.debug("IN dataset label " + label);
 		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		cache.setUserProfile(userProfile);
@@ -349,7 +349,7 @@ public class DatasetManagementAPI {
 	/*
 	 * Create indexes for the specified dataset and the specified columns
 	 */
-	public void createIndexes(String label, Set<String> columns) {
+	public void createIndexes(String label, Set<String> columns) throws Exception {
 		logger.debug("IN - Dataset label " + label);
 		SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		cache.setUserProfile(userProfile);
