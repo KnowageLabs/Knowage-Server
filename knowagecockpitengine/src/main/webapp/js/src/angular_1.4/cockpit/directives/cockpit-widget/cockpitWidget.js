@@ -1353,20 +1353,18 @@ function cockpitWidgetControllerFunction(
 	    })
 	}
 	
-	$scope.captureScreenShot = function(ev,elId){
-		$scope.ngModel.loadingScreen = true;
-		var element = document.querySelector('#w'+elId);
+	$scope.captureScreenShot = function(ev,model){
+		model.loadingScreen = true;
+		var element = document.querySelector('#w'+model.id);
 		html2canvas(element,{
-			width: element.clientWidth,
-		    height: element.clientHeight
+			width: element.scrollWidth,
+		    height: element.scrollHeight
 		    }
 		).then(function(canvas) {
-		    var imageType = 'image/png';
-		    var imageData = canvas.toDataURL(imageType);
-		    document.location.href = imageData.replace(imageType, 'image/octet-stream;name=document.png');
-		    //$scope.ngModel.screenBase64 = imageData;
-		    //delete $scope.ngModel.loadingScreen;
-		    //angular.element(element).find('a').triggerHandler('click');
+		    canvas.toBlob(function(blob) {
+		        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
+		    });
+		    delete model.loadingScreen;
 		});
 	};
 	

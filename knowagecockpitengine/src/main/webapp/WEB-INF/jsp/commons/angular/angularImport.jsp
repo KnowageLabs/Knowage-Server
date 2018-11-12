@@ -48,6 +48,11 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-cookies.js"></script-->
 
+<!-- POLYFILLS -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/canvas-toBlob/canvas-toBlob.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
+
+
 <!-- angular-material-->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 <link rel="stylesheet" href="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
@@ -143,6 +148,8 @@ END-PRODUCTION -->
 <!-- html2canvas -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
 
+<!-- FILESAVER -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 

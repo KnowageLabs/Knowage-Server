@@ -253,21 +253,18 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,c
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
 	
 	$scope.captureScreenShot = function(ev){
-		$scope.images = [];
-		var tabsContainer = document.querySelectorAll('cockpit-sheet md-tab-content');
-		for(var t in tabsContainer){
-			var element = document.querySelector('#tab-content-'+t+' #gridsterContainer');
-			html2canvas(element,{
-				width: element.clientWidth,
-			    height: element.clientHeight
-			    }
-			).then(function(canvas) {
-			    var imageType = 'image/png';
-			    var imageData = canvas.toDataURL(imageType);
-			    $scope.images.push(imageData)
-			    //document.location.href = imageData.replace(imageType, 'image/octet-stream');
-			});
-		}
+		$scope.loadingScreenshot = true;
+		var element = document.querySelector('#tab-content-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		html2canvas(element,{
+			width: element.clientWidth,
+		    height: element.clientHeight
+		    }
+		).then(function(canvas) {
+			canvas.toBlob(function(blob) {
+		        saveAs(blob, cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].label+'.png');
+		        $scope.loadingScreenshot = false;
+		    },function(error){$scope.loadingScreenshot = false;});
+		});
 	};
 };
 

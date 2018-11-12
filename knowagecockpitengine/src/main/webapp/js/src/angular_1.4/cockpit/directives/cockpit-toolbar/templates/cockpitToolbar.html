@@ -48,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-button>
 				<md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event)" ng-if="!cockpitModule_properties.EDIT_MODE">
 					<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
-					<md-icon md-font-icon="fa fa-camera-retro"></md-icon>
+					<md-icon md-font-icon="fa fa-spin fa-spinner" ng-if="loadingScreenshot"></md-icon>
+					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!loadingScreenshot"></md-icon>
 				</md-button>
 				<md-button aria-label="clean cache" class="md-fab md-raised md-mini" ng-click="cleanCache()" title = "Clear cache">
 					<md-tooltip md-direction="bottom">Clear Cache</md-tooltip>
