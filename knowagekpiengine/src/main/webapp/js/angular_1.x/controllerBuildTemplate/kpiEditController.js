@@ -86,7 +86,7 @@ function templateBuildControllerFunction(
 
 	$scope.loadListScorecardDialog = function() {
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
+		sbiModule_restServices.promiseGet("1.0/kpiee","listScorecard")
 		.then(function(response){
 
 			for(var i=0;i<response.data.length;i++){
