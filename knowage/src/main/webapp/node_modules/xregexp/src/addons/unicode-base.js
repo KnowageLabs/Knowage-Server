@@ -1,5 +1,5 @@
 /*!
- * XRegExp Unicode Base 4.1.1
+ * XRegExp Unicode Base 4.2.0
  * <xregexp.com>
  * Steven Levithan (c) 2008-present MIT License
  */
@@ -209,10 +209,8 @@ export default (XRegExp) => {
     XRegExp.addUnicodeData = (data) => {
         const ERR_NO_NAME = 'Unicode token requires name';
         const ERR_NO_DATA = 'Unicode token has no character data ';
-        let item;
 
-        for (let i = 0; i < data.length; ++i) {
-            item = data[i];
+        for (const item of data) {
             if (!item.name) {
                 throw new Error(ERR_NO_NAME);
             }

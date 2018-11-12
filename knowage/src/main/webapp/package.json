@@ -41,23 +41,17 @@
     "angular-ui-codemirror": "0.3.0",
     "angular-xregexp": "1.0.0",
     "codemirror": "5.32.0",
+    "file-saver": "^2.0.0-rc.4",
     "font-awesome": "4.7.0",
+    "html2canvas": "^1.0.0-alpha.12",
     "jsonformatter": "^0.6.0",
     "ngdraggable": "^0.1.10",
-    "npm": "^6.2.0",
+    "npm": "^6.4.1",
     "xregexp": "4.2.0"
   },
   "author": "knowage labs <knowage@eng.it>",
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/KnowageLabs/Knowage-Server/issues"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.4.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-minify": "^3.1.0",
-    "gulp-useref": "^3.1.5",
-    "gulp-version-number": "^0.1.7"
   }
 }

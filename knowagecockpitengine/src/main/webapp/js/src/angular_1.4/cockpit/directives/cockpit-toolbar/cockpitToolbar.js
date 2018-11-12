@@ -251,6 +251,21 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,c
 		cockpitModule_generalServices.closeNewCockpit();
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
+	
+	$scope.captureScreenShot = function(ev){
+		$scope.loadingScreenshot = true;
+		var element = document.querySelector('#tab-content-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		html2canvas(element,{
+			width: element.clientWidth,
+		    height: element.clientHeight
+		    }
+		).then(function(canvas) {
+			canvas.toBlob(function(blob) {
+		        saveAs(blob, cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].label+'.png');
+		        $scope.loadingScreenshot = false;
+		    },function(error){$scope.loadingScreenshot = false;});
+		});
+	};
 };
 
 

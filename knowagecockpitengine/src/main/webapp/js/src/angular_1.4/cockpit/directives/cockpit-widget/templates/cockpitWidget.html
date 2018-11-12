@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		<div layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
+		<div id="viewModeMenu" layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
 			
 			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
@@ -179,13 +179,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
+			
+			<md-button class="md-icon-button" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" >
+				<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
+				<md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
+				<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
+			</md-button>
 		</div>
-		
-		
 			
 		</div>
-		<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
-		</md-card-content>
+			<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
+			</md-card-content>
 	</md-card>
 	
 	

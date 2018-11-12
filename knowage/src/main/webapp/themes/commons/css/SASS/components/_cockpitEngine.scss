@@ -1342,7 +1342,7 @@
             			}
             		}
             	}
-            	.md-button {
+            	.md-button, a {
             		margin: 0;
             		opacity: 0;
             	}
@@ -1350,7 +1350,7 @@
             &:hover {
             	.viewModeMenu {	
 					background-color: rgba(white,.6);
-            		.md-button {
+            		.md-button, a {
             			opacity: 1 !important;
             		}
             	}
