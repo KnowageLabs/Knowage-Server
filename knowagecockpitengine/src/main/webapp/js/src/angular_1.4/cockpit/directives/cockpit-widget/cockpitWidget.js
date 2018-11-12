@@ -26,6 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('cockpitModule')
+.config( ['$compileProvider', function( $compileProvider ){   
+        	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
+    	}
+])
 .directive('autoCompileWidget', function ($compile) {
             return {
                 restrict: 'A',
@@ -153,26 +157,23 @@ angular.module('cockpitModule')
 	                    		if (scope.ngModel.dataset){
 	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
 	                    		}
+
 	                    		if(scope.ngModel.type.toLowerCase()=="chart" && scope.ngModel.drillable == undefined){
 	                    			if(scope.ngModel.cliccable){
-	                    				scope.ngModel.drillable = false;	
+	                    				scope.ngModel.drillable = false;
 	                    			} else {
+	                    				if($scope.enterpriseEdition)
 	                    				scope.ngModel.drillable = true;
 	                    			}
-	                    			
-	                    		}
 
+	                    		}
 	                    		if(scope.ngModel.type == "selector"){
 	                    			scope.updateble = true;
 	                    		}else{
 	                    			scope.updateble=objType.updateble==undefined? true : objType.updateble;
 	                    		}
-	                    		//if the dataset is realtime disable the cliccable icon in the toolbar
-	                    		if (dataset && dataset != null && dataset.isRealtime){
-	                        		scope.cliccable= false;
-	                    		} else {
-	                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
-	                    		}
+	                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+
 	                    		if(objType!=undefined){
 	                    			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
 	                    			var content=element[0].querySelector("md-card-content");
@@ -209,7 +210,12 @@ angular.module('cockpitModule')
                     		};
 
                     		scope.refreshWidget=function(options,nature,changedChartType){
-                    			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
+                    		    var finOptions;
+                    		    if(options) {
+                    		        finOptions = scope.getOptions == undefined ? options : angular.merge({}, scope.getOptions(), options);
+                    		    } else {
+                    		        finOptions = scope.getOptions == undefined ? {} :  scope.getOptions();
+                    		    }
                     			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions, undefined, changedChartType);
                     		};
                     	}
@@ -240,13 +246,14 @@ function cockpitWidgetControllerFunction(
 		sbiModule_i18n,
 		sbiModule_config,
 		$filter,
+		$sce,
 		$mdDialog)
 	{
 
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
-
+	    
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
@@ -258,7 +265,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
-	
+
 	$scope.widgetSpinner	= false;
 	$scope.widgetSearchBar 	= false; // default searchBar unactive
 	$scope.activeSearch 	= false; // default search unactive
@@ -277,12 +284,8 @@ function cockpitWidgetControllerFunction(
 		}
 	}
 
-	//disable cliccable for real time dataset
-	if ($scope.ngModel.dataset){
-		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-		if (widgetDataset && widgetDataset.isRealtime){
-			$scope.ngModel.cliccable = false;
-		}
+	if($scope.ngModel.style && $scope.ngModel.style.title && $scope.ngModel.style.title.label){
+		$scope.ngModel.content.name = $scope.ngModel.style.title.label;
 	}
 
 	// davverna - initializing search object to give all the columns to the user searchbar
@@ -367,15 +370,17 @@ function cockpitWidgetControllerFunction(
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 				},1000);*/
 				$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
+
 			}else{
-				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf);
+
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
 			}
 			break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
@@ -451,7 +456,9 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.updateFromDatasetFilter=function(label){
-		var dataset= $scope.getDataset();
+		var dataset= $scope.getDataset(label);
+
+
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -466,7 +473,11 @@ function cockpitWidgetControllerFunction(
 				(angular.isString(label) && angular.equals(label,dataset.label))
 			)
 		){
-			$scope.refreshWidget(undefined,'filters');
+
+			var options = {};
+			options.label = label;
+			$scope.refreshWidget(options,'filters');
+
 
 		}
 	}
@@ -489,10 +500,76 @@ function cockpitWidgetControllerFunction(
 
 	$scope.cloneWidget = function(){
 		var newModel = angular.copy($scope.ngModel);
+		delete newModel.col;
+		delete newModel.row;
 		newModel.id = new Date().getTime();
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
 
+	var createNewWidget = function (widgetType){
+		var newModel = angular.copy($scope.ngModel);
+		newModel.id = new Date().getTime();
+		newModel.type = widgetType;
+		newModel.content.wtype = widgetType;
+		return newModel;
+	}
+	var addAliasToShow = function (columnSelectedOfDataset){
+		for(var i in columnSelectedOfDataset){
+			var thisDs = columnSelectedOfDataset[i];
+			thisDs.alias = thisDs.name;
+			thisDs.aliasToShow = thisDs.name;
+		}
+	}
+	var prepareColumnSelectedOfDataset = function (newModel){
+		delete newModel.content.columnSelectedOfDataset;
+		newModel.content.columnSelectedOfDataset=[];
+		if($scope.target.attribute instanceof Array){
+			Array.prototype.push.apply(newModel.content.columnSelectedOfDataset, $scope.target.attribute);
+			Array.prototype.push.apply(newModel.content.columnSelectedOfDataset, $scope.target.measure);
+		}else{
+			newModel.content.columnSelectedOfDataset.push($scope.target.attribute);
+			newModel.content.columnSelectedOfDataset.push($scope.target.measure);
+		}
+	}
+	var prepareChartWidget = function (newModel){
+		newModel.content.filters= newModel.filters;
+		newModel.content.designer= "Chart Engine Designer";
+		cockpitModule_widgetServices.setChartTemp(newModel,$scope.target.visualization);
+	}
+	$scope.addTableFromChart = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		addAliasToShow(newModel.content.columnSelectedOfDataset);
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
+
+	$scope.addTableFromMap = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		prepareColumnSelectedOfDataset(newModel);
+		addAliasToShow(newModel.content.columnSelectedOfDataset);
+		newModel.dataset.dsId = $scope.target.dataset;
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
+
+	$scope.addChartFromTable = function (widgetType){
+		var newModel = createNewWidget(widgetType);
+		newModel.content.limitRows= newModel.limitRows;
+		newModel.content.datasetLabel = $scope.getDataset().label;
+		newModel.content.datasetId = newModel.dataset.dsId;
+		newModel.dataset.dsLabel = $scope.getDataset().label;
+		prepareChartWidget(newModel);
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
+
+	$scope.addChartFromMap = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		prepareColumnSelectedOfDataset(newModel);
+		newModel.content.datasetLabel = $scope.selectedDataset.label;
+		newModel.content.datasetId = $scope.target.dataset;
+		newModel.dataset.dsLabel = $scope.selectedDataset.label;
+		newModel.dataset.dsId = $scope.target.dataset;
+		prepareChartWidget(newModel);
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
 	//dialog to choose the sheet where to move the widget
 	$scope.moveWidget = function(ev){
 		$scope.targetSheet = new Object();
@@ -550,7 +627,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.chartsForDrill = ["bar","pie","line","treemap"]
 	$scope.changeClickability = function(){
-		if($scope.ngModel.cliccable && !$scope.ngModel.drillable){
+		if($scope.ngModel.cliccable && !$scope.ngModel.drillable && $scope.enterpriseEdition){
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = true;
 		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
@@ -560,19 +637,12 @@ function cockpitWidgetControllerFunction(
 			$scope.ngModel.cliccable = true;
 			$scope.ngModel.drillable = false;
 		}
-		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});;
+		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
-	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
+	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
-		}
-		//check if is a realtime dataset to disable selection
-		if ($scope.ngModel.dataset.dsId != undefined){
-    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-    		if (dataset.isRealtime){
-    			return;
-    		}
 		}
 
 		// check if cross navigation was enable don this widget
@@ -747,7 +817,9 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
-		if($scope.getDataset() && columnName){
+		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
+
+		if(dataset && columnName){
 
 			if(modalColumn!=undefined && modalValue!=undefined)
 			{
@@ -756,7 +828,7 @@ function cockpitWidgetControllerFunction(
 			}
 
 			// check if all associated data
-			var dsLabel=$scope.getDataset().label;
+			var dsLabel = dataset.label;
 			var originalColumnName;
 			if (!Array.isArray(columnName)){
 				//original management with simple value as parameters (not array, not multiselection)
@@ -838,10 +910,8 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 
-			var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
+			var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 			if(sel!=undefined){
-			    cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
-
 				if(!cockpitModule_template.configuration.aliases){
 					cockpitModule_template.configuration.aliases = [];
 				}
@@ -1009,8 +1079,10 @@ function cockpitWidgetControllerFunction(
 		}
 
 		// update widgets background color
+
 		var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor || ''};
 		angular.merge($scope.borderShadowStyle,tempBackGround);
+
 
 		// update sheets background color
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
@@ -1034,6 +1106,22 @@ function cockpitWidgetControllerFunction(
 			return undefined;
 		}
 	}
+
+	$scope.getDataset = function(label){
+		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
+			if (!Array.isArray($scope.ngModel.dataset.dsId)){
+				 return cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			}
+			for (ds in $scope.ngModel.dataset.dsId){
+				var tmpDS = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId[ds]);
+				if (tmpDS.label == label)
+					return tmpDS;
+			}
+		} else{
+			return undefined;
+		}
+	}
+
 	$scope.getDocument = function(){
 		if($scope.ngModel.document!=undefined && $scope.ngModel.document.docId != undefined){
 			return cockpitModule_documentServices.getDocumentById( $scope.ngModel.document.docId);
@@ -1132,6 +1220,93 @@ function cockpitWidgetControllerFunction(
 		}
 		return false;
 	}
+
+	$scope.mutualExclusionToggle = function() {
+		$scope.ngModel.mutualExclusion = !$scope.ngModel.mutualExclusion;
+		console.log($scope.ngModel.mutualExclusion);
+		if($scope.ngModel.mutualExclusion !== undefined) {
+			var l = $scope.getLayerByName($scope.ngModel.content.layers[0].name);
+			if (!l) return; //do nothing
+			l.setVisible(true);
+			if( $scope.ngModel.mutualExclusion === true) {
+				//By default select only the first layer
+				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
+					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
+					if (!l) return; //do nothing
+					l.setVisible(false);
+				}
+			} else {
+				//By  default select all layers
+				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
+					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
+					if (!l) return; //do nothing
+					l.setVisible(true);
+				}
+			}
+		}
+	}
+
+	$scope.modalQuickWidget= function(ev) {
+		if($scope.ngModel.type == 'chart'){
+			$scope.addTableFromChart("table");
+			return;
+		} else {
+			$mdDialog.show({
+				controller: function ($scope,$mdDialog,ngModel,cockpitModule_datasetServices) {
+
+					$scope.target = {"dataset":ngModel.dataset.dsId};
+
+					$scope.availableDatasetToSwitch = cockpitModule_datasetServices.getAvaiableDatasets();
+
+					$scope.selectDataset = function(){
+						$scope.selectedDataset = {};
+						$scope.modalFields = {"measures":[],"attributes":[]};
+						for(var i in $scope.availableDatasetToSwitch){
+							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.target.dataset){
+								$scope.selectedDataset = $scope.availableDatasetToSwitch[i];
+								for(var k in $scope.availableDatasetToSwitch[i].metadata.fieldsMeta){
+									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'ATTRIBUTE'){
+										$scope.modalFields.attributes.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+									}
+									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'MEASURE'){
+										$scope.modalFields.measures.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+									}
+								}
+							}
+						}
+					}
+					$scope.selectDataset();
+
+					$scope.cancel = function(){
+						$mdDialog.cancel();
+					}
+
+					$scope.add = function(){
+						if($scope.ngModel.type == 'table'){
+							$scope.addChartFromTable("chart");
+						} else if($scope.target.visualization == "table"){
+							$scope.addTableFromMap("table")
+						} else {
+							$scope.addChartFromMap("chart");
+						}
+						$mdDialog.hide();
+					}
+
+					$scope.selectVisualization = function(vis){
+						$scope.target.visualization = vis;
+					}
+
+				},
+				scope: $scope,
+		      templateUrl: currentScriptPath+'/templates/changeWidgetTypeDialog.tpl.html',
+		      targetEvent: ev,
+		      preserveScope: true,
+		      clickOutsideToClose:true,
+		      locals: {ngModel:$scope.ngModel}
+		    })
+		}
+	}
+
 	$scope.chartTypes = [];
 	$scope.showChartTypes = function(ev,widgetName){
 		if(!$scope.ngModel.content.chartTemplateOriginal){
@@ -1177,6 +1352,22 @@ function cockpitWidgetControllerFunction(
 	      locals: {ngModel:$scope.ngModel}
 	    })
 	}
+	
+	$scope.captureScreenShot = function(ev,model){
+		model.loadingScreen = true;
+		var element = document.querySelector('#w'+model.id);
+		html2canvas(element,{
+			width: element.scrollWidth,
+		    height: element.scrollHeight
+		    }
+		).then(function(canvas) {
+		    canvas.toBlob(function(blob) {
+		        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
+		    });
+		    delete model.loadingScreen;
+		});
+	};
+	
 };
 
 })();

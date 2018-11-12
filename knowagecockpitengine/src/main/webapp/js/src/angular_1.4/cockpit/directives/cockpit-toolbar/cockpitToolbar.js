@@ -42,7 +42,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -125,7 +125,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    				  id:(new Date()).getTime(),
 		    				  sizeX	:6,
 		    				  sizeY:6,
-		    				  content:{name:"new Widget"},
+		    				  content:{name:"new "+type+" Widget"},
 		    				  type:type,
 		    				  isNew : true,
 		    				  updateble : true,
@@ -145,76 +145,95 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    		  $mdDialog.hide();
 
 		    	  };
+		    	  
+		    	  $scope.showWidgetType = function(w){
+		    		  if(w.datasetRequirement){
+		    			  var datasetList = cockpitModule_datasetServices.getAvaiableDatasets();
+		    			  for(var k in datasetList){
+		    				  if(datasetList[k].type == w.datasetRequirement) return true;
+		    			  }
+		    			  return false
+		    		  }else return true;
+		    	  }
 
-		    	  //to-do recuperare questa informazione dal backend
-		    	  $scope.widgetType=[
-		    	         		{
-		    	        			name:"Text",
-		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.text"),
-		    	        			tags : ["text"],
-		    	        			img : "1.png",
-		    	        			class: "fa fa-font",
-		    	        			type : "text"
-		    	        		},{
-		    	        			name:"Image",
-		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.image"),
-		    	        			tags : ["image"],
-		    	        			img : "2.png",
-		    	        			class: "fa fa-picture-o",
-		    	        			type : "image"
-		    	        		},{
-		    	        			name:"Chart",
-		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.chart"),
-		    	        			tags : ["chart"],
-		    	        			img : "4.png",
-		    	        			class: "fa fa-bar-chart",
-		    	        			type : "chart"
-		    	        		},
-		    	        		{
-		    	        			name:"Html",
-		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.html"),
-		    	        			tags : ["html"],
-		    	        			img : "4.png",
-		    	        			class: "fa fa-code",
-		    	        			type : "html"
-		    	        		},{
-		    	        			name:"Table",
-		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),
-		    	        			tags : ["table"],
-		    	        			img : "5.png",
-		    	        			class: "fa fa-table",
-		    	        			type : "table"
-		    	        		},{
-							    	name:"Cross Table",
-							    	description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.cross"),
-							    	tags : ["table","pivot","cross"],
-							    	img : "6.png",
-							    	class: "fa fa-table",
-							    	type : "static-pivot-table"
-							      }
-							      ,{
-							    	  name:"Document",
-							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.document"),
-							    	  tags : ["document","datasource"],
-							    	  img : "7.png",
-							    	  class: "fa fa-file",
-							    	  type : "document"
-							      },{
-							    	  name:"Active Selections",
-							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
-							    	  tags : ["selection"],
-							    	  class: "fa fa-check-square-o",
-							    	  img : "8.png",
-							    	  type : "selection"
-							      },{
-							    	  name:"Selector",
-							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selector"),
-							    	  tags : ["selector"],
-							    	  class: "fa fa-caret-square-o-down",
-							    	  img : "9.png",
-							    	  type : "selector"
-							      }
-		    	        	];
+		    	  $scope.widgetType=[{
+						name:"Text",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.text"),
+						tags : ["text"],
+						img : "1.png",
+						class: "fa fa-font",
+						type : "text"
+					},{
+						name:"Image",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.image"),
+						tags : ["image"],
+						img : "2.png",
+						class: "fa fa-picture-o",
+						type : "image"
+					},{
+						name:"Chart",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.chart"),
+						tags : ["chart"],
+						img : "4.png",
+						class: "fa fa-bar-chart",
+						type : "chart"
+					},{
+						name:"Html",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.html"),
+						tags : ["html"],
+						img : "4.png",
+						class: "fa fa-code",
+						type : "html"
+					},{
+						name:"Table",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),
+						tags : ["table"],
+						img : "5.png",
+						class: "fa fa-table",
+						type : "table"
+					},{
+						name:"Cross Table",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.cross"),
+						tags : ["table","pivot","cross"],
+						img : "6.png",
+						class: "fa fa-table",
+						type : "static-pivot-table"
+					},{
+						name:"Document",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.document"),
+						tags : ["document","datasource"],
+						img : "7.png",
+						class: "fa fa-file",
+						type : "document"
+					},{
+                                      name:"Map",
+                                      description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.map"),
+                                      tags : ["map"],
+                                      img : "7.png",
+                                      class: "fa fa-map",
+                                      type : "map"
+                                  },{
+						name:"Active Selections",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
+						tags : ["selection"],
+						class: "fa fa-check-square-o",
+						img : "8.png",
+						type : "selection"
+					},{
+						name:"Selector",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selector"),
+						tags : ["selector"],
+						class: "fa fa-caret-square-o-down",
+						img : "9.png",
+						type : "selector"
+					},{
+						name:"Discovery",
+						description: 'discovery',
+						tags : ["discovery"],
+						class: "fa fa-rocket",
+						type : "discovery",
+						datasetRequirement: 'SbiSolrDataSet'
+				  }];
 
 		    	  $scope.saveConfiguration=function(){
 		    		  $mdDialog.hide();
@@ -232,11 +251,21 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		cockpitModule_generalServices.closeNewCockpit();
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
-
-//	$scope.toggleEditMode=function(){
-//		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE;
-//		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE;
-//	}
+	
+	$scope.captureScreenShot = function(ev){
+		$scope.loadingScreenshot = true;
+		var element = document.querySelector('#tab-content-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		html2canvas(element,{
+			width: element.clientWidth,
+		    height: element.clientHeight
+		    }
+		).then(function(canvas) {
+			canvas.toBlob(function(blob) {
+		        saveAs(blob, cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].label+'.png');
+		        $scope.loadingScreenshot = false;
+		    },function(error){$scope.loadingScreenshot = false;});
+		});
+	};
 };
 
 
@@ -341,7 +370,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.actionsOfSelectionColumns = [
 
 	                                    {
-	                                    	icon:'fa fa-trash iconAlignFix' ,
+	                                    	icon:'fa fa-trash' ,
 	                                    	action : function(item,event) {
 	                                    		$scope.deleteSelection(item);
 
@@ -384,7 +413,39 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	}
 
 	$scope.saveConfiguration = function(){
-	    cockpitModule_widgetSelection.updateSelections($scope.tmpSelection, $scope.tmpFilters);
+		var reloadAss=false;
+		var reloadFilt=[];
+		  if(!angular.equals($scope.tmpSelection,cockpitModule_template.configuration.aggregations )){
+	  		  angular.copy($scope.tmpSelection,cockpitModule_template.configuration.aggregations);
+	  		 reloadAss=true;
+		  }
+		  if(!angular.equals($scope.tmpFilters,cockpitModule_template.configuration.filters )){
+			  angular.forEach(cockpitModule_template.configuration.filters,function(val,dsLabel){
+				  if($scope.tmpFilters[dsLabel]==undefined || !angular.equals($scope.tmpFilters[dsLabel],val)){
+					  reloadFilt.push(dsLabel)
+				  }
+			  })
+			  angular.copy($scope.tmpFilters,cockpitModule_template.configuration.filters);
+		  }
+		  if(reloadAss){
+			  cockpitModule_widgetSelection.getAssociations(true);
+		  }
+		  if(!reloadAss && reloadFilt.length!=0){
+			  cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
+		  }
+
+		  var hs=false;
+		  for(var i=0;i<$scope.tmpSelection.length;i++){
+				if(Object.keys($scope.tmpSelection[i].selection).length>0){
+					hs= true;
+					break;
+				}
+			}
+
+		  if(hs==false && Object.keys($scope.tmpFilters).length==0 ){
+			  cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
+		  }
+
 		$mdDialog.cancel();
 	}
 

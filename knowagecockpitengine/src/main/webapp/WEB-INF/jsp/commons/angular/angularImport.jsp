@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<link rel="stylesheet" href="<%=spagoBiContext%>/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script-->
 
@@ -35,13 +35,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- END-DEBUG -->
 <!-- START-PRODUCTION 
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular/angular.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
 END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-aria/angular-aria.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-cookies/angular-cookies.min.js"></script>
+<!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-cookies.js"></script-->
+
+<!-- POLYFILLS -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/canvas-toBlob/canvas-toBlob.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
+
 
 <!-- angular-material-->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
@@ -121,6 +131,25 @@ END-PRODUCTION -->
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
+
+<!-- Open Layers 4.6.4 -->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol-debug.js"></script>
+
+<!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
+ 
+<!-- 3.x.x 
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.js"></script>	 
+-->
+<!-- mathjs for quantil thematization -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
+
+<!-- html2canvas -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
+
+<!-- FILESAVER -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 

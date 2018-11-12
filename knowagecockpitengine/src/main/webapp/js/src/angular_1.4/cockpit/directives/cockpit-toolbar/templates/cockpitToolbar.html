@@ -17,40 +17,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <div ng-cloak>
-<div class="kn-fab-toolbar hide-print" layout="row" ng-hide="(cockpitModule_properties.EXPORT_MODE) || (!cockpitModule_properties.EDIT_MODE && !cockpitModule_template.configuration.showMenuOnView)" ng-if="!cockpitModule_widgetServices.isFullPageWidget()">
-      <md-fab-speed-dial  md-open="fabSpeed.isOpen" md-direction="left" class="md-scale">
-        <md-fab-trigger>
-          <md-button aria-label="menu" class="md-fab md-warn" ng-click="toggleFab()" >
-          <md-tooltip md-direction="bottom">Cockpit menu</md-tooltip>
-            <md-icon md-font-icon="fa fa-bars"></md-icon>
-          </md-button>
-        </md-fab-trigger>
+	<div class="kn-fab-toolbar hide-print" layout="column" layout-align="start end" >
+    	<md-fab-speed-dial  md-open="fabSpeed.isOpen" md-direction="left" class="md-scale" ng-hide="(cockpitModule_properties.EXPORT_MODE) || (!cockpitModule_properties.EDIT_MODE && !cockpitModule_template.configuration.showMenuOnView)" ng-if="!cockpitModule_widgetServices.isFullPageWidget()">
+        	<md-fab-trigger>
+          		<md-button aria-label="menu" class="md-fab md-warn" ng-click="toggleFab()" >
+          			<md-tooltip md-direction="bottom">Cockpit menu</md-tooltip>
+            		<md-icon md-font-icon="fa fa-bars"></md-icon>
+          		</md-button>
+        	</md-fab-trigger>
 
-        <md-fab-actions>
-          <md-button aria-label="save" class="md-fab md-raised md-mini" ng-click="saveCockpit($event)" ng-if="cockpitModule_properties.EDIT_MODE">
-          	<md-tooltip md-direction="bottom">Save</md-tooltip>
-            <md-icon md-font-icon="fa fa-save"></md-icon>
-          </md-button>
-          <md-button aria-label="add" class="md-fab md-raised md-mini" ng-click="addWidget()" ng-if="cockpitModule_properties.EDIT_MODE">
-          	<md-tooltip md-direction="bottom">Add widget</md-tooltip>
-            <md-icon md-font-icon="fa fa-plus"></md-icon>
-          </md-button>
-          <md-button aria-label="settings" class="md-fab md-raised md-mini" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "General configuration">
-			<md-tooltip md-direction="bottom">General Configuration</md-tooltip>
-			<md-icon md-font-icon="fa fa-cog"></md-icon>
+        	<md-fab-actions>
+          		<md-button aria-label="save" class="md-fab md-raised md-mini" ng-click="saveCockpit($event)" ng-if="cockpitModule_properties.EDIT_MODE">
+          			<md-tooltip md-direction="bottom">Save</md-tooltip>
+            		<md-icon md-font-icon="fa fa-save"></md-icon>
+          		</md-button>
+				<md-button aria-label="add" class="md-fab md-raised md-mini" ng-click="addWidget()" ng-if="cockpitModule_properties.EDIT_MODE">
+					<md-tooltip md-direction="bottom">Add widget</md-tooltip>
+				  	<md-icon md-font-icon="fa fa-plus"></md-icon>
+				</md-button>
+        		<md-button aria-label="settings" class="md-fab md-raised md-mini" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "General configuration">
+					<md-tooltip md-direction="bottom">General Configuration</md-tooltip>
+					<md-icon md-font-icon="fa fa-cog"></md-icon>
+				</md-button>
+				<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "Data configuration">
+					<md-tooltip md-direction="bottom">Data Configuration</md-tooltip>
+					<md-icon md-font-icon="fa fa-database"></md-icon>
+				</md-button>
+				<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openSelections()" title = "Selections" ng-if="!cockpitModule_template.configuration.showSelectionButton">
+					<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
+				</md-button>
+				<md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event)" ng-if="!cockpitModule_properties.EDIT_MODE">
+					<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
+					<md-icon md-font-icon="fa fa-spin fa-spinner" ng-if="loadingScreenshot"></md-icon>
+					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!loadingScreenshot"></md-icon>
+				</md-button>
+				<md-button aria-label="clean cache" class="md-fab md-raised md-mini" ng-click="cleanCache()" title = "Clear cache">
+					<md-tooltip md-direction="bottom">Clear Cache</md-tooltip>
+					<md-icon md-font-icon="fa fa-recycle"></md-icon>
+				</md-button>
+      		</md-fab-actions>
+      	</md-fab-speed-dial>
+      
+		<md-button aria-label="data" class="md-fab md-raised md-mini fixedSelectionButton animation shrink-down" ng-click="openSelections()" title = "Selections" ng-if="cockpitModule_template.configuration.showSelectionButton && cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true">
+			<md-icon md-font-icon="fa fa-check-square-o"></md-icon>
+			<md-tooltip md-direction="bottom">Selections</md-tooltip>
 		</md-button>
-		<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "Data configuration">
-			<md-tooltip md-direction="bottom">Data Configuration</md-tooltip>
-			<md-icon md-font-icon="fa fa-database"></md-icon>
-		</md-button>
-		<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openSelections()" title = "Selections">
-			<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
-		</md-button>
-		<md-button aria-label="clean cache" class="md-fab md-raised md-mini" ng-click="cleanCache()" title = "Clear cache">
-		<md-tooltip md-direction="bottom">Clear Cache</md-tooltip>
-			<md-icon md-font-icon="fa fa-recycle"></md-icon>
-		</md-button>
-        </md-fab-actions>
-      </md-fab-speed-dial>
     </div>
-    </div>
+</div>

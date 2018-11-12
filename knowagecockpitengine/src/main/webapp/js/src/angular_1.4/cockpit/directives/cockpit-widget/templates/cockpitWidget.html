@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <md-fab-actions>	
 
-			<md-button class="md-icon-button "  aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="expandWidget();$event.stopPropagation();" >
+			<md-button class="md-icon-button "  aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE && (ngModel.type=='table' || ngModel.type=='chart' || ngModel.type=='pivot')" ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<md-button class="md-icon-button" aria-label="unselectable button" 
-			ng-if="cliccable==true && ngModel.type=='chart' && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1)" 
+			ng-if="enterpriseEdition && cliccable==true && ngModel.type=='chart' && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1)" 
 			ng-click="changeClickability()" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
           			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
@@ -109,11 +109,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
 			
+			<!-- XOR BUTTON -->
+			<md-button class="md-icon-button " ng-init="ngModel.mutualExclusion=false" ng-if="ngModel.type=='map'" aria-label="mutual exclusion button" ng-click="mutualExclusionToggle();$event.stopPropagation();" >
+				<md-tooltip md-direction="top" md-delay="1000">View only one layer at time</md-tooltip>
+				<md-icon md-font-icon="fa fa-long-arrow-right" ng-if="ngModel.mutualExclusion==false"></md-icon>
+				<md-icon md-font-icon="fa fa-arrows-h" ng-if="ngModel.mutualExclusion==true"></md-icon>
+			</md-button>
+			
 			<!-- quick widget BUTTON -->
-			<!-- md-button class="md-icon-button " ng-if="ngModel.type=='chart' || ngModel.type=='table' || ngModel.type=='map'" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
+			<md-button class="md-icon-button " ng-if="ngModel.type=='chart' || ngModel.type=='table' || ngModel.type=='map'" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>
 				<md-icon md-font-icon="fa fa-magic" ></md-icon>
-			</md-button-->
+			</md-button>
 			
 			</md-fab-actions>
 			</md-fab-speed-dial>
@@ -125,13 +132,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles">
 			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<!--  span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span-->
 					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
 					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">New Widget</span>
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		<div layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
+		<div id="viewModeMenu" layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
 			
 			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
@@ -173,13 +179,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
+			
+			<md-button class="md-icon-button" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" >
+				<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
+				<md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
+				<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
+			</md-button>
 		</div>
-		
-		
 			
 		</div>
-		<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
-		</md-card-content>
+			<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
+			</md-card-content>
 	</md-card>
 	
 	
