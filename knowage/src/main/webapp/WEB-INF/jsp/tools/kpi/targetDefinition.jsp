@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-card-content>
 					<angular-table flex 
 						id="kpisTable" ng-model="kpis"
-						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value", "editable": "true"}]'
+						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value", "editable": "true", "inputType":"number"}]'
 						columnsSearch='["name"]'
 						speed-menu-option="kpisActions"
 						show-search-bar="false"

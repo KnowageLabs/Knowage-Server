@@ -168,6 +168,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.transformer=col[i].transformer;
                                                     tmpColData.customClass=col[i].customClass;
                                                     tmpColData.customRecordsClass=col[i].customRecordsClass;
+                                                    if(col[i].inputType)tmpColData.inputType=col[i].inputType;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
                                                     tmpColData.style=col[i].style;
                                                     tmpColData.static=col[i].static;
