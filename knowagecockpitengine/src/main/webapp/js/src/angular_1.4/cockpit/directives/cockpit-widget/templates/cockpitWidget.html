@@ -180,22 +180,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
 			
-			
-			<md-button class="md-icon-button" ng-click="captureScreenShot($event,ngModel.id);$event.stopPropagation();" ng-if="!ngModel.loadingScreen" >
+			<md-button class="md-icon-button" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" >
 				<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
-				<md-icon md-font-icon="fa fa-camera-retro"></md-icon>
+				<md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
+				<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
 			</md-button>
-			<md-button class="md-icon-button" ng-if="ngModel.loadingScreen" >
-				<md-tooltip md-direction="bottom" md-delay="1000">Loading</md-tooltip>
-				<md-icon md-font-icon="fa fa-spinner fa-spin"></md-icon>
-			</md-button>
-			<a href="{{ngModel.screenBase64}}" ng-show="false" class="md-icon-button downloadScreenshot" download="{{extendedStyle.title.label || 'new_widget'}}">
-				<md-tooltip md-direction="bottom" md-delay="1000">Download Screenshot</md-tooltip>
-				<md-icon md-font-icon="fa fa-download"></md-icon>
-			</a>
 		</div>
-		
-		
 			
 		</div>
 			<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
