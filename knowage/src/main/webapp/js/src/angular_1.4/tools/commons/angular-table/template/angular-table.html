@@ -105,7 +105,7 @@
 			<span  ng-switch-when="false"  ng-class="getChangedValueStyle(row,column.name)"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   >
 				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="100" md-direction="bottom"><span dynamichtml="getColumnValue(row,column.name,column.transformer)"></span></md-tooltip>
 			</span>
-			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
+			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" type="{{column.inputType || 'text'}}" autofocus />
 		</span>
 
 		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--' && (showExpanderRowCondition==undefined || showExpanderRowCondition({row:row}))" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;" >
