@@ -1102,7 +1102,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				colDef.column = column;
 				colDef.parentValue = parentValue;
 				colDef.measureLabel = measureLabel;
-				let exists = $scope.ngModel.content.sortOptions.measuresSortKeys.some(member => member.column == column);
+				var exists = false;
+                for(var i in $scope.ngModel.content.sortOptions.measuresSortKeys){
+                    if($scope.ngModel.content.sortOptions.measuresSortKeys[i].column == column){
+                        exists = true;
+                        break;
+                    }
+                }
 				if (!exists) $scope.ngModel.content.sortOptions.measuresSortKeys.push(colDef);
 				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
 			}else{
@@ -1113,7 +1119,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
 					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
 				}
-				let exists = $scope.ngModel.content.sortOptions.columnsSortKeys.some(member => member.column == column);
+				var exists = false;
+                for(var i in $scope.ngModel.content.sortOptions.columnsSortKeys){
+                    if($scope.ngModel.content.sortOptions.columnsSortKeys[i].column == column){
+                        exists = true;
+                        break;
+                    }
+                }
 				if (!exists) $scope.ngModel.content.sortOptions.columnsSortKeys.push({'column': column});
 				axisConfig = $scope.ngModel.content.sortOptions.columnsSortKeys;
 			}
@@ -1127,7 +1139,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				colDef.column = column;
 				colDef.parentValue = parentValue;
 				colDef.measureLabel = measureLabel;
-				let exists = $scope.ngModel.content.sortOptions.measuresSortKeys.some(member => member.column == column);
+				var exists = false;
+                for(var i in $scope.ngModel.content.sortOptions.measuresSortKeys){
+                    if($scope.ngModel.content.sortOptions.measuresSortKeys[i].column == column){
+                        exists = true;
+                        break;
+                    }
+                }
 				if (!exists) $scope.ngModel.content.sortOptions.measuresSortKeys.push(colDef);
 				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
 			}else{
@@ -1138,7 +1156,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
 					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
 				}
-				let exists = $scope.ngModel.content.sortOptions.rowsSortKeys.some(member => member.column == column);
+				var exists = false;
+				for(var i in $scope.ngModel.content.sortOptions.rowsSortKeys){
+                    if($scope.ngModel.content.sortOptions.rowsSortKeys[i].column == column){
+                        exists = true;
+                        break;
+                    }
+                }
 				if (!exists) $scope.ngModel.content.sortOptions.rowsSortKeys.push({'column': column});
 				axisConfig = $scope.ngModel.content.sortOptions.rowsSortKeys;
 			}
