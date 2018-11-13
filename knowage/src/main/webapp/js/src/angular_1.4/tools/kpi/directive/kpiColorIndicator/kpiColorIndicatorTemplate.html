@@ -40,7 +40,7 @@
 				<input ng-model="p.criterion.translatedValueName" disabled ng-if="!definition" style="margin-bottom:5px;"/>
 			</md-input-container> 
 			<md-input-container flex='50' class="md-block" ng-if="p.criterion.valueCd!=='MAJORITY'" > 
-				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label>
 				<md-select ng-model="p.options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
 					<md-option	ng-repeat="tar in p.targets" ng-value="{{tar}}">	{{tar.name}} </md-option> 
 				</md-select> 
