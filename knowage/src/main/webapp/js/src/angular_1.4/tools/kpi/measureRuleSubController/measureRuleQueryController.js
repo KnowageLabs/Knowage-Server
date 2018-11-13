@@ -148,6 +148,10 @@ $scope.isPlaceholderCM=function(cm){
 			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error")); 
 		});
 	}
+
+	$scope.$watch("currentRule.definition", function(newValue, oldValue) {
+    	$scope.loadPlaceholder();
+    });
 	
 	
 }
