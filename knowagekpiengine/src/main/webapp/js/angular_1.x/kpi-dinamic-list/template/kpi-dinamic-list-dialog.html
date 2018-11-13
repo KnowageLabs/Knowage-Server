@@ -4,12 +4,12 @@
         <h2>KPI List</h2>
       </div>
     </md-toolbar>
-    <md-dialog-content layout="column" style ="height: 80%;">
+    <md-dialog-content layout="column" style ="height: 500px;">
      <div class="md-dialog-content" layout="column" flex>
 		<angular-table class="cssTable" flex
 		id='listKpiTable' ng-model="kpiAllList"
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
-		columns-search='["name"]' show-search-bar=true
+		columns-search='["name"]' show-search-bar=true no-pagination=true
 		multi-select= multiSelect selected-item="selectedItem" comparison-column="'id'"
 		scope-functions=tableFunction highlights-selected-item="true"
 		> </angular-table>
