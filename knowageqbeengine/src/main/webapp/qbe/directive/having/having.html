@@ -23,7 +23,30 @@
 	            	
 	      			<md-input-container flex=20>
 	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>
-		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly>
+	      				<input name="leftOperand" readonly>
+	      				<md-menu>
+	      					<md-button aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);">
+								<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
+							</md-button>
+							<md-menu-content>
+								<md-menu-item ng-repeat="entity in tree">
+									<md-menu class="havingOtherEntity">
+										<md-button ng-click="$mdMenu.open()">
+											<span>{{entity.text}}</span>
+										</md-button>
+										<md-menu-content>
+											<md-menu-item ng-repeat="fields in entity.children" ng-if="fields.iconCls == 'measure'">
+												<md-button ng-click="fillInput(having, fields, 'anotherEntity')">
+													<span>{{fields.text}}</span>
+												</md-button>
+											</md-menu-item>
+										</md-menu-content>
+									</md-menu>
+								</md-menu-item>
+							</md-menu-content>
+	      				</md-menu>
+	      				
+<!-- 		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly> -->
 		            </md-input-container>
 					
 <!-- 					<md-input-container flex=10> -->
