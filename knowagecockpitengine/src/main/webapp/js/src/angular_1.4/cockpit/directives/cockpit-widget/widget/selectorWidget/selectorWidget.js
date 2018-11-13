@@ -163,8 +163,8 @@ angular.module('cockpitModule')
 			$scope.ngModel.settings = {};
 		}
 
-		if($scope.ngModel.settings.staticValue){
-		    $scope.ngModel.settings.staticValues = $scope.ngModel.settings.staticValue.split(",");
+		if($scope.ngModel.settings.staticValue != undefined){
+		    $scope.ngModel.settings.staticValues = $scope.ngModel.settings.staticValue;
 		    delete $scope.ngModel.settings.staticValue;
 		}
 
@@ -261,7 +261,7 @@ angular.module('cockpitModule')
 					applyDefaultValues = true;
 					break;
 				case 'STATIC':
-					angular.copy($scope.ngModel.settings.staticValues, $scope.defaultValues);
+					$scope.defaultValues = $scope.ngModel.settings.staticValues.split(",");
 					applyDefaultValues = true;
 					break;
 				}
