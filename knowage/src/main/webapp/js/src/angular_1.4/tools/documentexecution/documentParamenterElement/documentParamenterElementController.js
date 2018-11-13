@@ -62,6 +62,14 @@
 
 		}
 
+		$scope.isEmpty = function(obj) {
+			for(var prop in obj) {
+				if(obj.hasOwnProperty(prop))
+					return false;
+			}
+			return JSON.strigify(obj) === JSON.stringify({});
+		}
+
 		$scope.getTreeParameterValue = function(innerNode) {
 			if (typeof innerNode === 'undefined'){
 				$scope.execProperties.hideProgressCircular.status=false;
