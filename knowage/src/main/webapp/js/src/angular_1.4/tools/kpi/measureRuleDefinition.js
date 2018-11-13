@@ -169,6 +169,17 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		return false;
 	}
 
+	$scope.isMetadataReadyToBeLoaded = function() {
+	    if($scope.havePlaceholder()) {
+	        for(var i=0; i<$scope.currentRule.placeholders.length; i++) {
+	            if($scope.currentRule.placeholders[i].value == undefined || $scope.currentRule.placeholders[i].value == "") {
+	                return false;
+	            }
+	        }
+	    }
+	    return true;
+	}
+
 	$scope.showMessage = function(){
 		var result = $scope.havePlaceholder();
 		if(result){
