@@ -147,7 +147,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-//	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
 	this.loadDatasetRecords = function(ngModel, options, loadDomainValues){
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
@@ -325,7 +324,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				}
 
                 if(config.type != "selector" || nature == 'init'){
-                    var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
+                    var dsRecords = this.loadDatasetRecords(config, options, config.type == "selector");
                     if(dsRecords == null){
 					    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
                     }else{
@@ -342,7 +341,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         dsRecords.then(function(data){
                             if(config.type == "selector"){
                                 if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
-                                    data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+                                    data.activeValues = wi.loadDatasetRecords(config, options, false);
                                 }else{
                                     config.activeValues = null;
                                 }
@@ -358,7 +357,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                 }else{
                     var data = {};
                     if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
-                        data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+                        data.activeValues = wi.loadDatasetRecords(config, options, false);
                     }
                     $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                 }
