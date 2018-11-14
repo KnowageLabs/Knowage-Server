@@ -113,7 +113,10 @@
 		name="Parameter memento persistence depth"
 		description="The number of values to save into the memento object associated to each parameter"
 		isActive="true" valueCheck="5" valueType="STRING" category="GENERIC_CONFIGURATION" />
-
+	<CONFIG label="KNOWAGE.SCHEDULER.scheduleIterationLimit"
+			name="Parameter schedule iteration limit"
+			description="The number of max iterations on parameter values allowed for each schedule"
+			isActive="true" valueCheck="100" valueType="NUM" category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="SPAGOBI.DATE-FORMAT-SERVER.format" name="SERVE DATE FORMAT"
 		description="Date format for communications with the server (both on sending and receiving) format attribute is for server side services, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
