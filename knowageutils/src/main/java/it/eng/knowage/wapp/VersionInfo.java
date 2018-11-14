@@ -25,15 +25,15 @@ public final class VersionInfo {
 	public static final int PATCH = 3;
 	public static final String VERSION_SEPARATOR = ".";
 	// this can be "-rc" "-snapshot" or any optional string
-	public static final String OPTIONAL = "-S";
+	public static final String OPTIONAL = "";
 
 	public static final String COMPLETE_VERSION = VersionInfo.MAJOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.MINOR + VersionInfo.VERSION_SEPARATOR
 			+ VersionInfo.PATCH + VersionInfo.OPTIONAL;
 	public static final String VERSION_FOR_EXPORT = VersionInfo.MAJOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.MINOR;
 
 	public static final String YEAR = "2018"; //YYYY
-	public static final String MONTH = "10"; //MM
-	public static final String DAY = "30"; //dd
+	public static final String MONTH = "11"; //MM
+	public static final String DAY = "14"; //dd
 	public static final String DATE_SEPARATOR = "/";
 
 	public static final String RELEASE_DATE = VersionInfo.YEAR + VersionInfo.DATE_SEPARATOR + VersionInfo.MONTH + VersionInfo.DATE_SEPARATOR + VersionInfo.DAY;
