@@ -48,10 +48,10 @@
 			$mdOpenMenu(ev);
 		};
 	 	
-	 	$scope.fieldHaving = function (item) {
-	 		if(item.leftOperandValue==$scope.field.id) 
-	 			return item;
-	 	};
+//	 	$scope.fieldHaving = function (item) {
+//	 		if(item.leftOperandValue==$scope.field.id) 
+//	 			return item;
+//	 	};
 	 	
 	 	var checkForIndex = function(){
 	 		var arrayOfIndex = [];
@@ -80,9 +80,9 @@
 				"filterInd": $scope.havingIndex,
 				"promptable": false,
 				"leftOperandAggregator": "",
-				"leftOperandValue": $scope.ngModel.field.id,
-				"leftOperandDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
-				"leftOperandLongDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
+				"leftOperandValue": [],
+				"leftOperandDescription": "",
+				"leftOperandLongDescription": "", 
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
@@ -136,6 +136,14 @@
 				default:
 					break;
 			}
+		};
+		
+		$scope.setLeft = function(having, fields) {
+			
+			having.leftOperandValue = [];
+			having.leftOperandValue.push(fields.id);
+			having.leftOperandDescription = fields.attributes.entity+" "+": "+fields.text;
+			having.leftOperandLongDescription = fields.attributes.entity+" "+": "+fields.text;
 		};
 		
 		var setRight = function(having, type, value) {
