@@ -239,17 +239,14 @@
 						<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
-								<md-select ng-model="localModel.content.style.generic['font-size']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
+								<input ng-model="localModel.content.style.generic['font-size']" type="text"/>
+								<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
 							</md-input-container>
 			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.font')}}</label>
+								<label>{{translate.load('sbi.cockpit.style.font.family')}}</label>
 								<md-select ng-model="localModel.content.style.generic['font']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontType" ng-value="meas.value" >
-									{{meas.label}}
+									<md-option ng-repeat="ff in cockpitModule_generalOptions.fontFamily" ng-value="ff.value" >
+										<span ng-style="{'font-family':ff.value}">{{ff.label}}</span>
 									</md-option>
 								</md-select>
 							</md-input-container>
@@ -265,7 +262,38 @@
 						</div>
 					</md-toolbar>
 					<md-card-content >
-						<div layout=row >
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<input ng-model="localModel.content.style.crossTabHeaders['font-size']" type="text"/>
+								<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+							</md-input-container>
+							<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.font.family')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['font-family']">
+									<md-option ng-repeat="ff in cockpitModule_generalOptions.fontFamily" ng-value="ff.value" >
+										<span ng-style="{'font-family':ff.value}">{{ff.label}}</span>
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['font-weight']">
+									<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value" >
+										<span ng-style="{'font-weight':fw.value}">{{fw.label}}</span>
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     		</div>
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['text-decoration']">
+									<md-option ng-repeat="td in cockpitModule_generalOptions.textDecoration" ng-value="td.value" >
+										<span ng-style="{'text-decoration':td.value}">{{td.label}}</span>
+									</md-option>
+								</md-select>
+							</md-input-container>
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.crossTabHeaders.color "></color-picker>
@@ -273,32 +301,6 @@
 							<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.crossTabHeaders['background-color'] "></color-picker>
-							</md-input-container>
-			     		</div>
-			     		<div layout=row >
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
-								<md-select ng-model="localModel.content.style.crossTabHeaders['font-size']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
-								<md-select ng-model="localModel.content.style.crossTabHeaders['font-weight']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
-								<md-select ng-model="localModel.content.style.crossTabHeaders['text-decoration']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
 							</md-input-container>
 			     		</div>
 					</md-card-content>
@@ -312,40 +314,45 @@
 						</div>
 					</md-toolbar>
 					<md-card-content >
-						<div layout=row flex >		     							     			
-				     		<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
-							</md-input-container>
-							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']" ></color-picker>
-							</md-input-container>
-			     		</div>
 			     		<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
-								<md-select ng-model="localModel.content.style.measuresHeaders['font-size']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
-									{{meas.label}}
+								<input ng-model="localModel.content.style.measuresHeaders['font-size']" type="text"/>
+								<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+							</md-input-container>
+							<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.font.family')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['font-family']">
+									<md-option ng-repeat="ff in cockpitModule_generalOptions.fontFamily" ng-value="ff.value" >
+										<span ng-style="{'font-family':ff.value}">{{ff.label}}</span>
 									</md-option>
 								</md-select>
 							</md-input-container>
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
 								<md-select ng-model="localModel.content.style.measuresHeaders['font-weight']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
-									{{meas.label}}
+									<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value" >
+										<span ng-style="{'font-weight':fw.value}">{{fw.label}}</span>
 									</md-option>
 								</md-select>
 							</md-input-container>
+			     		</div>
+			     		<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
 								<md-select ng-model="localModel.content.style.measuresHeaders['text-decoration']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
-									{{meas.label}}
+									<md-option ng-repeat="td in cockpitModule_generalOptions.textDecoration" ng-value="td.value" >
+										<span ng-style="{'text-decoration':td.value}">{{td.label}}</span>
 									</md-option>
 								</md-select>
+							</md-input-container>
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']"></color-picker>
 							</md-input-container>
 			     		</div>
 					</md-card-content>
@@ -359,40 +366,45 @@
 						</div>
 					</md-toolbar>
 					<md-card-content >
-						<div layout=row >
-				     		<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures.color "></color-picker>
-							</md-input-container>
-							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures['background-color'] "></color-picker>
-							</md-input-container>
-			     		</div>
 			     		<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
-								<md-select ng-model="localModel.content.style.measures['font-size']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
-									{{meas.label}}
+								<input ng-model="localModel.content.style.measures['font-size']" type="text"/>
+								<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+							</md-input-container>
+							<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.font.family')}}</label>
+								<md-select ng-model="localModel.content.style.measures['font-family']">
+									<md-option ng-repeat="ff in cockpitModule_generalOptions.fontFamily" ng-value="ff.value" >
+										<span ng-style="{'font-family':ff.value}">{{ff.label}}</span>
 									</md-option>
 								</md-select>
 							</md-input-container>
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
 								<md-select ng-model="localModel.content.style.measures['font-weight']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
-									{{meas.label}}
+									<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value" >
+										<span ng-style="{'font-weight':fw.value}">{{fw.label}}</span>
 									</md-option>
 								</md-select>
 							</md-input-container>
+			     		</div>
+			     		<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
 								<md-select ng-model="localModel.content.style.measures['text-decoration']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
-									{{meas.label}}
+									<md-option ng-repeat="td in cockpitModule_generalOptions.textDecoration" ng-value="td.value" >
+										<span ng-style="{'text-decoration':td.value}">{{td.label}}</span>
 									</md-option>
 								</md-select>
+							</md-input-container>
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures['background-color']"></color-picker>
 							</md-input-container>
 			     		</div>
 					</md-card-content>
