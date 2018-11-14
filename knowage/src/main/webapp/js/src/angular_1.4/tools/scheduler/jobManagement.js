@@ -211,7 +211,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
 				console.log("unable to save job ", data.errors);
-				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + data.errors);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + sbiModule_translate.load(data.errors));
 			} else {
 				ctrl.showToastOk(sbiModule_translate.load("sbi.glossary.success.save"));
 				ctrl.closeDetail();
@@ -1032,7 +1032,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					sbiModule_restServices.post("scheduleree", requestString	)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								console.error(sbiModule_translate.load("sbi.glossary.load.error"));
+								console.error(sbiModule_translate.load("sbi.glossary.load.error") + " " + sbiModule_translate.load("sbi.hierarchies.nodata"));
 							} else {
 								console.log("evento scaricato", data);
 								activityEventCtrl.disableName=true;
