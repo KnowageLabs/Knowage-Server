@@ -44,6 +44,14 @@
 		$scope.sbiModule_messaging = sbiModule_messaging;
 		$scope.i18n = sbiModule_i18n;
 
+		$scope.isEmpty = function(obj) {
+			for(var prop in obj) {
+				if(obj.hasOwnProperty(prop))
+					return false;
+			}
+			return JSON.strigify(obj) === JSON.stringify({});
+		}
+
 		$scope.getTreeParameterValue = function(innerNode) {
 			if (typeof innerNode === 'undefined'){
 				execProperties.hideProgressCircular.status=false;
