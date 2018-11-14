@@ -169,9 +169,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.moveProperty(columns[k],"style.fontWeight","style.font-weight");
 					if(!columns[k].text) columns[k].text = {"enabled":true};
 					$scope.moveProperty(columns[k], "style.size","style.width");
-					if(columns[k].style.textAlign == "left" ) columns[k].style.td = {'justify-content' : "flex-start"};
-					if(columns[k].style.textAlign == "center" ) columns[k].style.td = {'justify-content' : "center"};
-					if(columns[k].style.textAlign == "right" )columns[k].style.td = {'justify-content' : "flex-end"};
+					if(columns[k].style.textAlign == "Left" ) columns[k].style.td = {'justify-content' : "flex-start"};
+					if(columns[k].style.textAlign == "Center" ) columns[k].style.td = {'justify-content' : "center"};
+					if(columns[k].style.textAlign == "Right" )columns[k].style.td = {'justify-content' : "flex-end"};
 					if(columns[k].style.scopefunc && columns[k].scopefunc.condition){
 						columns[k].ranges = [];
 						for(var j in columns[k].scopefunc.condition){
