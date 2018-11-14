@@ -98,18 +98,18 @@
 	    		  return false;
 	    	  }
 	      } ,
-	      {
-	    	  icon:'fa fa-sliders' ,
-	    	  action : function(item,event) {
-	    		  $scope.addSummaryInfo(item);
-	    	  },
-	    	  visible : function(row,column) {
-	    		  if(row.fieldType == "MEASURE"){
-	    			  return true;
-	    		  }
-	    		  return false;
-	    	  }
-	      } ,
+//	      {
+//	    	  icon:'fa fa-sliders' ,
+//	    	  action : function(item,event) {
+//	    		  $scope.addSummaryInfo(item);
+//	    	  },
+//	    	  visible : function(row,column) {
+//	    		  if(row.fieldType == "MEASURE"){
+//	    			  return true;
+//	    		  }
+//	    		  return false;
+//	    	  }
+//	      } ,
 	      {
 	    	  icon:'fa fa-trash' ,
 	    	  action : function(item,event) {
@@ -435,7 +435,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 	
 	$scope.hasPrecision = function(column){
-		debugger;
 		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){
 			return true;
 		}
@@ -558,7 +557,6 @@ function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items
 	$scope.listType = cockpitModule_generalOptions.aggregationFunctions;
 
 	$scope.saveColumnConfiguration=function(){
-
 		items.resolve($scope.row);
 		$mdDialog.hide();
 	}

@@ -64,12 +64,12 @@
 	        </tr>
 	    </tbody>
 	    <tfoot>
-	    	<tr class="summaryTitle" ng-if="settings.summary.enabled && settings.summary.title">
-				<td ng-style="styledata.summary">{{settings.summary.title}}</td>
-			</tr>
 			<tr ng-if="settings.summary.enabled" class="summary">
 	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn" >
-		            <div ng-if="::hasPrecision(column)">
+	            	<div ng-if="$first && settings.summary.enabled && settings.summary.title" ng-style="styledata.summary">
+	            		{{settings.summary.title}}
+	            	</div>
+		            <div ng-if="::hasPrecision(column) && !$first" class="truncated">
 		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}</md-tooltip>
 	            			{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}
 		            </div>
