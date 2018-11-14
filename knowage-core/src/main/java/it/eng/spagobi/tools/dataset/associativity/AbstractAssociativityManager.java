@@ -61,8 +61,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	private static Logger logger = Logger.getLogger(AbstractAssociativityManager.class);
 
-	protected IDataSource cacheDataSource;
-	protected ICache cache;
 	protected Map<String, Map<String, String>> datasetToAssociations;
 	protected Pseudograph<String, LabeledEdge<String>> graph;
 	protected Map<String, IAssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
@@ -79,13 +77,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	@Override
 	public void process() throws Exception {
-		if (cacheDataSource == null) {
-			throw new SpagoBIException("Unable to get cache datasource, the value of [dataSource] is [null]");
-		}
-		if (cache == null) {
-			throw new SpagoBIException("Unable to get cache, the value of [cache] is [null]");
-		}
-
 		// (1) generate the starting set of values for each associations
 		initProcess();
 
@@ -119,7 +110,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		this.userProfile = userProfile;
 		initGraph(config);
 		initDocuments(config);
-		initCache();
 		initDatasets(config);
 	}
 
@@ -162,11 +152,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	private void initGraph(Config config) {
 		graph = config.getGraph();
-	}
-
-	private void initCache() {
-		cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-		cache = SpagoBICacheManager.getCache();
 	}
 
 	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, IAssociativeDatasetContainer container) {
