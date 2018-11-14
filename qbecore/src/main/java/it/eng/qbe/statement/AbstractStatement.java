@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,25 +11,32 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.statement;
-
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.query.IQueryField;
-import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.Query;
-import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.jgrapht.Graph;
+
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.spagobi.utilities.objects.Couple;
 
 /**
  * @author Andrea Gioia
@@ -50,8 +57,7 @@ public abstract class AbstractStatement implements IStatement {
 	int maxResults;
 
 	/**
-	 * If it is true (i.e. the maxResults limit is exceeded) then query
-	 * execution should be stopped
+	 * If it is true (i.e. the maxResults limit is exceeded) then query execution should be stopped
 	 */
 	boolean isBlocking;
 
@@ -63,7 +69,7 @@ public abstract class AbstractStatement implements IStatement {
 
 	/**
 	 * Instantiates a new basic statement.
-	 * 
+	 *
 	 * @param dataMartModel
 	 *            the data mart model
 	 */
@@ -73,7 +79,7 @@ public abstract class AbstractStatement implements IStatement {
 
 	/**
 	 * Create a new statement from query bound to the specific datamart-model
-	 * 
+	 *
 	 * @param dataMartModel
 	 *            the data mart model
 	 * @param query
@@ -82,87 +88,113 @@ public abstract class AbstractStatement implements IStatement {
 	protected AbstractStatement(IDataSource dataSource, Query query) {
 		this.dataSource = dataSource;
 		this.query = query;
+		updateQueryQraph();
 	}
 
+	private void updateQueryQraph() {
+
+		QueryGraph queryGraph = null;
+		IModelStructure modelStructure = this.dataSource.getModelStructure();
+		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(this.dataSource.getConfiguration().getModelName(), false);
+		Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
+		Set<IModelEntity> entities = this.query.getQueryEntities(this.dataSource);
+		queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(graph, entities);
+		this.query.setQueryGraph(queryGraph);
+
+	}
+
+	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
 
+	@Override
 	public Query getQuery() {
 		return query;
 	}
 
+	@Override
 	public void setQuery(Query query) {
 		this.query = query;
 		this.queryString = null;
 	}
 
+	@Override
 	public Map getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public void setParameters(Map parameters) {
 		this.parameters = parameters;
 	}
 
+	@Override
 	public Map getProfileAttributes() {
 		return profileAttributes;
 	}
 
+	@Override
 	public void setProfileAttributes(Map profileAttributes) {
 		this.profileAttributes = profileAttributes;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return offset;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#setOffset(int)
 	 */
+	@Override
 	public void setOffset(int offset) {
 		this.offset = offset;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#getFetchSize()
 	 */
+	@Override
 	public int getFetchSize() {
 		return fetchSize;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#setFetchSize(int)
 	 */
+	@Override
 	public void setFetchSize(int fetchSize) {
 		this.fetchSize = fetchSize;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#getMaxResults()
 	 */
+	@Override
 	public int getMaxResults() {
 		return maxResults;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.model.IStatement#setMaxResults(int)
 	 */
+	@Override
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 	}
@@ -175,6 +207,7 @@ public abstract class AbstractStatement implements IStatement {
 		this.isBlocking = isBlocking;
 	}
 
+	@Override
 	public String getQueryString() {
 		return queryString;
 	}
@@ -185,6 +218,7 @@ public abstract class AbstractStatement implements IStatement {
 
 	public abstract String getValueBounded(String operandValueToBound, String operandType);
 
+	@Override
 	public String getNextAlias(Map entityAliasesMaps) {
 		int aliasesCount = 0;
 		Iterator it = entityAliasesMaps.keySet().iterator();
@@ -217,6 +251,7 @@ public abstract class AbstractStatement implements IStatement {
 		return rootEntityAlias;
 	}
 
+	@Override
 	public String getFieldAliasNoRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps) {
 
 		Couple queryNameAndRoot = datamartField.getQueryName();
@@ -229,16 +264,16 @@ public abstract class AbstractStatement implements IStatement {
 	}
 
 	/**
-	 * Creates a list of clauses. for each role of the entity create this clause
-	 * part: role+.+field name. This function is used to create the joins for
-	 * the entities
-	 * 
+	 * Creates a list of clauses. for each role of the entity create this clause part: role+.+field name. This function is used to create the joins for the
+	 * entities
+	 *
 	 * @param datamartField
 	 * @param entityAliases
 	 * @param entityAliasesMaps
 	 * @param roleName
 	 * @return
 	 */
+	@Override
 	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String roleName) {
 
 		IModelEntity rootEntity;
@@ -266,16 +301,16 @@ public abstract class AbstractStatement implements IStatement {
 	}
 
 	/**
-	 * Creates a list of clauses. for each role of the entity create this clause
-	 * part: role+.+field name. This function is used to create the joins for
-	 * the entities
-	 * 
+	 * Creates a list of clauses. for each role of the entity create this clause part: role+.+field name. This function is used to create the joins for the
+	 * entities
+	 *
 	 * @param datamartField
 	 * @param entityAliases
 	 * @param entityAliasesMaps
 	 * @param roleName
 	 * @return
 	 */
+	@Override
 	public List<String> getFieldAliasWithRolesList(IModelField datamartField, Map entityAliases, Map entityAliasesMaps) {
 
 		List<String> toReturn = new ArrayList<String>();
@@ -315,15 +350,15 @@ public abstract class AbstractStatement implements IStatement {
 	}
 
 	/**
-	 * Check if a select field with the alias exist and if so take it as field
-	 * to get the query name. Used in FILTERS
-	 * 
+	 * Check if a select field with the alias exist and if so take it as field to get the query name. Used in FILTERS
+	 *
 	 * @param datamartField
 	 * @param entityAliases
 	 * @param entityAliasesMaps
 	 * @param alias
 	 * @return
 	 */
+	@Override
 	public String getFieldAliasWithRolesFromAlias(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String alias) {
 		Query query = this.getQuery();
 		List<ISelectField> fields = query.getSelectFields(true);
@@ -343,6 +378,7 @@ public abstract class AbstractStatement implements IStatement {
 	/**
 	 * Used in select, group, order
 	 */
+	@Override
 	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, IQueryField queryField) {
 
 		IModelEntity rootEntity;
@@ -384,6 +420,7 @@ public abstract class AbstractStatement implements IStatement {
 	/**
 	 * Used to build the from clause
 	 */
+	@Override
 	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias) {
 		String fromClauseElement = me.getName() + " " + entityAlias;
 		// for(int i=0; i<rel.size(); i++){

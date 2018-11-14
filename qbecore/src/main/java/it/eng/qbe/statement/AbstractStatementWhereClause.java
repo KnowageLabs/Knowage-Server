@@ -69,8 +69,10 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	/**
 	 * Builds the where clause part of the statement. If something goes wrong during the build process a StatementCompositionException will be thrown
 	 *
-	 * @param query             The target query
-	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
+	 * @param query
+	 *            The target query
+	 * @param entityAliasesMaps
+	 *            Contains an alias to entity map for each query build so far.
 	 *
 	 * @return a string representing in JPQL format the where clause part of the statement. It never returns null. If the target query have no filtering
 	 *         conditions it returns an empty String
@@ -121,9 +123,12 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	/**
 	 * Add where conditions explicitly defined by user
 	 *
-	 * @param buffer            Contains the part of where clause build so far
-	 * @param query             The target query
-	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
+	 * @param buffer
+	 *            Contains the part of where clause build so far
+	 * @param query
+	 *            The target query
+	 * @param entityAliasesMaps
+	 *            Contains an alias to entity map for each query build so far.
 	 *
 	 * @return Appends to the where clause build so far all the conditions explicitly defined by user and returns it
 	 */
@@ -454,8 +459,10 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	 * ONLY FOR ECLIPSE LINK Add to the where clause a fake condition.. Id est, take the primary key (or an attribute of the primary key if it's a composed key)
 	 * of the entity and (for example keyField) and add to the whereClause the clause entityAlias.keyField = entityAlias.keyField
 	 *
-	 * @param datamartEntityName the jpa object name
-	 * @param entityAlias        the alias of the table
+	 * @param datamartEntityName
+	 *            the jpa object name
+	 * @param entityAlias
+	 *            the alias of the table
 	 */
 	public void addTableFakeCondition(String whereClause, String datamartEntityName, String entityAlias) {
 		if (parentStatement.getDataSource() instanceof org.eclipse.persistence.jpa.JpaEntityManager) {// check if the provider is eclipse link

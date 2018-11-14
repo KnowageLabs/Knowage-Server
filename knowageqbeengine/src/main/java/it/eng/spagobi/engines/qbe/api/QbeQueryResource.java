@@ -171,7 +171,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
 			modelEntities.addAll(sqlModality.getSqlFilterEntities(query, getEngineInstance().getDataSource()));
-			updateQueryGraphInQuery(filteredQuery, true, modelEntities);
+			//updateQueryGraphInQuery(filteredQuery, true, modelEntities);
 
 			Map<String, Map<String, String>> inlineFilteredSelectFields = filteredQuery.getInlineFilteredSelectFields();
 
