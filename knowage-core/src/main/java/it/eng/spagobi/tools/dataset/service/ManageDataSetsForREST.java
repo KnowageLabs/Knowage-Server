@@ -707,13 +707,15 @@ public class ManageDataSetsForREST {
 			HashMap<String, Object> driversMap = new HashMap<>();
 
 			JSONObject driversJ = (JSONObject) json.get("parametersString");
-			for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
-				driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
+			for (int i = 0; i < JSONObject.getNames(driversJ).length; i = i + 2) {
+				if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "")
+					driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
 			}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-			dataSet.setDrivers(driversMap);
+			if (driversMap.size() > 1)
+				dataSet.setDrivers(driversMap);
 			// START -> This code should work instead of CheckQbeDataSets around
 			// the projects
 			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
