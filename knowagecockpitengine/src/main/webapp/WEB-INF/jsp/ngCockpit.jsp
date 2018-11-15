@@ -75,7 +75,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 		template.configuration.showMenuOnView=true;
 	}
 	
-	if(template.configuration.style==undefined){
+	if(typeof(template.configuration.style)=='undefined'){
 		template.configuration.style={titles : true};
 	}
 	

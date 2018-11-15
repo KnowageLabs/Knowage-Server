@@ -95,7 +95,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
 
 	$scope.initModel=function(){
-		angular.copy(angular.merge({},$scope.cockpitStyle,$scope.ngModel),$scope.ngModel)
+		angular.copy(angular.merge({},$scope.cockpitStyle,$scope.ngModel),$scope.ngModel);
 	}
 
 

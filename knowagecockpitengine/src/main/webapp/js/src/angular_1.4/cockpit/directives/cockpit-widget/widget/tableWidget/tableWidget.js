@@ -785,10 +785,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.toggleTh = function(){
 			$scope.colorPickerPropertyTh.disabled = $scope.model.style.th.enabled;
 		}
+
+		$scope.toggleSummary = function(){
+			$scope.summaryColorPickerProperty.disabled = $scope.model.settings.summary.enabled;
+		}
 		
 		$scope.colorPickerPropertyTh = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), disabled:($scope.model.style.th && $scope.model.style.th.enabled === false)}
 		
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
+		$scope.summaryColorPickerProperty = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.summary.enabled};
 
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};
 
