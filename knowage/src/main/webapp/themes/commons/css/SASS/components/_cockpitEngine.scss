@@ -653,6 +653,9 @@
 				}
 				select[multiple] {
 					height: 100%;
+					option {
+						font-size: inherit;
+					}
 				}
 				option {
 					font-size: $baseFontSize;

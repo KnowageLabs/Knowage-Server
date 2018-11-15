@@ -28,7 +28,7 @@
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select">
 				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])"
-						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)">
+						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
 					<option></option>
 				</select>
 			</div>
@@ -38,7 +38,7 @@
 		<md-input-container class="md-block multipleSelect" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select multipleSelect">
 				<select ng-model="selectedValues" multiple ng-change="toggleParameter(selectedValues)" 
-						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)"></select>
+						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()"></select>
 			</div>
 		</md-input-container>
 		
@@ -50,7 +50,7 @@
 		<div layout="row" layout-align="start center">
 			<md-input-container>
 				<label>{{::translate.load(ngModel.settings.modalityValue=='multiValue' ? "sbi.cockpit.widgets.selector.startdate" : "sbi.cockpit.widgets.selector.singledate")}}</label>
-				<md-datepicker name="startDate" ng-model="startDate" md-max-date="ngModel.settings.modalityValue=='multiValue' ? endDate : null" md-open-on-focus></md-datepicker>
+				<md-datepicker name="startDate" ng-model="startDate" md-max-date="ngModel.settings.modalityValue=='multiValue' ? endDate : null" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 			
 			<md-button class="md-icon-button" aria-label="Clear start date" title="Clear start date" ng-click="clearStartDate()">
@@ -61,7 +61,7 @@
 		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
 			<md-input-container>
 				<label>{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
-				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus></md-datepicker>
+				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 			
 			<md-button class="md-icon-button" aria-label="Clear end date" title="Clear end date" ng-click="clearEndDate()">

@@ -20,30 +20,61 @@
 								<span flex></span>
 							</div>
 						</md-toolbar>
-						<md-card-content >
-							<div flex layout="row" >
-								<md-input-container flex class="md-block" >
-									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontsize')}}</label>
-									 <input ng-model="model.style['font-size']" type="text">
-								</md-input-container>
-								<md-input-container flex class="md-block">
-									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontweight')}}</label>
-									<md-select aria-label="aria-label" ng-model="model.style['font-weight']">
-										<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" value="{{fw.value}}">{{fw.label}}</md-option>
-									</md-select>
-								</md-input-container>
-							</div>
-							<div flex layout="row" >
-								<md-input-container flex class="md-block" >
-									<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontcolor')}}</label>
-									<color-picker options="{format:'rgb'}" ng-model="model.style.color"/>
-								</md-input-container>
-								<md-input-container flex class="md-block">
-									<label>{{::translate.load('sbi.cockpit.widget.selector.label.height')}}</label>
-									<input ng-model="model.style['height']" type="text">
-								</md-input-container>
+						
+						<md-card-content>
+							<div flex layout=column >
+								<div flex layout="row" >
+									
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+										<md-select aria-label="aria-label" ng-model="model.style['font-family']">
+											<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}">
+												<span ng-style="{'font-family':fam.value}">{{fam.label}}</span>
+											</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+										<input ng-model="model.style['font-size']" type="text"/>
+										<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+										<md-select aria-label="aria-label" ng-model="model.style['font-weight']" >
+											<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}">
+												<span ng-style="{'font-weight':weight.value}">{{weight.label}}</span>
+											</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+										<md-select aria-label="aria-label" ng-model="model.style['font-style']">
+											<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value">
+												<span ng-style="{'font-style':fst.value}">{{fst.label}}</span>
+											</md-option>
+										</md-select>
+									</md-input-container>
+									
+								</div>
+								<div flex layout=column >
+									<div flex layout="row" >
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.widget.selector.label.height')}}</label>
+											<input ng-model="model.style['height']" type="text">
+										</md-input-container>
+										<md-input-container flex class="md-block" >
+											<label>{{::translate.load('sbi.cockpit.widget.selector.label.fontcolor')}}</label>
+											<color-picker options="{format:'rgb'}" ng-model="model.style.color"/>
+										</md-input-container>
+										<md-input-container flex class="md-block" >
+											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+											<color-picker options="{format:'rgb'}" ng-model="model.style['background-color']"/>
+										</md-input-container>
+									</div>
+								</div>
 							</div>
 						</md-card-content>
+
 					</md-card>
 					
 					<cockpit-style-configurator widget ng-model="model.style"></cockpit-style-configurator>
