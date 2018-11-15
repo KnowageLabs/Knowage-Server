@@ -57,7 +57,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
-import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -65,7 +64,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
@@ -864,7 +862,7 @@ public class SelfServiceDataSetCRUD {
 			dsToTest.setDsMetadata(dsMetadata);
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 
-			List<IDataSet> dataSets = new ArrayList();
+			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(dsToTest);
 
 			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(dsMetadata);
@@ -915,16 +913,15 @@ public class SelfServiceDataSetCRUD {
 		Integer limit = new Integer(10);
 		Integer resultNumber = null;
 		Integer maxSize = null;
+		ValidationErrors validationErrors = null;
+		JSONArray columns = new JSONArray();
 
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			String datasetMetadata = req.getParameter("datasetMetadata");
 			IDataSet dataSet;
-			// check if configuration for limit dataset preview is active then
-			// use it
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			Config previewRowsConfig = configDao.loadConfigParametersByLabel(previewRowsConfigLabel);
+
 			String limitPreview = req.getParameter("limitPreview");
 			boolean limitPreviewCheck = false;
 			if (limitPreview.equalsIgnoreCase("true")) {
@@ -940,19 +937,9 @@ public class SelfServiceDataSetCRUD {
 				limit = GeneralUtilities.getDatasetMaxResults();
 			}
 
-			if (limitPreviewCheck && (previewRowsConfig != null) && (previewRowsConfig.isActive())) {
-				// use a preview limit
-				String previewRowsConfigValue = previewRowsConfig.getValueCheck();
-				dataSet = recoverDataSetDetails(req, null, false, true, Integer.valueOf(previewRowsConfigValue));
-			} else {
-				// no preview limit
-				dataSet = recoverDataSetDetails(req, null, false);
-			}
+			dataSet = recoverDataSetDetails(req, null, false);
 
-			String dsMetadata = getDatasetTestMetadata(dataSet, profile, datasetMetadata);
-			dataSet.setDsMetadata(dsMetadata);
-
-			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			dataSet.loadData(start, GeneralUtilities.getDatasetMaxResults(), GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
@@ -964,8 +951,23 @@ public class SelfServiceDataSetCRUD {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
 			}
 
+			// Dataset Validation
+			// ---- Validate all records
+			if (datasetMetadata != null) {
+				String dsConfiguration = dataSet.getConfiguration();
+				JSONObject metadataDataset = new JSONObject(datasetMetadata);
+				columns = metadataDataset.getJSONArray("columns");
+				validationErrors = validateDataset(dataStore, columns, dsConfiguration);
+			}
+
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
 			dataSetWriter.setSetRenderer(true);
+
+			// Filter Datastore records if Limit Preview is checked
+			if (limitPreviewCheck) {
+				dataStore.getRecords().subList(limit, dataStore.getRecords().size()).clear();
+			}
+
 			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 			// remove the recNo inside fields that is not managed by
 			// DynamicGridPanel
@@ -989,138 +991,13 @@ public class SelfServiceDataSetCRUD {
 
 			}
 
-			// Dataset Validation ---------------------------------------------
-			if (datasetMetadata != null) {
-
-				ValidationErrors validationErrors = new ValidationErrors();
-
-				/**
-				 * Validation now takes care of types that are set for related columns of the file dataset metadata. For example, if we are having a column
-				 * 'country', it contains names of countries that are specific for a dataset (such as USA, Italy, UK, etc.), so user should not set its type as
-				 * a numeric one (Integer/Double), but as a String instead. However, if user specifies this column as a numeric type, the validation should
-				 * inform him about this problem (bad formatting of the metadata column(s)). In this method we will try to convert first 1000 values from all
-				 * columns available to the type that user provide for their columns. If cast (converting) cannot happen (exception appears), we will add an
-				 * information about that to the ValidationErrors object.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-
-				/**
-				 * All records that the file dataset provides (all resulting rows).
-				 */
-				long records = dataStore.getRecordsCount();
-
-				/**
-				 * Get all metadata for the dataset and then pick only those related to the "columns" property. This way we get all columns that the file
-				 * dataset possess.
-				 */
-				JSONObject metadataDataset = new JSONObject(datasetMetadata);
-				JSONArray columns = metadataDataset.getJSONArray("columns");
-
-				/**
-				 * Go through all columns that the file dataset has. First go through all rows for the first column, then through all of them in the second
-				 * column and so on.
-				 */
-				for (int i = 0; i < columns.length(); i++) {
-
-					/**
-					 * Divide the metadata column index (i) by 2 in order to have a correct information about the real index of the column that is validated.
-					 * This is needed because we have 2 metadata columns for each file dataset column.
-					 */
-					/*
-					 * Modified after the 'fieldAlias' property is provided. Since it appears two times for each metadata item, we will have 4 rows for each
-					 * column. A temporary value is 4. If the 'fieldAlias' is unique, this value should be changed to 3. (danristo)
-					 */
-					int index = (int) Math.round(Math.floor(i / 2));
-
-					JSONObject jo = new JSONObject();
-
-					/**
-					 * Go through all rows for a particular (current, i-th) column.
-					 */
-					for (int j = 0; j < records && j < 1000; j++) {
-
-						jo = (JSONObject) columns.get(i);
-						String pvalue = jo.opt("pvalue").toString().toUpperCase();
-
-						/**
-						 * Check if property value is not one of those that are common for field type (MEASURE/ATTRIBUTE), since we are not validating their
-						 * values, but rather those that are specified for types (Integer, Double, String). So, skip these two.
-						 */
-						if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE")) {
-							Object obj = dataStore.getRecordAt(j).getFieldAt(index).getValue();
-							/**
-							 * Try to convert a value that current field has to the type that is set for that field. If the converting (casting) does not go
-							 * well, an exception will be thrown and we will handle it by providing an information about the validation problem for that
-							 * particular cell.
-							 */
-							switch (pvalue) {
-
-							case "DOUBLE":
-
-								try {
-
-									if (obj != null && !(obj instanceof BigDecimal) && !(obj instanceof Double) && !(obj instanceof Float)) {
-										Double.parseDouble(obj.toString());
-									}
-
-								} catch (NumberFormatException nfe) {
-									logger.error("The cell cannot be formatted as a Double value", nfe);
-									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
-											"sbi.workspace.dataset.wizard.metadata.validation.error.double.title");
-								}
-
-								break;
-
-							case "INTEGER":
-
-								try {
-									if (obj != null && !(obj instanceof Integer) && !(obj instanceof Long)) {
-										Integer.parseInt(obj.toString());
-									}
-								} catch (NumberFormatException nfe) {
-									logger.error("The cell cannot be formatted as an Integer value", nfe);
-									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
-											"sbi.workspace.dataset.wizard.metadata.validation.error.integer.title");
-								}
-
-								break;
-							case "DATE":
-
-								try {
-									if (obj != null && !(obj instanceof Date)) {
-										String dsConfiguration = dataSet.getConfiguration();
-										JSONObject jsonConf = new JSONObject(dsConfiguration);
-										String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
-										DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
-										LocalDate localDate = LocalDate.parse(obj.toString(), formatter);
-										localDate.toDate();
-									}
-								} catch (Exception nfe) {
-									logger.error("The cell cannot be formatted as Date value", nfe);
-									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
-											"sbi.workspace.dataset.wizard.metadata.validation.error.date.title");
-								}
-
-								break;
-							}
-
-						}
-
-					}
-
-				}
-
-				if (!validationErrors.isEmpty()) {
-					// this create an array containing the fields with error for
-					// each rows
-					JSONArray errorsArray = validationErrorsToJSONObject(validationErrors);
-					gridDataFeed.put("validationErrors", errorsArray);
-
-				}
+			if (validationErrors != null && !validationErrors.isEmpty()) {
+				// this create an array containing the fields with error for
+				// each rows
+				JSONArray errorsArray = validationErrorsToJSONObject(validationErrors, columns);
+				gridDataFeed.put("validationErrors", errorsArray);
 
 			}
-			// -----------------------------------------------------------------
 
 			return gridDataFeed.toString();
 
@@ -1155,6 +1032,158 @@ public class SelfServiceDataSetCRUD {
 				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
+	}
+
+	private ValidationErrors validateDataset(IDataStore dataStore, JSONArray columns, String dsConfiguration) throws JSONException {
+
+		ValidationErrors validationErrors = new ValidationErrors();
+
+		/**
+		 * Validation now takes care of types that are set for related columns of the file dataset metadata. For example, if we are having a column 'country',
+		 * it contains names of countries that are specific for a dataset (such as USA, Italy, UK, etc.), so user should not set its type as a numeric one
+		 * (Integer/Double), but as a String instead. However, if user specifies this column as a numeric type, the validation should inform him about this
+		 * problem (bad formatting of the metadata column(s)). In this method we will try to convert first 1000 values from all columns available to the type
+		 * that user provide for their columns. If cast (converting) cannot happen (exception appears), we will add an information about that to the
+		 * ValidationErrors object.
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+
+		/**
+		 * All records that the file dataset provides (all resulting rows).
+		 */
+		long records = dataStore.getRecordsCount();
+
+		/**
+		 * Get all metadata for the dataset and then pick only those related to the "columns" property. This way we get all columns that the file dataset
+		 * possess.
+		 */
+		// JSONObject metadataDataset = new JSONObject(datasetMetadata);
+		// JSONArray columns = metadataDataset.getJSONArray("columns");
+
+		/**
+		 * Go through all columns that the file dataset has. First go through all rows for the first column, then through all of them in the second column and
+		 * so on.
+		 */
+		for (int i = 0; i < columns.length(); i++) {
+
+			/**
+			 * Divide the metadata column index (i) by 2 in order to have a correct information about the real index of the column that is validated. This is
+			 * needed because we have 2 metadata columns for each file dataset column.
+			 */
+			/*
+			 * Modified after the 'fieldAlias' property is provided. Since it appears two times for each metadata item, we will have 4 rows for each column. A
+			 * temporary value is 4. If the 'fieldAlias' is unique, this value should be changed to 3. (danristo)
+			 */
+			int index = (int) Math.round(Math.floor(i / 2));
+
+			JSONObject jo = new JSONObject();
+
+			/**
+			 * Go through all rows for a particular (current, i-th) column.
+			 */
+			for (int j = 0; j < records; j++) { // && j < 1000;
+
+				jo = (JSONObject) columns.get(i);
+				String pvalue = jo.opt("pvalue").toString().toUpperCase();
+
+				/**
+				 * Check if property value is not one of those that are common for field type (MEASURE/ATTRIBUTE), since we are not validating their values, but
+				 * rather those that are specified for types (Integer, Double, String). So, skip these two.
+				 */
+				if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE")) {
+					Object obj = dataStore.getRecordAt(j).getFieldAt(index).getValue();
+					/**
+					 * Try to convert a value that current field has to the type that is set for that field. If the converting (casting) does not go well, an
+					 * exception will be thrown and we will handle it by providing an information about the validation problem for that particular cell.
+					 */
+					switch (pvalue) {
+
+					case "DOUBLE":
+
+						try {
+
+							if (obj != null && !(obj instanceof BigDecimal) && !(obj instanceof Double) && !(obj instanceof Float)) {
+								Double.parseDouble(obj.toString());
+							}
+
+						} catch (NumberFormatException nfe) {
+							logger.error("The cell cannot be formatted as a Double value", nfe);
+							validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+									"sbi.workspace.dataset.wizard.metadata.validation.error.double.title");
+						}
+
+						break;
+
+					case "LONG":
+						try {
+							if (obj != null && !(obj instanceof Integer) && !(obj instanceof Long)) {
+								Long.parseLong(obj.toString());
+							}
+						} catch (NumberFormatException nfe) {
+							logger.error("The cell cannot be formatted as an Long value", nfe);
+							validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+									"sbi.workspace.dataset.wizard.metadata.validation.error.long.title");
+						}
+
+						break;
+
+					case "INTEGER":
+
+						try {
+							if (obj != null && !(obj instanceof Integer) && !(obj instanceof Long)) {
+								Integer.parseInt(obj.toString());
+							}
+						} catch (NumberFormatException nfe) {
+							logger.error("The cell cannot be formatted as an Integer value", nfe);
+							validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+									"sbi.workspace.dataset.wizard.metadata.validation.error.integer.title");
+						}
+
+						break;
+
+					case "DATE":
+
+						try {
+							if (obj != null && !(obj instanceof Date)) {
+								JSONObject jsonConf = new JSONObject(dsConfiguration);
+								String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
+								DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
+								LocalDate localDate = LocalDate.parse(obj.toString(), formatter);
+								localDate.toDate();
+							}
+						} catch (Exception nfe) {
+							logger.error("The cell cannot be formatted as Date value", nfe);
+							validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+									"sbi.workspace.dataset.wizard.metadata.validation.error.date.title");
+						}
+
+						break;
+
+					case "TIMESTAMP":
+						try {
+							if (obj != null && !(obj instanceof Timestamp)) {
+								JSONObject jsonConf = new JSONObject(dsConfiguration);
+								String timestampFormat = jsonConf.get(DataSetConstants.FILE_TIMESTAMP_FORMAT).toString();
+								DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
+								LocalDateTime localDatetime = LocalDateTime.parse(obj.toString(), formatter);
+								localDatetime.toDateTime();
+							}
+						} catch (Exception e) {
+							logger.error("The cell cannot be formatted as Timestamp value", e);
+							validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+									"sbi.workspace.dataset.wizard.metadata.validation.error.timestamp.title");
+						}
+
+						break;
+					}
+
+				}
+
+			}
+
+		}
+		return validationErrors;
 	}
 
 	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata)
@@ -1219,18 +1248,20 @@ public class SelfServiceDataSetCRUD {
 		return hierarchiesColumnsToCheck;
 	}
 
-	public JSONArray validationErrorsToJSONObject(ValidationErrors validationErrors) throws JSONException {
+	public JSONArray validationErrorsToJSONObject(ValidationErrors validationErrors, JSONArray columns) throws JSONException {
 
 		JSONArray errorsArray = new JSONArray();
 		Map<Integer, List<ErrorField>> allErrors = validationErrors.getAllErrors();
 
 		for (Map.Entry<Integer, List<ErrorField>> entry : allErrors.entrySet()) {
 			JSONObject rowJSONObject = new JSONObject();
-			rowJSONObject.put("id", String.valueOf(entry.getKey()));
+			rowJSONObject.put("id", Integer.valueOf(entry.getKey()));
 
 			List<ErrorField> rowErrors = entry.getValue();
 			for (ErrorField errorColumn : rowErrors) {
-				rowJSONObject.put("column_" + errorColumn.getColumnIndex(), errorColumn.getErrorDescription());
+				int columnIndex = errorColumn.getColumnIndex();
+				rowJSONObject.put("columnName", columns.getJSONObject(columnIndex).getString("column"));
+				rowJSONObject.put("column_" + columnIndex, errorColumn.getErrorDescription());
 			}
 
 			errorsArray.put(rowJSONObject);
@@ -1746,7 +1777,8 @@ public class SelfServiceDataSetCRUD {
 		String dsMetadata = null;
 
 		Integer start = new Integer(0);
-		Integer limit = new Integer(10);
+		// test first 50 rows
+		Integer limit = new Integer(50);
 
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 
@@ -1763,7 +1795,7 @@ public class SelfServiceDataSetCRUD {
 																		// or
 																		// not
 			}
-			dataSet.loadData(start, GeneralUtilities.getDatasetMaxResults(), GeneralUtilities.getDatasetMaxResults());
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 
@@ -1791,7 +1823,7 @@ public class SelfServiceDataSetCRUD {
 				String guessedType = guessColumnType(dataStore, i);
 				boolean isTimestamp = false;
 				boolean isDate = false;
-				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer")) {
+				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer") && !guessedType.equalsIgnoreCase("Long")) {
 					String dsConfiguration = dataSet.getConfiguration();
 					JSONObject jsonConf = new JSONObject(dsConfiguration);
 					isTimestamp = isATimestamp(jsonConf, dataStore, i);
@@ -1808,6 +1840,10 @@ public class SelfServiceDataSetCRUD {
 					Class type = Class.forName("java.util.Date");
 					ifmd.setType(type);
 					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+				} else if ("Long".equalsIgnoreCase(guessedType)) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+					Class type = Class.forName("java.lang.Long");
+					ifmd.setType(type);
 				} else if ("Integer".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Integer");
@@ -1837,7 +1873,7 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("ATTRIBUTE")) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							} else {
-								if ("Double".equalsIgnoreCase(guessedType) || "Integer".equalsIgnoreCase(guessedType)) {
+								if ("Double".equalsIgnoreCase(guessedType) || "Integer".equalsIgnoreCase(guessedType) || "Long".equalsIgnoreCase(guessedType)) {
 									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 								} else {
 									ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
@@ -1853,7 +1889,10 @@ public class SelfServiceDataSetCRUD {
 							 *
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
-							if (propertyValue.equalsIgnoreCase("Integer") || propertyValue.equalsIgnoreCase("java.lang.Integer")) {
+							if (propertyValue.equalsIgnoreCase("Long") || propertyValue.equalsIgnoreCase("java.lang.Long")) {
+								Class type = Class.forName("java.lang.Long");
+								ifmd.setType(type);
+							} else if (propertyValue.equalsIgnoreCase("Integer") || propertyValue.equalsIgnoreCase("java.lang.Integer")) {
 								Class type = Class.forName("java.lang.Integer");
 								ifmd.setType(type);
 							} else if (propertyValue.equalsIgnoreCase("Double") || propertyValue.equalsIgnoreCase("java.lang.Double")) {
@@ -1862,12 +1901,18 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("String") || propertyValue.equalsIgnoreCase("java.lang.String")) {
 								Class type = Class.forName("java.lang.String");
 								ifmd.setType(type);
+							} else if (propertyValue.equalsIgnoreCase("Timestamp") || propertyValue.equalsIgnoreCase("java.sql.Timestamp")) {
+								Class type = Class.forName("java.sql.Timestamp");
+								ifmd.setType(type);
 							} else if (propertyValue.equalsIgnoreCase("Date") || propertyValue.equalsIgnoreCase("java.util.Date")) {
 								Class type = Class.forName("java.util.Date");
 								ifmd.setType(type);
 							} else {
 								if ("Double".equalsIgnoreCase(guessedType)) {
 									Class type = Class.forName("java.lang.Double");
+									ifmd.setType(type);
+								} else if ("Long".equalsIgnoreCase(guessedType)) {
+									Class type = Class.forName("java.lang.Long");
 									ifmd.setType(type);
 								} else if ("Integer".equalsIgnoreCase(guessedType)) {
 									Class type = Class.forName("java.lang.Integer");
@@ -1912,8 +1957,8 @@ public class SelfServiceDataSetCRUD {
 	 * @return the guessed type of the column
 	 */
 	private String guessColumnType(IDataStore dataStore, int columnIndex) {
-		/// boolean isNumeric = true;
 		boolean foundDouble = false;
+		boolean foundLong = false;
 		boolean foundInteger = false;
 		for (int i = 0; i < Math.min(ROWS_LIMIT_GUESS_TYPE_HEURISTIC, dataStore.getRecordsCount()); i++) {
 			IRecord record = dataStore.getRecordAt(i);
@@ -1928,18 +1973,25 @@ public class SelfServiceDataSetCRUD {
 				foundInteger = true;
 			} catch (NumberFormatException e) {
 				try {
-					// found a double, so the column COULD be a double
-					Double.parseDouble(value.toString());
-					foundDouble = true;
+					Long.parseLong(value.toString());
+					foundLong = true;
 				} catch (NumberFormatException e2) {
-					// found a string, so the entire column MUST be a string we can stop the search
-					return "String";
+					try {
+						// found a double, so the column COULD be a double
+						Double.parseDouble(value.toString());
+						foundDouble = true;
+					} catch (NumberFormatException e3) {
+						// found a string, so the entire column MUST be a string we can stop the search
+						return "String";
+					}
 				}
 			}
 		}
 		// Double has priority to Integer
 		if (foundDouble) {
 			return "Double";
+		} else if (foundLong) {
+			return "Long";
 		} else if (foundInteger) {
 			return "Integer";
 		} else {

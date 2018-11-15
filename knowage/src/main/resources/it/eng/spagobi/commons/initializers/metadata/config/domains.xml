@@ -363,6 +363,8 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Integer" valueNm="Integer" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
+	<DOMAIN valueCd="Long" valueNm="Long" domainCd="DS_META_VALUE"
+		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Date" valueNm="Date" domainCd="DS_META_VALUE"

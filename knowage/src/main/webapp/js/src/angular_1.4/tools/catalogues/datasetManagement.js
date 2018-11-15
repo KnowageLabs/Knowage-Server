@@ -3983,6 +3983,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         			for(i=0;i<this.dsMetaValue.length;i++){
         			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="long".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
@@ -4423,6 +4424,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
 
     }
+
 
 	$scope.goToFirstStep = function () {
 		$scope.step=1;

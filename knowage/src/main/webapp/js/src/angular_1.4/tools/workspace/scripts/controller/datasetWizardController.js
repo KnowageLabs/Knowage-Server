@@ -17,8 +17,8 @@
  */
 
 function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiModule_user, sbiModule_config, multipartForm,
-			$http, sbiModule_translate, toastr) {
-
+			$http, sbiModule_translate, toastr, $filter, $mdSidenav) {
+	
 	var translate = sbiModule_translate;
 
 	$scope.showExportHDFS = sbiModule_user.functionalities.indexOf("DataSourceBigData")>-1;
@@ -33,6 +33,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.datasetColumns=[];
 	$scope.changingFile = false;
 	$scope.categorySet = null;
+	$scope.showErrors = false;
+	$scope.hideErors = true;
 
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
@@ -739,7 +741,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 //		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 //		 */
 //		$scope.step2ValidationFirstTime = true;
-
+//		$mdSidenav('errors-columndetails-sidenav').close();
 		$mdDialog.cancel();
 	}
 
@@ -956,20 +958,33 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				loc.columnView='<label>{{row.column}}</label>';
 				loc.pnameView='<label>{{row.pname}}</label>';
 				loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
-
+				
+				var msg = '';
 				/**
 				 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				if (($scope.validationPassed==true || $scope.validationError==true) && $scope.csvConfChanged==false && $scope.changedFileName==$scope.dataset.fileName) {
-
-					var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
-					//{{translate.load('')}}
-
-					// If type is invalid and there are validation errors in response.
-					var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
-
-					var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+				if ($scope.step2ValidationErrors != null && ($scope.validationPassed==true || $scope.validationError==true) && $scope.csvConfChanged==false && $scope.changedFileName==$scope.dataset.fileName) {
+					
+					var columnName = loc.column;
+					
+					var invalidColumns = $filter('filter')($scope.step2ValidationErrors, {columnName: columnName}, true);
+					
+					var invalidType = false;
+					
+					if (invalidColumns.length > 0 && invalidColumns[0]['column_' + i] != undefined) {																	
+						msg = invalidColumns[0]['column_' + i];
+						invalidType = true;
+						loc.columnErrorDetails = {
+							errors: invalidColumns,
+							skipRows: $scope.dataset.skipRows,
+							index: i
+						};
+					} else {
+						msg = "sbi.workspace.dataset.wizard.metadata.validation.success.title";
+					}
+					
+					var invalidColumnValidContent = '<md-content ng-click="scopeFunctions.showErrorDetails(row.columnErrorDetails)"><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
@@ -979,9 +994,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				else {
 
 					msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
-
-					// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
-//					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-circle-o fa-1x" style="background-color: #e6e6e6; width: 55%; padding-left: 45%; height: 100%" title="Pending for validation check..."></md-icon></md-content>';
+					
 					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 				}
@@ -989,7 +1002,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 		}
 	}
-
+		
+	
 	$scope.prepareDatasetForView = function() {
 
 		var datasets = $scope.dataset.meta.dataset;
@@ -1037,6 +1051,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString ||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="long".toLowerCase()||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="timestamp".toLowerCase()){
@@ -1210,5 +1225,214 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		console.info("CHANGE FILE [OUT]");
 
 	}
+	
+	// ------------------------ //
+	//   METADATA VALIDATION    //
+	// ------------------------ //
+	
+	$scope.metadataTypes = 
+		[
+		 	{name:"Columns",value:1},
+		 	{name:"Dataset",value:2}
+	 	];
+		
+		$scope.markSelectedOptMetadataType = function(md) {
+			
+			for (var i = 0; i < $scope.metadataTypes.length; i++) {			
+				if ($scope.metadataTypes[i].value == md) {
+					$scope.metadataType=$scope.metadataTypes[i];
+				}			
+			}
+			console.log($scope.metadataType);
+		}
+		
+	    $scope.tableColumns = 
+	    [
+		     {
+		      name:"columnView", 
+		      label:"Column",
+		      hideTooltip:true
+		     },
+		     
+		     {
+		         name:"pnameView",
+		         label:"Attribute",
+		         hideTooltip:true
+		     },
+		     
+		     {
+		         name:"pvalueView",
+		         label:"Value",
+		         hideTooltip:true
+		     },
+		     
+		     /**
+		      * A new column on the Step 2 of the Dataset wizard. It contains a graphic description of a validation state 
+		      * for all metadata column separately.
+		      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		      */
+		     {
+		    	 name: "metaValid",
+		    	 label: "Valid",
+		    	 hideTooltip: true
+		     }
+	     ];
+	    
+	    $scope.tableDataset =
+		[
+		 	{
+		        name:"pnameView",
+		        label:"Attribute",
+		        hideTooltip:true
+		    },
+		    
+		    {
+		        name:"pvalueView",
+		        label:"Value",
+		        hideTooltip:true
+		    }
+	    ];
+	        
+	    $scope.table=[];
+	    
+	    $scope.metaScopeFunctions={    		    		
+	    	translate: sbiModule_translate,	
+	    	datasetColumns:$scope.datasetColumns,
+	    	dsMetaProperty:$scope.dsMetaProperty,
+	    	dsMetaValue   :$scope.dsMetaValue,
+	    	filterMetaValues: function(value,row){
+	    		console.log(row);
+	    		row.dsMetaValue=[];
+	    		if(value.toLowerCase()==="type".toLowerCase()){
+	    			for(i=0;i<this.dsMetaValue.length;i++){
+	    			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase() ||
+	    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase() ||
+	    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="long".toLowerCase() ||
+	    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase() ||
+	    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() || 
+	    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
+	    				 row.dsMetaValue.push(this.dsMetaValue[i]);
+	    			
+	    			}
+	    			
+	    		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
+	    			for(i=0;i<this.dsMetaValue.length;i++){
+	       			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+	       			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
+	       				 row.dsMetaValue.push(this.dsMetaValue[i]);
+	       			
+	       			}
+	    			
+	    		}else{
+	    			
+	    			angular.copy(this.dsMetaValue,row.dsMetaValue);
+	    		}
+	    		
+	    	}
+	    };
+	    
+	    /**
+	     * A click-listener function that will take care when user clicks on the Value combo that is aligned with the particular 
+	     * Field type row, in order to indicate that we are changing this value. This information will be useful when user picks
+	     * e.g. a MEASURE, in which case the previous row of type Type (it belonging column, e.g. city) will remove its "String"
+	     * item, since the MEASURE cannot be if type String.
+	     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	     */
+	    $scope.metaScopeFunctions.valueChanged = function(item,index) {
+	    	    	
+	    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
+	    		$scope.prepareMetaForView(item.VALUE_CD,index);
+	    	}
+	    	
+	    }
+	    	    	    
+	    /**
+	     * Showing Excel cells that can't be casted to chosen Type (Value column: Integer, Double, Long...)
+	     */
+	    $scope.metaScopeFunctions.showErrorDetails = function(columnErrorDetails) {     	
+	    	
+	    	$scope.showErrors = true;
+	    	$scope.hideErrors = false;
+   		    	
+	    	$scope.columnErrorDetails = columnErrorDetails;
+			$scope.columnString = 'column_';
+			$scope.index = $scope.columnErrorDetails.index;    			
+	    	$scope.limit = 10;
+	    	$scope.errorsCount = $scope.columnErrorDetails.errors.length;
+			
+	    	$scope.showMoreErrorsButton = function() {
+	    		return $scope.errorsCount > $scope.limit;
+	    	}
+	    	
+	    	$scope.remainingErros = function() {
+	    		return $scope.errorsCount - $scope.limit;
+	    	}
+	    	
+	    	$scope.extandErrorList = function() {
+	    		if($scope.showMoreErrorsButton()) {
+	    			$scope.limit += $scope.limit;
+	    		} else {
+	    			$scope.limit = $scope.remainingErros();
+	    		}
+	    	}    	    	
+	    	
+		}
+	        
+	    $scope.closeErrorDetails = function() {	    	
+	    	$scope.showErrors = false;
+	    	$scope.hideErrors = true;
+	    	$scope.columnErrorDetails = {};
 
+	    }
+	    
+	    $scope.deleteMetaColumn=function(item){
+	    	var index=$scope.dataset.meta.columns.indexOf(item);
+	    	if(index>-1){
+	    		$scope.dataset.meta.columns.splice(index,1);
+	    	}
+	    }
+	    
+	    $scope.metaScopeFunctions.addNewMetaRow = function() {
+	    	var newRow = {
+	    			column:"",
+	    			pname:"",
+	    			pvalue:"",
+	    			dsMetaValue: [],
+	    			columnView:'<md-select ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>',
+	    			pnameView:'<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>',
+	    			pvalueView:'<md-select ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>'
+	    	}
+	    	angular.copy($scope.dsMetaValue,newRow.dsMetaValue);
+	    	$scope.dataset.meta.columns.push(newRow);
+
+	    }
+	    
+	    $scope.metaScopeFunctions.clearAllMeta = function() {
+	    	$scope.dataset.meta.columns = [];
+	    }
+	    
+	    $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
+	    
+	    $scope.metaScopeFunctions.addNewDatasetRow = function() {
+	    	var newRow = {
+	    			pname:"",
+	    			pvalue:"",
+	    			pnameView:'<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsGenMetaProperty" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>',
+	    			pvalueView:'<div><md-input-container"><input type="text" ng-model="row.pvalue">	</md-input-container></div>'
+	    	}
+	    	$scope.dataset.meta.dataset.push(newRow);
+	    }
+	    $scope.metaScopeFunctions.clearAllDatasets = function() {
+	    	$scope.dataset.meta.dataset = [];
+	    }
+	    
+	    $scope.deleteMeta=[{
+	    	label:'delete',
+	    	icon: 'fa fa-trash',
+	    	action:function(item){
+	    		 $scope.deleteMetaColumn(item);
+	    		
+	    	}
+	    }];
+		
 }
