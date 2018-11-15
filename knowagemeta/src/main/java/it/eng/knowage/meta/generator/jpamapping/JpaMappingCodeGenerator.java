@@ -45,6 +45,7 @@ import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelObject;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -352,6 +353,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 		velocityContext = new VelocityContext();
 		velocityContext.put("jpaTable", jpaTable);
+		velocityContext.put("sqlFilter", Constants.SQL_FILTER);
 		if (jpaTable.getPhysicalType().equalsIgnoreCase("View")) {
 			velocityContext.put("isUpdatable", false); //$NON-NLS-1$
 		} else {
