@@ -615,6 +615,27 @@ $organizerHeight : 120px;
 	 			overflow-y: hidden;
 	 		}
 	 	}
+	 	.showErrors {
+			height: 100%;
+			width: 300px;
+			z-index: 9999;
+			top: 0;
+			right: 0 !important;
+			 background-color:  #ffffff;
+			overflow-x: hidden;              
+		}
+		   
+		.hideErrors {
+			right: 300px;
+			position: fixed;
+			transition: right 0.3s ease-in;           
+		}
+	   
+		.showMoreErrors {
+			text-decoration: none;
+			font-size: 14px;
+			font-style: italic;
+		}
 	 }
 	
 }
