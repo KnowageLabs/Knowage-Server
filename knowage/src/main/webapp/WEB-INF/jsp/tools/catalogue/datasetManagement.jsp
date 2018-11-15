@@ -586,8 +586,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				         			<md-button ng-click="goToFirstStep()" ng-if="validated" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.finish")}}</md-button>		
 				         		</div>
 				         		
-				         	</md-card>				       	 	
-							
+				         	</md-card>				       	 															
 						</md-content>
 							
 						<!-- QUERY DATASET -->
@@ -2054,7 +2053,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tabs>
 	       		
 	       		</form>
-	       
+	       	
+    			<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="errors-columndetails-sidenav"> 
+					<md-toolbar class="md-theme-light"> 
+			 			<div class="md-toolbar-tools"> 
+			   	 			<h1 md-truncate flex="80">{{invalidColumn}}</h1>	       	 
+			    	 			<md-button class="md-icon-button" flex="20" aria-label="Close" ng-click="closeErrorDetails()"><i class="fa fa-times" aria-hidden="true"></i></md-button> 
+			   	 		</div> 
+			         </md-toolbar> 
+			         <md-content layout-padding> 
+			         	<md-list class="md-dense" flex ng-model="columnErrorDetails.errors">
+			 				<md-list-item class="md-2-line" ng-repeat="cell in columnErrorDetails.errors | limitTo: limit | orderBy:'id'">
+								<div class="md-list-item-text"> 
+			 						<h3>Row {{cell.id + columnErrorDetails.skipRows + 2 }}</h3> 
+								<p>{{translate.load(cell[columnString + index])}}</p> 
+			 					</div> 
+							</md-list-item> 
+			 			</md-list> 
+			 			<a style="text-decoration: none; font-style: italic;" ng-if="showMoreErrorsButton()" ng-click="extandErrorList()" href="">{{translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.showmore")}}: {{remainingErros()}}</a>
+			         </md-content>
+			 	</md-sidenav>	
+	       	
 	       </detail>
 	       
 		</angular-view-detail>

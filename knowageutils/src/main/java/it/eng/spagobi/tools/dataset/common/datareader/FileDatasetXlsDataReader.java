@@ -353,13 +353,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			} catch (Throwable t) {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
-			// update metadata type in order with the real value's type (default was string)
-			// if (valueField instanceof String) {
-			// if (NumberUtils.isNumber((String) valueField)) {
-			// ((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
-			// valueField = new BigDecimal(String.valueOf(valueField));
-			// }
-			// }
 
 			if (valueField != null && valueField instanceof Double) {
 				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Double.class);
@@ -438,16 +431,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 						}
 					}
 				}
-
-				// Double numericValue = cell.getNumericCellValue();
-				// // testing if the double is an integer value
-				// if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-				// // the number is an integer, this will remove the .0 trailing zeros
-				// int numericInt = numericValue.intValue();
-				// valueField = String.valueOf(numericInt);
-				// } else {
-				// valueField = String.valueOf(cell.getNumericCellValue());
-				// }
 			}
 			break;
 
