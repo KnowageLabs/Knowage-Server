@@ -19,8 +19,10 @@ package it.eng.qbe.query.filters;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +31,7 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
@@ -43,19 +46,29 @@ public class SqlFilterModelAccessModality extends AbstractModelAccessModality {
 	private UserProfile userProfile = null;
 
 	public ArrayList<IModelEntity> getSqlFilterEntities(Query query, IDataSource dataSource) {
-		ArrayList<IModelEntity> sqlFilterEntities = new ArrayList<>();
+		Set<IModelEntity> sqlFilterEntities = new HashSet<>();
 		IModelStructure modelStructure = dataSource.getModelStructure();
 		Map<String, IModelEntity> entity = modelStructure.getEntities();
 		Collection<IModelEntity> entities = entity.values();
+		Set<IModelEntity> queryEntities = query.getQueryEntities(dataSource);
+		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(dataSource.getConfiguration().getModelName(), false);
 
 		Iterator<IModelEntity> iterator = entities.iterator();
 		while (iterator.hasNext()) {
+			Set<IModelEntity> tempEntities = new HashSet<>();
 			IModelEntity tempEntity = iterator.next();
+
 			if (!tempEntity.getProperties().get("sqlFilter").equals("")) {
-				sqlFilterEntities.add(tempEntity);
+				tempEntities.add(tempEntity);
+				tempEntities.addAll(queryEntities);
+				boolean realtionship = rootEntitiesGraph.areRootEntitiesConnected(tempEntities);
+				if (realtionship) {
+					sqlFilterEntities.addAll(tempEntities);
+				}
 			}
 		}
-		return sqlFilterEntities;
+
+		return new ArrayList<IModelEntity>(sqlFilterEntities);
 	}
 
 }

@@ -442,7 +442,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				}
 			}
 		}
-		qbeDataSet.setDrivers(drivers);
+		dataSet.setDrivers(drivers);
 
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,

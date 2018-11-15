@@ -128,8 +128,15 @@ angular
 				for(var i = 0; i < $scope.drivers.length;i++){
 					$scope.businessModel.executed = true;
 					if($scope.drivers[i].mandatory){
-						$scope.businessModel.executed = false;
-						break;
+						if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
+							var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+							$scope.documentViewerUrl = url + '&' + Object.keys(drivers)[0] + "=" + drivers[Object.keys(drivers)[0]][0].value  ;
+							$scope.businessModel.executed = true;
+							break;
+						}else{
+							$scope.businessModel.executed = false;
+							break;
+						}
 					}
 				}
 
@@ -142,8 +149,9 @@ angular
 				$scope.showDrivers = false;
 				$scope.businessModel = {};
 				$scope.businessModel.executed = true;
+				$scope.documentViewerUrl = url;
 			}
-			$scope.documentViewerUrl = url;
+
 
 			$scope.hideDrivers =function(){
 				$scope.showDrivers = true;
