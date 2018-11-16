@@ -625,7 +625,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params = params + "offset=-1&size=-1";
 		}
 
-		if(ngModel.settings && ngModel.settings.summary.enabled){
+		if(ngModel.settings && ngModel.settings.summary && ngModel.settings.summary.enabled){
 			var summaryRow = ds.getSummaryRow(ngModel);
 			bodyString = bodyString + ",summaryRow:" + JSON.stringify(summaryRow);
 		}
