@@ -425,15 +425,20 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
 		Session session = (Session) entityManager.getDelegate();
-		Filter filter = session.enableFilter("sqlFilter");
-
+		Filter filter;
 		Map envs = getEnv();
 		String driverName = null;
-		Map filterNames = filter.getFilterDefinition().getParameterTypes();
 		String env = null;
+		Set filterNames = session.getSessionFactory().getDefinedFilterNames();
+		Iterator it = filterNames.iterator();
 
 		HashMap<String, Object> drivers = new HashMap<String, Object>();
-		for (Object key : filterNames.keySet()) {
+		while (it.hasNext()) {
+			String filterName = (String) it.next();
+			filter = session.enableFilter(filterName);
+			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+			session.disableFilter(filterName);
+			for (Object key : driverUrlNames.keySet()) {
 			driverName = key.toString();
 			for (Object key2 : envs.keySet()) {
 				env = key2.toString();

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -144,13 +145,25 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		EntityManager entityManager = getEntityMananger();
 		IModelStructure structure = this.statement.getDataSource().getModelStructure();
-		Filter filter = session.enableFilter("sqlFilter");
-
+		Filter filter;
+		Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
+		Iterator it = filterNamesR.iterator();
+		String driverName = null;
 		HashMap<String, Object> drivers = this.getDrivers();
-		Iterator it = drivers.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry) it.next();
-			filter.setParameter(pair.getKey().toString(), pair.getValue());
+			String filterName = (String) it.next();
+			filter = session.enableFilter(filterName);
+			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+			Iterator iter = drivers.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry pair = (Map.Entry) iter.next();
+				for (Object key : driverUrlNames.keySet()) {
+					driverName = key.toString();
+					if (pair.getKey().toString().equals(driverName)) {
+						filter.setParameter(pair.getKey().toString(), pair.getValue());
+					}
+				}
+			}
 		}
 	}
 
