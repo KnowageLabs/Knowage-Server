@@ -2601,6 +2601,19 @@
     		}
     	}
     }
+
+    .datasetSelector {
+    	.softIcon {
+    		md-icon{
+				opacity: .2;
+			}
+			&:hover {
+				md-icon{
+					opacity: .7;
+				}
+			}
+		}
+    }
 	
 }
 

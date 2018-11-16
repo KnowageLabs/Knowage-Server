@@ -1,5 +1,5 @@
-<div layout="column">
-	<div layout="row" layout-align="start center">
+<div layout="column" class="datasetSelector">
+	<div layout="row" layout-align="start center" >
 		<md-input-container class="md-block" flex>
 			<label>{{translate.load('sbi.cockpit.dataset')}}</label>
 			<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
@@ -18,16 +18,26 @@
 		<md-icon md-font-icon="fa fa-eraser"></md-icon>
 	</md-button>
 	</div>
+		<md-progress-linear ng-if="loadingMetadata" md-mode="indeterminate"></md-progress-linear>
 	<div ng-if="extended && dataset.metaData.fields.length > 0">
 		<table class="kn-table kn-table-alternated-rows kn-table-medium-rows">
 			<thead>
 				<tr>
-					<th>Column Name</th><th>Column Type</th>
+					<th>{{translate.load('sbi.cockpit.dataset.columnname')}}Column Name</th>
+					<th>{{translate.load('sbi.cockpit.dataset.columntype')}}</th>
+					<th style="width:100px">{{translate.load('sbi.cockpit.dataset.orderby')}}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-repeat="col in dataset.metaData.fields" ng-if="col.name">
-					<td>{{col.header}}</td><td>{{col.type}}</td>
+					<td>{{col.header}}</td>
+					<td>{{col.type}}</td>
+					<td ng-class="{'softIcon':col.header != datasetSettings.sortingColumn}">
+						<md-button class="md-icon-button" ng-click="orderColumn(col)" >
+							<md-icon md-font-icon="fa fa-sort-amount-asc" ng-if="datasetSettings.sortingOrder != 'DESC' || col.header != datasetSettings.sortingColumn" ></md-icon>
+							<md-icon md-font-icon="fa fa-sort-amount-desc" ng-if="col.header == datasetSettings.sortingColumn && datasetSettings.sortingOrder == 'DESC'"></md-icon>
+						</md-button>
+					</td>
 				</tr>
 			</tbody>
 		</table>
