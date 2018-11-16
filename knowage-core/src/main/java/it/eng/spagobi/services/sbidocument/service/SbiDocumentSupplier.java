@@ -132,7 +132,7 @@ public class SbiDocumentSupplier {
 		JSONArray parametersJSON = new JSONArray();
 		try {
 			Locale locale = new Locale(language, country);
-//			List parameters = biobject.getBiObjectParameters();
+//			List parameters = biobject.getDrivers();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator iter = parameters.iterator();
 				while (iter.hasNext()) {

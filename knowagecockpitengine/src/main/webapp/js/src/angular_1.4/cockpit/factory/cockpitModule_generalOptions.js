@@ -73,6 +73,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			{label:sbiModule_translate.load("sbi.cockpit.style.textAlign.center"),value:'center'}
 		 ],
 		 textVerticalAlign:	[
+		},
 			 {label:'',value:''},
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.top"),value:'top'},
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.middle"),value:'middle'},

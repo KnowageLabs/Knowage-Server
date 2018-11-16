@@ -444,7 +444,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.fieldsFunctions = [
     	
-        {
+    {
         	"label": "filters",
         	"icon": "fa fa-filter",
         	"visible": function (item){

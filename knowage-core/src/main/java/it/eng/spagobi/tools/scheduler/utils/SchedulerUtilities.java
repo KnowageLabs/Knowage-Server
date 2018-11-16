@@ -199,7 +199,7 @@ public class SchedulerUtilities {
 					// BIObject biobj = biobjdao.loadBIObjectByLabel(docLbls[i]);
 					BIObject biobj = biobjdao.loadBIObjectByLabel(docLbls[i].substring(0, docLbls[i].lastIndexOf("__")));
 					List biobjpars = biobjpardao.loadBIObjectParametersById(biobj.getId());
-					biobj.setBiObjectParameters(biobjpars);
+					biobj.setDrivers(biobjpars);
 					String biobjlbl = biobj.getLabel() + "__" + (i + 1);
 					SourceBean queryStringSB = (SourceBean) jobParSB.getFilteredSourceBeanAttribute("JOB_PARAMETER", "name", biobjlbl);
 					SourceBean iterativeSB = (SourceBean) jobParSB.getFilteredSourceBeanAttribute("JOB_PARAMETER", "name", biobjlbl + "_iterative");

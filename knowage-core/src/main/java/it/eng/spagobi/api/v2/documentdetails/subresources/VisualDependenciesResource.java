@@ -56,7 +56,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 		IObjParviewDAO parameterViewDAO;
 		try {
 			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewObjects = parameterViewDAO.loadObjParviewsFather(driverId);
+			parameterViewObjects = parameterViewDAO.loadObjParviews(driverId);
 			Assert.assertNotNull(parameterViewObjects, "Visual Dependencies can not be null");
 		} catch (HibernateException e) {
 			logger.error("Visual dependencies could not be loaded", e);
@@ -77,7 +77,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 		Assert.assertNotNull(parameterViewObject, "Visual Dependencies can not be null");
 		try {
 			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewDAO.insertObjParview(parameterViewObject);
+			parameterViewObject.setId(parameterViewDAO.insertObjParview(parameterViewObject));
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be created", e);
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);

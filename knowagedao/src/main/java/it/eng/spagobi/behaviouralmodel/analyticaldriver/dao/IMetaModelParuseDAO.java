@@ -20,4 +20,6 @@ public interface IMetaModelParuseDAO extends ISpagoBIDao {
 	public List loadAllParuses(Integer metaModelParId);
 
 	public List loadMetaModelParusesFather(Integer metaModelParId) throws HibernateException;
+
+	public List loadMetaModelParuse(Integer metaModelParId, Integer paruseId) throws HibernateException;
 }

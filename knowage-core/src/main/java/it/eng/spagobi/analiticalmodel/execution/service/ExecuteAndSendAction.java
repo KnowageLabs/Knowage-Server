@@ -177,7 +177,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 			execCtrl.refreshParameters(biobj, queryStr);
 
 			// set the description of the biobject parameters
-			setParametersDescription(biobj.getBiObjectParameters(), params);
+			setParametersDescription(biobj.getDrivers(), params);
 
 			// exec the document only if all its parameters are filled
 			// Why???? if a parameter is not mandatory and the user did not fill it????

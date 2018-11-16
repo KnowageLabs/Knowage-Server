@@ -17,33 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.text.Format;
 import java.text.ParseException;
@@ -74,6 +47,32 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/functionexecution")
 @ManageAuthorization
@@ -119,31 +118,31 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 	/*
 	 * @POST
-	 * 
+	 *
 	 * @Path("/url")
-	 * 
+	 *
 	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException,
 	 * JSONException {
-	 * 
+	 *
 	 * logger.debug("IN"); JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req); // String label = requestVal.getString("label"); String role =
 	 * requestVal.getString("role"); String modality = requestVal.optString("modality"); // String displayToolbar = requestVal.optString("displayToolbar"); //
 	 * String snapshotId = requestVal.optString("snapshotId"); // String subObjectID = requestVal.optString("subObjectID"); String sbiExecutionId =
 	 * requestVal.optString("SBI_EXECUTION_ID"); JSONObject jsonParameters = requestVal.optJSONObject("parameters"); JSONObject menuParameters =
 	 * requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
-	 * 
+	 *
 	 * RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req); SessionContainer aSessionContainer =
 	 * aRequestContainer.getSessionContainer(); SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-	 * 
+	 *
 	 * HashMap<String, Object> resultAsMap = new HashMap<String, Object>(); List errorList = new ArrayList<>(); MessageBuilder m = new MessageBuilder(); Locale
 	 * locale = m.getLocale(req); JSONObject err = new JSONObject(); JSONArray arrerr = new JSONArray(); if (sbiExecutionId == null || sbiExecutionId.isEmpty())
 	 * { // create execution id UUIDGenerator uuidGen = UUIDGenerator.getInstance(); UUID uuidObj = uuidGen.generateTimeBasedUUID(); sbiExecutionId =
 	 * uuidObj.toString(); sbiExecutionId = sbiExecutionId.replaceAll("-", ""); } resultAsMap.put("sbiExecutionId", sbiExecutionId);
-	 * 
+	 *
 	 * try { String executingRole = getExecutionRole(role); // displayToolbar // modality // BIObject obj =
 	 * DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole); // IParameterUseDAO parameterUseDAO =
 	 * DAOFactory.getParameterUseDAO(); BIObject obj = new BIObject();
-	 * 
-	 * // List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null); // for (DocumentParameters objParameter
+	 *
+	 * // List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null); // for (DocumentDriverRuntime objParameter
 	 * : parameters) { // // DEF VALUE // if (jsonParameters.isNull(objParameter.getId())) { // if (objParameter.getDefaultValues() != null &&
 	 * objParameter.getDefaultValues().size() > 0) { // if (objParameter.getDefaultValues().size() == 1) { // // SINGLE // Object value; // if
 	 * (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) { // // value =
@@ -169,23 +168,23 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 * (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) { // String date =
 	 * convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession), // SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
 	 * // jsonParameters.getString(objParameter.getId())); // jsonParameters.put(objParameter.getId(), date); // } // } // // } // // }
-	 * 
+	 *
 	 * String url = FunctionExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 	 * executingRole, modality, jsonParameters, locale); errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req,
 	 * this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, modality, jsonParameters, locale);
-	 * 
+	 *
 	 * // resultAsMap.put("parameters", parameters); resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId); if (errorList != null &&
 	 * !errorList.isEmpty()) { resultAsMap.put("errors", errorList); } // ADD TYPE CODE // TODO return EXPORT FORMAT MAP resultAsMap.put("typeCode",
 	 * obj.getBiObjectTypeCode()); resultAsMap.put("engineLabel", obj.getEngine().getLabel());
-	 * 
+	 *
 	 * } catch (DocumentExecutionException e) { err.put("message", e.getMessage()); err.put("type", "missingRole"); arrerr.put(err); JSONObject toRet = new
 	 * JSONObject(); toRet.put("errors", arrerr); return Response.ok(toRet.toString()).build(); } catch (Exception e) {
 	 * logger.error("Error while getting the document execution url", e); // throw new SpagoBIRuntimeException("Error while getting the document execution url",
 	 * e); err.put("message", e.getMessage()); arrerr.put(err); JSONObject toRet = new JSONObject(); toRet.put("errors", arrerr); return
 	 * Response.ok(toRet.toString()).build();
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * logger.debug("OUT"); return Response.ok(resultAsMap).build(); }
 	 */
 
@@ -217,12 +216,12 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
+		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
-		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null);
-		for (DocumentParameters objParameter : parameters) {
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, dum);
+		for (DocumentDriverRuntime objParameter : parameters) {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 
@@ -244,8 +243,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
-				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
-				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+				dum.refreshParameterForFilters(objParameter.getDriver(), jsonParameters);
+				parameterAsMap.put("parameterValue", objParameter.getDriver().getParameterValues());
 			}
 
 			boolean showParameterLov = true;
@@ -255,7 +254,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 
 				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
-						objParameter.getAnalyticalDocumentParameter(), req);
+						objParameter.getDriver(), req);
 
 				ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 						.get(DocumentExecutionUtils.DEFAULT_VALUES);
@@ -377,7 +376,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		BIObjectParameter biObjectParameter = null;
-		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
+		List<BIObjectParameter> parameters = biObject.getDrivers();
 		for (int i = 0; i < parameters.size(); i++) {
 			BIObjectParameter p = parameters.get(i);
 			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
@@ -623,7 +622,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 		return role;
 	}
 
-	private DefaultValuesList buildDefaultValueList(DocumentParameters objParameter) {
+	private DefaultValuesList buildDefaultValueList(DocumentDriverRuntime objParameter) {
 		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
 			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
 			String[] date = valueDate.split("#");

@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 	angular
-	.module('models_view_workspace', ['driversExecutionModule'])
+	.module('models_view_workspace', ['driversExecutionModule', 'businessModelOpeningModule','componentTreeModule'])
 
 	/**
 	 * The HTML content of the Recent view (recent documents).
@@ -39,7 +39,7 @@
 	});
 
 	function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window,
-			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter,driversExecutionService){
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversExecutionService, bmOpen_urlViewPointService){
 
 		$scope.businessModelsInitial=[];
 		$scope.federationDefinitionsInitial=[];
@@ -49,6 +49,8 @@
 		$scope.sbiUser = sbiModule_user;
 		$scope.i18n = sbiModule_i18n;
 		$scope.businessModelsDrivers = [];
+		$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
+
 		/**
 		 * The Business Model interface is improved: when models are set to be viewed as a list - the 'Label' column is removed (since there
 		 * is no 'label' property of this object) and the 'Description' column is provided instead. Columns for Federation models remain the
@@ -67,6 +69,16 @@
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
+			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel)
+			.then(function(){
+				businessModel.parametersData={}
+				businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;
+				var modelName= businessModel.name;
+				var dataSource=businessModel.dataSourceLabel;
+				var url = datasetParameters.qbeFromBMServiceUrl
+				+'&MODEL_NAME='+modelName
+				+'&DATA_SOURCE_LABEL='+ dataSource
+				+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 			var modelName= businessModel.name;
 			var dataSource=businessModel.dataSourceLabel;
@@ -79,24 +91,12 @@
 
 				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
 
-//			if( driversPerModel.length > 0){
-//				 $mdDialog.show({
-//	                 controller: executeDriversController,
-//	                 templateUrl:  sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/executeDrivers.html',
-//	                // targetEvent: $event,
-//	                 clickOutsideToClose: true,
-//	                 locals: {
-//	                	 businessModel: businessModel,
-//	                     drivers :  driversPerModel
-//	                 }
-//	             })
-//	             .then(
-//	                 function(answer) {
-	                	 $qbeViewer.openQbeInterfaceFromModel($scope,url);
-//	                 },
-//	                 function() {});
-//
-//		}
+				if( $scope.drivers.length > 0){
+					$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
+				}else{
+					 $qbeViewer.openQbeInterfaceFromModel($scope,url);
+				}
+			})
 		}
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
 		$scope.tableColumnsModels = [
@@ -388,9 +388,10 @@
 			})
 		}
 		var executeDriversController = function(businessModel , drivers , $mdDialog, $scope, $filter,sbiModule_translate){
+			businessModel.parametersData = {}
 				$scope.drivers = drivers
 				$scope.translate = sbiModule_translate;
-				$scope.drivers = [/*
+				$scope.drivers = [
 					{allowInternalNodeSelection: true,
 						dataDependencies: [],
 						dependsOn: {},
@@ -452,7 +453,8 @@
 							multivalue:false,
 							selectionType:"",
 							visualDependencies:[],"id":266}
-					*/	];
+						];
+				businessModel.parametersData.documentParameters = $scope.drivers;
 				$scope.businessModel = businessModel;
 
 

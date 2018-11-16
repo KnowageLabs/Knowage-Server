@@ -305,7 +305,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				String pName = document.getLabel() + "__" + docNo++;
 				String pValue = "";
 				String separator = "";
-				List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
+				List<BIObjectParameter> documentParameters = document.getDrivers();
 				for (BIObjectParameter documentParameter : documentParameters) {
 					String documentParameterUrl = documentParameter.getParameterUrlName();
 					String value = null;

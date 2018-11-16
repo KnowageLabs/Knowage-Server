@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
@@ -29,13 +38,6 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -723,7 +725,28 @@ public class VersionedDataSet implements IDataSet {
 		return wrappedDataset.toString();
 	}
 
+	@Override
 	public <T> T getImplementation(Class<T> clazz) {
 		return (T) wrappedDataset;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDrivers()
+	 */
+	@Override
+	public HashMap<String, Object> getDrivers() {
+		return wrappedDataset.getDrivers();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDrivers(java.util.HashMap)
+	 */
+	@Override
+	public void setDrivers(HashMap<String, Object> drivers) {
+		wrappedDataset.setDrivers(drivers);
 	}
 }

@@ -155,7 +155,7 @@ final String td_first_line_css_class = "kpi_first_line_td";
 		   ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 		   String parsToDetailDocs = "";
 		   if(instance!=null && instance.getBIObject()!=null){
-		   List pars = instance.getBIObject().getBiObjectParameters();			
+		   List pars = instance.getBIObject().getDrivers();			
 			if(pars!=null && !pars.isEmpty()){
 				Iterator ite=pars.iterator();
 				while(ite.hasNext()){

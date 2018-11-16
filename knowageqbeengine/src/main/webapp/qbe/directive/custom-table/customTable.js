@@ -272,11 +272,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			}
 		}
     	
-    	for (var i = 0; i < field.havings.length; i++) {
-			if(field.havings[i].leftOperandDescription == field.entity+" : "+field.name){
-				hav++;
-			}
-		}
     	
     	var total = filt + hav;
     	if(total == 0) {
@@ -479,14 +474,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				$scope.allFilters.push($scope.filterObject);
 
 		}
-		
-		for (var i = 0; i < field.havings.length; i++) {
-			$scope.havingObject = {
-				"operator": field.havings[i].operator,
-				"rightOperandDescription": field.havings[i].rightOperandAggregator + "(" + field.havings[i].rightOperandDescription + ")"
-			}
- 			$scope.allFilters.push($scope.havingObject);
- 		}
 		
         if($scope.allFilters.length > 0) {
 	    	$mdDialog.show({

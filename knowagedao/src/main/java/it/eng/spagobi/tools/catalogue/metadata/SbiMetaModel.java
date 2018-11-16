@@ -23,7 +23,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelPar
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
-public class SbiMetaModel extends SbiHibernateModel implements DriverableObject {
+public class SbiMetaModel extends SbiHibernateModel {
 
 	// Fields
 

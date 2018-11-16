@@ -59,7 +59,7 @@ public class BIObjectNotesManager {
 		
 		if(biobj!=null){
 			identif = "biobject=" + biobj.getLabel() + "&";
-			biobjpars = biobj.getBiObjectParameters();
+			biobjpars = biobj.getDrivers();
 			iterBiobjPars = biobjpars.iterator();
 			while(iterBiobjPars.hasNext()){
 				biobjpar = (BIObjectParameter)iterBiobjPars.next();
@@ -111,7 +111,7 @@ public class BIObjectNotesManager {
 		String parValueString = null;
 		
 		identif = "biobject=" + biobj.getLabel() + "&";
-		biobjpars = biobj.getBiObjectParameters();
+		biobjpars = biobj.getDrivers();
 		iterBiobjPars = biobjpars.iterator();
 		while(iterBiobjPars.hasNext()){
 			biobjpar = (BIObjectParameter)iterBiobjPars.next();

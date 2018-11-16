@@ -1136,7 +1136,7 @@ public class DocumentCompositionConfiguration {
 		// add other input parameter of the crossed doc not refreshed (will get values by the request)
 		try {
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
-			List objParams = obj.getBiObjectParameters();
+			List objParams = obj.getDrivers();
 			for (int j = 0; j < objParams.size(); j++) {
 				BIObjectParameter par = (BIObjectParameter) objParams.get(j);
 				if (!param.containsValue(par.getParameterUrlName())) {

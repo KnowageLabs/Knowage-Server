@@ -231,9 +231,9 @@ public class NetworkDriver extends AbstractEngineDriver implements IEngineDriver
 		}
 
 		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-		if (biobj.getBiObjectParameters() != null) {
+		if (biobj.getDrivers() != null) {
 			BIObjectParameter biobjPar = null;
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
+			for (Iterator it = biobj.getDrivers().iterator(); it.hasNext();) {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					String value = parValuesEncoder.encode(biobjPar);
@@ -338,9 +338,9 @@ public class NetworkDriver extends AbstractEngineDriver implements IEngineDriver
 	// private void addParametersContent(BIObject biobj, Map pars) {
 	// logger.debug("IN");
 	// JSONArray parsArray = null;
-	// if(biobj.getBiObjectParameters() != null){
+	// if(biobj.getDrivers() != null){
 	// ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-	// for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
+	// for(Iterator it = biobj.getDrivers().iterator(); it.hasNext();){
 	// BIObjectParameter biobjPar = (BIObjectParameter)it.next();
 	// try {
 	// String name = biobjPar.getLabel();

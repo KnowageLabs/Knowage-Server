@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Filter;
+import org.hibernate.Session;
 import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +29,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -35,6 +39,7 @@ import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -149,6 +154,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			}
 
+			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 			logger.debug("Parameter [" + "limit" + "] is equals to [" + limit + "]");
@@ -164,6 +170,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
 			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
+			modelEntities.addAll(sqlModality.getSqlFilterEntities(query, getEngineInstance().getDataSource()));
 			updateQueryGraphInQuery(filteredQuery, true, modelEntities);
 
 			Map<String, Map<String, String>> inlineFilteredSelectFields = filteredQuery.getInlineFilteredSelectFields();
@@ -321,6 +328,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("UndirectedGraph retrieved");
 			Set<IModelEntity> entities = filteredQuery.getQueryEntities(getEngineInstance().getDataSource());
 			if (entities.size() > 0) {
+				entities.addAll(modelEntities);
 				queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph, entities);
 			}
 
@@ -414,6 +422,34 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet dataSet = getActiveQueryAsDataSet(q);
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
 		IStatement statement = qbeDataSet.getStatement();
+
+		EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+		Session session = (Session) entityManager.getDelegate();
+		Filter filter;
+		Map envs = getEnv();
+		String driverName = null;
+		String env = null;
+		Set filterNames = session.getSessionFactory().getDefinedFilterNames();
+		Iterator it = filterNames.iterator();
+
+		HashMap<String, Object> drivers = new HashMap<String, Object>();
+		while (it.hasNext()) {
+			String filterName = (String) it.next();
+			filter = session.enableFilter(filterName);
+			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+			session.disableFilter(filterName);
+			for (Object key : driverUrlNames.keySet()) {
+				driverName = key.toString();
+				for (Object key2 : envs.keySet()) {
+					env = key2.toString();
+					if (driverName.equals(env)) {
+						drivers.put(driverName, getEnv().get(driverName));
+					}
+				}
+			}
+		}
+		dataSet.setDrivers(drivers);
+
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 				statement.getQuery().getQueryEntities(getEngineInstance().getDataSource()));
@@ -429,7 +465,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
-			// logQueryInAudit(qbeDataSet);
+			logQueryInAudit(qbeDataSet);
 
 			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
 			dataStore = dataSet.getDataStore();

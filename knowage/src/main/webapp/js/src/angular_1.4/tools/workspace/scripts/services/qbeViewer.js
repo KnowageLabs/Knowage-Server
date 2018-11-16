@@ -22,11 +22,10 @@
  */
 
 angular
-	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) {
+	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer) {
 
-		this.openQbeInterfaceFromModel = function($scope,url) {
-
+		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
 
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
@@ -37,13 +36,18 @@ angular
 					.show
 					(
 						{
+							skipHide: true,
 							scope:$scope,
 							preserveScope: true,
 							controller: openQbeInterfaceController,
 	//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url}
+							locals:{url:url,
+									execProperties:execProperties,
+									drivers:drivers,
+									driversExecutionService:driversExecutionService
+							}
 						}
 					)
 					.then(function() {
@@ -53,8 +57,24 @@ angular
 
 		};
 
-		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
+		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived,execProperties) {
 
+			if(execProperties){
+				$scope.dataset = execProperties;
+				$scope.drivers = $scope.dataset.drivers;
+				$scope.showDrivers = true;
+
+				if($scope.drivers){
+					$scope.businessModel.executed = false;
+				}else{
+					$scope.showDrivers = false;
+					$scope.businessModel.executed = true;
+				}
+			}else{
+				$scope.showDrivers = false;
+				$scope.businessModel = {};
+				$scope.businessModel.executed = true;
+			}
 
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
@@ -78,7 +98,10 @@ angular
 							controller: openQbeInterfaceController,
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url}
+							locals:{url:url,
+								   execProperties:execProperties,
+								   drivers:$scope.dataset.drivers,
+								   }
 						}
 					)
 					.then(function() {
@@ -86,16 +109,58 @@ angular
 					});
 
 			}
-
+			$scope.executeParameter = function(){
+				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				$scope.showQbe = true;
+				$scope.businessModel.executed = true;
+			}
 
 		};
 
-		function openQbeInterfaceController($scope,url,$timeout) {
+		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
+			if(execProperties){
+				$scope.businessModel = execProperties;
+				if(execProperties.dsTypeCd){
+					$scope.drivers = execProperties.drivers
+				}else{
+					$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
+				}
+				for(var i = 0; i < $scope.drivers.length;i++){
+					$scope.businessModel.executed = true;
+					if($scope.drivers[i].mandatory){
+						if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
+							var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+							var driverName = Object.keys(drivers)[0];
+							var driverValue = drivers[Object.keys(drivers)[0]][0].value;
+							 var driverObject = {};
+							 driverObject[driverName] = driverValue;
+							$scope.documentViewerUrl = url + '&' +  $httpParamSerializer(driverObject)  ;
+							$scope.businessModel.executed = true;
+							break;
+						}else{
+							$scope.businessModel.executed = false;
+							break;
+						}
+					}
+				}
+
+				$scope.showDrivers = true;
+				if($scope.drivers.length == 0){
+					$scope.showDrivers = false;
+					$scope.businessModel.executed = true;
+				}
+			}else{
+				$scope.showDrivers = false;
+				$scope.businessModel = {};
+				$scope.businessModel.executed = true;
+				$scope.documentViewerUrl = url;
+			}
 
 
-
-			$scope.documentViewerUrl = url;
-
+			$scope.hideDrivers =function(){
+				$scope.showDrivers = true;
+				$scope.businessModel.executed = !$scope.businessModel.executed;
+			}
 			$scope.closeDocument = function() {
 
 				$mdDialog.hide();
@@ -123,7 +188,12 @@ angular
 					}
 				}
 			}
-
+			$scope.executeParameter = function(){
+				var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				$scope.documentViewerUrl = url + '&' + $httpParamSerializer(drivers);
+				$scope.showQbe = true;
+				$scope.businessModel.executed = true;
+			}
 			$scope.saveQbeDocument = function() {
 
 				/**

@@ -104,9 +104,9 @@ public class AccessibilityDriver extends AbstractEngineDriver implements IEngine
 		}
 
 		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-		if (biobj.getBiObjectParameters() != null) {
+		if (biobj.getDrivers() != null) {
 			BIObjectParameter biobjPar = null;
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
+			for (Iterator it = biobj.getDrivers().iterator(); it.hasNext();) {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					String value = parValuesEncoder.encode(biobjPar);

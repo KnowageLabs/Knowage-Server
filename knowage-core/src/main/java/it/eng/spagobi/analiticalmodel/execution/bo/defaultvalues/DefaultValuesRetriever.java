@@ -18,25 +18,27 @@
 
 package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.AbstractBIResourceRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DefaultValuesRetriever {
 
@@ -135,10 +137,10 @@ public class DefaultValuesRetriever {
 	 * GET DEFAULT VALUE FROM DOCUMENT_URL_MANAGER
 	 */
 
-	public DefaultValuesList getDefaultValuesDum(BIObjectParameter analyticalDocumentParameter, BIObject object, IEngUserProfile profile, Locale locale,
+	public DefaultValuesList getDefaultValuesDum(AbstractDriver analyticalDocumentParameter, IDrivableBIResource object, IEngUserProfile profile, Locale locale,
 			String role) {
 		logger.debug("IN");
-		DocumentUrlManager dum = new DocumentUrlManager(profile, locale);
+		DocumentRuntime dum = new DocumentRuntime(profile, locale);
 		DefaultValuesList defaultValues = null;
 		try {
 			ILovDetail lovForDefault = dum.getLovDetailForDefault(analyticalDocumentParameter);
@@ -163,7 +165,7 @@ public class DefaultValuesRetriever {
 		return defaultValues;
 	}
 
-	protected DefaultValuesList getDefaultValuesFromDefaultLovDum(BIObject object, IEngUserProfile profile, ILovDetail lovForDefault, Locale locale)
+	protected DefaultValuesList getDefaultValuesFromDefaultLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lovForDefault, Locale locale)
 			throws Exception, SourceBeanException {
 		logger.debug("IN");
 		DefaultValuesList defaultValues = new DefaultValuesList();
@@ -189,7 +191,7 @@ public class DefaultValuesRetriever {
 		return defaultValues;
 	}
 
-	public DefaultValuesList getDefaultQueryValuesDum(BIObjectParameter biparam, DocumentUrlManager dum, IEngUserProfile userProfile, BIObject object,
+	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile, IDrivableBIResource object,
 			Locale locale, String role) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();

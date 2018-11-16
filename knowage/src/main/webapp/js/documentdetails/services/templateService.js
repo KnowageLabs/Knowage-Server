@@ -21,11 +21,11 @@
     	   .service('templateService', ['resourceService', 'DocumentService', 'multipartForm', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService, DocumentService, multipartForm, sbiModule_translate, sbiModule_messaging) {
     		   var templateResource = {};
     		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documents1";   		   
+    		   var requiredPath = "2.0/documents1";
     		   templateResource.listOfTemplates = [];
     		   templateResource.changedTemplates = [];
     		   templateResource.changedTemplate = {};
-    		   templateResource.file = {};    		  
+    		   templateResource.file = {};
     		   templateResource.templatesForDeleting = [];
     		   var templateUploadBasePath = document.id + '/templates';
 
@@ -37,21 +37,21 @@
     	  	      	  });
     	        	}
     	        };
-    	        
+
     	        templateResource.getAllTemplates = function() {
     	        	var templateBasePath = documentService.document.id + '/templates';
     	        	resourceService.get(requiredPath, templateBasePath).then(function(response) {
     	        		templateResource.listOfTemplates = response.data;
     	        	});
     	        }
-    	        
+
     	        templateResource.setActiveTemplate = function() {
     	        	if(templateResource.changedTemplate.id) {
     					var templateModifyBasePath = documentService.document.id + "/templates/" + templateResource.changedTemplate.id;
     	    			resourceService.put(requiredPath, templateModifyBasePath);
     				}
     	        };
-    	        
+
     	        var deleteTemplateById = function(template) {
     	          	 var basePath = documentService.document.id + "/" + 'templates';
     	          	 var basePathWithId = basePath + "/" + template.id;
@@ -66,7 +66,7 @@
     	          	 }
     	           };
 
-    		   
+
     		   return templateResource;
     	   }]);
 

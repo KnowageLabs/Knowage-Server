@@ -17,21 +17,22 @@
  */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.ParameterCache;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.ParameterCache;
 
 /**
  * This class caches LOV (list of values) executions' result. The key of the cache element is composed by the user's identifier and the LOV definition. In case
@@ -84,7 +85,7 @@ public class LovResultCacheManager {
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
-				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),
+				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getDrivers(),
 						executionInstance.getLocale());
 				logger.debug(lovResult);
 				// insert the data in cache
@@ -94,7 +95,7 @@ public class LovResultCacheManager {
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
 			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
-			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),
+			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getDrivers(),
 					executionInstance.getLocale());
 			logger.debug(lovResult);
 		}
@@ -126,12 +127,12 @@ public class LovResultCacheManager {
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(executionInstance.getBIObject().getBiObjectParameters());
-			String statement = queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters());
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getDrivers()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(executionInstance.getBIObject().getDrivers());
+			String statement = queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getDrivers());
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(executionInstance.getBIObject().getBiObjectParameters());
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(executionInstance.getBIObject().getDrivers());
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);
@@ -147,7 +148,7 @@ public class LovResultCacheManager {
 	 * GET LOV RESULT FROM DOCUMENT_URL_MANAGER
 	 */
 
-	public String getLovResultDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject object,
+	public String getLovResultDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource object,
 			boolean retrieveIfNotcached, Locale locale) throws Exception {
 		logger.debug("IN");
 
@@ -164,7 +165,7 @@ public class LovResultCacheManager {
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
-				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getBiObjectParameters(), locale);
+				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getDrivers(), locale);
 				logger.debug(lovResult);
 				// insert the data in cache
 				if (lovResult != null)
@@ -173,7 +174,7 @@ public class LovResultCacheManager {
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
 			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
-			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getBiObjectParameters(), locale);
+			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getDrivers(), locale);
 			logger.debug(lovResult);
 		}
 
@@ -181,19 +182,19 @@ public class LovResultCacheManager {
 		return lovResult;
 	}
 
-	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject objetc) throws Exception {
+	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource objetc) throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters()));
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getBiObjectParameters());
-			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters());
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getDrivers()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getDrivers());
+			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getDrivers());
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getBiObjectParameters());
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getDrivers());
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);

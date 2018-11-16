@@ -157,7 +157,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 */
 	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session) throws Exception, EMFInternalError {
 		logger.trace("IN");
-		List biparams = obj.getBiObjectParameters();
+		List biparams = obj.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			// if the param is a Fixed Lov, Make the profile attribute

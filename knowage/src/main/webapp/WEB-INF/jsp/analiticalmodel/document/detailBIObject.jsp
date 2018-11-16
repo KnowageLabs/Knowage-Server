@@ -1424,7 +1424,7 @@ function saveDocument(goBack) {
 			<input type='hidden' id='selected_obj_par_id' name='' value=''/>
 			<input type='hidden' id='toDriversList' name='' value=''/>
 <%
-	List biObjParams = obj.getBiObjectParameters();
+	List biObjParams = obj.getDrivers();
 		String obj_par_idStr = (String) moduleResponse
 				.getAttribute("selected_obj_par_id");
 		Integer obj_par_idInt = new Integer(obj_par_idStr);

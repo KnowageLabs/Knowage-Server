@@ -25,8 +25,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 
-public class MetaModel {
+public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 
 	private Integer id;
 
@@ -147,12 +148,23 @@ public class MetaModel {
 		this.modelLocker = modelLocker;
 	}
 
-	public List<BIMetaModelParameter> getBiMetaModelParameters() {
+//	public List<BIMetaModelParameter> getBiMetaModelParameters() {
+//		return biMetaModelParameters;
+//	}
+//
+//	public void setBiMetaModelParameters(List<BIMetaModelParameter> biMetaModelParameters) {
+//		this.biMetaModelParameters = biMetaModelParameters;
+//	}
+
+	@Override
+	public List<BIMetaModelParameter> getDrivers() {
 		return biMetaModelParameters;
 	}
 
-	public void setBiMetaModelParameters(List<BIMetaModelParameter> biMetaModelParameters) {
-		this.biMetaModelParameters = biMetaModelParameters;
+
+	@Override
+	public void setDrivers(List<BIMetaModelParameter> drivers) {
+		this.biMetaModelParameters = drivers;
 	}
 
 }

@@ -1,4 +1,4 @@
-﻿Insert in this file the history of DB Schema, only for PostgreSQL
+Insert in this file the history of DB Schema, only for PostgreSQL
 Every items must have:
 - The Developer who has made the change
 - The SQL script that updates the schema ( schema, index and FK )

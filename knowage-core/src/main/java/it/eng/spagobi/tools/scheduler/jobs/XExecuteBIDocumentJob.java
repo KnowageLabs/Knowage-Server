@@ -17,6 +17,30 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -54,18 +78,6 @@ import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
@@ -347,10 +359,10 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
                 Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles, EventType.SCHEDULER);
 
                 Map<String, String> parametersMap = new HashMap<String, String>();
-                BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(document.getBiObjectParameters());
+                BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(document.getDrivers());
                 while (objectParametersIterator.hasNext()) {
                     List parameters = (List) objectParametersIterator.next();
-                    document.setBiObjectParameters(parameters);
+                    document.setDrivers(parameters);
 
                     StringBuffer nameSuffix = new StringBuffer();
                     StringBuffer descriptionSuffix = new StringBuffer(" [");
@@ -383,7 +395,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
                     // check parameters value: if a parameter hasn't value but isn't mandatory the process
                     // must go on and so hasValidValue is set to true
-                    List tmpBIObjectParameters = document.getBiObjectParameters();
+                    List tmpBIObjectParameters = document.getDrivers();
                     Iterator it = tmpBIObjectParameters.iterator();
                     while (it.hasNext()) {
                         boolean isMandatory = false;
@@ -629,7 +641,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
     private void retrieveParametersValues(BIObject biobj) throws Exception {
         logger.debug("IN");
         try {
-            List parameters = biobj.getBiObjectParameters();
+            List parameters = biobj.getDrivers();
             if (parameters == null || parameters.isEmpty()) {
                 logger.debug("Document has no parameters");
                 return;
@@ -662,7 +674,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
     private void setLoadAtRuntimeParameters(BIObject biobj, String loadAtRuntimeParametersString) {
         logger.debug("IN");
         try {
-            List parameters = biobj.getBiObjectParameters();
+            List parameters = biobj.getDrivers();
             if (parameters == null || parameters.isEmpty()) {
                 logger.debug("Document has no parameters");
                 return;
@@ -705,7 +717,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
     private void setIterativeParameters(BIObject biobj, String iterativeParametersString) {
         logger.debug("IN");
         try {
-            List parameters = biobj.getBiObjectParameters();
+            List parameters = biobj.getDrivers();
             if (parameters == null || parameters.isEmpty()) {
                 logger.debug("Document has no parameters");
                 return;
@@ -733,7 +745,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
     private void setUseFormulaParameters(BIObject biobj, String useFormulaParametersString) {
         logger.debug("IN");
         try {
-            List parameters = biobj.getBiObjectParameters();
+            List parameters = biobj.getDrivers();
             if (parameters == null || parameters.isEmpty()) {
                 logger.debug("Document has no parameters");
                 return;

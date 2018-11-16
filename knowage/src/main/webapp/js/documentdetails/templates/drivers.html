@@ -100,13 +100,13 @@
                 </div>
             </md-toolbar>
             <md-card-content layout="column" class="noPadding">
-                <div layout="row" layout-align="center center" ng-if=" !dd.dataConditions.length > 0">
+                <div layout="row" layout-align="center center" ng-if=" !dd.dataConditions[dd.selectedDriver.id].length > 0">
                     <div class="kn-noItems">
                        {{dd.translate.load("sbi.documentdetails.drivers.nodata")}}
                     </div>
                 </div>
                 <md-list class="md-dense">
-                    <md-list-item class=" md-2-line "  ng-repeat="correlation in dd.dataConditions track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event,dd.selectedDriver,$index)">
+                    <md-list-item class=" md-2-line "  ng-repeat="correlation in dd.dataConditions[dd.selectedDriver.id] track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event,dd.selectedDriver,$index)">
                          
                         <div class="md-list-item-text " ng-if='!dd.driverRelatedObject.category'>
                             <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
@@ -115,7 +115,7 @@
                             <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
                  
                         </div>
-                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition($index,'data') " aria-label="delete driver ">
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition($index,'data',dd.selectedDriver) " aria-label="delete driver ">
                             <md-icon md-font-icon="fa fa-trash "></md-icon>
                         </md-button>
                         <md-divider></md-divider>
@@ -139,17 +139,17 @@
             </md-toolbar>
            
             <md-card-content layout="column" class="noPadding">
-                <div layout="row" layout-align="center center" ng-if=" !dd.visibilityConditions.length > 0">
+                <div layout="row" layout-align="center center" ng-if=" !dd.visibilityConditions[dd.selectedDriver.id].length > 0">
                     <div class="kn-noItems">
                         {{dd.translate.load("sbi.documentdetails.drivers.novisibility")}}
                     </div>
                 </div>
                 <md-list class="md-dense">
-                    <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
+                    <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions[dd.selectedDriver.id] track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
                         <div class="md-list-item-text ">
                             <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.parFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
                         </div>
-                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual') " aria-label="delete driver ">
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual',dd.selectedDriver) " aria-label="delete driver ">
                             <md-icon md-font-icon="fa fa-trash "></md-icon>
                         </md-button>
                         <md-divider></md-divider>

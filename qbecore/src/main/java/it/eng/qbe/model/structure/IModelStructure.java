@@ -52,16 +52,11 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Add a new root entity to the collection of tree hierarchies associated to the specified model name
 	 *
-	 * @param modelName
-	 *            the name of the model to which the new entity will be added
-	 * @param name
-	 *            the name of the new entity
-	 * @param path
-	 *            the path of the new entity
-	 * @param role
-	 *            the role of the new entity
-	 * @param type
-	 *            the type of the new entity
+	 * @param modelName the name of the model to which the new entity will be added
+	 * @param name      the name of the new entity
+	 * @param path      the path of the new entity
+	 * @param role      the role of the new entity
+	 * @param type      the type of the new entity
 	 *
 	 * @return the new root entity added to the collection of tree hierarchies associated to the specified model name
 	 */
@@ -70,10 +65,8 @@ public interface IModelStructure extends IModelObject {
 	public void addRootEntity(String modelName, IModelEntity entity);
 
 	/**
-	 * @param modelName
-	 *            the target model's name
-	 * @param entityName
-	 *            the target entity's name
+	 * @param modelName  the target model's name
+	 * @param entityName the target entity's name
 	 *
 	 * @return The root entity named entityName contained in the collection of tree associated to the model named modelName
 	 */
@@ -91,10 +84,8 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Gets the root entity relevant to the input entity in the specified in input
 	 *
-	 * @param the
-	 *            target entity
-	 * @param the
-	 *            name of the target model
+	 * @param the target entity
+	 * @param the name of the target model
 	 *
 	 * @return the root entity relevant to the input entity in the model specified in input
 	 */
@@ -103,8 +94,7 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Gets the root entity iterator for the target model.
 	 *
-	 * @param modelName
-	 *            the name of the target model
+	 * @param modelName the name of the target model
 	 *
 	 * @return the root entities iterator
 	 */
@@ -113,8 +103,7 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Gets the root entities.
 	 *
-	 * @param modelName
-	 *            the name of the target model
+	 * @param modelName the name of the target model
 	 *
 	 * @return the root entities
 	 */
@@ -136,18 +125,12 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Add a relationship between the two input entities
 	 *
-	 * @param modelName
-	 *            the name of the target model
-	 * @param fromEntity
-	 *            the relationship source entity
-	 * @param fromFields
-	 *            the relationship source fields
-	 * @param toEntity
-	 *            the relationship destination entity
-	 * @param fromFields
-	 *            the relationship destination fields
-	 * @param type
-	 *            relationship type
+	 * @param modelName  the name of the target model
+	 * @param fromEntity the relationship source entity
+	 * @param fromFields the relationship source fields
+	 * @param toEntity   the relationship destination entity
+	 * @param fromFields the relationship destination fields
+	 * @param type       relationship type
 	 */
 	void addRootEntityRelationship(String modelName, IModelEntity fromEntity, List<IModelField> fromFields, IModelEntity toEntity, List<IModelField> toFields,
 			String type, String relationName, String sourceJoinPath, String targetJoinPath);
@@ -159,16 +142,14 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Adds the entity.
 	 *
-	 * @param entity
-	 *            the entity
+	 * @param entity the entity
 	 */
 	public void addEntity(IModelEntity entity);
 
 	/**
 	 * Gets the entity.
 	 *
-	 * @param entityUniqueName
-	 *            the entity unique name
+	 * @param entityUniqueName the entity unique name
 	 *
 	 * @return the entity
 	 */
@@ -177,8 +158,7 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Gets the entity not by the unique name.
 	 *
-	 * @param Name
-	 *            the entity name
+	 * @param Name the entity name
 	 *
 	 * @return the entity
 	 */
@@ -190,16 +170,14 @@ public interface IModelStructure extends IModelObject {
 	/**
 	 * Adds the field.
 	 *
-	 * @param field
-	 *            the field
+	 * @param field the field
 	 */
 	public void addField(IModelField field);
 
 	/**
 	 * Gets the field.
 	 *
-	 * @param fieldUniqueName
-	 *            the field unique name
+	 * @param fieldUniqueName the field unique name
 	 *
 	 * @return the field
 	 */
@@ -222,4 +200,6 @@ public interface IModelStructure extends IModelObject {
 	public void setMaxRecursionLevel(int maxRecursionLevel);
 
 	public int getMaxRecursionLevel();
+
+	public Map<String, IModelEntity> getEntities();
 }

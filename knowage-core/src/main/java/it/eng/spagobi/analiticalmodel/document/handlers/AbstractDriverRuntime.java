@@ -13,25 +13,25 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
@@ -44,32 +44,39 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-public class DocumentParameters {
-	private static Logger logger = Logger.getLogger(DocumentParameters.class);
+public abstract class AbstractDriverRuntime {
+	private static Logger logger = Logger.getLogger(AbstractDriverRuntime.class);
 	public static final String SERVICE_NAME = "GET_PARAMETERS_FOR_EXECUTION_SERVICE";
 
 	// DAOs
 	private IParameterUseDAO ANALYTICAL_DRIVER_USE_MODALITY_DAO;
-	private IObjParuseDAO DATA_DEPENDENCIES_DAO;
-	private IObjParviewDAO VISUAL_DEPENDENCIES_DAO;
-	private IBIObjectParameterDAO ANALYTICAL_DOCUMENT_PARAMETER_DAO;
+	private IObjParuseDAO DATA_DEPENDENCIES_DOC_DAO;
+	private IObjParviewDAO VISUAL_DEPENDENCIES_DOC_DAO;
+	private IBIObjectParameterDAO DRIVER_DOC_DAO;
+
+	private IMetaModelParuseDAO DATA_DEPENDENCIES_BM_DAO;
+	private IMetaModelParviewDAO VISUAL_DEPENDENCIES_BM_DAO;
+	private IBIMetaModelParameterDAO DRIVER_BM_DAO;
+
 	private IParameterDAO ANALYTICAL_DRIVER_DAO;
 
 	// attribute loaded from spagobi's metadata
-	BIObjectParameter analyticalDocumentParameter;
+	AbstractDriver driver;
 	Parameter analyticalDriver;
 	ParameterUse analyticalDriverExecModality;
-	List dataDependencies;
-	List visualDependencies;
+	List<AbstractParuse> dataDependencies;
+	List<AbstractParview> visualDependencies;
 	List lovDependencies;
 
 	// attribute used by the serializer
 	Integer biObjectId;
+	Integer biMetaModelId;
 	String id;
 	Integer parameterUseId;
 	String label;
@@ -100,84 +107,83 @@ public class DocumentParameters {
 	// in case of massive export these are the parameter ids referred by current parameter
 	List<Integer> objParameterIds;
 
+	List<Integer> metaModelParameterIds;
+
 	DefaultValuesList defaultValues;
 	ArrayList<HashMap<String, Object>> admissibleValues;
 
-	// dependencies (dataDep & visualDep &lovDep)
-	Map<String, List<ParameterDependency>> dependencies;
+	// dependencies (dataDep & visualDep & lovDep) for document and business model
+	Map<String, List<DriverDependencyRuntime>> dependencies;
 
 	String executionRole;
 	Locale locale;
-	BIObject object;
+	IDrivableBIResource biResource;
 
-	public abstract class ParameterDependency {
+	public abstract class DriverDependencyRuntime {
 		public String urlName;
 	};
 
-	public class DataDependency extends ParameterDependency {
+	public class DataDependencyRuntime extends DriverDependencyRuntime {
 	}
 
-	public class VisualDependency extends ParameterDependency {
-		public ObjParview condition;
+	public class VisualDependencyRuntime extends DriverDependencyRuntime {
+		public AbstractParview condition;
 	}
 
-	public class LovDependency extends ParameterDependency {
+	public class LovDependencyRuntime extends DriverDependencyRuntime {
 	}
 
-	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj) {
-		analyticalDocumentParameter = biParam;
+	public AbstractDriverRuntime() {
+	}
+
+	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, AbstractBIResourceRuntime dum,
+			List<? extends AbstractDriver> objParameters) {
+		driver = driver2;
 		executionRole = exeRole;
-		object = obj;
+		biResource = doc;
 		locale = loc;
 
 		initDAO();
-		initAttributes();
-		initDependencies();
+		initAttributes(driver);
+		initDependencies(driver, objParameters);
 
-		loadAdmissibleValues();
+		loadAdmissibleValues(driver, dum);
 
-		loadDefaultValues();
+		loadDefaultValues(driver);
 		objParameterIds = new ArrayList<Integer>();
 	}
 
-	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj, boolean _isFromCross, boolean loadAdmissible) {
-		analyticalDocumentParameter = biParam;
+	public AbstractDriverRuntime(AbstractDriver driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible,
+			AbstractBIResourceRuntime dum, List<AbstractDriver> objParameters) {
+		driver = driver2;
 		executionRole = exeRole;
-		object = obj;
+		biResource = doc;
 		locale = loc;
 		isFromCross = _isFromCross;
 		initDAO();
-		initAttributes();
-		initDependencies();
+		initAttributes(driver);
+		initDependencies(driver, objParameters);
 		if (loadAdmissible) {
-			loadAdmissibleValues();
+			loadAdmissibleValues(driver, dum);
 		}
-		loadDefaultValues();
+		loadDefaultValues(driver);
 		objParameterIds = new ArrayList<Integer>();
 	}
 
-	private void initDAO() {
+	public void initDAO() {
 		ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
 
-		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
-
-		VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
-		try {
-			ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (HibernateException e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
-		}
 		ANALYTICAL_DRIVER_DAO = DAOFactory.getParameterDAO();
 
 	}
 
-	void initAttributes() {
-		id = analyticalDocumentParameter.getParameterUrlName();
-		biObjectId = analyticalDocumentParameter.getId();
-		// label = localize( analyticalDocumentParameter.getLabel() );
-		label = analyticalDocumentParameter.getLabel();
-		Integer parameterId = analyticalDocumentParameter.getParameter().getId();
-		analyticalDriver = analyticalDocumentParameter.getParameter();
+	void initAttributes(AbstractDriver driver) {
+		id = driver.getParameterUrlName();
+		biObjectId = driver.getId();
+		// label = localize( driver.getLabel() );
+		label = driver.getLabel();
+		Integer parameterId = driver.getParameter().getId();
+		analyticalDriver = driver.getParameter();
 		parType = analyticalDriver.getType();
 		selectionType = analyticalDriver.getModalityValue().getSelectionType();
 		valueSelection = analyticalDriver.getValueSelection();
@@ -188,14 +194,14 @@ public class DocumentParameters {
 		 * mandatory = false; Iterator it = analyticalDriver.getChecks().iterator(); while (it.hasNext()){ Check check = (Check)it.next(); if
 		 * (check.getValueTypeCd().equalsIgnoreCase("MANDATORY")){ mandatory = true; break; } }
 		 */
-		mandatory = analyticalDocumentParameter.getRequired() == 1;
-		multivalue = analyticalDocumentParameter.isMultivalue();
-		visible = analyticalDocumentParameter.getVisible() == 1;
-		colspan = analyticalDocumentParameter.getColSpan() != null ? analyticalDocumentParameter.getColSpan() : 1;
-		thickPerc = analyticalDocumentParameter.getThickPerc() != null ? analyticalDocumentParameter.getThickPerc() : 0;
+		mandatory = driver.getRequired() == 1;
+		multivalue = driver.isMultivalue();
+		visible = driver.getVisible() == 1;
+		colspan = driver.getColSpan() != null ? driver.getColSpan() : 1;
+		thickPerc = driver.getThickPerc() != null ? driver.getThickPerc() : 0;
 
 		try {
-			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(), executionRole);
+			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(driver.getParID(), executionRole);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole + "]", e);
@@ -206,81 +212,38 @@ public class DocumentParameters {
 		enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
 	}
 
-	private void initDependencies() {
-		initDataDependencies();
-		initVisualDependencies();
-		initLovDependencies();
+	private void initDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
+		initDataDependencies(driver);
+		initVisualDependencies(driver);
+		initLovDependencies(driver, objParameters);
 	}
 
-	private void initVisualDependencies() {
+	public void initVisualDependencies(AbstractDriver driver) {
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<ParameterDependency>>();
-		}
-		try {
-			visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
-		} catch (HibernateException e) {
-			throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
-		}
-		Iterator it = visualDependencies.iterator();
-		while (it.hasNext()) {
-			ObjParview dependency = (ObjParview) it.next();
-			Integer objParFatherId = dependency.getParFatherId();
-			try {
-				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
-				VisualDependency visualDependency = new VisualDependency();
-				visualDependency.urlName = objParFather.getParameterUrlName();
-				visualDependency.condition = dependency;
-				if (!dependencies.containsKey(visualDependency.urlName)) {
-					dependencies.put(visualDependency.urlName, new ArrayList<ParameterDependency>());
-				}
-				List<ParameterDependency> depList = dependencies.get(visualDependency.urlName);
-				depList.add(visualDependency);
-			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
-			}
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
 		}
 	}
 
-	private void initLovDependencies() {
-
+	protected void initLovDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<ParameterDependency>>();
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
 		}
-		// the execution instance could be a map if in massive export case
-		// ExecutionInstance executionInstance = null;
-		// Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
-		// boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
-		// if (!isAMap) {
-		// executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		// } else {
-		// Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
-		// Integer objId = analyticalDocumentParameter.getBiObjectID();
-		// executionInstance = instances.get(objId);
-		// }
-		// if (executionInstance == null) {
-		// throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id " + " ["
-		// + analyticalDocumentParameter.getBiObjectID() + "]: was it searched as a map? " + isAMap);
-		// }
-
-		DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
-		ILovDetail lovDetail = dum.getLovDetail(analyticalDocumentParameter);
+		DocumentRuntime doc = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+		ILovDetail lovDetail = doc.getLovDetail(driver);
 		Set<String> lovParameters = null;
 		try {
 			if (lovDetail != null) {
 				lovParameters = lovDetail.getParameterNames();
 				if (lovParameters != null && !lovParameters.isEmpty()) {
 					logger.debug("Found one or more parameters inside the LOV");
-					List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO
-							.loadBIObjectParametersById(analyticalDocumentParameter.getBiObjectID());
-					LovDependency lovDependency = new LovDependency();
+					LovDependencyRuntime lovDependency = new LovDependencyRuntime();
 					lovDependencies = new ArrayList<>();
-					for (BIObjectParameter objParameter : objParameters) {
+					for (AbstractDriver objParameter : objParameters) {
 						Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
 						if (objAnalyticalDriver != null && lovParameters.contains(objAnalyticalDriver.getLabel())) {
 							logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel() + "] associated to the placeholder in the LOV");
 							lovDependency.urlName = objParameter.getParameterUrlName();
 							lovDependencies.add(lovDependency.urlName);
-							// break;
 						}
 					}
 					if (lovDependency.urlName == null || lovDependency.urlName.isEmpty()) {
@@ -289,11 +252,9 @@ public class DocumentParameters {
 					}
 
 					if (!dependencies.containsKey(lovDependency.urlName)) {
-						dependencies.put(lovDependency.urlName, new ArrayList<ParameterDependency>());
-						// lovDependencies = new ArrayList<>();
-						// lovDependencies.add(lovDependency.urlName);
+						dependencies.put(lovDependency.urlName, new ArrayList<DriverDependencyRuntime>());
 					}
-					List<ParameterDependency> depList = dependencies.get(lovDependency.urlName);
+					List<DriverDependencyRuntime> depList = dependencies.get(lovDependency.urlName);
 					depList.add(lovDependency);
 				}
 			}
@@ -302,31 +263,9 @@ public class DocumentParameters {
 		}
 	}
 
-	private void initDataDependencies() {
+	public void initDataDependencies(AbstractDriver driver) {
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<ParameterDependency>>();
-		}
-		try {
-			dataDependencies = DATA_DEPENDENCIES_DAO.loadObjParuse(analyticalDocumentParameter.getId(), analyticalDriverExecModality.getUseID());
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while loading parameter data dependecies for parameter [" + id + "]", e);
-		}
-		Iterator it = dataDependencies.iterator();
-		while (it.hasNext()) {
-			ObjParuse dependency = (ObjParuse) it.next();
-			Integer objParFatherId = dependency.getParFatherId();
-			try {
-				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
-				DataDependency dataDependency = new DataDependency();
-				dataDependency.urlName = objParFather.getParameterUrlName();
-				if (!dependencies.containsKey(dataDependency.urlName)) {
-					dependencies.put(dataDependency.urlName, new ArrayList<ParameterDependency>());
-				}
-				List<ParameterDependency> depList = dependencies.get(dataDependency.urlName);
-				depList.add(dataDependency);
-			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
-			}
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
 		}
 	}
 
@@ -334,11 +273,11 @@ public class DocumentParameters {
 	 * Load admissible values from LOV done if not lookup and not manual input done if is from cross and not manual input
 	 */
 
-	public void loadAdmissibleValues() {
+	protected void loadAdmissibleValues(AbstractDriver driver, AbstractBIResourceRuntime dum) {
 		logger.debug("IN");
 		try {
 
-			DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
+//			DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
 
 			// get LOV info
 			Integer paruseId = analyticalDriverExecModality.getUseID();
@@ -346,7 +285,7 @@ public class DocumentParameters {
 			// get admissible values metadata (i.e. LOV metadata, in case AD has LOV)
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 				// get LOV metadata
-				ILovDetail lovProvDet = dum.getLovDetail(analyticalDocumentParameter);
+				ILovDetail lovProvDet = dum.getLovDetail(driver);
 				lovColumnsNames = lovProvDet.getVisibleColumnNames();
 				lovDescriptionColumnName = lovProvDet.getDescriptionColumnName();
 				lovValueColumnName = lovProvDet.getValueColumnName();
@@ -368,13 +307,13 @@ public class DocumentParameters {
 			if (retrieveAdmissibleValue) {
 				List rows;
 				try {
-					rows = executeLOV();
+					rows = executeLOV(dum);
 				} catch (MissingLOVDependencyException e) {
 					logger.debug("Could not get LOV values because of a missing LOV dependency", e);
 					setValuesCount(-1); // it means that we don't know the lov size
 					return;
 				}
-				rows = applyPostProcessingDependencies(rows);
+				rows = applyPostProcessingDependencies(rows, dum);
 				setValuesCount(rows == null ? 0 : rows.size());
 				logger.debug("Loaded " + valuesCount + "values");
 
@@ -385,15 +324,16 @@ public class DocumentParameters {
 				if (getValuesCount() == 1 && this.isMandatory()) {
 					SourceBean lovSB = (SourceBean) rows.get(0);
 					value = getValueFromLov(lovSB);
-					analyticalDocumentParameter.setParameterValues(new ArrayList<>(Arrays.asList(value)));
+					driver.setParameterValues(new ArrayList<>(Arrays.asList(value)));
 				}
 
-				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(analyticalDocumentParameter), rows,
-						DocumentExecutionUtils.MODE_SIMPLE);
+				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows, DocumentExecutionUtils.MODE_SIMPLE);
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
+					// System.out.println(i);
 					JSONObject item = valuesJSONArray.getJSONObject(i);
+
 					if (item.length() > 0) {
 
 						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
@@ -401,9 +341,9 @@ public class DocumentParameters {
 						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
 						boolean defaultParameterAlreadyExist = false;
 						// if it is a LOOKUP
-						if (analyticalDocumentParameter.getParameter() != null && analyticalDocumentParameter.getParameter().getModalityValue() != null
-								&& analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType() != null
-								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
+						if (driver.getParameter() != null && driver.getParameter().getModalityValue() != null
+								&& driver.getParameter().getModalityValue().getSelectionType() != null
+								&& !driver.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
 								if (item.has("value") && item.has("description")) {
@@ -438,14 +378,14 @@ public class DocumentParameters {
 
 				// retrieve description for cross case
 				if (isFromCross) {
-					logger.debug("Parameter value for parameter " + analyticalDocumentParameter.getParameterUrlName()
+					logger.debug("Parameter value for parameter " + driver.getParameterUrlName()
 							+ " is retrieved from cross so it is necessary to retrieve description from admissible values");
-					if (analyticalDocumentParameter.getParameterValues() == null) {
-						analyticalDocumentParameter.setParameterValues(new ArrayList());
+					if (driver.getParameterValues() == null) {
+						driver.setParameterValues(new ArrayList());
 					}
 					// add values description search for description
 					List<String> descriptions = new ArrayList<String>();
-					for (Iterator iterator = analyticalDocumentParameter.getParameterValues().iterator(); iterator.hasNext();) {
+					for (Iterator iterator = driver.getParameterValues().iterator(); iterator.hasNext();) {
 						Object parameterValue = iterator.next();
 						String value = parameterValue != null && parameterValue instanceof String ? parameterValue.toString() : null;
 						if (value != null) {
@@ -470,7 +410,7 @@ public class DocumentParameters {
 							}
 						}
 					}
-					analyticalDocumentParameter.setParameterValuesDescription(descriptions);
+					driver.setParameterValuesDescription(descriptions);
 
 					// if parameter is of type lookup empty admissible values
 					if (isFromCross && "LOOKUP".equalsIgnoreCase(selectionType)) {
@@ -521,12 +461,12 @@ public class DocumentParameters {
 		return itemAsMap;
 	}
 
-	private List applyPostProcessingDependencies(List rows) {
+	private List applyPostProcessingDependencies(List rows, AbstractBIResourceRuntime dum) {
 		Map selectedParameterValues = getSelectedParameterValuesAsMap();
-		IEngUserProfile profile = UserProfileManager.getProfile();
-		DocumentUrlManager dum = new DocumentUrlManager(profile, this.locale);
-		List<ObjParuse> biParameterExecDependencies = dum.getDependencies(analyticalDocumentParameter, this.executionRole);
-		ILovDetail lovProvDet = dum.getLovDetail(analyticalDocumentParameter);
+//		IEngUserProfile profile = UserProfileManager.getProfile();
+//		DocumentRuntime dum = new DocumentRuntime(profile, this.locale);
+		List<AbstractParuse> biParameterExecDependencies = dum.getDependencies(driver, this.executionRole);
+		ILovDetail lovProvDet = dum.getLovDetail(driver);
 		if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
 				&& biParameterExecDependencies.size() > 0) {
 			rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
@@ -536,27 +476,26 @@ public class DocumentParameters {
 
 	private Map getSelectedParameterValuesAsMap() {
 		Map toReturn = new HashMap();
-		List<BIObjectParameter> parameters = this.object.getBiObjectParameters();
-		for (BIObjectParameter parameter : parameters) {
+		List<AbstractDriver> parameters = this.biResource.getDrivers();
+		for (AbstractDriver parameter : parameters) {
 			toReturn.put(parameter.getParameterUrlName(), parameter.getParameterValues());
 		}
 		return toReturn;
 	}
 
-	public void loadDefaultValues() {
+	public void loadDefaultValues(AbstractDriver driver) {
 		logger.debug("IN");
 		try {
 			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			defaultValues = retriever.getDefaultValuesDum(analyticalDocumentParameter, this.object, profile, this.locale, this.executionRole);
+			defaultValues = retriever.getDefaultValuesDum(driver, this.biResource, profile, this.locale, this.executionRole);
 
-			if (defaultValues.size() > 0
-					&& (analyticalDocumentParameter.getParameterValues() == null || analyticalDocumentParameter.getParameterValues().isEmpty())) {
+			if (defaultValues.size() > 0 && (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
 				// if parameter has no values set, but it has default values, those values are considered as values
 				defaultValues = buildDefaultValueList();
 				if (defaultValues != null) {
-					analyticalDocumentParameter.setParameterValues(defaultValues.getValuesAsList());
-					analyticalDocumentParameter.setParameterValuesDescription(defaultValues.getDescriptionsAsList());
+					driver.setParameterValues(defaultValues.getValuesAsList());
+					driver.setParameterValuesDescription(defaultValues.getDescriptionsAsList());
 				}
 			}
 
@@ -613,19 +552,18 @@ public class DocumentParameters {
 		}
 	}
 
-	private List executeLOV() {
+	private List executeLOV(AbstractBIResourceRuntime dum) {
 		List rows = null;
 		String lovResult = null;
 		try {
 			// get the result of the lov
-			// IEngUserProfile profile = getUserProfile();
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-			// lovResult = executionCacheManager.getLovResult(profile, executionInstance.getLovDetail(analyticalDocumentParameter),
-			// executionInstance.getDependencies(analyticalDocumentParameter), executionInstance, true);
-			DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
-			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(analyticalDocumentParameter),
-					dum.getDependencies(analyticalDocumentParameter, this.executionRole), this.object, true, this.locale);
+
+//			DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+
+			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(driver), dum.getDependencies(driver, this.executionRole),
+					this.biResource, true, this.locale);
 			// get all the rows of the result
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 			rows = lovResultHandler.getRows();
@@ -638,16 +576,15 @@ public class DocumentParameters {
 		return rows;
 	}
 
-	private boolean hasParameterInsideLOV() {
-		DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
-		ILovDetail lovDetail = dum.getLovDetail(analyticalDocumentParameter);
+	private boolean hasParameterInsideLOV(AbstractBIResourceRuntime dum) {
+//		DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+		ILovDetail lovDetail = dum.getLovDetail(driver);
 		if (lovDetail != null) {
 			Set<String> parameterNames = null;
 			try {
 				parameterNames = lovDetail.getParameterNames();
 			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution lov parameters for execution of document with id "
-						+ " [" + analyticalDocumentParameter.getBiObjectID() + "]", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution lov parameters for execution of document", e);
 			}
 			if (parameterNames != null && !parameterNames.isEmpty()) {
 				return true;
@@ -663,7 +600,7 @@ public class DocumentParameters {
 		String value = null;
 		ILovDetail lovProvDet = null;
 		try {
-			Parameter par = analyticalDocumentParameter.getParameter();
+			Parameter par = driver.getParameter();
 			ModalitiesValue lov = par.getModalityValue();
 			// build the ILovDetail object associated to the lov
 			String lovProv = lov.getLovProvider();
@@ -676,9 +613,6 @@ public class DocumentParameters {
 		return value;
 	}
 
-	// ========================================================================================
-	// ACCESSOR METHODS
-	// ========================================================================================
 	public String getId() {
 		return id;
 	}
@@ -807,11 +741,11 @@ public class DocumentParameters {
 		this.value = value;
 	}
 
-	public Map<String, List<ParameterDependency>> getDependencies() {
+	public Map<String, List<DriverDependencyRuntime>> getDependencies() {
 		return dependencies;
 	}
 
-	public void setDependencies(Map<String, List<ParameterDependency>> dependencies) {
+	public void setDependencies(Map<String, List<DriverDependencyRuntime>> dependencies) {
 		this.dependencies = dependencies;
 	}
 
@@ -887,12 +821,12 @@ public class DocumentParameters {
 		this.thickPerc = thickPerc;
 	}
 
-	public BIObjectParameter getAnalyticalDocumentParameter() {
-		return analyticalDocumentParameter;
+	public AbstractDriver getDriver() {
+		return driver;
 	}
 
-	public void setAnalyticalDocumentParameter(BIObjectParameter analyticalDocumentParameter) {
-		this.analyticalDocumentParameter = analyticalDocumentParameter;
+	public void setDriver(AbstractDriver driver) {
+		this.driver = driver;
 	}
 
 	public String getLovValueColumnName() {

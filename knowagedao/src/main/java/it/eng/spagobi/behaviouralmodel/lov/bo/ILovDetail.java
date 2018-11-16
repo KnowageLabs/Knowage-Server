@@ -19,8 +19,8 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.utilities.objects.Couple;
 
 import java.io.Serializable;
@@ -68,7 +68,7 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters, Locale locale)
 			throws Exception;
 
 	/**

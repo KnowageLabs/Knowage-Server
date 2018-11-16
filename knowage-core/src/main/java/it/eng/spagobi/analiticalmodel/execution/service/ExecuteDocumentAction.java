@@ -100,7 +100,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
 						} else {
 							logParam.put("ENGINE", obj.getEngine().toString());
-							// logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
+							// logParam.put("PARAMETERS", obj.getDrivers().toString());
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "ERR");
 							} catch (Exception e) {

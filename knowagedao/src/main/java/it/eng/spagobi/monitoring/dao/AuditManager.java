@@ -213,7 +213,7 @@ public class AuditManager {
 		audit.setDocumentState(obj.getStateCode());
 
 		String documentParameters = "";
-		List parameters = obj.getBiObjectParameters();
+		List parameters = obj.getDrivers();
 		if (parameters != null && parameters.size() > 0) {
 			for (int i = 0; i < parameters.size(); i++) {
 				BIObjectParameter parameter = (BIObjectParameter) parameters.get(i);

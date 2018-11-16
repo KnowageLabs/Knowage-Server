@@ -704,10 +704,18 @@ public class ManageDataSetsForREST {
 			String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 			String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
+			HashMap<String, Object> driversMap = new HashMap<>();
+
+			JSONObject driversJ = (JSONObject) json.get("parametersString");
+			for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
+				if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0)
+					driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
+			}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-
+			if (driversMap.size() > 0)
+				dataSet.setDrivers(driversMap);
 			// START -> This code should work instead of CheckQbeDataSets around
 			// the projects
 			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
@@ -719,7 +727,6 @@ public class ManageDataSetsForREST {
 			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
 			logger.debug("Datamart retriever correctly added to Qbe dataset");
 			// END
-
 			dataSet.setJsonQuery(jsonQuery);
 			dataSet.setDatamarts(qbeDatamarts);
 			if (dataSourceLabel != null && !dataSourceLabel.trim().equals("")) {
@@ -777,6 +784,20 @@ public class ManageDataSetsForREST {
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		return toReturn;
 	}
+
+	/**
+	 * @return
+	 */
+//	private BusinessModelDriverRuntime parseJsonObjectToDriver(JSONObject driver) {
+//		BusinessModelDriverRuntime bmDriver = new BusinessModelDriverRuntime();
+//		JSONArray admissibleValues = (JSONArray) driver.get("admissibleValues");
+//
+//			for(int i = 0; i < admissibleValues.length(); i++) {
+//
+//			}
+//		bmDriver.setAdmissibleValues(driver.get("admissibleValues"));
+//		return bmDriver;
+//	}
 
 	public List getCategories(UserProfile userProfile) {
 		IRoleDAO rolesDao = null;

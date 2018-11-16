@@ -19,7 +19,7 @@
 	var documentExecutionModule = angular.module('driversExecutionModule');
 
 	documentExecutionModule.directive('documentParamenterElement',
-			['sbiModule_config',"$mdDialog",
+			['sbiModule_config',
 			 function(sbiModule_config) {
 		return {
 			restrict: 'E',
@@ -28,47 +28,69 @@
 			controller: documentParamenterElementCtrl,
 			scope: {
 				parameter: '=',
+				execproperties: '=',
 			}
 		};
 	}]);
 
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate,
-			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user,
+			 $mdDialog, $mdMedia,$filter,sbiModule_dateServices, sbiModule_user,
 			sbiModule_messaging, sbiModule_i18n,driversExecutionService) {
 
-		$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
-		$scope.execProperties = execProperties;
-		$scope.documentExecuteServices = documentExecuteServices;
+		$scope.translate = sbiModule_translate;
+		//$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
 		$scope.sbiModule_translate = sbiModule_translate;
 		$scope.sbiModule_messaging = sbiModule_messaging;
 		$scope.i18n = sbiModule_i18n;
+		$scope.execProperties = $scope.execproperties
+		$scope.driversExecutionService = driversExecutionService;
+		var initalize = function(){
+			if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+				$scope.executionPath = "1.0/documentexecution";
+				$scope.valuesPath = "parametervalues";
+				$scope.executionParameters = "1.0/documentExeParameters";
+				$scope.parametersPath = "getParameters";
+			}else{
+				adaptExecutionProperties();
+
+				$scope.executionPath = "1.0/businessModelOpening";
+				$scope.valuesPath = "parametervalues";
+				$scope.executionParameters = "1.0/businessModelOpening";
+				$scope.parametersPath = "getParameters";
+			}
+
+		}
+
+		$scope.isEmpty = function(obj) {
+			for(var prop in obj) {
+				if(obj.hasOwnProperty(prop))
+					return false;
+			}
+			return JSON.stringify(obj) === JSON.stringify({});
+		}
 
 		$scope.getTreeParameterValue = function(innerNode) {
 			if (typeof innerNode === 'undefined'){
-				execProperties.hideProgressCircular.status=false;
+				$scope.execProperties.hideProgressCircular.status=false;
 			}
 
 			var treeLovNode = (innerNode != undefined && innerNode != null)? innerNode.id : 'lovroot';
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 
-//			var params =
-//				'label=' + execProperties.executionInstance.OBJECT_LABEL
-//				+ '&role=' + execProperties.selectedRole.name
-//				+ '&biparameterId=' + $scope.parameter.urlName
-//				+ '&mode=' + 'COMPLETE'
-//				+ '&treeLovNode=' + treeLovNode
-//			;
-
-
 			var params = {};
-			params.label = execProperties.executionInstance.OBJECT_LABEL;
-			params.role=execProperties.selectedRole.name;
-			params.biparameterId=$scope.parameter.urlName;
+			if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+				params.label = $scope.execProperties.executionInstance.OBJECT_LABEL;
+			} else {
+				params.name = $scope.execProperties.executionInstance.OBJECT_NAME;
+			}
+			params.role=$scope.execProperties.selectedRole.name;
+			params.parameterId=$scope.parameter.urlName;
 			params.mode='complete';
 			params.treeLovNode=treeLovNode;
-			driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
+			params.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
+
 
 			if(!$scope.parameter.children || $scope.parameter.children.length == 0) {
 				$scope.parameter.children = $scope.parameter.children || [];
@@ -76,13 +98,11 @@
 
 //				treeLovNode = 'lovroot';
 
-				sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
+				sbiModule_restServices.post($scope.executionPath,$scope.valuesPath , params)
 				.success(function(response, status, headers, config) {
 					console.log('parametervalues response OK -> ', response);
 
 					angular.copy(response.filterValues, $scope.parameter.children);
-//					$scope.updateAddToParameterInnerValuesMap($scope.parameter, $scope.parameter.children);
-
 					//check parameters selected field
 					if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
 						for(var z=0;z<$scope.parameter.children.length;z++){
@@ -105,7 +125,7 @@
 				if(!innerNode.children || innerNode.children.length == 0) {
 					innerNode.children = innerNode.children || [];
 
-					sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
+					sbiModule_restServices.post($scope.executionPath,$scope.valuesPath, params)
 					.success(function(response, status, headers, config) {
 						console.log('parametervalues response OK -> ', response);
 						angular.copy(response.filterValues, innerNode.children);
@@ -129,6 +149,7 @@
 				$scope.popupParameterDialog($scope.parameter, templateUrl);
 			}
 		};
+
 
 
 		$scope.checkboxParameterExists = function (parVal,parameter) {
@@ -221,16 +242,13 @@
 				parameter.parameterValue= [];
 			}
 			if(parameter.parameterDescription == undefined ) parameter.parameterDescription ="";
-//			var idx = parameter.parameterValue.indexOf(parVal);
-//			parameter.parameterDescription[idx] = parDescr;
-			addParameterValueDescription(parameter);
-
+				addParameterValueDescription(parameter);
 		}
 
 
 		$scope.popupLookupParameterDialog = function(parameter) {
 
-			execProperties.hideProgressCircular.status=false;
+			$scope.execProperties.hideProgressCircular.status=false;
 			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
@@ -241,8 +259,6 @@
 
 		$scope.endDateRange = function(defaultValue, parameter){
 			var dateStart = parameter.parameterValue;
-			//console.log('range : ' , defaultValue);
-			//console.log('datestart : ' , dateStart);
 			if(defaultValue && defaultValue!='' && dateStart!=null && dateStart!=''){
 				var defaultValueObj = {};
 				for(var i=0; i<parameter.defaultValues.length; i++){
@@ -270,7 +286,6 @@
 					dateS.setDate(ys + ye);
 				}
 				var dateToSubmit = $filter('date')(dateS, $scope.parseDateTemp(sbiModule_config.localizedDateFormat));
-				//var dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, sbiModule_config.localizedDateFormat);
 				if(typeof parameter.datarange == 'undefined' ){
 					parameter.datarange = {};
 				}
@@ -291,11 +306,6 @@
 			}
 			return result;
 		}
-
-
-
-
-
 
 		$scope.showRequiredFieldMessage = function(parameter) {
 		return (
@@ -332,8 +342,10 @@
 		};
 
 
+
 		$scope.popupParameterDialog = function(parameter, templateUrl) {
 			$mdDialog.show({
+				skipHide: true,
 				$type: "confirm",
 				clickOutsideToClose: false,
 				theme: "knowage",
@@ -341,7 +353,7 @@
 				closeTo: '#' + parameter.urlName,
 				templateUrl : templateUrl,
 				onComplete : function() {
-								execProperties.hideProgressCircular.status=true;
+					$scope.execProperties.hideProgressCircular.status=true;
 								},
 				locals : {
 					parameter: parameter,
@@ -495,23 +507,25 @@
 						};
 						// BACKEND FILTERING
 						var objPost = {};
-						objPost.OBJECT_LABEL = $scope.execProperties.executionInstance.OBJECT_LABEL;
+						if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
+							objPost.OBJECT_LABEL = $scope.execProperties.executionInstance.OBJECT_LABEL;
+						} else {
+							objPost.OBJECT_NAME = $scope.execProperties.executionInstance.OBJECT_NAME;
+						}
 						objPost.ROLE = $scope.execProperties.selectedRole.name;
 						objPost.PARAMETER_ID = paramDialogCtrl.tempParameter.urlName;
 						objPost.MODE = 'extra';
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
 
-						sbiModule_restServices.post(
-								"1.0/documentExeParameters",
-								"getParameters", objPost)
-								.success(function(data, status, headers, config) {
-									if(data.errors && data.errors[0]){
-										sbiModule_messaging.showWarningMessage(data.errors[0].message, 'Warning');
-									}
-									else if(data.status=="OK"){
-										paramDialogCtrl.tableData = data.result.root;
-										paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
-									}
+						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
+											  .success(function(data, status, headers, config) {
+													if(data.errors && data.errors[0]){
+														sbiModule_messaging.showWarningMessage(data.errors[0].message, 'Warning');
+													}
+													else if(data.status=="OK"){
+														paramDialogCtrl.tableData = data.result.root;
+														paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+													}
 								});
 
 						paramDialogCtrl.initSelectedTableItems = function() {
@@ -580,6 +594,7 @@
 					+ valueData;
 
 			$mdDialog.show({
+				skipHide: true,
 				clickOutsideToClose: false,
 				theme: "knowage",
 				openFrom: '#' + parameter.urlName,
@@ -679,5 +694,21 @@
 			}
 			return ret;
 		}
-	};
+
+		var adaptExecutionProperties = function(){
+			$scope.execProperties.selectedRole = {}
+			$scope.execProperties.executionInstance = {}
+			$scope.execProperties.executionInstance.OBJECT_ID = $scope.execProperties.id;
+			$scope.execProperties.executionInstance.OBJECT_LABEL = $scope.execProperties.name;
+			$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
+			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
+			if(!$scope.execProperties.hideProgressCircular){
+				$scope.execProperties.hideProgressCircular={};
+			    $scope.execProperties.hideProgressCircular.status=false;
+			}
+		}
+
+		initalize();
+
+	}
 })();

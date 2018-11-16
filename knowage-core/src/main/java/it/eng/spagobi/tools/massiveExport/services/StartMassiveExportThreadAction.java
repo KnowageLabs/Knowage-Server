@@ -206,7 +206,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 		for (BIObject document : documents) {
 			logger.debug("fill values of object " + document.getLabel());
-			List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
+			List<BIObjectParameter> documentParameters = document.getDrivers();
 			for (BIObjectParameter documentParameter : documentParameters) {
 				logger.debug("search value for obj par with id  " + documentParameter.getId());
 				String documentParameterLabel = parametersJSON.getString(documentParameter.getId().toString() + "_objParameterId");

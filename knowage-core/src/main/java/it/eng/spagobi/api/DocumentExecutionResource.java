@@ -77,8 +77,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -217,7 +217,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 			// BUILD THE PARAMETERS
 			Monitor buildJsonParametersMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
-			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, permanentSession, parameterUseDAO, obj);
+			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
+			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, permanentSession, parameterUseDAO, obj, dum);
 			buildJsonParametersMonitor.stop();
 			// BUILD URL
 			Monitor buildJUrlMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildUrl");
@@ -320,9 +321,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
-			IParameterUseDAO parameterUseDAO, BIObject obj) throws JSONException, EMFUserError {
-		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false);
-		for (DocumentParameters objParameter : parameters) {
+			IParameterUseDAO parameterUseDAO, BIObject obj, DocumentRuntime dum) throws JSONException, EMFUserError {
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false, dum);
+		for (DocumentDriverRuntime objParameter : parameters) {
 			Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
 			try {
 				// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
@@ -390,8 +391,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
 							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
-						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
-								objParameter.getAnalyticalDocumentParameter(), req);
+						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj, objParameter.getDriver(), req);
 
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
@@ -476,9 +476,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
-
-		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true);
-		for (DocumentParameters objParameter : parameters) {
+		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true, dum);
+		for (DocumentDriverRuntime objParameter : parameters) {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 
@@ -502,12 +502,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			// get values
-			if (objParameter.getAnalyticalDocumentParameter().getParameterValues() != null) {
+			if (objParameter.getDriver().getParameterValues() != null) {
 
 				List paramValueLst = new ArrayList();
 				List paramDescrLst = new ArrayList();
-				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
-				Object paramDescriptionValues = objParameter.getAnalyticalDocumentParameter().getParameterValuesDescription();
+				Object paramValues = objParameter.getDriver().getParameterValues();
+				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
 				if (paramValues instanceof List) {
 
@@ -676,8 +676,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (lstValues.size() == 0)
 					jsonCrossParameters.remove(objParameter.getId());
 
-				String parLab = objParameter.getAnalyticalDocumentParameter() != null && objParameter.getAnalyticalDocumentParameter().getParameter() != null
-						? objParameter.getAnalyticalDocumentParameter().getParameter().getLabel()
+				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
+						? objParameter.getDriver().getParameter().getLabel()
 						: "";
 				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
 				String sessionKey = parLab + "_" + useModLab;
@@ -822,9 +822,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return sessionParametersMap;
 	}
 
-	private boolean isReadyForExecution(List<DocumentParameters> parameters) {
-		for (DocumentParameters parameter : parameters) {
-			List values = parameter.getAnalyticalDocumentParameter().getParameterValues();
+	private boolean isReadyForExecution(List<DocumentDriverRuntime> parameters) {
+		for (DocumentDriverRuntime parameter : parameters) {
+			List values = parameter.getDriver().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically
 			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
 				logger.debug("Parameter [" + parameter.getId() + "] is mandatory but has no values. Execution cannot start automatically");
@@ -836,8 +836,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private void applyRequestParameters(BIObject biObject, JSONObject crossNavigationParametesMap, Map<String, JSONObject> sessionParametersMap, String role,
 			Locale locale, List<String> parsFromCross) {
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
-		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
+		DocumentRuntime documentUrlManager = new DocumentRuntime(this.getUserProfile(), locale);
+		List<BIObjectParameter> parameters = biObject.getDrivers();
 		for (BIObjectParameter parameter : parameters) {
 			if (crossNavigationParametesMap.has(parameter.getParameterUrlName())) {
 				logger.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
@@ -877,7 +877,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			throws EMFUserError, SerializationException, JSONException, IOException {
 
 		BIObjectParameter biObjectParameter = null;
-		List parameters = biObject.getBiObjectParameters();
+		List parameters = biObject.getDrivers();
 		for (int i = 0; i < parameters.size(); i++) {
 			BIObjectParameter p = (BIObjectParameter) parameters.get(i);
 			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
@@ -968,7 +968,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		role = (String) requestVal.opt("role");
 		label = (String) requestVal.opt("label");
-		biparameterId = (String) requestVal.opt("biparameterId");
+		biparameterId = (String) requestVal.opt("parameterId");
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
 
@@ -976,7 +976,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		BIObjectParameter biObjectParameter = null;
-		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
+		List<BIObjectParameter> parameters = biObject.getDrivers();
 		for (int i = 0; i < parameters.size(); i++) {
 			BIObjectParameter p = parameters.get(i);
 			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {

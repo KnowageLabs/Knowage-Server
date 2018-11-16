@@ -125,7 +125,7 @@ public class FileDestination extends JavaClassDestination {
 		String extension = "pdf";
 		
 		analyticalDoc = getBiObj();
-		analyticalDrivers = analyticalDoc.getBiObjectParameters();
+		analyticalDrivers = analyticalDoc.getDrivers();
 		for(int i = 0; i < analyticalDrivers.size(); i++) {
 			analyticalDriver = (BIObjectParameter)analyticalDrivers.get(i);
 			

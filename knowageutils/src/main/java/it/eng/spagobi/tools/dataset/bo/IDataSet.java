@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
@@ -29,12 +37,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public interface IDataSet extends Iterable<IRecord> {
 
@@ -124,6 +126,9 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setParametersMap(Map<String, String> paramValues) throws JSONException;
 
+	HashMap<String, Object> getDrivers();
+
+	void setDrivers(HashMap<String, Object> drivers);
 	// --------------------------------------------------------------------------------------------------
 
 	// profilation ...
@@ -234,14 +239,10 @@ public interface IDataSet extends Iterable<IRecord> {
 	/**
 	 * Get the values for a certain dataset's field, considering a optional filter.
 	 *
-	 * @param fieldName
-	 *            The dataset's field
-	 * @param start
-	 *            The offset on results
-	 * @param limit
-	 *            The limit on result
-	 * @param filter
-	 *            The optional filter
+	 * @param fieldName The dataset's field
+	 * @param start     The offset on results
+	 * @param limit     The limit on result
+	 * @param filter    The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter);
@@ -306,4 +307,5 @@ public interface IDataSet extends Iterable<IRecord> {
 	void resolveParameters();
 
 	<T> T getImplementation(Class<T> clazz);
+
 }

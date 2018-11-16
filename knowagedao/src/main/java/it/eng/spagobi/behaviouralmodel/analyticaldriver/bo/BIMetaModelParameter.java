@@ -1,6 +1,6 @@
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
-public class BIMetaModelParameter extends AbstractDriverUsage {
+public class BIMetaModelParameter extends AbstractDriver {
 
 	private Integer biMetaModelID;
 

@@ -107,23 +107,11 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             		}
                 	return filt;
                 }
-                
-                scope.countHavings = function (field) {
-                	var hav = 0;
-                	for (var i = 0; i < scope.$parent.havings.length; i++) {
-            			if(scope.$parent.havings[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
-            				hav++;
-            			}
-            		}
-                	return hav;
-                }
 
                 scope.countAll = function (field) {
                 	var filt = scope.countFilters(field);
-                	var hav = scope.countHavings(field);
-                	var total = filt + hav;
                
-                	return total;
+                	return filt;
                 }
 
                 scope.isThereAFilter = function (entity) {

@@ -187,6 +187,11 @@
 	      	              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	      	              			}else
 	      	       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.visualdependecycreated"), 'Success!');
+	      	       				if(!driversResource.visusalDependencyObjects){ driversResource.visusalDependencyObjects = []; driversResource.visusalDependencyObjects[visualDependency.parId] =[]}
+	      	       				for(var i = 0;i<driversResource.visusalDependencyObjects[visualDependency.parId].length;i++)
+	      	       			if (driversResource.visusalDependencyObjects[visualDependency.parId][i].prog == visualDependency.prog)
+        						driversResource.visusalDependencyObjects[visualDependency.parId][i] = response.data
+
 	      	       			});;
 	      	       		}else{
 	      	       			crudService.put(requiredPath,visualPath,visualDependency).then(function(response){
@@ -194,6 +199,7 @@
 	      	              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	      	              			}else
 	      	       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.visualdependecyupdated"), 'Success!');
+
 	      	       			});;
 	      	       		}
 	      	       	}
@@ -201,17 +207,23 @@
 	      	       };
 
 	      	     driversResource.persistDataDependency = function(driverableObjectId,requiredPath){
+	      	   	var parusesForDataDependency={};
 	      	       	for(var i = 0; i < driversResource.changedDataDependencies.length; i++){
-	      	       		var persistances =  Object.keys(driversResource.paruseColumns);
-	      	       		var filterColumns =  Object.values(driversResource.paruseColumns);
+	      	       		var persistances =  Object.keys(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
+	      	       		var filterColumns =  Object.values(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
 	      	       		var dataDependency = driversResource.changedDataDependencies[i];
 	      	       		var isNew = dataDependency.newDependency;
 	      	       		var prog = dataDependency.prog;
 	      	       		var dataPath = driverableObjectId + '/datadependencies';
-	      	       		var parusesForDataDependency={};
+
 	      	       		var filterColumnsForDataDependency=[];
-	      	       		parusesForDataDependency = dataDependency.persist;
+
 	      	       		for(var j = 0 ; j < persistances.length;j++){
+	      	       			if(j == 0){
+	      	       		parusesForDataDependency = dataDependency.persist;
+	      	       			}else{
+	      	       				isNew = true;
+	      	       			}
 	      	       			if(persistances[j] != "undefined" &&  parusesForDataDependency[persistances[j]]){
 	      	       			var newDataDependency = {};
 	      	       			if(prog == dataDependency.prog){
@@ -230,21 +242,30 @@
 	      	       			newDataDependency.useModeId= paruse[0].useID;
 	      			        		if(isNew){
 	      			        			prepareDependencyForPersisting(newDataDependency);
+	      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
 	      			        			delete newDataDependency.persist;
 	      			        			crudService.post(requiredPath,dataPath,newDataDependency).then(function(response){
 	      			        				if(response.data.errors){
 	      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-	      			               			}else
+	      			               			}else{
 	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
+	      			        				for(var i = 0; i < driversResource.dataDependencyObjects[newDataDependency.parId].length; i++){
+	      			        					if (driversResource.dataDependencyObjects[newDataDependency.parId][i].prog == newDataDependency.prog)
+	      			        						driversResource.dataDependencyObjects[newDataDependency.parId][i] = response.data
+	      			        					}
+	      			               			}
 	      			        			});
 	      			        			newDataDependency.prog++;
 	      			        		}else{
+	      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
 	      			        			delete newDataDependency.persist;
 	      			        			crudService.put(requiredPath,dataPath,newDataDependency).then(function(response){
 	      			        				if(response.data.errors){
 	      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-	      			               			}else
+	      			               			}else{
 	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
+
+	      			               			}
 	      			        			});
 	      			        			newDataDependency.prog++;
 	      			        		}
@@ -252,6 +273,7 @@
 
 	      	       	}
 	      	       }
+	      	      driversResource.changedDataDependencies = [];
 	      	     }
 	      	     var prepareDependencyForPersisting = function(dependency){
 	             	delete dependency.newDependency;

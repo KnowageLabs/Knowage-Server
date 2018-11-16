@@ -348,7 +348,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 		// TODO cancellare quando anche la check list è nella finestra di lookup
 		Map paramsDescriptionMap = new HashMap();
-		List biparams = obj.getBiObjectParameters();
+		List biparams = obj.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -783,7 +783,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			List paramDescriptions = (lookUpDescObj == null) ? paramValues : getAsList(lookUpDescObj);
 
 			// Set into the righr object parameter the list value
-			List biparams = obj.getBiObjectParameters();
+			List biparams = obj.getDrivers();
 			Iterator iterParams = biparams.iterator();
 			while (iterParams.hasNext()) {
 				BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -1229,7 +1229,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 		Integer objParId = getLookedUpParameterId(request);
 		BIObject obj = getExecutionInstance().getBIObject();
-		Iterator iterParams = obj.getBiObjectParameters().iterator();
+		Iterator iterParams = obj.getDrivers().iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter aBIParameter = (BIObjectParameter) iterParams.next();
 			if (aBIParameter.getId().equals(objParId)) {
@@ -1267,7 +1267,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	 * 
 	 * //id of BIParameter selected String parIdS=(String)request.getAttribute("objParId"); Integer id=Integer.valueOf(parIdS);
 	 * 
-	 * // List of BiParameters, find the one to change List biObjPars=instance.getBIObject().getBiObjectParameters();
+	 * // List of BiParameters, find the one to change List biObjPars=instance.getBIObject().getDrivers();
 	 * 
 	 * 
 	 * BIObjectParameter currbiObjPar=null; // Find the right BIparameter boolean found=false; for (Iterator iterator = biObjPars.iterator(); iterator.hasNext()
@@ -1335,7 +1335,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		Integer objParId = Integer.valueOf(objParIdS);
 
 		BIObjectParameter currbiObjPar = null;
-		List biObjPars = instance.getBIObject().getBiObjectParameters();
+		List biObjPars = instance.getBIObject().getDrivers();
 
 		// currbiObjPar.set
 
@@ -1374,7 +1374,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		HashMap paramsDescriptionMap = (HashMap) contextManager.get("PARAMS_DESCRIPTION_MAP");
 		if (pendingDelete != null && !pendingDelete.trim().equals("")) {
 			BIObject object = instance.getBIObject();
-			List biparams = object.getBiObjectParameters();
+			List biparams = object.getDrivers();
 			Iterator iterParams = biparams.iterator();
 			while (iterParams.hasNext()) {
 				BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
@@ -1525,7 +1525,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 		BIObject obj = instance.getBIObject();
 		// gets parameter's values and creates a string of values
-		List parameters = obj.getBiObjectParameters();
+		List parameters = obj.getDrivers();
 		Iterator iterParams = parameters.iterator();
 		String contentVP = "";
 		while (iterParams.hasNext()) {
@@ -1671,7 +1671,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		ExecutionInstance instance = getExecutionInstance();
 		BIObject obj = instance.getBIObject();
 		// gets parameter's values and creates a string of values
-		List parameters = obj.getBiObjectParameters();
+		List parameters = obj.getDrivers();
 		Iterator iterParams = parameters.iterator();
 
 		String allParametersValues = vp.getVpValueParams();

@@ -434,11 +434,11 @@ public class JPivotDriver extends AbstractEngineDriver implements IEngineDriver 
 			logger.warn("BIObject parameter null");
 			return pars;
 		}
-		if (biobj.getBiObjectParameters() != null) {
+		if (biobj.getDrivers() != null) {
 			BIObjectParameter biobjPar = null;
 			String value = null;
 			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
+			for (Iterator it = biobj.getDrivers().iterator(); it.hasNext();) {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					/*

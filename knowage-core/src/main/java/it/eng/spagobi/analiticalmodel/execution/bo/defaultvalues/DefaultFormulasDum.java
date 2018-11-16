@@ -1,21 +1,21 @@
 package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
-import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.AbstractBIResourceRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DefaultFormulasDum {
 
@@ -35,9 +35,10 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter, DocumentUrlManager dum, IEngUserProfile profile,
-				BIObject object, Locale locale, String role) {
-			return new DefaultValuesList();
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
+				IDrivableBIResource object, Locale locale, String role) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	};
@@ -50,8 +51,8 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter, DocumentUrlManager dum, IEngUserProfile profile,
-				BIObject object, Locale locale, String role) {
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
+				IDrivableBIResource object, Locale locale, String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
 			DefaultValue defaultValue = null;
 			try {
@@ -93,8 +94,8 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter, DocumentUrlManager dum, IEngUserProfile profile,
-				BIObject object, Locale locale, String role) {
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
+				IDrivableBIResource object, Locale locale, String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
 			DefaultValue defaultValue = null;
 			try {

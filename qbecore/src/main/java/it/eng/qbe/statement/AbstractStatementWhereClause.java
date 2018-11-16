@@ -41,6 +41,7 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
@@ -68,10 +69,8 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	/**
 	 * Builds the where clause part of the statement. If something goes wrong during the build process a StatementCompositionException will be thrown
 	 *
-	 * @param query
-	 *            The target query
-	 * @param entityAliasesMaps
-	 *            Contains an alias to entity map for each query build so far.
+	 * @param query             The target query
+	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
 	 *
 	 * @return a string representing in JPQL format the where clause part of the statement. It never returns null. If the target query have no filtering
 	 *         conditions it returns an empty String
@@ -122,12 +121,9 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	/**
 	 * Add where conditions explicitly defined by user
 	 *
-	 * @param buffer
-	 *            Contains the part of where clause build so far
-	 * @param query
-	 *            The target query
-	 * @param entityAliasesMaps
-	 *            Contains an alias to entity map for each query build so far.
+	 * @param buffer            Contains the part of where clause build so far
+	 * @param query             The target query
+	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
 	 *
 	 * @return Appends to the where clause build so far all the conditions explicitly defined by user and returns it
 	 */
@@ -258,23 +254,39 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	public String injectAutoJoins(String whereClause, Query query, Map entityAliasesMaps) {
 		logger.debug("IN");
 		String joinConditions = "";
+		QueryGraph queryGraph = query.getQueryGraph();
 		try {
 			Map rootEntityAlias = (Map) entityAliasesMaps.get(query.getId());
 
 			if (rootEntityAlias == null || rootEntityAlias.keySet().size() == 0) {
 				return "";
 			}
-
 			Set<IModelEntity> unjoinedEntities = getUnjoinedRootEntities(rootEntityAlias);
+			SqlFilterModelAccessModality sqlFilterModality = new SqlFilterModelAccessModality();
+			unjoinedEntities.addAll(sqlFilterModality.getSqlFilterEntities(query, parentStatement.getDataSource()));
+
 			if (unjoinedEntities.size() > 1) {
-				QueryGraph queryGraph = query.getQueryGraph();
+				queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(queryGraph, unjoinedEntities);
+				Iterator iterator = unjoinedEntities.iterator();
+				while (iterator.hasNext()) {
+					queryGraph.addVertex((IModelEntity) iterator.next());
+				}
+
+				if (unjoinedEntities.size() > 0) {
+					queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(queryGraph, unjoinedEntities);
+				}
+
+				query.setQueryGraph(queryGraph);
+
 				if (queryGraph == null) {
 					logger.debug("NO GRAPH FOUND IN THE QUERY. creating a default one");
 					String modelName = parentStatement.getDataSource().getConfiguration().getModelName();
 					Graph<IModelEntity, Relationship> rootEntitiesGraph = parentStatement.getDataSource().getModelStructure()
 							.getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
+
 					queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(rootEntitiesGraph, unjoinedEntities);
 				}
+
 				boolean areConnected = GraphManager.getGraphValidatorInstance(null).isValid(queryGraph, unjoinedEntities);
 				if (areConnected) {
 					List<Relationship> relationships = queryGraph.getConnections();
@@ -442,10 +454,8 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	 * ONLY FOR ECLIPSE LINK Add to the where clause a fake condition.. Id est, take the primary key (or an attribute of the primary key if it's a composed key)
 	 * of the entity and (for example keyField) and add to the whereClause the clause entityAlias.keyField = entityAlias.keyField
 	 *
-	 * @param datamartEntityName
-	 *            the jpa object name
-	 * @param entityAlias
-	 *            the alias of the table
+	 * @param datamartEntityName the jpa object name
+	 * @param entityAlias        the alias of the table
 	 */
 	public void addTableFakeCondition(String whereClause, String datamartEntityName, String entityAlias) {
 		if (parentStatement.getDataSource() instanceof org.eclipse.persistence.jpa.JpaEntityManager) {// check if the provider is eclipse link

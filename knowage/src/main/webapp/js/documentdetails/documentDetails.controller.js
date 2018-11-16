@@ -71,11 +71,11 @@
         	DriversService.persistVisualDependency(documentService.document.id,requiredPath);
         	DriversService.deleteVisualDependencies(documentService.document.id,requiredPath);
         	}
-
         	if(DocumentService.document.outputParameters) {
         		outputParametersService.persistOutputParameters();
         		outputParametersService.deleteOutputParameters();
         	}
+
 
         	dataLineageService.persistTables();
 			dataLineageService.deleteTables();

@@ -186,7 +186,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			}
 
 			try {
-				List objParams = document.getBiObjectParameters();
+				List objParams = document.getDrivers();
 				for (Iterator iterator = objParams.iterator(); iterator.hasNext();) {
 					JSONObject paramJSON = new JSONObject();
 					BIObjectParameter param = (BIObjectParameter) iterator.next();
@@ -419,7 +419,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			parameterDAO = DAOFactory.getParameterDAO();
 
 			// It inserts all the parameters of the object
-			for (BIObjectParameter parameter : document.getBiObjectParameters()) {
+			for (BIObjectParameter parameter : document.getDrivers()) {
 				parameter.setParameter(parameterDAO.loadForDetailByParameterID(parameter.getParID()));
 
 				parameter.setBiObjectID(document.getId());
@@ -679,7 +679,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			sourceDocumentLabel = sourceDocument.getLabel();
 			destinationDocumentLabel = destinationDocument.getLabel();
 
-			List<BIObjectParameter> parameters = sourceDocument.getBiObjectParameters();
+			List<BIObjectParameter> parameters = sourceDocument.getDrivers();
 
 			// order parameters on priority value to mantein the same order of the original
 			Comparator<BIObjectParameter> comparator = new Comparator<BIObjectParameter>() {
@@ -917,10 +917,10 @@ public class AnalyticalModelDocumentManagementAPI {
 						"Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document [" + document + "]", t);
 			}
 
-			if (document.getBiObjectParameters() == null) {
-				document.setBiObjectParameters(new ArrayList<BIObjectParameter>());
+			if (document.getDrivers() == null) {
+				document.setDrivers(new ArrayList<BIObjectParameter>());
 			}
-			document.getBiObjectParameters().add(documentParameter);
+			document.getDrivers().add(documentParameter);
 
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw

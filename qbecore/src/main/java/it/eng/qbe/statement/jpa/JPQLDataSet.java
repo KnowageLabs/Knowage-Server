@@ -18,16 +18,22 @@
 package it.eng.qbe.statement.jpa;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Filter;
+import org.hibernate.Session;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -80,6 +86,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = -1;
 
 		EntityManager entityManager = getEntityMananger();
+		Session session = (Session) entityManager.getDelegate();
+		enableFilters(session);
 
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
@@ -127,6 +135,40 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		if (hasDataStoreTransformer()) {
 			getDataStoreTransformer().transform(dataStore);
 		}
+	}
+
+	/**
+	 * @param session
+	 * @param runtimeDrivers
+	 */
+	private void enableFilters(Session session) {
+		HashMap<String, Object> drivers = this.getDrivers();
+//		if (drivers != null) {
+		EntityManager entityManager = getEntityMananger();
+		IModelStructure structure = this.statement.getDataSource().getModelStructure();
+		Filter filter;
+		Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
+		Iterator it = filterNamesR.iterator();
+		String driverName = null;
+
+		while (it.hasNext()) {
+			String filterName = (String) it.next();
+			filter = session.enableFilter(filterName);
+			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+
+			Iterator iter = drivers.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry pair = (Map.Entry) iter.next();
+				for (Object key : driverUrlNames.keySet()) {
+					driverName = key.toString();
+					if (pair.getKey().toString().equals(driverName)) {
+
+						filter.setParameter(pair.getKey().toString(), pair.getValue());
+					}
+				}
+			}
+		}
+		// }
 	}
 
 	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
@@ -236,6 +278,26 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	@Override
 	public boolean isIterable() {
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDrivers()
+	 */
+	@Override
+	public HashMap<String, Object> getDrivers() {
+		return super.getDrivers();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDrivers()
+	 */
+	@Override
+	public void setDrivers(HashMap<String, Object> drivers) {
+		super.setDrivers(drivers);
 	}
 
 }

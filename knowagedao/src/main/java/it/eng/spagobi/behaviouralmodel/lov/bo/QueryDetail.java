@@ -56,6 +56,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -293,13 +295,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * executionInstance) throws Exception;
      */
     @Override
-    public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> bIObjectParameters, Locale locale)
-            throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> bIObjectParameters,
+			Locale locale) throws Exception {
         return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
     }
 
-    public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> documentParameters, Locale locale,
-                               boolean getAllColumns) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> documentParameters,
+			Locale locale, boolean getAllColumns) throws Exception {
         logger.debug("IN");
         Map<String, String> parameters = getParametersNameToValueMap(documentParameters);
         String statement = getWrappedStatement(dependencies, documentParameters);
@@ -323,7 +325,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param executionInstance The execution instance (useful to retrieve dependencies values)
      * @return the in-line view that filters the original lov using the dependencies.
      */
-    public String getWrappedStatement(List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
+	public String getWrappedStatement(List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters) {
         logger.debug("IN");
         String result = getQueryDefinition();
         if (dependencies != null && dependencies.size() > 0 && BIObjectParameters != null) {
@@ -348,14 +350,14 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param dependencies      The dependencies configuration
      * @param executionInstance The execution instance
      */
-    private void buildWhereClause(StringBuffer buffer, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
+	private void buildWhereClause(StringBuffer buffer, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters) {
         buffer.append(" WHERE ");
         if (dependencies.size() == 1) {
-            ObjParuse dependency = dependencies.get(0);
+			AbstractParuse dependency = dependencies.get(0);
             addFilter(buffer, dependency, BIObjectParameters);
         } else if (dependencies.size() == 2) {
-            ObjParuse leftPart = dependencies.get(0);
-            ObjParuse rightPart = dependencies.get(1);
+			AbstractParuse leftPart = dependencies.get(0);
+			AbstractParuse rightPart = dependencies.get(1);
             String lo = leftPart.getLogicOperator();
             addFilter(buffer, leftPart, BIObjectParameters);
             buffer.append(" " + lo + " ");
@@ -364,7 +366,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
             // build the expression
             Iterator iterOps = dependencies.iterator();
             while (iterOps.hasNext()) {
-                ObjParuse op = (ObjParuse) iterOps.next();
+				AbstractParuse op = (AbstractParuse) iterOps.next();
                 if (op.getPreCondition() != null) {
                     buffer.append(" " + op.getPreCondition() + " ");
                 }
@@ -386,7 +388,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param dependency        The dependency's configuration
      * @param executionInstance The execution instance
      */
-    private void addFilter(StringBuffer buffer, ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+	private void addFilter(StringBuffer buffer, AbstractParuse dependency, List<? extends AbstractDriver> BIObjectParameters) {
         BIObjectParameter fatherParameter = getFatherParameter(dependency, BIObjectParameters);
         if (isDateRange(fatherParameter)) {
             buffer.append(getDateRangeClause(dependency, fatherParameter));
@@ -408,7 +410,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
     }
 
     @SuppressWarnings("rawtypes")
-    protected String getDateRangeClause(ObjParuse dependency, BIObjectParameter fp) {
+	protected String getDateRangeClause(AbstractParuse dependency, BIObjectParameter fp) {
         Assert.assertNotNull(fp, "param must be present");
         List values = fp.getParameterValues();
         if (notContainsValue(values)) {
@@ -515,7 +517,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param executionInstance The execution instance
      * @return the value to be used in the wrapped statement
      */
-    private String findValue(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+	private String findValue(AbstractParuse dependency, List<? extends AbstractDriver> BIObjectParameters) {
         String typeFilter = dependency.getFilterOperation();
         BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
         List values = fatherPar.getParameterValues();
@@ -556,12 +558,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param values  The values to be concatenated
      * @return the values concatenated by ','
      */
-    private String concatenateValues(BIObjectParameter biparam, List values) {
+	private String concatenateValues(AbstractDriver driver, List values) {
         StringBuffer buffer = new StringBuffer();
         Iterator it = values.iterator();
         while (it.hasNext()) {
             String aValue = (String) it.next();
-            buffer.append(getSQLValue(biparam, aValue));
+			buffer.append(getSQLValue(driver, aValue));
             if (it.hasNext()) {
                 buffer.append(",");
             }
@@ -577,8 +579,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param value   The value of the parameter
      * @return the SQL value suitable for the input value
      */
-    private String getSQLValue(BIObjectParameter biparam, String value) {
-        String parameterType = biparam.getParameter().getType();
+	private String getSQLValue(AbstractDriver driver, String value) {
+		String parameterType = driver.getParameter().getType();
         if (parameterType.equals(SpagoBIConstants.NUMBER_TYPE_FILTER)) {
             validateNumber(value);
             return value;
@@ -699,7 +701,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @param executionInstance The Execution instance
      * @return the suitable operator for the input dependency
      */
-    private String findOperator(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+	private String findOperator(AbstractParuse dependency, List<? extends AbstractDriver> BIObjectParameters) {
         String typeFilter = dependency.getFilterOperation();
         if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)) {
             return "LIKE";
@@ -730,7 +732,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
         }
     }
 
-    private BIObjectParameter getFatherParameter(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+	private BIObjectParameter getFatherParameter(AbstractParuse dependency, List<? extends AbstractDriver> BIObjectParameters) {
         Integer fatherId = dependency.getParFatherId();
         Iterator it = BIObjectParameters.iterator();
         while (it.hasNext()) {
@@ -797,9 +799,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
      * @return a list of errors: it is empty if all values are admissible, otherwise it will contain a EMFUserError for each wrong value
      * @throws Exception
      */
-    public List validateValues(IEngUserProfile profile, BIObjectParameter biparam) throws Exception {
+	public List validateValues(IEngUserProfile profile, AbstractDriver driver) throws Exception {
         List toReturn = new ArrayList();
-        List<String> values = biparam.getParameterValues();
+		List<String> values = driver.getParameterValues();
         List parameterValuesDescription = new ArrayList();
         DataConnection dataConnection = null;
         SQLCommand sqlCommand = null;
@@ -807,7 +809,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
         String statement = null;
         SourceBean result = null;
         try {
-            statement = getValidationQuery(profile, biparam, values);
+			statement = getValidationQuery(profile, driver, values);
             logger.debug("Executing validation statement [" + statement + "] ...");
             // gets connection
             Connection conn = getConnection(profile, dataSource);
@@ -838,10 +840,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
             Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, VALUE_ALIAS, aValue);
             if (obj == null) {
                 // value was not found!!
-                logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + aValue + "'" + " for user '"
+				logger.error("Parameter '" + driver.getLabel() + "' cannot assume value '" + aValue + "'" + " for user '"
                         + ((UserProfile) profile).getUserId().toString() + "'.");
                 List l = new ArrayList();
-                l.add(biparam.getLabel());
+				l.add(driver.getLabel());
                 l.add(aValue);
                 EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1077, l);
                 toReturn.add(userError);
@@ -860,14 +862,14 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
             }
             parameterValuesDescription.add(description);
         }
-        biparam.setParameterValuesDescription(parameterValuesDescription);
+		driver.setParameterValuesDescription(parameterValuesDescription);
         return toReturn;
     }
 
     /**
      * This methods builds the validation query, see validateValues method.
      */
-    private String getValidationQuery(IEngUserProfile profile, BIObjectParameter biparam, List<String> values) throws Exception {
+	private String getValidationQuery(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
         String statement = getQueryDefinition();
         statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
         StringBuffer buffer = new StringBuffer();
@@ -882,10 +884,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
             if (values.size() == 1) {
                 buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
-                buffer.append(getSQLValue(biparam, values.get(0)));
+				buffer.append(getSQLValue(driver, values.get(0)));
             } else {
                 buffer.append(getColumnSQLName(this.valueColumnName) + " IN (");
-                buffer.append(concatenateValues(biparam, values));
+				buffer.append(concatenateValues(driver, values));
                 buffer.append(")");
             }
         }

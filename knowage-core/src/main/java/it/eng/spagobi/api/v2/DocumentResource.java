@@ -104,7 +104,7 @@ public class DocumentResource extends AbstractDocumentResource {
         if (document == null)
             throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
-        List<BIObjectParameter> parameters = document.getBiObjectParameters();
+        List<BIObjectParameter> parameters = document.getDrivers();
 
         for (BIObjectParameter parameter : parameters) {
             parameter.setParameter(loadAnalyticalDriver(parameter));
@@ -481,7 +481,7 @@ public class DocumentResource extends AbstractDocumentResource {
 					if (forceVisibility || ObjectsAccessVerifier.canSee(sbiob, profile)) {
                         JSONObject tmp = fromDocumentLight(sbiob);
                         if (loadObjPar != null && loadObjPar == true) {
-                            tmp.put("objParameter", fromObjectParameterListLight(sbiob.getBiObjectParameters()));
+                            tmp.put("objParameter", fromObjectParameterListLight(sbiob.getDrivers()));
                         }
                         jarr.put(tmp);
                     }
@@ -598,8 +598,7 @@ public class DocumentResource extends AbstractDocumentResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date,
-			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar,
-			@QueryParam("callback") String callback) {
+                                   @QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
         logger.debug("IN");
         IBIObjectDAO documentsDao = null;
         List<BIObject> allObjects = null;
@@ -654,7 +653,6 @@ public class DocumentResource extends AbstractDocumentResource {
             // if (callback != null && !callback.isEmpty()) {
             // toBeReturned = callback + "(" + toBeReturned + ")";
             // }
-			// return toBeReturned;
             return Response.ok(toBeReturned).build();
         } catch (Exception e) {
             logger.error("Error while getting the list of documents", e);

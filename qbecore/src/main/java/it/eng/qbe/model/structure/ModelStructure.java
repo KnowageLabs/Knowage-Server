@@ -463,6 +463,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return this.maxRecursionLevel;
 	}
 
+	public Map<String, IModelEntity> getEntities() {
+		return this.entities;
+	}
+
 	public List<ModelViewEntity> getViewsEntities(String modelName) {
 		List<ModelViewEntity> toReturn = new ArrayList<ModelViewEntity>();
 		List<IModelEntity> entities = this.getRootEntities(modelName);

@@ -1007,7 +1007,7 @@ public class TriggerManagementModule extends AbstractHttpModule {
 					String objpref = biobj.getId().toString()+"__" + new Integer(index).toString();
 					if(uniqueDispatchContextName.equals(objpref)){
 					
-					List pars = biobj.getBiObjectParameters();
+					List pars = biobj.getDrivers();
 					Iterator iterPars = pars.iterator();
 					String queryString= "";
 					while(iterPars.hasNext()) {

@@ -76,9 +76,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 						"the ObjParuse relevant to BIObjectParameter with " + "id=" + aObjParuse.getParId() + " and ParameterUse with " + "id="
 								+ aObjParuse.getUseModeId() + " does not exist.");
 			}
-			// delete the existing object
-			aSession.delete(sbiObjParuse);
-			// create the new object
+
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
@@ -98,7 +96,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
 			// save new object
 			updateSbiCommonInfo4Insert(correlation);
-			aSession.save(correlation);
+			aSession.update(correlation);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -107,8 +105,10 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
+					aSession.clear();
 					aSession.close();
+				}
 			}
 		}
 		/*
@@ -128,10 +128,11 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public void insertObjParuse(ObjParuse aObjParuse) throws HibernateException {
+	public Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
+		SbiObjParuse correlation = new SbiObjParuse();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -143,7 +144,6 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 						"the BIObjectParameter with " + "id=" + aObjParuse.getParFatherId() + " does not exist.");
 
 			}
-			SbiObjParuse correlation = new SbiObjParuse();
 
 			correlation.setSbiObjPar(sbiObjPar);
 			correlation.setSbiParuse(sbiParuse);
@@ -155,7 +155,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setPostCondition(aObjParuse.getPostCondition());
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
 			updateSbiCommonInfo4Insert(correlation);
-			aSession.save(correlation);
+			correlation.setId((Integer) aSession.save(correlation));
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -166,8 +166,10 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
+				return correlation.getId();
 			}
 		}
+		return correlation.getId();
 	}
 
 	/**

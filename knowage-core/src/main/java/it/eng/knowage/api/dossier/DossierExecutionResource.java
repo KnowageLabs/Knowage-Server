@@ -120,7 +120,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		ParametersDecoder decoder = new ParametersDecoder();
 		logger.debug("fill values of object " + document.getLabel());
-		List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
+		List<BIObjectParameter> documentParameters = document.getDrivers();
 		for (BIObjectParameter documentParameter : documentParameters) {
 			String parameterUrl = documentParameter.getParameterUrlName();
 			logger.debug("search value for obj par with label  " + parameterUrl);

@@ -621,7 +621,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		HashMap parametersMap = null;
 
 		// Search if the chart has parameters
-		List parametersList = obj.getBiObjectParameters();
+		List parametersList = obj.getDrivers();
 		logger.debug("Check for BIparameters and relative values");
 		if (parametersList != null) {
 			parametersMap = new HashMap();
@@ -677,7 +677,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		JSONArray JSONPars = new JSONArray();
 
 		// Search if the chart has parameters
-		List parametersList = obj.getBiObjectParameters();
+		List parametersList = obj.getDrivers();
 		logger.debug("Check for BIparameters and relative values");
 		if (parametersList != null) {
 			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {

@@ -241,7 +241,7 @@ public class DocumentCompositionExporter {
 		if (currentConf == null)
 			return;
 
-		List parametersBO = object.getBiObjectParameters();
+		List parametersBO = object.getDrivers();
 		Map<String, Object> currentParameters = currentConf.getParameters();
 		if (currentParameters != null) {
 			if (parametersBO != null) {
@@ -296,7 +296,7 @@ public class DocumentCompositionExporter {
 						continue;
 					}
 				}
-				object.getBiObjectParameters().add(biObjPar);
+				object.getDrivers().add(biObjPar);
 			}
 
 		}

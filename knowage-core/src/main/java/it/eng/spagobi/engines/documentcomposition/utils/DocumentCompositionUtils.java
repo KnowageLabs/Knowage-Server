@@ -486,7 +486,7 @@ public class DocumentCompositionUtils {
 	private static List getInstanceValue(String key, ExecutionInstance instance) {
 		List retVal = new ArrayList();
 		BIObject obj = instance.getBIObject();
-		List objPars = obj.getBiObjectParameters();
+		List objPars = obj.getDrivers();
 
 		for (int i = 0; i < objPars.size(); i++) {
 			BIObjectParameter objPar = (BIObjectParameter) objPars.get(i);
@@ -511,7 +511,7 @@ public class DocumentCompositionUtils {
 			return null;
 
 		BIObjectParameter par = null;
-		List objParams = obj.getBiObjectParameters();
+		List objParams = obj.getDrivers();
 		for (int i = 0, l = objParams.size(); i < l; i++) {
 			par = (BIObjectParameter) objParams.get(i);
 			if (par.getParameterUrlName().equals(urlKey))

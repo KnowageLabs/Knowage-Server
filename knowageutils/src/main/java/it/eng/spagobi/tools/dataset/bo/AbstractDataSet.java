@@ -1,21 +1,27 @@
 /*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+/*
+ * Knowage, Open Source Business Intelligence suite Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Knowage is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * Knowage is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.bo;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -46,11 +52,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.*;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -69,6 +70,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	private Map paramsMap;
 	Map<String, Object> properties;
 
+	private HashMap<String, Object> runtimeDrivers;
 	// Transformer attributes (better to remove them.
 	// They should be stored only into dataSetTransformer (see above)
 	protected Integer transformerId;
@@ -405,7 +407,7 @@ public abstract class AbstractDataSet implements IDataSet {
 				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
 				SourceBean sbRows = (SourceBean) xmlParams.getAttribute(ROWS);
 				List lst = sbRows.getAttributeAsList(ROW);
-				for (Iterator iterator = lst.iterator(); iterator.hasNext(); ) {
+				for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 					SourceBean sbRow = (SourceBean) iterator.next();
 					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
@@ -444,13 +446,13 @@ public abstract class AbstractDataSet implements IDataSet {
 
 		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
 			JSONObject parameter = iterator.next();
-				String parameterName = parameter.getString("namePar");
-				if (parametersValues.get(parameterName) == null) {
-					toReturn += parameterName;
-					if (iterator.hasNext()) {
-						toReturn += ", ";
-					}
+			String parameterName = parameter.getString("namePar");
+			if (parametersValues.get(parameterName) == null) {
+				toReturn += parameterName;
+				if (iterator.hasNext()) {
+					toReturn += ", ";
 				}
+			}
 		}
 		return toReturn;
 	}
@@ -636,8 +638,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persisted
-	 *            the persisted to set
+	 * @param persisted the persisted to set
 	 */
 	@Override
 	public void setPersisted(boolean persisted) {
@@ -664,8 +665,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param scheduled
-	 *            the scheduled to set
+	 * @param scheduled the scheduled to set
 	 */
 	@Override
 	public void setScheduled(boolean scheduled) {
@@ -701,8 +701,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persistTableName
-	 *            the persistTableName to set
+	 * @param persistTableName the persistTableName to set
 	 */
 	@Override
 	public void setPersistTableName(String persistTableName) {
@@ -718,8 +717,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param configuration
-	 *            the configuration to set
+	 * @param configuration the configuration to set
 	 */
 	@Override
 	public void setConfiguration(String configuration) {
@@ -735,8 +733,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param userIn
-	 *            the userIn to set
+	 * @param userIn the userIn to set
 	 */
 	@Override
 	public void setUserIn(String userIn) {
@@ -752,8 +749,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param dateIn
-	 *            the dateIn to set
+	 * @param dateIn the dateIn to set
 	 */
 	@Override
 	public void setDateIn(Date dateIn) {
@@ -769,8 +765,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param noActiveVersions
-	 *            the noActiveVersions to set
+	 * @param noActiveVersions the noActiveVersions to set
 	 */
 	@Override
 	public void setNoActiveVersions(List noActiveVersions) {
@@ -786,8 +781,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param owner
-	 *            the owner to set
+	 * @param owner the owner to set
 	 */
 	@Override
 	public void setOwner(String owner) {
@@ -853,14 +847,10 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * TemporaryTableManager; in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a
 	 * datasource for writing must be provided.
 	 *
-	 * @param fieldName
-	 *            The dataset's field
-	 * @param start
-	 *            The offset on results
-	 * @param limit
-	 *            The limit on result
-	 * @param filter
-	 *            The optional filter
+	 * @param fieldName The dataset's field
+	 * @param start     The offset on results
+	 * @param limit     The limit on result
+	 * @param filter    The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
 	@Override
@@ -1096,8 +1086,18 @@ public abstract class AbstractDataSet implements IDataSet {
 		return strategy;
 	}
 
+	@Override
 	public <T> T getImplementation(Class<T> clazz) {
 		return (T) this;
 	}
 
+	@Override
+	public void setDrivers(HashMap<String, Object> runtimeDrivers) {
+		this.runtimeDrivers = runtimeDrivers;
+	}
+
+	@Override
+	public HashMap<String, Object> getDrivers() {
+		return this.runtimeDrivers;
+	}
 }

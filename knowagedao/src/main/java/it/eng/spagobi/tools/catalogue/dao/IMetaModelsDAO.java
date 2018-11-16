@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
+import java.util.List;
+
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-
-import java.util.List;
 
 public interface IMetaModelsDAO extends ISpagoBIDao {
 
@@ -76,5 +76,11 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 	public MetaModel toModel(SbiMetaModel hibModel);
 
 	public Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent);
+
+	MetaModel loadMetaModelForExecutionByIdAndRole(Integer id, String role);
+
+	MetaModel loadMetaModelForDetail(Integer id);
+
+	MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role);
 
 }

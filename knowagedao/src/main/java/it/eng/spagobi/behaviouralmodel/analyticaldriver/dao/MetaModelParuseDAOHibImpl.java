@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetamodelParuse;
@@ -30,7 +31,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql = "from SbiMetaModelParuse s where s.paruseId=? " + " order by s.prog";
+			String hql = "from SbiMetamodelParuse s where s.id=? " + " order by s.prog";
 
 			Query query = session.createQuery(hql);
 			query.setInteger(0, metaModelParuseId.intValue());
@@ -59,6 +60,61 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 		return metaModelParuses;
 	}
 
+	/**
+	 * Load obj paruse.
+	 *
+	 * @param objParId
+	 *            the obj par id
+	 * @param paruseId
+	 *            the paruse id
+	 *
+	 * @return the list
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuse(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List loadMetaModelParuse(Integer metaModelParId, Integer paruseId) throws HibernateException {
+		List metaModelParuses = new ArrayList();
+		MetaModelParuse toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "from SbiMetamodelParuse s where s.sbiMetaModelPar.metaModelParId=? " + " and s.sbiParuse.useId=? " + " order by s.prog";
+
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, metaModelParId.intValue());
+			query.setInteger(1, paruseId.intValue());
+
+			List sbiMetaModelParuses = query.list();
+			if (sbiMetaModelParuses == null)
+				return metaModelParuses;
+			Iterator itersbiOP = sbiMetaModelParuses.iterator();
+			while (itersbiOP.hasNext()) {
+				SbiMetamodelParuse sbiop = (SbiMetamodelParuse) itersbiOP.next();
+				MetaModelParuse op = toMetaModelParuse(sbiop);
+				metaModelParuses.add(op);
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new HibernateException(he.getLocalizedMessage(), he);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return metaModelParuses;
+	}
+
 	@Override
 	public void modifyMetaModelParuse(MetaModelParuse aMetaModelParuse) throws HibernateException {
 		Session aSession = null;
@@ -67,7 +123,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "from SbiMetamodelParuse s  where s.paruseId=? ";
+			String hql = "from SbiMetamodelParuse s  where s.id=? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
@@ -80,8 +136,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 
 			SbiMetaModelParameter metaModelParameter = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getUseModeId());
-			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					aMetaModelParuse.getParFatherId());
+			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParFatherId());
 
 			sbiMetamodelParuse.setFilterColumn(aMetaModelParuse.getFilterColumn());
 			sbiMetamodelParuse.setFilterOperation(aMetaModelParuse.getFilterOperation());
@@ -125,11 +180,10 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			tx = aSession.beginTransaction();
 			SbiMetaModelParameter sbiMetamodelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getUseModeId());
-			SbiMetaModelParameter sbiMetamodelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					aMetaModelParuse.getParFatherId());
+			SbiMetaModelParameter sbiMetamodelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParFatherId());
 			if (sbiMetamodelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParuse",
-						"the BIMetaMOdelParameter with " + "id=" + aMetaModelParuse.getParFatherId() + " does not exist.");
+						"the BIMetaModelParameter with " + "id=" + aMetaModelParuse.getParFatherId() + " does not exist.");
 
 			}
 			SbiMetamodelParuse newHibMetaModel = new SbiMetamodelParuse();
@@ -168,7 +222,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "from SbiMetamodelParuse s where s.paruseId = ? ";
+			String hql = "from SbiMetamodelParuse s where s.id = ? ";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
 
