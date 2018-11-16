@@ -24,12 +24,15 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.utils.QBEAssociativeDatasetContainer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
@@ -49,7 +52,15 @@ public abstract class AssociativeDatasetContainerFactory {
 		case FLAT:
 			return new FlatAssociativeDatasetContainer(dataSet, parametersValues);
 		case INLINE_VIEW:
-			return new JDBCAssociativeDatasetContainer(dataSet, parametersValues);
+			if (dataSet instanceof VersionedDataSet) {
+				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+			}
+			if (dataSet instanceof AbstractJDBCDataset) {
+				return new JDBCAssociativeDatasetContainer(dataSet, parametersValues);
+			} else {
+				return new QBEAssociativeDatasetContainer(dataSet, parametersValues);
+
+			}
 		case CACHED:
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 			ICache cache = SpagoBICacheManager.getCache();

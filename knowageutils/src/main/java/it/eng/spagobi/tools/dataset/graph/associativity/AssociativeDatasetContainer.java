@@ -45,6 +45,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGroupException;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -57,7 +58,7 @@ import it.eng.spagobi.utilities.parameters.ParametersUtilities;
  *
  */
 
-public class AssociativeDatasetContainer {
+public class AssociativeDatasetContainer implements IAssociativeDatasetContainer {
 
 	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainer.class);
 
@@ -67,6 +68,7 @@ public class AssociativeDatasetContainer {
 	protected Map<String, String> parameters;
 	protected final Set<SimpleFilter> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
+	protected final Set<EdgeGroup> usedGroups = new HashSet<>();
 
 	protected boolean nearRealtime = false;
 	private boolean resolved = false;
@@ -78,6 +80,7 @@ public class AssociativeDatasetContainer {
 		this.parameters = parameters;
 	}
 
+	@Override
 	public IDataSet getDataSet() {
 		return dataSet;
 	}
@@ -94,6 +97,7 @@ public class AssociativeDatasetContainer {
 		return filters;
 	}
 
+	@Override
 	public boolean addFilter(SimpleFilter filter) {
 		return filters.add(filter);
 	}
@@ -106,42 +110,22 @@ public class AssociativeDatasetContainer {
 		return filters.add(buildInFilter(columnNames, tuples));
 	}
 
-	public boolean update(List<String> columnNames, Set<Tuple> tuples) {
-		if (columnNames.isEmpty()) {
-			return false;
-		} else {
-			if (!ParametersUtilities.containsParameter(columnNames)) {
-				return addFilter(columnNames, tuples);
-			} else {
-				if (columnNames.size() == 1) {
-					String parameter = columnNames.get(0);
-					Set<String> values = new HashSet<>(tuples.size());
-					for (Tuple tuple : tuples) {
-						values.add(tuple.toString("", "", ""));
-					}
-					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
-					dataSet.setParamsMap(parameters);
-					return true;
-				} else {
-					throw new IllegalEdgeGroupException("Columns " + columnNames
-							+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
-				}
-			}
-		}
-	}
-
+	@Override
 	public Set<EdgeGroup> getGroups() {
 		return groups;
 	}
 
+	@Override
 	public boolean removeGroup(EdgeGroup group) {
 		return groups.remove(group);
 	}
 
+	@Override
 	public boolean addGroup(EdgeGroup group) {
 		return groups.add(group);
 	}
 
+	@Override
 	public Set<EdgeGroup> getUnresolvedGroups() {
 		Set<EdgeGroup> unresolvedGroups = new HashSet<>();
 		for (EdgeGroup group : groups) {
@@ -156,28 +140,34 @@ public class AssociativeDatasetContainer {
 		return nearRealtime;
 	}
 
+	@Override
 	public boolean isResolved() {
 		return resolved;
 	}
 
+	@Override
 	public void resolve() {
 		resolved = true;
 	}
 
+	@Override
 	public void unresolve() {
 		resolved = false;
 	}
 
+	@Override
 	public void unresolveGroups() {
 		for (EdgeGroup group : groups) {
 			group.unresolve();
 		}
 	}
 
+	@Override
 	public Map<String, String> getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException {
 		PreparedStatementData data = buildPreparedStatementData(columnNames);
 		String query = data.getQuery();
@@ -220,6 +210,7 @@ public class AssociativeDatasetContainer {
 		}
 	}
 
+	@Override
 	public Set<Tuple> getTupleOfValues(String parameter) {
 		return AssociativeLogicUtils.getTupleOfValues(parameters.get(ParametersUtilities.getParameterName(parameter)));
 	}
@@ -232,8 +223,8 @@ public class AssociativeDatasetContainer {
 		return getSelectQuery(columnNames).getPreparedStatementData(dataSource);
 	}
 
-	private SelectQuery getSelectQuery(List<String> columnNames) {
-		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName);
+	protected SelectQuery getSelectQuery(List<String> columnNames) {
+		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(getTableName());
 		if (!filters.isEmpty()) {
 			selectQuery.where(new AndFilter(filters.toArray(new SimpleFilter[0])));
 		}
@@ -282,5 +273,48 @@ public class AssociativeDatasetContainer {
 		builder.append(resolved);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer#update(it.eng.spagobi.tools.dataset.graph.EdgeGroup,
+	 * java.util.List, java.util.Set)
+	 */
+	@Override
+	public boolean update(EdgeGroup group, List<String> columnNames, Set<Tuple> tuples) {
+		if (columnNames.isEmpty()) {
+			return false;
+		} else {
+			usedGroups.add(group);
+			if (!ParametersUtilities.containsParameter(columnNames)) {
+				return addFilter(columnNames, tuples);
+			} else {
+				if (columnNames.size() == 1) {
+					String parameter = columnNames.get(0);
+					Set<String> values = new HashSet<>(tuples.size());
+					for (Tuple tuple : tuples) {
+						values.add(tuple.toString("", "", ""));
+					}
+					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
+					dataSet.setParamsMap(parameters);
+					return true;
+				} else {
+					throw new IllegalEdgeGroupException("Columns " + columnNames
+							+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
+				}
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer#getUsedGroups()
+	 */
+	@Override
+	public Set<EdgeGroup> getUsedGroups() {
+		// TODO Auto-generated method stub
+		return usedGroups;
 	}
 }
