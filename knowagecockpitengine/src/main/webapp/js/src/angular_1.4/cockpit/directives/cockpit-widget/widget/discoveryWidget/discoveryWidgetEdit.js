@@ -38,10 +38,11 @@ function discoveryWidgetEditControllerFunction(
 	$scope.columnsGrid = {
 		angularCompileRows: true,
 		enableColResize: false,
-        enableSorting: true,
+        enableSorting: false,
         enableFilter: false,
         onGridReady: resizeColumns,
         onGridSizeChanged: resizeColumns,
+        onCellEditingStopped: refreshRow,
         columnDefs: [{"headerName":"Column","field":"name"},
     		{"headerName":"Alias","field":"alias","editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
     		{"headerName":"Type","field":"fieldType","editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
@@ -58,11 +59,12 @@ function discoveryWidgetEditControllerFunction(
 	}
 	
 	function editableCell(params){
-		return '<i>'+params.value+'</i>';
+		return '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 	}
 	
 	function checkboxRenderer(params){
-		return '<div style="display:inline-flex;justify-content:center;width:100%;"><input type="checkbox" ng-model="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']"/></div>'
+		var input = (params.node.data.fieldType == 'MEASURE' && params.colDef.field == "facet") ? '' : '<input type="checkbox" ng-model="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']"/>';
+		return '<div style="display:inline-flex;justify-content:center;width:100%;">'+input+'</div>';
 	}
 	
 	function styleRenderer(params){
@@ -77,6 +79,11 @@ function discoveryWidgetEditControllerFunction(
 			  	'	<md-tooltip md-delay="500">Column Settings</md-tooltip>'+
 			  	'	<md-icon md-font-icon="fa fa-pencil"></md-icon>'+
 			  	'</md-button></div>';
+	}
+	
+	function refreshRow(cell){
+		if(cell.node.data.fieldType == 'MEASURE') $scope.newModel.content.columnSelectedOfDataset[cell.rowIndex].facet = false; 
+		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 	}
 	
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){

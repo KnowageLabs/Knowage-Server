@@ -45,60 +45,6 @@
 		   						<div class="kn-grid-container" style="padding:0;">
 		   							<div ag-grid="columnsGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
 		   						</div>
-		   						<!-- div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
-	        						<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Column</label>
-							        	<md-select ng-model="col.name">
-							              <md-option ng-repeat="field in local.metadata.fieldsMeta" value="{{field.name}}">
-							                {{field.name}}
-							              </md-option>
-							            </md-select>
-							      	</md-input-container>
-							      	<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Alias</label>
-								        <input ng-model="col.alias" >
-							      	</md-input-container>
-							      	<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Type</label>
-							        	<input type="text" disabled ng-model="col.fieldType" />
-							      	</md-input-container>
-							      	<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Aggregation function</label>
-								        <md-select ng-model="col.aggregationSelected" ng-init="col.aggregationSelected = initAggregation(col)">
-							              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation.name}}" ng-if="aggregation.available.indexOf(col.fieldType) != -1">
-							                {{aggregation.name}}
-							              </md-option>
-							            </md-select>
-							      	</md-input-container>
-							      	<md-button class="md-icon-button" ng-click="showSettingsDialog($event,col)" style="background-color:{{col.style['background-color']}}">
-							      		<md-tooltip md-delay="500">Column Settings</md-tooltip>
-							      		<md-icon md-font-icon="fa fa-paint-brush" style="color:{{col.style.color}}"></md-icon>
-							      	</md-button>
-							      	<md-button class="md-icon-button facetReady" ng-init="col.facet = initProperty(col.facet)" ng-click="col.facet=!col.facet">
-							      		<md-tooltip ng-if="col.facet" md-delay="500">Hide Facet</md-tooltip>
-							      		<md-tooltip ng-if="!col.facet" md-delay="500">Show Facet</md-tooltip>
-							      		<span class="fa-stack">
-										  <i class="fa fa-indent fa-stack-1x"></i>
-										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.facet}"></i>
-										</span>
-							      	</md-button>
-							      	<md-button class="md-icon-button facetReady" ng-init="col.visible = initProperty(col.visible)" ng-click="col.visible=!col.visible">
-							      		<md-tooltip ng-if="col.visible" md-delay="500">Hide Column</md-tooltip>
-							      		<md-tooltip ng-if="!col.visible" md-delay="500">Show Column</md-tooltip>
-							      		<span class="fa-stack">
-										  <i class="fa fa-eye fa-stack-1x"></i>
-										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.visible}"></i>
-										</span>
-							      	</md-button>
-							      	<md-button class="md-icon-button facetReady" ng-init="col.fullTextSearch = initProperty(col.fullTextSearch)" ng-click="col.fullTextSearch=!col.fullTextSearch">
-							      		<md-tooltip ng-if="col.fullTextSearch" md-delay="500">Skip column in text search</md-tooltip>
-							      		<md-tooltip ng-if="!col.fullTextSearch" md-delay="500">Use column in text search</md-tooltip>
-							      		<span class="fa-stack">
-										  <i class="fa fa-file-text fa-stack-1x"></i>
-										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.fullTextSearch}"></i>
-										</span>
-							      	</md-button>
-		        				</div-->
 		   					</md-card-content>
 		   				</md-card>
 		        </md-tab>
@@ -111,39 +57,57 @@
 								<span flex></span>
 							</div>
 						</md-toolbar>
-						<md-card-content >
+						<md-card-content>
+						<div flex layout=column >
+							<div flex layout="row" >
+								
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-family']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}"><span ng-style="{'font-family':fam.value}">{{fam.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container flex class="md-block" >
+									<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+									<input ng-model="model.style.th['font-size']" ng-disabled="!newModel.style.th.enabled" type="text"/>
+									<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-weight']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-style']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								
+							</div>
 							<div flex layout=column >
 								<div flex layout="row" >
-									<md-input-container flex class="md-block" >
-										<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
-										 <input ng-model="newModel.style.th['font-size']" type="text" ng-disabled="!newModel.style.th.enabled">
-									</md-input-container>
-									<md-input-container flex class="md-block">
-										<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
-										<input ng-model="newModel.style.th['font-weight']" type="text" ng-disabled="!newModel.style.th.enabled">
-									</md-input-container>
 									<md-input-container flex class="md-block">
 										<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
 										<md-select aria-label="aria-label" ng-model="newModel.style.th['justify-content']" ng-disabled="!newModel.style.th.enabled">
-											<md-option ng-repeat="align in textAlignments" value="{{align.align}}">{{align.text}}</md-option>
+											<md-option ng-repeat="fjc in cockpitModule_generalOptions.flexJustifyContent" ng-value="fjc.value">{{fjc.label}}</md-option>
 										</md-select>
 									</md-input-container>
-								</div>
-								<div flex layout=column >
-									<div flex layout="row" >
-										<md-input-container flex class="md-block">
-											<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
-											<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th.color"/>
-										</md-input-container>
-										<md-input-container flex class="md-block">
-											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-											<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th['background-color']"/>
-										</md-input-container>
-										
-									</div>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+										<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th.color"/>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+										<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th['background-color']"/>
+									</md-input-container>
+									
 								</div>
 							</div>
-						</md-card-content>
+						</div>
+					</md-card-content>
+
 					</md-card>
 					
 					<md-card>
