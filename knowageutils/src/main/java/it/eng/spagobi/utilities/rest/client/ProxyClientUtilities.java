@@ -59,11 +59,13 @@ public final class ProxyClientUtilities {
 			} else {
 				// Username and/or password not acceptable. Trying to set proxy without credentials
 				logger.debug("Setting proxy without authentication");
-				Client client = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS).build();
+				Client client = new ResteasyClientBuilder().defaultProxy(proxyHost, proxyPortInt).establishConnectionTimeout(10, TimeUnit.SECONDS).build();
 				target = (ResteasyWebTarget)client.target(url);
 				logger.debug("Proxy without authentication set");
 			}
 		} else {
+			Client client = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS).build();
+			target = (ResteasyWebTarget)client.target(url);
 			logger.debug("No proxy configuration found");
 		}
 		logger.debug("REST client set");
