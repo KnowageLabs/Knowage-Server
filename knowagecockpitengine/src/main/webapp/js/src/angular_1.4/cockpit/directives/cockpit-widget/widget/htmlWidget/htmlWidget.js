@@ -69,6 +69,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			delete $scope.ngModel.datasetId;
 		}
 		
+		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
+		
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 			$scope.showWidgetSpinner();
 			if(datasetRecords) $scope.htmlDataset = datasetRecords;
@@ -85,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
-				
+				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 				//getting dataset parameters if available
 				$scope.params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 				for(var p in $scope.params){

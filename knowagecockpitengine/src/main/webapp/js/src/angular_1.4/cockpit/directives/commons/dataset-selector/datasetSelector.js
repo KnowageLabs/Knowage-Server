@@ -15,12 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-/**
- * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v0.0.1
- * 
- */
 (function(){
 
 angular.module('cockpitModule').directive('datasetSelector',function($compile){
@@ -31,6 +25,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 		   scope:{
 			   ngModel:"=",
 			   extended:"=?",
+			   datasetSettings:"=?",
 			   onChange:"&",
 		   },
 		   compile: function (tElement, tAttrs, transclude) {
@@ -49,13 +44,16 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 
 function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,sbiModule_translate,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
+	if(!$scope.datasetSettings) $scope.datasetSettings = {};
 	$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
+	
 	$scope.addNewDataset=function(){
 		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true)
 		 .then(function(data){
 			 $scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 			 $scope.ngModel=data.id.dsId;
 			 $scope.onChange({dsId:data.id.dsId});
+			 $scope.getMetaData($scope.ngModel);
 		 });
 	}
 	$scope.cancelDataset=function(){
@@ -63,6 +61,8 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	}
 	$scope.getMetaData = function(id){
 		if(id){
+			$scope.loadingMetadata = true;
+			$scope.dataset = {};
 			sbiModule_restServices.restToRootProject();
 			var params = cockpitModule_datasetServices.getDatasetParameters(id);
 			for(var p in params){
@@ -72,15 +72,28 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			}
 			sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
 				.then(function(data){
+					$scope.loadingMetadata = false;
 					$scope.dataset = data.data;
-				})
+					$scope.datasetSettings.sortingColumn = $scope.dataset.metaData.fields[1].header;
+					$scope.datasetSettings.sortingOrder = 'ASC';
+				},function(error){
+					$scope.loadingMetadata = false;
+					})
 		}else {
 			$scope.dataset = {};
-		}
-		
+		}	
 	}
-	if($scope.extended){
-		$scope.getMetaData($scope.ngModel);
+	
+	if($scope.ngModel) $scope.getMetaData($scope.ngModel);
+	
+	$scope.orderColumn = function(col){
+		if(col.header == $scope.datasetSettings.sortingColumn) {
+			$scope.datasetSettings.sortingOrder = $scope.datasetSettings.sortingOrder == 'ASC' ? 'DESC' : 'ASC';
+		}
+		else{
+			$scope.datasetSettings.sortingColumn = col.header;
+			$scope.datasetSettings.sortingOrder = 'ASC';
+		}
 	}
 	
 	var metaDataWatcher = $scope.$watch('ngModel',function(newValue,oldValue){
@@ -88,7 +101,6 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			$scope.getMetaData(newValue);
 		}
 	})
-	
 	
 };
 
