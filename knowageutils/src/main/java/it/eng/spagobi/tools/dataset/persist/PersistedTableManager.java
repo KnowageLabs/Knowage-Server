@@ -196,7 +196,7 @@ public class PersistedTableManager implements IPersistedManager {
 							if (rawField instanceof BigDecimal) {
 								intValue = ((BigDecimal) rawField).intValueExact();
 							} else {
-								intValue = Integer.valueOf((String) rawField);
+								intValue = Integer.valueOf(rawField.toString());
 							}
 							field.setValue(intValue);
 						} catch (Throwable t) {
@@ -210,7 +210,7 @@ public class PersistedTableManager implements IPersistedManager {
 							if (rawField instanceof BigDecimal) {
 								doubleValue = ((BigDecimal) rawField).doubleValue();
 							} else {
-								doubleValue = Double.valueOf((String) rawField);
+								doubleValue = Double.valueOf(rawField.toString());
 							}
 							field.setValue(doubleValue);
 
