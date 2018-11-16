@@ -4266,8 +4266,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 * and an additional String option for ATTRIBUTES, so for this reason we are keeping the combo box element.
 				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-//					loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
-//					loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
 
 				loc.columnView='<label>{{row.column}}</label>';
 				loc.pnameView='<label>{{row.pname}}</label>';
@@ -4280,18 +4278,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				if (($scope.validationPassed==true || $scope.validationError==true) && $scope.csvConfChanged==false) {
-
-//					var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
-//					//{{translate.load('')}}
-//
-//					// If type is invalid and there are validation errors in response.
-//					var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
-//
-//					var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-//					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-//
-//					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
-//					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
 					
 					var columnName = loc.column;
 					
@@ -4323,7 +4309,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
 
 					// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
-//					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-circle-o fa-1x" style="background-color: #e6e6e6; width: 55%; padding-left: 45%; height: 100%" title="Pending for validation check..."></md-icon></md-content>';
 					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 				}
