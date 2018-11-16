@@ -130,7 +130,11 @@ angular
 					if($scope.drivers[i].mandatory){
 						if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
 							var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
-							$scope.documentViewerUrl = url + '&' + Object.keys(drivers)[0] + "=" + drivers[Object.keys(drivers)[0]][0].value  ;
+							var driverName = Object.keys(drivers)[0];
+							var driverValue = drivers[Object.keys(drivers)[0]][0].value;
+							 var driverObject = {};
+							 driverObject[driverName] = driverValue;
+							$scope.documentViewerUrl = url + '&' +  $httpParamSerializer(driverObject)  ;
 							$scope.businessModel.executed = true;
 							break;
 						}else{
