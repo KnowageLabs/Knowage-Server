@@ -67,7 +67,7 @@
 				if(obj.hasOwnProperty(prop))
 					return false;
 			}
-			return JSON.strigify(obj) === JSON.stringify({});
+			return JSON.stringify(obj) === JSON.stringify({});
 		}
 
 		$scope.getTreeParameterValue = function(innerNode) {
