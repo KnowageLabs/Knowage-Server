@@ -92,7 +92,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 				}
 			}
 			
-			pathUrl+="&COCKPIT_PARAMETER="+JSON.stringify(docPa)
+			pathUrl+="&COCKPIT_PARAMETER="+encodeURIComponent(JSON.stringify(docPa));
 			pathUrl+="&IS_FROM_DOCUMENT_WIDGET=true";
 			
 			var tmpUrl = sbiModule_config.externalBasePath+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl;
