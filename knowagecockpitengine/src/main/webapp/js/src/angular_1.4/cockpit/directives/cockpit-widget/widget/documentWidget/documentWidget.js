@@ -93,7 +93,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 					}
 				}
 				
-				pathUrl+="&COCKPIT_PARAMETER="+JSON.stringify(docPa)
+				pathUrl+="&COCKPIT_PARAMETER="+encodeURIComponent(JSON.stringify(docPa));
 			}
 			pathUrl+="&IS_FROM_DOCUMENT_WIDGET=true";
 			
