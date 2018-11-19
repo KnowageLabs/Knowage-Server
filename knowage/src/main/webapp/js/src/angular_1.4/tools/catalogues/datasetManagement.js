@@ -3130,12 +3130,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.drivers = $scope.dataset.drivers;
 			for(var i = 0; i < $scope.drivers.length;i++){
 				$scope.dataset.executed = true;
+				if($scope.drivers[i].mandatory &&  $scope.drivers.length == 1 ){
+					$scope.dataset.executed = true;
+					$scope.showDrivers = false;
+				}else
 				if($scope.drivers[i].mandatory){
 					$scope.dataset.executed = false;
+					$scope.showDrivers = true;
 					break;
 				}
 			}
-			$scope.showDrivers = true;
+
 			if(!$scope.drivers){
 				$scope.showDrivers = false;
 				$scope.dataset.executed = true;

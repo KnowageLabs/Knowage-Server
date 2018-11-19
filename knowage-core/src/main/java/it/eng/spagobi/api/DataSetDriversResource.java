@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
@@ -77,12 +78,13 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		ParameterUse parameterUse;
 		String role;
-//		try {
-		role = "admin";// (String) getUserProfile().getRoles().iterator().next();
-//		} catch (EMFInternalError e2) {
-//			logger.debug(e2.getCause(), e2);
-//			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
-//		}
+
+		try {
+			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
+		} catch (EMFInternalError e2) {
+			logger.debug(e2.getCause(), e2);
+			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
+		}
 		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role);
 		BusinessModelOpenParameters BMOP = new BusinessModelOpenParameters();
 		try {
