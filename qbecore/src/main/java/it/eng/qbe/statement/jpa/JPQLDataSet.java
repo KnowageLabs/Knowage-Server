@@ -142,26 +142,21 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @param runtimeDrivers
 	 */
 	private void enableFilters(Session session) {
-
-		EntityManager entityManager = getEntityMananger();
-		IModelStructure structure = this.statement.getDataSource().getModelStructure();
-		Filter filter;
-		Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
-		Iterator it = filterNamesR.iterator();
-		String driverName = null;
 		HashMap<String, Object> drivers = this.getDrivers();
-		while (it.hasNext()) {
-			String filterName = (String) it.next();
-			filter = session.enableFilter(filterName);
-			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-			Iterator iter = drivers.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry pair = (Map.Entry) iter.next();
+		if (!drivers.isEmpty()) {
+			EntityManager entityManager = getEntityMananger();
+			IModelStructure structure = this.statement.getDataSource().getModelStructure();
+			Filter filter;
+			Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
+			Iterator it = filterNamesR.iterator();
+			String driverName = null;
+			while (it.hasNext()) {
+				String filterName = (String) it.next();
+				filter = session.enableFilter(filterName);
+				Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
 				for (Object key : driverUrlNames.keySet()) {
 					driverName = key.toString();
-					if (pair.getKey().toString().equals(driverName)) {
-						filter.setParameter(pair.getKey().toString(), pair.getValue());
-					}
+					filter.setParameter(driverName, drivers.get(driverName));
 				}
 			}
 		}
