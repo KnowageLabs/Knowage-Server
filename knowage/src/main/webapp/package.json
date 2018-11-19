@@ -1,6 +1,6 @@
 {
   "name": "knowage",
-  "version": "6.0.0",
+  "version": "6.3.0",
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "tests"
   ],
   "dependencies": {
-    "ag-grid-community": "^17.1.1",
+    "ag-grid": "^17.1.1",
     "angular": "1.7.2",
     "angular-animate": "1.7.2",
     "angular-aria": "1.7.2",
@@ -41,7 +41,9 @@
     "angular-ui-codemirror": "0.3.0",
     "angular-xregexp": "1.0.0",
     "codemirror": "5.32.0",
+    "file-saver": "^2.0.0-rc.4",
     "font-awesome": "4.7.0",
+    "html2canvas":"^1.0.0-alpha.12",
     "jsonformatter": "^0.6.0",
     "ngdraggable": "^0.1.10",
     "npm": "^6.2.0",
