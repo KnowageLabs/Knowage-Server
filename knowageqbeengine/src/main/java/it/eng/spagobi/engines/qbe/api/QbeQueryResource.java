@@ -440,12 +440,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			session.disableFilter(filterName);
 			for (Object key : driverUrlNames.keySet()) {
 				driverName = key.toString();
-				for (Object key2 : envs.keySet()) {
-					env = key2.toString();
-					if (driverName.equals(env)) {
-						drivers.put(driverName, getEnv().get(driverName));
-					}
-				}
+				drivers.put(driverName, envs.get(driverName));
 			}
 		}
 		dataSet.setDrivers(drivers);

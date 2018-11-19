@@ -154,15 +154,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			String filterName = (String) it.next();
 			filter = session.enableFilter(filterName);
 			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-
-			Iterator iter = drivers.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry pair = (Map.Entry) iter.next();
 				for (Object key : driverUrlNames.keySet()) {
 					driverName = key.toString();
-					if (pair.getKey().toString().equals(driverName)) {
-
-						filter.setParameter(pair.getKey().toString(), pair.getValue());
+					filter.setParameter(driverName, drivers.get(driverName));
 					}
 				}
 			}
