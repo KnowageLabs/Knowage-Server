@@ -97,7 +97,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.datasetSavedFromQbe = false;
 
 	$scope.datasetTemp = null;
-	
+
 	function createSourceNameOnDataset(datasetsArray) {
 		for(var i=0; i < datasetsArray.length; i++) {
 			var index = datasetsArray.indexOf(datasetsArray[i]);
@@ -144,9 +144,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
-			
+
 			createSourceNameOnDataset($scope.datasets);
-			
+
 			$scope.markNotDerived($scope.datasets);
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
@@ -229,7 +229,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			var enterpriseDatasetsWithParams = [];
 			angular.copy(response.data.root,enterpriseDatasetsWithParams);
-			
+
 			for (var i = 0; i < enterpriseDatasetsWithParams.length; i++) {
 				if(enterpriseDatasetsWithParams[i].pars.length==0){
 					$scope.enterpriseDatasets.push(enterpriseDatasetsWithParams[i]);
@@ -238,7 +238,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			//angular.copy(response.data.root,$scope.enterpriseDatasets);
 			createSourceNameOnDataset($scope.enterpriseDatasets);
 			$scope.markNotDerived($scope.enterpriseDatasets);
-			
+
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
@@ -416,7 +416,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
 		$scope.selectedDataset = dataset;
-		
+
 		if (alreadySelected) {
 			$scope.selectedDataset=undefined;
 			$scope.setDetailOpen(!$scope.showDatasetDetail);
@@ -645,14 +645,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
        		console.info("Format " + format + " not supported");
        	}
     }
-    
+
     $scope.previewDataset = function(dataset){
 
     	console.info("DATASET FOR PREVIEW: ",dataset);
 
     	$scope.datasetInPreview=dataset;
     	$scope.disableBack=true;
-
+    	$scope.getDatasetParametersFromBusinessModel(dataset)
     	/**
     	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
     	 * property (e.g. Query datasets).
@@ -708,7 +708,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    });
 
     }
-    
+
     $scope.editQbeDataset = function(dataset) {
     	$scope.selectedDataSet = dataset;
     	var url = null;
@@ -728,7 +728,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	  $scope.isFromDataSetCatalogue = false;
 	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
     }
-    
+
     $scope.editFileDataset = function (arg) {
 
   	  $scope.initializeDatasetWizard(arg);
@@ -750,8 +750,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
   	      }
   	    });
     }
-    
-    
+
+
     $scope.tableDatasets = [
     	{"label":"Label","name":"label","type":"text"},
     	{"label":"Name","name":"name","type":"text"},
@@ -763,7 +763,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.derivated && ds.pars.length == 0}}
     	]}
     ];
-    
+
     $scope.getPreviewSet = function(dataset){
 
     	var datasetType = dataset.dsTypeCd.toUpperCase();
@@ -868,26 +868,26 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     }
 
-    $scope.cloneDataset = function(dataset) { 	
+    $scope.cloneDataset = function(dataset) {
     	var clonedDataset = angular.copy(dataset);
-    	
-    	clonedDataset.id = "";    	
+
+    	clonedDataset.id = "";
     	clonedDataset.dsVersions = [];
     	clonedDataset.usedByNDocs = 0;
-    	    	
+
 		clonedDataset.name = "CLONE_" + clonedDataset.name;
 		clonedDataset.label = "CLONE_" + clonedDataset.label;
 		clonedDataset.description = "CLONED " + clonedDataset.description;
-    	
+
 		clonedDataset.scopeCd = "USER";
-		
+
     	if(sbiModule_user.userId != clonedDataset.owner){
     		clonedDataset.owner = sbiModule_user.userId;
     	}
-    	
-    	if(clonedDataset.catTypeId) 
+
+    	if(clonedDataset.catTypeId)
     		delete clonedDataset.catTypeId;
-    	
+
     	$mdDialog.show({
     		controller: cloneQbeDatasetDialogController,
 			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
@@ -898,11 +898,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				clonedDescription: clonedDataset.description
 			},
 			clickOutsideToClose: false
-    	}).then(function(result){    	
+    	}).then(function(result){
     		clonedDataset.name = result.name;
     		clonedDataset.label = result.label;
     		clonedDataset.description = result.description;
-    		    					
+
     		sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
     		.then(function(response){
     			clonedDataset.id = response.data.id;
@@ -917,28 +917,28 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}, function(response){
     		// canceled mdDialog
     	});
-    	    	
+
     }
-    
+
     function cloneQbeDatasetDialogController($scope, $mdDialog, sbiModule_translate, kn_regex, clonedLabel, clonedName, clonedDescription) {
     	 $scope.translate = sbiModule_translate;
     	 $scope.regex = kn_regex;
-    	 
+
     	 $scope.dataset = {
 			 label: clonedLabel,
 			 name: clonedName,
 			 description: clonedDescription
     	 };
-    	 
+
     	 $scope.cancel = function() {
     		 $mdDialog.cancel();
     	 }
-    	 
+
     	 $scope.save = function(result){
     		 $mdDialog.hide(result);
     	 }
     }
-    
+
     $scope.addNewFileDataset=function(){
 
       console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");
@@ -1365,8 +1365,46 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	var prevScope = $scope;
-
+	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
+			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
+				$scope.drivers = response.data.filterStatus;
+			})
+		}
     function DatasetPreviewController($scope,$mdDialog,$http){
+    	$scope.executeParameter = function(){
+			$scope.showQbe = true;
+			$scope.dataset.executed = true;
+			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
+			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+			.then(function(response){
+					$scope.getPreviewSet(response.data);
+			})
+		}
+
+		//	$scope.dataset = $scope.selectedDataSet;
+		//	$scope.drivers = $scope.dataset.drivers;
+			for(var i = 0; i < $scope.drivers.length;i++){
+				$scope.dataset.executed = true;
+				if($scope.drivers[i].mandatory &&  $scope.drivers.length == 1 ){
+					$scope.dataset.executed = true;
+					$scope.showDrivers = false;
+				}else
+				if($scope.drivers[i].mandatory){
+					$scope.dataset.executed = false;
+					$scope.showDrivers = true;
+					break;
+				}
+			}
+
+			if(!$scope.drivers){
+				$scope.showDrivers = false;
+				$scope.dataset.executed = true;
+			}
+
+			$scope.hideDrivers =function(){
+				$scope.showDrivers = true;
+				$scope.dataset.executed = !$scope.dataset.executed;
+			}
 
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
