@@ -73,8 +73,8 @@
 			$scope.ngModel.bodySend.startDateField = $scope.savingQbeDataSet.startDateField;
 			$scope.ngModel.bodySend.scopeId = $scope.scopeList[0].VALUE_ID;
 			$scope.ngModel.bodySend.scopeCd = $scope.scopeList[0].VALUE_CD;
-			$scope.ngModel.bodySend.categoryId = $scope.categoryList[0].VALUE_ID;
-			$scope.ngModel.bodySend.categoryCd = $scope.categoryList[0].VALUE_CD;
+			//$scope.ngModel.bodySend.categoryId = $scope.categoryList[0].VALUE_ID;
+			//$scope.ngModel.bodySend.categoryCd = $scope.categoryList[0].VALUE_CD;
 			$scope.ngModel.bodySend.sourceDatasetLabel = "";
 
 			save_service.saveQbeDataSet($scope.ngModel.bodySend);

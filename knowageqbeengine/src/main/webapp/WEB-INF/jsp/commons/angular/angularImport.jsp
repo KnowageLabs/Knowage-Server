@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 %>
 
 
