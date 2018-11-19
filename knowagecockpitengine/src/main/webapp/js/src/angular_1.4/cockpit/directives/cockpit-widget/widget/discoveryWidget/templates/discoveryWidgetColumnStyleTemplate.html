@@ -4,27 +4,42 @@
         <h2>{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h2>
       </div>
     </md-toolbar>
-    <md-dialog-content style="width:600px;min-height:300px;max-height:810px; ">
-    	<md-subheader>Color</md-subheader>
-		<div layout="row" layout-padding>
-			<md-input-container flex class="noPadding"> 
-				<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-				<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style['background-color'] "></color-picker>
+    <md-dialog-content style="width:600px;" layout-padding>
+    	<div flex layout="row" >
+			<md-input-container flex class="md-block">
+				<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+				<color-picker options="colorPickerProperty" ng-model="selectedColumn.style.color"/>
 			</md-input-container>
-			<md-input-container flex class="noPadding"> 
-				<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
-				<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
+			<md-input-container flex class="md-block">
+				<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+				<color-picker options="colorPickerProperty" ng-model="selectedColumn.style['background-color']"/>
 			</md-input-container>
 		</div>
-		<md-subheader>Text</md-subheader>
-		<div layout="row" style="padding:8px">
-       		<md-input-container flex> 
-				<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
-				<input ng-model="selectedColumn.style['font-weight']" type="text" />
+    	<div flex layout="row" >
+    		<md-input-container flex class="md-block">
+				<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+				<md-select aria-label="aria-label" ng-model="selectedColumn.style['font-family']">
+					<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}"><span ng-style="{'font-family':fam.value}">{{fam.label}}</span></md-option>
+				</md-select>
 			</md-input-container>
-			<md-input-container flex>
-				<label>{{translate.load("sbi.cockpit.table.fontsize")}}</label>
-				<input ng-model="selectedColumn.style['font-size']" type="text" />
+			<md-input-container flex class="md-block" >
+				<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+				<input ng-model="selectedColumn.style['font-size']" type="text"/>
+				<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+			</md-input-container>
+		</div>
+		<div flex layout="row" >
+			<md-input-container flex class="md-block">
+				<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+				<md-select aria-label="aria-label" ng-model="selectedColumn.style['font-weight']">
+					<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
+				</md-select>
+			</md-input-container>
+			<md-input-container flex class="md-block">
+				<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+				<md-select aria-label="aria-label" ng-model="selectedColumn.style['font-style']">
+					<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+				</md-select>
 			</md-input-container>
 			<md-input-container flex>
 				<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
@@ -32,16 +47,16 @@
 						<md-option ng-repeat="align in textAlignments" value="{{align.align}}">{{align.text}}</md-option>
 				</md-select>
 			</md-input-container>
-		</div> 
+		</div>
     </md-dialog-content>
 
     <md-dialog-actions layout="row">
       <span flex></span>
       <md-button class="md-raised" ng-click="cancel()" >
-        Cancel
+        {{::translate.load('sbi.generic.cancel')}}
       </md-button>
       <md-button class="md-raised md-primary" ng-click="save()" >
-        Save
+        {{::translate.load('sbi.generic.save')}}
       </md-button>
     </md-dialog-actions>
 </md-dialog>
