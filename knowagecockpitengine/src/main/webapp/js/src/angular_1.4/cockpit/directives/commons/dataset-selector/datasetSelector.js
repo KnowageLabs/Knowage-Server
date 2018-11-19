@@ -74,8 +74,8 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 				.then(function(data){
 					$scope.loadingMetadata = false;
 					$scope.dataset = data.data;
-					$scope.datasetSettings.sortingColumn = $scope.dataset.metaData.fields[1].header;
-					$scope.datasetSettings.sortingOrder = 'ASC';
+					$scope.datasetSettings.sortingColumn = $scope.datasetSettings.sortingColumn || $scope.dataset.metaData.fields[1].header;
+					$scope.datasetSettings.sortingOrder = $scope.datasetSettings.sortingOrder || 'ASC';
 				},function(error){
 					$scope.loadingMetadata = false;
 					})
