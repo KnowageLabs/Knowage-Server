@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewere , $q,driversExecutionService){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q,driversExecutionService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -3122,7 +3122,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
 			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(function(response){
-				response.data.rows.push({id: 2, column_1: "Sheki Turkovic"})
 					$scope.getPreviewSet(response.data);
 			})
 		}
@@ -3131,12 +3130,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.drivers = $scope.dataset.drivers;
 			for(var i = 0; i < $scope.drivers.length;i++){
 				$scope.dataset.executed = true;
+				if($scope.drivers[i].mandatory &&  $scope.drivers.length == 1 ){
+					$scope.dataset.executed = true;
+					$scope.showDrivers = false;
+				}else
 				if($scope.drivers[i].mandatory){
 					$scope.dataset.executed = false;
+					$scope.showDrivers = true;
 					break;
 				}
 			}
-			$scope.showDrivers = true;
+
 			if(!$scope.drivers){
 				$scope.showDrivers = false;
 				$scope.dataset.executed = true;

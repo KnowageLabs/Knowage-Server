@@ -707,10 +707,16 @@ public class ManageDataSetsForREST {
 			HashMap<String, Object> driversMap = new HashMap<>();
 
 			JSONObject driversJ = (JSONObject) json.get("parametersString");
-			for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
-				if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0)
-					driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
-			}
+			if (driversJ.length() != 0)
+				for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
+					if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0) {
+						if (driversJ.get(JSONObject.getNames(driversJ)[i]) instanceof JSONArray) {
+							String arrayValue = driversJ.getJSONArray(JSONObject.getNames(driversJ)[i]).getJSONObject(0).getString("value");
+							driversMap.put(JSONObject.getNames(driversJ)[i], arrayValue);
+						} else
+							driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
+					}
+				}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);

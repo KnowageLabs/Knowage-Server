@@ -72,9 +72,9 @@
 
 <md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  layout-fill md-is-locked-open="$mdMedia('gt-md')">
 <div layout=column>
-<div flex=90 > filip
+<div flex=90 >
       <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
- filip  </div>
+  </div>
    <div flex=10>
 <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="executeParameter()">
 	{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
