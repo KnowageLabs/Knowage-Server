@@ -57,24 +57,9 @@ angular
 
 		};
 
-		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived,execProperties) {
+		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived,driversExecutionService) {
 
-			if(execProperties){
-				$scope.dataset = execProperties;
-				$scope.drivers = $scope.dataset.drivers;
-				$scope.showDrivers = true;
 
-				if($scope.drivers){
-					$scope.businessModel.executed = false;
-				}else{
-					$scope.showDrivers = false;
-					$scope.businessModel.executed = true;
-				}
-			}else{
-				$scope.showDrivers = false;
-				$scope.businessModel = {};
-				$scope.businessModel.executed = true;
-			}
 
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
@@ -98,9 +83,12 @@ angular
 							controller: openQbeInterfaceController,
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url,
-								   execProperties:execProperties,
-								   drivers:$scope.dataset.drivers,
+							locals:{
+								url:url,
+								execProperties:{},
+								drivers:{},
+								driversExecutionService:{},
+								bmOpen_urlViewPointService:{}
 								   }
 						}
 					)
@@ -120,11 +108,13 @@ angular
 		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
 			if(execProperties){
 				$scope.businessModel = execProperties;
+
 				if(execProperties.dsTypeCd){
 					$scope.drivers = execProperties.drivers
 				}else{
 					$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
 				}
+				if($scope.drivers){
 				for(var i = 0; i < $scope.drivers.length;i++){
 					$scope.businessModel.executed = true;
 					if($scope.drivers[i].mandatory){
@@ -143,11 +133,12 @@ angular
 						}
 					}
 				}
-
+				}
 				$scope.showDrivers = true;
-				if($scope.drivers.length == 0){
+				if(!$scope.drivers){
 					$scope.showDrivers = false;
 					$scope.businessModel.executed = true;
+					$scope.documentViewerUrl = url;
 				}
 			}else{
 				$scope.showDrivers = false;
@@ -189,7 +180,11 @@ angular
 				}
 			}
 			$scope.executeParameter = function(){
+				if(execProperties.parametersData){
 				var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				}else {
+					var drivers = {};
+				}
 				$scope.documentViewerUrl = url + '&' + $httpParamSerializer(drivers);
 				$scope.showQbe = true;
 				$scope.businessModel.executed = true;

@@ -17,7 +17,7 @@
 
 			executionService.buildStringParameters = function (documentParameters) {
 
-				if(documentParameters.length > 0) {
+				if(documentParameters && documentParameters.length > 0) {
 					for(var i = 0; i < documentParameters.length; i++ ) {
 						var parameter = documentParameters[i];
 						var valueKey = parameter.urlName;
