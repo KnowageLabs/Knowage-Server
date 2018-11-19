@@ -706,7 +706,7 @@ public class ManageDataSetsForREST {
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 			HashMap<String, Object> driversMap = new HashMap<>();
 
-			JSONObject driversJ = (JSONObject) json.get("parametersString");
+			JSONObject driversJ = json.has("parametersString") ? (JSONObject) json.get("parametersString") : new JSONObject();
 			if (driversJ.length() != 0)
 				for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
 					if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0) {
