@@ -58,12 +58,6 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 		super.initAttributes(driver);
 	}
 
-	// public void initDependencies(BIMetaModelParameter driver) {
-	// super.initDataDependencies(driver);
-	// super.initVisualDependencies(driver);
-	// super.initLovDependencies(driver, DRIVER_BM_DAO.loadBIMetaModelParameterByMetaModelId(driver.getBiMetaModelID()));
-	// }
-
 	@Override
 	public void initVisualDependencies(BIMetaModelParameter driver) {
 		if (dependencies == null) {

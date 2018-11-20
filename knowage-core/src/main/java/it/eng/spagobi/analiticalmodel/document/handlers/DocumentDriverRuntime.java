@@ -56,12 +56,6 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 		super.initAttributes(driver);
 	}
 
-	// public void initDependencies(BIObjectParameter driver) {
-	// super.initDataDependencies(driver);
-	// super.initVisualDependencies(driver);
-	// super.initLovDependencies(driver, DRIVER_DOC_DAO.loadBIObjectParametersById(driver.getBiObjectID()));
-	// }
-
 	@Override
 	public void initVisualDependencies(BIObjectParameter driver) {
 		if (dependencies == null) {
