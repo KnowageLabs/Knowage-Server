@@ -7,10 +7,6 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
-	   			<md-button aria-label="Filters on aggregations" ng-if="!smartPreview" ng-click="openFiltersOnAggregations(ngModel)">{{translate.load("kn.qbe.custom.table.toolbar.filters")}}
-	   				<md-tooltip md-delay="500">{{translate.load("kn.qbe.custom.table.toolbar.filters.on.aggregations")}}</md-tooltip>
-	   				<md-icon md-font-icon="fa fa-filter"></md-icon>
-	   			</md-button>
 	   			<md-button ng-click="showSQLQuery()">sql
 <!-- 					<md-icon md-font-icon="fas fa fa-database"></md-icon> -->
 				</md-button>
@@ -73,7 +69,7 @@
 	   			<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
 	   			</h2> 
 	   		<span flex></span>
-	   		<md-menu>			      
+	   		<md-menu>
 	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
 	      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.custom.table.column.settings")}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
@@ -232,10 +228,13 @@
 		        	<md-icon md-menu-origin class="fa fa-info"></md-icon>
 		      	</md-button>
 		      	<span flex></span>
-		      	<label ng-show="countFilters(field)" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>
+		      	<label ng-show="countFilters(field)" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length + field.havings.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>
 		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openFilters(field)">
 		        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
 		      	</md-button> 
+<!-- 		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openHavings(field)"> -->
+<!-- 		        	<md-icon md-menu-origin class="fa fa-check-square-o"></md-icon> -->
+<!-- 		      	</md-button>  -->
 	      	</div>  	
       	</md-toolbar>
      </div>  

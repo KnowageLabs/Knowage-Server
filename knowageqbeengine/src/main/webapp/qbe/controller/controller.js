@@ -444,7 +444,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.fieldsFunctions = [
     	
-    {
+//        {
+//        	"label": "havings",
+//        	"icon": "fa fa-check-square-o",
+//        	"visible": function (item){
+//        		return true;
+//        	},
+//        	"action": function(item, event) {
+//            	$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+//        	}
+//        },
+    	{
         	"label": "filters",
         	"icon": "fa fa-filter",
         	"visible": function (item){

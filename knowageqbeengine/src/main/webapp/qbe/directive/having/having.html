@@ -12,6 +12,12 @@
 	   	</div>
 	</md-toolbar>
 	<md-content flex layout="column">
+		
+		<div layout="row" layout-align="center center" >
+			<div class="kn-noItems" flex="60" flex-xs="100">
+				<p class="ng-binding">{{translate.load("kn.qbe.havings.message")}}</p>
+			</div>
+		</div>
 		<div layout="row" layout-align="center center" ng-if="(havings | filter : field.id).length == 0">
 			<div class="kn-noItems" flex="60" flex-xs="100">
 				<p class="ng-binding">{{translate.load("kn.qbe.havings.nohavings")}}</p>
@@ -19,39 +25,12 @@
 		</div>
 		<md-card ng-if="(havings | filter : field.id).length > 0">
 			<md-card-content layout="column" layout-padding>
- 				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings | filter : field.id" >    			
+
+				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings | filter : field.id" >    			
 	            	
-	            	<md-input-container flex=20>
-	            		<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>
- 	      				<input name="leftOperand" ng-model="having.leftOperandDescription" readonly>
-	            	</md-input-container>
-	            	
-	      			<md-input-container>
-<!-- 	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label> -->
-<!-- 	      				<input name="leftOperand" readonly> -->
-	      				<md-menu>
-	      					<md-button aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);">
-								<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
-							</md-button>
-							<md-menu-content>
-								<md-menu-item ng-repeat="entity in tree">
-									<md-menu class="havingOtherEntity">
-										<md-button ng-click="$mdMenu.open()">
-											<span>{{entity.text}}</span>
-										</md-button>
-										<md-menu-content>
-											<md-menu-item ng-repeat="fields in entity.children" ng-if="fields.iconCls == 'measure'">
-												<md-button ng-click="setLeft(having, fields)">
-													<span>{{fields.text}}</span>
-												</md-button>
-											</md-menu-item>
-										</md-menu-content>
-									</md-menu>
-								</md-menu-item>
-							</md-menu-content>
-	      				</md-menu>
-	      				
-<!-- 		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly> -->
+	      			<md-input-container flex=20>
+	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>
+		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly>
 		            </md-input-container>
 					
 <!-- 					<md-input-container flex=10> -->
@@ -78,7 +57,7 @@
 						</md-select>
 					</md-input-container>
 					
-<!-- 					<md-input-container flex=10 ng-if="having.rightType=='anotherEntity'"> -->
+<!-- 					<md-input-container flex=10 ng-if="having.rightType=='anotherEntity' || having.rightType=='subquery'"> -->
 <!-- 						<label class="havingLabel">{{translate.load("kn.qbe.havings.target.function")}}</label> -->
 <!-- 						<md-select ng-model="having.rightOperandAggregator"> -->
 <!-- 							<md-option ng-repeat="rightOperandAggregator in getFunctions" value="{{rightOperandAggregator}}">{{rightOperandAggregator}} -->
@@ -100,10 +79,10 @@
 								<md-menu-item ng-repeat="entity in tree">
 									<md-menu class="havingOtherEntity">
 										<md-button ng-click="$mdMenu.open()">
-											<span>{{entity.text}}</span>
+										<span>{{entity.text}}</span>
 										</md-button>
 										<md-menu-content>
-											<md-menu-item ng-repeat="r in entity.children" ng-if="r.iconCls == 'measure'">
+											<md-menu-item ng-repeat="r in entity.children">
 												<md-button ng-click="fillInput(having, r, 'anotherEntity')">
 													<span>{{r.text}}</span>
 												</md-button>
@@ -123,7 +102,7 @@
 <!-- 						</md-select> -->
 <!-- 					</md-input-container> -->
 					
-					<md-input-container flex=25 ng-if="having.rightType!='anotherEntity'">
+					<md-input-container flex=25 ng-if="having.rightType!='anotherEntity' && having.rightType!='subquery'">
 						<label class="havingLabel">{{translate.load("kn.qbe.havings.target")}}</label>
 						<input name="rightOperand" ng-model="having.rightOperandDescription" ng-change="edit(having)">
 					</md-input-container>
@@ -144,7 +123,8 @@
 			</md-card-content>
 		</md-card>
 	</md-content>
-  	</md-card-content>
+
+ 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="start center">
 	 <span flex></span>
 	      <md-button ng-click="closeHavings()" class="md-raised">

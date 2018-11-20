@@ -239,8 +239,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	}
 	
-	$scope.openFiltersOnAggregations = function(ngModel) {
-		$rootScope.$broadcast('openHavings', {"ngModel": ngModel});
+	$scope.openHavings = function(field) {
+		$rootScope.$broadcast('openHavings', field);
 	}
 	
 	$scope.openFilters = function (field){
@@ -272,6 +272,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			}
 		}
     	
+    	for (var i = 0; i < field.havings.length; i++) {
+			if(field.havings[i].leftOperandDescription == field.entity+" : "+field.name){
+				hav++;
+			}
+		}
     	
     	var total = filt + hav;
     	if(total == 0) {
@@ -393,6 +398,20 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
       	},
       	{
+      		"label":$scope.translate.load("kn.qbe.general.havings"),
+      		icon:'fa fa-check-square',
+      		color:'#a3a5a6',
+      		action:function(row,event){
+
+      			$scope.basicViewScopeFunctions.openHavings(row);
+            },
+            visible: function (item) {
+            
+            	return item.funct != '' ? true : false;
+            }
+
+      	},
+      	{
     		"label": sbiModule_translate.load("kn.qbe.custom.table.modified.field"),
     		"icon": "fa fa-calculator",
     		"visible": function (item){
@@ -431,6 +450,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		openFilters : function (row) {
 			$scope.openFilters(row);
+		},
+		openHavings : function (row) {
+			$scope.openHavings(row);
 		},
 		isGrouped : function (row){
 			for (var i = 0; i < $scope.ngModel.length; i++) {
@@ -474,6 +496,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				$scope.allFilters.push($scope.filterObject);
 
 		}
+		
+		for (var i = 0; i < field.havings.length; i++) {
+			$scope.havingObject = {
+				"operator": field.havings[i].operator,
+				"rightOperandDescription": field.havings[i].rightOperandAggregator + "(" + field.havings[i].rightOperandDescription + ")"
+			}
+ 			$scope.allFilters.push($scope.havingObject);
+ 		}
 		
         if($scope.allFilters.length > 0) {
 	    	$mdDialog.show({
