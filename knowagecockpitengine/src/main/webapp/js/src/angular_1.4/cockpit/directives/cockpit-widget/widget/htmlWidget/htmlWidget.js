@@ -155,7 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.parseHtmlFunctions = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var parser = new DOMParser()
-				var parsedHtml = parser.parseFromString(rawHtml, "text/html");
+				var parsedHtml = parser.parseFromString(rawHtml, "text/html"); 
 				var allElements = parsedHtml.getElementsByTagName('*');
 				var aggregationsReg = rawHtml.match($scope.aggregationRegex);
 				if(aggregationsReg) {
@@ -294,7 +294,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return (precision && !isNaN(eval(p1)))? parseFloat(eval(p1)).toFixed(precision) : eval(p1);
 		}
 		
-		$scope.ifConditionReplacer = function(match, p1, p2, aggr){
+		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
 			if(aggr){
 				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)] : 'null';
 			}
@@ -303,7 +303,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else {
 				p1 = 'null';
 			}
-			return p1;
+			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
 		}
 		
 		$scope.replacer = function(match, p1, p2, p3, precision) {
@@ -312,7 +312,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else{
 				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
-			return (precision && !isNaN(parseFloat(p1)))? parseFloat(p1).toFixed(precision) : p1;
+			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
 			
 		}
 		$scope.paramsReplacer = function(match, p1){
