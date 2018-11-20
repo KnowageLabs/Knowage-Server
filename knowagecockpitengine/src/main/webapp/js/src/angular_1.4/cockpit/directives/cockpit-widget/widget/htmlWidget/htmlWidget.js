@@ -116,6 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.cssToRender){
 				$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
 						function(placeholderResultCss){
+							placeholderResultCss = $scope.parseCalc(placeholderResultCss);
 							$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
 						}
 					)
@@ -212,7 +213,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	for(var r = 0; r<limit; r++){
 				    		var tempRow = angular.copy(repeatedElement);
 				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
-								return "[kn-column='"+c1+"' row='"+(c2||r)+"']";
+				    			var precisionPlaceholder = '';
+				    			if(precision) precisionPlaceholder = "precision='"+precision+"'";
+								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\' " + precisionPlaceholder + "]";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
 				    		if(r==0){
@@ -291,13 +294,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return (precision && !isNaN(eval(p1)))? parseFloat(eval(p1)).toFixed(precision) : eval(p1);
 		}
 		
-		$scope.ifConditionReplacer = function(match, p1, p2){
-			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
+		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
+			if(aggr){
+				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)] : 'null';
+			}
+			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
 				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)];
 			}else {
 				p1 = 'null';
 			}
-			return p1;
+			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
 		}
 		
 		$scope.replacer = function(match, p1, p2, p3, precision) {
