@@ -27,6 +27,8 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 			   extended:"=?",
 			   datasetSettings:"=?",
 			   onChange:"&",
+			   datasetTypeAvailable:"=?",
+			   datasetTypeExclusion:"=?"
 		   },
 		   compile: function (tElement, tAttrs, transclude) {
                 return {
@@ -54,6 +56,8 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			 $scope.ngModel=data.id.dsId;
 			 $scope.onChange({dsId:data.id.dsId});
 			 $scope.getMetaData($scope.ngModel);
+		 },function(error){
+			 console.log(error);
 		 });
 	}
 	$scope.cancelDataset=function(){
@@ -82,6 +86,35 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 		}else {
 			$scope.dataset = {};
 		}	
+	}
+	
+	$scope.isDatasetAvailable = function(ds){
+		if($scope.datasetTypeExclusion){
+		    var excluded = false;
+			for(var e in $scope.datasetTypeExclusion){
+				if($scope.datasetTypeExclusion[e].type == ds.type){
+					if($scope.datasetTypeExclusion[e].configuration){
+						if(ds.configuration[$scope.datasetTypeExclusion[e].configuration.property] == $scope.datasetTypeExclusion[e].configuration.value) return false;
+					} else {
+					    return false;
+					}
+
+				}
+			}
+			return true;
+		}
+		if($scope.datasetTypeAvailable){
+			for(var a in $scope.datasetTypeAvailable){
+				if($scope.datasetTypeAvailable[a].type == ds.type){
+					if($scope.datasetTypeAvailable[a].configuration){
+						if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
+						else return false;
+					}	
+					return true;
+				}else return false;
+			}
+		}
+		return true;
 	}
 	
 	if($scope.ngModel) $scope.getMetaData($scope.ngModel);
