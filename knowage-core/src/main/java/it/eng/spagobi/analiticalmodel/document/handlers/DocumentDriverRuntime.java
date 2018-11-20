@@ -1,6 +1,7 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -21,18 +22,19 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-public class DocumentDriverRuntime extends AbstractDriverRuntime{
+public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParameter> {
 
 	private static Logger logger = Logger.getLogger(DocumentDriverRuntime.class);
 
 	// DAOs
-		private IParameterUseDAO ANALYTICAL_DRIVER_USE_MODALITY_DAO;
-		private IObjParuseDAO DATA_DEPENDENCIES_DOC_DAO;
-		private IObjParviewDAO VISUAL_DEPENDENCIES_DOC_DAO;
-		private IBIObjectParameterDAO DRIVER_DOC_DAO;
-		private IParameterDAO ANALYTICAL_DRIVER_DAO;
+	private IParameterUseDAO ANALYTICAL_DRIVER_USE_MODALITY_DAO;
+	private IObjParuseDAO DATA_DEPENDENCIES_DOC_DAO;
+	private IObjParviewDAO VISUAL_DEPENDENCIES_DOC_DAO;
+	private IBIObjectParameterDAO DRIVER_DOC_DAO;
+	private IParameterDAO ANALYTICAL_DRIVER_DAO;
 
-	public DocumentDriverRuntime(BIObjectParameter biParam, String exeRole, Locale loc, BIObject doc, DocumentRuntime dum, List<BIObjectParameter> objParameters) {
+	public DocumentDriverRuntime(BIObjectParameter biParam, String exeRole, Locale loc, BIObject doc, DocumentRuntime dum,
+			List<BIObjectParameter> objParameters) {
 		super(biParam, exeRole, loc, doc, dum, objParameters);
 		// TODO Auto-generated constructor stub
 	}
@@ -54,14 +56,17 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime{
 		super.initAttributes(driver);
 	}
 
-	public void initDependencies(BIObjectParameter driver) {
-		super.initDataDependencies(driver);
-		super.initVisualDependencies(driver);
-		super.initLovDependencies(driver, DRIVER_DOC_DAO.loadBIObjectParametersById(driver.getBiObjectID()));
-	}
+	// public void initDependencies(BIObjectParameter driver) {
+	// super.initDataDependencies(driver);
+	// super.initVisualDependencies(driver);
+	// super.initLovDependencies(driver, DRIVER_DOC_DAO.loadBIObjectParametersById(driver.getBiObjectID()));
+	// }
 
-	private void initVisualDependencies(BIObjectParameter driver) {
-		super.initVisualDependencies(driver);
+	@Override
+	public void initVisualDependencies(BIObjectParameter driver) {
+		if (dependencies == null) {
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
+		}
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_DOC_DAO.loadObjParviews(driver.getId());
 		} catch (HibernateException e) {
@@ -87,8 +92,11 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime{
 		}
 	}
 
+	@Override
 	public void initDataDependencies(BIObjectParameter driver) {
-		super.initDataDependencies(driver);
+		if (dependencies == null) {
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
+		}
 		try {
 			dataDependencies = DATA_DEPENDENCIES_DOC_DAO.loadObjParuse(driver.getId(), analyticalDriverExecModality.getUseID());
 		} catch (EMFUserError e) {
@@ -117,12 +125,9 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime{
 		super.loadAdmissibleValues(driver, dum);
 	}
 
-	 @Override
+	@Override
 	public BIObjectParameter getDriver() {
-	        return (BIObjectParameter)driver;
-	 }
-
-
-
+		return driver;
+	}
 
 }
