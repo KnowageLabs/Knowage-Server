@@ -33,13 +33,13 @@
 		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly>
 		            </md-input-container>
 					
-<!-- 					<md-input-container flex=10> -->
-<!-- 						<label class="havingLabel">{{translate.load("kn.qbe.havings.function")}}</label> -->
-<!-- 						<md-select ng-model="having.leftOperandAggregator"> -->
-<!-- 							<md-option ng-repeat="leftOperandAggregator in getFunctions" value="{{leftOperandAggregator}}">{{leftOperandAggregator}} -->
-<!-- 							</md-option> -->
-<!-- 						</md-select> -->
-<!-- 					</md-input-container> -->
+					<md-input-container flex=10>
+						<label class="havingLabel">{{translate.load("kn.qbe.havings.function")}}</label>
+						<md-select ng-model="having.leftOperandAggregator">
+							<md-option ng-repeat="leftOperandAggregator in getFunctions" value="{{leftOperandAggregator}}">{{leftOperandAggregator}}
+							</md-option>
+						</md-select>
+					</md-input-container>
 					
 					<md-input-container flex=10>
 						<label class="havingLabel">{{translate.load("kn.qbe.havings.operator")}}</label>
