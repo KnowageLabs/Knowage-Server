@@ -1,6 +1,7 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -20,7 +21,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
+public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaModelParameter> {
 
 	private static Logger logger = Logger.getLogger(BusinessModelDriverRuntime.class);
 
@@ -57,14 +58,17 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 		super.initAttributes(driver);
 	}
 
-	public void initDependencies(BIMetaModelParameter driver) {
-		super.initDataDependencies(driver);
-		super.initVisualDependencies(driver);
-		super.initLovDependencies(driver, DRIVER_BM_DAO.loadBIMetaModelParameterByMetaModelId(driver.getBiMetaModelID()));
-	}
+	// public void initDependencies(BIMetaModelParameter driver) {
+	// super.initDataDependencies(driver);
+	// super.initVisualDependencies(driver);
+	// super.initLovDependencies(driver, DRIVER_BM_DAO.loadBIMetaModelParameterByMetaModelId(driver.getBiMetaModelID()));
+	// }
 
+	@Override
 	public void initVisualDependencies(BIMetaModelParameter driver) {
-		super.initVisualDependencies(driver);
+		if (dependencies == null) {
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
+		}
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_BM_DAO.loadMetaModelParviews(driver.getId());
 		} catch (HibernateException e) {
@@ -90,8 +94,11 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 		}
 	}
 
+	@Override
 	public void initDataDependencies(BIMetaModelParameter driver) {
-		super.initDataDependencies(driver);
+		if (dependencies == null) {
+			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
+		}
 		try {
 			dataDependencies = DATA_DEPENDENCIES_BM_DAO.loadMetaModelParuseById(driver.getId());
 		} catch (Exception e) {
@@ -122,7 +129,7 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime {
 
 	@Override
 	public BIMetaModelParameter getDriver() {
-		return (BIMetaModelParameter) driver;
+		return driver;
 	}
 
 }

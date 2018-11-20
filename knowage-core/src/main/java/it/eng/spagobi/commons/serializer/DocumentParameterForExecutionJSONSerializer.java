@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.analiticalmodel.document.handlers.AbstractDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
@@ -79,9 +80,9 @@ public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 
 				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if (pd instanceof DocumentDriverRuntime.DataDependencyRuntime) {
+					if (pd instanceof AbstractDriverRuntime.DataDependencyRuntime) {
 						dependency.put("hasDataDependency", true);
-					} else if (pd instanceof DocumentDriverRuntime.VisualDependencyRuntime) {
+					} else if (pd instanceof AbstractDriverRuntime.VisualDependencyRuntime) {
 						AbstractParview visualCondition = ((DocumentDriverRuntime.VisualDependencyRuntime) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
