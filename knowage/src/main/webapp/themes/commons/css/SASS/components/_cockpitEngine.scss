@@ -274,44 +274,16 @@
     			background-position: 0 0;
     			background-color: $baseColor;
     			&.clusters {
-    				mask-image: url('../img/cockpit/mapWidget/clusters.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/clusters.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
+    				@include custom-mask-image('../img/cockpit/mapWidget/clusters.svg');
     			}
     			&.markers {
-    				mask-image: url('../img/cockpit/mapWidget/markers.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/markers.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
+    				@include custom-mask-image('../img/cockpit/mapWidget/markers.svg');
     			}
     			&.heatmap {
-    				mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
+    				@include custom-mask-image('../img/cockpit/mapWidget/heatmap.svg');
     			}
     			&.choropleth {
-    				mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
+    				@include custom-mask-image('../img/cockpit/mapWidget/choropleth.svg');
     			}
     		}
     	}
@@ -2419,6 +2391,7 @@
 	}
 
 	.cockpitSelectorWidget{
+		
 	    .cockpitSelectorWidgetCombobox {
             padding-top: 0;
             md-input-container {
@@ -2563,6 +2536,48 @@
 	}
 
 	.cockpitSelectorWidgetSettings {
+		.selTypes {
+    		.outerIcon {
+    			padding: 0 8px;
+    			border: 1px solid $ternaryColor;
+    			cursor: pointer;
+    			margin-right: 8px;
+    			&.selected {
+    				background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    		&:hover, &.selected {
+	    			.selTypesIcon {
+    					background-color: $lightTextColor;
+    				}
+	    		}
+    		}
+    		.selTypesIcon {
+    			width: 100px;
+    			height: 60px;
+    			background-repeat: no-repeat;
+    			background-size: 50%;
+    			background-position: center;
+    			background-color: $baseColor;
+    			&.multiValueIcon {
+    				@include custom-mask-image('../img/cockpit/selectorWidget/check.svg', 50%, center);
+    			}
+    			&.singleValueIcon {
+    				@include custom-mask-image('../img/cockpit/selectorWidget/radio.svg', 50%, center);
+    			}
+    			&.dropdownIcon {
+    				@include custom-mask-image('../img/cockpit/selectorWidget/dropdown.svg', 50%, center);
+    			}
+    			&.singleValueTemporalIcon {
+    				@include custom-mask-image('../img/cockpit/selectorWidget/singleDate.svg', 50%, center);
+    			}
+    			&.multiValueTemporalIcon {
+    				@include custom-mask-image('../img/cockpit/selectorWidget/multiDate.svg', 50%, center);
+    			}
+    		}
+    	}
 		.alternatedInput{
 			.radioContainer {
 				margin: 0;

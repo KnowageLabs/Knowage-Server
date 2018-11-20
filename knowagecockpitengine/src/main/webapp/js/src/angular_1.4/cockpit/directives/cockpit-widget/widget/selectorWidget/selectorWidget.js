@@ -66,9 +66,11 @@ angular.module('cockpitModule')
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
 	  	}
+		
+		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX') $scope.ngModel.settings.modalityValue = "dropdown";
 
 		$scope.isDisabled = function(p){
-			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue=="singleValue"){
+			if($scope.ngModel.settings.modalityValue=="dropdown"){
 				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1 && $scope.selectedValues.indexOf(p) == -1;
 			}else{
 				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1;

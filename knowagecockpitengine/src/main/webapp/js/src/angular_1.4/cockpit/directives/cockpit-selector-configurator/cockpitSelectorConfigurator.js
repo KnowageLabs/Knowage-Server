@@ -33,6 +33,9 @@
 		if(!$scope.model.settings.modalityPresent){
 			$scope.model.settings.modalityPresent="LIST";
 		}
+		if($scope.model.settings.modalityPresent == "COMBOBOX"){
+			$scope.model.settings.modalityValue = "dropdown";
+		}
 		if(!$scope.model.settings.defaultValue){
 			$scope.model.settings.defaultValue="";
 		}
@@ -52,8 +55,15 @@
 			return false;
 		}
 		
+		$scope.setSelectorType = function(type){
+			$scope.model.settings.modalityValue = type;
+		}
+		
 		$scope.showCircularcolumns = {value :false};
-		$scope.modalityValue = [{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value')},{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue')}];
+		$scope.modalityValue = [
+			{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value'),temporalAvailable:true},
+			{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue'),temporalAvailable:true},
+			{value :"dropdown",name: $scope.translate.load('sbi.cockpit.widgets.selector.selectinput'),temporalAvailable:false}];
 		$scope.modalityView = [
 			{value: "vertical",name: $scope.translate.load('sbi.cockpit.widgets.selector.vertical'),icon:"fa fa-ellipsis-v"},
 			{value :"horizontal",name: $scope.translate.load('sbi.cockpit.widgets.selector.horizontal'),icon:"fa fa-ellipsis-h"},

@@ -1,7 +1,6 @@
 <div flex layout-align="center center" class="cockpitSelectorWidget">
-
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
-		<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" 
+	<div ng-if="ngModel.settings.modalityValue=='singleValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+		<div ng-if="ngModel.settings.modalityValue!='multiValue'" layout="column" 
 			ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 			<label class="kn-custom-radio-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
 				<span>{{::record.column_1}}</span>
@@ -12,7 +11,7 @@
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller"
+	<div ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller"
 		ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 		<label class="kn-custom-checkbox-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
 			<span>{{::record.column_1}}</span>
@@ -22,10 +21,10 @@
 	</div>
 	
 	<!-- lov combobox single and multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX' && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
+	<div ng-if="ngModel.settings.modalityValue=='dropdown' && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
 	
 		<!-- single -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue' && showSelection" style="width:100%">
+		<md-input-container class="md-block" ng-if="showSelection" style="width:100%">
 			<div class="kn-select">
 				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])"
 						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
@@ -34,13 +33,13 @@
 			</div>
 		</md-input-container>
 		
-		<!-- multiple -->
+		<!-- multiple 
 		<md-input-container class="md-block multipleSelect" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select multipleSelect">
 				<select ng-model="selectedValues" multiple ng-change="toggleParameter(selectedValues)" 
 						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()"></select>
 			</div>
-		</md-input-container>
+		</md-input-container-->
 		
 	</div>
 	

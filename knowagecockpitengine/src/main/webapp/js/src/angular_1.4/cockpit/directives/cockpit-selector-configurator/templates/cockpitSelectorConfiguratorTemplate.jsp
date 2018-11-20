@@ -21,28 +21,25 @@
 		</md-card-content>
 	</md-card>
 	<md-card flex>
-		<md-card-title>
-           	<md-card-title-text layout="row">
-               	<span flex class="md-headline">{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.modality')}}</span>
-                   <span flex></span>  
-             	</md-card-title-text>
-        </md-card-title>
-        <md-card-content class="alternatedInput">
-			<md-input-container class="md-block radioContainer">
-	       		<md-radio-group layout="row" ng-model="model.settings.modalityValue" layout="row" layout-align="start center"> 
-	       			<md-radio-button ng-repeat="button in modalityValue" ng-value="button.value">
-	           			{{button.name}}
-	       			</md-radio-button>
-	   			</md-radio-group>
-		    </md-input-container>
-		    <md-input-container class="md-block radioContainer" ng-if="!isSelectedColumnTemporal()>
-	       		<md-radio-group layout="row" ng-model="model.settings.modalityPresent" layout="row" layout-align="start center"> 
-	       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value">
-	           			{{button.name}}
-	       			</md-radio-button>
-	   			</md-radio-group>
-		    </md-input-container>
-		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityPresent=='LIST'">
+		<md-subheader>{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.modality')}}</md-subheader>
+	        <md-card-content class="alternatedInput noPadding">
+	        	<div layout="row" class="selTypes" style="padding:8px;" ng-if="!isSelectedColumnTemporal()">
+					<div class="outerIcon" ng-repeat="visType in modalityValue" ng-click="setSelectorType(visType.value)" ng-class="{'selected':model.settings.modalityValue==visType.value}">
+						<div class="selTypesIcon" ng-class="visType.value+'Icon'">
+							<md-tooltip>{{visType.name}}</md-tooltip>
+						</div>
+					</div>
+				</div>
+				<div layout="row" class="selTypes" style="padding:8px;" ng-if="isSelectedColumnTemporal()">
+					<div class="outerIcon" ng-repeat="visType in modalityValue" ng-click="setSelectorType(visType.value)" ng-if="visType.temporalAvailable" ng-class="{'selected':model.settings.modalityValue==visType.value}">
+						<div class="selTypesIcon" ng-class="visType.value+'TemporalIcon'">
+							<md-tooltip>{{visType.name}}</md-tooltip>
+						</div>
+					</div>
+				</div>
+		    
+		    <md-subheader ng-if="model.settings.modalityValue!='dropdown'">{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.alignment')}}</md-subheader>
+		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityValue!='dropdown'" layout-padding>
 	      		<md-radio-group  layout="row" ng-model="model.settings.modalityView" layout="row" layout-align="start center"> 
 	       			<md-radio-button ng-repeat="button in modalityView" ng-value="button.value">
 	            		<md-icon md-font-icon="{{button.icon}}" style="text-align:center"></md-icon> {{button.name}}
@@ -50,7 +47,8 @@
 	   			</md-radio-group>
 		    </md-input-container>
 		    
-		    <div layout="row">
+		    <md-subheader>{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.options')}}</md-subheader>
+		    <div layout="row" style="padding:8px;">
 		    	<md-input-container class="md-block" flex ng-if="!isSelectedColumnTemporal()">
 					<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
 					<md-select  ng-model="model.settings.defaultValue">
