@@ -245,6 +245,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
 				    	condition = condition.replace($scope.paramsRegex, $scope.paramsReplacer);
+				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
@@ -290,7 +291,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Replacers
 		$scope.calcReplacer = function(match,p1,precision){
-			return (precision && !isNaN(eval(p1)))? eval(p1).toFixed(precision) : eval(p1);
+			return (precision && !isNaN(eval(p1)))? parseFloat(eval(p1)).toFixed(precision) : eval(p1);
 		}
 		
 		$scope.ifConditionReplacer = function(match, p1, p2, aggr){
