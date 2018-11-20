@@ -115,19 +115,6 @@ function onSelectionChanged(node){
 			'</md-button>';
 }
 
-	 $scope.executeDoc = function(id,e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		for(var k in $scope.folderDocuments){
-			if($scope.folderDocuments[k].id == id){
-				$scope.selectedDocument = $scope.folderDocuments[k];
-				$scope.executeDocument($scope.selectedDocument);
-				return;
-			}
-
-		}
-	 }
-
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
 			$scope.selectedDocument = undefined;
@@ -315,6 +302,23 @@ function onSelectionChanged(node){
 		$scope.runningDocuments.push(tmpDoc);
 
 	};
+	
+	$scope.executeDoc = function(id,e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		for(var k in $scope.folderDocuments){
+			if($scope.folderDocuments[k].id == id){
+				$scope.selectedDocument = $scope.folderDocuments[k];
+				$scope.executeDocument($scope.selectedDocument);
+				return;
+			}
+		}
+		sbiModule_restServices.promiseGet("2.0","documents/"+id)
+		.then(function(response) {
+			$scope.selectedDocument = response.data;
+			$scope.executeDocument($scope.selectedDocument);
+		},function(error){console.log(error)})
+	 }
 
 	$scope.wasSelected = function(document) {
 		return $scope.selectedDocument === document;
