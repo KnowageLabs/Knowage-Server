@@ -816,15 +816,17 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 			    	 $scope.editFieldsProperty=function(selectedColumn){
 			    		  selectedColumn.sorterByColumns = $scope.getSorterByColumns($scope.currentDataset); //load all columns to manage external sort column
-			    		  var guiSortOptions = fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows);
-			    		  var templateSortOptions = model.content.sortOptions;
-			    		  if (!angular.equals(guiSortOptions, templateSortOptions)){
-			    			  selectedColumn.showSortingAlert = true;
-			    			  console.log("ATTENTION: The user had save sortings manually that are different by the configuration set. The system are using the first ones.");
-			    			  console.log("templateSortOptions:", templateSortOptions);
-			    			  console.log("guiSortOptions:", guiSortOptions);
-			    		  }else{
-			    				selectedColumn.showSortingAlert = false;
+			    		  if (model.content.crosstabDefinition){
+				    		  var guiSortOptions = fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows);
+				    		  var templateSortOptions = model.content.sortOptions;
+				    		  if (!angular.equals(guiSortOptions, templateSortOptions)){
+				    			  selectedColumn.showSortingAlert = true;
+				    			  console.log("ATTENTION: The user had save sortings manually that are different by the configuration set. The system are using the first ones.");
+				    			  console.log("templateSortOptions:", templateSortOptions);
+				    			  console.log("guiSortOptions:", guiSortOptions);
+				    		  }else{
+				    				selectedColumn.showSortingAlert = false;
+				    		  }
 			    		  }
 			    		  selectedColumn.fnOrder = fnOrder;
 			    		  $mdDialog.show({
