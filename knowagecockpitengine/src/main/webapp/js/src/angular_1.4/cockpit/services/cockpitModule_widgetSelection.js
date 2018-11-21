@@ -711,9 +711,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if(widget.dataset && widget.dataset.dsId){
 					var datasetLabel = datasetMap[""+widget.dataset.dsId];
 					if(datasetLabel != undefined){
-//						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
-						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset[widget.dataset.dsId]){
-							var widgetColumn = widget.content.columnSelectedOfDataset[widget.dataset.dsId][widgetColumnIndex];
+						var columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
+						for(var widgetColumnIndex in columns){
+						    var widgetColumn =columns[widgetColumnIndex];
 
 							if(widgetColumn && widgetColumn.name){
 								var columnName = widgetColumn.name;
