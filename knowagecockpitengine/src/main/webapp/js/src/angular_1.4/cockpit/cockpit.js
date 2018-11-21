@@ -43,12 +43,16 @@ var cockpitApp= angular.module("cockpitModule",[
 	'knModule',
 	'agGrid'
 	]);
-cockpitApp.config(['$mdThemingProvider','$mdGestureProvider','$compileProvider', function($mdThemingProvider,$mdGestureProvider,$compileProvider) {
+cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
     $mdGestureProvider.skipClickHijack();
     $compileProvider.debugInfoEnabled(false);
-}]);
+    if(isIE){
+    	$mdInkRippleProvider.disableInkRipple();
+    	$mdAriaProvider.disableWarnings();
+    }
+});
 
 
 cockpitApp.controller("cockpitMasterControllerWrapper",
