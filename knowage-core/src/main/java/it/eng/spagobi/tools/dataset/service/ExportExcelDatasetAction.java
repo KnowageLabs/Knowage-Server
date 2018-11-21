@@ -19,9 +19,15 @@ package it.eng.spagobi.tools.dataset.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -39,6 +45,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
 	public static final String VERSION_ID = "id";
+	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
 
 	// logger component
 	private static Logger logger = Logger.getLogger(ExportExcelDatasetAction.class);
@@ -46,6 +54,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 	@Override
 	public void doService() {
 		logger.info("IN");
+		SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 		try {
 			Integer id = this.getAttributeAsInteger(VERSION_ID);
@@ -68,6 +78,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			// create WB
 			XSSFWorkbook wb = new XSSFWorkbook();
 			XSSFSheet sheet = wb.createSheet("datastore");
+			CreationHelper createHelper = wb.getCreationHelper();
+
 			// STYLE CELL
 			CellStyle borderStyleHeader = wb.createCellStyle();
 			borderStyleHeader.setBorderBottom(CellStyle.BORDER_THIN);
@@ -98,9 +110,76 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 						if (dataStore.getRecordAt(i) != null && dataStore.getRecordAt(i).getFields() != null
 								&& dataStore.getRecordAt(i).getFields().size() > 0) {
 							for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
-								XSSFCell cell = row.createCell(k);
-								cell.setCellValue("" + dataStore.getRecordAt(i).getFieldAt(k).getValue());
-								cell.setCellStyle(borderStyleRow);
+								Class<?> clazz = dataStore.getMetaData().getFieldType(k);
+								Object value = dataStore.getRecordAt(i).getFieldAt(k).getValue();
+
+								if (value != null) {
+
+									if (Timestamp.class.isAssignableFrom(clazz)) {
+										CellStyle tsCellStyle = wb.createCellStyle();
+										tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
+										tsCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+										tsCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+										XSSFCell cell = row.createCell(k);
+										String formatedTimestamp = timeStampFormat.format(value);
+										Date ts = timeStampFormat.parse(formatedTimestamp);
+										cell.setCellValue(ts);
+										cell.setCellStyle(tsCellStyle);
+									} else if (Date.class.isAssignableFrom(clazz)) {
+										CellStyle dateCellStyle = wb.createCellStyle();
+										dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
+										dateCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+										dateCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+										XSSFCell cell = row.createCell(k);
+										String formatedDate = dateFormat.format(value);
+										Date date = dateFormat.parse(formatedDate);
+										cell.setCellValue(date);
+										cell.setCellStyle(dateCellStyle);
+									} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
+											|| Double.class.isAssignableFrom(clazz) || Float.class.isAssignableFrom(clazz)
+											|| BigDecimal.class.isAssignableFrom(clazz)) {
+										// Format Numbers
+										if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
+											CellStyle intCellStyle = wb.createCellStyle();
+											intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+											intCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+											intCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+											XSSFCell cell = row.createCell(k);
+											cell.setCellValue(Double.parseDouble(value.toString()));
+											cell.setCellStyle(intCellStyle);
+										} else {
+											CellStyle decimalCellStyle = wb.createCellStyle();
+											decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+											decimalCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+											decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+											XSSFCell cell = row.createCell(k);
+											cell.setCellValue(Double.parseDouble(value.toString()));
+											cell.setCellStyle(decimalCellStyle);
+										}
+
+									} else {
+										XSSFCell cell = row.createCell(k);
+										cell.setCellValue(value.toString());
+										cell.setCellStyle(borderStyleRow);
+									}
+
+								} else {
+									XSSFCell cell = row.createCell(k);
+									cell.setCellStyle(borderStyleRow);
+								}
+
 							}
 						}
 					}
@@ -128,6 +207,9 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		} catch (EMFUserError e) {
 			logger.error("write output stream error " + e.getMessage());
 			throw new SpagoBIServiceException(this.getActionName(), "Impossible to write back the responce to the client", e);
+		} catch (ParseException e) {
+			logger.error("write output stream error " + e.getMessage());
+			throw new SpagoBIServiceException(this.getActionName(), "Impossible to parse Date/DateTime value", e);
 		}
 
 	}
