@@ -20,6 +20,8 @@ var scripts = document.getElementsByTagName("script");
 var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
+var isIE = window.document.documentMode;
+
 (function() {
 
 var cockpitApp= angular.module("cockpitModule",[
@@ -41,11 +43,16 @@ var cockpitApp= angular.module("cockpitModule",[
 	'ui.codemirror',
 	'knModule'
 	]);
-cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
+cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$mdInkRippleProvider,$mdAriaProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
-}]);
-
+    if (isIE) {
+	    //$mdGestureProvider.disableAll();
+    	$mdThemingProvider.disableTheming();
+	    $mdInkRippleProvider.disableInkRipple();
+	    $mdAriaProvider.disableWarnings();
+	  }
+});
 
 cockpitApp.controller("cockpitMasterControllerWrapper",
 		['$scope',

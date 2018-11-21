@@ -257,8 +257,11 @@ md-card.md-knowage-theme {
     }
 }
 
-md-tab-content md-content.md-knowage-theme {
+md-tab-content {
+  background-color: $pageBackground;
+  md-content.md-knowage-theme {
     background-color: transparent;
+  }
 }
 
 // Dialog Buttons

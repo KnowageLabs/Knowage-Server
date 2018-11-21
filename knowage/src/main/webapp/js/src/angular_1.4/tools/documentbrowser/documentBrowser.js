@@ -155,10 +155,6 @@ function onSelectionChanged(node){
 		}
 	};
 
-
-
-
-
 	$scope.loadFolderDocuments=function(folderId){
 		$scope.hideProgressCircular=false;
 		sbiModule_restServices.promiseGet("2.0","documents","folderId=" + folderId)
@@ -285,6 +281,8 @@ function onSelectionChanged(node){
 
 	$scope.executeDocument = function(document) {
 		
+		var isIE = window.document.documentMode;
+		
 		var params = {};
 
 		var url = sbiModule_config.contextName
@@ -296,12 +294,15 @@ function onSelectionChanged(node){
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + document.name
 			;
-
-		var tmpDoc={};
-		angular.copy(document,tmpDoc);
-		tmpDoc.url=url;
-		$scope.runningDocuments.push(tmpDoc);
-
+		
+		if(isIE){
+			location.href = url;
+		}else{
+			var tmpDoc={};
+			angular.copy(document,tmpDoc);
+			tmpDoc.url=url;
+			$scope.runningDocuments.push(tmpDoc);
+		}
 	};
 	
 	$scope.executeDoc = function(id,e){

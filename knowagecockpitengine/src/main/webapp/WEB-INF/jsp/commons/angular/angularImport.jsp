@@ -97,7 +97,6 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-gridster/angular-gridster.min.js"></script>
 <link rel="stylesheet" href="<%=spagoBiContext%>/js/lib/angular/angular-gridster/angular-gridster.min.css">
  
- 
 <!-- colorpicker -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinygradient.min.js"></script>
@@ -111,6 +110,10 @@ END-PRODUCTION -->
 
 <!-- 		angular-drag-and-drop-lists -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>	
+
+<!--[if gte IE 8]>
+	<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle_ie.css" />
+<![endif]-->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">	
 
 <!--  angular JSON FORMATTER -->
@@ -135,16 +138,7 @@ END-PRODUCTION -->
 <!-- Open Layers 4.6.4 -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol-debug.js"></script>
-
-<!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
  
-<!-- 3.x.x 
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.js"></script>	 
--->
-<!-- mathjs for quantil thematization -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
-
 <!-- html2canvas -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
 
@@ -154,5 +148,3 @@ END-PRODUCTION -->
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
-
-	

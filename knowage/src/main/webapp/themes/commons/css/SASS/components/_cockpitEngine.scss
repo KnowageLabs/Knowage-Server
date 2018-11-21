@@ -1570,7 +1570,6 @@
 								&.viewModeSheet {
 									top: -1px;
 								}
-								top: -8px;
 							}
 						}
 					}
@@ -2241,5 +2240,11 @@
 .hasCrossNavigation {
 	cockpit-image-widget {
 		cursor: pointer;
+	}
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-cockpit cockpit-grid {
+		overflow-y: hidden;
 	}
 }
