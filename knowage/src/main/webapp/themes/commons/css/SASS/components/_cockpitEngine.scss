@@ -1896,6 +1896,17 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-cockpit {
+		.pivotTableDesigner {
+			min-height: 600px;
+			.measureAttributeTab {
+				min-height: 600px;
+			}
+		}
+		cockpit-grid {
+			overflow-y: hidden;
+		}
+	}
     cockpit-table {
 	    .cockpitTableContainer {
 	    	table.cockpitTable {
@@ -1913,6 +1924,13 @@
 		}
 	}
 	cockpit-sheet {
+		.cockpitEditMode {
+			md-tab-item {
+				span {
+					top: -8px;
+				}
+			}
+		}
 		md-tabs {
 			md-tabs-wrapper {
 				md-tabs-canvas {

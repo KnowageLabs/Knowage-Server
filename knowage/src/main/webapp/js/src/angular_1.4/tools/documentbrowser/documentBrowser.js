@@ -284,6 +284,7 @@ function onSelectionChanged(node){
 
 	$scope.executeDocument = function(document) {
 
+		var isIE = window.document.documentMode;
 		var params = {};
 
 		var url = sbiModule_config.contextName
@@ -296,10 +297,15 @@ function onSelectionChanged(node){
 			+ '&OBJECT_NAME=' + document.name
 			;
 
-		var tmpDoc={};
-		angular.copy(document,tmpDoc);
-		tmpDoc.url=url;
-		$scope.runningDocuments.push(tmpDoc);
+		if(isIE){
+			location.href = url;
+		}else{
+			var tmpDoc={};
+			angular.copy(document,tmpDoc);
+			tmpDoc.url=url;
+			$scope.runningDocuments.push(tmpDoc);
+		}
+		
 
 	};
 	

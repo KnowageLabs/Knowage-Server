@@ -15,7 +15,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+var isIE = window.document.documentMode;
 var scripts = document.getElementsByTagName("script");
 var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
