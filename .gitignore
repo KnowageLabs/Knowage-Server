@@ -65,9 +65,6 @@ target/
 *.ear
 *.logs
 
-# ant folders
-ant-build/
-dist/
 
 # zanata folder
 .zanata-cache/
