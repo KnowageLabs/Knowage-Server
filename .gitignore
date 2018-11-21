@@ -64,7 +64,3 @@ target/
 *.war
 *.ear
 *.logs
-
-# ant folders
-ant-build/
-dist/
