@@ -17,6 +17,22 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -24,102 +40,171 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
-    public static final String VERSION_ID = "id";
+	public static final String VERSION_ID = "id";
 
-    // logger component
-    private static Logger logger = Logger.getLogger(ExportExcelDatasetAction.class);
+	// logger component
+	private static Logger logger = Logger.getLogger(ExportExcelDatasetAction.class);
+	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
 
-    @Override
-    public void doService() {
-        logger.info("IN");
+	@Override
+	public void doService() {
+		logger.info("IN");
 
-        Integer id = this.getAttributeAsInteger(VERSION_ID);
-        // GET DATA STORE INFO
-        IDataSetDAO dao = DAOFactory.getDataSetDAO();
-        dao.setUserProfile(this.getUserProfile());
-        IDataSet dataSet = dao.loadDataSetById(id);
+		SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
-        IDataStore dataStore = null;
-        try {
-            dataSet.loadData();
-            dataStore = dataSet.getDataStore();
-        } catch (Exception e) {
-            logger.error("Error loading dataset", e);
-        }
+		Integer id = this.getAttributeAsInteger(VERSION_ID);
+		// GET DATA STORE INFO
+		IDataSetDAO dao = DAOFactory.getDataSetDAO();
+		dao.setUserProfile(this.getUserProfile());
+		IDataSet dataSet = dao.loadDataSetById(id);
 
-        freezeHttpResponse();
-        getHttpResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + dataSet.getName() + ".xlsx" + "\";");
-        getHttpResponse().setContentType("application/vnd.ms-excel");
-        // create WB
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet("datastore");
-        // STYLE CELL
-        CellStyle borderStyleHeader = wb.createCellStyle();
-        borderStyleHeader.setBorderBottom(CellStyle.BORDER_THIN);
-        borderStyleHeader.setBorderLeft(CellStyle.BORDER_THIN);
-        borderStyleHeader.setBorderRight(CellStyle.BORDER_THIN);
-        borderStyleHeader.setBorderTop(CellStyle.BORDER_THIN);
-        borderStyleHeader.setAlignment(CellStyle.ALIGN_CENTER);
-        CellStyle borderStyleRow = wb.createCellStyle();
-        borderStyleRow.setBorderBottom(CellStyle.BORDER_THIN);
-        borderStyleRow.setBorderLeft(CellStyle.BORDER_THIN);
-        borderStyleRow.setBorderRight(CellStyle.BORDER_THIN);
-        borderStyleRow.setBorderTop(CellStyle.BORDER_THIN);
-        borderStyleRow.setAlignment(CellStyle.ALIGN_RIGHT);
-        if (dataStore != null) {
-            // CREATE HEADER SHEET
-            XSSFRow header = sheet.createRow((short) 0); // first row
-            if (dataStore.getMetaData() != null && dataStore.getMetaData().getFieldCount() > 0) {
-                for (int i = 0; i <= dataStore.getMetaData().getFieldCount() - 1; i++) {
-                    XSSFCell cell = header.createCell(i);
-                    cell.setCellValue(dataStore.getMetaData().getFieldAlias(i));
-                    cell.setCellStyle(borderStyleHeader);
-                }
-            }
-            // FILL CELL RECORD
-            if (dataStore.getRecordsCount() > 0) {
-                for (int i = 0; i <= dataStore.getRecordsCount() - 1; i++) {
-                    XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
-                    if (dataStore.getRecordAt(i) != null && dataStore.getRecordAt(i).getFields() != null
-                            && dataStore.getRecordAt(i).getFields().size() > 0) {
-                        for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
-                            XSSFCell cell = row.createCell(k);
-                            cell.setCellValue("" + dataStore.getRecordAt(i).getFieldAt(k).getValue());
-                            cell.setCellStyle(borderStyleRow);
-                        }
-                    }
-                }
-            }
-        } else {
-            MessageBuilder msgBuild = new MessageBuilder();
+		IDataStore dataStore = null;
+		try {
+			dataSet.loadData();
+			dataStore = dataSet.getDataStore();
+		} catch (Exception e) {
+			logger.error("Error loading dataset", e);
+		}
 
-            XSSFRow header = sheet.createRow((short) 0); // first row
-            XSSFCell cell = header.createCell(1);
-            cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", getLocale()));
-            cell.setCellStyle(borderStyleHeader);
-        }
+		freezeHttpResponse();
+		getHttpResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + dataSet.getName() + ".xlsx" + "\";");
+		getHttpResponse().setContentType("application/vnd.ms-excel");
+		// create WB
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet("datastore");
+		CreationHelper createHelper = wb.getCreationHelper();
 
-        OutputStream out;
-        try {
-            out = getHttpResponse().getOutputStream();
-            wb.write(out);
-            getHttpResponse().getOutputStream().flush();
-            getHttpResponse().getOutputStream().close();
-        } catch (IOException e) {
-            logger.error("write output file stream error " + e.getMessage());
-            throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
-        }
-    }
+		// STYLE CELL
+		CellStyle borderStyleHeader = wb.createCellStyle();
+		borderStyleHeader.setBorderBottom(CellStyle.BORDER_THIN);
+		borderStyleHeader.setBorderLeft(CellStyle.BORDER_THIN);
+		borderStyleHeader.setBorderRight(CellStyle.BORDER_THIN);
+		borderStyleHeader.setBorderTop(CellStyle.BORDER_THIN);
+		borderStyleHeader.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle borderStyleRow = wb.createCellStyle();
+		borderStyleRow.setBorderBottom(CellStyle.BORDER_THIN);
+		borderStyleRow.setBorderLeft(CellStyle.BORDER_THIN);
+		borderStyleRow.setBorderRight(CellStyle.BORDER_THIN);
+		borderStyleRow.setBorderTop(CellStyle.BORDER_THIN);
+		borderStyleRow.setAlignment(CellStyle.ALIGN_RIGHT);
+		if (dataStore != null) {
+			// CREATE HEADER SHEET
+			XSSFRow header = sheet.createRow((short) 0); // first row
+			if (dataStore.getMetaData() != null && dataStore.getMetaData().getFieldCount() > 0) {
+				for (int i = 0; i <= dataStore.getMetaData().getFieldCount() - 1; i++) {
+					XSSFCell cell = header.createCell(i);
+					cell.setCellValue(dataStore.getMetaData().getFieldAlias(i));
+					cell.setCellStyle(borderStyleHeader);
+				}
+			}
+			// FILL CELL RECORD
+			if (dataStore.getRecordsCount() > 0) {
+				for (int i = 0; i <= dataStore.getRecordsCount() - 1; i++) {
+					XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
+					if (dataStore.getRecordAt(i) != null && dataStore.getRecordAt(i).getFields() != null && dataStore.getRecordAt(i).getFields().size() > 0) {
+						for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
+							Class<?> clazz = dataStore.getMetaData().getFieldType(k);
+							Object value = dataStore.getRecordAt(i).getFieldAt(k).getValue();
+
+							try {
+								if (value != null) {
+
+									if (Timestamp.class.isAssignableFrom(clazz)) {
+										CellStyle tsCellStyle = wb.createCellStyle();
+										tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
+										tsCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+										tsCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+										tsCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+										XSSFCell cell = row.createCell(k);
+										String formatedTimestamp = timeStampFormat.format(value);
+										Date ts = timeStampFormat.parse(formatedTimestamp);
+										cell.setCellValue(ts);
+										cell.setCellStyle(tsCellStyle);
+									} else if (Date.class.isAssignableFrom(clazz)) {
+										CellStyle dateCellStyle = wb.createCellStyle();
+										dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
+										dateCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+										dateCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+										dateCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+										XSSFCell cell = row.createCell(k);
+										String formatedDate = dateFormat.format(value);
+										Date date = dateFormat.parse(formatedDate);
+										cell.setCellValue(date);
+										cell.setCellStyle(dateCellStyle);
+									} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
+											|| Double.class.isAssignableFrom(clazz) || Float.class.isAssignableFrom(clazz)
+											|| BigDecimal.class.isAssignableFrom(clazz)) {
+										// Format Numbers
+										if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
+											CellStyle intCellStyle = wb.createCellStyle();
+											intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+											intCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+											intCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+											intCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+											XSSFCell cell = row.createCell(k);
+											cell.setCellValue(Double.parseDouble(value.toString()));
+											cell.setCellStyle(intCellStyle);
+										} else {
+											CellStyle decimalCellStyle = wb.createCellStyle();
+											decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+											decimalCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+											decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+											decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+											XSSFCell cell = row.createCell(k);
+											cell.setCellValue(Double.parseDouble(value.toString()));
+											cell.setCellStyle(decimalCellStyle);
+										}
+
+									} else {
+										XSSFCell cell = row.createCell(k);
+										cell.setCellValue(value.toString());
+										cell.setCellStyle(borderStyleRow);
+									}
+
+								} else {
+									XSSFCell cell = row.createCell(k);
+									cell.setCellStyle(borderStyleRow);
+								}
+							} catch (ParseException e) {
+								logger.error("write output stream error " + e.getMessage());
+								throw new SpagoBIServiceException(this.getActionName(), "Impossible to parse Date/DateTime value", e);
+							}
+
+						}
+					}
+				}
+			}
+		} else {
+			MessageBuilder msgBuild = new MessageBuilder();
+
+			XSSFRow header = sheet.createRow((short) 0); // first row
+			XSSFCell cell = header.createCell(1);
+			cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", getLocale()));
+			cell.setCellStyle(borderStyleHeader);
+		}
+
+		OutputStream out;
+		try {
+			out = getHttpResponse().getOutputStream();
+			wb.write(out);
+			getHttpResponse().getOutputStream().flush();
+			getHttpResponse().getOutputStream().close();
+		} catch (IOException e) {
+			logger.error("write output file stream error " + e.getMessage());
+			throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
+		}
+	}
 }
