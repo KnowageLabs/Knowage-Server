@@ -226,14 +226,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,c
 						class: "fa fa-caret-square-o-down",
 						img : "9.png",
 						type : "selector"
-					},{
-						name:"Discovery",
-						description: 'discovery',
-						tags : ["discovery"],
-						class: "fa fa-rocket",
-						type : "discovery",
-						datasetRequirement: 'SbiSolrDataSet'
-				  }];
+					}];
 
 		    	  $scope.saveConfiguration=function(){
 		    		  $mdDialog.hide();

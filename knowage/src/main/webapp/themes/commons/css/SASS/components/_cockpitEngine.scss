@@ -1553,6 +1553,7 @@
 	}
 	.addNewWidget {
 		md-dialog-content {
+			background-color: $tabBackground;
 			.widgetsContainer {
 				.widgetContainer {
 					min-width: 100px;
@@ -1561,6 +1562,13 @@
 		}
 	}
 	cockpit-sheet {
+		.cockpitEditMode {
+			md-tab-item {
+				span {
+					top: -8px;
+				}
+			}
+		}
 		md-tabs {
 			md-tabs-wrapper {
 				md-tabs-canvas {
@@ -2244,7 +2252,15 @@
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	.kn-cockpit cockpit-grid {
-		overflow-y: hidden;
+	.kn-cockpit {
+		.pivotTableDesigner {
+			min-height: 600px;
+			.measureAttributeTab {
+				min-height: 600px;
+			}
+		}
+		cockpit-grid {
+			overflow-y: hidden;
+		}
 	}
 }

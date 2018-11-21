@@ -64,6 +64,12 @@ md-toolbar.md-knowage-theme {
         }
       }
 		}
+    &:not(.md-menu-toolbar){
+      background-color: white;
+    }
+}
+md-dialog {
+  background-color: white;
 }
 
 md-list-item ._md-list-item-inner ._md-secondary-container, md-list-item ._md-secondary-container {
@@ -258,7 +264,6 @@ md-card.md-knowage-theme {
 }
 
 md-tab-content {
-  background-color: $pageBackground;
   md-content.md-knowage-theme {
     background-color: transparent;
   }
@@ -489,6 +494,9 @@ md-toast.md-knowage-theme.kn-toast-error {
     background-color: red;
 }
 
+.md-toast-content {
+  background-color: black;
+}
 
 
 	
@@ -517,7 +525,7 @@ width:100%;
 }
 
 md-tab-content > div {
-height:100%;
+height:100% !important;
 }
 
 .rightHeight {

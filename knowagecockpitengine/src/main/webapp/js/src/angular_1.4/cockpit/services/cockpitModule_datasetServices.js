@@ -920,7 +920,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						$scope.datasetList = datasetList;
 						$scope.isDatasetListLoaded = true;
 					},function(response){
-						sbiModule_restServices.errorHandler(response.data,"");
+						sbiModule_restServices.errorHandler(response,"");
 						def.reject();
 					});
 
