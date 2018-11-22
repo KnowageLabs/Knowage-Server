@@ -20,6 +20,8 @@
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
+		
+		$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 
 		if(!$scope.model.settings.modalSelectionColumn){
 			$scope.model.settings.modalSelectionColumn="";
@@ -89,12 +91,13 @@
 	        enableFilter: false,
 	        enableSorting: false,
 	        onGridReady : resizeColumns,
+	        onCellEditingStopped: refreshRow,
 	        columnDefs: [
-	        	{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
-	        	{headerName:'Name', field:'name'},
-	        	{headerName:'Alias', field:'alias'},
-	        	{headerName:'Aggregation', cellRenderer: aggregationRenderer},
-	        	{headerName:'Type', field: 'fieldType'},
+	        	//{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
+	        	{headerName:'Name', field:'name',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+	        	{headerName:'Alias', field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+	        	{headerName:'Aggregation', field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":aggregationEditable, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+	        	{headerName:'Type', field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
 	        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
 			rowData: $scope.model.content.columnSelectedOfDataset
 		}
@@ -112,21 +115,33 @@
 			var downButton = params.data.order != $scope.columnsGrid.api.getDisplayedRowCount()-1 ?  '<md-button ng-click="moveDown($event,'+params.data.order+')" class="md-icon-button h20" aria-label="up"><md-icon md-font-icon="fa fa-arrow-down"></md-icon></md-button>' : '';
 			return 	'<div layout="row">'+
 						upButton+
+						params.data.order+
 						downButton+
 				 	'</div>';
 		}
 		
-		function aggregationRenderer(params){
-			return params.data.fieldType == "MEASURE" ? params.data.aggregationSelected : '';
+		function editableCell(params){
+			return '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
+		}
+		
+		function aggregationEditable(params) {
+			return params.data.fieldType == "MEASURE" ? true : false;
+		}
+		
+		function aggregationRenderer(params) {
+			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
+			return params.data.fieldType == "MEASURE" ? aggregation : '';
 		}
 		
 		function buttonRenderer(params){
-			if(params.data.style) var color = params.data.style.color;
-			return 	'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')">'+
-					'	<md-icon style="color:'+color+'" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
+			return 	'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')" ng-style="{\'background-color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+					'	<md-icon ng-style="{\'color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
 					'</md-button>'+
-					'<md-button class="md-icon-button" ng-click="editRow(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-pencil"></md-icon></md-button>'+
 					'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+		}
+		
+		function refreshRow(cell){
+			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 		
 		$scope.moveUp = function(evt,index){
@@ -523,8 +538,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
-	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
