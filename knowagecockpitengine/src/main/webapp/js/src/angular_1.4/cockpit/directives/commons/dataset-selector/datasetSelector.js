@@ -42,7 +42,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 	   }
 });
 
-function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,sbiModule_translate,sbiModule_restServices){
+function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,sbiModule_translate,sbiModule_restServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	if(!$scope.datasetSettings) $scope.datasetSettings = {};
 	$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
@@ -70,15 +70,14 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 					params[p] = params[p][0];
 				}
 			}
-			sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
-				.then(function(data){
-					$scope.loadingMetadata = false;
-					$scope.dataset = data.data;
-					$scope.datasetSettings.sortingColumn = $scope.datasetSettings.sortingColumn || $scope.dataset.metaData.fields[1].header;
+			for(var d in $scope.availableDatasets){
+				if($scope.availableDatasets[d].id.dsId == id){
+					$scope.dataset = $scope.availableDatasets[d];
+					$scope.datasetSettings.sortingColumn = $scope.datasetSettings.sortingColumn || $scope.dataset.metadata.fieldsMeta[0].name;
 					$scope.datasetSettings.sortingOrder = $scope.datasetSettings.sortingOrder || 'ASC';
-				},function(error){
-					$scope.loadingMetadata = false;
-					})
+				}
+			};
+			$scope.loadingMetadata = false;
 		}else {
 			$scope.dataset = {};
 		}	
@@ -87,11 +86,11 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	if($scope.ngModel) $scope.getMetaData($scope.ngModel);
 	
 	$scope.orderColumn = function(col){
-		if(col.header == $scope.datasetSettings.sortingColumn) {
+		if(col.name == $scope.datasetSettings.sortingColumn) {
 			$scope.datasetSettings.sortingOrder = $scope.datasetSettings.sortingOrder == 'ASC' ? 'DESC' : 'ASC';
 		}
 		else{
-			$scope.datasetSettings.sortingColumn = col.header;
+			$scope.datasetSettings.sortingColumn = col.name;
 			$scope.datasetSettings.sortingOrder = 'ASC';
 		}
 	}
@@ -103,6 +102,15 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			$scope.getMetaData(newValue);
 		}
 	})
+	
+	$scope.getFieldType = function(typeValue){
+		for(var o in cockpitModule_generalOptions.fieldsTypes){
+			if(cockpitModule_generalOptions.fieldsTypes[o].value == typeValue){
+				return cockpitModule_generalOptions.fieldsTypes[o].label;
+			}
+		}
+		return typeValue;
+	}
 	
 };
 

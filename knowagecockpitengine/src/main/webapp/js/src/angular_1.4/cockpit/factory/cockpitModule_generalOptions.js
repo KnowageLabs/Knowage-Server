@@ -77,6 +77,28 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.top"),value:'top'},
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.middle"),value:'middle'},
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.bottom"),value:'bottom'}
+		 ],
+		 flexJustifyContent:	[
+			 {label:'',value:''},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textAlign.left"),value:'flex-start'},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textAlign.center"),value:'center'},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textAlign.right"),value:'flex-end'}
+		 ],
+		 fieldsTypes:	[
+			 {label:'string',value:'java.lang.String'},
+			 {label:'integer',value:'java.lang.Integer'},
+			 {label:'integer',value:'java.lang.Long'},
+			 {label:'integer',value:'java.math.BigInteger'},
+			 {label:'float',value:'java.math.BigDecimal'},
+			 {label:'float',value:'java.lang.Double'},
+			 {label:'float',value:'java.lang.Float'},
+			 {label:'date',value:'java.sql.Date'},
+			 {label:'date',value:'java.util.Date'},
+			 {label:'time',value:'java.sql.Time'},
+			 {label:'timestamp',value:'java.sql.Timestamp'},
+			 {label:'timestamp',value:'oracle.sql.TIMESTAMP'},
+			 {label:'blob',value:'oracle.sql.BLOB'},
+			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ]
 	}
 });
