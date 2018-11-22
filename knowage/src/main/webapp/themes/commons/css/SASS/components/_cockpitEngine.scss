@@ -1885,97 +1885,6 @@
 		-moz-box-shadow: none !important;
 	}
 
-	
-//firefox style
-@-moz-document url-prefix() {
- 
-        /*md-card-title {
-            width: 100%;
-        }*/
-    }
-	
-//IE style
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	.kn-cockpit {
-		.pivotTableDesigner {
-			min-height: 600px;
-			.measureAttributeTab {
-				min-height: 600px;
-			}
-		}
-		cockpit-grid {
-			overflow-y: hidden;
-		}
-	}
-    cockpit-table {
-	    .cockpitTableContainer {
-	    	table.cockpitTable {
-		    	width: 100%;
-		    }
-		}
-	}
-	.addNewWidget {
-		md-dialog-content {
-			.widgetsContainer {
-				.widgetContainer {
-					min-width: 100px;
-				}
-			}
-		}
-	}
-	cockpit-sheet {
-		.cockpitEditMode {
-			md-tab-item {
-				span {
-					top: -8px;
-				}
-			}
-		}
-		md-tabs {
-			md-tabs-wrapper {
-				md-tabs-canvas {
-					md-pagination-wrapper {
-						.md-tab {
-							span {
-								&.viewModeSheet {
-									top: -1px;
-								}
-								top: -8px;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	.htmlWidgetConfiguration {
-		section {
-			height: 100%;
-		}
-		.availableFunctions {
-			._md-subheader-content {
-				
-			}
-		}
-   		.htmlEditor {
-   			.CodeMirror {
-				height: 500px;
-			}
-   		}
-		.CodeMirror {
-			width: 100%;
-		}
-		.widgetId {
-			text-transform: none;
-		}
-		.availableFunctions {
-			.description {
-				font-size: $mediumFontSize;
-			}
-		}
-	}    
-}
-
 }
 
 /* WIDGET DIALOG */
@@ -2660,4 +2569,94 @@
 	cockpit-image-widget {
 		cursor: pointer;
 	}
+}
+
+//firefox style
+@-moz-document url-prefix() {
+ 
+        /*md-card-title {
+            width: 100%;
+        }*/
+    }
+	
+//IE style
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-cockpit {
+		.pivotTableDesigner {
+			min-height: 600px;
+			.measureAttributeTab {
+				min-height: 600px;
+			}
+		}
+		cockpit-grid {
+			overflow-y: hidden;
+		}
+		cockpit-sheet {
+			.cockpitEditMode {
+				md-tab-item {
+					span {
+						top: -8px;
+					}
+				}
+			}
+			md-tabs {
+				md-tabs-wrapper {
+					md-tabs-canvas {
+						md-pagination-wrapper {
+							.md-tab {
+								span {
+									&.viewModeSheet {
+										top: -1px;
+									}
+									top: -8px;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+    cockpit-table {
+	    .cockpitTableContainer {
+	    	table.cockpitTable {
+		    	width: 100%;
+		    }
+		}
+	}
+	.addNewWidget {
+		md-dialog-content {
+			.widgetsContainer {
+				.widgetContainer {
+					min-width: 100px;
+				}
+			}
+		}
+	}
+	.htmlWidgetConfiguration {
+		section {
+			height: 100%;
+		}
+		.availableFunctions {
+			._md-subheader-content {
+				
+			}
+		}
+   		.htmlEditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
+		.CodeMirror {
+			width: 100%;
+		}
+		.widgetId {
+			text-transform: none;
+		}
+		.availableFunctions {
+			.description {
+				font-size: $mediumFontSize;
+			}
+		}
+	}    
 }

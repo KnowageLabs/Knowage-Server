@@ -2,7 +2,7 @@
 	<div layout="row" layout-align="start center" >
 		<md-input-container class="md-block" flex>
 			<label>{{translate.load('sbi.cockpit.dataset')}}</label>
-			<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel.id});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
+			<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
 				<md-select-header class="demo-select-header">
 					<input ng-model="searchTerm" type="search" ng-keydown="$event.stopPropagation()" placeholder="Search for a dataset.." class="demo-header-searchbox _md-text">
 				</md-select-header>
@@ -23,7 +23,7 @@
 		<table class="kn-table kn-table-alternated-rows kn-table-medium-rows">
 			<thead>
 				<tr>
-					<th>{{translate.load('sbi.cockpit.dataset.columnname')}}Column Name</th>
+					<th>{{translate.load('sbi.cockpit.dataset.columnname')}}</th>
 					<th>{{translate.load('sbi.cockpit.dataset.columntype')}}</th>
 					<th style="width:100px">{{translate.load('sbi.cockpit.dataset.orderby')}}</th>
 				</tr>

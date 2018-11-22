@@ -131,6 +131,8 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	
 	var metaDataWatcher = $scope.$watch('ngModel',function(newValue,oldValue){
 		if($scope.extended && newValue!=oldValue){
+			delete $scope.datasetSettings.sortingColumn;
+			delete $scope.datasetSettings.sortingOrder;
 			$scope.getMetaData(newValue);
 		}
 	})
