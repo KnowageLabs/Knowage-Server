@@ -41,7 +41,7 @@ public class ClassLoaderManager {
 
 	/**
 	 * Updates the class loader of the thread and sets the class loader in the variable qbeClassLoader.. NOTE: The qbeClassLoader is static
-	 * 
+	 *
 	 * @param jarFile
 	 * @return
 	 */
@@ -83,7 +83,7 @@ public class ClassLoaderManager {
 		return qbeClassLoader;
 	}
 
-	private static void removeClassLoader(DynamicClassLoader previousCL) {
+	private static synchronized void removeClassLoader(DynamicClassLoader previousCL) {
 		if (qbeClassLoader instanceof DynamicClassLoader) {
 			DynamicClassLoader start = (DynamicClassLoader) qbeClassLoader;
 			ClassLoader genericClassLoader = start;
@@ -127,13 +127,18 @@ public class ClassLoaderManager {
 
 	/**
 	 * Update the thread class loader with a dynamic class loader that considers also the jar file
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
-	public static ClassLoader updateCurrentClassLoader(File file) {
+	public static synchronized ClassLoader updateCurrentClassLoader(File file) {
 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		ClassLoader previousClassLoader = null;
+		if (qbeClassLoader != null) {
+			previousClassLoader = qbeClassLoader;
+		} else {
+			previousClassLoader = Thread.currentThread().getContextClassLoader();
+		}
 
 		boolean wasAlreadyLoaded = false;
 
@@ -151,9 +156,8 @@ public class ClassLoaderManager {
 					className = className.replaceAll("/", ".");
 					className = className.replaceAll("\\\\", ".");
 					try {
-						logger.debug("loading class [" + className + "]" + " with class loader ["
-								+ Thread.currentThread().getContextClassLoader().getClass().getName() + "]");
-						Thread.currentThread().getContextClassLoader().loadClass(className);
+						logger.debug("loading class [" + className + "]" + " with class loader [" + previousClassLoader.getClass().getName() + "]");
+						previousClassLoader.loadClass(className);
 						wasAlreadyLoaded = true;
 						logger.debug("Class [" + className + "] has been already loaded (?)");
 						break;
@@ -183,18 +187,17 @@ public class ClassLoaderManager {
 
 			if (!wasAlreadyLoaded) {
 
-				ClassLoader previous = cl;
-				Thread.currentThread().getContextClassLoader();
+				ClassLoader previous = previousClassLoader;
 				DynamicClassLoader current = new DynamicClassLoader(file, previous);
 				Thread.currentThread().setContextClassLoader(current);
-				cl = current;
+				previousClassLoader = current;
 			}
 
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
 		}
 
-		return cl;
+		return previousClassLoader;
 	}
 
 }
