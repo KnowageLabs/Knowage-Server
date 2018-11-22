@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
+			cockpitModule_analyticalDrivers,
 			cockpitModule_properties){
 		
 		//Regular Expressions used
@@ -89,12 +90,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 				//getting dataset parameters if available
-				$scope.params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
-				for(var p in $scope.params){
-					if($scope.params[p].length == 1){
-						$scope.params[p] = $scope.params[p][0];
-					}
-				}
+//				$scope.params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
+//				for(var p in $scope.params){
+//					if($scope.params[p].length == 1){
+//						$scope.params[p] = $scope.params[p][0];
+//					}
+//				}
 				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, $scope.ngModel, undefined).then(
 					function(data){
 						$scope.htmlDataset = data;
@@ -105,7 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
 				if($scope.ngModel.htmlToRender){
-					$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + $scope.ngModel.htmlToRender +" </div>"));
+					$scope.checkParamsPlaceholders($scope.ngModel.htmlToRender).then(function(placeholderResultHtml){
+						$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + placeholderResultHtml +" </div>"));
+					})
 				}
 				$scope.hideWidgetSpinner();
 			}
@@ -282,7 +285,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.checkParamsPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var resultHtml = rawHtml.replace($scope.paramsRegex, function(match, p1) {
-					p1=$scope.params[p1];
+					p1=cockpitModule_analyticalDrivers[p1];
 					return p1;
 				});
 				resolve(resultHtml);
@@ -316,7 +319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		}
 		$scope.paramsReplacer = function(match, p1){
-			p1=$scope.params[p1];
+			p1=cockpitModule_analyticalDrivers[p1];
 			return p1;
 		}
 		
