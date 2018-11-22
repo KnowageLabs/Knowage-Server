@@ -19,7 +19,7 @@
 	</md-button>
 	</div>
 		<md-progress-linear ng-if="loadingMetadata" md-mode="indeterminate"></md-progress-linear>
-	<div ng-if="extended && dataset.metaData.fields.length > 0">
+	<div ng-if="extended && dataset.metadata.fieldsMeta.length > 0">
 		<table class="kn-table kn-table-alternated-rows kn-table-medium-rows">
 			<thead>
 				<tr>
@@ -29,13 +29,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="col in dataset.metaData.fields" ng-if="col.name">
-					<td>{{col.header}}</td>
-					<td>{{col.type}}</td>
-					<td ng-class="{'softIcon':col.header != datasetSettings.sortingColumn}">
+				<tr ng-repeat="col in dataset.metadata.fieldsMeta" ng-if="col.name">
+					<td>{{col.name}}</td>
+					<td>{{::getFieldType(col.type)}}</td>
+					<td ng-class="{'softIcon':col.name != datasetSettings.sortingColumn}">
 						<md-button class="md-icon-button" ng-click="orderColumn(col)" >
-							<md-icon md-font-icon="fa fa-sort-amount-asc" ng-if="datasetSettings.sortingOrder != 'DESC' || col.header != datasetSettings.sortingColumn" ></md-icon>
-							<md-icon md-font-icon="fa fa-sort-amount-desc" ng-if="col.header == datasetSettings.sortingColumn && datasetSettings.sortingOrder == 'DESC'"></md-icon>
+							<md-icon md-font-icon="fa fa-sort-amount-asc" ng-if="datasetSettings.sortingOrder != 'DESC' || col.name != datasetSettings.sortingColumn" ></md-icon>
+							<md-icon md-font-icon="fa fa-sort-amount-desc" ng-if="col.name == datasetSettings.sortingColumn && datasetSettings.sortingOrder == 'DESC'"></md-icon>
 						</md-button>
 					</td>
 				</tr>
