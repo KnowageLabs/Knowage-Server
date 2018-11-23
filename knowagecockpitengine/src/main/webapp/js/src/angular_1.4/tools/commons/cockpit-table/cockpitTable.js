@@ -56,6 +56,10 @@
                     		return "'" + scope.settings.sortingColumn + "'";
                     	}
                 		return "";
+                    }    
+                    
+                    scope.datify = function(dateString,dateFormat){
+                    	return moment(dateString, dateFormat).valueOf();
                     }
 
                     //returning if the order is ASC or DESC

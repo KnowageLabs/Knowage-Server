@@ -110,6 +110,41 @@
 							</md-card-content>
 						</md-card>
 			  		</div> 
+			  		
+			  		<md-card>
+						<md-toolbar class="ternaryToolbar" ng-if="selectedColumn.fieldType == 'MEASURE' || selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+				      		<div class="md-toolbar-tools">
+					        	<h2>
+					          		<span>Format</span>
+					        	</h2>
+				        	</div>
+				       </md-toolbar>
+		       
+				       <md-card-content>
+					       <div flex layout="row" >
+								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
+									<label> {{translate.load('sbi.cockpit.style.prefix')}}</label>
+									<input class="input_class"  ng-model="selectedColumn.style.prefix"> 
+								</md-input-container>
+								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
+									<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
+									<input class="input_class"  ng-model="selectedColumn.style.suffix"> 
+								</md-input-container>
+								<md-input-container flex class="md-block" class="small counter" ng-if="hasPrecision(selectedColumn)">
+									<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
+									<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" > 
+								</md-input-container>
+								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+									<label> Date Format</label>
+									 <md-select ng-model="selectedColumn.dateFormat">
+							            <md-option ng-repeat="df in cockpitModule_generalOptions.dateFormat" ng-value="df.value" class="withHint">
+							              <span>{{df.label}}</span><span flex></span><small>{{df.hint}}</small>
+							            </md-option>
+						            </md-select>
+								</md-input-container>
+					   		</div>
+				       </md-card-content>
+			       	</md-card>
 					       
 		       		<md-card>
 						<md-toolbar class="ternaryToolbar ">
@@ -121,27 +156,7 @@
 				       </md-toolbar>
 		       
 				       <md-card-content>
-					       <div flex layout="row" ng-if="selectedColumn.fieldType == 'MEASURE'">
-								<md-input-container flex class="md-block" class="small counter">
-									<label> {{translate.load('sbi.cockpit.style.prefix')}}</label>
-									<input class="input_class"  ng-model="selectedColumn.style.prefix"> 
-								</md-input-container>
-								<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
-									<input class="input_class"  ng-model="selectedColumn.style.suffix"> 
-								</md-input-container>
-								<!--  md-input-container flex class="md-block"  class="small counter">  
-									<label>{{translate.load('sbi.cockpit.style.format')}}</label>
-									<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
-										<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
-									</md-select>
-								</md-input-container-->
-								<md-input-container flex class="md-block" class="small counter" ng-if="hasPrecision(selectedColumn)">
-									<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" > 
-								</md-input-container>
-					       </div>	
-					       
+				       
 					       <div layout="row">
 								<md-input-container class="md-block" flex>
 									<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>

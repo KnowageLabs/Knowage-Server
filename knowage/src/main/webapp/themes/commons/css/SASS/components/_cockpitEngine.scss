@@ -2556,7 +2556,21 @@
 			}
 		}
     }
-	
+    :not(md-select-value){
+    	md-option.withHint {
+    		._md-text {
+    			width: 100%;
+    			display: inline-flex;
+    		}
+    	}
+    }
+    md-select-value {
+    	._md-text {
+    		small {
+    			display: none;
+    		}
+    	}
+    }
 }
 
 #cockpitDataConfig {

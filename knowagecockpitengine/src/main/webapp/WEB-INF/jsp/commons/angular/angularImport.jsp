@@ -136,6 +136,9 @@ END-PRODUCTION -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol-debug.js"></script>
 
+<!-- MOMENT.JS -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
+
 <!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
  
 <!-- 3.x.x 
