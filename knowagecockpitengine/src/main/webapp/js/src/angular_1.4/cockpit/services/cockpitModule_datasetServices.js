@@ -20,9 +20,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				angular.forEach(cockpitModule_template.configuration.datasets, function(item){
 					this.push(item.dsId);
 				}, dsIds);
-
+				
+				// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
+				var seeTechical = false;
+				if(sbiModule_user.isTechnicalUser == "true") {
+					seeTechical = true;
+				}
+				
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
+				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (seeTechical ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
 				.then(function(response){
 					for(var i in response.data.item){
 						var dataset = response.data.item[i];
@@ -54,9 +60,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.loadDatasetList=function(){
 		var def=$q.defer();
-		if(!ds.isDatasetListLoaded){
-			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE"))
+		if(!ds.isDatasetListLoaded){			
+			// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
+			var seeTechical = false;
+			if(sbiModule_user.isTechnicalUser == "true") {
+				seeTechical = true;
+			}	
+			
+			sbiModule_restServices.restToRootProject();						
+			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (seeTechical ? "TRUE" : "FALSE"))
 			.then(function(response){
 				var allDatasets = response.data.item;
 
