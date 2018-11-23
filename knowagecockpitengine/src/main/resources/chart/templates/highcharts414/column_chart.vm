@@ -60,6 +60,7 @@
 		#set($enableDrilldown = true)
 	#end
 #end
+
 #if(!$chart.groupCategories)
 #set($chart.groupCategories ='false')
 	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
@@ -1317,6 +1318,8 @@
     #end
   	#set ($counter = 0)
 	#set ($count = $count+1)
+	#set ($customColors = $chart.CUSTOMCOLOR)
+
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
@@ -1342,7 +1345,12 @@
 		    #end
 		
 			name: "$relatedSerie.name",
-		
+
+			#if($customColors.containsKey($relatedSerie.name))
+			#set($customSerieName = $relatedSerie.name)
+			
+				color:'$customColors.get($customSerieName)',
+			#end
 			#*
 				Move series values from the middle of the chart (in the middle of the top slice) to the axis for RADAR.
 				[KNOWAGE-1111 JIRA ISSUE]
@@ -1385,6 +1393,7 @@
 	    	  	#end
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 	    	   	#foreach($row in $rows)
+	    	   	
 					#if( $row.get($serieColumnsMapped))
 						#set ($serieValue = $row.get($serieColumnsMapped))
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
@@ -1417,8 +1426,14 @@
 							x: Date.parse("$serieCategoryName"),
 							#end
 							#end
+							
+							#if($customColors.containsKey($serieCategoryName))
+           					color:'$customColors.get($serieCategoryName)',
+           					#end
+						
 						},
 						 #set ($counterX = $counterX+1)
+
 
 					#end
 				#end
@@ -1598,7 +1613,7 @@
 		#elseif($counter!=0)
 		#set($selectedValue = false)
 		#end
-		
+
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		{
@@ -1608,11 +1623,12 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
+
 			data: [
 				#foreach($el in  $map.get($valueKey))
-							
+						
 				{
-				
+
 					#if($el.y!="")	
 						y: $el.y,
 					#end
@@ -1625,7 +1641,11 @@
 					x: Date.parse("$el.name"),
 					#end
 					#end
-					
+						
+						#if($customColors.containsKey($el.name))
+	   					color:'$customColors.get($el.name)',
+	   					#end
+           					
 				},
 				#end	
 			], 

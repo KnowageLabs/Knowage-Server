@@ -11,6 +11,7 @@
 
 #set($rows = $data.rows) ## data in table rows
 
+
 #set($categoriesNumber = $rows.size()) 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
@@ -51,7 +52,7 @@
 	#if($enableDrilldown || $crossNavigation != '')
 		#set($drilldownEnabledFlag = true)
 	#end
-	
+	#set ($customColors = $chart.CUSTOMCOLOR)
 	meta: {
 		drilldownEnabled: $drilldownEnabledFlag,
 	},
@@ -527,6 +528,12 @@
 	    	
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
 	    	{
+
+	    	#if($customColors.containsKey($relatedSerie.name))
+				color:'$customColors.get($relatedSerie.name)',
+			#end
+	    	
+	    	
 	    		name: '$relatedSerie.name',
 	    		#if(!$exportWebApp)   		
 		    	point:
@@ -1022,6 +1029,7 @@
 					#end
 					 
 				#end
+				
 	    	    #if($categoriesNumber!=$zeroValues)
 	    	    #foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
@@ -1029,13 +1037,17 @@
 					#set( $serieName = $serieName.replace("""", "\""") )
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{
+
 						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
 						y: $serieValue,
+						#if($customColors.containsKey($serieName))
+						color:'$customColors.get($serieName)',
+						#end
 					},
 				#end
 				#end
-				 
+
 	    	],
 	    	
 	  #set($i=$i+1)  

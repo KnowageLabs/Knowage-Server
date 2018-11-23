@@ -44,6 +44,10 @@
 	@include custom-background-image('../../sbi_default/img/chart/types/chart_bar.png');
 }
 
+.customColors_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_pane.png');
+}
+
 .pie{
 	@include custom-background-image('../../sbi_default/img/chart/types/chart_pie.png');
 }

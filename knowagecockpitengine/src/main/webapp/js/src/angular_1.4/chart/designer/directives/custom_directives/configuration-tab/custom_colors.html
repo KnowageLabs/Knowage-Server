@@ -1,0 +1,31 @@
+<div layout="column" >
+
+	<md-list flex>
+										
+	<md-list-item ng-repeat="(key,value) in customColors" class="noright colorpaletteItem" ng-style="{'background-color':true ? value:'white'}">
+		<!--  <span ng-style="{'color':key ? 'black':'white'}"><b>{{key}}</b></span>-->
+		<span ng-style="{'color':(value == 'black') ? 'white':'black'}"><b>{{key}}</b></span>
+		
+		
+		<md-icon md-font-icon="fa fa-trash" ng-style="{'color':(value == 'black') ? 'white':'black'}" class="md-secondary md-hue-3 fa-lg"  ng-click="deleteCustomColor(key)" aria-label="delete_color"></md-icon>
+	</md-list-item>					
+					  	
+	</md-list>	
+
+	<md-input-container class="md-block" >
+		<label>{{translate.load("sbi.chartengine.configuration.customColors")}}</label>
+		<input name="nani" ng-model="customColorObj.customName"> 
+	</md-input-container>
+	
+	<md-input-container class="md-block" >
+		<label>{{translate.load("sbi.chartengine.configuration.customColor")}}</label>
+		<input name=nani" ng-model="customColorObj.customValue"> 
+	</md-input-container>
+
+
+		<label>Click + to add another color</label>
+		<md-button class="md-icon-button" aria-label="Info" ng-click="addCustomColor()" flex=20>
+	<md-icon md-font-icon="fa fa-plus" class="fa fa-lg"></md-icon>
+	</md-button>
+
+</div>
