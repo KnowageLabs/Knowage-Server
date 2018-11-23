@@ -203,7 +203,7 @@ var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
 <%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> --%>
 <%-- <link rel="stylesheet" type="text/css" href="${request.contextPath}/themes/commons/css/customStyle.css"> --%>
 <!-- <link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css"> -->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css" />
 
 <title>Cockpit engine</title>
 </head> 

@@ -99,6 +99,17 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'timestamp',value:'oracle.sql.TIMESTAMP'},
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
+		 ],
+		 dateFormat: [
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.long"),value:'dd EEEE yyyy HH:mm:ss',hint:'September 03 2010 12:05:08 PM'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.medium"),value:'medium',hint:'Sep 3, 2010 12:05:08 PM'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.short"),value:'short',hint:'9/3/10 12:05 PM'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.fullDate"),value:'fullDate',hint:'Friday, September 3, 2010'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.longDate"),value:'longDate',hint:'September 3, 2010'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumDate"),value:'mediumDate',hint:'Sep 3, 2010'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'shortDate',hint:'09/03/2010'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumTime"),value:'mediumTime',hint:'12:05:08 PM'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'shortTime',hint:'12:05 PM'}
 		 ]
 	}
 });
