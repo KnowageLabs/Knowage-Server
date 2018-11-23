@@ -19,7 +19,6 @@
 		     </md-input-container>
 		</md-card-content>
 	</md-card>
-	
 	<md-card>
 		<md-card-title>
               <md-card-title-text layout="row">

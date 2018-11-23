@@ -40,7 +40,7 @@
 	                 	<span ng-if="::hasPrecision(column)">	{{row[column.aliasToShow] | number:checkPrecision(column)}} </span>
 	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
-					<div class="cellContainer" ng-style="::getContainerStyle(column)">
+					<div class="cellContainer" ng-style="{'justify-content':column.style['justify-content'] || 'flex-start'}">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow] | number:checkPrecision(column)}}</span>

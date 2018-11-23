@@ -103,7 +103,7 @@
                 			delete(style['max-width']);
                     		delete(style.width);
                 		}
-                    	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],style);
+                    	if(column.style && column.style['justify-content']) scope.flexToAlign(scope.alignMap,column.style['justify-content'],style);
                     	return style;
                     }
 
@@ -184,11 +184,11 @@
                 		}
                 	}
 
-                	scope.getContainerStyle = function(column){
-                		var style = {};
-                		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
-                		return style;
-                	}
+//                	scope.getContainerStyle = function(column){
+//                		var style = {};
+//                		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
+//                		return style;
+//                	}
 
                 	//function passed to parent on click
                     scope.clickItem = function (event,row,column) {

@@ -153,12 +153,12 @@
 								</md-input-container>
 							</div>
 					       <div layout="row">
-								<!--  md-input-container class="md-block" flex>
+								<md-input-container class="md-block" flex>
 									<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
-									<md-select ng-model="selectedColumn.style.td['justify-content']">
+									<md-select ng-model="selectedColumn.style['justify-content']">
 										<md-option ng-repeat="fs in cockpitModule_generalOptions.flexJustifyContent" ng-value="fs.value">{{fs.label}}</md-option>
 									</md-select>
-								</md-input-container-->
+								</md-input-container>
 								<md-input-container class="md-block" flex>
 									<label>{{::translate.load("sbi.cockpit.table.fontsize")}}</label>
 									<input ng-model="selectedColumn.style['font-size']" type="text"/>

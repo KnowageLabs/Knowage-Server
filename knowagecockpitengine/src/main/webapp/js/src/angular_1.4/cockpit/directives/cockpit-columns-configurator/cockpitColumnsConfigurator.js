@@ -90,16 +90,37 @@
 	        enableColResize: false,
 	        enableFilter: false,
 	        enableSorting: false,
+	        onRowDragMove: onRowDragMove,
 	        onGridReady : resizeColumns,
 	        onCellEditingStopped: refreshRow,
 	        columnDefs: [
 	        	//{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
-	        	{headerName:'Name', field:'name',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+	        	{headerName:'Name', field:'name',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
 	        	{headerName:'Alias', field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
-	        	{headerName:'Aggregation', field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":aggregationEditable, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
 	        	{headerName:'Type', field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
+	        	{headerName:'Aggregation', field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":aggregationEditable, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
 	        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
 			rowData: $scope.model.content.columnSelectedOfDataset
+		}
+		
+		function onRowDragMove(event) {
+		    if (event.node !== event.overNode) {
+		    	var fromIndex = $scope.model.content.columnSelectedOfDataset.indexOf(event.node.data);
+		    	var toIndex = $scope.model.content.columnSelectedOfDataset.indexOf(event.overNode.data);
+
+		    	var newStore = $scope.model.content.columnSelectedOfDataset.slice();
+		        moveInArray(newStore, fromIndex, toIndex);
+		        $scope.model.content.columnSelectedOfDataset = newStore;
+		        
+		        $scope.columnsGrid.api.setRowData(newStore);
+		        $scope.columnsGrid.api.clearFocusedCell();
+		    }
+
+		    function moveInArray(arr, fromIndex, toIndex) {
+		        var element = arr[fromIndex];
+		        arr.splice(fromIndex, 1);
+		        arr.splice(toIndex, 0, element);
+		    }
 		}
 		
 		function resizeColumns(){
