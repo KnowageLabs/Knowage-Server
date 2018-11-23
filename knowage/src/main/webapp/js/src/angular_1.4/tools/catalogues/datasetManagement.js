@@ -3122,8 +3122,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
 			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(function(response){
-				response.data.rows.push({id: 2, column_1: "Sheki Turkovic"})
-					$scope.getPreviewSet(response.data);
+				$scope.getPreviewSet(response.data);
 			})
 		}
 
