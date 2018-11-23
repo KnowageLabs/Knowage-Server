@@ -1,7 +1,7 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,11 +23,11 @@ angular.module('configuration-tab', [])
 		restrict: 'AE',
 		replace:true,
 		templateUrl: function(){
-		      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.html' 
-	      },   
+		      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.html'
+	      },
 		controller: configurationTabControllerFunction
 	}
-		
+
 });
 
 function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData,$mdColorPalette,$mdColors, $mdColorUtil){
@@ -42,32 +42,49 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		 order:"",
 		 value:""
  }
+ $scope.customColorObj = {customName:"",customValue:""};
  $scope.colorPickerOptionsCockpit = {
 			swatch:true,
 			alpha:false,
 			pos:"bottom right",
-			format:"hex"		 
+			format:"hex"
 	 }
- 
- 
+
+
  $scope.colors = [];
+ if(!$scope.chartTemplate.CUSTOMCOLOR){
+	 $scope.chartTemplate.CUSTOMCOLOR = {};
+ }
+ $scope.customColors=$scope.chartTemplate.CUSTOMCOLOR
  $scope.presetColors = Object.keys($mdColorPalette);
  if($scope.chartTemplate != null && $scope.chartTemplate.COLORPALETTE != "" ){
 	 if($scope.chartTemplate.COLORPALETTE.COLOR.constructor === Array) {
 		 $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
 	 } else if ($scope.chartTemplate.COLORPALETTE.COLOR.constructor === Object) {
 		 $scope.colors.push($scope.chartTemplate.COLORPALETTE.COLOR);
-	 }	 
+	 }
  }else{
 	 if($scope.chartTemplate){
 		 $scope.chartTemplate.COLORPALETTE = {};
-		 $scope.chartTemplate.COLORPALETTE.COLOR = []; 
+		 $scope.chartTemplate.COLORPALETTE.COLOR = [];
 	 }
 	 $scope.colors = [];
  }
- 
- 
- 
+
+ $scope.addCustomColor = function(){
+		$scope.customColors[$scope.customColorObj.customName]=$scope.customColorObj.customValue;
+		$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
+		$scope.customColorObj = {};
+	}
+
+	$scope.deleteCustomColor = function(item) {
+
+		delete $scope.chartTemplate.CUSTOMCOLOR[item];
+
+	}
+
+
+
  $scope.addColor = function(color) {
 	 var value ="";
 	 var name = "";
@@ -90,7 +107,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 			 value:""
 	 }
 }
- 
+
  $scope.moveColorUp = function(item) {
 	 	var index = $scope.colors.indexOf(item);
 		var nextIndex = index-1;
@@ -100,8 +117,8 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		for (var i = 0; i < $scope.colors.length; i++) {
 			 $scope.colors[i].order = (i+1).toString();
 		}
-		
-		
+
+
 }
  $scope.moveColorDown = function(item) {
 	 	var index = $scope.colors.indexOf(item);
@@ -139,11 +156,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	     return true;
 	 }else{
 		 return false;
-	 } 
-	 
+	 }
+
 }
- 
- 
+
+
  function hex (c) {
 	  var s = "0123456789abcdef";
 	  var i = parseInt (c);
@@ -173,10 +190,10 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	function generateColor(colorStart,colorEnd,colorCount){
 
 		// The beginning of your gradient
-		var start = convertToRGB (colorStart);    
+		var start = convertToRGB (colorStart);
 
 		// The end of your gradient
-		var end   = convertToRGB (colorEnd);    
+		var end   = convertToRGB (colorEnd);
 
 		// The number of colors to compute
 		var len = colorCount;
@@ -185,43 +202,43 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		var alpha = 0.0;
 
 		var gradientArray = [];
-		
+
 		for (i = 0; i < len; i++) {
 			var c = [];
 			alpha += (1.0/len);
-			
+
 			c[0] = start[0] * alpha + (1 - alpha) * end[0];
 			c[1] = start[1] * alpha + (1 - alpha) * end[1];
 			c[2] = start[2] * alpha + (1 - alpha) * end[2];
 
 			gradientArray.push("#"+convertToHex (c).toUpperCase());
-			
+
 		}
-		
+
 		return gradientArray;
-		
+
 	}
 	$scope.gradientFirstColor = "#FFFFFF";
 	$scope.gradientLastColor = "#000000";
 	$scope.gradientSteps = 3;
 
-	
-	
+
+
 	$scope.makeGradient = function(first,last,step) {
 		var firstColor = first;
 		var lastColor = last;
-		
+
 		var gradientStrings = generateColor(first,last,step);
 		for (var i = 0; i < gradientStrings.length; i++) {
 			$scope.addColor(gradientStrings[i]);
 		}
-		
+
 		$scope.colors.reverse();
 	}
 
-  
+
  $scope.templateUrls = ChartDesignerData.getTemplateURLs();
- 
+
  $scope.dimensionMeasureType = ChartDesignerData.getDimensionMeasureTypeOptions();
  $scope.orientationType = ChartDesignerData.getOrientationTypeOptions();
  $scope.fontFamilyOptions = ChartDesignerData.getFontFamilyOptions();
@@ -234,7 +251,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.verticalAlignType = ChartDesignerData.getVerticalAlignTypeOptions();
  $scope.wordLayoutOptions=ChartDesignerData.getWordLayoutOptions();
  $scope.orderParallelOptions=ChartDesignerData.getParallelOrderOptions();
- 
+
  $scope.changeAngles = function (item){
 	 if(item=="horizontal") {
 		 $scope.chartTemplate.minAngle = 0;
@@ -243,17 +260,17 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	 else if(item=="vertical") {
 		 $scope.chartTemplate.minAngle = 90;
 		 $scope.chartTemplate.maxAngle = 90;
-	 } 
+	 }
 	 else if(item=="horizontalAndVertical") {
 		 $scope.chartTemplate.minAngle = 0;
 		 $scope.chartTemplate.maxAngle = 90;
-	 } 
+	 }
  }
- 
+
  $scope.openConfigurationDetails = function(button) {
 	 $scope.selectedConfigurationButton = button;
 	 $scope.disableLegendCheckbox = false;
-	 
+
 	 if($scope.selectedChartType == 'parallel'){
 		 $scope.chartTemplate.LEGEND.show = true;
 		 $scope.disableLegendCheckbox = true;
@@ -263,11 +280,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		 }else{
 			 $scope.seriesForParallel = [];
 		 }*/
-		 
+
 	 }
-	 
+
 }
- 
- 
+
+
 }
 

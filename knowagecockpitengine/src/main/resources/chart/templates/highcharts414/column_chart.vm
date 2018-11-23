@@ -1315,6 +1315,7 @@
     #end
   	#set ($counter = 0)
 	#set ($count = $count+1)
+	#set ($customColors = $chart.CUSTOMCOLOR)
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
@@ -1339,6 +1340,12 @@
 		    #end
 		
 			name: "$relatedSerie.name",
+			
+			#if($customColors.containsKey($relatedSerie.name))
+			#set($customSerieName = $relatedSerie.name)
+			
+				color:'$customColors.get($customSerieName)',
+			#end
 		
 			#*
 				Move series values from the middle of the chart (in the middle of the top slice) to the axis for RADAR.
@@ -1413,6 +1420,10 @@
 							x: Date.parse("$serieCategoryName"),
 							#end
 							#end
+							
+							#if($customColors.containsKey($serieCategoryName))
+           					color:'$customColors.get($serieCategoryName)',
+           					#end
 						},
 						#set ($countXvalues = $countXvalues+1)
 					#end
@@ -1642,6 +1653,10 @@
 					x: Date.parse("$el.name"),
 					#end
 					#end
+					
+					#if($customColors.containsKey($el.name))
+	   					color:'$customColors.get($el.name)',
+	   					#end
 					
 				},
 				#end	

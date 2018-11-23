@@ -212,7 +212,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			return data;
 			break;
 		case 'line':
-			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"}]
+			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
+				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;
@@ -232,14 +234,18 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			break;
 		case 'bar':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
-				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"}]
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"},
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;
 			break;
 		case 'pie':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
-			    {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"}]
+			    {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"},
+			    {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;
@@ -271,6 +277,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				sequenceURL: sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/sequence.html',
 				explanationURL: sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/explanation.html',
 				advancedSerieBarURL: sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/advanced_serie_conf_bar.html',
+				customColorsURL: sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/custom_colors.html',
+
 			 };
 		return data;
 	};
