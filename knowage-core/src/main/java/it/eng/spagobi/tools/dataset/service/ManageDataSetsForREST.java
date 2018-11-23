@@ -706,11 +706,17 @@ public class ManageDataSetsForREST {
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 			HashMap<String, Object> driversMap = new HashMap<>();
 
-			JSONObject driversJ = (JSONObject) json.get("parametersString");
-			for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
-				if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0)
-					driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
-			}
+			JSONObject driversJ = json.has("parametersString") ? (JSONObject) json.get("parametersString") : new JSONObject();
+			if (driversJ.length() != 0)
+				for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
+					if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0) {
+						if (driversJ.get(JSONObject.getNames(driversJ)[i]) instanceof JSONArray) {
+							String arrayValue = driversJ.getJSONArray(JSONObject.getNames(driversJ)[i]).getJSONObject(0).getString("value");
+							driversMap.put(JSONObject.getNames(driversJ)[i], arrayValue);
+						} else
+							driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
+					}
+				}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
@@ -788,16 +794,16 @@ public class ManageDataSetsForREST {
 	/**
 	 * @return
 	 */
-//	private BusinessModelDriverRuntime parseJsonObjectToDriver(JSONObject driver) {
-//		BusinessModelDriverRuntime bmDriver = new BusinessModelDriverRuntime();
-//		JSONArray admissibleValues = (JSONArray) driver.get("admissibleValues");
-//
-//			for(int i = 0; i < admissibleValues.length(); i++) {
-//
-//			}
-//		bmDriver.setAdmissibleValues(driver.get("admissibleValues"));
-//		return bmDriver;
-//	}
+	// private BusinessModelDriverRuntime parseJsonObjectToDriver(JSONObject driver) {
+	// BusinessModelDriverRuntime bmDriver = new BusinessModelDriverRuntime();
+	// JSONArray admissibleValues = (JSONArray) driver.get("admissibleValues");
+	//
+	// for(int i = 0; i < admissibleValues.length(); i++) {
+	//
+	// }
+	// bmDriver.setAdmissibleValues(driver.get("admissibleValues"));
+	// return bmDriver;
+	// }
 
 	public List getCategories(UserProfile userProfile) {
 		IRoleDAO rolesDao = null;
