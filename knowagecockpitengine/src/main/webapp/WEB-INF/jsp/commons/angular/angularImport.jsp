@@ -116,6 +116,9 @@ END-PRODUCTION -->
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
+<!-- MOMENT.JS -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
+
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 

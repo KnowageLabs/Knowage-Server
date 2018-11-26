@@ -71,7 +71,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 					 			<md-content layout="row" layout-wrap flex>
 									<angular-table flex
 										id='documentlist' ng-model=ctrl.selectedJob.documents
-										columns='[{"label":translate.load("sbi.generic.name"),"name":"name","size":"200px"},
+										columns='[{"label":translate.load("sbi.generic.label"),"name":"name","size":"200px"},
 											{"label":translate.load("sbi.scheduler.parameters"),"name":"condensedParameters"}]'
 										show-search-bar=false
 										highlights-selected-item=false>
