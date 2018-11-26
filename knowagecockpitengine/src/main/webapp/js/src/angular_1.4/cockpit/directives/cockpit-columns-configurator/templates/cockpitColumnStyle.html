@@ -121,8 +121,8 @@
 					       
 			   <!-- ----------------- -->
 		       
-		       		<md-card>
-						<md-toolbar class="ternaryToolbar" ng-if="selectedColumn.fieldType == 'MEASURE' || selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+		       		<md-card ng-if="selectedColumn.fieldType == 'MEASURE' || selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+						<md-toolbar class="ternaryToolbar" >
 				      		<div class="md-toolbar-tools">
 					        	<h2>
 					          		<span>Format</span>
