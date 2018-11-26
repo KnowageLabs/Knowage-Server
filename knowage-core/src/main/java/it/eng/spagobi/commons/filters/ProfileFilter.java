@@ -53,6 +53,7 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -147,6 +148,7 @@ public class ProfileFilter implements Filter {
 
 				if (profile != null) {
 					manageTenant(profile);
+					UserProfileManager.setProfile((UserProfile) profile);
 				}
 
 				chain.doFilter(request, response);
@@ -159,6 +161,7 @@ public class ProfileFilter implements Filter {
 			// since TenantManager uses a ThreadLocal, we must clean after
 			// request processed in each case
 			TenantManager.unset();
+			UserProfileManager.unset();
 		}
 	}
 
@@ -255,13 +258,11 @@ public class ProfileFilter implements Filter {
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
-	 * @param httpRequest
-	 *            The http request
+	 * @param httpRequest The http request
 	 *
 	 * @return the current user unique identified
 	 *
-	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
+	 * @throws Exception in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	private String getUserIdWithSSO(HttpServletRequest request) {
 		logger.debug("IN");
