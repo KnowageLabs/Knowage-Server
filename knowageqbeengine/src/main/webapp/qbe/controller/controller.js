@@ -616,35 +616,52 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		return finishEdit.promise;
 	};
 
-	$scope.openHavings = function(field, havings, tree, subqueries) {
-		if(field.hasOwnProperty('attributes')){
+	$scope.openHavings = function(field) {
+		// $scope.editQueryObj.havings,$scope.entityModel,
+		// $scope.editQueryObj.subqueries, $scope.editQueryObj.fields
+		$scope;
+		if (field.hasOwnProperty('attributes')) {
 			field_copy = angular.copy(field);
-			field={};
+			field = {};
 			field = {}
 			field.id = field_copy.id;
 			field.name = field_copy.text;
 			field.entity = field_copy.attributes.entity;
 			field.iconCls = field_copy.attributes.iconCls;
 			field.color = field_copy.color;
-			field.visible= true;
-			field.group= false;
-			field.order= 1;
+			field.visible = true;
+			field.group = false;
+			field.order = 1;
 		}
-		var finishEdit=$q.defer();
+		var finishEdit = $q.defer();
 		var config = {
-				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/havingTemplate.html',
-				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
-				controller: function($scope,havings,mdPanelRef){
-					$scope.model ={"havings": havings, "field": field, "tree": tree,"mdPanelRef":mdPanelRef, "subqueries":subqueries};
-				},
-				locals: {"havings": havings, "field": field, "tree": tree, "subqueries":subqueries},
-				hasBackdrop: true,
-				clickOutsideToClose: true,
-				escapeToClose: true,
-				focusOnOpen: true,
-				preserveScope: true,
+			attachTo : angular.element(document.body),
+			templateUrl : sbiModule_config.contextName
+					+ '/qbe/templates/havingTemplate.html',
+			position : $mdPanel.newPanelPosition().absolute().center(),
+			fullscreen : true,
+			controller : function($scope, havings, tree, subqueries, selectedFields, mdPanelRef) {
+				$scope.model = {
+					"havings" : havings,
+					"field" : field,
+					"tree" : tree,
+					"mdPanelRef" : mdPanelRef,
+					"subqueries" : subqueries,
+					"selectedFields" : selectedFields
+				};
+			},
+			locals : {
+				"havings" : $scope.editQueryObj.havings,
+				"field" : field,
+				"tree" : $scope.entityModel,
+				"subqueries" : $scope.editQueryObj.subqueries,
+				"selectedFields" : $scope.editQueryObj.fields
+			},
+			hasBackdrop : true,
+			clickOutsideToClose : true,
+			escapeToClose : true,
+			focusOnOpen : true,
+			preserveScope : true,
 		};
 		$mdPanel.open(config);
 		return finishEdit.promise;

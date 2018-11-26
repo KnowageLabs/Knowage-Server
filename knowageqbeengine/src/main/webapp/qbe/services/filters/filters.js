@@ -31,7 +31,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 
 	this.getHavingTargetTypes = [
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:""},
-		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherentity"),value:"anotherEntity"}
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherField"),value:"anotherEntity"}
 		 // {name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"},
 	];
 

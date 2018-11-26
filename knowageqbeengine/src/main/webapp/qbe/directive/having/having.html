@@ -31,15 +31,16 @@
 	      			<md-input-container flex=20>
 	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>
 		            	<input name="leftOperand" ng-model="having.leftOperandDescription" readonly>
+		            	<md-tooltip md-delay="500">{{ngModel.field.entity + ": " + field.funct + " (" + ngModel.field.name + ")"}}</md-tooltip>
 		            </md-input-container>
 					
-					<md-input-container flex=10>
-						<label class="havingLabel">{{translate.load("kn.qbe.havings.function")}}</label>
-						<md-select ng-model="having.leftOperandAggregator">
-							<md-option ng-repeat="leftOperandAggregator in getFunctions" value="{{leftOperandAggregator}}">{{leftOperandAggregator}}
-							</md-option>
-						</md-select>
-					</md-input-container>
+<!-- 					<md-input-container flex=10> -->
+<!-- 						<label class="havingLabel">{{translate.load("kn.qbe.havings.function")}}</label> -->
+<!-- 						<md-select ng-model="having.leftOperandAggregator"> -->
+<!-- 							<md-option ng-repeat="leftOperandAggregator in getFunctions" value="{{leftOperandAggregator}}">{{leftOperandAggregator}} -->
+<!-- 							</md-option> -->
+<!-- 						</md-select> -->
+<!-- 					</md-input-container> -->
 					
 					<md-input-container flex=10>
 						<label class="havingLabel">{{translate.load("kn.qbe.havings.operator")}}</label>
@@ -76,18 +77,21 @@
 								<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
 							</md-button>
 							<md-menu-content>
-								<md-menu-item ng-repeat="entity in tree">
+								<md-menu-item ng-repeat="entity in selFields" ng-if="entity.fieldType == 'measure'">
 									<md-menu class="havingOtherEntity">
 										<md-button ng-click="$mdMenu.open()">
-										<span>{{entity.text}}</span>
+<!-- 											<span>{{entity.field}}</span> -->
+											<md-button ng-click="setRight(having, entity, 'anotherEntity')">
+												<span>{{entity.field}}</span>
+											</md-button>
 										</md-button>
-										<md-menu-content>
-											<md-menu-item ng-repeat="r in entity.children">
-												<md-button ng-click="fillInput(having, r, 'anotherEntity')">
-													<span>{{r.text}}</span>
-												</md-button>
-											</md-menu-item>
-										</md-menu-content>
+<!-- 										<md-menu-content> -->
+<!-- 											<md-menu-item ng-repeat="r in entity.children" ng-if="r.iconCls == 'measure'"> -->
+<!-- 												<md-button ng-click="fillInput(having, r, 'anotherEntity')"> -->
+<!-- 													<span>{{r.text}}</span> -->
+<!-- 												</md-button> -->
+<!-- 											</md-menu-item> -->
+<!-- 										</md-menu-content> -->
 									</md-menu>
 								</md-menu-item>
 							</md-menu-content>

@@ -42,6 +42,7 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 	$scope.tree = $scope.ngModel.tree.entities;
 	$scope.translate = sbiModule_translate;
 	$scope.subqueries = $scope.ngModel.subqueries;
+	$scope.selFields = $scope.ngModel.selectedFields
 	
 	var checkForIndex = function(){
 		var arrayOfIndex = [];
@@ -71,15 +72,15 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 				"filterDescripion": "having"+$scope.havingIndex,
 				"filterInd": $scope.havingIndex,
 				"promptable": false,
-				"leftOperandAggregator": "",
+				"leftOperandAggregator": $scope.field.funct,
 				"leftOperandValue": $scope.ngModel.field.id,
-				"leftOperandDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
-				"leftOperandLongDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
+				"leftOperandDescription": $scope.ngModel.field.entity+ ":" + " " + $scope.field.funct + " (" + $scope.ngModel.field.name + ")",
+				"leftOperandLongDescription": $scope.ngModel.field.entity+ ":" + " " + $scope.field.funct + " (" + $scope.ngModel.field.name + ")",
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
 				"operator": "EQUALS TO",
-				"rightOperandAggregator": "",
+				"rightOperandAggregator": $scope.field.funct,
 				"rightOperandValue": [],
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
@@ -133,24 +134,27 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 	$scope.fillInput = function(having, type, value) {
 		switch(value) {
 		case "subquery":
-			setRight(having, type, value);
+			$scope.setRight(having, type, value);
 			break;
 		case "anotherEntity":
-			setRight(having, type, value);
+			$scope.setRight(having, type, value);
 			break;
 		default:
 				break;
 		}
 	}
 
-	var setRight = function(having, type, value) {
+	$scope.setRight = function(having, type, value) {
 		if(value=='anotherEntity'){
 			having.rightOperandValue=[];
 			having.rightOperandValue.push(type.id) ;
 			having.rightOperandType="Field Content";
-			having.rightOperandDescription=type.attributes.entity+" "+": "+type.text;
-			having.rightOperandLongDescription=type.attributes.entity+" "+": "+type.text;
-			having.rightOperandAlias=type.text;
+			//having.rightOperandDescription=type.attributes.entity+" "+": "+type.text;
+			having.rightOperandDescription = type.field;
+			//having.rightOperandLongDescription = type.attributes.entity+" "+": "+type.text;
+			having.rightOperandLongDescription = type.field;
+			//having.rightOperandAlias=type.text;
+			having.rightOperandAlias = type.field;
 		} else if(value =='subquery') {
 			having.rightOperandValue.push(type.id);
 			having.rightOperandDescription = type.name;
