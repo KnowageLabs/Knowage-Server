@@ -1154,6 +1154,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 				};
 
+				activityEventCtrl.isUniqueMailSettedInAnotherDoc = function() {
+				    var isUniqueMailSetted = false;
+				    for(var i in activityEventCtrl.event.documents){
+				        var doc = activityEventCtrl.event.documents[i];
+				        if(activityEventCtrl.selectedDocument.label != doc.label && doc.uniqueMail){
+				            isUniqueMailSetted = true;
+				            break;
+				        }
+				    }
+				    return isUniqueMailSetted;
+				}
+
 				activityEventCtrl.triggerEvent = function() {
 					var requestTriggerEvent = "eventName=" + activityEventCtrl.event.triggerName
 
