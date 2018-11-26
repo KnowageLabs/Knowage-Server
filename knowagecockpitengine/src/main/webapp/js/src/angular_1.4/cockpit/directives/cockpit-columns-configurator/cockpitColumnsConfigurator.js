@@ -95,10 +95,14 @@
 	        onCellEditingStopped: refreshRow,
 	        columnDefs: [
 	        	//{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
-	        	{headerName:'Name', field:'name',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
-	        	{headerName:'Alias', field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
-	        	{headerName:'Type', field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
-	        	{headerName:'Aggregation', field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":aggregationEditable, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.name'), field:'name',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
+	        		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
+	        		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.summaryfunction'), field: 'funcSummary', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
+	        		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
 	        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
 			rowData: $scope.model.content.columnSelectedOfDataset
 		}
@@ -142,10 +146,12 @@
 		}
 		
 		function editableCell(params){
-			return '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
+			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
 		}
-		
-		function aggregationEditable(params) {
+		function isInputEditable(params) {
+			return typeof(params.data.name) !== 'undefined'; 
+		}
+		function isAggregationEditable(params) {
 			return params.data.fieldType == "MEASURE" ? true : false;
 		}
 		
@@ -155,10 +161,17 @@
 		}
 		
 		function buttonRenderer(params){
-			return 	'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')" ng-style="{\'background-color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+			var calculator = '';
+			if(params.data.isCalculated){
+				calculator = '<md-button class="md-icon-button" ng-click="addNewCalculatedField(\''+params.rowIndex+'\')">'+
+							 '<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button>';
+			}
+			return 	calculator +
+					'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')" ng-style="{\'background-color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+					'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
 					'	<md-icon ng-style="{\'color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
 					'</md-button>'+
-					'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+					'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 		}
 		
 		function refreshRow(cell){
@@ -464,8 +477,8 @@
 
 		}
 
-		$scope.addNewCalculatedField = function(currentRow){
-
+		$scope.addNewCalculatedField = function(currentRowIndex){
+			var currentRow = $scope.model.content.columnSelectedOfDataset[currentRowIndex];
 			var deferred = $q.defer();
 			var promise ;
 			$mdDialog.show({
