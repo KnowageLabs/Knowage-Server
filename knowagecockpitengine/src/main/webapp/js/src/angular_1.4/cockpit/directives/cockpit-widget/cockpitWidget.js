@@ -840,6 +840,8 @@ function cockpitWidgetControllerFunction(
 
 			var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 			if(sel!=undefined){
+				cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
+
 				if(!cockpitModule_template.configuration.aliases){
 					cockpitModule_template.configuration.aliases = [];
 				}
