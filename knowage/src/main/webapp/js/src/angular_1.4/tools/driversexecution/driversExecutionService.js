@@ -1,7 +1,7 @@
 
 (function() {
 	angular.module('driversExecutionModule')
-		.service('driversExecutionService',['sbiModule_translate', 'driversDependencyService',function(sbiModule_translate, driversDependencyService){
+		.service('driversExecutionService',['sbiModule_translate', 'driversDependencyService','$filter',function(sbiModule_translate, driversDependencyService,$filter){
 			var executionService = {}
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
