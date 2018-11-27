@@ -15,32 +15,58 @@
 	
 	<build>
 		<finalName>knowage</finalName>
-	    <plugins>
-	        <plugin>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <configuration>
-	                <attachClasses>true</attachClasses>
-	                <classesClassifier>classes</classesClassifier>
-	            </configuration>
-	        </plugin>
-
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<version>1.6.9</version>
-				<configuration>
-					<container>
-						<containerId>tomcat8x</containerId>
-						<type>installed</type>
-						<home>${application-home}</home>
-					</container>
+		<pluginManagement>
+		    <plugins>
+		        <plugin>
+		            <artifactId>maven-war-plugin</artifactId>
+		            <configuration>
+		                <attachClasses>true</attachClasses>
+		                <classesClassifier>classes</classesClassifier>
+		            </configuration>
+		        </plugin>
+	
+				<plugin>
+					<groupId>org.codehaus.cargo</groupId>
+					<artifactId>cargo-maven2-plugin</artifactId>
+					<version>1.6.9</version>
 					<configuration>
-						<type>existing</type>
-						<home>${application-home}</home>
+						<container>
+							<containerId>tomcat8x</containerId>
+							<type>installed</type>
+							<home>${application-home}</home>
+						</container>
+						<configuration>
+							<type>existing</type>
+							<home>${application-home}</home>
+						</configuration>
 					</configuration>
-				</configuration>
-			</plugin>
-	    </plugins>
+				</plugin>
+		    </plugins>
+		  </pluginManagement>
+		  <plugins>
+		  		<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.6.0</version>
+					<executions>
+						<execution>		
+							<id>npm-package-install</id>
+							<phase>prepare-package</phase>
+	                  		<goals>
+		                    	<goal>exec</goal>
+		                  	</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<executable>npm</executable>
+	                    <arguments>
+                      		<argument>install</argument>
+	                    </arguments>
+	                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+					</configuration>
+		  	</plugin>
+		  
+		  </plugins>
 	</build>
 	
 	<profiles>	
