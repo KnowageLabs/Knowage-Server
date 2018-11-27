@@ -89,6 +89,8 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 				if (java.util.Date.class.isAssignableFrom(value.getClass())) {
 					java.util.Date date = (java.util.Date) value;
 					stmt.setDate(parameterIndex, new java.sql.Date(date.getTime()));
+				} else if(value.getClass().getName().toLowerCase().contains(".timestamp")){
+					stmt.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf(value.toString()));
 				} else {
 					stmt.setObject(parameterIndex, value);
 				}
