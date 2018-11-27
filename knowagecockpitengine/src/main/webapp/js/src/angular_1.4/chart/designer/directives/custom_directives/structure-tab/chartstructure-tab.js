@@ -955,6 +955,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	}
 
+	$scope.clearAxisMajorGridDetails = function () {
+				$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
+			}
+
 	$scope.removeSeriesContainer = function(seriesContainer) {
 
 		var seriesForDeletion = angular.copy(seriesContainer);
