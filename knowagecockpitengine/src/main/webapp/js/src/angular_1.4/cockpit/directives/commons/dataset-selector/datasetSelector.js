@@ -21,7 +21,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/commons/dataset-selector/templates/datasetSelector.html',
 		   transclude: true,
-		   replace: true,		  
+		   replace: true,
 		   scope:{
 			   ngModel:"=",
 			   extended:"=?",
@@ -35,12 +35,12 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
                     pre: function preLink(scope, element, attrs, ctrl, transclud) {
                     },
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
-                    	
+
                     }
                 };
 		   	},
 		    controller: datasetSelectorControllerFunction,
-		   
+
 	   }
 });
 
@@ -48,7 +48,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	$scope.translate=sbiModule_translate;
 	if(!$scope.datasetSettings) $scope.datasetSettings = {};
 	$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
-	
+
 	$scope.addNewDataset=function(){
 		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true)
 		 .then(function(data){
@@ -67,7 +67,6 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 		if(id){
 			$scope.loadingMetadata = true;
 			$scope.dataset = {};
-			sbiModule_restServices.restToRootProject();
 			var params = cockpitModule_datasetServices.getDatasetParameters(id);
 			for(var p in params){
 				if(params[p].length == 1){
@@ -84,7 +83,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			$scope.loadingMetadata = false;
 		}else {
 			$scope.dataset = {};
-		}	
+		}
 	}
 	
 	$scope.isDatasetAvailable = function(ds){
@@ -115,9 +114,9 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 		}
 		return true;
 	}
-	
+
 	if($scope.ngModel) $scope.getMetaData($scope.ngModel);
-	
+
 	$scope.orderColumn = function(col){
 		if(col.name == $scope.datasetSettings.sortingColumn) {
 			$scope.datasetSettings.sortingOrder = $scope.datasetSettings.sortingOrder == 'ASC' ? 'DESC' : 'ASC';
@@ -127,7 +126,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			$scope.datasetSettings.sortingOrder = 'ASC';
 		}
 	}
-	
+
 	var metaDataWatcher = $scope.$watch('ngModel',function(newValue,oldValue){
 		if($scope.extended && newValue!=oldValue){
 			delete $scope.datasetSettings.sortingColumn;
@@ -135,7 +134,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			$scope.getMetaData(newValue);
 		}
 	})
-	
+
 	$scope.getFieldType = function(typeValue){
 		for(var o in cockpitModule_generalOptions.fieldsTypes){
 			if(cockpitModule_generalOptions.fieldsTypes[o].value == typeValue){
@@ -144,7 +143,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 		}
 		return typeValue;
 	}
-	
+
 };
 
 })();
