@@ -151,8 +151,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			targetUrl= sbiModule_config.contextName
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + doc.document.id
-			+ '&OBJECT_LABEL=' + doc.document.label
-			+ '&SELECTED_ROLE=' + selectedRole.name
+			+ '&OBJECT_LABEL=' + encodeURIComponent(doc.document.label)
+			+ '&SELECTED_ROLE=' + encodeURIComponent(selectedRole.name)
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + encodeURIComponent(doc.document.name)
 			+"&CROSS_PARAMETER="+parameterStr;
