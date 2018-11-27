@@ -58,22 +58,21 @@
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">
 				
-                   <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
-						<md-icon md-font-icon="fa fa-search"></md-icon>
-				</md-button>
-				 <md-button title="{{translate.load('sbi.workspace.dataset.edit')}}" aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="editFederation(selectedModel)">
-						<md-icon md-font-icon="fa fa-pencil"></md-icon>
+                <md-button aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
+                	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
 				
-				 <md-button title="{{translate.load('sbi.workspace.dataset.delete')}}" aria-label="Delete" class="md-icon-button" ng-show="currentModelsTab=='federations' && isAbletoDelete(selectedModel)" ng-click="deleteFederation(selectedModel)">
-						<md-icon md-font-icon="fa fa-trash"></md-icon>
+				 <md-button aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="editFederation(selectedModel)">
+				 	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.edit')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				
-				<!-- @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
-				<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Models Details" class="md-icon-button" ng-click="hideRightSidePanel()">
-						<md-icon md-font-icon="fa fa-times" ></md-icon>
+				 <md-button aria-label="Delete" class="md-icon-button" ng-show="currentModelsTab=='federations' && isAbletoDelete(selectedModel)" ng-click="deleteFederation(selectedModel)">
+				 	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.delete')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
 				</md-button>
-				
+								
 			</div>
 		</md-toolbar>
 			
