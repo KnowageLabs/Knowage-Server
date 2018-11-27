@@ -216,9 +216,15 @@
 	     	<md-card ng-if="datasetWizardView==2" class="validationStep" >
 	        
 	        	<md-toolbar class="secondaryToolbar">
-	           	<div class="md-toolbar-tools">
-	              	<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
-	              	<span flex></span>
+		           	<div class="md-toolbar-tools">
+		              	<h2 flex>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
+						<span flex>
+							<md-input-container ng-if="validationError">
+								<md-checkbox aria-label="Display only validation errors" ng-model="displayInvalidColumns.value" ng-checked="" ng-change="filterInvalidColumns()">
+									{{translate.load('sbi.ds.wizard.displayValidationErrors')}}
+								</md-checkbox>
+							</md-input-container>							
+						</span>
 	          	 	</div>
 	        	</md-toolbar>         
 	                 
@@ -229,11 +235,12 @@
 								id="columnsMeta"
 								ng-model=dataset.meta.columns
 								columns="tableColumns"
-								show-search-bar=false
+								show-search-bar=false							
 								scope-functions="metaScopeFunctions"
 								no-pagination=false
 								items-per-page=6
 								fixed-item-per-page=true
+								columns-search='["invalidColumn"]'
 								class="step2DefDataTable">														
 							</angular-table>						
 			            </form>				            	            			            
@@ -298,7 +305,7 @@
 					columns="allHeadersForStep3Preview" 
 					no-pagination=false
 					items-per-page="6"
-								fixed-item-per-page="true"
+					fixed-item-per-page="true"
 					show-search-bar=false
 					full-width="true"
 					relative-header="true">
@@ -378,8 +385,8 @@
 	     	<!-- CARD 4 (END) -->	      			     
    </md-dialog-content>
    
-   <md-dialog-actions layout="row">
-		<md-button 	ng-if="datasetWizardView>1" ng-click="toggleDWVBack()" title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> {{translate.load("sbi.general.previous")}}</md-button>
+   <md-dialog-actions layout="row">   		
+		<md-button 	ng-if="datasetWizardView>1" ng-click="toggleDWVBack()" title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> {{translate.load("sbi.general.previous")}}</md-button>		
 		<md-button 	ng-click="toggleDWVNext()" ng-disabled="nextOrSaveButtonCondition()" ng-if="datasetWizardView!=4" title="{{datasetWizStep1NextButtonTitle()}}">  {{translate.load("sbi.general.next")}}</md-button>
 		<md-button ng-disabled="nextOrSaveButtonCondition()" ng-if="datasetWizardView==4" ng-click="toggleDWVNext()">{{translate.load("sbi.general.save")}}</md-button>	
  	</md-dialog-actions>

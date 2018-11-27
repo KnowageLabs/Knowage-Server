@@ -362,6 +362,7 @@ public class SelfServiceDataSetCRUD {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String saveDataSet(@Context HttpServletRequest request) {
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
 		try {
 
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
@@ -378,8 +379,8 @@ public class SelfServiceDataSetCRUD {
 			IDataSet dsNew = recoverDataSetDetails(request, ds, true);
 
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
-			String dsMetadata = null;
-			dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
+			IMetaData metadata = getDatasetMetadata(dsNew, profile, meta);
+			String dsMetadata = dsp.metadataToXML(metadata);
 			dsNew.setDsMetadata(dsMetadata);
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 
@@ -847,28 +848,37 @@ public class SelfServiceDataSetCRUD {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String testDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		Integer limit = new Integer(10);
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			String label = req.getParameter("label");
 			String meta = req.getParameter(DataSetConstants.METADATA);
+			boolean limitPreview = Boolean.valueOf(req.getParameter("limitPreview"));
 
 			IDataSet dsToTest = recoverDataSetDetails(req, null, false);
 
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
-			String dsMetadata = null;
-			dsMetadata = getDatasetTestMetadata(dsToTest, profile, meta);
-			JSONArray datasetColumns = getDatasetColumns(dsToTest, profile);
-			dsToTest.setDsMetadata(dsMetadata);
+			IMetaData dsMetadata = getDatasetMetadata(dsToTest, profile, meta);
+			JSONArray datasetColumns = getDatasetColumns(dsMetadata, profile);
+
+			String metaData = dsp.metadataToXML(dsMetadata);
+			dsToTest.setDsMetadata(metaData);
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 
 			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(dsToTest);
 
-			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(dsMetadata);
+			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(metaData);
+			if (limitPreview) {
+				dsToTest.getDataStore().getRecords().subList(limit, dsToTest.getDataStore().getRecords().size()).clear();
+			}
 			JSONObject JSONReturn = new JSONObject();
+			JSONObject gridDataFeed = writeDatasetAsJson(dsToTest.getDataStore());
 			JSONReturn.put("meta", metaJSONobject);
 			JSONReturn.put("datasetColumns", datasetColumns);
+			JSONReturn.put("gridForPreview", gridDataFeed);
 			return JSONReturn.toString();
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
@@ -960,36 +970,12 @@ public class SelfServiceDataSetCRUD {
 				validationErrors = validateDataset(dataStore, columns, dsConfiguration);
 			}
 
-			JSONDataWriter dataSetWriter = new JSONDataWriter();
-			dataSetWriter.setSetRenderer(true);
-
 			// Filter Datastore records if Limit Preview is checked
 			if (limitPreviewCheck) {
 				dataStore.getRecords().subList(limit, dataStore.getRecords().size()).clear();
 			}
 
-			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
-			// remove the recNo inside fields that is not managed by
-			// DynamicGridPanel
-			JSONObject metadata = gridDataFeed.getJSONObject("metaData");
-			if (metadata != null) {
-				JSONArray fieldsArray = metadata.getJSONArray("fields");
-				boolean elementFound = false;
-				int i = 0;
-				for (; i < fieldsArray.length(); i++) {
-					String element = fieldsArray.getString(i);
-					if (element.equals("recNo")) {
-						elementFound = true;
-						break;
-					}
-				}
-				if (elementFound) {
-					logger.debug(elementFound);
-					logger.debug(i);
-					fieldsArray.remove(i);
-				}
-
-			}
+			JSONObject gridDataFeed = writeDatasetAsJson(dataStore);
 
 			if (validationErrors != null && !validationErrors.isEmpty()) {
 				// this create an array containing the fields with error for
@@ -1034,6 +1020,43 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
+	private JSONObject writeDatasetAsJson(IDataStore dataStore) throws JSONException {
+		logger.debug("IN");
+		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		dataSetWriter.setSetRenderer(true);
+		dataSetWriter.setPreserveOriginalDataTypes(true);
+		JSONObject toReturn = new JSONObject();
+		try {
+			toReturn = (JSONObject) dataSetWriter.write(dataStore);
+			// remove the recNo inside fields that is not managed by
+			// DynamicGridPanel
+			JSONObject metadata = toReturn.getJSONObject("metaData");
+			if (metadata != null) {
+				JSONArray fieldsArray = metadata.getJSONArray("fields");
+				boolean elementFound = false;
+				int i = 0;
+				for (; i < fieldsArray.length(); i++) {
+					String element = fieldsArray.getString(i);
+					if (element.equals("recNo")) {
+						elementFound = true;
+						break;
+					}
+				}
+				if (elementFound) {
+					logger.debug(elementFound);
+					logger.debug(i);
+					fieldsArray.remove(i);
+				}
+
+			}
+		} catch (JSONException e) {
+			logger.error("Can not write Dataset as JSON");
+			throw e;
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	private ValidationErrors validateDataset(IDataStore dataStore, JSONArray columns, String dsConfiguration) throws JSONException {
 
 		ValidationErrors validationErrors = new ValidationErrors();
@@ -1053,13 +1076,6 @@ public class SelfServiceDataSetCRUD {
 		 * All records that the file dataset provides (all resulting rows).
 		 */
 		long records = dataStore.getRecordsCount();
-
-		/**
-		 * Get all metadata for the dataset and then pick only those related to the "columns" property. This way we get all columns that the file dataset
-		 * possess.
-		 */
-		// JSONObject metadataDataset = new JSONObject(datasetMetadata);
-		// JSONArray columns = metadataDataset.getJSONArray("columns");
 
 		/**
 		 * Go through all columns that the file dataset has. First go through all rows for the first column, then through all of them in the second column and
@@ -1772,14 +1788,10 @@ public class SelfServiceDataSetCRUD {
 		return scopeId;
 	}
 
-	private String getDatasetTestMetadata(IDataSet dataSet, IEngUserProfile profile, String metadata) throws Exception {
+	private IMetaData getDatasetMetadata(IDataSet dataSet, IEngUserProfile profile, String metadata) throws Exception {
 		logger.debug("IN");
-		String dsMetadata = null;
-
+		IMetaData metaData = null;
 		Integer start = new Integer(0);
-		// test first 50 rows
-		Integer limit = new Integer(50);
-
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 
 		try {
@@ -1795,9 +1807,8 @@ public class SelfServiceDataSetCRUD {
 																		// or
 																		// not
 			}
-			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			dataSet.loadData(start, GeneralUtilities.getDatasetMaxResults(), GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
-			DatasetMetadataParser dsp = new DatasetMetadataParser();
 
 			JSONObject metadataObject = new JSONObject();
 			JSONArray columnsMetadataArray = new JSONArray();
@@ -1809,7 +1820,7 @@ public class SelfServiceDataSetCRUD {
 				datasetMetadataArray = metadataObject.getJSONArray("dataset");
 			}
 
-			IMetaData metaData = dataStore.getMetaData();
+			metaData = dataStore.getMetaData();
 			// Setting general custom properties for entire Dataset
 			for (int i = 0; i < datasetMetadataArray.length(); i++) {
 				JSONObject datasetJsonObject = datasetMetadataArray.getJSONObject(i);
@@ -1934,16 +1945,13 @@ public class SelfServiceDataSetCRUD {
 
 			}
 
-			dsMetadata = dsp.metadataToXML(dataStore.getMetaData()); // using
-																		// new
-																		// parser
 		} catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose", e);
 			throw new RuntimeException("Error while executing dataset for test purpose", e);
 		}
 
 		logger.debug("OUT");
-		return dsMetadata;
+		return metaData;
 	}
 
 	/**
@@ -2053,26 +2061,17 @@ public class SelfServiceDataSetCRUD {
 		return true;
 	}
 
-	public JSONArray getDatasetColumns(IDataSet dataSet, IEngUserProfile profile) throws Exception {
+	public JSONArray getDatasetColumns(IMetaData metaData, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
-
-		Integer start = new Integer(0);
-		Integer limit = new Integer(10);
-
 		JSONArray columnsJSON = new JSONArray();
 
 		try {
-			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
-			IDataStore dataStore = dataSet.getDataStore();
-
-			IMetaData metaData = dataStore.getMetaData();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				String name = ifmd.getName();
 				JSONObject jsonMeta = new JSONObject();
 				jsonMeta.put("columnName", name);
 				columnsJSON.put(jsonMeta);
-
 			}
 
 		} catch (RuntimeException re) {

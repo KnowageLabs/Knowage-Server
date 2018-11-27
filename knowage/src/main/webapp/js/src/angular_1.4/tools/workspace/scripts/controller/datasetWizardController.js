@@ -35,6 +35,10 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.categorySet = null;
 	$scope.showErrors = false;
 	$scope.hideErors = true;
+	$scope.displayInvalidColumns = { value: false };
+	var isDirty = false;
+	var metaColumnsTemp = [];
+	var gridForPreview;
 
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
@@ -200,14 +204,14 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		if ($scope.changedFileName == null) {
 			$scope.changedFileName = $scope.dataset.fileName;
 		}
-
+				
+		$scope.dataset.limitPreview = $scope.limitPreviewChecked;
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
 
 		$http
 		(
 			{
 				method: 'POST',
-//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
 				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
 				data: $scope.dataset,
 				params: params,
@@ -232,9 +236,10 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				if (!response.data.errors) {
 
 					console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
-
+					
+					gridForPreview = response.data.gridForPreview;
 					$scope.datasetWizardView = $scope.datasetWizardView + 1;
-
+					
 					/**
 					 * If there was a non-empty metadata before submitting of the Step 1 (previously we were on the Step 2),
 					 * retrieve the metadata.
@@ -351,156 +356,140 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 		params.SBI_EXECUTION_ID = -1;
 
-		$http
-		(
-			{
-				method: 'POST',
-//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/getDataStore',
-				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
-				data: $scope.dataset,
-				params: params,
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-
-				transformRequest: function(obj) {
-
-					var str = [];
-
-					for(var p in obj)
-						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-
-					return str.join("&");
-
+		if (isDirty) {
+			
+			$http
+			(
+				{
+					method: 'POST',
+					url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
+					data: $scope.dataset,
+					params: params,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	
+					transformRequest: function(obj) {
+	
+						var str = [];
+	
+						for(var p in obj)
+							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	
+						return str.join("&");
+	
+					},
+				}
+			)
+			.then
+			(
+				function successCallback(response) {
+	
+					/**
+					 * If the response does not contain the validation errors after submitting the Step 2 for particular
+					 * file dataset, then we are dealing with the valid metadata configuration (formatting).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (!response.data.validationErrors) {
+						//If no errors go to preview - step 3
+						previewDataSet();
+					}
+					/**
+					 * If the response however contains the property that indicated that there are some validation problems
+					 * (errors), handle the situation and inform user about it.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					else if(response.data.validationErrors) {
+	
+						console.warn("[VALIDATION ERRORS]: Validation failed!");
+	
+						$scope.validationStatus = false;
+	
+						/**
+						 * Now, since we are having validation errors when submitting the Step 3, change the value of the
+						 * scope variable that contains these data.
+						 */
+						$scope.step2ValidationErrors = response.data.validationErrors;
+	
+						/**
+						 * Since the validation of the Step 2 went wrong (metadata are not valid), set flags that indicate that
+						 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that
+						 * there were validation errors.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.validationPassed = false;
+						$scope.csvConfChanged = false;
+						$scope.validationError = true;
+	
+						// "Refresh" the Step 2 table, in order to where the validation error appears.
+						$scope.prepareMetaForView();
+						$scope.prepareDatasetForView();
+	
+						// Inform the user about the validation error.
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.msg"), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+	
+					}
+					else {
+						console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
+						$scope.validationStatus = false;
+	
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+	
+						$scope.step2ValidationErrors = null;
+	
+						/**
+						 * Since the validation of the Step 2 went wrong (some failure happened), set flags that indicate that
+						 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that
+						 * there were validation errors.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.validationError = true;
+						$scope.validationPassed = false;
+						$scope.csvConfChanged = false;
+					}
 				},
-			}
-		)
-		.then
-		(
-			function successCallback(response) {
-
-				/**
-				 * If the response does not contain the validation errors after submitting the Step 2 for particular
-				 * file dataset, then we are dealing with the valid metadata configuration (formatting).
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if (!response.data.validationErrors) {
-
-					console.info("[SUCCESS]: The Step 2 form is validated and submitted successfully!");
-
-//					/**
-//					 * As far as we reach the Step 2 and try to validate the metadata, change the state of the flag that indicates that we tried to validate the
-//					 * Step 2. When the flag is false, we are able to change the state of the 'Valid' column in the grid (angular-table) on the Step 2. Else, we
-//					 * will see the initial grey field with the icon inside of it that indicates that the validation is pending (waiting for user to move to the
-//					 * Step 3).
-//					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-//					 */
-//					($scope.step2ValidationFirstTime==true) ? $scope.step2ValidationFirstTime = false : null;
-
-					// Take the meta data from resulting JSON object (needed for the table's header)
-
-					$scope.resultMetaDataStep2 = [];
-					$scope.resultRowsStep2 = [];
-					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
-
-					// Take all results (pure data) for rows of the Angular table
-					angular.copy(response.data.rows,$scope.resultRowsStep2);
-					$scope.collectHeadersForStep3Preview();
-
-					// Move to the next step (Step 3)
-					$scope.datasetWizardView = $scope.datasetWizardView + 1;
-
-					/**
-					 * Set this indicator to NULL, since we do not have this property inside the response - the metadata
-					 * of the file dataset is valid. Also, inform user about the successful validation of the metadata.
-					 * Set the status of validation to true, in order to indicate that the metadata is well configured.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					$scope.step2ValidationErrors = null;
-					$scope.validationStatus = true;
-
-					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-					toastr.success(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),
-							sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
-
-					/**
-					 * Since the validation of the Step 2 went well (successful), set flags that indicate that the validation
-					 * went successfully, that the CSV configration parameters are not changed (anymore) and that there were
-					 * not validation errors.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					$scope.validationPassed = true;
-					$scope.csvConfChanged = false;
-					$scope.validationError = false;
-				}
-				/**
-				 * If the response however contains the property that indicated that there are some validation problems
-				 * (errors), handle the situation and inform user about it.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				else if(response.data.validationErrors) {
-
-					console.warn("[VALIDATION ERRORS]: Validation failed!");
-
+			
+				function errorCallback(response) {
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+					console.info("[FAILURE]: The form cannot be submitted because of some failure.");
+					console.log(response);
 					$scope.validationStatus = false;
-
-//					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
-
-					/**
-					 * Now, since we are having validation errors when submitting the Step 3, change the value of the
-					 * scope variable that contains these data.
-					 */
-					$scope.step2ValidationErrors = response.data.validationErrors;
-
-					/**
-					 * Since the validation of the Step 2 went wrong (metadata are not valid), set flags that indicate that
-					 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that
-					 * there were validation errors.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					$scope.validationPassed = false;
-					$scope.csvConfChanged = false;
-					$scope.validationError = true;
-
-					// "Refresh" the Step 2 table, in order to where the validation error appears.
-					$scope.prepareMetaForView();
-					$scope.prepareDatasetForView();
-
-					// Inform the user about the validation error.
+	
 					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-					toastr.error(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.msg"), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+					toastr.error(sbiModule_translate.load("sbi.ds.wizard.form.submit.failure.msg"), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
 				}
-				else {
-					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
-					$scope.validationStatus = false;
-
-					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-					toastr.error(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
-					$scope.step2ValidationErrors = null;
-
-					/**
-					 * Since the validation of the Step 2 went wrong (some failure happened), set flags that indicate that
-					 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that
-					 * there were validation errors.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					$scope.validationError = true;
-					$scope.validationPassed = false;
-					$scope.csvConfChanged = false;
-				}
-			},
-
-			function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
-				console.log(response);
-				$scope.validationStatus = false;
-
-				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-				toastr.error(sbiModule_translate.load("sbi.ds.wizard.form.submit.failure.msg"), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
-			}
 		);
+	  } else {
+		previewDataSet();
+	  }
+		
+	}
+	
+	var previewDataSet = function() {
+		console.info("[SUCCESS]: The Step 2 form is validated and submitted successfully!");
+		$scope.resultMetaDataStep2 = [];
+		$scope.resultRowsStep2 = [];
+		angular.copy(gridForPreview.metaData.fields,$scope.resultMetaDataStep2);
+
+		// Take all results (pure data) for rows of the Angular table
+		angular.copy(gridForPreview.rows,$scope.resultRowsStep2);
+		$scope.collectHeadersForStep3Preview();
+
+		// Move to the next step (Step 3)
+		$scope.datasetWizardView = $scope.datasetWizardView + 1;
+
+		$scope.step2ValidationErrors = null;
+		$scope.validationStatus = true;
+		
+		// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+		toastr.success(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),
+				sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+
+		
+		$scope.validationPassed = true;
+		$scope.csvConfChanged = false;
+		$scope.validationError = false;
 	}
 
 	/**
@@ -529,7 +518,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		(
 			{
 				method: 'POST',
-//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/save',
 				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/save',
 				data: $scope.dataset,
 				params: params,
@@ -542,7 +530,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					for(var p in obj)
 						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
 
-//					console.log(str.join("&"));
 					return str.join("&");
 
 				},
@@ -632,8 +619,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 	$scope.toggleDWVNext = function() {
 
-//			console.log($scope.dataset);
-
 		/**
 		 * Remember the lastly chosen metadata type from the combo box on the Step 2 when leaving it.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -647,18 +632,11 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		switch($scope.datasetWizardView) {
 			case 1: $scope.submitStep1(); break;
 			case 2: $scope.submitStep2(); break;
+			case 3: $scope.datasetWizardView = $scope.datasetWizardView +1; break;
 			case 4: $scope.submitStep4(); break;
 		}
-
-		/**
-		 * Bigger then 1, because for the Step 1 we will move to the next step in the 'submitStep1()', according to the state of success of the service call.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		if($scope.datasetWizardView>2 && $scope.datasetWizardView<4){
-			$scope.datasetWizardView = $scope.datasetWizardView +1;
-		}
 	}
-
+	
 	$scope.toggleDWVBack = function() {
 
 		/**
@@ -741,7 +719,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 //		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 //		 */
 //		$scope.step2ValidationFirstTime = true;
-//		$mdSidenav('errors-columndetails-sidenav').close();
 		$mdDialog.cancel();
 	}
 
@@ -873,7 +850,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		var initialization = !item && !index;
-
+						
 		$scope.prepareMetaValue($scope.dataset.meta.columns,item,index);
 
 		/**
@@ -883,7 +860,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		$scope.dataset.meta.columns = filterMetadataRows($scope.dataset.meta.columns);
-
+		
 		for(i=0; i< $scope.dataset.meta.columns.length;i++) {
 
 			loc = $scope.dataset.meta.columns[i];
@@ -952,12 +929,9 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				 * and an additional String option for ATTRIBUTES, so for this reason we are keeping the combo box element.
 				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-//					loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
-//					loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
-
 				loc.columnView='<label>{{row.column}}</label>';
 				loc.pnameView='<label>{{row.pname}}</label>';
-				loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
+				loc.pvalueView='<md-select aria-label="pvalue-view" ng-model="row.pvalue" ng-change="scopeFunctions.setFormDirty()" class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
 				
 				var msg = '';
 				/**
@@ -988,7 +962,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
-					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
+					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;										
 
 				}
 				else {
@@ -1001,6 +975,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 			}
 
 		}
+		if ($scope.validationError)
+			angular.copy($scope.dataset.meta.columns, metaColumnsTemp);
 	}
 		
 	
@@ -1015,6 +991,19 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 	}
 
+	$scope.filterInvalidColumns = function() {
+		if ($scope.displayInvalidColumns.value) {
+			$scope.dataset.meta.columns = $scope.dataset.meta.columns.filter(function(element){
+				if ($scope.step2ValidationErrors.find(function(target){
+					return element.column == target.columnName;
+				})) return true;
+				else return false;
+			});
+		} else {
+			$scope.dataset.meta.columns = metaColumnsTemp;
+		}
+	}
+	
 	$scope.filterMetaValue = function(pname,item,i,index,myFieldType){
 
 		var filteredMetaValues = [];
@@ -1331,6 +1320,10 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	    	}
 	    };
 	    
+		$scope.metaScopeFunctions.setFormDirty = function () {
+			isDirty = true;
+		}
+	    
 	    /**
 	     * A click-listener function that will take care when user clicks on the Value combo that is aligned with the particular 
 	     * Field type row, in order to indicate that we are changing this value. This information will be useful when user picks
@@ -1338,8 +1331,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	     * item, since the MEASURE cannot be if type String.
 	     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	     */
-	    $scope.metaScopeFunctions.valueChanged = function(item,index) {
-	    	    	
+	    $scope.metaScopeFunctions.valueChanged = function(item,index) {	    	
 	    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
 	    		$scope.prepareMetaForView(item.VALUE_CD,index);
 	    	}
