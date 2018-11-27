@@ -57,7 +57,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulasFromXml();
 	formulaService.getCustomFormulas().then(function(response) {
-		$scope.customFormulas = response.data.data;
+		$scope.customFormulas = [];
+		if(response.data.data){
+			$scope.customFormulas = response.data.data;
+		};
 		for (var i = 0; i < $scope.customFormulas.length; i++) {
 			$scope.customTransformedFormulas.push(formulaService.createFormula($scope.customFormulas[i]))
 		}
@@ -443,7 +446,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }];
 
     $scope.fieldsFunctions = [
-    	
+
 //        {
 //        	"label": "havings",
 //        	"icon": "fa fa-check-square-o",
@@ -481,7 +484,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	"meta": $scope.meta,
         	"schedulingCronLine":"0 * * * * ?"
     };
-    
+
     $scope.$on('openHavings',function(event,field){
 		$scope.openHavings(field,$scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
 	});
@@ -612,7 +615,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$mdPanel.open(config);
 		return finishEdit.promise;
 	};
-	
+
 	$scope.openHavings = function(field, havings, tree, subqueries) {
 		if(field.hasOwnProperty('attributes')){
 			field_copy = angular.copy(field);

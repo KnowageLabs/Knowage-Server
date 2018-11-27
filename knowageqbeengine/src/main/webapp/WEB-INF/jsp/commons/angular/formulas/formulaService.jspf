@@ -18,11 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 angular.module('formulas')
 
-.factory('formulaService',function($http,sbiModule_config){
+.factory('formulaService',function($http,sbiModule_config,sbiModule_restServices){
 	var formulas = angular.fromJson('<%= formulasJson%>');
 
 	var dataSourceId = <%= datasourceId%>;
-	
 	function Formula(formula){
 		this.type = formula.type;
 		this.name = formula.name;
@@ -53,7 +52,8 @@ angular.module('formulas')
 		},
 		
 		getCustomFormulas: function(){
-   			return $http.get(sbiModule_config.externalBasePath+"/restful-services/2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
+			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+   			return sbiModule_restServices.promiseGet("/2.0/configs","KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
    		}
 	};
 });
