@@ -3,6 +3,7 @@ kn-table {
 	display: block;
 	.kn-table-container {
 		height: 100%;
+		overflow-y: auto;
 		margin: 8px;
 		background-color: $tabBackground;
 		&.kn-table-full-width {
@@ -204,3 +205,9 @@ kn-table {
 			overflow: auto;
 		}
 	}	
+
+@-moz-document url-prefix() {
+	.kn-firefox-height-fix:not(.kn-table) {
+		height: calc(100vh - 105px);
+	}
+}

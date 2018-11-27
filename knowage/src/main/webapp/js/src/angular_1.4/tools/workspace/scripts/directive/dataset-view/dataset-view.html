@@ -1,7 +1,7 @@
 <kn-table ng-hide="showGridView==true || ngModel.length==0 "
 	columns='[{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"}]' 
 	model=ngModel
-	click-function="clickDataset(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed"></kn-table>						
+	click-function="clickDataset(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed kn-firefox-height-fix"></kn-table>						
 <!-- Dataset Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 	<div  class="workspaceCardContainer" ng-repeat="dataset in ngModel| orderBy:orderingDatasetCards"  flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
