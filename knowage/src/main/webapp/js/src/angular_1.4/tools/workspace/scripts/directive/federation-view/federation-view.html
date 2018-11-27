@@ -1,11 +1,9 @@
-<md-card ng-hide="showGridView==true || ngModel.length==0 ">
-	<md-card-content class="noPadding" style="overflow-y:auto;">
-		<kn-table
-			columns='tableColumns' 
-			model="ngModel"
-			click-function="clickFederation(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-full-width"></kn-table>		
-	</md-card-content>
-</md-card>
+
+<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+	columns='tableColumns' 
+	model="ngModel"
+	click-function="clickFederation(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed kn-firefox-height-fix"></kn-table>		
+
 <!-- Federation Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true ">
 	<div class="workspaceCardContainer" ng-repeat="federation in ngModel| orderBy:orderingFederationCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
