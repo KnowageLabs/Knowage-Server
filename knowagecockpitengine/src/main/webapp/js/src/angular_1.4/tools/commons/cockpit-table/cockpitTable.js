@@ -59,7 +59,11 @@
                     }    
                     
                     scope.datify = function(dateString,dateFormat){
-                    	return moment(dateString, dateFormat).valueOf();
+                    	var returningDate = moment(dateString, dateFormat).valueOf();
+                    	if(isNaN(returningDate)){
+                    		returningDate = dateString;
+                    	}
+                    	return  returningDate;
                     }
 
                     //returning if the order is ASC or DESC
