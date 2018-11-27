@@ -243,6 +243,9 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			Map<String, Map<String, Set<Tuple>>> selections = manager.getSelections();
 
+			logger.debug(selections);
+			logger.debug(selectionsMap);
+
 			for (String d : selectionsMap.keySet()) {
 				if (!selections.containsKey(d)) {
 					selections.put(d, new HashMap<String, Set<Tuple>>());
