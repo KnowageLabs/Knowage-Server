@@ -945,9 +945,7 @@ function structureTabControllerFunction($scope, sbiModule_translate, sbiModule_r
 	}
 
 	$scope.clearAxisMajorGridDetails = function () {
-				console.log("before")
 				$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
-				console.log("after")
 			}
 
 	$scope.removeSeriesContainer = function (seriesContainer) {
