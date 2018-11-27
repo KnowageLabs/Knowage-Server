@@ -8,7 +8,7 @@
 			<div layout="row">
 				
 				<span flex></span>
-				<md-button  ng-click="hideDrivers()" class="md-icon-button">
+				<md-button ng-if="drivers.length > 0" ng-click="hideDrivers()" class="md-icon-button">
 	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
 	       	 	</md-button>
 				<md-button ng-hide="{{isFromDataSetCatalogue}}" ng-click="saveQbeDocument()" class="md-icon-button">
