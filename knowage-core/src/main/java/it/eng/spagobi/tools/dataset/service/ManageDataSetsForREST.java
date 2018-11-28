@@ -1241,7 +1241,11 @@ public class ManageDataSetsForREST {
 		value = value.trim();
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
-			toReturn = value;
+			if (!(value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = "'" + value + "'";
+			} else {
+				toReturn = value;
+			}
 
 		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
 
