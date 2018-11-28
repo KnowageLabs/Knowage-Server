@@ -175,21 +175,7 @@ public class DocumentCompositionUtils {
 					baseUrlReturn += "?";
 				String driverClassName = obj.getEngine().getDriverName();
 				IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
-				Map tmpPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
-				Map mapPars = new HashMap();
-				//clean from complex objects (array)
-				for ( Object key : tmpPars.keySet() ) {
-					Object value = tmpPars.get(key);
-					if (value != null) {
-						if (value instanceof ArrayList) {
-							logger.debug("Remove object ["+ key + "] - [" + value +"] from url because is an array");
-						} else {
-							mapPars.put(key, value);
-						}
-					} else {
-						mapPars.put(key, value);
-					}
-				}
+				Map mapPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
 				String id = (String) requestSB.getAttribute("vpId");
 				if (id != null) {
 					IViewpointDAO VPDAO = DAOFactory.getViewpointDAO();
@@ -280,7 +266,8 @@ public class DocumentCompositionUtils {
 				}
 			}
 
-			urlReturn += "&" + SpagoBIConstants.ROLE + "=" + executionRole;
+			// urlReturn += "&" + SpagoBIConstants.ROLE + "=" + executionRole;
+			urlReturn += "&" + SpagoBIConstants.EXECUTION_ROLE + "=" + executionRole;
 			urlReturn += getParametersUrl(obj, document, requestSB, instance);
 			// adds '|' char for management error into jsp if is necessary.
 
@@ -342,6 +329,8 @@ public class DocumentCompositionUtils {
 				// clean the url to call the specific Test servlet (ie: /knowagegeoreportengine/Test)
 				baseUrlReturn = obj.getEngine().getUrl();
 				int restURLPos = baseUrlReturn.indexOf("/api/");
+				if (restURLPos < 0)
+					restURLPos = baseUrlReturn.indexOf("/restful-services/");
 				if (restURLPos >= 0)
 					baseUrlReturn = baseUrlReturn.substring(0, restURLPos + 1);
 				baseUrlReturn += "Test?";
