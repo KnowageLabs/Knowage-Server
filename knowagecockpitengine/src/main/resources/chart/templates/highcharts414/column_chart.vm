@@ -1056,11 +1056,15 @@
 	   		],
 			#end
 			
-        	min:$yAxis.min,
-        	#if($yAxis.min != $yAxis.max)
-        	max:$yAxis.max,
+			#set($intValue = 0)
+			#if($chartType=="radar")
+        		min: 0,
+        	#else
+	        	min:$yAxis.min,
+	        	#if($yAxis.min != $yAxis.max)
+	        	max:$yAxis.max,
+	        	#end
         	#end
-        	
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	linkedTo:0,
         	#end
@@ -1071,7 +1075,6 @@
         	*#
         	##min: 0,
         	#if($chartType=="line")
-        	
         	min: $yAxis.min,
         	#if($yAxis.max>$yAxis.min)
         	max: $yAxis.max,
