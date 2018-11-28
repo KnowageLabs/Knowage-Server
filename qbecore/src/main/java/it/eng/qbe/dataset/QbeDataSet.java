@@ -520,12 +520,12 @@ public class QbeDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public HashMap<String, Object> getDrivers() {
+	public Map<String, Object> getDrivers() {
 		return super.getDrivers();
 	}
 
 	@Override
-	public void setDrivers(HashMap<String, Object> drivers) {
+	public void setDrivers(Map<String, Object> drivers) {
 		super.setDrivers(drivers);
 	}
 }

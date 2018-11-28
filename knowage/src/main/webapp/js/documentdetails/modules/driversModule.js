@@ -313,7 +313,7 @@
 	          	 var lovIdAndColumns = {}
 	          	 var lovColumns = [];
 	          	 var lovObject = JSON.parse(lov.lovProviderJSON);
-	          	 	if(lovObject != []){
+	          	 	if(lovObject != [] && lovObject.QUERY){
 	          	 	var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
 	    	            	 if(stringColumns.includes(",")){
 	    	            		  lovColumns = stringColumns.split(',')

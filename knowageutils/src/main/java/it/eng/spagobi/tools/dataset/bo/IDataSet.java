@@ -18,7 +18,6 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,9 +125,9 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setParametersMap(Map<String, String> paramValues) throws JSONException;
 
-	HashMap<String, Object> getDrivers();
+	Map<String, Object> getDrivers();
 
-	void setDrivers(HashMap<String, Object> drivers);
+	void setDrivers(Map<String, Object> drivers);
 	// --------------------------------------------------------------------------------------------------
 
 	// profilation ...

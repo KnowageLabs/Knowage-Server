@@ -18,7 +18,6 @@
 package it.eng.qbe.statement.jpa;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +141,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @param runtimeDrivers
 	 */
 	private void enableFilters(Session session) {
-		HashMap<String, Object> drivers = this.getDrivers();
+		Map<String, Object> drivers = this.getDrivers();
 		if (!drivers.isEmpty()) {
 			EntityManager entityManager = getEntityMananger();
 			IModelStructure structure = this.statement.getDataSource().getModelStructure();
@@ -156,7 +155,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
 				for (Object key : driverUrlNames.keySet()) {
 					driverName = key.toString();
-					filter.setParameter(driverName, drivers.get(driverName));
 				}
 			}
 		}
@@ -277,7 +275,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDrivers()
 	 */
 	@Override
-	public HashMap<String, Object> getDrivers() {
+	public Map<String, Object> getDrivers() {
 		return super.getDrivers();
 	}
 
@@ -287,7 +285,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDrivers()
 	 */
 	@Override
-	public void setDrivers(HashMap<String, Object> drivers) {
+	public void setDrivers(Map<String, Object> drivers) {
 		super.setDrivers(drivers);
 	}
 

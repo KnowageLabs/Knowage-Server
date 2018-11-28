@@ -76,7 +76,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 						"the ObjParuse relevant to BIObjectParameter with " + "id=" + aObjParuse.getParId() + " and ParameterUse with " + "id="
 								+ aObjParuse.getUseModeId() + " does not exist.");
 			}
-
+			aSession.clear();
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
@@ -84,7 +84,8 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
 						"the BIObjectParameter with " + "id=" + aObjParuse.getParFatherId() + " does not exist.");
 			}
-			SbiObjParuse correlation = new SbiObjParuse(aObjParuse.getUseModeId());
+			SbiObjParuse correlation = new SbiObjParuse(aObjParuse.getId());
+
 			correlation.setSbiObjPar(sbiObjPar);
 			correlation.setSbiParuse(sbiParuse);
 			correlation.setSbiObjParFather(sbiObjParFather);
@@ -94,7 +95,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setPreCondition(aObjParuse.getPreCondition());
 			correlation.setPostCondition(aObjParuse.getPostCondition());
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
-			// save new object
+
 			updateSbiCommonInfo4Insert(correlation);
 			aSession.update(correlation);
 			tx.commit();
