@@ -23,9 +23,9 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer) {
-
-		this.openQbeInterfaceFromModel = function($scope,url,execProperties,drivers,driversExecutionService) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector) {
+		var driversExecutionService = $injector.get('driversExecutionService');
+		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
 
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
@@ -43,10 +43,9 @@ angular
 	//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
-							locals:{url:url,
-									execProperties:execProperties,
-									drivers:drivers,
-									driversExecutionService:driversExecutionService
+							locals:{
+									url:url,
+									driverableObject:driverableObject
 							}
 						}
 					)
@@ -57,22 +56,16 @@ angular
 
 		};
 
-		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived,driversExecutionService) {
-
-
+		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
 
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
 			}else{
 
-
-
-
 				$scope.editQbeDset = editDSet;
 				if( $scope.selectedDataSet && !isDerived){
 					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
 				}
-
 
 				$mdDialog
 					.show
@@ -85,10 +78,7 @@ angular
 							fullscreen: true,
 							locals:{
 								url:url,
-								execProperties:{},
-								drivers:{},
-								driversExecutionService:{},
-								bmOpen_urlViewPointService:{}
+								driverableObject:$scope.selectedDataSet,
 								   }
 						}
 					)
@@ -97,34 +87,27 @@ angular
 					});
 
 			}
-			$scope.executeParameter = function(){
-				$scope.documentViewerUrl = url //+ driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
-				$scope.showQbe = true;
-				$scope.businessModel.executed = true;
-			}
-
 		};
 
-		function openQbeInterfaceController($scope,url,execProperties,drivers,$timeout,driversExecutionService, bmOpen_urlViewPointService) {
-			if(execProperties){
-				$scope.businessModel = execProperties;
+		function openQbeInterfaceController($scope,url,driverableObject,$timeout) {
 
-				if(execProperties.dsTypeCd){
-					$scope.drivers = execProperties.drivers
-				}else{
-					$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
-				}
+			$scope.showDrivers = false;
+			$scope.documentViewerUrl = url;
+			$scope.driverableObject = {};
+
+			if(driverableObject){
+
+				driverableObject.executed = true;
+				$scope.driverableObject = driverableObject;
+				driverableObject.dsTypeCd ? $scope.drivers = driverableObject.drivers : $scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+
 				if($scope.drivers){
 				for(var i = 0; i < $scope.drivers.length;i++){
 					$scope.businessModel.executed = true;
 					if($scope.drivers[i].mandatory){
+							$scope.showDrivers = true;
 						if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
-							var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
-							var driverName = Object.keys(drivers)[0];
-							var driverValue = drivers[Object.keys(drivers)[0]][0].value;
-							 var driverObject = {};
-							 driverObject[driverName] = driverValue;
-							$scope.documentViewerUrl = url + '&' +  $httpParamSerializer(driverObject)  ;
+								$scope.documentViewerUrl = url + '&' +  parseParameterSingleDefaultValue($scope.drivers);
 							$scope.businessModel.executed = true;
 							break;
 						}else{
@@ -134,19 +117,7 @@ angular
 					}
 				}
 				}
-				$scope.showDrivers = true;
-				if(!$scope.drivers){
-					$scope.showDrivers = false;
-					$scope.businessModel.executed = true;
-					$scope.documentViewerUrl = url;
 				}
-			}else{
-				$scope.showDrivers = false;
-				$scope.businessModel = {};
-				$scope.businessModel.executed = true;
-				$scope.documentViewerUrl = url;
-			}
-
 
 			$scope.hideDrivers =function(){
 				$scope.showDrivers = true;
@@ -180,8 +151,8 @@ angular
 				}
 			}
 			$scope.executeParameter = function(){
-				if(execProperties.parametersData){
-				var drivers = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
+				if($scope.drivers){
+				var drivers = driversExecutionService.buildStringParameters($scope.drivers);
 				}else {
 					var drivers = {};
 				}
@@ -239,5 +210,13 @@ angular
 
 			}
 
+		}
+		var parseParameterSingleDefaultValue = function(rawDrivers){
+			var drivers = driversExecutionService.buildStringParameters(rawDrivers);
+			var driverName = Object.keys(drivers)[0];
+			var driverValue = drivers[Object.keys(drivers)[0]][0].value;
+			var driverObject = {};
+			driverObject[driverName] = driverValue;
+			return $httpParamSerializer(driverObject);
 		}
 });

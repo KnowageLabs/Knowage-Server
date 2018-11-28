@@ -707,13 +707,13 @@ public class ManageDataSetsForREST {
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 			HashMap<String, Object> driversMap = null;
 			JSONObject driversJSON = json.optJSONObject("parametersString");
-			if (driversJSON != null) {
+			if (driversJSON.length() > 0) {
 				driversMap = (HashMap<String, Object>) parseJsonDriversMap(driversJSON);
 					}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-			if (driversMap.size() > 0)
+			if (driversMap != null && driversMap.size() > 0)
 				dataSet.setDrivers(driversMap);
 			// START -> This code should work instead of CheckQbeDataSets around
 			// the projects

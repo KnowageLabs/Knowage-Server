@@ -2140,7 +2140,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		$scope.parameterItems = parameterItemsTemp;
-		$scope.setParametersAsDrivers($scope.parameterItems,$scope.documentParameters)
+//		$scope.setParametersAsDrivers($scope.parameterItems,$scope.documentParameters)
 		console.log('$scope.documentParameters')
 		console.log($scope.documentParameters)
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
@@ -3141,7 +3141,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				}
 			}
 
-			if(!$scope.drivers){
+			if(!$scope.drivers || $scope.drivers.length == 0){
 				$scope.showDrivers = false;
 				$scope.dataset.executed = true;
 			}
