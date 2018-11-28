@@ -588,16 +588,16 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					if (categoryTag.groupby.indexOf(",") > -1) {
 
 						//and groupbyNames is an array
-						if(categoryTag.groupbyNames.indexOf(",") > -1) {
+						if (categoryTag.groupbyNames.indexOf(", ") > -1) {
 
 							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
 
-							var groupBySplitArray = categoryTag.groupby.split(",");
+							var groupBySplitArray = categoryTag.groupby.split(", ");
 							for (i=0; i<groupBySplitArray.length; i++) {
 
 								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
 								obj.column = groupBySplitArray[i];
-								var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
+								var groupByNameSplitArray = categoryTag.groupbyNames.split(", ");
 								for (var j = 0; j < groupByNameSplitArray.length; j++) {
 									if(j==i){
 										obj.name = groupByNameSplitArray[j];
@@ -616,7 +616,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 
 							var gbnCounter = 0;
-							var groupBySplitArray = categoryTag.groupby.split(",");
+							var groupBySplitArray = categoryTag.groupby.split(", ");
 							for (i=0; i<groupBySplitArray.length; i++) {
 								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
 								//check if grpupByName is empty and case for first situation
