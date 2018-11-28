@@ -266,7 +266,8 @@ public class DocumentCompositionUtils {
 				}
 			}
 
-			urlReturn += "&" + SpagoBIConstants.ROLE + "=" + executionRole;
+			// urlReturn += "&" + SpagoBIConstants.ROLE + "=" + executionRole;
+			urlReturn += "&" + SpagoBIConstants.EXECUTION_ROLE + "=" + executionRole;
 			urlReturn += getParametersUrl(obj, document, requestSB, instance);
 			// adds '|' char for management error into jsp if is necessary.
 
@@ -328,6 +329,8 @@ public class DocumentCompositionUtils {
 				// clean the url to call the specific Test servlet (ie: /knowagegeoreportengine/Test)
 				baseUrlReturn = obj.getEngine().getUrl();
 				int restURLPos = baseUrlReturn.indexOf("/api/");
+				if (restURLPos < 0)
+					restURLPos = baseUrlReturn.indexOf("/restful-services/");
 				if (restURLPos >= 0)
 					baseUrlReturn = baseUrlReturn.substring(0, restURLPos + 1);
 				baseUrlReturn += "Test?";

@@ -161,7 +161,7 @@ ${enable.cas.start} END-CAS -->
   
   <servlet-mapping>
     <servlet-name>EngineTestServlet</servlet-name>
-    <url-pattern>/servlet/AdapterHTTPTest</url-pattern>
+    <url-pattern>/Test</url-pattern>
   </servlet-mapping>
     
   <session-config>
