@@ -163,6 +163,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var aggregationsReg = rawHtml.match($scope.aggregationRegex);
 				if(aggregationsReg) {
 					var tempModel = angular.copy($scope.ngModel);
+					delete tempModel.settings;
+					tempModel.content.columnSelectedOfDataset = [];
 					var tempDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
 					for(var a in aggregationsReg){
 						var aggRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1})?(?:\s+precision=\'(\d)\')?\])/;
@@ -171,11 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
 								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
 								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
-								if(tempModel.content.columnSelectedOfDataset) {
-									tempModel.content.columnSelectedOfDataset.push(angular.copy(tempDataset.metadata.fieldsMeta[m]));
-								}else{
-									tempModel.content.columnSelectedOfDataset = [angular.copy(tempDataset.metadata.fieldsMeta[m])];
-								}
+								tempModel.content.columnSelectedOfDataset.push(angular.copy(tempDataset.metadata.fieldsMeta[m]));
 							}
 						}
 					}
