@@ -397,30 +397,49 @@ $organizerHeight : 120px;
 	 	min-width: 200px;
 	 }
 	 
+	 .metadataValidationColumn {
+	 	text-align: center;
+	 }
+	 
+	 .metadataValidColumn {
+		background-color: #c6ecc6 !important;
+		cursor: default;
+	}
+	
+	.metadataInvalidColumn {
+		background-color: #ffcccc !important;
+	}
+	
+	.metadataDefaultColumn {
+		background-color: #e6e6e6 !important; 
+	}
+	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .invalidTypeMetadata {
-	 	color: #990000; 
-	 	background-color: #ffcccc;
-	 	width: 55%; 
-	 	padding-left: 45%;  
-	 	height: 100%;
+	 	color: #990000;
+	 	padding-left: 10px;
 	 }
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .validTypeMetadata {
-	 	color: #006600; 
-	 	background-color: #c6ecc6; 
-	 	width: 55%; 
-	 	padding-left: 45%;  
-	 	height: 100%
+	 	color: #006600;
+    	cursor: default;
+    	padding-left: 10px;
 	 }
+	 
+	 .leftInavlidIcon {
+	    display: inline-block;
+    	width: 56%;
+	}
+	
+	.rightInvalidIcon {
+	    display: inline-block;
+   	 	width: 44%;
+	}
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .defaultStateValidType {
-	 	background-color: #e6e6e6; 
-	 	width: 55%; 
-	 	padding-left: 45%; 
-	 	height: 100%
+	 	padding-left: 10px;
 	 }
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 

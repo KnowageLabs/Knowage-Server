@@ -388,7 +388,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_FORMULA:
-			valueField = cell.getCellFormula().toString();
+			valueField = cell.getNumericCellValue();
 			break;
 
 		case Cell.CELL_TYPE_NUMERIC:

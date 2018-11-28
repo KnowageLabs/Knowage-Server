@@ -877,7 +877,7 @@ public class SelfServiceDataSetCRUD {
 			dataSets.add(dsToTest);
 
 			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(metaData);
-			if (limitPreview) {
+			if (limitPreview && (limit < dsToTest.getDataStore().getRecordsCount())) {
 				dsToTest.getDataStore().getRecords().subList(limit, dsToTest.getDataStore().getRecords().size()).clear();
 			}
 			JSONObject JSONReturn = new JSONObject();
@@ -935,6 +935,7 @@ public class SelfServiceDataSetCRUD {
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
+			req.setCharacterEncoding("UTF-8");
 			String datasetMetadata = req.getParameter("datasetMetadata");
 			IDataSet dataSet;
 
@@ -977,7 +978,7 @@ public class SelfServiceDataSetCRUD {
 			}
 
 			// Filter Datastore records if Limit Preview is checked
-			if (limitPreviewCheck) {
+			if (limitPreviewCheck && limit < resultNumber) {
 				dataStore.getRecords().subList(limit, dataStore.getRecords().size()).clear();
 			}
 
