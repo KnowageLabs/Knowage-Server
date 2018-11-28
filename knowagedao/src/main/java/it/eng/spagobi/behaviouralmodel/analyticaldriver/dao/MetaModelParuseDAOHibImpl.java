@@ -63,15 +63,12 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 	/**
 	 * Load obj paruse.
 	 *
-	 * @param objParId
-	 *            the obj par id
-	 * @param paruseId
-	 *            the paruse id
+	 * @param objParId the obj par id
+	 * @param paruseId the paruse id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuse(java.lang.Integer, java.lang.Integer)
 	 */
@@ -224,12 +221,12 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 
 			String hql = "from SbiMetamodelParuse s where s.id = ? ";
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
+			hqlQuery.setInteger(0, aMetaModelParuse.getId().intValue());
 
 			SbiMetamodelParuse sbiMetamodelParuse = (SbiMetamodelParuse) hqlQuery.uniqueResult();
 			if (sbiMetamodelParuse == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "eraseMetaModelParuse",
-						"the MetaModelParuse with " + "id=" + aMetaModelParuse.getUseModeId() + " does not exist.");
+						"the MetaModelParuse with " + "id=" + aMetaModelParuse.getId() + " does not exist.");
 			}
 			aSession.delete(sbiMetamodelParuse);
 			tx.commit();

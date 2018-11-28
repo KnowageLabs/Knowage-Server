@@ -70,7 +70,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	private Map paramsMap;
 	Map<String, Object> properties;
 
-	private HashMap<String, Object> runtimeDrivers;
+	private Map<String, Object> runtimeDrivers;
 	// Transformer attributes (better to remove them.
 	// They should be stored only into dataSetTransformer (see above)
 	protected Integer transformerId;
@@ -1092,12 +1092,12 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	@Override
-	public void setDrivers(HashMap<String, Object> runtimeDrivers) {
+	public void setDrivers(Map<String, Object> runtimeDrivers) {
 		this.runtimeDrivers = runtimeDrivers;
 	}
 
 	@Override
-	public HashMap<String, Object> getDrivers() {
+	public Map<String, Object> getDrivers() {
 		return this.runtimeDrivers;
 	}
 }

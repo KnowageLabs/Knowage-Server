@@ -147,7 +147,7 @@ angular
             	 var lovIdAndColumns = {}
             	 var lovColumns = [];
             	 var lovObject = JSON.parse(lov.lovProviderJSON);
-            	 	if(lovObject != []){
+            	 	if(lovObject != [] && lovObject.QUERY){
             	 	var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
 		            	 if(stringColumns.includes(",")){
 		            		  lovColumns = stringColumns.split(',')
@@ -466,22 +466,15 @@ angular
 
                  var setDataDependencyProperties = function(dataDependency){
                 	// var driverIndex = $scope.driversService.driversOnObject.findIndex(i => i.priority ==selectedDriver.priority);
-                	 var driverIndex = -1;
-                	 for(var i = 0; i < $scope.driversService.driversOnObject.length;i++){
-                		 if($scope.driversService.driversOnObject[i].priority == selectedDriver.priority)
-                			 driverIndex = i;
-                	 }
-  					if($scope.driversService.driversOnObject.length > 1){
-  						selectedDriver = $scope.driversService.driversOnObject[driverIndex];
-  					}else selectedDriver = $scope.driversService.driversOnObject[0] ;
+
                 	 var dataProgram;
-                	 var dataObjects = driversService.dataDependencyObjects[selectedDriver.id];
+                	 var dataObjects = driversService.dataDependencyObjects[$scope.selectedDriver.id];
                 	 for(var i = 0; i<dataObjects.length;i++){
                 		 if(dataDependency== dataObjects[i])
                 			 dataProgram = i+1;
                 	 }
                 	 dataDependency.prog = dataProgram;
-	                 dataDependency.parId = selectedDriver.id;
+	                 dataDependency.parId = $scope.selectedDriver.id;
 	                 dataDependency.parFatherUrlName = $filter('filter')($scope.drivers,{id:dataDependency.parFatherId})[0].parameterUrlName
 	                 dataDependency.filterColumn
                  }

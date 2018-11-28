@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -250,21 +250,21 @@ public class CkanDataSet extends ConfigurableDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDrivers()
 	 */
 	@Override
-	public HashMap<String, Object> getDrivers() {
+	public Map<String, Object> getDrivers() {
 		return getDrivers();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDrivers(java.util.HashMap)
 	 */
 	@Override
-	public void setDrivers(HashMap<String, Object> drivers) {
+	public void setDrivers(Map<String, Object> drivers) {
 		setDrivers(drivers);
 	}
 }

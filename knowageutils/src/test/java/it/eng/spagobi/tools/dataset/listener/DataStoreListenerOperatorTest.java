@@ -19,7 +19,6 @@ package it.eng.spagobi.tools.dataset.listener;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -759,13 +758,13 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public HashMap<String, Object> getDrivers() {
+		public Map<String, Object> getDrivers() {
 
 			return getDrivers();
 		}
 
 		@Override
-		public void setDrivers(HashMap<String, Object> drivers) {
+		public void setDrivers(Map<String, Object> drivers) {
 
 			setDrivers(drivers);
 		}

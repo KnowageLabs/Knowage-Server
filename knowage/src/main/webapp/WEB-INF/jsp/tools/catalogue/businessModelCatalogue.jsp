@@ -271,7 +271,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      </md-card-content>
 			      </md-card>
 			      </md-tab>
-			      <md-tab label="Drivers">			  	
+			      <md-tab label="Drivers" ng-if="selectedBusinessModel.id">			  	
 				  	<md-tab-body>
 				  		<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/drivers.html")%>'" />
 				  	</md-tab-body>
