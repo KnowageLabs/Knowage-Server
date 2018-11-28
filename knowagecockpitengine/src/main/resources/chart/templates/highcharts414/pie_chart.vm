@@ -529,8 +529,8 @@
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
 	    	{
 
-	    	#if($customColors.containsKey($relatedSerie.name))
-				color:'$customColors.get($relatedSerie.name)',
+	    	#if($customColors.containsKey($relatedSerie.name.toLowerCase()))
+				color:'$customColors.get($relatedSerie.name.toLowerCase())',
 			#end
 	    	
 	    	
@@ -1041,8 +1041,8 @@
 						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
 						y: $serieValue,
-						#if($customColors.containsKey($serieName))
-						color:'$customColors.get($serieName)',
+						#if($customColors.containsKey($serieName.toLowerCase()))
+						color:'$customColors.get($serieName.toLowerCase())',
 						#end
 					},
 				#end

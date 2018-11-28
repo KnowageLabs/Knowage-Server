@@ -1349,10 +1349,8 @@
 		
 			name: "$relatedSerie.name",
 
-			#if($customColors.containsKey($relatedSerie.name))
-			#set($customSerieName = $relatedSerie.name)
-			
-				color:'$customColors.get($customSerieName)',
+			#if($customColors.containsKey($relatedSerie.name.toLowerCase()))
+				color:'$customColors.get($relatedSerie.name.toLowerCase())',
 			#end
 			#*
 				Move series values from the middle of the chart (in the middle of the top slice) to the axis for RADAR.
@@ -1429,9 +1427,8 @@
 							x: Date.parse("$serieCategoryName"),
 							#end
 							#end
-							
-							#if($customColors.containsKey($serieCategoryName))
-           					color:'$customColors.get($serieCategoryName)',
+							#if($customColors.containsKey($serieCategoryName.toLowerCase()))
+           					color:'$customColors.get($serieCategoryName.toLowerCase())',
            					#end
 						
 						},
@@ -1645,8 +1642,8 @@
 					#end
 					#end
 						
-						#if($customColors.containsKey($el.name))
-	   					color:'$customColors.get($el.name)',
+						#if($customColors.containsKey($el.name.toLowerCase()))
+	   					color:'$customColors.get($el.name.toLowerCase())',
 	   					#end
            					
 				},
