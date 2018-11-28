@@ -572,7 +572,7 @@ function structureTabControllerFunction($scope, sbiModule_translate, sbiModule_r
 					if (categoryTag.groupby.indexOf(",") > -1) {
 
 						//and groupbyNames is an array
-						if (categoryTag.groupbyNames.indexOf(", ") > -1) {
+						if (categoryTag.groupbyNames.indexOf(",") > -1) {
 
 							$scope.categories.push({ column: categoryTag.column, groupby: "", groupbyNames: "", name: categoryTag.name, orderColumn: categoryTag.orderColumn, orderType: categoryTag.orderType, stacked: "", stackedType: "" });
 
