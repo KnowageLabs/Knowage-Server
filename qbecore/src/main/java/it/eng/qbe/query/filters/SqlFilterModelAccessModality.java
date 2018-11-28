@@ -25,13 +25,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
@@ -69,6 +75,15 @@ public class SqlFilterModelAccessModality extends AbstractModelAccessModality {
 		}
 
 		return new ArrayList<IModelEntity>(sqlFilterEntities);
+	}
+
+	public QueryGraph setGraphWithSqlQueryEntities(Set<IModelEntity> unjoinedEntities, IStatement parentStatement) {
+		String modelNameFM = parentStatement.getDataSource().getConfiguration().getModelName();
+		Graph<IModelEntity, Relationship> rootEntitiesGraphFM = parentStatement.getDataSource().getModelStructure().getRootEntitiesGraph(modelNameFM, false)
+				.getRootEntitiesGraph();
+
+		return GraphManager.getDefaultCoverGraphInstance(((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.defaultCoverImpl")))
+				.getCoverGraph(rootEntitiesGraphFM, unjoinedEntities);
 	}
 
 }
