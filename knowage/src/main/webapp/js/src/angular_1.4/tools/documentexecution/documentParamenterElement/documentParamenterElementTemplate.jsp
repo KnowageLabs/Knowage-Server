@@ -99,15 +99,17 @@
 	</section>	
 	
 	<!-- manual number input -->
-	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
+	<div class="textInput" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic'}">{{i18n.getI18n(parameter.label)}}</label> 
 		</div>
-		<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number">	
-	</md-input-container>
+		<md-input-container class="md-block noMargin" flex>
+			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number" />	
+		</md-input-container>
+	</div>
 	
 	<!-- manual text input -->
 	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="textInput">
@@ -118,7 +120,7 @@
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic'}">{{i18n.getI18n(parameter.label)}} </label> 
 		</div>
 		<md-input-container class="md-block noMargin" flex>
-			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" >
+			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" />
 		</md-input-container>
 	</div>
 	
