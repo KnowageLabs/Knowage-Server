@@ -531,7 +531,9 @@
 #set ($serieName= $row.get($categorieColumnsMapped))
 		{
 			drilldown: $enableNextDrilldown,
-			y: $serieValue,
+			#if($serieValue!="")
+				y: $serieValue,
+			#end
 			name: '$serieName',
 			#if($category == $categoryDate)
 				#if($serieName.length()>10)
