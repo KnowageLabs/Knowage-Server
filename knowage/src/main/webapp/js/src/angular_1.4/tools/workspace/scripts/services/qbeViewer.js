@@ -103,15 +103,15 @@ angular
 
 				if($scope.drivers){
 				for(var i = 0; i < $scope.drivers.length;i++){
-					$scope.businessModel.executed = true;
+					$scope.driverableObject.executed = true;
 					if($scope.drivers[i].mandatory){
 							$scope.showDrivers = true;
 						if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
 								$scope.documentViewerUrl = url + '&' +  parseParameterSingleDefaultValue($scope.drivers);
-							$scope.businessModel.executed = true;
+							$scope.driverableObject.executed = true;
 							break;
 						}else{
-							$scope.businessModel.executed = false;
+							$scope.driverableObject.executed = false;
 							break;
 						}
 					}
@@ -121,7 +121,7 @@ angular
 
 			$scope.hideDrivers =function(){
 				$scope.showDrivers = true;
-				$scope.businessModel.executed = !$scope.businessModel.executed;
+				$scope.driverableObject.executed = !$scope.driverableObject.executed;
 			}
 			$scope.closeDocument = function() {
 
@@ -158,7 +158,7 @@ angular
 				}
 				$scope.documentViewerUrl = url + '&' + $httpParamSerializer(drivers);
 				$scope.showQbe = true;
-				$scope.businessModel.executed = true;
+				$scope.driverableObject.executed = true;
 			}
 			$scope.saveQbeDocument = function() {
 
