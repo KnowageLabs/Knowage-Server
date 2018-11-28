@@ -262,20 +262,13 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 				return "";
 			}
 			Set<IModelEntity> unjoinedEntities = getUnjoinedRootEntities(rootEntityAlias);
+
 			SqlFilterModelAccessModality sqlFilterModality = new SqlFilterModelAccessModality();
 			unjoinedEntities.addAll(sqlFilterModality.getSqlFilterEntities(query, parentStatement.getDataSource()));
 
 			if (unjoinedEntities.size() > 1) {
-				queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(queryGraph, unjoinedEntities);
-				Iterator iterator = unjoinedEntities.iterator();
-				while (iterator.hasNext()) {
-					queryGraph.addVertex((IModelEntity) iterator.next());
-				}
 
-				if (unjoinedEntities.size() > 0) {
-					queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(queryGraph, unjoinedEntities);
-				}
-
+				queryGraph = sqlFilterModality.setGraphWithSqlQueryEntities(unjoinedEntities, parentStatement);
 				query.setQueryGraph(queryGraph);
 
 				if (queryGraph == null) {

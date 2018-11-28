@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.json.JsonException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -704,19 +705,11 @@ public class ManageDataSetsForREST {
 			String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 			String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
-			HashMap<String, Object> driversMap = new HashMap<>();
-
-			JSONObject driversJ = json.has("parametersString") ? (JSONObject) json.get("parametersString") : new JSONObject();
-			if (driversJ.length() != 0)
-				for (int i = 0; i < JSONObject.getNames(driversJ).length; i++) {
-					if (driversJ.getString(JSONObject.getNames(driversJ)[i]) != "" && (i & 1) == 0) {
-						if (driversJ.get(JSONObject.getNames(driversJ)[i]) instanceof JSONArray) {
-							String arrayValue = driversJ.getJSONArray(JSONObject.getNames(driversJ)[i]).getJSONObject(0).getString("value");
-							driversMap.put(JSONObject.getNames(driversJ)[i], arrayValue);
-						} else
-							driversMap.put(JSONObject.getNames(driversJ)[i], driversJ.getString(JSONObject.getNames(driversJ)[i]));
+			HashMap<String, Object> driversMap = null;
+			JSONObject driversJSON = json.optJSONObject("parametersString");
+			if (driversJSON != null) {
+				driversMap = (HashMap<String, Object>) parseJsonDriversMap(driversJSON);
 					}
-				}
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
@@ -794,16 +787,6 @@ public class ManageDataSetsForREST {
 	/**
 	 * @return
 	 */
-//	private BusinessModelDriverRuntime parseJsonObjectToDriver(JSONObject driver) {
-//		BusinessModelDriverRuntime bmDriver = new BusinessModelDriverRuntime();
-//		JSONArray admissibleValues = (JSONArray) driver.get("admissibleValues");
-//
-//			for(int i = 0; i < admissibleValues.length(); i++) {
-//
-//			}
-//		bmDriver.setAdmissibleValues(driver.get("admissibleValues"));
-//		return bmDriver;
-//	}
 
 	public List getCategories(UserProfile userProfile) {
 		IRoleDAO rolesDao = null;
@@ -1564,5 +1547,24 @@ public class ManageDataSetsForREST {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while retriving dataset from request", t);
 		}
 		return dataSet;
+	}
+
+	private Map parseJsonDriversMap(JSONObject drivers) {
+		HashMap<String, Object> driversMap = new HashMap<>();
+		try {
+			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
+				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
+					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
+						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
+						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
+					} else
+						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
+				}
+			}
+		} catch (JSONException e) {
+			logger.debug("Unsuccessful parsing of JSONObject to map");
+			throw new JsonException(e.getLocalizedMessage(), e);
+		}
+		return driversMap;
 	}
 }
