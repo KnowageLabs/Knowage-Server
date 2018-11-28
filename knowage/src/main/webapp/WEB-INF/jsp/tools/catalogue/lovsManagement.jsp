@@ -72,9 +72,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail show-detail="showMe">
  		<list label='translate.load("sbi.behavioural.lov.title")' new-function="createLov"> 
 
-			 	
+			 <md-input-container md-no-float class="md-block md-icon-right" style="padding-left:8px">
+	      		<input ng-model="search" type="text" placeholder="Search" >
+		      	<md-icon md-font-icon="fa fa-search" style="display:inline-block;"></md-icon>
+		    </md-input-container>
 				
-				 <angular-table
+				 <!-- angular-table
 			flex
 			id="listOfLovs_id" 
 			ng-model="listOfLovs"
@@ -88,7 +91,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			highlights-selected-item=true
 			speed-menu-option="lovsManagementSpeedMenu"
 			click-function="itemOnClick(item)">
-		     </angular-table>
+		     </angular-table-->
+		     
+		     <kn-table
+				columns='[{"label":"Label","name":"label","type":"text"},{"label":"Description","name":"description","type":"text"},{"label":"Type","name":"itypeCd","type":"text"}]'
+				model=listOfLovs search-model="search"
+				click-function="itemOnClick(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-background-transparent kn-height-auto"></kn-table>		
 		
 
 		</list>
