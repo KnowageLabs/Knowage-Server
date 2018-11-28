@@ -1810,8 +1810,17 @@
 	#end
 	#end
     ],
-    
     tooltip: {
+
+    #if($chart.TOOLTIP.borderWidth)
+    	borderWidth: $chart.TOOLTIP.borderWidth,
+    #end
+    
+    #if($chart.TOOLTIP.borderRadius)
+    	borderRadius: $chart.TOOLTIP.borderRadius,
+    #end
+    
+    
     followTouchMove:false,
     followPointer:true,
     	## NOTE (TOOLTIP PROBLEM): disable the tooltip in order to provide possibility to hide the tooltip after set amount of time after hover 

@@ -302,7 +302,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					        	 "fontWeight":""
 					         },
 					         "text":""
-					      },
+						  },
+						  "TOOLTIP":{
+							  "borderWidth":0,
+							  "borderRadius":0,
+						  },
 					      "VALUES":{
 					         "CATEGORY":{
 					            "name":"",
@@ -342,8 +346,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 },
 					                 "TOOLTIP":{
 					                    "backgroundColor":"",
-					                    "borderWidth":0,
-					                    "borderRadius":0,
 					                    "showAbsValueTooltip":false,
 						                "showPercentageTooltip":true,
 					                    "style":{
@@ -558,8 +560,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 							"type": "",
 							"TOOLTIP": {
 								"backgroundColor": "",
-								"borderRadius": 0,
-								"borderWidth": 0,
 								"style": {
 									"align":"",
 									"color":"",
@@ -755,8 +755,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"type": "",
 						"TOOLTIP": {
 							"backgroundColor": "",
-							"borderRadius": 0,
-							"borderWidth": 0,
 							"style": {
 								"align":"",
 								"color":"",
@@ -961,8 +959,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					            	   "fontSize":"",
 					            	   "fontWeight":""
 					               },
-			                    "borderWidth":"",
-			                    "borderRadius":""
 			                 }
 			              }
 			         ]
@@ -1132,7 +1128,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			        	 "fontWeight":""
 			         },
 			         "text":""
-			      },
+				  },
+				"TOOLTIP":{
+					"borderWidth":0,
+					"borderRadius":0,
+				  },
 				"VALUES": {
 					"CATEGORY": {
 						"column": "",
@@ -1169,8 +1169,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				            	   "fontSize":"",
 				            	   "fontWeight":""
 				               },
-		                    "borderWidth":"",
-		                    "borderRadius":""
 		                 }
 					}]
 				},
@@ -1319,7 +1317,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			        	 "fontWeight":""
 			         },
 			         "text":""
-			      },
+				  },
+				"TOOLTIP":{
+					"borderWidth":0,
+					"borderRadius":0,
+				  },
 				"VALUES": {
 					"CATEGORY": {
 						"column": "",
@@ -1365,10 +1367,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				            	   "fontSize":"",
 				            	   "fontWeight":""
 				               },
-		                    "borderWidth":0,
-		                    "borderRadius":0,
-		                    "tooltipExpression":"",
-		                 },
+			                    "tooltipExpression":"",
+			                 },
 
 					}]
 				},
@@ -1773,8 +1773,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				            	   "fontSize":"",
 				            	   "fontWeight":""
 				               },
-		                    "borderWidth":0,
-		                    "borderRadius":0
 		                 },
 						"showAbsValue": false,
 						"showPercentage": false,
