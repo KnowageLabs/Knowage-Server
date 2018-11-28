@@ -1157,6 +1157,15 @@
    
 	],
     tooltip: {
+    
+    	#if($chart.TOOLTIP.borderWidth)
+    		borderWidth: $chart.TOOLTIP.borderWidth,
+   	    #end
+    
+        #if($chart.TOOLTIP.borderRadius)
+    		borderRadius: $chart.TOOLTIP.borderRadius,
+        #end
+    
         useHTML: true,
         backgroundColor: null,
         borderWidth: 2,
