@@ -33,6 +33,7 @@
 			scope: {
 				columns: "=",
 				model: "=",
+				searchModel: "=",
 				clickFunction: "&",
 				customClass: "@"
 			}

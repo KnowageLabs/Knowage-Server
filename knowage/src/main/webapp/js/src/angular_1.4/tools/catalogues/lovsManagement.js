@@ -16,7 +16,8 @@ var app = angular.module
 	 	'angular-list-detail',
 	 	'ui.codemirror',
 	 	'ui.tree',
-	 	'ab-base64'
+	 	'ab-base64',
+	 	'knTable'
 	 ]
 );
 
