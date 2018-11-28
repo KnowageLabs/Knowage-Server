@@ -67,8 +67,8 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  }
 
 $scope.addCustomColor = function(){
-	
-	$scope.customColors[$scope.customColorObj.customName]=$scope.customColorObj.customValue;
+
+	$scope.customColors[$scope.customColorObj.customName.toLowerCase()]=$scope.customColorObj.customValue;
 	$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
 	 $scope.customColorObj = {customName:"",customValue:""};
 
