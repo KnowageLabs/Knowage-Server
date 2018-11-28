@@ -302,7 +302,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
-				console.log(response);
 
 				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 				toastr.error(sbiModule_translate.load('sbi.ds.wizard.form.submit.failure.msg'), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
@@ -344,20 +343,13 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		$scope.dataset.start = "";
 		$scope.dataset.page = 10;
 
-		/**
-		 * If the editing of the existing Dataset is in progress, reset its label in order to save a new XLS/CSV file.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		if ($scope.editingDatasetFile==true && $scope.dataset.fileUploaded==true) {
-			$scope.dataset.label = "";
-		}
-
 		var params = {};
 
 		params.SBI_EXECUTION_ID = -1;
 
+		// If User changes provided DataTypes on UI, go for Validation of Dataset, otherwise go for Preview of Dataset
 		if (isDirty) {
-			
+			// Validation
 			$http
 			(
 				{
@@ -388,7 +380,11 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					 * file dataset, then we are dealing with the valid metadata configuration (formatting).
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					if (!response.data.validationErrors) {
+					if (!response.data.validationErrors) {						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.success(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),
+								sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+						
 						//If no errors go to preview - step 3
 						previewDataSet();
 					}
@@ -459,7 +455,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 					toastr.error(sbiModule_translate.load("sbi.ds.wizard.form.submit.failure.msg"), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
 				}
-		);
+			);
 	  } else {
 		previewDataSet();
 	  }
@@ -481,12 +477,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 		$scope.step2ValidationErrors = null;
 		$scope.validationStatus = true;
-		
-		// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-		toastr.success(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),
-				sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
-
-		
+				
 		$scope.validationPassed = true;
 		$scope.csvConfChanged = false;
 		$scope.validationError = false;

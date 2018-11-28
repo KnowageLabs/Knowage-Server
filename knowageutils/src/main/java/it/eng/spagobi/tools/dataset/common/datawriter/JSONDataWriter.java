@@ -272,9 +272,13 @@ public class JSONDataWriter implements IDataWriter {
 			if (propertyRawValue == null) {
 				propertyRawValue = new Integer(1);
 			}
-			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
-			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
-			resultNumber = ((Integer) propertyRawValue).intValue();
+
+			if (propertyRawValue instanceof String) {
+				resultNumber = Integer.parseInt(propertyRawValue.toString());
+			} else {
+				resultNumber = ((Integer) propertyRawValue).intValue();
+			}
+
 			Assert.assertTrue(resultNumber >= 0,
 					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
 			result.put(TOTAL_PROPERTY, resultNumber);

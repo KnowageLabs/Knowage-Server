@@ -83,6 +83,8 @@ import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
@@ -407,6 +409,10 @@ public class SelfServiceDataSetCRUD {
 				toReturnId = dao.insertDataSet(dsNew);
 				updateAudit(request, profile, "DATA_SET.ADD", logParam, "OK");
 			} else {
+				ICache cache = SpagoBICacheManager.getCache();
+				if (cache != null && cache.delete(dsNew))
+					logger.debug("Cleared dataset from cache");
+
 				// update ds
 				dao.modifyDataSet(dsNew);
 
