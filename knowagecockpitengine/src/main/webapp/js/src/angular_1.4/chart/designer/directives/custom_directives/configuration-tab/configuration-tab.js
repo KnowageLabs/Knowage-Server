@@ -45,7 +45,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 			format:"hex"
 	 }
 
-
  $scope.colors = [];
  if(!$scope.chartTemplate.CUSTOMCOLOR){
 	 $scope.chartTemplate.CUSTOMCOLOR = {};
@@ -68,9 +67,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  }
 
 $scope.addCustomColor = function(){
+	
 	$scope.customColors[$scope.customColorObj.customName]=$scope.customColorObj.customValue;
 	$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
-	$scope.customColorObj = {};
+	 $scope.customColorObj = {customName:"",customValue:""};
+
 }
 
 $scope.deleteCustomColor = function(item) {
