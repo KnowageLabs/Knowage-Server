@@ -207,14 +207,16 @@ angular
                     	 self.drivers.splice(i, 1);
                      }
                  }
-                 self.priorityOfDeletedDriver = self.drivers[index].priority;
-                 for (var d in self.drivers) {
-                     if (self.drivers[d].priority > self.drivers[index].priority) {
-                     if (self.drivers[d].priority > self.priorityOfDeletedDriver) {
-                         self.drivers[d].priority--;
-                     }
-                 }
-//                 self.confirmDelete(index,name);
+                 if(self.drivers.length > 0){
+	                 self.priorityOfDeletedDriver = self.drivers[index].priority;
+	                 for (var d in self.drivers) {
+	                     if (self.drivers[d].priority > self.drivers[index].priority) {
+	                     if (self.drivers[d].priority > self.priorityOfDeletedDriver) {
+	                         self.drivers[d].priority--;
+	                     }
+	                 }
+	//                 self.confirmDelete(index,name);
+	                 }
                  }
              }
              self.movePriority = function(priority, direction) {

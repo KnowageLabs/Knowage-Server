@@ -48,9 +48,8 @@
 		$scope.selectedModel = undefined;
 		$scope.sbiUser = sbiModule_user;
 		$scope.i18n = sbiModule_i18n;
-		$scope.businessModelsDrivers = [];
 		$scope.drivers = bmOpen_urlViewPointService.listOfDrivers;
-
+		$scope.bmOpen_urlViewPointService = bmOpen_urlViewPointService;
 		/**
 		 * The Business Model interface is improved: when models are set to be viewed as a list - the 'Label' column is removed (since there
 		 * is no 'label' property of this object) and the 'Description' column is provided instead. Columns for Federation models remain the
@@ -89,10 +88,8 @@
 			+'&DATA_SOURCE_ID='+ dataSourceId
 			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
-				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
-
 				if( $scope.drivers.length > 0){
-					$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel,$scope.drivers, driversExecutionService);
+					$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel);
 				}else{
 					 $qbeViewer.openQbeInterfaceFromModel($scope,url);
 				}
@@ -183,7 +180,6 @@
 
 					for (var i = 0 ; i < $scope.businessModels.length; i ++ ){
 						$scope.businessModels[i].description = $scope.i18n.getI18n($scope.businessModels[i].description);
-						getBusinessModelDrivers($scope.businessModels);
 					}
 
 					// S.Lupo - businessModels must be filtered by categories backend side
@@ -205,16 +201,7 @@
 
 			});
 		}
-		var getBusinessModelDrivers = function(businessModels){
-			var bussinesModelPath = '2.0/businessmodels';
-			for(var i = 0; i < businessModels.length; i++){
-				var driversPath = businessModels[i].id + '/drivers'
-				sbiModule_restServices.promiseGet(bussinesModelPath,driversPath).then(function(response){
-					$scope.businessModelsDrivers.push(response.data);
-				})
 
-			}
-		}
 		$scope.loadBusinessModelsCategories= function(roleIds){
 
 			sbiModule_restServices.promiseGet("2.0/domains", "rolesCategories", queryParamRolesIds(roleIds))
