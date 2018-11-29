@@ -415,8 +415,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 						try {
 							valueField = new BigDecimal(String.valueOf(formatedCell));
 						} catch (NumberFormatException e) {
-							logger.error("Can not read Numeric value of " + formatedCell);
-							throw e;
+							valueField = cell.getNumericCellValue();
 						}
 					}
 				} else {
@@ -426,8 +425,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 						try {
 							valueField = new Long(String.valueOf(formatedCell));
 						} catch (NumberFormatException e) {
-							logger.error("Can not read Numeric value of " + formatedCell);
-							throw e;
+							valueField = cell.getNumericCellValue();
 						}
 					}
 				}
