@@ -94,7 +94,7 @@ angular
 			$scope.showDrivers = false;
 			$scope.documentViewerUrl = url;
 			$scope.driverableObject = {};
-
+			$scope.driverableObject.executed = true;
 			if(driverableObject){
 
 				driverableObject.executed = true;
