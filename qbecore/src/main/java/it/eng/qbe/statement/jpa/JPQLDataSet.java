@@ -155,6 +155,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
 				for (Object key : driverUrlNames.keySet()) {
 					driverName = key.toString();
+					filter.setParameter(driverName, drivers.get(driverName));
 				}
 			}
 		}
