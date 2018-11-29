@@ -111,7 +111,7 @@
                 			delete(style['max-width']);
                     		delete(style.width);
                 		}
-                    	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],style);
+                    	if(column.style && column.style['justify-content']) scope.flexToAlign(scope.alignMap,column.style['justify-content'],style);
                     	return style;
                     }
 
@@ -119,7 +119,7 @@
                     	var summarystyle = angular.copy(scope.styledata.summary?scope.styledata.summary:{});
                     	if(column.style && column.style.width) summarystyle['max-width'] = column.style.width;
                     	if(column.style && column.style.width) summarystyle.width = column.style.width;
-                    	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],summarystyle);
+                    	if(column.style && column.style['justify-content']) scope.flexToAlign(scope.alignMap,column.style['justify-content'],summarystyle);
                     	return summarystyle;
                     }
 
@@ -127,6 +127,10 @@
                     scope.getCellStyle = function(column,value){
                     	var style= {};
                     	if(!scope.settings.showGrid) style['border-width'] = 0;
+                    	if(scope.styledata.td && scope.styledata.td['justify-content']){
+                    		scope.styledata['justify-content'] = scope.styledata.td['justify-content'];
+                    		delete scope.styledata.td;
+                    	}
                     	if(scope.styledata.td) angular.merge(style,scope.styledata.td);
                     	if(column.style) angular.merge(style,column.style);
 
@@ -192,11 +196,11 @@
                 		}
                 	}
 
-                	scope.getContainerStyle = function(column){
-                		var style = {};
-                		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
-                		return style;
-                	}
+//                	scope.getContainerStyle = function(column){
+//                		var style = {};
+//                		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
+//                		return style;
+//                	}
 
                 	//function passed to parent on click
                     scope.clickItem = function (event,row,column) {
