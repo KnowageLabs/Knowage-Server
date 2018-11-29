@@ -145,6 +145,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"color":query.fields[i].color,
          		    	"data":[],
          		    	"funct":query.fields[i].funct,
+         		    	"fieldType" : query.fields[i].fieldType,
          		    	"visible":query.fields[i].visible,
          		    	"distinct":$scope.editQueryObj.distinct,
          		    	"group":query.fields[i].group,
@@ -381,7 +382,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				   "funct":isColumnType(field,"measure")? "SUM":"",
 				   "color":field.color,
 				   "group":isColumnType(field,"attribute"),
-
 				   "order":"NONE",
 				   "include":true,
 				   "visible":true,
@@ -486,7 +486,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     };
 
     $scope.$on('openHavings',function(event,field){
-		$scope.openHavings(field,$scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+		$scope.openHavings(field);
+		// $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries
 	});
 
     $scope.$on('openFilters',function(event,field){
@@ -617,9 +618,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	};
 
 	$scope.openHavings = function(field) {
-		// $scope.editQueryObj.havings,$scope.entityModel,
-		// $scope.editQueryObj.subqueries, $scope.editQueryObj.fields
-		$scope;
+		
 		if (field.hasOwnProperty('attributes')) {
 			field_copy = angular.copy(field);
 			field = {};

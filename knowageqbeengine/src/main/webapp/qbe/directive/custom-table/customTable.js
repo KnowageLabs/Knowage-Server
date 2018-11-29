@@ -407,7 +407,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
             },
             visible: function (item) {
             
-            	return item.funct != '' ? true : false;
+            	return item.fieldType == 'measure' ? true : false;
             }
 
       	},
