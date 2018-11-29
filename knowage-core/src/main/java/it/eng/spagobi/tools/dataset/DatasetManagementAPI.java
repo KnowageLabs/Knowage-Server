@@ -23,16 +23,7 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
@@ -1294,15 +1285,15 @@ public class DatasetManagementAPI {
 				for (int i = 0; i < parameters.size(); i++) {
 					JSONObject parameter = parameters.get(i);
 					if (paramName.equals(parameter.optString("namePar"))) {
-						String[] values = paramValues.get(paramName).split(",");
 						boolean isMultiValue = parameter.optBoolean("multiValuePar");
-						int length = isMultiValue ? values.length : 1;
+						String paramValue = paramValues.get(paramName);
+						String[] values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
 
 						String typePar = parameter.optString("typePar");
 						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
 
 						List<String> newValues = new ArrayList<>();
-						for (int j = 0; j < length; j++) {
+						for (int j = 0; j < values.length; j++) {
 							String value = values[j].trim();
 							if (!value.isEmpty()) {
 								if (!value.startsWith(delim) && !value.endsWith(delim)) {
