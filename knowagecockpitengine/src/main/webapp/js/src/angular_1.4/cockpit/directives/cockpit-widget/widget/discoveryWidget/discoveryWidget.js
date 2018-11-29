@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
-								scope.initWidget();
 								scope.showWidgetSpinner();
+								scope.initWidget();
 							});
 						}
 					};
@@ -136,6 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
 						$scope.gridOptions.api.resetRowHeights();
+						$scope.hideWidgetSpinner();
 					}
 					$scope.gridOptions.api.setRowData(datasetRecords.rows);
 					resizeColumns();
