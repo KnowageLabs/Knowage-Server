@@ -135,8 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(nature == 'init'){
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
-						$scope.gridOptions.api.resetRowHeights();
-						$scope.hideWidgetSpinner();
+						$scope.gridOptions.api.resetRowHeights();	
 					}
 					$scope.gridOptions.api.setRowData(datasetRecords.rows);
 					resizeColumns();
@@ -144,6 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.totalResults = datasetRecords.results;
 				$scope.hideWidgetSpinner();
 			}
+			if(nature == 'init') $scope.hideWidgetSpinner();
 		}
 		
 		$scope.getColumns = function(fields) {
@@ -203,6 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			item.ds=$scope.ngModel.dataset.label;
 			delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group];
 			$rootScope.$broadcast('DELETE_SELECTION',item);
+			$scope.refreshWidget();
 		}
 		
 		$scope.selectItem = function(group, item){
