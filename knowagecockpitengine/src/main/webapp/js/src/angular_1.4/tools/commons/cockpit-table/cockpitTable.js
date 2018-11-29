@@ -127,11 +127,7 @@
                     scope.getCellStyle = function(column,value){
                     	var style= {};
                     	if(!scope.settings.showGrid) style['border-width'] = 0;
-                    	if(scope.styledata.td && scope.styledata.td['justify-content']){
-                    		scope.styledata['justify-content'] = scope.styledata.td['justify-content'];
-                    		delete scope.styledata.td;
-                    	}
-                    	if(scope.styledata.td) angular.merge(style,scope.styledata.td);
+                    	if(scope.styledata.td) delete scope.styledata.td;
                     	if(column.style) angular.merge(style,column.style);
 
 
