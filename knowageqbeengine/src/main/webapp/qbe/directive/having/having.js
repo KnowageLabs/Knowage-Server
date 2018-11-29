@@ -110,7 +110,7 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 			return item;
 	}
 
-	$scope.getConditionOptions = filters_service.getOperators;
+	$scope.getConditionOptions = filters_service.getSpecialOperators;
 	$scope.getFunctions = filters_service.aggFunctions;
 	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
 	$scope.getHavingTargetTypes = filters_service.getHavingTargetTypes;
