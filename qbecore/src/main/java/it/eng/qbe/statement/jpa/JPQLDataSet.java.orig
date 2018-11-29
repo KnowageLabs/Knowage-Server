@@ -141,8 +141,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 * @param runtimeDrivers
 	 */
 	private void enableFilters(Session session) {
+<<<<<<< HEAD
 		Map<String, Object> drivers = this.getDrivers();
-		// if (drivers != null) {
+//		if (drivers != null) {
 		EntityManager entityManager = getEntityMananger();
 		IModelStructure structure = this.statement.getDataSource().getModelStructure();
 		Filter filter;
@@ -154,12 +155,36 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			String filterName = (String) it.next();
 			filter = session.enableFilter(filterName);
 			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-			for (Object key : driverUrlNames.keySet()) {
-				driverName = key.toString();
-				filter.setParameter(driverName, drivers.get(driverName));
+
+			Iterator iter = drivers.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry pair = (Map.Entry) iter.next();
+				for (Object key : driverUrlNames.keySet()) {
+					driverName = key.toString();
+					if (pair.getKey().toString().equals(driverName)) {
+
+						filter.setParameter(pair.getKey().toString(), pair.getValue());
+					}
+=======
+		HashMap<String, Object> drivers = this.getDrivers();
+		if (!drivers.isEmpty()) {
+			EntityManager entityManager = getEntityMananger();
+			IModelStructure structure = this.statement.getDataSource().getModelStructure();
+			Filter filter;
+			Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
+			Iterator it = filterNamesR.iterator();
+			String driverName = null;
+			while (it.hasNext()) {
+				String filterName = (String) it.next();
+				filter = session.enableFilter(filterName);
+				Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+				for (Object key : driverUrlNames.keySet()) {
+					driverName = key.toString();
+					filter.setParameter(driverName, drivers.get(driverName));
+>>>>>>> 292bbf1286... Refactored code for enabling filters
+				}
 			}
 		}
-
 		// }
 	}
 
