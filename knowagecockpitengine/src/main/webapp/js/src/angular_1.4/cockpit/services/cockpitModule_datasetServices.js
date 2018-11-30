@@ -20,8 +20,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				angular.forEach(cockpitModule_template.configuration.datasets, function(item){
 					this.push(item.dsId);
 				}, dsIds);
-				
-				// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //				
+
+				// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser + "&ids=" + dsIds.join())
 				.then(function(response){
@@ -54,9 +54,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.loadDatasetList=function(){
 		var def=$q.defer();
-		if(!ds.isDatasetListLoaded){			
+		if(!ds.isDatasetListLoaded){
 			// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
-			sbiModule_restServices.restToRootProject();						
+			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser)
 			.then(function(response){
 				var allDatasets = response.data.item;
@@ -112,7 +112,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
-	
+
 	this.getDatasetLabelById=function(dsId){
 		if(ds.datasetMapById[dsId]){
 			return ds.datasetMapById[dsId].label;
@@ -491,7 +491,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return params;
 	}
-
+	var savedFilters = null;
+	this.getFiltersWithoutParams=function(){
+		return savedFilters;
+	}
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues){
 
@@ -752,7 +755,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				delete item[prop];
 			});
 		});
-
+		savedFilters = filtersToSendWithoutParams;
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);

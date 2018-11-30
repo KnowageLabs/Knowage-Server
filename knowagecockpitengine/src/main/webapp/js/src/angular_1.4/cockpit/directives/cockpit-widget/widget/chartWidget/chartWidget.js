@@ -245,12 +245,9 @@ function cockpitChartWidgetControllerFunction(
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
-			
-			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
-			if(Object.keys(filtersParams).length == 0){
-				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
-			}
-			
+
+			var filtersParams = cockpitModule_datasetServices.getFiltersWithoutParams();
+
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			var objForDrill = {};
 			objForDrill.aggregations = aggregations;
@@ -686,7 +683,7 @@ function cockpitChartWidgetControllerFunction(
 			    		  }
 
 				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
-				    	  
+
 				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE"){
 					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
 					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
