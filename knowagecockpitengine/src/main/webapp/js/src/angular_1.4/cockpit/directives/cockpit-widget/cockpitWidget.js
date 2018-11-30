@@ -162,7 +162,7 @@ angular.module('cockpitModule')
 	                    			if(scope.ngModel.cliccable){
 	                    				scope.ngModel.drillable = false;
 	                    			} else {
-	                    				if($scope.enterpriseEdition)
+	                    				if(scope.enterpriseEdition)
 	                    				scope.ngModel.drillable = true;
 	                    			}
 
