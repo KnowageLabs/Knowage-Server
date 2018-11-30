@@ -21,9 +21,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					this.push(item.dsId);
 				}, dsIds);
 				
-				// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser + "&ids=" + dsIds.join())
+				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=true&ids=" + dsIds.join())
 				.then(function(response){
 					for(var i in response.data.item){
 						var dataset = response.data.item[i];
