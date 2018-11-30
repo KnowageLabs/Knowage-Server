@@ -1040,9 +1040,10 @@
 
 						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
-						y: 0,
 						#if($serieValue!="")
 							y: $serieValue,
+						#else
+							y:null,
 						#end
 						#if($customColors.containsKey($serieName.toLowerCase()))
 						color:'$customColors.get($serieName.toLowerCase())',
