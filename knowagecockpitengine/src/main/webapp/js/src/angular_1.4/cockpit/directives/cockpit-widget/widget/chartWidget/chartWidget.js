@@ -246,10 +246,7 @@ function cockpitChartWidgetControllerFunction(
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
 
-			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
-			if(Object.keys(filtersParams).length == 0){
-				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
-			}
+			var filtersParams = cockpitModule_datasetServices.getFiltersWithoutParams();
 
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			var objForDrill = {};

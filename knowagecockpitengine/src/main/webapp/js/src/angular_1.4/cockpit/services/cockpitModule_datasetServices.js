@@ -541,7 +541,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return params;
 	}
-
+	var savedFilters = null;
+	this.getFiltersWithoutParams=function(){
+		return savedFilters;
+	}
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues){
 
@@ -825,7 +828,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			});
 		});
    
-
+		savedFilters = filtersToSendWithoutParams;
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
