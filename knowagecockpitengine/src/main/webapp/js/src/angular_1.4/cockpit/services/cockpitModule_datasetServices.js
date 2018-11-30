@@ -22,7 +22,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}, dsIds);
 
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
+				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=true&ids=" + dsIds.join())
 				.then(function(response){
 					for(var i in response.data.item){
 						var dataset = response.data.item[i];
@@ -55,7 +55,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var def=$q.defer();
 		if(!ds.isDatasetListLoaded){
 			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE"))
+			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser)
 			.then(function(response){
 				var allDatasets = response.data.item;
 
