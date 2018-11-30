@@ -253,14 +253,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				Map<String, Set<Tuple>> calcSelections = selections.get(d);
 				Map<String, Set<Tuple>> inputSelections = selectionsMap.get(d);
 				for (String selectionKey : inputSelections.keySet()) {
-					if (calcSelections.containsKey(selectionKey)) { // intersect tuples
-						Set<Tuple> oldSelectionTuples = calcSelections.get(selectionKey);
-						Set<Tuple> newSelectionTuples = inputSelections.get(selectionKey);
-						newSelectionTuples.retainAll(oldSelectionTuples);
-						calcSelections.put(selectionKey, newSelectionTuples);
-					} else { // add tuples
-						calcSelections.put(selectionKey, inputSelections.get(selectionKey));
-					}
+					calcSelections.put(selectionKey, inputSelections.get(selectionKey));
 				}
 			}
 
