@@ -996,6 +996,10 @@ color-picker {
   md-select-menu[multiple] md-option[selected]._md-checkbox-enabled ._md-icon::after{
     padding-top: 11px;
   }
+  md-tooltip {
+    background-color: lighten(black,15%);
+    color: white;
+  }
   
 }
 
