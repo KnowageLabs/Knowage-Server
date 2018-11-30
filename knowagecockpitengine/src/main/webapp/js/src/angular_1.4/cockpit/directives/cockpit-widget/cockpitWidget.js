@@ -1357,7 +1357,7 @@ function cockpitWidgetControllerFunction(
 	
 	$scope.captureScreenShot = function(ev,model){
 		model.loadingScreen = true;
-		var element = document.querySelector('#w'+model.id+' md-card-card-content');
+		var element = document.querySelector('#w'+model.id+' md-card-content');
 		html2canvas(element,{
 			imageTimeout: 0,
 			width: element.scrollWidth,

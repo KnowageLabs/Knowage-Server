@@ -85,7 +85,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return obj;
 		}
 		
-		$scope.ngModel.search = {};
+		$scope.ngModel.search = {
+//				facets : [
+//					{
+//						name: 'col',
+//						value: ['a','b']
+//					},{...}
+//				]
+		};
 		$scope.facets = [];
 		
 		$scope.gridOptions = {
@@ -210,35 +217,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.dimensions && $scope.dimensions.width<600){
 				$scope.toggleMenu();
 			}
-//			if($scope.ngModel.settings.facets.selection){
+			if($scope.ngModel.settings.facets.selection){
+				$scope.ngModel.search.facets = {};
 				if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1){
 					$scope.deleteFilterSelection(group, item.column_1);
 				}else{
 					$scope.doSelection(group, item.column_1, null, null, item, null, undefined, !$scope.ngModel.settings.facets.selection);
 				}
-//			}else{
-//				$scope.showWidgetSpinner();
-//				var tempFilter = {
-//					"colAlias":group,
-//					"colName":group,
-//					"dataset":$scope.ngModel.dataset.label,
-//					filterOperator : "=",
-//					filterVals : [item.column_1],
-//					type:"java.lang.String"
-//				};
-//				if($scope.ngModel.filters && $scope.ngModel.filters.length>0){
-//					for(var k in $scope.ngModel.filters){
-//						if($scope.ngModel.filters[k].colName == group && $scope.ngModel.filters[k].filterVals.indexOf(item.column_1)!=-1) {
-//							$scope.ngModel.filters.splice(k,1);
-//						}else {
-//							$scope.ngModel.filters.push(tempFilter);
-//						}
-//					}
-//				}else {
-//					$scope.ngModel.filters = [tempFilter];
-//				}
-//				$scope.refreshWidget();
-//			}
+			}else{
+				if(!$scope.ngModel.search.facets) $scope.ngModel.search.facets = {};
+				if($scope.ngModel.search.facets[group] && $scope.ngModel.search.facets[group].filterVals.length>0){
+					for(var k in $scope.ngModel.search.facets[group].filterVals){
+						if($scope.ngModel.search.facets[group].filterVals.indexOf(item.column_1)!=-1) {
+							$scope.ngModel.search.facets[group].filterVals.splice(k,1);
+							if($scope.ngModel.search.facets[group].filterVals.length==0) delete $scope.ngModel.search.facets[group];
+						}else {
+							$scope.ngModel.search.facets[group].filterVals.push(item.column_1);
+						}
+					}
+				}else {
+					$scope.ngModel.search.facets[group] = { filterOperator: "=", filterVals: [item.column_1]} ;
+				}
+				$scope.refreshWidget();
+			}
 		}
 		
 		$scope.first = function(){
@@ -274,6 +275,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].name == facet && $scope.ngModel.content.columnSelectedOfDataset[k].facet) return true
 			}
+			return false;
+		}
+		
+		$scope.isFacetSelected = function(group,item){
+			if($scope.template.configuration.filters && $scope.template.configuration.filters[$scope.ngModel.dataset.label] && $scope.template.configuration.filters[$scope.ngModel.dataset.label][group] == item.column_1) return true;
+			if($scope.ngModel.search.facets && $scope.ngModel.search.facets[group] && $scope.ngModel.search.facets[group].filterVals.indexOf(item.column_1)!=-1) return true;
 			return false;
 		}
 

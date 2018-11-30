@@ -720,6 +720,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params += "&limit=" + limitRows.rows;
 		}
 		
+		if(ngModel.type === 'discovery'){
+			filtersToSend[ngModel.dataset.label] = ngModel.search.facets;
+		}
+		
 		var filters;
 		if(ngModel.filters){
 			filters = ngModel.filters;

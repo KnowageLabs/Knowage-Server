@@ -466,7 +466,8 @@
 	    			.chip {
 	    				border: 1px solid $bordersColor;
 					    border-radius: 15px;
-					    min-width: 40px;
+					    min-width: 30px;
+					    padding: 0 4px;
 					    text-align: center;
 					    font-size: $mediumFontSize;
 	    			}
