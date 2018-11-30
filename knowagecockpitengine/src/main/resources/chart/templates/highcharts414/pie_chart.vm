@@ -1035,7 +1035,11 @@
 					{
 						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
-						y: $serieValue,
+						#if($serieValue!="")
+							y: $serieValue,
+						#else
+							y:null,
+						#end
 						#if($customColors.containsKey($serieName))
 						color:'$customColors.get($serieName)',
 						#end
