@@ -70,29 +70,19 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	 $scope.colors = [];
  }
 
-<<<<<<< HEAD
- $scope.addCustomColor = function(){
-		$scope.customColors[$scope.customColorObj.customName]=$scope.customColorObj.customValue;
-		$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
-		$scope.customColorObj = {};
-	}
-=======
 $scope.addCustomColor = function(){
-	
-	$scope.customColors[$scope.customColorObj.customName]=$scope.customColorObj.customValue;
+
+	$scope.customColors[$scope.customColorObj.customName.toLowerCase()]=$scope.customColorObj.customValue;
 	$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
 	 $scope.customColorObj = {customName:"",customValue:""};
 
 }
->>>>>>> 570b1a88c5... [RESOLVED Knowage-3612 Allowing to override colors on charts with predefined values]
 
-	$scope.deleteCustomColor = function(item) {
+$scope.deleteCustomColor = function(item) {
 
-		delete $scope.chartTemplate.CUSTOMCOLOR[item];
+	delete $scope.chartTemplate.CUSTOMCOLOR[item];
 
-	}
-
-
+}
 
  $scope.addColor = function(color) {
 	 var value ="";
