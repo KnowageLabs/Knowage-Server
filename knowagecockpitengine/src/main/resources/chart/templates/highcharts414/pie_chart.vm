@@ -1040,6 +1040,7 @@
 
 						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
+						y: 0,
 						#if($serieValue!="")
 							y: $serieValue,
 						#end
