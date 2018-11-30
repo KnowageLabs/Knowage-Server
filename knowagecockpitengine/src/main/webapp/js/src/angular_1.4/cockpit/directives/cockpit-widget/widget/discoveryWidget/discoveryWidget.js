@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.totalResults = datasetRecords.results;
 				$scope.hideWidgetSpinner();
 			}
-			if(nature == 'init') $scope.hideWidgetSpinner();
+			$scope.hideWidgetSpinner();
 		}
 		
 		$scope.getColumns = function(fields) {
