@@ -23,7 +23,7 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,qbeUrlBuilderService) {
 		var driversExecutionService = $injector.get('driversExecutionService');
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
@@ -93,31 +93,25 @@ angular
 		function openQbeInterfaceController($scope,url,driverableObject,$timeout) {
 
 			$scope.showDrivers = false;
-			$scope.documentViewerUrl = url;
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
+			qbeUrlBuilderService.setBaseUrl(url);
 			if(driverableObject){
 
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
 				driverableObject.dsTypeCd ? $scope.drivers = driverableObject.drivers : $scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+				$scope.showDrivers = driversExecutionService.checkForMandatoryDrivers($scope.drivers);
 
-				if($scope.drivers){
-					for(var i = 0; i < $scope.drivers.length;i++){
-						if($scope.drivers[i].mandatory){
-							$scope.showDrivers = true;
-							if($scope.drivers[i].defaultValues.length == 1 && $scope.drivers[i].defaultValues[0].isEnabled){
-								$scope.documentViewerUrl = url + '&' +  parseParameterSingleDefaultValue($scope.drivers);
-								$scope.driverableObject.executed = true;
-								break;
-							}else{
-								$scope.driverableObject.executed = false;
-								break;
-							}
-						}
-					}
-				}
 			}
+
+			  var directExecutionObjects = driversExecutionService.additionalUrlDrivers;
+			//  add To url and build
+
+			qbeUrlBuilderService.addQueryParams(directExecutionObjects);
+
+
+			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
 			$scope.hideDrivers =function(){
 				$scope.showDrivers = true;
@@ -156,7 +150,10 @@ angular
 				}else {
 					var drivers = {};
 				}
-				$scope.documentViewerUrl = url + '&' + $httpParamSerializer(drivers);
+
+				qbeUrlBuilderService.addQueryParams(drivers);
+				$scope.documentViewerUrl = qbeUrlBuilderService.build();
+
 				$scope.showQbe = true;
 				$scope.driverableObject.executed = true;
 			}
@@ -211,12 +208,5 @@ angular
 			}
 
 		}
-		var parseParameterSingleDefaultValue = function(rawDrivers){
-			var drivers = driversExecutionService.buildStringParameters(rawDrivers);
-			var driverName = Object.keys(drivers)[0];
-			var driverValue = drivers[Object.keys(drivers)[0]][0].value;
-			var driverObject = {};
-			driverObject[driverName] = driverValue;
-			return $httpParamSerializer(driverObject);
-		}
+
 });

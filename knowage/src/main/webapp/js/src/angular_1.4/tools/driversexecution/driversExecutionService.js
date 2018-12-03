@@ -6,7 +6,7 @@
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
 			executionService.jsonDatumDesc = null;
-
+			executionService.additionalUrlDrivers = [];
 			var isParameterSelectionValueLov = function(parameter) {return  parameter.valueSelection.toLowerCase() == 'lov'};
 			var isParameterSelectionTypeTree = function(parameter) {return parameter.selectionType.toLowerCase() == 'tree'};
 			var isParameterSelectionTypeLookup = function(parameter) {return parameter.selectionType.toLowerCase() == 'lookup'};
@@ -164,6 +164,31 @@
 					driversDependencyService.updateVisualDependency(parameters[i],execProperties);
 				}
 			};
+
+			executionService.checkForMandatoryDrivers = function(drivers){
+				var showSideBar = false;
+				if(drivers){
+					for(var i = 0; i < drivers.length;i++){
+						if(drivers[i].mandatory){
+							if(drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
+								executionService.additionalUrlDrivers.push(parseParameterSingleDefaultValue([drivers[i]]));
+							}else{
+								showSideBar = true;
+							}
+						}
+					}
+				}
+				return showSideBar
+			};
+
+			var parseParameterSingleDefaultValue = function(rawDrivers){
+				var drivers = executionService.buildStringParameters(rawDrivers);
+				var driverName = Object.keys(drivers)[0];
+				var driverValue = drivers[Object.keys(drivers)[0]][0].value;
+				var driverObject = {};
+				driverObject[driverName] = driverValue;
+				return driverObject;
+			}
 
 			var resetWithoutDefaultValues = function(parameter){
 
