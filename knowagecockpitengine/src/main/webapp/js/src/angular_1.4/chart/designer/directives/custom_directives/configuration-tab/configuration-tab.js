@@ -75,11 +75,9 @@ $scope.addCustomColor = function(){
 
 }
 
-$scope.deleteCustomColor = function(item) {
-	for (var i = 0; i < $scope.chartTemplate.CUSTOMCOLORS.COLOR.length; i++) {
-		$scope.chartTemplate.CUSTOMCOLORS.COLOR[i].customName = item.customName;
-		$scope.chartTemplate.CUSTOMCOLORS.COLOR.splice(i);
-	}
+$scope.deleteCustomColor = function(index) {
+	$scope.chartTemplate.CUSTOMCOLORS.COLOR.splice(index,1);
+
 }
 
  $scope.addColor = function(color) {
