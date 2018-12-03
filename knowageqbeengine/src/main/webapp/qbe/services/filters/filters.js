@@ -25,7 +25,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 	this.getTargetTypes = [
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:"manual"},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"},
-		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherentity"),value:"anotherEntity"},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherEntity"),value:"anotherEntity"},
 		 
 	];
 
