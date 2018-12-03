@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- services -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_widgetServices.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_backwardCompatibility.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_datasetServices.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_documentServices.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_generalServices.js"></script>

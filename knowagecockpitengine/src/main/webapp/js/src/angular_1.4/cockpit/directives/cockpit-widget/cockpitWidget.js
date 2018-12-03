@@ -247,13 +247,16 @@ function cockpitWidgetControllerFunction(
 		sbiModule_config,
 		$filter,
 		$sce,
-		$mdDialog)
+		$mdDialog,cockpitModule_backwardCompatibility)
 	{
 
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
 	    
+	if(!cockpitModule_backwardCompatibility.compareVersion(cockpitModule_properties.CURRENT_KNOWAGE_VERSION,$scope.ngModel.knowageVersion)){
+		$scope.ngModel = cockpitModule_backwardCompatibility.updateModel($scope.ngModel);
+	}
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
