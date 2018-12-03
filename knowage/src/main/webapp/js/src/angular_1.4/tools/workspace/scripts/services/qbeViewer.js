@@ -25,6 +25,7 @@ angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector) {
 		var driversExecutionService = $injector.get('driversExecutionService');
+
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
 
 			$scope.editQbeDset = false;
