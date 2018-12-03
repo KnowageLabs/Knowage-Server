@@ -41,7 +41,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelPar
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
@@ -223,8 +222,6 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		monitor.stop();
 		return businessModel;
 	}
-
-
 
 	@Override
 	public MetaModel loadMetaModelById(Integer id) {
@@ -1365,9 +1362,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			logger.debug("MetaModel loaded");
 			MetaModel model = toModel(hibMetaModel);
 			// Admin can force unlock from other
-			boolean isAdmin = UserUtilities.isAdministrator(UserUtilities.getUserProfile(userId));
+			// boolean isAdmin = UserUtilities.isAdministrator(UserUtilities.getUserProfile(userId));
 
-			if ((model.getModelLocked().equals(true) && model.getModelLocker().equals(userId)) || (isAdmin)) {
+			if ((model.getModelLocked().equals(true) && model.getModelLocker().equals(userId))) {
 				// set to "not active" the current active model
 				String hql = " update SbiMetaModel ar set ar.modelLocked = ?, ar.modelLocker = ? where ar.modelLocked = ?  and ar.id = ? ";
 				Query query = session.createQuery(hql);
