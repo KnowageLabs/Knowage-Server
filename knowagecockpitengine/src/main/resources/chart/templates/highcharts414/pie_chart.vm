@@ -1176,7 +1176,6 @@
     
         useHTML: true,
         backgroundColor: null,
-        borderWidth: 2,
         style: {
             padding: 0
         },
