@@ -1318,7 +1318,7 @@
     #end
   	#set ($counter = 0)
 	#set ($count = $count+1)
-	#set ($customColors = $chart.CUSTOMCOLOR)
+	#set ($customColors = $chart.CUSTOMCOLORS.COLOR)
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
@@ -1343,13 +1343,12 @@
 		    #end
 		
 			name: "$relatedSerie.name",
-			
-			#if($customColors.containsKey($relatedSerie.name))
-			#set($customSerieName = $relatedSerie.name)
-			
-				color:'$customColors.get($customSerieName)',
+			#foreach($customColor in $customColors)
+			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+				color:'$customColor.customValue',
 			#end
-		
+			#end
+
 			#*
 				Move series values from the middle of the chart (in the middle of the top slice) to the axis for RADAR.
 				[KNOWAGE-1111 JIRA ISSUE]
@@ -1421,6 +1420,11 @@
 							#if($isDateTime==true)
 							#if($datetype=="string")
 							x: Date.parse("$serieCategoryName"),
+							#end
+							#end
+           					#foreach($customColor in $customColors)
+							#if($customColor.customName.equalsIgnoreCase($serieCategoryName))
+								color:'$customColor.customValue',
 							#end
 							#end
 							
@@ -1656,10 +1660,11 @@
 					x: Date.parse("$el.name"),
 					#end
 					#end
-					
-					#if($customColors.containsKey($el.name))
-	   					color:'$customColors.get($el.name)',
-	   					#end
+					#foreach($customColor in $customColors)
+					#if($customColor.customName.equalsIgnoreCase($el.name))
+						color:'$customColor.customValue',
+					#end
+					#end
 					
 				},
 				#end	

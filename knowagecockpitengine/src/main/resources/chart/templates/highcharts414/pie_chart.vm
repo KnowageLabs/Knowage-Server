@@ -51,7 +51,7 @@
 	#if($enableDrilldown || $crossNavigation != '')
 		#set($drilldownEnabledFlag = true)
 	#end
-	#set ($customColors = $chart.CUSTOMCOLOR)	
+	#set ($customColors = $chart.CUSTOMCOLORS.COLOR)
 	meta: {
 		drilldownEnabled: $drilldownEnabledFlag,
 	},
@@ -528,8 +528,10 @@
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
 	    	{
 	    	
-	    		#if($customColors.containsKey($relatedSerie.name))
-				color:'$customColors.get($relatedSerie.name)',
+			#foreach($customColor in $customColors)
+			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+				color:'$customColor.customValue',
+			#end
 				#end
 	    		name: '$relatedSerie.name',
 	    		#if(!$exportWebApp)   		
@@ -1040,8 +1042,10 @@
 						#else
 							y:null,
 						#end
-						#if($customColors.containsKey($serieName))
-						color:'$customColors.get($serieName)',
+						#foreach($customColor in $customColors)
+						#if($customColor.customName.equalsIgnoreCase($serieName))
+							color:'$customColor.customValue',
+						#end
 						#end
 					},
 				#end
