@@ -20,7 +20,7 @@ angular.module('formulas')
 
 .factory('formulaService',function($http,sbiModule_config){
 	var formulas = angular.fromJson('<%= formulasJson%>');
-	debugger;
+	
 	var dataSourceId = <%= datasourceId%>;
 	
 	function Formula(formula){
