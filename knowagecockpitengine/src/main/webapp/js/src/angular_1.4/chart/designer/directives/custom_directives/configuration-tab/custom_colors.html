@@ -7,7 +7,7 @@
 		<span ng-style="{'color':(colorItem.customValue == 'black') ? 'white':'black'}"><b>{{colorItem.customName}}</b></span>
 		
 		
-		<md-icon md-font-icon="fa fa-trash" ng-style="{'color':(value == 'black') ? 'white':'black'}" class="md-secondary md-hue-3 fa-lg"  ng-click="deleteCustomColor(key)" aria-label="delete_color"></md-icon>
+		<md-icon md-font-icon="fa fa-trash" ng-style="{'color':(value == 'black') ? 'white':'black'}" class="md-secondary md-hue-3 fa-lg"  ng-click="deleteCustomColor($index)" aria-label="delete_color"></md-icon>
 	</md-list-item>					
 					  	
 	</md-list>	
