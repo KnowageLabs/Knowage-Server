@@ -41,7 +41,7 @@ md-toolbar.md-knowage-theme {
         outline: none;
         z-index: 10;
 		height: $toolbarHeight;
-		background-color: $headerBackground !important;
+		background-color: $headerBackground;
 		color: $lightTextColor !important;
 		.md-toolbar-tools {
 			height: $toolbarHeight;
@@ -64,6 +64,12 @@ md-toolbar.md-knowage-theme {
         }
       }
 		}
+    &._md-toolbar-transitions{
+      transition: none;
+    }
+    &:not(.md-menu-toolbar){
+      background-color: $baseColor;
+    }
 }
 
 md-list-item ._md-list-item-inner ._md-secondary-container, md-list-item ._md-secondary-container {
