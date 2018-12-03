@@ -51,6 +51,7 @@ END-PRODUCTION -->
 <!-- POLYFILLS -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/canvas-toBlob/canvas-toBlob.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/map-polyfill/map-polyfill.js"></script>
 
 
 <!-- angular-material-->
