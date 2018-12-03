@@ -23,15 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var self=this;
 		var currentVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 		
-		self.alignToJustify = function(property) {
-			var aligns = ['left','right'];
-			var justify = ['flex-start','flex-end'];
-			if(aligns.indexOf(property) != -1){
-				return justify[aligns.indexOf(property)];
-			}
-			return property;
-		}
-		
 		self.compareVersion = function(v1,v2){
 			if(!v2) return false;
 			
@@ -45,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			v1 = versionToArray(v1);
 			v2 = versionToArray(v2);
-			  
+			
 			for(var k in v1){
 				if(v1[k]>v2[k]) {
 					return false;
@@ -62,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(model.style.td) delete model.style.td;
 					for(k in model.content.columnSelectedOfDataset){
 						if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.td) {
-							model.content.columnSelectedOfDataset[k].style['justify-content'] = self.alignToJustify(model.content.columnSelectedOfDataset[k].style.td);
+							model.content.columnSelectedOfDataset[k].style['justify-content'] = model.content.columnSelectedOfDataset[k].style.td['justify-content'];
 							delete model.content.columnSelectedOfDataset[k].style.td;
 						}
 					}
