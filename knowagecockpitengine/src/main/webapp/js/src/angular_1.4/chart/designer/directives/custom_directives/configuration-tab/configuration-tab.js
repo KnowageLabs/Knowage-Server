@@ -46,10 +46,12 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	 }
 
  $scope.colors = [];
- if(!$scope.chartTemplate.CUSTOMCOLOR){
-	 $scope.chartTemplate.CUSTOMCOLOR = {};
+
+ if(!$scope.chartTemplate.CUSTOMCOLORS){
+	 $scope.chartTemplate.CUSTOMCOLORS = {}
+	 $scope.chartTemplate.CUSTOMCOLORS.COLOR = [];
  }
- $scope.customColors=$scope.chartTemplate.CUSTOMCOLOR
+ $scope.customColors=$scope.chartTemplate.CUSTOMCOLORS.COLOR
 
  $scope.presetColors = Object.keys($mdColorPalette);
  if($scope.chartTemplate != null && $scope.chartTemplate.COLORPALETTE != "" ){
@@ -68,16 +70,16 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
 $scope.addCustomColor = function(){
 
-	$scope.customColors[$scope.customColorObj.customName.toLowerCase()]=$scope.customColorObj.customValue;
-	$scope.chartTemplate.CUSTOMCOLOR= $scope.customColors;
-	 $scope.customColorObj = {customName:"",customValue:""};
+	$scope.chartTemplate.CUSTOMCOLORS.COLOR.push($scope.customColorObj);
+	$scope.customColorObj = {customName:"",customValue:""};
 
 }
 
 $scope.deleteCustomColor = function(item) {
-
-	delete $scope.chartTemplate.CUSTOMCOLOR[item];
-
+	for (var i = 0; i < $scope.chartTemplate.CUSTOMCOLORS.COLOR.length; i++) {
+		$scope.chartTemplate.CUSTOMCOLORS.COLOR[i].customName = item.customName;
+		$scope.chartTemplate.CUSTOMCOLORS.COLOR.splice(i);
+	}
 }
 
  $scope.addColor = function(color) {

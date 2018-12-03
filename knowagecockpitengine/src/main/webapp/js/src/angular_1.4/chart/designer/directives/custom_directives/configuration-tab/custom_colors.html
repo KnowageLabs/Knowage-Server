@@ -2,9 +2,9 @@
 
 	<md-list flex>
 										
-	<md-list-item ng-repeat="(key,value) in customColors" class="noright colorpaletteItem" ng-style="{'background-color':true ? value:'white'}">
+	<md-list-item ng-repeat="colorItem in chartTemplate.CUSTOMCOLORS.COLOR" class="noright colorpaletteItem" ng-style="{'background-color':true ? colorItem.customValue:'white'}">
 		<!--  <span ng-style="{'color':key ? 'black':'white'}"><b>{{key}}</b></span>-->
-		<span ng-style="{'color':(value == 'black') ? 'white':'black'}"><b>{{key}}</b></span>
+		<span ng-style="{'color':(colorItem.customValue == 'black') ? 'white':'black'}"><b>{{colorItem.customName}}</b></span>
 		
 		
 		<md-icon md-font-icon="fa fa-trash" ng-style="{'color':(value == 'black') ? 'white':'black'}" class="md-secondary md-hue-3 fa-lg"  ng-click="deleteCustomColor(key)" aria-label="delete_color"></md-icon>
