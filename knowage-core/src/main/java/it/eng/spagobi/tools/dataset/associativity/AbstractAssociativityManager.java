@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
@@ -136,7 +137,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					documentsAndExcludedDatasets.add(v1);
 				} else {
 					Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
-					dataSet.setParamsMap(parametersValues);
+					new DatasetManagementAPI().setDataSetParameters(dataSet, parametersValues);
 
 					boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
 					DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);

@@ -18,19 +18,30 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 import java.util.Map;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
+public class CachedAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
 
-public class FlatAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
+	private String tableName;
+	private IDataSource dataSource;
 
-	public FlatAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
+	public CachedAssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, Map<String, String> parameters) {
 		super(dataSet, parameters);
+		this.tableName = tableName;
+		this.dataSource = dataSource;
 	}
 
 	@Override
 	public String getTableName() {
-		return dataSet.getFlatTableName();
+		return tableName;
+	}
+
+	@Override
+	public IDataSource getDataSource() {
+		return dataSource;
 	}
 
 }

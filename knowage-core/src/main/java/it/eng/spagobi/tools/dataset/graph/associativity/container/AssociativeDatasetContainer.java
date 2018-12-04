@@ -18,25 +18,10 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.*;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
@@ -46,6 +31,12 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
+import javax.naming.NamingException;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -103,7 +94,7 @@ abstract class AssociativeDatasetContainer implements IAssociativeDatasetContain
 						values.add(tuple.toString("", "", ""));
 					}
 					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
-					dataSet.setParamsMap(parameters);
+					new DatasetManagementAPI().setDataSetParameters(dataSet, parameters);
 					return true;
 				} else {
 					throw new IllegalEdgeGroupException("Columns " + columnNames

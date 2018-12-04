@@ -18,16 +18,11 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jgrapht.graph.Pseudograph;
-
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import org.jgrapht.graph.Pseudograph;
+
+import java.util.*;
 
 public class Config {
 

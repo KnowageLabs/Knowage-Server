@@ -17,12 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.graph;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import org.apache.commons.lang.StringUtils;
 
 public class EdgeGroup {
 

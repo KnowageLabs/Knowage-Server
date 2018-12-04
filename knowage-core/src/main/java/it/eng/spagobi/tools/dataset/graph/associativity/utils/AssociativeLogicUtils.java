@@ -18,24 +18,19 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.metamodel.data.DataSet;
-import org.jgrapht.graph.Pseudograph;
-
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
+import org.apache.commons.lang.StringUtils;
+import org.apache.metamodel.data.DataSet;
+import org.jgrapht.graph.Pseudograph;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class AssociativeLogicUtils {
 

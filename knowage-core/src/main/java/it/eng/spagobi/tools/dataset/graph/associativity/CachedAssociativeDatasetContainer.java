@@ -16,12 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.tools.dataset.graph.associativity.container;
-
-import java.util.Map;
+package it.eng.spagobi.tools.dataset.graph.associativity;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.JDBCAssociativeDatasetContainer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.util.Map;
 
 public class CachedAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
 

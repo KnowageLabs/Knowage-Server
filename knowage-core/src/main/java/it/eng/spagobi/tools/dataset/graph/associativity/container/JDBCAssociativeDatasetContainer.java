@@ -18,25 +18,26 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableHelper;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
+
+import javax.naming.NamingException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer {
 
@@ -86,14 +87,7 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 			for (int i = 0; i < values.size(); i++) {
 				int parameterIndex = i + 1;
 				Object value = values.get(i);
-				if (java.util.Date.class.isAssignableFrom(value.getClass())) {
-					java.util.Date date = (java.util.Date) value;
-					stmt.setDate(parameterIndex, new java.sql.Date(date.getTime()));
-				} else if(value.getClass().getName().toLowerCase().contains(".timestamp")){
-					stmt.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf(value.toString()));
-				} else {
-					stmt.setObject(parameterIndex, value);
-				}
+				PersistedTableHelper.addField(stmt, i, value, "", value.getClass().getName(), false, new HashMap<String, Integer>());
 			}
 			stmt.execute();
 			rs = stmt.getResultSet();

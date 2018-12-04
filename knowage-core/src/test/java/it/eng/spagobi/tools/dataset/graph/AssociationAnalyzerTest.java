@@ -17,24 +17,19 @@
  */
 package it.eng.spagobi.tools.dataset.graph;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.Pseudograph;
 import org.junit.Before;
 import org.junit.Test;
 
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AssociationAnalyzerTest {
 	private static final String K = "k";

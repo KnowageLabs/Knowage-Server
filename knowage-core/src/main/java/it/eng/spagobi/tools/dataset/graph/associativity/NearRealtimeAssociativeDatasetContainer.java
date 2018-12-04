@@ -18,15 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -35,6 +26,13 @@ import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.log4j.Logger;
+
+import javax.naming.NamingException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)

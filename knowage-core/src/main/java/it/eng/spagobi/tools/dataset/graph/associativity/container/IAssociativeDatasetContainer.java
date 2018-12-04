@@ -18,18 +18,17 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.utilities.database.DataBaseException;
+
+import javax.naming.NamingException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface IAssociativeDatasetContainer {
 
