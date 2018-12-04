@@ -32,7 +32,6 @@ import org.hibernate.Session;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -91,7 +90,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
 		logger.debug("Compiling query statement [" + statementStr + "]");
-
 		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
@@ -142,18 +140,16 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	private void enableFilters(Session session) {
 		Map<String, Object> drivers = this.getDrivers();
-		if (!drivers.isEmpty()) {
-			EntityManager entityManager = getEntityMananger();
-			IModelStructure structure = this.statement.getDataSource().getModelStructure();
-			Filter filter;
-			Set filterNamesR = session.getSessionFactory().getDefinedFilterNames();
-			Iterator it = filterNamesR.iterator();
+		if (drivers != null) {
+			Filter filter = null;
+			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
+			Iterator<String> it = filterNames.iterator();
 			String driverName = null;
 			while (it.hasNext()) {
-				String filterName = (String) it.next();
+				String filterName = it.next();
 				filter = session.enableFilter(filterName);
-				Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-				for (Object key : driverUrlNames.keySet()) {
+				Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+				for (String key : driverUrlNames.keySet()) {
 					driverName = key.toString();
 					filter.setParameter(driverName, drivers.get(driverName));
 				}
