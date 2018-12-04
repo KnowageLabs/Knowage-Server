@@ -999,6 +999,16 @@ color-picker {
   }
 }
 
+.kn-main-body {
+  ._md-open-menu-container {
+    z-index: 9999;
+  }
+  ._md-menu-backdrop {
+    z-index: 9998;
+  }
+}
+
+
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
     overflow-y: hidden;

@@ -1,0 +1,15 @@
+<md-menu-bar>
+	<md-menu>
+		<button ng-click="$mdMenu.open()">
+        	<md-icon class="sidebar-icon material-icons" ng-click="$mdOpenMenu();$event.stopPropagation()" ng-mouseover="$mdOpenMenu()" md-menu-origin>folder</md-icon>
+      	</button>
+      	<md-menu-content>
+        	<md-menu-item ng-repeat="level in levels">
+  				<md-button ng-click="levelAction({src:level.src,linkType:level.linkType})">
+    				{{level.text}}
+    				<kn-inner-menu levels="level.menu" ng-if="level.menu"></kn-inner-menu>
+  				</md-button>
+			</md-menu-item>
+    	</md-menu-content>
+	</md-menu>
+</md-menu-bar>

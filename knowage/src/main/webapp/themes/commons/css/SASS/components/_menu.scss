@@ -367,6 +367,34 @@
           top: 24px;
         }
       }
+      .sidebar-nav-link {
+        display: inline-flex;
+        width:100%;
+        padding-right:16px;
+      }
+      md-menu-bar.md-knowage-theme {
+        padding: 0;
+        &>md-menu {
+          padding: 0;
+          &>button {
+            display: flex;
+            width: 40px;
+            height: 32px;
+            padding: 0;
+            align-items: center;
+            md-icon {
+              color: $ternaryColor;
+              text-align: center;
+              font-size: 16px;
+            }
+          }
+          &._md-open {
+            &>button {
+              background: transparent;
+            }
+          }
+        }
+      }
     }
     .dropdown-menu {
       position: relative;

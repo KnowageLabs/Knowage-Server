@@ -55,7 +55,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	    		curr_country: Sbi.config.curr_country,
         	    		curr_language: Sbi.config.curr_language
         	    	}
-        	}).success(function(data){
+        	}).then(function(response){
         		$scope.translate = sbiModule_translate;
         		$scope.messaging = sbiModule_messaging;
         		$scope.download = sbiModule_download;
@@ -66,13 +66,13 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         		$scope.i18n.loadI18nMap().then(function() {
 
         			$scope.links = [];
-        			$scope.fixed = data.fixedMenu;
-        			$scope.userName = data.userName;
-        			$scope.groups = data.userMenu;
-        			if (data.customMenu != undefined && data.customMenu != null && data.customMenu.length > 0){
+        			$scope.fixed = response.data.fixedMenu;
+        			$scope.userName = response.data.userName;
+        			$scope.groups = response.data.userMenu;
+        			if (response.data.customMenu != undefined && response.data.customMenu != null && response.data.customMenu.length > 0){
 
-        				if(data.customMenu[0].menu != undefined){
-        					$scope.customs = data.customMenu[0].menu;
+        				if(response.data.customMenu[0].menu != undefined){
+        					$scope.customs = response.data.customMenu[0].menu;
         				}
         				else{
         					$scope.customs = {};
@@ -111,8 +111,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 
         		}); // end of load I 18n
 
-        	}).
-        	error(function(error){
+        	},
+        	function(error){
         		$scope.showAlert('Attention, ' + $scope.userName,"Error Calling REST service for Menu. Please check if the server or connection is working.")
         	});
 
@@ -192,13 +192,12 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 		        	        	    params: {
 		        	        	    		SELECTED_ROLE: scope.defaultRole,
 		        	        	    	}
-		        	        	}).success(function(data){
+		        	        	}).then(function(data){
 		        	        		console.log("default role set correcty");
 		        	        		 //call again the home page
 		        	        		var homeUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?PAGE=LoginPage"
 		        	        		window.location.href=homeUrl;
-		        	        	}).
-		        	        	error(function(error){
+		        	        	},function(error){
 		        	        		console.log("Error: default role NOT set");
 		        	        		$scope.showAlert('Attention, ' + $scope.userName,"Error setting default role. Please check if the server or connection is working.")
 		        	        	});
@@ -247,12 +246,12 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.licenseData=[];
 				$scope.hostsData=[];
 
-	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').success(function(data){
-	        		if (data.errors){
-						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').then(function(data){
+	        		if (data.data.errors){
+						$scope.messaging.showErrorMessage(data.data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;
 					}
-	        		console.log("License Data:", data);
+	        		console.log("License Data:", data.data);
 
 	        		$scope.hostsData=data.hosts;
 	        		$scope.licenseData=data.licenses;
@@ -271,8 +270,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						},
 						controller: licenseDialogController
 					});
-	        	}).
-	        	error(function(error){
+	        	},function(error){
 	        		$scope.showAlert('Attention, ' + "Error Calling REST service for Menu. Please check if the server or connection is working.")
 	        	});
 
@@ -559,7 +557,6 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
        	        	};
        				sbiModule_restServices.promisePost('2.0/preferences','',preferencesObj)
        				.then(function(response) {
-       			         console.log(response);
        			      sbiModule_messaging.showSuccessMessage("preferences saved successfuly", 'Success');
        			        enableUIO=scope.enableUIO;
              	        enableRobobraille= scope.enableRobobraille;
@@ -569,7 +566,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
              	    	sbiModule_messaging.showSuccessMessage("Preferences saved successfuly", 'Successs');
              	    	$window.location.reload();
        				}, function(response) {
-       					sbiModule_messaging.showErrorMessage(response, 'Error');
+       					sbiModule_messaging.showErrorMessage(response.data, 'Error');
 
        				});
 
@@ -639,4 +636,62 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 			}
         }
     };
+    
 }]);
+
+myApp.directive('knInnerMenu', ["RecursionHelper", function(RecursionHelper){
+	return {
+        restrict: "E",
+        scope: {
+        	levels: '=',
+        	levelAction: '&'
+        },
+        templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/knInnerMenu.html", 
+        compile: function(element) {
+            return RecursionHelper.compile(element);
+        }
+    };
+}]);
+
+myApp.factory('RecursionHelper', ['$compile', function($compile){
+    return {
+        /**
+         * Manually compiles the element, fixing the recursion loop.
+         * @param element
+         * @param [link] A post-link function, or an object with function(s) registered via pre and post properties.
+         * @returns An object containing the linking functions.
+         */
+        compile: function(element, link){
+            // Normalize the link parameter
+            if(angular.isFunction(link)){
+                link = { post: link };
+            }
+
+            // Break the recursion loop by removing the contents
+            var contents = element.contents().remove();
+            var compiledContents;
+            return {
+                pre: (link && link.pre) ? link.pre : null,
+                /**
+                 * Compiles and re-adds the contents
+                 */
+                post: function(scope, element){
+                    // Compile the contents
+                    if(!compiledContents){
+                        compiledContents = $compile(contents);
+                    }
+                    // Re-add the compiled contents to the element
+                    compiledContents(scope, function(clone){
+                        element.append(clone);
+                    });
+
+                    // Call the post-linking function, if any
+                    if(link && link.post){
+                        link.post.apply(null, arguments);
+                    }
+                }
+            };
+        }
+    };
+}]);
+
