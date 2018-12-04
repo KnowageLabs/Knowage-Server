@@ -41,164 +41,164 @@
 }
 
 .bar{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_bar.png');
+	@include custom-background-image('../img/chart/types/chart_bar.png');
 }
 
-.customColors_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_pane.png');
-}    
-    
 .pie{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_pie.png');
+	@include custom-background-image('../img/chart/types/chart_pie.png');
 }
 
 .line{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_line.png');
+	@include custom-background-image('../img/chart/types/chart_line.png');
 }
 
 .sunburst{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_sunburst.png');
+	@include custom-background-image('../img/chart/types/chart_sunburst.png');
 }
 
 .scatter{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_scatter.png');
+	@include custom-background-image('../img/chart/types/chart_scatter.png');
 }
 
 .parallel{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_parallel.png');
+	@include custom-background-image('../img/chart/types/chart_parallel.png');
 }
 
 .radar{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_radar.png');
+	@include custom-background-image('../img/chart/types/chart_radar.png');
 }
 
 .gauge{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_gauge.png');
+	@include custom-background-image('../img/chart/types/chart_gauge.png');
 }
 
 .treemap{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_treemap.png');
+	@include custom-background-image('../img/chart/types/chart_treemap.png');
 }
 
 .heatmap{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_heatmap.png');
+	@include custom-background-image('../img/chart/types/chart_heatmap.png');
 }
 
 .wordcloud{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_wordcloud.png');
+	@include custom-background-image('../img/chart/types/chart_wordcloud.png');
 }
 
 .chord{
-	@include custom-background-image('../../sbi_default/img/chart/types/chart_chord.png');
+	@include custom-background-image('../img/chart/types/chart_chord.png');
 }
 
 .bar_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/bar chart (double).png');
+	@include custom-preview-image('../img/chart/preview/bar chart (double).png');
 }
 
 .pie_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/pie chart.png');
+	@include custom-preview-image('../img/chart/preview/pie chart.png');
 }
 
 .line_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/line chart.png');
+	@include custom-preview-image('../img/chart/preview/line chart.png');
 }
 
 .sunburst_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/sunburst.png');
+	@include custom-preview-image('../img/chart/preview/sunburst.png');
 }
 
 .scatter_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/scatter chart.png');
+	@include custom-preview-image('../img/chart/preview/scatter chart.png');
 }
 
 .parallel_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/parallel chart.png');
+	@include custom-preview-image('../img/chart/preview/parallel chart.png');
 }
 
 .radar_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/Radar chart.png');
+	@include custom-preview-image('../img/chart/preview/Radar chart.png');
 }
 
 .gauge_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/Gauge chart.png');
+	@include custom-preview-image('../img/chart/preview/Gauge chart.png');
 }
 
 .treemap_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/tree map chart.png');
+	@include custom-preview-image('../img/chart/preview/tree map chart.png');
 }
 
 .heatmap_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/heatmap.png');
+	@include custom-preview-image('../img/chart/preview/heatmap.png');
 }
 
 .wordcloud_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/wordcloud chart.png');
+	@include custom-preview-image('../img/chart/preview/wordcloud chart.png');
 }
 
 .chord_preview{
-	@include custom-preview-image('../../sbi_default/img/chart/preview/chord.png');
+	@include custom-preview-image('../img/chart/preview/chord.png');
 }
 
 /* configuration */
 .generic_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_generic.png');
+	@include custom-background-image('../img/chart/configuration/configuration_generic.png');
 }
 
 .title_and_subtitle_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_title_and_subtitle.png');
+	@include custom-background-image('../img/chart/configuration/configuration_title_and_subtitle.png');
 }
 
 .no_data_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_no_data_message.png');
+	@include custom-background-image('../img/chart/configuration/configuration_no_data_message.png');
 }
 
 .legend_title_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_legend_title.png');
+	@include custom-background-image('../img/chart/configuration/configuration_legend_title.png');
 }
 
 .legend_items_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_legend_items.png');
+	@include custom-background-image('../img/chart/configuration/configuration_legend_items.png');
 }
 
 .palette_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_color_palette.png');
+	@include custom-background-image('../img/chart/configuration/configuration_color_palette.png');
 }
 
 .pane_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_pane.png');
+	@include custom-background-image('../img/chart/configuration/configuration_pane.png');
 }
 
 .tooltip_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_tooltip.png');
+	@include custom-background-image('../img/chart/configuration/configuration_tooltip.png');
 }
 
 .limit_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_limit.png');
+	@include custom-background-image('../img/chart/configuration/configuration_limit.png');
 }
 
 .axis_lines_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_axes_lines.png');
+	@include custom-background-image('../img/chart/configuration/configuration_axes_lines.png');
 }
 
 .ticks_and_labels_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_ticks_and_labels.png');
+	@include custom-background-image('../img/chart/configuration/configuration_ticks_and_labels.png');
 }
 
 .sequence_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_sequence.png');
+	@include custom-background-image('../img/chart/configuration/configuration_sequence.png');
 }
 
 .explanation_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_explanation.png');
+	@include custom-background-image('../img/chart/configuration/configuration_explanation.png');
 }
 
 .word_settings_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_words_settings.png');
+	@include custom-background-image('../img/chart/configuration/configuration_words_settings.png');
 }
 
 .advancedSerieConfBar_config{
-	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_advanced_serie.png');
+	@include custom-background-image('../img/chart/configuration/configuration_advanced_serie.png');
+}
+
+.customColors_config{
+	@include custom-background-image('../img/chart/configuration/configuration_custom_colors.png');
 }
 
 .dangerBorder {
