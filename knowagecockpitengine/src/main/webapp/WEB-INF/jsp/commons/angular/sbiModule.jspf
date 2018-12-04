@@ -550,6 +550,9 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		deferred.notify('About to call async function');
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		
+		if(conf == undefined) conf = {};
+		if(conf.data == undefined) conf.data = "";
+		
 		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
