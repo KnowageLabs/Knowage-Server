@@ -50,11 +50,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",model.knowageVersion)){
 				if(model.type=='table'){
-					if(model.style.td) delete model.style.td;
-					for(k in model.content.columnSelectedOfDataset){
-						if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.td) {
-							model.content.columnSelectedOfDataset[k].style['justify-content'] = model.content.columnSelectedOfDataset[k].style.td['justify-content'];
-							delete model.content.columnSelectedOfDataset[k].style.td;
+					if(model.style && model.style.td) delete model.style.td;
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(k in model.content.columnSelectedOfDataset){
+							if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.td) {
+								model.content.columnSelectedOfDataset[k].style['justify-content'] = model.content.columnSelectedOfDataset[k].style.td['justify-content'];
+								delete model.content.columnSelectedOfDataset[k].style.td;
+							}
 						}
 					}
 				}
