@@ -96,6 +96,11 @@ angular
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
 			qbeUrlBuilderService.setBaseUrl(url);
+
+			var queryParamObj = {};
+			queryParamObj.PARAMS = $scope.parameterItems;
+			qbeUrlBuilderService.addQueryParams(queryParamObj);
+
 			if(driverableObject){
 
 				driverableObject.executed = true;
@@ -108,13 +113,7 @@ angular
 			  var directExecutionObjects = driversExecutionService.additionalUrlDrivers;
 			//  add To url and build
 
-			 var parameters = {};
-			parameters.params = $scope.parameterItems;
-
-			qbeUrlBuilderService.addQueryParams(parameters);
 			qbeUrlBuilderService.addQueryParams(directExecutionObjects);
-
-
 			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
 			$scope.hideDrivers =function(){

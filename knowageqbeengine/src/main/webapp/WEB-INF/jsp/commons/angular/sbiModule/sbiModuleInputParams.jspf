@@ -19,10 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 angular.module('sbiModule')
 
 .factory('sbiModule_inputParams',function(){
+	
+		var getArray = function(){
+			
+		}
 		return {
 			modelName:'<%=request.getParameter("MODEL_NAME")%>',
 			dataSourceLabel:'<%=request.getParameter("DATA_SOURCE_LABEL")%>',
-			dataSourceForWritingLabel:'<%=request.getParameter("DEFAULT_DATASOURCE_FOR_WRITING_LABEL")%>'
+			dataSourceForWritingLabel:'<%=request.getParameter("DEFAULT_DATASOURCE_FOR_WRITING_LABEL")%>',
+			params:angular.fromJson('<%=paramsJsonArray%>')
 			
 	    	
 		};

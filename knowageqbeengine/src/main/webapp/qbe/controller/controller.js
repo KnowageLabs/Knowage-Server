@@ -48,7 +48,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
-	$scope.pars = [];
+	$scope.pars = inputParamService.params;
 	$scope.meta = [];
 	$scope.editQueryObj = new Query("");
 	$scope.advancedFilters = [];
@@ -618,7 +618,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	};
 
 	$scope.openHavings = function(field) {
-		
+
 		if (field.hasOwnProperty('attributes')) {
 			field_copy = angular.copy(field);
 			field = {};

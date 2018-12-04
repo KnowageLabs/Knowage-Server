@@ -46,6 +46,8 @@ author:...
 <%@page import="it.eng.spagobi.engines.qbe.query.formula.DAO.IFormulaDAO"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="it.eng.spagobi.utilities.StringUtils"%>
+<%@page import="org.json.JSONArray"%>
+<%@page import="org.json.JSONObject"%>
 
 
 
@@ -69,6 +71,7 @@ author:...
        String datasourceId= request.getParameter("DATA_SOURCE_ID");
        ObjectMapper objectMapper = new ObjectMapper();
        ExecutionSession es = new ExecutionSession(request, request.getSession());
+       JSONArray paramsJsonArray = new JSONArray();
        
        
       
@@ -102,5 +105,12 @@ author:...
 	   formulaDAO = new FormulaDAOXmlImpl();
 	   formulas = formulaDAO.getAll();
 	   String formulasJson = StringUtils.escape(objectMapper.writeValueAsString(formulas),'\\','\\');
+	   
+	   String[] params = request.getParameterValues("PARAMS");
+	   for(int i = 0;i<params.length;i++){
+		   paramsJsonArray.put(new JSONObject(params[i]));
+	   }
+	   
+	   
 %>
 <%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
