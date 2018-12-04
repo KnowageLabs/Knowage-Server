@@ -22,18 +22,39 @@
 
 	    var parameters = [];
 	    var httpParamSerializer = $httpParamSerializer;
-			var baseUrl = "";
-			var getQueryString = function(){
+		var baseUrl = "";
+		var getQueryString = function(){
 				var queryString = "";
 	      for(var i = 0;i < parameters.length;i++){
 	      	var params = getQueryStringFromObj(parameters[i]);
 	        queryString = queryString + "&" + params;
 	      }
 				return queryString;
-			}
+		}
 
 	    var getQueryStringFromObj = function(obj){
 	    	return httpParamSerializer(obj)
+	    }
+
+	    var clearParameters = function(){
+	    	parameters.length = 0;
+	    }
+
+	    var isObject = function(obj){
+			return  typeof obj === 'object' && obj.constructor === Object;
+		}
+
+	    var isEmpty = function(obj){
+	    	return Object.keys(obj).length === 0;
+	    }
+
+	    var isNull = function(obj){
+	    	return obj === null || obj === undefined;
+	    }
+
+	    var isValid = function(value){
+
+	    	return !isNull(value) && isObject(value) && !isEmpty(value)
 	    }
 
 			return {
@@ -43,11 +64,16 @@
 				},
 
 				addQueryParams:function(paramsObj){
-					parameters.push(paramsObj)
+					if(isValid(paramsObj)){
+						parameters.push(paramsObj)
+					}
+
 				},
 
 				build:function(){
-					return baseUrl + getQueryString();
+					var url = baseUrl + getQueryString();
+					clearParameters();
+					return url;
 				}
 
 			}

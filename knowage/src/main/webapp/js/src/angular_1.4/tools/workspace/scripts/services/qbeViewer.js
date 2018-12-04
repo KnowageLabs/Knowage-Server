@@ -108,6 +108,10 @@ angular
 			  var directExecutionObjects = driversExecutionService.additionalUrlDrivers;
 			//  add To url and build
 
+			 var parameters = {};
+			parameters.params = $scope.parameterItems;
+
+			qbeUrlBuilderService.addQueryParams(parameters);
 			qbeUrlBuilderService.addQueryParams(directExecutionObjects);
 
 
@@ -150,6 +154,7 @@ angular
 				}else {
 					var drivers = {};
 				}
+
 
 				qbeUrlBuilderService.addQueryParams(drivers);
 				$scope.documentViewerUrl = qbeUrlBuilderService.build();
