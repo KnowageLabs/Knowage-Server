@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.jgrapht.Graph;
 import org.json.JSONArray;
@@ -425,20 +424,16 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
 		Session session = (Session) entityManager.getDelegate();
-		Filter filter;
-		Map envs = getEnv();
+		Map<String, String> envs = getEnv();
 		String driverName = null;
-		String env = null;
-		Set filterNames = session.getSessionFactory().getDefinedFilterNames();
-		Iterator it = filterNames.iterator();
+		Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
+		Iterator<String> it = filterNames.iterator();
 
-		HashMap<String, Object> drivers = new HashMap<String, Object>();
+		Map<String, Object> drivers = new HashMap<String, Object>();
 		while (it.hasNext()) {
-			String filterName = (String) it.next();
-			filter = session.enableFilter(filterName);
-			Map driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-			session.disableFilter(filterName);
-			for (Object key : driverUrlNames.keySet()) {
+			String filterName = it.next();
+			Map<String, String> driverUrlNames = session.getSessionFactory().getFilterDefinition(filterName).getParameterTypes();
+			for (String key : driverUrlNames.keySet()) {
 				driverName = key.toString();
 				drivers.put(driverName, envs.get(driverName));
 			}
