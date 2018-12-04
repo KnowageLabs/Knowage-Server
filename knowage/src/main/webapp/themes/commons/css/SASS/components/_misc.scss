@@ -983,6 +983,35 @@ color-picker {
   }
 }
 
+.kn-grid-container {
+  height: 100%;
+  display: flex;
+  padding: $tabPadding;
+  .ag-theme-knowage {
+    width: 100%;
+    box-shadow: 0px 3px 3px $shadowsColor;
+  }
+}
+
+.kn-main-body {
+  ._md-open-menu-container {
+    z-index: 9999;
+  }
+  ._md-menu-backdrop {
+    z-index: 9998;
+  }
+}
+
+
+@supports (-ms-ime-align: auto) {
+  .kn-list-detail {
+    overflow-y: hidden;
+  }
+  .kn-grid-container {
+    height: calc(100% - 64px);
+  }
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {

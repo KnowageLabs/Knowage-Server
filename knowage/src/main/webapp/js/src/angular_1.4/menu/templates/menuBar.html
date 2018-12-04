@@ -32,9 +32,13 @@
 	      		<ul data-ng-if="custom.menu" class="nav sidebar-nav">
 	      		<li class="dropdown">
 	      		 <ul  id="custom-dropdown-{{$index}}" class="dropdown-menu" >
-	            	<li data-ng-repeat="menu in custom.menu">
-	            		<a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)" ng-class="{ 'text-line-through' : menu.isClickable == 'false'}"> 
-	            		<i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>{{menu.text}}</a> </li>
+	      		 	<li data-ng-repeat="menu in custom.menu">
+	            		<a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)" class="sidebar-nav-link"> 
+	            			<i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  
+	            			<span>{{menu.text}}</span><span flex></span>
+	            			<kn-inner-menu levels="menu.menu" ng-if="menu.menu" level-action="menuCall(src,linkType)"></kn-inner-menu>
+	            		</a> 
+	            	</li>
 	       		 </ul>
 	       		</li> 
 	       		</ul>

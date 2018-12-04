@@ -367,6 +367,35 @@
           top: 24px;
         }
       }
+      .sidebar-nav-link {
+        display: inline-flex;
+        width:100%;
+        padding-right:16px;
+      }
+      md-menu-bar.md-knowage-theme {
+        padding: 0;
+        &>md-menu {
+          padding: 0;
+          &>button {
+            display: flex;
+            width: 40px;
+            height: 32px;
+            padding: 0;
+            align-items: center;
+            md-icon {
+              color: $ternaryColor;
+              text-align: center;
+              font-size: 16px;
+            }
+          }
+          &._md-open {
+            &>button {
+              background: transparent;
+            }
+          }
+        }
+      }
+
     }
     .dropdown-menu {
       position: relative;
@@ -380,6 +409,32 @@
     }
   }
 }
+
+kn-inner-menu{
+  md-menu-bar {
+    padding:0;
+  }
+  .levelsButton{
+    display: flex;
+    width: 40px;
+    height: 32px;
+    padding: 0;
+    align-items: center;
+    background: transparent !important;
+    justify-content: center;
+    md-icon {
+      margin: 0;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: $ternaryColor;
+      text-align: center;
+      font-size: 16px;
+    }
+  }
+}
+
 
 .sidebar-inverse {
   background-color: $baseColor;

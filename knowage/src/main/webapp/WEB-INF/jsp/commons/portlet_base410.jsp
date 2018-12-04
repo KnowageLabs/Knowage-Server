@@ -252,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        <body class="ie-9">
 	    <![endif]-->
 <!--[if !IE]><!-->
-<body>
+<body class="kn-main-body">
 	<script>  
 			if (/*@cc_on!@*/false) {  
 				document.documentElement.className+=' ie10';  
