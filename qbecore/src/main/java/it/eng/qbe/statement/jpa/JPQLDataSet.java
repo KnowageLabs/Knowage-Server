@@ -144,19 +144,19 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			Filter filter = null;
 			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
 			Iterator<String> it = filterNames.iterator();
-		String driverName = null;
+			String driverName = null;
 
-		while (it.hasNext()) {
+			while (it.hasNext()) {
 				String filterName = it.next();
-			filter = session.enableFilter(filterName);
+				filter = session.enableFilter(filterName);
 				Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
 				for (String key : driverUrlNames.keySet()) {
-				driverName = key.toString();
-				filter.setParameter(driverName, drivers.get(driverName));
+					driverName = key.toString();
+					filter.setParameter(driverName, drivers.get(driverName));
+				}
 			}
-		}
 
-		// }
+		}
 	}
 
 	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
