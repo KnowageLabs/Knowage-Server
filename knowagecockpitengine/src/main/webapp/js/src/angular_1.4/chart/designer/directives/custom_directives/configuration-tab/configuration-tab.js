@@ -47,10 +47,16 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
  $scope.colors = [];
 
- if(!$scope.chartTemplate.CUSTOMCOLORS){
-	 $scope.chartTemplate.CUSTOMCOLORS = {}
-	 $scope.chartTemplate.CUSTOMCOLORS.COLOR = [];
- }
+ $scope.chartsThatHaveCustomColors= ["bar","pie","line"];
+ var checkForCustomColors = function (){
+	if($scope.chartsThatHaveCustomColors.indexOf($scope.selectedChartType) >-1 && !$scope.chartTemplate.CUSTOMCOLORS){
+		$scope.chartTemplate.CUSTOMCOLORS = {}
+		$scope.chartTemplate.CUSTOMCOLORS.COLOR = [];
+	}
+ };
+
+
+ checkForCustomColors();
  $scope.customColors=$scope.chartTemplate.CUSTOMCOLORS.COLOR
 
  $scope.presetColors = Object.keys($mdColorPalette);
@@ -69,7 +75,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  }
 
 $scope.addCustomColor = function(){
-
+	checkForCustomColors();
 	$scope.chartTemplate.CUSTOMCOLORS.COLOR.push($scope.customColorObj);
 	$scope.customColorObj = {customName:"",customValue:""};
 
