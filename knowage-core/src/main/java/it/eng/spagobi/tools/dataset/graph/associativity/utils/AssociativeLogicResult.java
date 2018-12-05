@@ -18,12 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.Tuple;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)

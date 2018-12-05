@@ -18,10 +18,10 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.util.Map;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.util.Map;
 
 public class CachedAssociativeDatasetContainer extends InlineViewAssociativeDatasetContainer {
 

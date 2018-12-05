@@ -24,6 +24,7 @@ import com.jamonapi.MonitorFactory;
 import commonj.work.Work;
 import commonj.work.WorkItem;
 import gnu.trove.set.hash.TLongHashSet;
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
@@ -53,11 +54,13 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -66,6 +69,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.naming.NamingException;
 import java.io.File;
@@ -92,6 +96,12 @@ public class DatasetManagementAPI {
 
 	private UserProfile userProfile;
 	private IDataSetDAO dataSetDao;
+
+	private static final String ROWS = "ROWS";
+	private static final String ROW = "ROW";
+	private static final String NAME = "NAME";
+	private static final String TYPE = "TYPE";
+	private static final String MULTIVALUE = "MULTIVALUE";
 
 	// ==============================================================================
 	// COSTRUCTOR METHODS
@@ -476,6 +486,118 @@ public class DatasetManagementAPI {
 			throw new SpagoBIRuntimeException("Error loading the data set categories visible from the roles of the user");
 		}
 		return categories;
+	}
+
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) {
+		String toReturn = "";
+
+		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
+			JSONObject parameter = iterator.next();
+			try {
+				String parameterName = parameter.getString("namePar");
+				if (parametersValues.get(parameterName) == null) {
+					toReturn += parameterName;
+					if (iterator.hasNext()) {
+						toReturn += ", ";
+					}
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected exception occured while checking spagobi filters ", t);
+			}
+		}
+		return toReturn;
+	}
+
+	public List<JSONObject> getDataSetParameters(String label) {
+		logger.debug("IN");
+		try {
+			List<JSONObject> parametersList = new ArrayList<>();
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+
+			if (dataSet == null) {
+				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
+			}
+
+			String strParams = dataSet.getParameters();
+			if (strParams == null) {
+				return parametersList;
+			}
+
+			try {
+				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
+				SourceBean sbRows = (SourceBean) xmlParams.getAttribute(ROWS);
+				List lst = sbRows.getAttributeAsList(ROW);
+				for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+					SourceBean sbRow = (SourceBean) iterator.next();
+					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
+					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
+
+					if (typePar != null && typePar.startsWith("class")) {
+						typePar = typePar.substring(6);
+					}
+					JSONObject paramMetaDataJSON = new JSONObject();
+					String filterId = "ds__" + dataSet.getLabel() + "__" + namePar;
+					paramMetaDataJSON.put("id", filterId);
+					paramMetaDataJSON.put("labelObj", dataSet.getLabel());
+					paramMetaDataJSON.put("nameObj", dataSet.getName());
+					paramMetaDataJSON.put("typeObj", "Dataset");
+					paramMetaDataJSON.put("namePar", namePar);
+					paramMetaDataJSON.put("typePar", typePar);
+					paramMetaDataJSON.put("multiValuePar", multiValue);
+					parametersList.add(paramMetaDataJSON);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to parse parameters [" + strParams + "]", t);
+			} finally {
+				logger.debug("OUT");
+			}
+
+			return parametersList;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	public void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
+		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
+		if (parameters.size() > paramValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		if (paramValues.size() > 0) {
+			for (String paramName : paramValues.keySet()) {
+				for (int i = 0; i < parameters.size(); i++) {
+					JSONObject parameter = parameters.get(i);
+					if (paramName.equals(parameter.optString("namePar"))) {
+						boolean isMultiValue = parameter.optBoolean("multiValuePar");
+						String paramValue = paramValues.get(paramName);
+						String[] values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+
+						String typePar = parameter.optString("typePar");
+						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+						List<String> newValues = new ArrayList<>();
+						for (int j = 0; j < values.length; j++) {
+							String value = values[j].trim();
+							if (!value.isEmpty()) {
+								if (!value.startsWith(delim) && !value.endsWith(delim)) {
+									newValues.add(delim + value + delim);
+								} else {
+									newValues.add(value);
+								}
+							}
+						}
+						paramValues.put(paramName, StringUtils.join(newValues, ","));
+						break;
+					}
+				}
+			}
+			dataSet.setParamsMap(paramValues);
+		}
 	}
 
 	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)

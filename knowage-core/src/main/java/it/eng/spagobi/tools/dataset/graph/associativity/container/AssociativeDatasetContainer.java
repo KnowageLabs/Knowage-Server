@@ -19,6 +19,7 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
@@ -86,7 +87,7 @@ public abstract class AssociativeDatasetContainer implements IAssociativeDataset
                         values.add(tuple.toString("", "", ""));
                     }
                     parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
-                    dataSet.setParamsMap(parameters);
+                    new DatasetManagementAPI().setDataSetParameters(dataSet,parameters);
                     return true;
                 } else {
                     throw new IllegalEdgeGroupException("Columns " + columnNames

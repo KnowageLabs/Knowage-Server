@@ -21,6 +21,7 @@ package it.eng.spagobi.tools.dataset.associativity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
@@ -128,7 +129,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				Assert.assertNotNull(dataSet, "Unable to get metadata for dataset [" + v1 + "]");
 
 				Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
-				dataSet.setParamsMap(parametersValues);
+				new DatasetManagementAPI().setDataSetParameters(dataSet,parametersValues);
 
 				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
 				DatasetEvaluationStrategyType evaluationStrategyType = dataSet.getEvaluationStrategy(isNearRealtime);

@@ -18,16 +18,15 @@
 
 package it.eng.spagobi.tools.dataset.graph;
 
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import org.jgrapht.graph.ClassBasedEdgeFactory;
+import org.jgrapht.graph.Pseudograph;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-import org.jgrapht.graph.Pseudograph;
-
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)

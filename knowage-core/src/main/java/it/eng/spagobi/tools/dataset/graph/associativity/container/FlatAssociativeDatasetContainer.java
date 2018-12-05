@@ -18,9 +18,9 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.util.Map;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+
+import java.util.Map;
 
 public class FlatAssociativeDatasetContainer extends InlineViewAssociativeDatasetContainer {
 
