@@ -47,7 +47,6 @@ cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvide
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
     $mdGestureProvider.skipClickHijack();
-    $compileProvider.debugInfoEnabled(false);
     if(isIE){
     	$mdInkRippleProvider.disableInkRipple();
     	$mdAriaProvider.disableWarnings();
