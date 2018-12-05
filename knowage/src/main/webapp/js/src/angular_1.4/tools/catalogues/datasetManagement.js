@@ -4297,8 +4297,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						msg = "sbi.workspace.dataset.wizard.metadata.validation.success.title";
 					}
 					
-					var invalidColumnValidContent = '<md-content ng-click="scopeFunctions.showErrorDetails(row.columnErrorDetails)"><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					var invalidColumnValidContent = '<md-content class="metadataValidationColumn metadataInvalidColumn" ng-click="scopeFunctions.showErrorDetails(row.columnErrorDetails)"><div><div class="leftInavlidIcon"><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '" style="float:right;"></div></md-icon><div class="rightInvalidIcon"><md-icon md-font-icon="fa fa-info fa-1x" class="invalidTypeMetadata"></md-icon></div></div></md-content>';
+					var validColumnValidContent = '<md-content class="metadataValidationColumn metadataValidColumn"><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
 					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
@@ -4309,7 +4309,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
 
 					// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
-					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					loc.metaValid = '<md-content class="metadataValidationColumn metadataDefaultColumn"><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 				}
 			}
