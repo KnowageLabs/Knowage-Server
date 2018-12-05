@@ -386,6 +386,7 @@
               color: $ternaryColor;
               text-align: center;
               font-size: 16px;
+              top: 0;
             }
           }
           &._md-open {
@@ -409,10 +410,8 @@
   }
 }
 
-kn-inner-menu{
-  md-menu-bar {
-    padding:0;
-  }
+.kn-inner-menu{
+  padding:0;
   .levelsButton{
     display: flex;
     width: 40px;

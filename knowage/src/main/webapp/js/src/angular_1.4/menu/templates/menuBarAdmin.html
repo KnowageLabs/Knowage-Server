@@ -30,7 +30,7 @@
 	            		<a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)" class="sidebar-nav-link"> 
 	            			<i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  
 	            			<span>{{menu.text}}</span><span flex></span>
-	            			<kn-inner-menu levels="menu.menu" ng-if="menu.menu" level-action="menuCall(src,linkType)"></kn-inner-menu>
+	            			<ng-include ng-init="levels = menu.menu;" ng-if="menu.menu" src="'innerMenu'" />
 	            		</a> 
 	            	</li>
 	       		 </ul>
@@ -64,4 +64,23 @@
          </div>
       </div>
    </div>
+   <script type="text/ng-template" id="innerMenu">
+<md-menu-bar class="kn-inner-menu">
+	<md-menu>
+		<button class="levelsButton" ng-mouseenter="$mdOpenMenu();$event.stopPropagation()" md-menu-origin>
+        	<md-icon class="sidebar-icon material-icons">folder</md-icon>
+      	</button>
+      	<md-menu-content>
+        	<md-menu-item ng-repeat="level in levels">
+  				<md-button ng-click="menuCall(level.src,level.linkType)">
+    				{{level.text}}
+    				<ng-include ng-init="levels= level.menu" ng-if="level.menu" src="'innerMenu'" />
+  				</md-button>
+			</md-menu-item>
+    	</md-menu-content>
+	</md-menu>
+</md-menu-bar>
+ </script>
 </div>
+
+ 
