@@ -722,8 +722,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params += "&limit=" + limitRows.rows;
 		}
 		
-		if(ngModel.type === 'discovery'){
-			filtersToSend[ngModel.dataset.label] = ngModel.search.facets;
+		if(ngModel.type === 'discovery' && !ngModel.settings.facets.selection){
+			angular.merge(filtersToSend[ngModel.dataset.label],ngModel.search.facets);
 		}
 		
 		var filters;

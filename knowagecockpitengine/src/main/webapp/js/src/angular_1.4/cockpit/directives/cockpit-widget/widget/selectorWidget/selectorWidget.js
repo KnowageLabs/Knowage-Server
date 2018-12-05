@@ -67,6 +67,7 @@ angular.module('cockpitModule')
 	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
 	  	}
 		
+		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
 		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX') $scope.ngModel.settings.modalityValue = "dropdown";
 
 		$scope.isDisabled = function(p){

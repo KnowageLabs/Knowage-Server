@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetSelection,
 			cockpitModule_generalServices,
+			cockpitModule_properties,
 			cockpitModule_template){
 		
 		$scope.template = cockpitModule_template;
@@ -209,6 +210,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			item.value = value;
 			item.ds=$scope.ngModel.dataset.label;
 			delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group];
+			if(Object.keys(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label]).length==0){
+				delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label];
+			}
+			if(Object.keys(cockpitModule_template.configuration.filters).length==0){
+				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
+			}
 			$rootScope.$broadcast('DELETE_SELECTION',item);
 			$scope.refreshWidget();
 		}
