@@ -1077,7 +1077,9 @@
         	#end
         
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
-        	linkedTo:0,
+        	#*
+        	linkedTo:0, property was removed in order to provide different values on axis, see example for better understanding on link http://jsfiddle.net/JeLrb/515/
+        	*#
         	#end
         	#set ($axisCounter = 1)
         	#*
