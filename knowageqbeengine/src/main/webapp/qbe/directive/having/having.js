@@ -96,15 +96,6 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 		$scope.havings.push(object);
 	}
 	
-	var selFields = function() {
-		var selF = $scope.ngModel.selectedFields;
-		for(var i=0; i<selF.length; i++) {
-			if(selF[i]["type"] == 'inline.calculated.field') 
-				return true;
-		}
-		return false;
-	}
-	
 	if($scope.havings.length == 0) {
 		$scope.addNewHaving();
 	}
