@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
-								scope.showWidgetSpinner();
+								//scope.showWidgetSpinner();
 								scope.initWidget();
 							});
 						}
@@ -135,6 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
+			$scope.showWidgetSpinner();
 			if(datasetRecords){
 				$scope.facets = datasetRecords.facets;
 				$scope.metaData = datasetRecords.metaData;
