@@ -65,12 +65,12 @@ angular
 
          	 		if(driversService.driverRelatedObject.id){
     					 if (self.drivers) {
-    	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
+    	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
     	                     var index = self.drivers.length;
     	                  self.driversNum = self.drivers.length > 1;
     	                     self.selectDriver( index );
     	                 } else {
-    	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
+    	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':true,'required':true,'multivalue':false}];
     	                  self.driversNum = self.drivers.length > 1;
     	                     self.selectDriver(1);
 
@@ -79,12 +79,12 @@ angular
           }else{
 				 if(driversService.driverRelatedObject.id){
 					 if (self.drivers) {
-	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
 	                     var index = self.drivers.length;
 	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver( index );
 	                 } else {
-	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
+	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':true,'required':true,'multivalue':false}];
 	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver(1);
 	                 }
@@ -104,6 +104,7 @@ angular
 
              $scope.$on('changedModel', function(event, data) {
             	   self.driverRelatedObject = data;
+            	//   driversService.driverRelatedObject =  self.driverRelatedObject;
             	   self.selectedDriver = undefined;
             	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
             	   requiredPath = "2.0/businessmodels";

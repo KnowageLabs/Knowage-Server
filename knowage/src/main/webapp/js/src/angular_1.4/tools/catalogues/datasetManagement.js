@@ -56,60 +56,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 	$scope.datasetParameters = []
 
-    $scope.setParametersAsDrivers = function(parameters,drivers){
-		for(var i = 0; i < parameters.length; i++){
-			if(parameters[i].type == "Number"){
-				var newDriver = {
-						urlName:parameters[i].name,
-						dependsOn:{},
-						selectedLayerProp:null,
-						dataDependencies:[],
-						valueSelection:"man_in",
-						showOnPanel:"true",
-						driverUseLabel:"parameter",
-						label : parameters[i].name,
-						selectedLayer:null,
-						type:"NUM",
-						driverLabel:"parameter",
-						mandatory:false,
-						allowInternalNodeSelection:false,
-						lovDependencies:[],
-						typeCode:"MAN_IN",
-						multivalue: parameters[i].multivalue,
-						selectionType:"",
-						visualDependencies:[],
-						"id":i,
-						defaultValues: [parameters[i].defaultValue]
-
-				}
-			}else{
-				var newDriver = {
-						urlName:parameters[i].name,
-						dependsOn:{},
-						selectedLayerProp:null,
-						dataDependencies:[],
-						valueSelection:"man_in",
-						showOnPanel:"true",
-						driverUseLabel:"parameter",
-						label : parameters[i].name,
-						selectedLayer:null,
-						type:"STRING",
-						driverLabel:"parameter",
-						mandatory:false,
-						allowInternalNodeSelection:false,
-						lovDependencies:[],
-						typeCode:"MAN_IN",
-						multivalue: parameters[i].multivalue,
-						selectionType:"",
-						visualDependencies:[],
-						"id":i,
-						defaultValues: [parameters[i].defaultValue]
-				}
-			}
-			$scope.documentParameters.push(newDriver)
-		}
-	}
-
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
@@ -2140,9 +2086,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		$scope.parameterItems = parameterItemsTemp;
-//		$scope.setParametersAsDrivers($scope.parameterItems,$scope.documentParameters)
-		console.log('$scope.documentParameters')
-		console.log($scope.documentParameters)
+
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
 			// Cast the REST NGSI (transform from the String)
 			if($scope.selectedDataSet.restNGSI){
@@ -3116,6 +3060,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 
 	function DatasetPreviewController($scope,$mdDialog,$http) {
+
 		$scope.executeParameter = function(){
 			$scope.showQbe = true;
 			$scope.dataset.executed = true;
@@ -3129,27 +3074,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.dataset = $scope.selectedDataSet;
 			$scope.drivers = $scope.dataset.drivers;
 
-			if(!$scope.drivers || $scope.drivers.length == 0){
-				$scope.showDrivers = false;
-				$scope.dataset.executed = true;
-			}else{
-			    for(var i = 0; i < $scope.drivers.length;i++){
-                    $scope.dataset.executed = true;
-                    if($scope.drivers[i].mandatory &&  $scope.drivers.length == 1 ){
-                        $scope.dataset.executed = true;
-                        $scope.showDrivers = false;
-                    }else
-                    if($scope.drivers[i].mandatory){
-                        $scope.dataset.executed = false;
-                        $scope.showDrivers = true;
-                        break;
-                    }
-                }
-			}
+			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+			$scope.dataset.executed = !$scope.showDrivers;
 
 			$scope.hideDrivers =function(){
-				$scope.showDrivers = true;
-				$scope.dataset.executed = !$scope.dataset.executed;
+				$scope.showDrivers = !$scope.showDrivers;
+				$scope.dataset.executed = true;
 			}
 
 		$scope.closeDatasetPreviewDialog=function(){
@@ -3190,16 +3120,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
+		if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+			var hasParameters = false;
+		}else{
 		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
-		$scope.selectedDataSet.parametersData = {};
-		$scope.selectedDataSet.parametersData.documentParameters = {}
-
-		$scope.getParameters = function(){
-
-			return $scope.documentParameters;
 		}
-
-		//$scope.selectedDataSet.parametersData.documentParameters = $scope.documentParameters;
+		$scope.selectedDataSet.parametersData = {};
+		$scope.selectedDataSet.parametersData.documentParameters = {};
 
 		if(hasParameters){
 			$scope.parameterPreviewItems = $scope.parameterItems;

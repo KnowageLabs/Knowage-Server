@@ -190,7 +190,7 @@
 			</md-select>
 		</md-input-container>
 	</div>
-	
+	<render-parameters driverable-object = "execproperties" parameter = "parameter" ng-repeat="parameter in execproperties.pars" ></render-parameters>
 	
 	<!-- "DEFAULT VALID MESSAGE " message -->
 	<div ng-if="!showDefaultValueAreValid(parameter)">

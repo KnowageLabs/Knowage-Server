@@ -8,7 +8,7 @@
 			<div layout="row">
 				
 				<span flex></span>
-				<md-button ng-if="drivers.length > 0" ng-click="hideDrivers()" class="md-icon-button">
+				<md-button ng-if="drivers.length > 0" ng-click="toggleDrivers()" class="md-icon-button">
 	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
 	       	 	</md-button>
 				<md-button ng-hide="{{isFromDataSetCatalogue}}" ng-click="saveQbeDocument()" class="md-icon-button">
@@ -28,7 +28,7 @@
 	</md-dialog-content>
 
 </md-dialog>
-<div layout="column" flex=20 ng-if="showDrivers && !driverableObject.executed">
+<div layout="column" flex=20 ng-if="showDrivers">
 <md-toolbar class="header secondaryToolbar" >
 		<div class="md-toolbar-tools" layout="row" layout-align="space-around center">
 			<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">

@@ -172,7 +172,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 					+ aBIMetaModelParameter.getPriority();// + " and s.sbiMetaModel.id = " + hibMetaModel.getId();
 			Query query = session.createQuery(hqlUpdateShiftRight);
 			query.executeUpdate();
-			setTenant("DEFAULT_TENANT");
+			setTenant(getTenant());
 			newHibMetaModelParameter.setPriority(aBIMetaModelParameter.getPriority());
 			newHibMetaModelParameter.getCommonInfo().setOrganization(getTenant());
 			updateSbiCommonInfo4Insert(newHibMetaModelParameter);

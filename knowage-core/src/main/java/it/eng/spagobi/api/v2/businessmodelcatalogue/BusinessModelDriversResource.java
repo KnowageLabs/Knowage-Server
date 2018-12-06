@@ -60,7 +60,7 @@ public class BusinessModelDriversResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
-		// System.out.println(parameters);
+
 		return parameters;
 	}
 

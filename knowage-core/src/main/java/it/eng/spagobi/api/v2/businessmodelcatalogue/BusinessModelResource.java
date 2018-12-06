@@ -71,7 +71,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 *
 	 */
 	public static enum FILETYPE {
-		JAR, LOG, SBIMODEL
+	JAR, LOG, SBIMODEL
 	};
 
 	private static final String LOG_SUFFIX = ".log";
@@ -558,7 +558,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	@Path("/{id}/drivers")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public BusinessModelDriversResource getBusinessModelDrivers(@PathParam("id") Integer id) {
 		logger.debug("Getting DriversResource instance");
@@ -566,7 +565,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	@Path("/{id}/datadependencies")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public BusinessModelDataDependenciesResource getDataDependencies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
 		logger.debug("Getting DataDependenciesResource instance");
@@ -574,7 +572,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	@Path("/{id}/visualdependencies")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public BusinessModelVisualDependenciesResource getVisualDependencies() {
 		logger.debug("Getting VisualDependenciesResource instance");

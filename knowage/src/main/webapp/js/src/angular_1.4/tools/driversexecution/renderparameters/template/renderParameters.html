@@ -1,0 +1,25 @@
+<!-- manual number input -->
+	<div class="textInput" ng-if="parameter.type == 'Number'"  layout="column" layout-margin>
+		<<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class='requiredField'  flex = 80 ng-style= ''>{{parameter.name}} </label> 
+			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+		</div>
+		<md-input-container class="md-block noMargin" flex>
+			<input class="input_class" ng-model="parameter.value"  ng-required=true type="number" />	
+		</md-input-container>
+	</div>
+	
+	<!-- manual text input -->
+	<div ng-if="parameter.type=='String'" layout="column" layout-margin class="textInput">
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class='requiredField'  flex = 80 ng-style= ''>{{parameter.name}} </label> 
+			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+		</div>
+		<md-input-container class="md-block noMargin" flex>
+			<input class="input_class" ng-model="parameter.value"  ng-required=true />
+		</md-input-container>
+	</div>

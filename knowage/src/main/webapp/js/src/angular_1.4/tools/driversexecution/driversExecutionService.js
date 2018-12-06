@@ -6,7 +6,7 @@
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
 			executionService.jsonDatumDesc = null;
-			executionService.additionalUrlDrivers = [];
+			executionService.additionalUrlDrivers =[];
 			var isParameterSelectionValueLov = function(parameter) {return  parameter.valueSelection.toLowerCase() == 'lov'};
 			var isParameterSelectionTypeTree = function(parameter) {return parameter.selectionType.toLowerCase() == 'tree'};
 			var isParameterSelectionTypeLookup = function(parameter) {return parameter.selectionType.toLowerCase() == 'lookup'};
@@ -165,12 +165,12 @@
 				}
 			};
 
-			executionService.checkForMandatoryDrivers = function(drivers){
+			executionService.hasMandatoryDrivers = function(drivers){
 				var showSideBar = false;
 				if(drivers){
 					for(var i = 0; i < drivers.length;i++){
 						if(drivers[i].mandatory){
-							if(drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
+							if(drivers[i].defaultValues && drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
 								executionService.additionalUrlDrivers.push(parseParameterSingleDefaultValue([drivers[i]]));
 							}else{
 								showSideBar = true;
@@ -180,6 +180,16 @@
 				}
 				return showSideBar
 			};
+
+			executionService.createObjectFromArray = function(drivers){
+				var returnObject = {}
+				for(var i = 0; i < drivers.length; i++){
+					var driverName = Object.keys(drivers[i]);
+					var driverValue = drivers[i][Object.keys(drivers[i])[0]];
+					returnObject[driverName] = driverValue;
+				}
+				return returnObject
+			}
 
 			var parseParameterSingleDefaultValue = function(rawDrivers){
 				var drivers = executionService.buildStringParameters(rawDrivers);

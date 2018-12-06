@@ -46,7 +46,7 @@ angular
 							fullscreen: true,
 							locals:{
 									url:url,
-									driverableObject:driverableObject
+									driverableObject:$scope.selectedModel
 							}
 						}
 					)
@@ -97,29 +97,41 @@ angular
 			$scope.driverableObject.executed = true;
 			qbeUrlBuilderService.setBaseUrl(url);
 
-			var queryParamObj = {};
-			queryParamObj.PARAMS = $scope.parameterItems;
-			qbeUrlBuilderService.addQueryParams(queryParamObj);
 
 			if(driverableObject){
 
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
 				driverableObject.dsTypeCd ? $scope.drivers = driverableObject.drivers : $scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
-				$scope.showDrivers = driversExecutionService.checkForMandatoryDrivers($scope.drivers);
+				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
 
 			}
+			driverableObject.pars = driverableObject.pars ? driverableObject.pars : [];
+			var queryParamObj = {};
+			queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
+			qbeUrlBuilderService.addQueryParams(queryParamObj);
 
-			  var directExecutionObjects = driversExecutionService.additionalUrlDrivers;
-			//  add To url and build
+			$scope.driverableObject.executed = !$scope.showDrivers;
 
-			qbeUrlBuilderService.addQueryParams(directExecutionObjects);
+			if($scope.driverableObject.pars && $scope.driverableObject.pars.length > 0){
+					$scope.showDrivers = true
+					$scope.driverableObject.executed = false;
+			}
+
+
+			var drivers = driversExecutionService.additionalUrlDrivers;
+
+			var driversObject = driversExecutionService.createObjectFromArray(drivers);
+
+			qbeUrlBuilderService.addQueryParams(driversObject);
+			qbeUrlBuilderService.addQueryParams(parameters);
 			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
-			$scope.hideDrivers =function(){
-				$scope.showDrivers = true;
-				$scope.driverableObject.executed = !$scope.driverableObject.executed;
+			$scope.toggleDrivers =function(){
+				$scope.showDrivers = !$scope.showDrivers;
+				$scope.driverableObject.executed = true;
 			}
+
 			$scope.closeDocument = function() {
 
 				$mdDialog.hide();
@@ -148,17 +160,16 @@ angular
 				}
 			}
 			$scope.executeParameter = function(){
+
 				if($scope.drivers){
 				var drivers = driversExecutionService.buildStringParameters($scope.drivers);
 				}else {
 					var drivers = {};
 				}
 
-
 				qbeUrlBuilderService.addQueryParams(drivers);
 				$scope.documentViewerUrl = qbeUrlBuilderService.build();
-
-				$scope.showQbe = true;
+				$scope.showDrivers = false
 				$scope.driverableObject.executed = true;
 			}
 			$scope.saveQbeDocument = function() {
@@ -212,5 +223,6 @@ angular
 			}
 
 		}
+
 
 });

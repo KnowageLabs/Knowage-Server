@@ -350,7 +350,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
-
+					DriversService.driverRelatedObject = $scope.selectedBusinessModel;
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
