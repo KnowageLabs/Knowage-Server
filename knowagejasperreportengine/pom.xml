@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>6.2.4</version>
+		<version>6.2.5-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>6.2.4</version>
+			<version>6.2.5-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
-			<version>6.2.4</version>
+			<version>6.2.5-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 		

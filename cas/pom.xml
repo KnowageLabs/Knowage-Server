@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>6.2.4</version>
+			<version>6.2.5-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
