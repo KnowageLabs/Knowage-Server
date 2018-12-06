@@ -76,11 +76,11 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 				"leftOperandValue": $scope.ngModel.field.id,
 				"leftOperandDescription": $scope.ngModel.field.entity+ ":" + " " + $scope.field.funct + " (" + $scope.ngModel.field.name + ")",
 				"leftOperandLongDescription": $scope.ngModel.field.entity+ ":" + " " + $scope.field.funct + " (" + $scope.ngModel.field.name + ")",
-				"leftOperandType": "Field Content",
+				"leftOperandType": $scope.field.id.expression ? "inline.calculated.field" : "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
 				"operator": "EQUALS TO",
-				"rightOperandAggregator": $scope.field.funct,
+				"rightOperandAggregator": "",
 				"rightOperandValue": [],
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
@@ -94,6 +94,15 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 				"entity": $scope.ngModel.field.entity
 			}
 		$scope.havings.push(object);
+	}
+	
+	var selFields = function() {
+		var selF = $scope.ngModel.selectedFields;
+		for(var i=0; i<selF.length; i++) {
+			if(selF[i]["type"] == 'inline.calculated.field') 
+				return true;
+		}
+		return false;
 	}
 	
 	if($scope.havings.length == 0) {

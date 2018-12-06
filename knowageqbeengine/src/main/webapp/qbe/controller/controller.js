@@ -791,7 +791,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
                 	$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
                 	$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
-                	$scope.calculatedFieldOutput.entity = "";
+                	$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.funct = "";
                 	$scope.calculatedFieldOutput.group = false;

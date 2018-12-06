@@ -23,10 +23,10 @@
 				<p class="ng-binding">{{translate.load("kn.qbe.havings.nohavings")}}</p>
 			</div>
 		</div>
-		<md-card ng-if="(havings | filter : field.id).length > 0">
+		<md-card ng-if="(havings).length > 0">
 			<md-card-content layout="column" layout-padding>
 
-				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings | filter : field.id" >    			
+				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings" >    			
 	            	
 	      			<md-input-container flex=20>
 	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>

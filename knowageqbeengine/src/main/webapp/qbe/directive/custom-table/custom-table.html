@@ -7,7 +7,7 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
-	   			<md-button ng-click="showSQLQuery()">sql
+	   			<md-button ng-click="showSQLQuery()">{{translate.load("kn.qbe.custom.table.toolbar.sql")}}
 <!-- 					<md-icon md-font-icon="fas fa fa-database"></md-icon> -->
 				</md-button>
 	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>

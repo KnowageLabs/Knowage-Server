@@ -392,17 +392,16 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
       		icon:'fa fa-filter',
       		color:'#a3a5a6',
       		action:function(row,event){
-
-              	 $scope.basicViewScopeFunctions.openFilters(row)
-               }
-
+      			
+      			$scope.basicViewScopeFunctions.openFilters(row);
+            }
       	},
       	{
       		"label":$scope.translate.load("kn.qbe.general.havings"),
       		icon:'fa fa-check-square',
       		color:'#a3a5a6',
       		action:function(row,event){
-
+      		
       			$scope.basicViewScopeFunctions.openHavings(row);
             },
             visible: function (item) {
