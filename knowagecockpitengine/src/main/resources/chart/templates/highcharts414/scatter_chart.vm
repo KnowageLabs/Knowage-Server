@@ -217,6 +217,8 @@
 		 	
 		 	legend: 
 		 	{
+				itemDistance: 0,
+	    		symbolPadding: 25,
 		        align: 'center', 
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
@@ -227,6 +229,8 @@
 	  
 		    legend: 
 		    {
+					itemDistance: 0,
+		    		symbolPadding: 25,
 		            align: 'center',
 		            verticalAlign: '$chart.LEGEND.position', 
 		            layout: 'horizontal',
@@ -327,6 +331,8 @@
 				 	
 	 		legend: 
 		    {
+		    		itemDistance: 0,
+    				symbolPadding: 25,
 		            align: 'center',
 		            verticalAlign: '$chart.LEGEND.position', 
 		            layout: 'horizontal',
@@ -338,6 +344,8 @@
 		 	
 		 	legend: 
 		 	{
+		 		itemDistance: 0,
+    			symbolPadding: 25,
 		        align: '$chart.LEGEND.position', 
 		        verticalAlign: 'middle',
 		        layout: 'vertical',
@@ -413,6 +421,8 @@
 		*#
 		legend:
 		{
+			itemDistance: 0,
+    		symbolPadding: 25,
 			enabled: false,
 		},
 	    
@@ -420,6 +430,8 @@
     
     #*
     legend: {
+    	itemDistance: 0,
+    	symbolPadding: 25,
 	    #if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'false')
 	    enabled: false,
 	    #end
