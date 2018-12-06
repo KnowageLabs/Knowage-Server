@@ -97,6 +97,8 @@ angular
 			$scope.driverableObject.executed = true;
 			qbeUrlBuilderService.setBaseUrl(url);
 
+			var queryParamObj = {};
+			queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
 
 			if(driverableObject){
 
@@ -106,10 +108,7 @@ angular
 				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
 
 			}
-			driverableObject.pars = driverableObject.pars ? driverableObject.pars : [];
-			var queryParamObj = {};
-			queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
-			qbeUrlBuilderService.addQueryParams(queryParamObj);
+
 
 			$scope.driverableObject.executed = !$scope.showDrivers;
 
@@ -124,7 +123,7 @@ angular
 			var driversObject = driversExecutionService.createObjectFromArray(drivers);
 
 			qbeUrlBuilderService.addQueryParams(driversObject);
-			qbeUrlBuilderService.addQueryParams(parameters);
+			qbeUrlBuilderService.addQueryParams(queryParamObj);
 			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
 			$scope.toggleDrivers =function(){
