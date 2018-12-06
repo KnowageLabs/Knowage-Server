@@ -271,6 +271,41 @@ angular.module('chartInitializer')
 			      });
 			    });
 			  })(Highcharts);
+
+			 //function that swaps position of checkbox on labels
+			  (function(H) {
+					var each = H.each,
+						css = H.css;
+ 					Highcharts.Legend.prototype.positionCheckboxes = function() {
+						var alignAttr = this.group && this.group.alignAttr,
+						translateY,
+						clipHeight = this.clipHeight || this.legendHeight,
+						titleHeight = this.titleHeight;
+ 						if (alignAttr) {
+						translateY = alignAttr.translateY;
+						each(this.allItems, function(item) {
+							var checkbox = item.checkbox,
+							groupW = item.legendGroup.element.getBBox().width,
+							top;
+ 							if (checkbox) {
+							top = translateY + titleHeight + checkbox.y +
+								(this.scrollOffset || 0) + 3;
+							css(checkbox, {
+								left: (alignAttr.translateX + item.checkboxOffset +
+								checkbox.x - groupW) + 'px',
+								top: top + 'px',
+								display: this.proximate || (
+									top > translateY - 6 &&
+									top < translateY + clipHeight - 6
+								) ?
+								'' : 'none'
+							});
+							}
+						}, this);
+						}
+					}
+					}(Highcharts)); 
+
 	}
 
 
