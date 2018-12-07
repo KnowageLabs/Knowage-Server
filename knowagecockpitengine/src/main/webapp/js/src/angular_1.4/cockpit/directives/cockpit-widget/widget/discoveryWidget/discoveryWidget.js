@@ -274,6 +274,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.selectItem = function(group, item){
+			if(item.column_2==0) return;
 			if($scope.dimensions && $scope.dimensions.width<600){
 				$scope.toggleMenu();
 			}

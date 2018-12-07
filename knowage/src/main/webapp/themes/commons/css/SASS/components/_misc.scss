@@ -854,6 +854,10 @@ md-tab-item {
                                   supported by Chrome and Opera */
 }
 
+.notAllowedCursor {
+  cursor: not-allowed !important;
+}
+
 .knowageStandardTable {
   width: 100%;
   border-collapse: collapse;

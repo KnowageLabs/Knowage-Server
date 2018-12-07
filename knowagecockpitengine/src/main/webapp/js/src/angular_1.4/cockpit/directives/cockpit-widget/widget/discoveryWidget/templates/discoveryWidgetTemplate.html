@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	        			ng-if="!facet.closed" 
 	        			class="selectable discoveryFiltersItem" 
 	        			ng-repeat="item in facet.rows | orderBy:'column_2':true" 
-	        			ng-class="{'selected': isFacetSelected(key,item)}" 
+	        			ng-class="{'selected': isFacetSelected(key,item),'notAllowedCursor':item.column_2==0}" 
 	        			ng-click="selectItem(key,item)" 
 	        			layout="row" layout-align="start center">
 	          			<span class="discoveryFiltersListName truncated">
