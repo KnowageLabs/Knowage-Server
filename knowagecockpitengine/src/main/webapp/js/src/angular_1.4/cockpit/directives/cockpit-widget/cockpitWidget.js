@@ -135,7 +135,7 @@ angular.module('cockpitModule')
 		return sbiModule_i18n.getI18n(label);
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -247,7 +247,9 @@ function cockpitWidgetControllerFunction(
 		sbiModule_config,
 		$filter,
 		$sce,
-		$mdDialog,cockpitModule_backwardCompatibility)
+		$mdDialog,cockpitModule_backwardCompatibility,
+		cockpitModule_exportWidgetService)
+
 	{
 
 	$scope.openMenu = function($mdMenu, ev) {
@@ -1376,6 +1378,10 @@ function cockpitWidgetControllerFunction(
 		    delete model.loadingScreen;
 		});
 	};
+	
+	$scope.exportToExcel = function(event, ngModel) {
+		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel);
+	}
 	
 };
 
