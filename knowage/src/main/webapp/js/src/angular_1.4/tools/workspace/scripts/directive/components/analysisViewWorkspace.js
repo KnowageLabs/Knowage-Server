@@ -201,6 +201,55 @@
 					}
 			);
 		}
+		
+		$scope.editAnalysisDocument = function(selectedDocument, ev) {
+			
+			$mdDialog.show({
+				controller: editAnalysisDocumentController,
+				templateUrl: sbiModule_config.contextName + "/js/src/angular_1.4/tools/workspace/templates/editAnalysisDocumentTemp.html",
+				locals: {
+					selDocument: selectedDocument
+				},
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose: false
+				
+			});
+			
+		};
+		
+		$scope.isVisible = function(document) {
+			
+			return ((document) && sbiModule_user.userId === document.creationUser) ? true : false;
+		};
+		
+		function editAnalysisDocumentController($scope, $mdDialog, selDocument) {
+			
+			$scope.selectedDocument = selDocument;
+			
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			}
+			
+			$scope.save = function(selectedDoc) {
+				
+				$scope.selectedDocument = {
+					name: selectedDoc.name,
+					label: selectedDoc.label,
+					description: selectedDoc.description,
+					id: selectedDoc.id
+				};
+				
+				$scope.dataToSend = {
+					selectedDoc: $scope.selectedDocument,
+					updateFromWorkspace: true
+				};
+				
+				sbiModule_restServices.promisePost("2.0/saveDocument", "", $scope.dataToSend);
+				$mdDialog.hide();
+				
+			}
+		}
 
 		/**
 		 * Delete particular Analysis document from the Workspace.

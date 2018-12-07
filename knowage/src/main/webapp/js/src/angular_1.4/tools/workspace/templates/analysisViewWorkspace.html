@@ -43,6 +43,11 @@
 					<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 				</md-button>
 				
+				<md-button aria-label="Edit Document" class="md-icon-button" ng-click="editAnalysisDocument(selectedDocument, $event)" ng-if="isVisible(selectedDocument)">
+					<md-tooltip md-delay="500">{{translate.load('sbi.workspace.edit.document')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-edit"></md-icon>
+				</md-button>
+				
 				<md-menu class="noMargin">
 			     	<md-button class="md-icon-button" ng-click="$mdOpenMenu()">
 			      		<md-tooltip md-delay="500">Other options</md-tooltip>
