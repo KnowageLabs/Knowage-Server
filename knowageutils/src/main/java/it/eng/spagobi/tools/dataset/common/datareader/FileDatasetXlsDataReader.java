@@ -323,11 +323,10 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			}
 
 			FieldMetadata fieldMeta = new FieldMetadata();
-			if (valueField instanceof String) {
-				String fieldName = StringUtils.escapeForSQLColumnName((String) valueField);
-				fieldMeta.setName(fieldName);
-				fieldMeta.setType(String.class);
-			}
+			String fieldName = StringUtils.escapeForSQLColumnName(valueField.toString());
+			fieldMeta.setName(fieldName);
+			fieldMeta.setType(String.class);
+
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}
 
