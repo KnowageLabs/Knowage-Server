@@ -844,6 +844,16 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
 		
 });
 
+
+sbiM.factory('sbiModule_cockpitDocument', function(){
+	return {
+		docId: <%= docId %>,
+		docLabel: '<%= docLabel %>',
+		docName: '<%= docName %>',
+		docDescription: '<%= docDescription %>'
+	}
+});
+
 </script>
 
 
