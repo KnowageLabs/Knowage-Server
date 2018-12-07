@@ -11,17 +11,17 @@
 		<md-dialog-content>
 			<div class="md-dialog-content">
 				<md-input-container class="md-icon-float md-block">
-					<label>Label</label>
+					<label>{{translate.load("sbi.workspace.document.name")}}</label>
 					<input type="text" placeholder="Label" ng-required="true" md-maxlength="100" ng-model="selectedDocument.label">
 				</md-input-container>
 				<br />
 				<md-input-container class="md-icon-float md-block">
-					<label>Name</label>
+					<label>{{translate.load("sbi.workspace.document.label")}}</label>
 					<input type="text" placeholder="Name" ng-required="true" md-maxlength="100" ng-model="selectedDocument.name">
 				</md-input-container>
 				<br />
 				<md-input-container class="md-icon-float md-block">
-					<label>Description</label>
+					<label>{{translate.load("sbi.workspace.document.description")}}</label>
 					<textarea ng-model="selectedDocument.description" maxlength="400"></textarea>
 					<p>{{400 - selectedDocument.description.length + "/400"}}</p>
 				</md-input-container>

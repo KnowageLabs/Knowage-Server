@@ -223,9 +223,10 @@
 			return ((document) && sbiModule_user.userId === document.creationUser) ? true : false;
 		};
 		
-		function editAnalysisDocumentController($scope, $mdDialog, selDocument) {
+		function editAnalysisDocumentController($scope, $mdDialog, selDocument, sbiModule_translate) {
 			
 			$scope.selectedDocument = selDocument;
+			$scope.translate = sbiModule_translate
 			
 			$scope.cancel = function() {
 				$mdDialog.cancel();
