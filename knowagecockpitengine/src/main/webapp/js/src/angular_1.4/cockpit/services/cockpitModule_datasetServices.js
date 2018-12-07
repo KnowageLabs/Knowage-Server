@@ -545,7 +545,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return savedFilters;
 	}
 	//TODO missing maxRows
-	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues){
+	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature){
 
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
@@ -722,7 +722,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params += "&limit=" + limitRows.rows;
 		}
 		
-		if(ngModel.type === 'discovery' && !ngModel.settings.facets.selection){
+		if(ngModel.type === 'discovery' && !ngModel.settings.facets.selection && nature!='selections'){
 			filtersToSend[ngModel.dataset.label] = ngModel.search.facets;
 		}
 		

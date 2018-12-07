@@ -147,7 +147,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-	this.loadDatasetRecords = function(ngModel, options, loadDomainValues){
+	this.loadDatasetRecords = function(ngModel, options, loadDomainValues,nature){
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
@@ -182,9 +182,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				angular.copy(ngModel, ngModelCopy);
 				ngModelCopy.content.filters = [];
 //				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
-				return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
+				return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy, nature);
 			}
-			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues);
+			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature);
 		}
 		return null;
 	}
@@ -324,7 +324,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				}
 
                 if(config.type != "selector" || nature == 'init'){
-                    var dsRecords = this.loadDatasetRecords(config, options, config.type == "selector");
+                    var dsRecords = this.loadDatasetRecords(config, options, config.type == "selector",nature);
                     if(dsRecords == null){
 					    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
                     }else{

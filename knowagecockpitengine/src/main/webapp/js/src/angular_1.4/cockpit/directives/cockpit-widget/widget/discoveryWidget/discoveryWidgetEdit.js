@@ -72,7 +72,7 @@ function discoveryWidgetEditControllerFunction(
 				  	'	<md-tooltip md-delay="500">Select aggregation</md-tooltip>'+
 				  	'	<md-icon md-font-icon="fa fa-pencil"></md-icon>'+
 				  	'</md-button>';
-		if(params.node.data.fieldType == 'MEASURE'){
+		if(params.node.data.fieldType == 'ATTRIBUTE'){
 			return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;">'+input+button+'</div>';
 		}else return '<span></span>';
 	}
