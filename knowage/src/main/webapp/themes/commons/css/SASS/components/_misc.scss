@@ -839,6 +839,13 @@ md-tab-item {
   border-color: red;
 }
 
+.kn-error-popup {
+  min-width: 300px; 
+  max-height: 400px; 
+  max-width: 600px; 
+  padding: 1px;
+}
+
 .kn-inputError {
   color: $negativeColor !important;
   border-bottom-color: $negativeColor !important;

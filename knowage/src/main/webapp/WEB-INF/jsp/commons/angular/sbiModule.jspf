@@ -626,15 +626,13 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 				    	}
 				    },
 				    disableParentScroll: true,
-				    template: '<md-card>'+
-				    	 		'<md-card-title style="   min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
-			          			'	<md-card-title-text>'+
-			            		'		<span class="md-headline">{{title}}</span>'+
-			            		'		<span class="md-subhead"  ng-bind-html="text"> </span>'+
-			          			'	</md-card-title-text>'+
+				    template: '<md-card class="kn-error-popup">'+
+				    	 		'<md-card-title>'+
+			            		'	<span class="md-headline">{{title}}</span>'+
 			          			'</md-card-title>'+
+			          			'<md-card-content><p ng-bind-html="text"></p></md-card-content>'+
 			          			'<md-card-actions layout="row" layout-align="end center">'+
-			                   	 '<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
+			                   	 '<md-button class="md-raised md-primary" ng-click="closeDialog()">{{ok}}</md-button>'+
 			                  '</md-card-actions>'+
 			          		'</md-card>',
 				    hasBackdrop: true,
