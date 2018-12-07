@@ -57,7 +57,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
 
  checkForCustomColors();
- $scope.customColors=$scope.chartTemplate.CUSTOMCOLORS.COLOR
+ //$scope.customColors=$scope.chartTemplate.CUSTOMCOLORS.COLOR
 
  $scope.presetColors = Object.keys($mdColorPalette);
  if($scope.chartTemplate != null && $scope.chartTemplate.COLORPALETTE != "" ){
