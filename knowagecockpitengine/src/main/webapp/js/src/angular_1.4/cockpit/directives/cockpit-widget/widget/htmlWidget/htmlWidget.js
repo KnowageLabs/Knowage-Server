@@ -89,13 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
-				//getting dataset parameters if available
-//				$scope.params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
-//				for(var p in $scope.params){
-//					if($scope.params[p].length == 1){
-//						$scope.params[p] = $scope.params[p][0];
-//					}
-//				}
+
 				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, $scope.ngModel, undefined).then(
 					function(data){
 						$scope.htmlDataset = data;
@@ -245,7 +239,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
-				    	condition = condition.replace($scope.paramsRegex, $scope.paramsReplacer);
+				    	condition = condition.replace($scope.paramsRegex, $scope.ifConditionParamsReplacer);
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
@@ -307,13 +301,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
 		}
 		
+		$scope.ifConditionParamsReplacer = function(match, p1){
+			return typeof(cockpitModule_analyticalDrivers[p1]) == 'string' ? '\''+cockpitModule_analyticalDrivers[p1]+'\'' : cockpitModule_analyticalDrivers[p1];
+		}
+		
 		$scope.replacer = function(match, p1, p2, p3, precision) {
 			if(p3){
 				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)] : 'null';
 			}else{
 				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
-			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
+			if(!isNaN(p1)){
+				if(precision) p1 = parseFloat(p1).toFixed(precision);
+				p1 = p1.toLocaleString();
+			}
+			return p1;
 			
 		}
 		$scope.paramsReplacer = function(match, p1){
