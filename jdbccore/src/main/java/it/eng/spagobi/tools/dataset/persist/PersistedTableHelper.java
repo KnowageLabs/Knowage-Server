@@ -36,17 +36,6 @@ public class PersistedTableHelper {
 
 	private static transient Logger logger = Logger.getLogger(PersistedTableHelper.class);
 	
-	public static void fillColumnSize(Object fieldValue, String fieldMetaName, String fieldMetaTypeName, Map<String, Integer> columnSizes) {
-		if (fieldMetaTypeName.contains("String")) {
-			Integer lenValue = (fieldValue == null) ? new Integer("0") : new Integer(fieldValue.toString().length());
-			Integer prevValue = columnSizes.get(fieldMetaName) == null ? new Integer("0") : columnSizes.get(fieldMetaName);
-			if (lenValue > prevValue) {
-				columnSizes.remove(fieldMetaName);
-				columnSizes.put(fieldMetaName, lenValue);
-			}
-		}
-	}
-
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
 		try {
@@ -88,7 +77,6 @@ public class PersistedTableHelper {
 				if (lenValue > prevValue) {
 					columnSizes.remove(fieldMetaName);
 					columnSizes.put(fieldMetaName, lenValue);
-					
 				}
 				if (!(fieldValue instanceof String)) {
 					logger.debug("An unexpected error occured while extimating field [" + fieldMetaName + "] memory size whose type is equal to ["
@@ -112,20 +100,9 @@ public class PersistedTableHelper {
 					insertStatement.setDate(fieldIndex + 1, sqlDate);
 				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
-//				if(fieldValue instanceof java.util.Date) {
-					java.util.Date date = (java.util.Date) fieldValue;
-					// JDK 8 version
-					/*
-					 * Instant instant = date.toInstant(); ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault()); LocalDate localDate =
-					 * zdt.toLocalDate();
-					 */
-					DateTime dateTime = new DateTime(date, DateTimeZone.getDefault());
-					java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
-					insertStatement.setTimestamp(fieldIndex + 1, new java.sql.Timestamp(sqlDate.getTime()));
-					
-//					insertStatement.setTimestamp(fieldIndex + 1, Timestamp.valueOf(fieldValue.toString()));
-//				}
-
+				Timestamp timestamp = Timestamp.valueOf(fieldValue.toString());
+				DateTime dateTime = new DateTime(timestamp, DateTimeZone.getDefault());
+				insertStatement.setTimestamp(fieldIndex + 1, new Timestamp(dateTime.getMillis()));
 			} else if (fieldMetaTypeName.contains("Time")) {
 				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
 			} else if (fieldMetaTypeName.contains("Byte")) {
