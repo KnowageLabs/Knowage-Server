@@ -641,7 +641,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return DEFAULT_TIME_PATTERN;
 		}
 
-		if (typeString.startsWith("ISO8601")) {
+		if (typeString.toLowerCase().startsWith("iso8601")) {
 			return DEFAULT_TIMESTAMP_PATTERN;
 		}
 
