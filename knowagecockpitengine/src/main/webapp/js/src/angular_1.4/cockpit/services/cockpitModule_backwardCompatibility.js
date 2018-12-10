@@ -46,6 +46,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return true;
 		}
 		
+		self.updateCockpitModel = function(template){
+			//to version 6.3
+			if(!self.compareVersion("6.3.0",template.knowageVersion)){
+				if(template.configuration && typeof(template.configuration.showScreenshot)=='undefined') template.configuration.showScreenshot = true;
+			}
+			template.knowageVersion = currentVersion;
+			return template;
+		}
+		
 		self.updateModel = function(model){
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",model.knowageVersion)){

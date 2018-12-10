@@ -318,8 +318,13 @@ function cockpitWidgetControllerFunction(
 		$scope.activeSearch = false;
 		$scope.refreshWidget();
 	}
-
-
+	
+	$scope.showScreenshotButton = function(){
+		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection') return false;
+		if(typeof($scope.ngModel.style.showScreenshot) == 'undefined' ) {
+			return cockpitModule_template.configuration.showScreenshot;
+		}else return $scope.ngModel.style.showScreenshot;
+	}
 
 	// global WIDGET_EVENT
 	$rootScope.$on('WIDGET_EVENT',function(conf,eventType,config){
