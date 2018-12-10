@@ -1,5 +1,4 @@
-<div class="kn-table-container" ng-class="[customClass]">
-	<table class="kn-table" ng-class="[customClass]">
+	<table class="kn-table" ng-class="customClass">
 		<thead>
 			<tr> 
 				<th ng-repeat="column in columns" ng-style="{'width':column.width}" ng-click="setColumnSorting(column)" ng-class="{'sortable':!column.unsortable}">
@@ -13,7 +12,8 @@
 				<td ng-repeat="column in columns">
 					<span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
 					<span ng-if="column.type=='date'">{{setDate(row[column.name]) | date:'medium' }}</span>
-					<div layout="row" layout-align="end center" ng-if="column.type == 'buttons'">
+
+					<div layout="row" layout-align="center center" ng-if="column.type == 'buttons'">
 						<md-button class="md-icon-button" ng-click="actionClick(row,button,$event)" ng-repeat="button in column.buttons" ng-if="column.buttons.length <= 2">
 							<md-tooltip>{{button.name}}</md-tooltip>
 							<md-icon md-font-icon="{{button.icon}}">

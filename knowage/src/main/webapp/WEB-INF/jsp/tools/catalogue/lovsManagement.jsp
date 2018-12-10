@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		     </angular-table-->
 		     
 		     <kn-table
-				columns='[{"label":"Label","name":"label","type":"text"},{"label":"Description","name":"description","type":"text"},{"label":"Type","name":"itypeCd","type":"text"}]'
+				columns=lovTableColumns
 				model=listOfLovs search-model="search"
 				click-function="itemOnClick(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-background-transparent kn-height-auto"></kn-table>		
 		
