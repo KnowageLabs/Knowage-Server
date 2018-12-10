@@ -116,11 +116,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			dataStore = readXls(inputDataStream);
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("Inaccessible file", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Cannot read the file", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Cannot read data", e);
 		}
 
 		return dataStore;
@@ -147,27 +147,13 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			int initialRow = 0;
 
 			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty()))) {
-				initialRow = Integer.parseInt(getSkipRows());
+				initialRow = Integer.parseInt(getSkipRows()) - 1;
 				logger.debug("Skipping first " + getSkipRows() + " rows");
 			}
 
 			int rowsLimit;
 			if ((getLimitRows() != null) && (!(getLimitRows().isEmpty()))) {
-
-				/**
-				 * This line is commented, since we need an absolute value of the last row that should be taken while now the 0th row is always taken into count
-				 * and always as a header, not as an effective data row. In terms of the existing implementation: number of rows to take from an XLS file should
-				 * be an offset of value 'limitRows' relative to the 'initialRow' that is now the real effective row (data, not header) from which we start
-				 * counting.
-				 *
-				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// ORIGINAL CODE (danristo)
-				// rowsLimit = initialRow + Integer.parseInt(limitRows) - 1;
-				// MODIFIED CODE (danristo)
-				rowsLimit = initialRow + Integer.parseInt(getLimitRows());
-
-				// if the calculated limit exceed the physical number of rows or is equal to zero, just read all the rows
+				rowsLimit = initialRow + Integer.parseInt(getLimitRows()) - 1;
 				if ((rowsLimit > sheet.getPhysicalNumberOfRows()) || rowsLimit == 0) {
 					rowsLimit = sheet.getPhysicalNumberOfRows();
 				}
@@ -186,67 +172,38 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			int rowFetched = 0;
 
-			/**
-			 * Starting point when picking rows from the XLS file is ALWAYS the 0th row - the header of the file (metadata - the names of the columns of the
-			 * file dataset). Inside the for-loop we will check if the row is the header (0th) and if it is, treat it accordingly. Otherwise, skip all rows that
-			 * are between this one and the one that we get as a final row ('rowsLimit').
-			 *
-			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			// ORIGINAL CODE (danristo)
-			// for (int r = initialRow; r <= rowsLimit; r++) {
-			// MODIFIED CODE (danristo)
-			for (int r = 0; r <= rowsLimit; r++) {
-				// check if there is a limit for the rows to fetch in preview
+			for (int r = initialRow; r <= rowsLimit; r++) {
 
-				/**
-				 * If we are in between 0th and final row of the XLS file, while skipping all rows that user specified as the ones that should be skipped, take
-				 * all metadata (for initial, zeroth) and data available in their columns.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if (r > initialRow || r == 0) {
-
-					Row row = sheet.getRow(r);
-					if (checkIfRowIsEmpty(row)) {
-						continue;
-					}
-
-					/**
-					 * The zeroth row will always be the header of the XLS file.
-					 *
-					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					// ORIGINAL CODE (danristo)
-					// if (r == initialRow) {
-					// MODIFIED CODE (danristo)
-					if (r == 0) {
-						try {
-							MetaData dataStoreMeta = parseHeader(dataStore, row);
-							dataStore.setMetaData(dataStoreMeta);
-						} catch (Throwable t) {
-							throw new RuntimeException("Impossible to parse header row", t);
-						}
-					} else {
-						try {
-							if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-									|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
-											&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
-								IRecord record = parseRow(dataStore, row);
-								dataStore.appendRecord(record);
-								rowFetched++;
-							}
-
-							if (rowFetched == fetchSize)
-								break;
-
-						} catch (Throwable t) {
-							throw new RuntimeException("Impossible to parse row [" + r + "]", t);
-						}
-					}
-
+				Row row = sheet.getRow(r);
+				if (checkIfRowIsEmpty(row)) {
+					continue;
 				}
 
+				if (r == initialRow) {
+
+					try {
+						MetaData dataStoreMeta = parseHeader(dataStore, row);
+						dataStore.setMetaData(dataStoreMeta);
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse header row", t);
+					}
+				} else {
+					try {
+						if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
+								|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
+										&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+							IRecord record = parseRow(dataStore, row);
+							dataStore.appendRecord(record);
+							rowFetched++;
+						}
+
+						if (rowFetched == fetchSize)
+							break;
+
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse row [" + r + "]", t);
+					}
+				}
 			}
 			logger.debug("Read [" + rowFetched + "] records");
 			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
