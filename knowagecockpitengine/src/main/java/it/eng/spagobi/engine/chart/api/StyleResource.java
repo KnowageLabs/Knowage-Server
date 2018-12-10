@@ -17,11 +17,7 @@
  */
 package it.eng.spagobi.engine.chart.api;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
 import java.util.Iterator;
 
 import javax.ws.rs.GET;
@@ -54,11 +50,9 @@ public class StyleResource {
 		String resourcePath = ChartEngineConfig.getEngineResourcePath();
 
 		JSONArray allStyles = new JSONArray();
-		URL urlToSfnas = StyleResource.class.getResource(PATH_TO_SFNAS);
-		String path = urlToSfnas.getPath();
-		path = path.replaceAll("%20", " ");
+		InputStream inputStream = StyleResource.class.getResourceAsStream(PATH_TO_SFNAS);
 
-		JSONObject sfnas = convertToJson(path);
+		JSONObject sfnas = convertToJson(getContent(inputStream));
 		if (sfnas != null)
 			allStyles.put(sfnas);
 		File folder = new File(resourcePath + PATH_TO_STYLE);
@@ -69,11 +63,11 @@ public class StyleResource {
 
 		File[] listOfFiles = folder.listFiles();
 
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				String pathToFile = folder.getPath() + File.separator + listOfFiles[i].getName();
+		for (File listOfFile : listOfFiles) {
+			if (listOfFile.isFile()) {
+				String pathToFile = folder.getPath() + File.separator + listOfFile.getName();
 
-				JSONObject style = convertToJson(pathToFile);
+				JSONObject style = convertToJson(getContent(pathToFile));
 				if (style != null) {
 					allStyles.put(style);
 				}
@@ -83,20 +77,35 @@ public class StyleResource {
 		return allStyles.toString();
 	}
 
-	private JSONObject convertToJson(String filepath) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filepath));
+	private String getContent(String filepath) throws IOException {
 		StringBuilder fileContent = new StringBuilder();
-		String line = null;
 
+		BufferedReader br = new BufferedReader(new FileReader(filepath));
+		String line;
 		while ((line = br.readLine()) != null) {
 			fileContent.append(line);
 		}
 		br.close();
 
-		try {
+		return fileContent.toString();
+	}
 
-			String template = fileContent.toString();
-			JSONObject obj = new JSONObject(Xml.xml2json(template));
+	private String getContent(InputStream inputStream) throws IOException {
+		StringBuilder fileContent = new StringBuilder();
+
+		String line;
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+			while ((line = bufferedReader.readLine()) != null) {
+				fileContent.append(line);
+			}
+		}
+
+		return fileContent.toString();
+	}
+
+	private JSONObject convertToJson(String fileContent) {
+		try {
+			JSONObject obj = new JSONObject(Xml.xml2json(fileContent));
 			Iterator keys = obj.keys();
 
 			String key = (String) keys.next();
@@ -132,12 +141,12 @@ public class StyleResource {
 				String value = keyValue.toString();
 				String[] result = value.split(";");
 				JSONObject obj = new JSONObject();
-				for (int i = 0; i < result.length; i++) {
-					String[] temp = result[i].split(":");
+				for (String aResult : result) {
+					String[] temp = aResult.split(":");
 					if (temp.length > 1) {
 
 						if (isNumeric(temp[1])) {
-							if (temp[1].indexOf(".") != -1) {
+							if (temp[1].contains(".")) {
 								double num = Double.parseDouble(temp[1]);
 								obj.put(temp[0], num);
 							} else {
@@ -163,7 +172,7 @@ public class StyleResource {
 
 			if (isNumeric(keyValue.toString())) {
 
-				if (keyValue.toString().indexOf(".") != -1) {
+				if (keyValue.toString().contains(".")) {
 					jsonObj.put(key, Double.parseDouble(keyValue.toString()));
 				} else {
 					jsonObj.put(key, Integer.parseInt(keyValue.toString()));
@@ -196,12 +205,11 @@ public class StyleResource {
 
 	private static boolean isNumeric(String str) {
 		try {
-			if (str.indexOf(".") != -1) {
+			if (str.contains(".")) {
 				double num = Double.parseDouble(str);
 			} else {
 				int num = Integer.parseInt(str);
 			}
-
 		} catch (NumberFormatException nfe) {
 			return false;
 		}
