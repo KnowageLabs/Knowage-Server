@@ -121,40 +121,28 @@
 <md-card>
 	<md-toolbar class="ternaryToolbar" >
 		<div class="md-toolbar-tools" layout="row">
-			<md-switch ng-model="ngModel.shadows">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
+			<h2>Other Options</h2>
 			<span flex></span>
-			<md-button class="md-icon-button" ng-click="resetShadowsStyle()" ng-if="isWidget && (ngModel.shadows!=cockpitStyle.shadows || !angular.equals(ngModel.shadow,cockpitStyle.shadow))">
-				<md-icon md-font-icon="fa fa-eraser"  ></md-icon>
-			</md-button>
 		</div>
 	</md-toolbar>
-	<md-card-content layout="row" layout-align="space-around center">
-		<md-input-container class="md-block" flex>
-			<label>{{translate.load("sbi.cockpit.style.shadows.size")}}</label>
-				<md-select ng-model="ngModel.shadow['box-shadow']" ng-disabled="!ngModel.shadows">
-			<md-option ng-repeat="bs in boxShadow" ng-value="bs.value">{{bs.label}}</md-option>
-			</md-select>
-		</md-input-container>
-	</md-card-content>
-</md-card>
-
-
-<md-card>
-	<md-toolbar class="ternaryToolbar" >
-		<div class="md-toolbar-tools" layout="row">
-			<h2>{{translate.load("sbi.cockpit.style.backgroundcolor")}}</h2>
-			<span flex></span>
-			<md-button class="md-icon-button" ng-if="isWidget && (ngModel.backgroundColor!=cockpitStyle.backgroundColor || !angular.equals(ngModel.backgroundColor,cockpitStyle.backgroundColor))" ng-click="resetBackgroundStyle()">
-				<md-icon md-font-icon="fa fa-eraser"  ></md-icon>
-			</md-button>
+	<md-card-content >
+		<div layout="row" layout-align="space-around center">
+		<md-switch ng-model="ngModel.shadows" flex="20">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
+			<md-input-container class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.style.shadows.size")}}</label>
+					<md-select ng-model="ngModel.shadow['box-shadow']" ng-disabled="!ngModel.shadows">
+				<md-option ng-repeat="bs in boxShadow" ng-value="bs.value">{{bs.label}}</md-option>
+				</md-select>
+			</md-input-container>
 		</div>
-	</md-toolbar>
-	<md-card-content layout="row" layout-align="space-around center">
-		
 		<md-input-container flex class="md-block"> 
 			<label>{{translate.load('sbi.cockpit.style.backgroundcolor')}}</label> 
 			<color-picker options="{format:'rgb'}" ng-model="ngModel.backgroundColor"></color-picker> 
+			<md-button class="md-icon-button" ng-if="isWidget && (ngModel.backgroundColor!=cockpitStyle.backgroundColor || !angular.equals(ngModel.backgroundColor,cockpitStyle.backgroundColor))" ng-click="resetBackgroundStyle()">
+				<md-icon md-font-icon="fa fa-eraser"  ></md-icon>
+			</md-button>
 		</md-input-container> 
-		
+		<md-switch ng-if="isUndefined(ngModel.showScreenshot)" ng-model="cockpitModule_template.configuration.showScreenshot" ng-click="changeShowScreenshot()">Enable Screenshots</md-switch>
+		<md-switch ng-if="!isUndefined(ngModel.showScreenshot)" ng-model="ngModel.showScreenshot">Enable Screenshots</md-switch>
 	</md-card-content>
 </md-card>

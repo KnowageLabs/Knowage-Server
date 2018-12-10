@@ -90,6 +90,7 @@ angular.module('cockpitModule').directive('cockpitStyleCustomWidgetConfigurator'
 function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.angular=angular;
 	$scope.cockpitStyle={};
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
@@ -97,7 +98,6 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.initModel=function(){
 		angular.copy(angular.merge({},$scope.cockpitStyle,$scope.ngModel),$scope.ngModel);
 	}
-
 
 	$scope.resetBordersStyle=function(){
 		$scope.ngModel.borders=$scope.cockpitStyle.borders
@@ -132,12 +132,18 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	$scope.borderColorOptions={format:'rgb',disabled:false};
 	
-	$scope.$watch('ngModel.borders',function(newValue,oldValue){
+	$scope.isUndefined = function(property){
+		return typeof(property)=='undefined' ? true : false;
+	}
+	
+	$scope.changeShowScreenshot = function(){
+		$scope.ngModel.showScreenshot = !cockpitModule_template.configuration.showScreenshot;
+	}
+	
+	$scope.bordersWatcher = $scope.$watch('ngModel.borders',function(newValue,oldValue){
 		$scope.borderColorOptions.disabled = !newValue;
 	})
 	
-	
-
 	$scope.toggleBorderVisibility=function(){
 		$scope.borderColorOptions.disabled=!$scope.ngModel.borders
 	}
@@ -195,8 +201,14 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		                    	value:'0px 8px 19px #ccc'
 		                    },
 	                    ];
+	
+	$scope.$on('$destroy', function() {
+		$scope.bordersWatcher();
+  });
 
 }
+
+
 
 
 })();
