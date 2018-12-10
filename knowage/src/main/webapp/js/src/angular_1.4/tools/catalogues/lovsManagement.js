@@ -286,6 +286,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                                ];
 	
 	
+	$scope.lovTableColumns = [{"label":"Label","name":"label","type":"text"},{"label":"Description","name":"description","type":"text"},{"label":"Type","name":"itypeCd","type":"text"},
+		{"label":sbiModule_translate.load("sbi.generic.delete"),"name":sbiModule_translate.load("sbi.generic.delete"),"type":"buttons","buttons" :[
+			{"icon":"fa fa-trash-o", "action" : function(item,event){$scope.confirmDelete(item,event)}}]}];
+	
 	
 	$scope.confirm = $mdDialog
     .confirm()
