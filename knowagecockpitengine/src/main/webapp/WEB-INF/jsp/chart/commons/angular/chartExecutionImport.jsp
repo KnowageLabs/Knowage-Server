@@ -29,27 +29,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	This file specifies the name and the structure of the Angular application that will be responsible for managing 
 	the execution of charts. 
 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/tools/scripts/app.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/tools/scripts/directives/data-preview-table/dataPreviewTable.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/tools/scripts/app.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/tools/scripts/directives/data-preview-table/dataPreviewTable.js"></script>
 
 <!-- 
 	Controller (the logic) that handles the execution of the chart.
 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/tools/scripts/controller/chartExecutionController.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/tools/scripts/controller/chartExecutionController.js"></script>
 
 
 <!-- 
 	Configuration that is needed for our Angular application - all module that we need for it (e.g. sbiModule).
 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/tools/scripts/config/chartExecutionConfig.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/tools/scripts/config/chartExecutionConfig.js"></script>
 
 <!-- 
 	All directives that our application will use (for now, an empty array).
 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/tools/scripts/directives/chartExecutionDirectives.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/tools/scripts/directives/chartExecutionDirectives.js"></script>
 
 <!-- The configuration properties container for the rendering of the charts. (danristo) -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/commons/Settings.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/commons/Settings.js"></script>
 
 
 

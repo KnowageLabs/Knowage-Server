@@ -47,13 +47,13 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		<%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
 		
 		<!-- TODO: provide comment!!! -->
-		<script src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/ChartExecutionWebServiceManagerFactory.js"></script>
+		<script src="<%=engineContext%>/js/src/angular_1.4/chart/ChartExecutionWebServiceManagerFactory.js"></script>
 		
 		<!-- 
 			Import the D3 library, needed for the rendering of charts that are implemented in this language 
 			(SUNBURST, WORDCLOUD, PARALLEL, CHORD).
 		 -->
-		<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/d3/d3.js'/></script>
+		<script type="text/javascript" src='<%=engineContext%>/js/lib/d3/d3.js'/></script>
 		
 		<%-- ---------------------------------------------------------------------- --%>
 		<%-- IMPORT [END]															--%>
@@ -146,7 +146,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*/
 				locale = '<%=locale%>';	
-				thisContextName = '${pageContext.request.contextPath}';  //'knowagechartengine'
+				thisContextName = '<%=engineContext%>';  //'knowagechartengine'
 		 		driverParams = '<%=driverParams%>';
 	 			jsonTemplate = '<%=template%>';
 	 			datasetLabel = '<%=datasetLabel%>';

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    port: '<%= request.getServerPort()%>',
 		    curr_country: '<%= curr_country %>',
 	    	curr_language: '<%= curr_language%>',
-			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
+			contextName: '<%=engineContext%>',
 	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
 	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
 	        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',

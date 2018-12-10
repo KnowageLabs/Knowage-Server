@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	pageEncoding="UTF-8"%>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/lib/chartJs/Chart.js"></script>
+	src="<%=engineContext%>/js/lib/chartJs/Chart.js"></script>
 
 <script>
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {

@@ -43,6 +43,7 @@ public class EnginConf {
 	private String spagoBiSsoClass = null;
 	private String sessionExpiredUrl = null;
 	private String hmacKey = null;
+	private String engineContext = null;
 
 	/**
 	 * For testing purpose
@@ -267,6 +268,7 @@ public class EnginConf {
 				setSpagoBiSsoClass();
 				setSessionExpiredUrl();
 				setHmacKey();
+				setEngineContext();
 			} else {
 
 				logger.debug("Impossible to load configuration for report engine. Checking if throw a missing class exception...");
@@ -288,6 +290,21 @@ public class EnginConf {
 
 	public static void setTestconfigInputstream(InputStream testconfigInputstream) {
 		EnginConf.testconfigInputstream = testconfigInputstream;
+	}
+
+	public String getEngineContext() {
+		return engineContext;
+	}
+
+	private void setEngineContext() {
+		logger.debug("IN");
+		SourceBean sb = (SourceBean) config.getAttribute("ENGINE_CONTEXT");
+		if (sb != null) {
+			engineContext = sb.getCharacters();
+		} else {
+			engineContext = null;
+		}
+		logger.debug("OUT");
 	}
 
 }

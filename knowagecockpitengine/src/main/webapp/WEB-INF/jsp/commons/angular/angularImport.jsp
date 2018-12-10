@@ -75,9 +75,9 @@ END-PRODUCTION -->
 
 <!-- angular table -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cockpit-angular-table/CockpitAngularTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cockpit-table/cockpitTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/accessible-angular-table/AccessibleAngularTable.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/tools/commons/cockpit-angular-table/CockpitAngularTable.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/tools/commons/cockpit-table/cockpitTable.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/tools/commons/accessible-angular-table/AccessibleAngularTable.js"></script>
 <script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script>
 
 <!-- document tree -->
@@ -102,9 +102,9 @@ END-PRODUCTION -->
 <!-- colorpicker -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinygradient.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="<%=engineContext%>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<link rel="stylesheet" href="<%=engineContext%>/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
 <!--  wysiwyg -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/ngWYSIWYG/wysiwyg.min.js"></script>	

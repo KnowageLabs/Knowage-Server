@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  pageEncoding="UTF-8"%>
 
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Wordcloud.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Sunburst.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Parallel.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Chord.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/d3/renderD3.js"></script> 
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/d3/renderD3Wordcloud.js"></script> 
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/d3/renderD3Sunburst.js"></script> 
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/d3/renderD3Parallel.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/d3/renderD3Chord.js"></script>
 <script>
 
 	// TODO: check if ext was imported (don't care)

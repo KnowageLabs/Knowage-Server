@@ -165,7 +165,7 @@ author:
 			
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 -->
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>	
+		<script type="text/javascript" src="<%=engineContext%>/js/src/treemap/treemap.js"></script>	
     </head>
 	
 	<%-- == BODY ========================================================== --%>
@@ -231,7 +231,7 @@ author:
  			
  			var isCockpit = <%=isCockpit%>;
  			
-			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
+			var thisContextName			= '<%=engineContext%>';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
 			var exporterContextName 	= 'highcharts-export-web';

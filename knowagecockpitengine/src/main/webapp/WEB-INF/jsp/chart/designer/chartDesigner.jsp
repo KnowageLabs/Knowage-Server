@@ -18,6 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
 
+<%
+	String engineContext = EnginConf.getInstance().getEngineContext();
+%>
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -51,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  			
  			var isCockpit = <%=isCockpit%>;
  			
-			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
+			var thisContextName			= '<%=engineContext%>';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
 			var exporterContextName 	= 'highcharts-export-web';

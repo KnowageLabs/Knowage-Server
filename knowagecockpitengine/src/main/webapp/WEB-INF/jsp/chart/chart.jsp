@@ -214,7 +214,7 @@ author:
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
 	<%-- div with wait while loading message --%>
    	<div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
-		<img src='${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
+		<img src='<%=engineContext%>/img/icon-info15.png' />  Downloading...
    	</div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
@@ -253,7 +253,7 @@ author:
 				document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
 			}			
 			
-			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
+			var thisContextName			= '<%=engineContext%>';  //'knowagechartengine';
 			thisContextName.replace('/','');
 			var exporterContextName 	= 'highcharts-export-web';
 			
@@ -621,7 +621,7 @@ author:
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
  			Sbi.chart.viewer.ChartTemplateContainer.datasetLabel = '<%=datasetLabel%>';
  			
- 			var thisContextName	= '${pageContext.request.contextPath}';  //'knowagechartengine';
+ 			var thisContextName	= '<%=engineContext%>';  //'knowagechartengine';
  			var thisContextNameParam = thisContextName.replace('/', '');
 			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(

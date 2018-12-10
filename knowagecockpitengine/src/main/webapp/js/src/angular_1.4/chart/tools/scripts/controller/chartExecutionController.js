@@ -222,8 +222,8 @@ function chartExecutionFunction($rootScope,$scope,$http,chartExecutionWebService
 		
 		chartType = chartConfiguration.chart.type.toUpperCase();
 		isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
-		
-		thisContextName	= '${pageContext.request.contextPath}';  //'knowagechartengine', /'knowage';
+
+		thisContextName	= sbiModule_config.engineContext;  //'knowagechartengine', /'knowage';
 		thisContextName.replace('/','');
 		
 		exporterContextName = 'highcharts-export-web';

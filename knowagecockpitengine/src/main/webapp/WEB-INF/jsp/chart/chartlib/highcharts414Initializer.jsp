@@ -19,17 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page language="java" contentType="text/html; charset=UTF-8"
  pageEncoding="UTF-8"%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-more.src.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/drilldown.src.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/heatmap.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/treemap.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/data.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/treemap/treemap.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/highcharts-more.src.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/drilldown.src.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/heatmap.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/treemap.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/highcharts/4.1.4/modules/data.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/treemap/treemap.js"></script>
 
 <script>
 	

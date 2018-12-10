@@ -10,7 +10,7 @@ var sbiM=angular.module('sbiModule',["ngSanitize"]);
 
 sbiM.factory('sbiModule_config',function(){ 
 	return {
-    	contextName: '${pageContext.request.contextPath}',
+    	contextName: '<%=engineContext%>',
 <%--     	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>', --%>
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
@@ -817,8 +817,8 @@ sbiM.factory('sbiModule_cockpitDocument', function(){
 
 
 <!-- sbiModule_dateServices -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js"></script>
 <!-- sbiModule_jsonServices -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_jsonServices.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_jsonServices.js"></script>
 <script type="text/javascript" src="<%=request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/js/lib/angular-localization/<%=curr_language%>-<%=curr_country%>.js"></script>
 	 

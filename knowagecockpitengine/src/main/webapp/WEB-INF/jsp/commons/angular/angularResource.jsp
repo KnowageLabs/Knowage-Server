@@ -46,6 +46,7 @@
 <%
 	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
 	String chartEngineContextName = sb.getCharacters();
+	String engineContext = EnginConf.getInstance().getEngineContext();
 
 	CockpitEngineInstance engineInstance= (CockpitEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	IEngUserProfile profile= engineInstance.getUserProfile();

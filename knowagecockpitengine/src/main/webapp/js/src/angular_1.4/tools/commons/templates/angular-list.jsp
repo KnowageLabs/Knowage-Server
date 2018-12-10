@@ -24,16 +24,16 @@
 						dir-paginate="item in ngModel | filterBySpecificColumnAngularList:searchFastVal:itemName:localSearch |  itemsPerPage:	itemsPerPage "
 						pagination-id='id+"Pagination"' total-items='totalItemCount'
 						current-page=currentPageNumber style="border: none;"
-						ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
+						ng-include="'<%=engineContext%>/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
 	
 				<li ng-if='!SyncPagination && paginate' id="listItemTemplate"
 						dir-paginate="item in ngModel | filterBySpecificColumnAngularList:searchFastVal:itemName:localSearch |  itemsPerPage:	itemsPerPage "
 						pagination-id='id+"Pagination"' current-page=currentPageNumber style="border: none;"
-						ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
+						ng-include="'<%=engineContext%>/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
 	
 				<li ng-if='!paginate' ng-repeat="item in ngModel | filterBySpecificColumnAngularList:searchFastVal:itemName:localSearch"
 						style="border: none;"
-						ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
+						ng-include="'<%=engineContext%>/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'"></li>
 			</ol>
 		</div>
 

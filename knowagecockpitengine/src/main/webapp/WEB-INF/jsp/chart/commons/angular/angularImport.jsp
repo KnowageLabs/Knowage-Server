@@ -26,44 +26,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="width=device-width">
 
 <!-- Font awesome CSS for fancy icons. -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=engineContext%>/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
 <!-- START-DEBUG -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular.js"></script>
 <!-- END-DEBUG -->
 <!-- START-PRODUCTION 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
 END-PRODUCTION -->
 <!-- angular-material-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=engineContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 
 <!-- toastr -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=engineContext%>/themes/sbi_default/css/angular-toastr.css">
+<script type="text/javascript" src="<%=engineContext%>/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js"></script>
 
 <!-- angular tree -->
-<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+<link rel="stylesheet" 	href="<%=engineContext%>/js/lib/angular/angular-tree/angular-ui-tree.min.css">
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 
 <!-- angular json tree -->
-<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-json-tree/json-tree.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-json-tree/json-tree.js"></script>
+<link rel="stylesheet" 	href="<%=engineContext%>/js/lib/angular/angular-json-tree/json-tree.css">
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
 <!-- expanderBox -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/expander-box/expanderBox.js"></script>
 
 <!-- colorpicker -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/color-picker/tinycolor-min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/color-picker/tinygradient.min.js"></script>
+<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="<%=engineContext%>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<link rel="stylesheet" href="<%=engineContext%>/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
 <!-- 
 	Specifying all Angular services that we are eventually going to use (inject into the controller that is created for the 
