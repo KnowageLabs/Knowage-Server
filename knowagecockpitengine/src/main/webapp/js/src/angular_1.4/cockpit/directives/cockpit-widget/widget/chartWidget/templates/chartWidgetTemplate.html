@@ -8,7 +8,5 @@ updateble='ngModel.updateble'
 drillable='ngModel.drillable' 
 on-click-series='reloadWidgetsByChartEvent' 
 layout-column flex>
-
-
-
 </chart-renderer>
+<canvas class="canvas-for-highcharts" ng-if='enterpriseEdition && d3Charts.indexOf(chartType)==-1' id='"canvas_"+ngModel.id'></canvas>

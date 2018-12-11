@@ -213,6 +213,8 @@ function cockpitChartWidgetControllerFunction(
 		$scope.ngModel.cross={};
 	};
 
+	$scope.chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
+	$scope.d3Charts = ["wordcloud","parallel","sunburst","chord"]
 	$scope.init=function(element,width,height){
 		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
 	    	  for (var i = 0; i < $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length; i++) {
@@ -287,7 +289,7 @@ function cockpitChartWidgetControllerFunction(
 				$timeout(function (){
 					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
 				},400)
-				
+
 			}
 		}
 
@@ -369,9 +371,9 @@ function cockpitChartWidgetControllerFunction(
 										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 										  scope.adaptMetadata(metadataFields);
 
-														   
-																		   
-												
+
+
+
 
 										  //send broadcast for selections with data filtered by selections
 										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
@@ -698,7 +700,7 @@ function cockpitChartWidgetControllerFunction(
 			    		  }
 
 				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
-				    	  
+
 				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE"){
 					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
 					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
