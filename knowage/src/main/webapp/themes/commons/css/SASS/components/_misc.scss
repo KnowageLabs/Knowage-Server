@@ -1032,6 +1032,9 @@ color-picker {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .canvas-for-highcharts{
+    display: none;
+  }
   html{
     overflow: hidden;
   }

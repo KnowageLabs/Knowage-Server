@@ -141,6 +141,9 @@ END-PRODUCTION -->
 <!-- MOMENT.JS -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
 
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/rgbcolor/index.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
+
 <!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
  
 <!-- 3.x.x 

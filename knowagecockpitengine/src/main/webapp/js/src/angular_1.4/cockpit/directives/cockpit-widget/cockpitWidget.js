@@ -15,7 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it) v0.0.1
  *
@@ -1368,19 +1367,36 @@ function cockpitWidgetControllerFunction(
 	$scope.captureScreenShot = function(ev,model){
 		model.loadingScreen = true;
 		var element = document.querySelector('#w'+model.id+' .placedWidget');
-		html2canvas(element,{
-			imageTimeout: 0,
-			ignoreElements: document.querySelector('#viewModeMenu'),
-			async: false,
-			width: element.scrollWidth,
-		    height: element.scrollHeight
-		    }
-		).then(function(canvas) {
-		    canvas.toBlob(function(blob) {
-		        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
-		    });
-		    delete model.loadingScreen;
-		});
+		if(model.type == 'chart' && isIE && $scope.enterpriseEdition){
+			var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
+			xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
+			canvg(document.getElementById('canvas_'+model.id), xml, {renderCallback:function(){
+				document.getElementById('canvas_'+model.id).toBlob(function(blob) {
+			        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
+			        var tempCtx = document.getElementById('canvas_'+model.id).getContext("2d");
+			        tempCtx.clearRect(0, 0, 0, 0);
+			    });
+			}});
+			
+		    
+		}else{
+			html2canvas(element,{
+				imageTimeout: 0,
+				ignoreElements: document.querySelector('#viewModeMenu'),
+				async: false,
+				width: element.scrollWidth,
+			    height: element.scrollHeight
+			    }
+			).then(function(canvas) {
+			    canvas.toBlob(function(blob) {
+			        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
+			    });
+			});
+		}
+		delete model.loadingScreen;
+		
+		
+		
 	};
 	
 	$scope.exportToExcel = function(event, ngModel) {
