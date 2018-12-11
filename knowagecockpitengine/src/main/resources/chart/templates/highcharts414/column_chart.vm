@@ -1637,9 +1637,9 @@
 			name: '$valueKey',
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
-		    	 #set ($counter = $counter+1)
+		    	 
 		    #end
-
+				#set ($counter = $counter+1)
 			data: [
 				#foreach($el in  $map.get($valueKey))
 						
