@@ -17,7 +17,7 @@ public class Hive2DataBase extends HiveDataBase implements MetaDataBase {
 
 	@Override
 	public String getAliasDelimiter() {
-		return "";
+		return "`";
 	}
 
 	@Override
