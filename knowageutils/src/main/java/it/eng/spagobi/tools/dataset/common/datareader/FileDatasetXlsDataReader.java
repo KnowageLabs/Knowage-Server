@@ -146,7 +146,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			int initialRow = 0;
 
-			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty()))) {
+			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty())) && !(getSkipRows().equals(String.valueOf(0)))) {
 				initialRow = Integer.parseInt(getSkipRows()) - 1;
 				logger.debug("Skipping first " + getSkipRows() + " rows");
 			}
