@@ -5,7 +5,7 @@
 	 <label ng-if="selectedChartType.toLowerCase()!='heatmap'">{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumn.labelText")}}</label>
 	 <label  ng-if="selectedChartType.toLowerCase()=='heatmap'">{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumnFirstCateg.labelText")}}</label>
 		 <md-select ng-model="categories[0].orderColumn" name="categories_ordering_column"> <md-option
-		ng-repeat="option in allAttributes" value="{{option.id}}">{{option.id}}</md-option>
+		ng-repeat="option in allAttributes" value="{{option.id}}">{{option.alias}}</md-option>
 	</md-select> </md-input-container>
 	
 <md-input-container class="md-block">
