@@ -50,6 +50,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -126,8 +127,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Utility method. Returns the document associated to the descriptor object.
 	 *
-	 * @param docDescriptor
-	 *            Could be the document itself (an object of type BIObject), its id (an object of type Integer) or its label (an object of type String)
+	 * @param docDescriptor Could be the document itself (an object of type BIObject), its id (an object of type Integer) or its label (an object of type
+	 *                      String)
 	 *
 	 * @return the document associated to the descriptor object if it exist, null otherwise.
 	 */
@@ -170,8 +171,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Utility method. Returns the analytical drivers associated to the document object.
 	 *
-	 * @param label
-	 *            Could be the label of the document
+	 * @param label Could be the label of the document
 	 *
 	 * @return the list with analitycal drivers associated.
 	 */
@@ -214,8 +214,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Utility method. Returns the analytical driver associated to the descriptor object.
 	 *
-	 * @param analyticalDriverDescriptor
-	 *            Could be the analytical driver itself (an object of type Parameter) or its label (an object of type String)
+	 * @param analyticalDriverDescriptor Could be the analytical driver itself (an object of type Parameter) or its label (an object of type String)
 	 *
 	 * @return the analytical driver associated to the descriptor object if it exist, null otherwise.
 	 */
@@ -249,8 +248,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Utility method. Returns the metadata property associated to the descriptor object.
 	 *
-	 * @param matadataPropertyDescriptor
-	 *            Could be the metadata property's id (an object of type Integer) or its label (an object of type String)
+	 * @param matadataPropertyDescriptor Could be the metadata property's id (an object of type Integer) or its label (an object of type String)
 	 *
 	 * @return the analytical driver associated to the descriptor object if it exist, null otherwise.
 	 */
@@ -282,8 +280,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 *
-	 * @param document
-	 *            The document
+	 * @param document The document
 	 * @return return true if the doocument's id property is set and not equal to 0. This method do not perform a real check on the database.
 	 */
 	public boolean isAnExistingDocument(BIObject document) {
@@ -297,10 +294,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 *
-	 * @param document
-	 *            The document to save (insert or modify)
-	 * @param template
-	 *            The new template of the document
+	 * @param document The document to save (insert or modify)
+	 * @param template The new template of the document
 	 *
 	 * @return true if the save operation perform an overwrite ( = modify an existing document ), false otherwise ( = insert a new document )
 	 *
@@ -410,8 +405,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 *
-	 * @param document
-	 *            The document whose parameters have to be saved (insert or modify)
+	 * @param document The document whose parameters have to be saved (insert or modify)
 	 */
 	public void saveDocumentParameters(BIObject document) {
 		IParameterDAO parameterDAO;
@@ -434,10 +428,11 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Clone a document
 	 *
-	 * @param document
-	 *            The document id of the document to clone
+	 * @param profile
+	 *
+	 * @param document The document id of the document to clone
 	 */
-	public BIObject cloneDocument(Integer documentId) {
+	public BIObject cloneDocument(Integer documentId, IEngUserProfile profile) {
 		logger.debug("IN");
 
 		Assert.assertNotNull(documentId, "Input parameter [documentId] cannot be null");
@@ -455,7 +450,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			try {
 				logger.debug("Udapting label and name of the clone");
 				updateClonedDocumentProperties(clonedDocument);
-
+				updateDocumentFolder(clonedDocument, profile);
 				// document
 				logger.debug("Saving the clone of the document");
 				Integer clonedDocumentId = documentDAO.insertBIObjectForClone(clonedDocument, clonedTemplate);
@@ -484,6 +479,13 @@ public class AnalyticalModelDocumentManagementAPI {
 		}
 
 		return clonedDocument;
+	}
+
+	private void updateDocumentFolder(BIObject clonedDocument, IEngUserProfile profile) {
+		List<Integer> functionalities = new ArrayList<>();
+		functionalities.add(UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true).getId());
+		clonedDocument.setFunctionalities(functionalities);
+
 	}
 
 	private void updateClonedDocumentProperties(BIObject document) {
@@ -558,20 +560,17 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 *
-	 * @param documentDescriptor
-	 *            The descriptor of the target document
-	 * @param subObjectId
-	 *            The id of the target subobject (optional). If it is nos specified the metadata properties will be applied to the main object
-	 * @param metadataJSON
-	 *            The metadata properties to add. They are encoded as an array of object like the following one <code>
+	 * @param documentDescriptor The descriptor of the target document
+	 * @param subObjectId        The id of the target subobject (optional). If it is nos specified the metadata properties will be applied to the main object
+	 * @param metadataJSON       The metadata properties to add. They are encoded as an array of object like the following one <code>
 	 * {
 	 * 	meta_id: NUMBER
 	 * , meta_name: STRING
 	 * , meta_content: STRING
 	 * }
-	 * </code> at least one between attributes meta_id and meta_name must be set.
+	 * </code>                at least one between attributes meta_id and meta_name must be set.
 	 *
-	 *            TODO use this method to refactor class SaveMetadataAction
+	 *                           TODO use this method to refactor class SaveMetadataAction
 	 *
 	 */
 	public void saveDocumentMetadataProperties(Object documentDescriptor, Integer subObjectId, JSONArray metadataJSON) {
@@ -658,10 +657,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Copy all the parameters associated with sourceDocument to destinationDocument
 	 *
-	 * @param sourceDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the source document
-	 * @param destinationDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the destination document
+	 * @param sourceDocument      can be an object of type BIObject or an Integer representing the id of the source document
+	 * @param destinationDocument can be an object of type BIObject or an Integer representing the id of the destination document
 	 */
 	public void copyParameters(Object sourceDocument, Object destinationDocument) {
 		copyParameters(getDocument(sourceDocument), getDocument(destinationDocument));
@@ -747,10 +744,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Copy all the subobjects associated with sourceDocument to destinationDocument
 	 *
-	 * @param sourceDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the source document
-	 * @param destinationDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the destination document
+	 * @param sourceDocument      can be an object of type BIObject or an Integer representing the id of the source document
+	 * @param destinationDocument can be an object of type BIObject or an Integer representing the id of the destination document
 	 */
 
 	public void copySubobjects(Object sourceDocument, Object destinationDocument) {
@@ -808,10 +803,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Copy all the metadata associated with sourceDocument to destinationDocument. It does not copy the metdata of subjocts of the source document
 	 *
-	 * @param sourceDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the source document
-	 * @param destinationDocument
-	 *            can be an object of type BIObject or an Integer representing the id of the destination document
+	 * @param sourceDocument      can be an object of type BIObject or an Integer representing the id of the source document
+	 * @param destinationDocument can be an object of type BIObject or an Integer representing the id of the destination document
 	 */
 
 	public void copyMetadata(Object sourceDocument, Object destinationDocument) {
@@ -855,10 +848,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	 * label match with the corresponding dataset parameter's name. If for one dataset parameter does not exist an analytical driver whose label match with the
 	 * name of the parameter an exception will be thrown
 	 *
-	 * @param dataset
-	 *            the datset
-	 * @param document
-	 *            the document
+	 * @param dataset  the datset
+	 * @param document the document
 	 */
 	public void propagateDatasetParameters(IDataSet dataset, BIObject document) {
 
@@ -875,10 +866,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	 * present on the database. The name and the url of the added parameters are both equal to the analytical driver label. This method do not check if the
 	 * document already have a parameter with this name.
 	 *
-	 * @param documentDescriptor
-	 *            can be the document itself(BIObject), the document id(Integer) or the document label(String)
-	 * @param analyticalDriverDescriptor
-	 *            can be the analytical driver(Parameter) itself or its label (String)
+	 * @param documentDescriptor         can be the document itself(BIObject), the document id(Integer) or the document label(String)
+	 * @param analyticalDriverDescriptor can be the analytical driver(Parameter) itself or its label (String)
 	 * @param priority
 	 */
 	public void addParameter(BIObject documentDescriptor, Object analyticalDriverDescriptor, int priority) {

@@ -125,7 +125,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 		logger.debug("Execute clone");
-		BIObject cloned = documentManagementAPI.cloneDocument(id);
+		BIObject cloned = documentManagementAPI.cloneDocument(id, profile);
 		logger.debug("OUT");
 		String toBeReturned = JsonConverter.objectToJson(cloned, BIObject.class);
 		return Response.ok(toBeReturned).build();
@@ -400,7 +400,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 			if (direction != null && "UP".equalsIgnoreCase(direction)) {
 				moveStateUp(id);
-			}else if (direction != null && "DOWN".equalsIgnoreCase(direction)) {
+			} else if (direction != null && "DOWN".equalsIgnoreCase(direction)) {
 				moveStateDown(id);
 			}
 		} catch (EMFUserError e) {
@@ -411,46 +411,45 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		return "{}";
 	}
 
-	private void moveStateUp(Integer id) throws EMFUserError  {
+	private void moveStateUp(Integer id) throws EMFUserError {
 
-	    if (id != null){
-    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
-    		if (obj!= null){
-    			String state = obj.getStateCode();
-    			if (state!= null && state.equals("DEV")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
-    				obj.setStateCode("TEST");
-    				obj.setStateID(dTemp.getValueId());
-    			}else if (state!= null && state.equals("TEST")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "REL");
-    				obj.setStateCode("REL");
-    				obj.setStateID(dTemp.getValueId());
-    			}
-    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
-    		}
-	     }
-	 }
+		if (id != null) {
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			if (obj != null) {
+				String state = obj.getStateCode();
+				if (state != null && state.equals("DEV")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+					obj.setStateCode("TEST");
+					obj.setStateID(dTemp.getValueId());
+				} else if (state != null && state.equals("TEST")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "REL");
+					obj.setStateCode("REL");
+					obj.setStateID(dTemp.getValueId());
+				}
+				DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+			}
+		}
+	}
 
+	private void moveStateDown(Integer id) throws EMFUserError {
 
-	private void moveStateDown(Integer id) throws EMFUserError  {
-
-	    if (id != null){
-    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
-    		if (obj!= null){
-    			String state = obj.getStateCode();
-    			if (state!= null && state.equals("REL")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
-    				obj.setStateCode("TEST");
-    				obj.setStateID(dTemp.getValueId());
-    			}else if (state!= null && state.equals("TEST")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
-    				obj.setStateCode("DEV");
-    				obj.setStateID(dTemp.getValueId());
-    			}
-    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
-    		}
-	     }
-	 }
+		if (id != null) {
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			if (obj != null) {
+				String state = obj.getStateCode();
+				if (state != null && state.equals("REL")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+					obj.setStateCode("TEST");
+					obj.setStateID(dTemp.getValueId());
+				} else if (state != null && state.equals("TEST")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+					obj.setStateCode("DEV");
+					obj.setStateID(dTemp.getValueId());
+				}
+				DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+			}
+		}
+	}
 
 	/**
 	 * Creates a json array with children document informations
