@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.json.JsonException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -66,7 +67,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 	@Path("/export/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String exportData(@PathParam("label") String label, @Context HttpServletRequest req) {
-		String res = loadData(label, req, 0, Integer.MAX_VALUE, 0, null, null, null, null, null, null, null);
+		String res = loadData(label, req, 0, Integer.MAX_VALUE, 0, null, null, null, null, null, null, null, null);
 		return res;
 	}
 
@@ -77,7 +78,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			@QueryParam("limit") Integer limit, @QueryParam("page") Integer page, @QueryParam("dataSetParameters") String dataSetParameters,
 			@QueryParam("sort") JSONArray sortOptions, @QueryParam("valueFilter") String valueFilter, @QueryParam("columnsFilter") String columnsFilter,
 			@QueryParam("columnsFilterDescription") String columnsFilterDescription, @QueryParam("typeValueFilter") String typeValueFilter,
-			@QueryParam("typeFilter") String typeFilter) {
+			@QueryParam("typeFilter") String typeFilter, @QueryParam("drivers") JSONObject driversMap) {
 
 		logger.debug("Retriving data for the preview");
 
@@ -85,7 +86,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 		boolean isDatasetVisible = false;
 		Map<String, Object> parametersMap = new HashMap<String, Object>();
-
+		Map<String, Object> driversRuntimeMap = parseJsonDriversMap(driversMap);
 		// Adding the parameters for sort, filters and dataset parameters
 		logger.debug("Adding filters, sorting, parameters");
 		addSortParam(sortOptions, parametersMap);
@@ -150,6 +151,9 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 			logger.debug("Setting parameters");
 			ds.setParamsMap(parametersMap);
+
+			logger.debug("Setting drivers");
+			ds.setDrivers(driversRuntimeMap);
 
 			logger.debug("Loading the data");
 			ds.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
@@ -363,5 +367,24 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			locale = Locale.ENGLISH;
 		}
 		return locale;
+	}
+
+	private Map parseJsonDriversMap(JSONObject drivers) {
+		HashMap<String, Object> driversMap = new HashMap<>();
+		try {
+			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
+				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
+					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
+						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
+						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
+					} else
+						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
+				}
+			}
+		} catch (JSONException e) {
+			logger.debug("Unsuccessful parsing of JSONObject to map");
+			throw new JsonException(e.getLocalizedMessage(), e);
+		}
+		return driversMap;
 	}
 }

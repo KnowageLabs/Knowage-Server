@@ -55,7 +55,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.dateFormatDefault = "dd/MM/yyyy";
 	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 	$scope.datasetParameters = []
-
+	var parameterDeletingMessage = "Are you sure you want to delete the dataset parameter ? ";
+	var qbeParameterDeletingMessage = "";
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
@@ -889,7 +890,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 	// TODO: translate
 		    	var confirm = $mdDialog.confirm()
 			         .title("Delete dataset parameter")
-			         .textContent("Are you sure you want to delete the dataset parameter?")
+			         .textContent($scope.selectedDataSet.dsTypeCd == "Qbe" ? qbeParameterDeletingMessage : parameterDeletingMessage)
 			         .ariaLabel("Delete dataset parameter")
 			         .ok($scope.translate.load("sbi.general.yes"))
 			         .cancel($scope.translate.load("sbi.general.No"));
@@ -1905,7 +1906,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.setFormNotDirty();
 			}
 		}
-
+		 if($scope.selectedDataSet.dsTypeCd = "Qbe" && !qbeParameterDeletingMessage.includes("Qbe") ){
+				qbeParameterDeletingMessage =  parameterDeletingMessage + "Parameters for Qbe Dataset should be deleted from qbeDesigner";
+		}
 
 	};
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
@@ -3062,7 +3065,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	function DatasetPreviewController($scope,$mdDialog,$http) {
 
 		$scope.executeParameter = function(){
-			$scope.showQbe = true;
+			$scope.showDrivers = false;
 			$scope.dataset.executed = true;
 			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
 			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))

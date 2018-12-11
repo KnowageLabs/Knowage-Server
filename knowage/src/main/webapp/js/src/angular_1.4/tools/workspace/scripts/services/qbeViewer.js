@@ -98,13 +98,19 @@ angular
 			qbeUrlBuilderService.setBaseUrl(url);
 
 			var queryParamObj = {};
-			queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
 
 			if(driverableObject){
 
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
-				driverableObject.dsTypeCd ? $scope.drivers = driverableObject.drivers : $scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+
+				if(driverableObject.dsTypeCd ){
+					$scope.drivers = driverableObject.drivers
+						queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
+				}else{
+						$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+				}
+
 				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
 
 			}
@@ -161,12 +167,16 @@ angular
 			$scope.executeParameter = function(){
 
 				if($scope.drivers){
-				var drivers = driversExecutionService.buildStringParameters($scope.drivers);
+					var drivers = driversExecutionService.buildStringParameters($scope.drivers);  // [WIP new implementation]  driversExecutionService.prepareDriversForSending($scope.drivers);
 				}else {
 					var drivers = {};
 				}
 
+
+				qbeUrlBuilderService.addQueryParams(queryParamObj);
 				qbeUrlBuilderService.addQueryParams(drivers);
+
+
 				$scope.documentViewerUrl = qbeUrlBuilderService.build();
 				$scope.showDrivers = false
 				$scope.driverableObject.executed = true;

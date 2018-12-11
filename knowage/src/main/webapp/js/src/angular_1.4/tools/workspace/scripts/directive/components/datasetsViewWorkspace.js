@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular
-	.module('datasets_view_workspace', [])
+	.module('datasets_view_workspace', ['driversExecutionModule'])
 
 	/**
 	 * The HTML content of the Recent view (recent documents).
@@ -39,7 +39,7 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -592,8 +592,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 		 //$window.location.href=url;
-		$qbeViewer.openQbeInterfaceDSet($scope, false, url, true);
-
+		$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
+			$qbeViewer.openQbeInterfaceDSet($scope, false, url, true);
+		})
     }
 
     $scope.extractNotDerivedLabels= function(datasets){
@@ -652,7 +653,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     	$scope.datasetInPreview=dataset;
     	$scope.disableBack=true;
-    	$scope.getDatasetParametersFromBusinessModel(dataset)
+    	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
     	/**
     	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
     	 * property (e.g. Query datasets).
@@ -706,7 +707,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		         // previewDatasetColumns:$scope.previewDatasetColumns
 		      }
 		    });
-
+    	})
     }
 
     $scope.editQbeDataset = function(dataset) {
@@ -722,11 +723,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	           +'&DATAMART_NAME='+modelName
 	           +'&DATASOURCE_LABEL='+ dataSource;
 	     }
-	     $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
+	     $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
 	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
 	  // $window.location.href=url;
-	  $scope.isFromDataSetCatalogue = false;
-	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
+			  $scope.isFromDataSetCatalogue = false;
+			  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
+	     });
     }
 
     $scope.editFileDataset = function (arg) {
@@ -782,7 +784,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		$scope.paginationDisabled = false;
     		$scope.previewPaginationEnabled = true;
     	}
+    	if (datasetType == "QBE") {
 
+    	}
     	params={};
     	params.start = $scope.startPreviewIndex;
     	params.limit = $scope.itemsPerPage;
@@ -794,6 +798,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	params.columnsFilterDescription=null;
     	params.typeValueFilter=null;
     	params.typeFilter=null;
+    	params.drivers = driversExecutionService.buildStringParameters($scope.drivers);
 
     	config={};
     	config.params=params;
@@ -1366,45 +1371,27 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	var prevScope = $scope;
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
-			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
+		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.drivers = response.data.filterStatus;
+				selectedDataset.drivers = $scope.drivers;
 			})
+			return promise;
 		}
     function DatasetPreviewController($scope,$mdDialog,$http){
     	$scope.executeParameter = function(){
-			$scope.showQbe = true;
+			$scope.showDrivers = false;
 			$scope.dataset.executed = true;
-			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
-			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-			.then(function(response){
-					$scope.getPreviewSet(response.data);
-			})
+			$scope.dataset.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
+			$scope.getPreviewSet($scope.datasetInPreview);
 		}
 
-		//	$scope.dataset = $scope.selectedDataSet;
-		//	$scope.drivers = $scope.dataset.drivers;
-			for(var i = 0; i < $scope.drivers.length;i++){
-				$scope.dataset.executed = true;
-				if($scope.drivers[i].mandatory &&  $scope.drivers.length == 1 ){
-					$scope.dataset.executed = true;
-					$scope.showDrivers = false;
-				}else
-				if($scope.drivers[i].mandatory){
-					$scope.dataset.executed = false;
-					$scope.showDrivers = true;
-					break;
-				}
-			}
+		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+		$scope.dataset.executed = !$scope.showDrivers;
 
-			if(!$scope.drivers){
-				$scope.showDrivers = false;
-				$scope.dataset.executed = true;
-			}
-
-			$scope.hideDrivers =function(){
-				$scope.showDrivers = true;
-				$scope.dataset.executed = !$scope.dataset.executed;
-			}
+		$scope.hideDrivers =function(){
+			$scope.showDrivers = !$scope.showDrivers;
+			$scope.dataset.executed = true;
+		}
 
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];

@@ -1,5 +1,6 @@
 package it.eng.spagobi.engines.qbe.api;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,10 @@ import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JacksonMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -170,7 +174,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
 			modelEntities.addAll(sqlModality.getSqlFilterEntities(query, getEngineInstance().getDataSource()));
-			//updateQueryGraphInQuery(filteredQuery, true, modelEntities);
+			// updateQueryGraphInQuery(filteredQuery, true, modelEntities);
 
 			Map<String, Map<String, String>> inlineFilteredSelectFields = filteredQuery.getInlineFilteredSelectFields();
 
@@ -416,7 +420,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return promptValues;
 	}
 
-	public IDataStore executeQuery(Integer start, Integer limit, Query q) {
+	public IDataStore executeQuery(Integer start, Integer limit, Query q) throws IOException {
 		IDataStore dataStore = null;
 		IDataSet dataSet = getActiveQueryAsDataSet(q);
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
@@ -439,6 +443,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 		}
 		dataSet.setDrivers(drivers);
+		drivers = transformDriversFromEnv(drivers);
 
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
@@ -884,4 +889,17 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
+	public static Map<String, Object> transformDriversFromEnv(Map<String, Object> drivers) throws IOException {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		ObjectMapper mapper = JacksonMapper.getMapper();
+
+		try {
+			map = mapper.readValue(drivers.toString().replaceAll("=", ":"), new TypeReference<Map<String, Object>>() {
+			});
+		} catch (IOException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+
+		return map;
+	}
 }

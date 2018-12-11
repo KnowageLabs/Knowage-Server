@@ -149,6 +149,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.metaWebFunctionality=false;
 				$scope.businessModelForm.$setPristine();
 				$scope.businessModelForm.$setUntouched();
+				 driversService.setDriverRelatedObject($scope.selectedBusinessModel);
 			}else{
 				$mdDialog.show($scope.confirm).then(function(){
 					angular.copy(item,$scope.selectedBusinessModel);

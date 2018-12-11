@@ -394,6 +394,23 @@
 				}
 			};
 
+			executionService.prepareDriversForSending = function(drivers){
+
+				var transformedDrivers = {};
+
+					for(var i = 0; i < drivers.length; i++){
+
+						var tempDriver = {}
+						tempDriver.urlName = drivers[i].urlName;
+						tempDriver.mandatory = drivers[i].mandatory;
+						tempDriver.multivalue = drivers[i].multivalue;
+						tempDriver.value = drivers[i].parameterValue
+
+						transformedDrivers[tempDriver.urlName] = tempDriver;
+					}
+
+				return transformedDrivers;
+			}
   return executionService;
 
 		}])
