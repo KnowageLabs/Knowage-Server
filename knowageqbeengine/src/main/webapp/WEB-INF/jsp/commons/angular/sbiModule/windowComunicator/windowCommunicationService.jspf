@@ -1,0 +1,147 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+<script>
+angular.module('sbiModule').service('windowCommunicationService',['messageHandlerValidatorService',function(messageHandlerValidatorService){
+
+	
+ 
+	var communicatorUtils = new CommunicatorUtils();
+	var listenerManager = new ListenerManager();
+	var messageManager = new MessageManager(messageHandlerValidatorService);
+	 
+	var eventLisneter = function(event){
+		 
+	 	if(communicatorUtils.isConnectionRequest(event)){
+	 		listenerManager.addListener(event.source)	
+	 	}else if(communicatorUtils.isConnectionClosing(event)){
+	 		listenerManager.removeListener(event.source)
+	 	}else{	
+	 		messageManager.handleMessage(event)
+	 	}
+	 	
+		
+	} 
+	
+	 var init = function(){
+		 
+		 if(communicatorUtils.hasParent()){
+			 messageManager.sendConnectionRequest();
+			 listenerManager.addListener(window.parent);
+		 }
+		 window.addEventListener("message",eventLisneter, false);
+		 window.addEventListener("beforeunload",messageManager.unsubscribe, false);	
+	 }
+	 
+	 init();
+	 return {
+		 	
+		removeMessageHandler:function(messageHandler){messageManager.removeMessageHandler(messageHandler)},
+		sendMessage:function(message){messageManager.broadcastMessage(message,listenerManager.listeners)},
+	 	addMessageHandler:function(messageHandler){messageManager.addMessageHandler(messageHandler)}
+	 }
+
+}])
+
+function CommunicatorUtils(){
+	
+	this.hasParent = function(){
+		 return window !== window.parent;
+	 }
+	
+	this.isConnectionRequest = function(event){
+		 return event.data === "handshake";
+	 }
+	
+	this.isConnectionClosing = function(event){
+		 return event.data === "unsubscribe";
+	 }
+}
+
+function ListenerManager(){
+	
+	this.listeners = [];
+	
+	this.addListener = function(listener){
+		 this.listeners.push(listener)
+		 this.removeNonExistingListeners();
+	 }
+	 
+	this.removeListener = function(listener){
+		 for(var i = 0;i<this.listeners.length;i++){
+	 			if(listener === this.listeners[i]){
+	 				this.listeners.splice(i,1);
+	 			}
+		 }
+	 }
+	 
+	this.removeNonExistingListeners = function(){
+		 for(var i = 0;i<this.listeners.length;i++){
+	 			if(!this.listeners[i].parent){
+	 				this.listeners.splice(i,1);
+	 			}
+		 }
+	 }
+}
+
+function MessageManager(messageHandlerValidator){
+	
+	this.messageHandlers = [];
+	this.messageHandlerValidator = messageHandlerValidator;
+	
+	this.sendConnectionRequest = function(){
+		 window.parent.postMessage("handshake","*");
+	 }
+	 
+	 this.unsubscribe = function(){
+		 window.parent.postMessage("unsubscribe","*");
+	 }
+	 
+	 this.addMessageHandler = function(messageHandler){
+			if(this.messageHandlerValidator.isValid(messageHandler)){
+				this.messageHandlers.push(messageHandler)
+			}else{
+				
+				console.error("valid messageHandler must have function handleMessage(message)")
+				console.error(messageHandler)
+			}
+			
+		}
+	 
+	 this.handleMessage = function(event){
+		 for(var i = 0;i<this.messageHandlers.length;i++){
+	 			this.messageHandlers[i].handleMessage(event.data);
+		 }
+	 }
+	 
+	this.broadcastMessage = function(message,listeners){
+		 for(var i =0;i<listeners.length;i++){
+			 listeners[i].postMessage(message,"*");
+			}
+	 }
+	
+	this.removeMessageHandler = function(messageHandler){
+		 for(var i = 0;i<this.messageHandlers.length;i++){
+	 			if(messageHandler === this.messageHandlers[i]){
+	 				this.messageHandlers.splice(i,1);
+	 			}
+		 }
+	}
+	 
+	 
+	
+}
+</script>

@@ -35,6 +35,7 @@ angular
 		"sbiModule_restServices",
 		"sbiModule_messaging",
 		"sbiModule_user",
+		"windowCommunicationService",
 		"$mdDialog",
 		"$mdPanel",
 		"$q",
@@ -42,7 +43,7 @@ angular
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -56,6 +57,22 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulasFromXml();
+	var comunicator = windowCommunicationService;
+	comunicator.sendMessage("Hi from qbe");
+
+	var consoleHandler = {}
+	consoleHandler.handleMessage = function(message){
+		if(message === 'close'){
+			var saveObj = {};
+			saveObj.qbeQuery = {catalogue: {queries: [$scope.editQueryObj]}};;
+			saveObj.pars = $scope.pars;
+			comunicator.sendMessage(saveObj);
+		}
+		console.log(message)
+	}
+	comunicator.addMessageHandler(consoleHandler);
+
+
 	formulaService.getCustomFormulas().then(function(response) {
 		$scope.customFormulas = [];
 		if(response.data.data){

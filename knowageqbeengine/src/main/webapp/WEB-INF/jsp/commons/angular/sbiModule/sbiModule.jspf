@@ -35,5 +35,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleDownloadService.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleDeviceService.jspf"%>
 
-
-
+<%@include file="/WEB-INF/jsp/commons/angular/sbiModule/windowComunicator/windowCommunicationService.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/sbiModule/windowComunicator/messageHandlerValidatorService.jspf"%>

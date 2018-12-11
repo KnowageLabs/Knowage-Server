@@ -23,8 +23,19 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService) {
 		var driversExecutionService = $injector.get('driversExecutionService');
+
+		var comunicator = windowCommunicationService;
+		var consoleHandler = {}
+		consoleHandler.name = "console"
+		consoleHandler.handleMessage = function(message){
+			console.log(message)
+		}
+
+
+		comunicator.addMessageHandler(consoleHandler);
+
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
 
@@ -59,6 +70,19 @@ angular
 
 		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
 
+			var saveHadler = {}
+			saveHadler.name = "save"
+			saveHadler.handleMessage = function(message){
+				if(message.pars) {
+					$scope.parameterItems = message.pars;
+					$scope.selectedDataSet.qbeJSONQuery = message.qbeQuery;
+				}
+			}
+			comunicator.addMessageHandler(saveHadler);
+			$scope.$on("$destroy",function(){
+				console.log("destroying controller")
+				comunicator.removeMessageHandler(saveHadler);
+			})
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
 			}else{
@@ -84,7 +108,7 @@ angular
 						}
 					)
 					.then(function() {
-
+						comunicator.removeMessageHandler(saveHadler);
 					});
 
 			}
@@ -145,8 +169,8 @@ angular
 				$mdDialog.hide();
 
 				if($scope.isFromDataSetCatalogue) {
-					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
-
+					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+					comunicator.sendMessage("close");
 				} else {
 					if ($scope.datasetSavedFromQbe==true) {
 
