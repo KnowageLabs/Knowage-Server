@@ -1,6 +1,5 @@
 package it.eng.spagobi.engines.qbe.api;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,10 +22,7 @@ import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JacksonMapper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -420,7 +416,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return promptValues;
 	}
 
-	public IDataStore executeQuery(Integer start, Integer limit, Query q) throws IOException {
+	public IDataStore executeQuery(Integer start, Integer limit, Query q) {
 		IDataStore dataStore = null;
 		IDataSet dataSet = getActiveQueryAsDataSet(q);
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
@@ -443,7 +439,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 		}
 		dataSet.setDrivers(drivers);
-		drivers = transformDriversFromEnv(drivers);
+//		drivers = transformDriversFromEnv(drivers);
 
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
@@ -889,17 +885,17 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
-	public static Map<String, Object> transformDriversFromEnv(Map<String, Object> drivers) throws IOException {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		ObjectMapper mapper = JacksonMapper.getMapper();
-
-		try {
-			map = mapper.readValue(drivers.toString().replaceAll("=", ":"), new TypeReference<Map<String, Object>>() {
-			});
-		} catch (IOException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-
-		return map;
-	}
+//	public static Map<String, Object> transformDriversFromEnv(Map<String, Object> drivers) throws IOException {      [WIP new implementation of drivers] Should be moved to seperated file or to use existing methods
+//		HashMap<String, Object> map = new HashMap<String, Object>();
+//		ObjectMapper mapper = JacksonMapper.getMapper();
+//
+//		try {
+//			map = mapper.readValue(drivers.toString().replaceAll("=", ":"), new TypeReference<Map<String, Object>>() {
+//			});
+//		} catch (IOException e) {
+//			throw new IOException(e.getMessage(), e);
+//		}
+//
+//		return map;
+//	}
 }
