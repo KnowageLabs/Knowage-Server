@@ -279,6 +279,10 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
 
+			if (valueField == null) {
+				valueField = new String();
+				valueField = "Column " + String.valueOf(c + 1);
+			}
 			FieldMetadata fieldMeta = new FieldMetadata();
 			String fieldName = StringUtils.escapeForSQLColumnName(valueField.toString());
 			fieldMeta.setName(fieldName);
