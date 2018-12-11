@@ -57,7 +57,7 @@
 						drag-options="dragOptionsFunct"
 						after-delete-association=afterClearItem(item)
 						multivalue=true
-						associated-parent-path="$parent.name"
+						
 						>
 					</associator-directive>
 				
