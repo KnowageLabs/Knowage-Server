@@ -104,9 +104,10 @@ angular
 
              $scope.$on('changedModel', function(event, data) {
             	   self.driverRelatedObject = data;
+            	   driversService.renderedDrivers =  $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
             	//   driversService.driverRelatedObject =  self.driverRelatedObject;
             	   self.selectedDriver = undefined;
-            	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
+            	   self.drivers = driversService.renderedDrivers;
             	   requiredPath = "2.0/businessmodels";
             	   self.driversNum = self.drivers.length > 1
              });
@@ -209,14 +210,12 @@ angular
                      }
                  }
                  if(self.drivers.length > 0){
-	                 self.priorityOfDeletedDriver = self.drivers[index].priority;
+	                 self.priorityOfDeletedDriver = driversService.driversForDeleting[driversService.driversForDeleting.length-1].priority;
 	                 for (var d in self.drivers) {
-	                     if (self.drivers[d].priority > self.drivers[index].priority) {
 	                     if (self.drivers[d].priority > self.priorityOfDeletedDriver) {
 	                         self.drivers[d].priority--;
 	                     }
-	                 }
-	//                 self.confirmDelete(index,name);
+
 	                 }
                  }
              }

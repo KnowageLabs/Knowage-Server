@@ -27,7 +27,7 @@
 	      		  driversResource.driverRelatedObject = {};
 	    		  driversResource.driversOnObject = [];
 	    		  driversResource.driversNum =0;
-
+	    		  driversResource.renderedDrivers = [];
 
 	      		driversResource.getParusesByAnaliticalDriverId = function (driverId){
 	    			   var base = "2.0/analyticalDrivers";
@@ -126,6 +126,10 @@
 	               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
+		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
+		           					if(response.data.priority == driversResource.renderedDrivers[i].priority)
+		           						driversResource.renderedDrivers[i] = response.data;
+		           				}
 
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
 	           					var driverIndex = -1;

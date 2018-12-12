@@ -702,6 +702,11 @@
 			$scope.execProperties.executionInstance.OBJECT_LABEL = $scope.execProperties.name;
 			$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
 			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
+			if($scope.execProperties.drivers){
+				$scope.execProperties.parametersData = {};
+				$scope.execProperties.parametersData.documentParameters = $scope.execProperties.drivers;
+			}
+
 			if(!$scope.execProperties.hideProgressCircular){
 				$scope.execProperties.hideProgressCircular={};
 			    $scope.execProperties.hideProgressCircular.status=false;

@@ -1378,6 +1378,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			return promise;
 		}
     function DatasetPreviewController($scope,$mdDialog,$http){
+    	$scope.dataset = $scope.datasetInPreview;
     	$scope.executeParameter = function(){
 			$scope.showDrivers = false;
 			$scope.dataset.executed = true;
