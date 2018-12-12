@@ -80,9 +80,11 @@ public final class Tuple {
 			if (i != 0) {
 				tuple.append(valueDelimiter);
 			}
-			tuple.append(stringDelimiter);
-			tuple.append((values.get(i) == null ? null : getProperValueString(values.get(i))));
-			tuple.append(stringDelimiter);
+			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
+			String delimiter = value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
+			tuple.append(delimiter);
+			tuple.append(value);
+			tuple.append(delimiter);
 		}
 		tuple.append(suffix);
 		return tuple.toString();
