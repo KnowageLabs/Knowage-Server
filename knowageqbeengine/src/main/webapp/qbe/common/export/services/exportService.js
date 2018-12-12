@@ -17,47 +17,64 @@
  */
 
 (function(){
-	
-	angular.module('exportModule').factory('exportService', function(sbiModule_action_builder,sbiModuleDownloadService,sbiModule_messaging){
-		
+
+	angular.module('exportModule').factory('exportService', function(sbiModule_action_builder,sbiModuleDownloadService,sbiModule_messaging, sbiModule_restServices, sbiModule_config){
+
 		var exporters = [];
 		exporters.push(new Exporter('csv','text/csv'));
 		exporters.push(new Exporter('xls','application/vnd.ms-excel'));
 		exporters.push(new Exporter('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
-		
-		
+
+
 		return {
-			
-			exportQueryResults:function(query,mimeType){
-				
-				var exportResultAction = sbiModule_action_builder.getActionBuilder("POST");
-				exportResultAction.actionName = "EXPORT_RESULT_ACTION";
-				exportResultAction.queryParams.MIME_TYPE = mimeType;
-				exportResultAction.formParams.query = query;
-				exportResultAction.conf.responseType = 'arraybuffer';
-				exportResultAction.executeAction().then(function(response){
-					
-					sbiModuleDownloadService.getBlob(response);
-					
-					
-				},function(response){
-					var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
-					var obj = JSON.parse(decodedString);
-					sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
-				});
+
+			exportQueryResults:function(query, mimeType, bodySend){
+				if(mimeType=='text/csv') {
+					var config = {"responseType": "arraybuffer"};
+					var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id;
+					var promise = sbiModule_restServices.promisePost('qbequery/export', q, bodySend, config);
+					var fileName = "report.csv";
+					var fileExtension = 'csv';
+					promise.then(function(response){
+
+						sbiModuleDownloadService.getBlob(response, fileName, fileExtension);
+
+					},function(response){
+						var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
+						var obj = JSON.parse(decodedString);
+						sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
+					});
+				} else {
+					var exportResultAction = sbiModule_action_builder.getActionBuilder("POST");
+					exportResultAction.actionName = "EXPORT_RESULT_ACTION";
+					exportResultAction.queryParams.MIME_TYPE = mimeType;
+					exportResultAction.formParams.query = query;
+					exportResultAction.conf.responseType = 'arraybuffer';
+					exportResultAction.executeAction().then(function(response){
+
+						sbiModuleDownloadService.getBlob(response);
+
+
+					},function(response){
+						var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
+						var obj = JSON.parse(decodedString);
+						sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
+					});
+				}
+
 			},
-		
+
 			getExporters:function(){
 				return exporters;
 			}
 		}
-		
+
 	})
-	
+
 	function Exporter(name,mymeType){
 		this.name = name;
 		this.mimeType = mymeType;
 	}
-	
-	
+
+
 })();
