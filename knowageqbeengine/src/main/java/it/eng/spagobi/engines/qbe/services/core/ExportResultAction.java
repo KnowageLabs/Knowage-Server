@@ -27,13 +27,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
@@ -149,7 +154,9 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				// logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 
 				statement.setParameters(getEnv());
+
 				jpaQueryStr = statement.getQueryString();
+
 				logger.debug("Executable HQL/JPQL query: [" + jpaQueryStr + "]");
 
 				sqlQuery = statement.getSqlQueryString();
@@ -233,6 +240,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			try {
 
 				IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+
 				connection = dataSource.getConnection();
 			} catch (Exception e) {
 				logger.debug("Query execution aborted because of an internal exception");
@@ -337,6 +345,25 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			dataSet.addBinding("attributes", userAttributes);
 			dataSet.addBinding("parameters", this.getEnv());
 			logger.debug("Executing query ...");
+
+			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+			Session session = (Session) entityManager.getDelegate();
+			Map<String, Object> envs = getEnv();
+			String driverName = null;
+			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
+			Iterator<String> iter = filterNames.iterator();
+
+			Map<String, Object> drivers = new HashMap<String, Object>();
+			while (iter.hasNext()) {
+				String filterName = iter.next();
+				Map<String, String> driverUrlNames = session.getSessionFactory().getFilterDefinition(filterName).getParameterTypes();
+				for (String key : driverUrlNames.keySet()) {
+					driverName = key.toString();
+					drivers.put(driverName, envs.get(driverName));
+				}
+			}
+			dataSet.setDrivers(drivers);
+
 			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
 
 			dataStore = dataSet.getDataStore();
