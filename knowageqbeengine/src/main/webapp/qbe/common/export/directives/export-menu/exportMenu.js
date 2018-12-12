@@ -17,11 +17,11 @@
  */
 
 (function(){
-	
+
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
+
 	angular.module('exportModule')
 	.directive('exportMenu', function($mdDialog, $mdMenu) {
 		 return {
@@ -30,28 +30,34 @@
 		        scope: {},
 		        templateUrl: currentScriptPath + 'export.menu.tmpl.html',
 		        link: function link(scope, element, attrs) {
-		        	
+
 		        	scope.$on('editQueryObj', function (event, data) {
 		        		console.log("editQueryObj");
 		    			console.log(data);
 		    			scope.query = data;
 		    		});
+
+		        	scope.$on('bodySend', function (event, data) {
+		        		console.log("bodySend");
+		    			console.log(data);
+		    			scope.bodySend = data;
+		    		});
 		        }
 		    };
-		
-		
+
+
 	})
-	
+
 	function exportMenuController($scope,exportService,sbiModule_translate){
 		$scope.exportService = exportService;
 		$scope.translate = sbiModule_translate;
-		
+
 		$scope.openMenu = function(menu, e){
 			e.stopPropagation();
 			menu(e);
 		}
-		
-		
+
+
 	}
-	
+
 })();

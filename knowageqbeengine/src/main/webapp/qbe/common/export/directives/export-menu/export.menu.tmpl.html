@@ -8,7 +8,7 @@
 	</md-button>
 	<md-menu-content>
 		<md-menu-item ng-repeat="exporter in exportService.getExporters()">
-			<md-button class="md-button" ng-click="exportService.exportQueryResults(query,exporter.mimeType)" >
+			<md-button class="md-button" ng-click="exportService.exportQueryResults(query, exporter.mimeType, bodySend)" >
 					{{exporter.name | uppercase}}
 			</md-button>
 		</md-menu-item>			

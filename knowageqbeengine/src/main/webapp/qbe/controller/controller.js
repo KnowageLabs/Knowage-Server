@@ -97,6 +97,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 		}
+		$rootScope.$broadcast('bodySend', $scope.bodySend);
 		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 	},true)
 
