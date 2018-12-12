@@ -29,11 +29,6 @@ import java.util.Scanner;
 
 import javax.script.ScriptEngineManager;
 
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.AbstractDataSource;
@@ -48,7 +43,8 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.script.groovy.GroovyScriptAPI;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -67,6 +63,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 public abstract class AbstractQbeDataSet extends AbstractDataSet {
@@ -112,7 +109,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			dataStoreFieldMeta.setAlias(queryFiled.getAlias());
 			if (queryFiled.isSimpleField()) {
 				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryFiled;
-				dataStoreFieldMeta.setName(((SimpleSelectField) queryFiled).getUniqueName());
+				dataStoreFieldMeta.setName(((SimpleSelectField) queryFiled).getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
 				dataStoreFieldMeta.setProperty("uniqueName", dataMartSelectField.getUniqueName());
 				dataStoreFieldMeta.setType(Object.class);
@@ -454,7 +451,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		sb.append("_");
 		sb.append(getSQLQuery(true));
 		sb.append("_");
-		if(getDataSource() != null &&  getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
+		if (getDataSource() != null && getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
 			sb.append(getDataSource().getJNDIRunTime(getUserProfile()));
 			sb.append("_");
 		}
@@ -578,8 +575,10 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since executed JDBC dataset does not contain correct metadata (name, alias,
 	 * attribute/measure) therefore we need to merge metadata
 	 *
-	 * @param jdbcMetadata     the metadata retrieved by executing the JDBC dataset
-	 * @param qbeQueryMetaData the metadata of the Qbe query
+	 * @param jdbcMetadata
+	 *            the metadata retrieved by executing the JDBC dataset
+	 * @param qbeQueryMetaData
+	 *            the metadata of the Qbe query
 	 */
 	protected IMetaData mergeMetadata(IMetaData jdbcMetadata, IMetaData qbeQueryMetaData) {
 		int count = jdbcMetadata.getFieldCount();
