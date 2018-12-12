@@ -20,6 +20,10 @@
 author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 --%>
 
+<%
+	String engineContext = EnginConf.getInstance().getEngineContext();
+%>
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
