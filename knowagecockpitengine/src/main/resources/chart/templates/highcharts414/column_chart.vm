@@ -1623,7 +1623,7 @@
 	#end
 	
 	#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
-		$datasettransformer.print($relatedSerie.showValue)
+
 		#if($counter==0 && $relatedSerie.showValue =='true')
 		#set($selectedValue = true)
 		#else
