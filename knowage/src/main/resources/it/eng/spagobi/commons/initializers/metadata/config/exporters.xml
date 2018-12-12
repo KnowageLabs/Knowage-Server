@@ -28,7 +28,7 @@
 	<EXPORTER domain="XLS" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="XLSX" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagecockpitengine" defaultValue="true" />
-	<EXPORTER domain="JPG" engine="knowagecockpitengine" defaultValue="false" />
+	<!--EXPORTER domain="JPG" engine="knowagecockpitengine" defaultValue="false" /-->
 	<EXPORTER domain="XLS" engine="knowageolapengine" defaultValue="true" />
     <EXPORTER domain="XLS" engine="knowagewhatifengine" defaultValue="true" />
 </EXPORTERS>
