@@ -98,6 +98,7 @@ angular
 			qbeUrlBuilderService.setBaseUrl(url);
 
 			var queryParamObj = {};
+			var queryDriverObj = {};
 
 			if(driverableObject){
 
@@ -105,7 +106,7 @@ angular
 				$scope.driverableObject = driverableObject;
 
 				if(driverableObject.dsTypeCd ){
-					$scope.drivers = driverableObject.drivers
+					    $scope.drivers = driverableObject.drivers
 						queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
 				}else{
 						$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
@@ -126,9 +127,11 @@ angular
 
 			var drivers = driversExecutionService.additionalUrlDrivers;
 
-			var driversObject = driversExecutionService.createObjectFromArray(drivers);
+			var driversObject = driversExecutionService.createObjectFromArray(drivers); // [WIP]  --> driversExecutionService.prepareDriversForSending(drivers);
+			queryDriverObj.DRIVERS = driversObject;
 
-			qbeUrlBuilderService.addQueryParams(driversObject);
+
+			qbeUrlBuilderService.addQueryParams(driversObject); /// [WIP]  --> qbeUrlBuilderService.addQueryParams(queryDriverObj);
 			qbeUrlBuilderService.addQueryParams(queryParamObj);
 			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
@@ -167,14 +170,14 @@ angular
 			$scope.executeParameter = function(){
 
 				if($scope.drivers){
-					var drivers = driversExecutionService.buildStringParameters($scope.drivers);  // [WIP new implementation]  driversExecutionService.prepareDriversForSending($scope.drivers);
+					var drivers = driversExecutionService.buildStringParameters($scope.drivers);  // [WIP should be used after for changing sending object] --->  driversExecutionService.prepareDriversForSending($scope.drivers);
 				}else {
 					var drivers = {};
 				}
 
-
+				//[WIP] queryDriverObj.DRIVERS = drivers;
 				qbeUrlBuilderService.addQueryParams(queryParamObj);
-				qbeUrlBuilderService.addQueryParams(drivers);
+				qbeUrlBuilderService.addQueryParams(drivers);  // [WIP] qbeUrlBuilderService.addQueryParams(queryDriverObj);
 
 
 				$scope.documentViewerUrl = qbeUrlBuilderService.build();
