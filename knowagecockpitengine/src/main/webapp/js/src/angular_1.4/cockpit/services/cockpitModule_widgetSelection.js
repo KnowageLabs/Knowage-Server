@@ -830,7 +830,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				for(var i in datasetLabelAndColumnNames){
 					var datasetLabelAndColumnName = datasetLabelAndColumnNames[i];
 					var split = datasetLabelAndColumnName.split(".");
-					if(split[0]==datasetLabel && split[1]==columnName){
+					if(split[0]==datasetLabel && split[1].toLowerCase()==columnName.toLowerCase()){
 						result = selections[datasetLabelAndColumnName]
 					}
 				}
@@ -838,9 +838,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 
 		selections = cockpitModule_template.configuration.filters;
-		if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
-			result = selections[datasetLabel][columnName];
-		}
+		if(selections && selections[datasetLabel]){
+		    if(selections[datasetLabel][columnName]){
+                result = selections[datasetLabel][columnName];
+            } else if(selections[datasetLabel][columnName.toLowerCase()]){
+                result = selections[datasetLabel][columnName.toLowerCase()];
+            }
+        }
 
 		if(result){
 			return Array.isArray(result) ? result : [result];

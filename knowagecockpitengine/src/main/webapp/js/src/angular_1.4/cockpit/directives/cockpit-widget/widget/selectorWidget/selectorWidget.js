@@ -244,7 +244,7 @@ angular.module('cockpitModule')
 
 		var checkForSavedSelections = function(nature){
 			var datasetLabel = $scope.ngModel.dataset.label;
-			var columnName = $scope.ngModel.content.selectedColumn.name;
+			var columnName = $scope.ngModel.content.selectedColumn.aliasToShow;
 			var selections = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
 
 			$scope.hasDefaultValues = !selections || selections.length==0;
@@ -289,7 +289,7 @@ angular.module('cockpitModule')
 
 		var updateModel = function(activeVals){
 			var datasetLabel = $scope.ngModel.dataset.label;
-			var columnName = $scope.ngModel.content.selectedColumn.name;
+			var columnName = $scope.ngModel.content.selectedColumn.aliasToShow;
 			var values = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
 			updateValues(values);
 		}

@@ -582,7 +582,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var i in values.rows[j]){
 						var header = headerMap[i];
 						if(header){
-							obj[header] = values.rows[j][i];
+							obj[header.toLowerCase()] = values.rows[j][i];
 						}
 					}
 					table.push(obj);
