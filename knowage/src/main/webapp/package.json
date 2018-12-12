@@ -44,7 +44,7 @@
     "codemirror": "5.32.0",
     "file-saver": "2.0.0-rc.4",
     "font-awesome": "4.7.0",
-    "html2canvas":"1.0.0-alpha.12",
+    "html2canvas": "1.0.0-alpha.12",
     "jsonformatter": "0.6.0",
     "moment": "2.22.2",
     "ngdraggable": "0.1.10",
