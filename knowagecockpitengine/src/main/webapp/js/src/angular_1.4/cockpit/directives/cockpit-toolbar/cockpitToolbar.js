@@ -252,16 +252,25 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,c
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
 	
+	
+	
 	$scope.captureScreenShot = function(ev){
+		
+		function getSheetFromCurrent(current){
+			for(var i in cockpitModule_template.sheets){
+				if(cockpitModule_template.sheets[i].index == current) return i;
+			}
+		}
+		
 		$scope.loadingScreenshot = true;
-		var element = document.querySelector('#tab-content-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		var element = document.querySelector('#gridsterSheet-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
 		html2canvas(element,{
 			width: element.clientWidth,
 		    height: element.clientHeight
 		    }
 		).then(function(canvas) {
 			canvas.toBlob(function(blob) {
-		        saveAs(blob, cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].label+'.png');
+		        saveAs(blob, cockpitModule_template.sheets[getSheetFromCurrent(cockpitModule_properties.CURRENT_SHEET)].label+'.png');
 		        $scope.loadingScreenshot = false;
 		    },function(error){$scope.loadingScreenshot = false;});
 		});
