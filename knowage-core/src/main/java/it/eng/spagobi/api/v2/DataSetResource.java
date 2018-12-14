@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -55,6 +57,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -270,6 +273,49 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		return super.deleteDataset(label);
+	}
+
+	@GET
+	@Path("/download/file")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response downloadDataSetFile(@QueryParam("fileName") String fileName, @QueryParam("type") String type) {
+		File file = null;
+		ResponseBuilder response = null;
+		try {
+			String resourcePath = SpagoBIUtilities.getResourcePath();
+			String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + fileName;
+			file = new File(filePath);
+
+			if (file == null || !file.exists()) {
+				logger.error("File cannot be found");
+				throw new SpagoBIRuntimeException("File [" + fileName + "] is not found");
+			}
+
+			response = Response.ok(file);
+			String mimeType = getMimeType(type);
+			if (mimeType != null) {
+				response.header("Content-Type", mimeType);
+			}
+			response.header("Content-Disposition", "attachment; fileName=" + fileName + "; fileType=" + type + "; extensionFile=" + type);
+		} catch (SpagoBIRuntimeException e) {
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		} catch (Exception e) {
+			logger.error("Error while downloading Dataset file", e);
+			throw new SpagoBIRuntimeException("Error while downloading dataset file");
+		}
+		return response.build();
+	}
+
+	private String getMimeType(String type) {
+		String mimeType = "";
+		if (type.equalsIgnoreCase("XLS") || type.equalsIgnoreCase("CSV")) {
+			mimeType = "application/vnd.ms-excel";
+		} else if (type.equalsIgnoreCase("XLSX")) {
+			mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		} else {
+			mimeType = null;
+		}
+		return mimeType;
 	}
 
 	public String getDatasetsAsPagedList(String pageStr, String itemPerPageStr, String search, Boolean seeTechnical, String ids) {

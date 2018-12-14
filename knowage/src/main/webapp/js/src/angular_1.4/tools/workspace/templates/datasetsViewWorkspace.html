@@ -198,6 +198,12 @@
 				            	{{translate.load('sbi.workspace.dataset.delete')}}
 				          	</md-button>
 				        </md-menu-item>
+			           <md-menu-item ng-show="selectedDataset.dsTypeCd=='File'">
+				          	<md-button aria-label="Download Dataset" ng-click="downloadDatasetFile(selectedDataset)">
+				            	<md-icon md-font-icon="fa fa-download" md-menu-align-target></md-icon>
+				            	{{translate.load('sbi.workspace.dataset.download')}}
+				          	</md-button>
+				        </md-menu-item>
 				        <md-divider></md-divider>
 				        <md-menu-item>
 				          	<md-button aria-label="Help Online" ng-click="showHelpOnline(selectedDataset)">
