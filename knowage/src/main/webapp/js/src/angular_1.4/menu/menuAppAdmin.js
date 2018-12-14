@@ -253,8 +253,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					}
 	        		console.log("License Data:", data.data);
 
-	        		$scope.hostsData=data.hosts;
-	        		$scope.licenseData=data.licenses;
+	        		$scope.hostsData=data.data.hosts;
+	        		$scope.licenseData=data.data.licenses;
 					$mdDialog.show({
 						parent: parentEl,
 						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/license.jsp',
