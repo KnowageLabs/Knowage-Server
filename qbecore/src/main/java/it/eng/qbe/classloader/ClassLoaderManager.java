@@ -19,10 +19,7 @@ package it.eng.qbe.classloader;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
 
@@ -96,7 +93,7 @@ public class ClassLoaderManager {
 				if (!previousCL.equals(genericClassLoader)) {
 					currentClassLoaders.add(aDynClassLoader);
 				}
-				genericClassLoader = genericClassLoader.getParent();
+				genericClassLoader = start.getParent();
 			}
 			root = genericClassLoader;
 
@@ -140,64 +137,72 @@ public class ClassLoaderManager {
 			previousClassLoader = Thread.currentThread().getContextClassLoader();
 		}
 
-		boolean wasAlreadyLoaded = false;
-
-		logger.debug("IN");
-
-		JarFile jarFile = null;
-		try {
-			jarFile = new JarFile(file);
-			Enumeration<JarEntry> entries = jarFile.entries();
-			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				if (entry.getName().endsWith(".class")) {
-					String entryName = entry.getName();
-					String className = entryName.substring(0, entryName.lastIndexOf(".class"));
-					className = className.replaceAll("/", ".");
-					className = className.replaceAll("\\\\", ".");
-					try {
-						logger.debug("loading class [" + className + "]" + " with class loader [" + previousClassLoader.getClass().getName() + "]");
-						previousClassLoader.loadClass(className);
-						wasAlreadyLoaded = true;
-						logger.debug("Class [" + className + "] has been already loaded (?)");
-						break;
-					} catch (Exception e) {
-						wasAlreadyLoaded = false;
-						logger.debug("Class [" + className + "] hasn't be loaded yet (?)");
-						break;
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
-		} finally {
-			try {
-				if (jarFile != null) {
-					jarFile.close();
-				}
-			} catch (Exception e2) {
-				logger.error("Error closing the jar file", e2);
-			}
-		}
-
-		logger.debug("Jar file [" + file.getName() + "] already loaded: " + wasAlreadyLoaded);
-
-		try {
-
-			if (!wasAlreadyLoaded) {
-
-				ClassLoader previous = previousClassLoader;
-				DynamicClassLoader current = new DynamicClassLoader(file, previous);
-				Thread.currentThread().setContextClassLoader(current);
-				previousClassLoader = current;
-			}
-
-		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
+		DynamicClassLoader loader = getPreviousClassLoader(previousClassLoader, file);
+		if (loader == null) {
+			ClassLoader previous = previousClassLoader;
+			DynamicClassLoader current = new DynamicClassLoader(file, previous);
+			Thread.currentThread().setContextClassLoader(current);
+			return current;
 		}
 
 		return previousClassLoader;
+
+		// logger.debug("IN");
+		//
+		// JarFile jarFile = null;
+		// try {
+		// jarFile = new JarFile(file);
+		// Enumeration<JarEntry> entries = jarFile.entries();
+		// while (entries.hasMoreElements()) {
+		// JarEntry entry = entries.nextElement();
+		// if (entry.getName().endsWith(".class")) {
+		// String entryName = entry.getName();
+		// String className = entryName.substring(0, entryName.lastIndexOf(".class"));
+		// className = className.replaceAll("/", ".");
+		// className = className.replaceAll("\\\\", ".");
+		// try {
+		// logger.debug("loading class [" + className + "]" + " with class loader [" + previousClassLoader.getClass().getName() + "]");
+		// previousClassLoader.loadClass(className);
+		// wasAlreadyLoaded = true;
+		// logger.debug("Class [" + className + "] has been already loaded (?)");
+		// break;
+		// } catch (Exception e) {
+		// wasAlreadyLoaded = false;
+		// logger.debug("Class [" + className + "] hasn't be loaded yet (?)");
+		// break;
+		// }
+		// }
+		// }
+		//
+		// } catch (Exception e) {
+		// logger.error("Impossible to update current class loader", e);
+		// } finally {
+		// try {
+		// if (jarFile != null) {
+		// jarFile.close();
+		// }
+		// } catch (Exception e2) {
+		// logger.error("Error closing the jar file", e2);
+		// }
+		// }
+		//
+		// logger.debug("Jar file [" + file.getName() + "] already loaded: " + wasAlreadyLoaded);
+		//
+		// try {
+		//
+		// if (!wasAlreadyLoaded) {
+		//
+		// ClassLoader previous = previousClassLoader;
+		// DynamicClassLoader current = new DynamicClassLoader(file, previous);
+		// Thread.currentThread().setContextClassLoader(current);
+		// previousClassLoader = current;
+		// }
+		//
+		// } catch (Exception e) {
+		// logger.error("Impossible to update current class loader", e);
+		// }
+		//
+		// return previousClassLoader;
 	}
 
 }
