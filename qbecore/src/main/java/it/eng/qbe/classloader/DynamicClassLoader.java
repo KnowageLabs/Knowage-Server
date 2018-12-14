@@ -36,8 +36,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class DynamicClassLoader extends URLClassLoader {
 
 	// private ClassLoader parentClassLoader;
-	private File jarFile;
-	private long jarFileLastModified;
+	private final File jarFile;
+	private final long jarFileLastModified;
 
 	private static transient Logger logger = Logger.getLogger(DynamicClassLoader.class);
 
@@ -237,6 +237,9 @@ public class DynamicClassLoader extends URLClassLoader {
 	@Override
 	public Enumeration<URL> getResources(String descriptorPath) throws IOException {
 
+		logger.debug("String descriptorPath:");
+		logger.debug(descriptorPath);
+
 		if (descriptorPath.equals("META-INF/persistence.xml")) {
 			// load the persistence.xml from the jar file
 			try {
@@ -254,16 +257,32 @@ public class DynamicClassLoader extends URLClassLoader {
 
 					@Override
 					public boolean hasMoreElements() {
+						logger.debug("ClassLoader internalLoader:");
+						logger.debug(internalLoader);
 						return internalLoader instanceof DynamicClassLoader;
 					}
 
 					@Override
 					public URL nextElement() {
 						DynamicClassLoader currentClassLoader = (DynamicClassLoader) internalLoader;
+						logger.debug("DynamicClassLoader currentClassLoader:");
+						logger.debug(currentClassLoader);
+
 						internalLoader = internalLoader.getParent();
+						logger.debug("internalLoader.getParent():");
+						logger.debug(internalLoader);
+
 						File file = currentClassLoader.getJarFile();
+						logger.debug("currentClassLoader.getJarFile():");
+						logger.debug(file.getName());
+
 						String s = file.toURI().toString();
+						logger.debug("file.toURI().toString():");
+						logger.debug(s);
+
 						try {
+							logger.debug("\"jar:\" + s + \"!/META-INF/persistence.xml\"");
+							logger.debug("jar:" + s + "!/META-INF/persistence.xml");
 							return new URI("jar:" + s + "!/META-INF/persistence.xml").toURL();
 						} catch (Exception e) {
 							throw new SpagoBIRuntimeException("Cannot build URL to peristence.xml on JAR file " + s, e);
@@ -276,6 +295,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				return super.getResources(descriptorPath);
 			}
 		} else {
+
 			return super.getResources(descriptorPath);
 		}
 	}
