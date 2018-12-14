@@ -1,24 +1,24 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
+
+
+
+
 
 /**
  * Authors - Alberto Ghedin
  */
 Ext.ns("Sbi.qbe");
 
-Sbi.qbe.ManageDatasetFieldMetadata = function(config) { 
+Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
 
-	
+
 	this.border =  false;
 	this.frame = false;
-	
+
 
 	//Add to the dom the select used from the combo..
 	//it is referenced by Id from the transform
@@ -32,7 +32,7 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
 		Ext.DomHelper.append(bodyElement[0].id, select );
 	}
 
-	
+
 	var editorC = new Ext.form.ComboBox({
     	typeAhead: true,
         triggerAction: 'all',
@@ -44,34 +44,34 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
         forceSelection : true
     });
 	editorC.setValue("ATTRIBUTE");
-	
+
 	this.fieldsColumns =  [
 	    {
-	    	header: LN('sbi.ds.field.name'), 
-	    	//width: 140,  
+	    	header: LN('sbi.ds.field.name'),
+	    	//width: 140,
 			id:'name',
-			sortable: true, 
-			dataIndex: 'displayedName' 
+			sortable: true,
+			dataIndex: 'displayedName'
 	    },{
         	header: LN('sbi.ds.field.metadata'),
             dataIndex: 'fieldType',
-           // width: 140, 
+           // width: 140,
             editor: editorC
-        }			
+        }
 	];
-    
+
 	 var cm = new Ext.grid.ColumnModel({
 	        columns: this.fieldsColumns
 	    });
-	 
+
 	 this.fieldStore = new Ext.data.JsonStore({
 		    id : 'name',
 		    fields: ['displayedName','name', 'fieldType','type' ],
 		    idIndex: 0,
 		    data:{}
 		});
-	 
-		 
+
+
 		 var sm = new Ext.grid.RowSelectionModel({
 	         singleSelect: true
 	     });
@@ -100,7 +100,7 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
 };
 
 Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
-  
+
 	fieldsColumns:null,
 	emptyStore: true
 
@@ -110,24 +110,24 @@ Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   			//Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
   			if ((fieldsColumns.columns != undefined) && (fieldsColumns.columns != null)){
   				var columnsArray = new Array();
-  				
+
   				var columnsNames = new Array();
   				//create columns list
   				for (var i = 0; i < fieldsColumns.columns.length; i++) {
   					var element = fieldsColumns.columns[i];
-  					columnsNames.push(element.column); 
+  					columnsNames.push(element.alias);
   				}
-  				
+
   				columnsNames = this.removeDuplicates(columnsNames);
-  				
-  				
+
+
   				for (var i = 0; i < columnsNames.length; i++) {
   					var columnObject = {displayedName:'', name:'',fieldType:'',type:''};
   					var currentColumnName = columnsNames[i];
   					//this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
   					if (currentColumnName.indexOf(":") != -1){
   					    var arr = currentColumnName.split(':');
-  					     
+
   	  					columnObject.displayedName = arr[1];
   					} else {
   	  					columnObject.displayedName = currentColumnName;
@@ -149,15 +149,15 @@ Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   					if(columnObject.fieldType == undefined || columnObject.fieldType == '') {
   						columnObject.fieldType = "ATTRIBUTE";
   					}
-  						
+
   					columnsArray.push(columnObject);
-	  			}			
-  				
+	  			}
+
   				this.fieldStore.loadData(columnsArray);
   				// end workaround ---------------------------------------------------
   			} else {
   	  			this.fieldStore.loadData(fieldsColumns);
-  			}			
+  			}
   			this.emptyStore = false;
   		}else{
   			this.emptyStore = true;
@@ -166,7 +166,7 @@ Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
 
 	,removeDuplicates: function(array) {
 	    var index = {};
-	   
+
 	    for (var i = array.length - 1; i >= 0; i--) {
 	        if (array[i] in index) {
 	            // remove this item
