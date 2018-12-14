@@ -257,6 +257,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		}
 
 	};
+	
 	$scope.reload = function(){
 		
 		sbiModule_restServices.get("1.0/serverManager/importExport/menu","getAllMenu")

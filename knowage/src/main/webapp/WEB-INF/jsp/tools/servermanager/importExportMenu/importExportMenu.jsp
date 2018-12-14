@@ -83,43 +83,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<md-tab id="importTab" > 
 					<md-tab-label>{{translate.load("SBISet.import", "component_impexp_messages")}}</md-tab-label>
-					<md-tab-body> <md-card>
-					<md-toolbar> 
-						<div class="md-toolbar-tools">{{translate.load("sbi.importusers.import")}}</div>
-					</md-toolbar>
-						<md-card-content>
-							<div layout="row" layout-wrap layout-align="center center">
-								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
-								<md-button ng-click="upload($event)" aria-label="upload Menu"
-								class="md-fab md-mini"  > <md-icon
-								md-font-icon="fa fa-upload"  >
-								</md-icon> </md-button>
-							</div>
-							<div layout="row" layout-wrap >
-								<md-radio-group layout="row" ng-model="typeSaveMenu">
-								      <md-radio-button value="Override" ng-click="reloadTree('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-								      <md-radio-button value="Missing" ng-click="reloadTree('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
-								 </md-radio-group>
-								
-								<span flex></span>
-								<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
-							</div>
-						
-							<div layout="row" layout-wrap>
-								<span flex></span>
-								<div flex=30  >
-									<h4>{{translate.load("sbi.importusers.userimport");}}</h4>
-									<component-tree ng-model="tree" subnode-key="children" text-to-show-key="name" > </component-tree>
+					<md-tab-body> 
+						<md-card>
+							<md-toolbar> 
+								<div class="md-toolbar-tools">{{translate.load("sbi.importusers.import")}}</div>
+							</md-toolbar>
+							<md-card-content>
+								<div layout="row" layout-wrap layout-align="center center">
+									<file-upload flex id="AssociationFileUploadImport" ng-model="importFile" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
+									<md-button ng-click="upload($event)" aria-label="upload Menu" class="md-fab md-mini"> 
+										<md-icon md-font-icon="fa fa-upload"></md-icon> 
+									</md-button>
 								</div>
-								<span flex=10>
+								<div layout="row" layout-wrap >
+									<md-radio-group layout="row" ng-model="typeSaveMenu">
+									      <md-radio-button value="Override" ng-click="reloadTree('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+									      <md-radio-button value="Missing" ng-click="reloadTree('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+									 </md-radio-group>
+									
+									<span flex></span>
+									<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+								</div>
 							
-								</span>
-								<div flex=30>
-									<h4>{{translate.load("sbi.importusers.userimporting");}}</h4>
-									<component-tree ng-model="treeInTheDB" subnode-key="children" text-to-show-key="name" > </component-tree>
+								<div layout="row" layout-wrap>
+									<span flex></span>
+									<div flex=30  >
+										<h4>{{translate.load("sbi.importusers.userimport");}}</h4>
+										<component-tree ng-model="tree" subnode-key="children" text-to-show-key="name" > </component-tree>
+									</div>
+									<span flex=10></span>
+									<div flex=30>
+										<h4>{{translate.load("sbi.importusers.userimporting");}}</h4>
+										<component-tree ng-model="treeInTheDB" subnode-key="children" text-to-show-key="name" > </component-tree>
+									</div>
+									<span flex></span>
 								</div>
-								<span flex></span>
-							</div>
 							</md-card-content>
 						</md-card>
 					</md-tab-body>
