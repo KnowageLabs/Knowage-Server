@@ -396,19 +396,17 @@
 
 			executionService.prepareDriversForSending = function(drivers){
 
-				var transformedDrivers = [];
+				var transformedDrivers = {};
 
 					for(var i = 0; i < drivers.length; i++){
-						if((i & 1) == 0){
+
 							var tempDriver = {}
 							tempDriver.urlName = drivers[i].urlName;
 							tempDriver.type = drivers[i].type;
 							tempDriver.multivalue = drivers[i].multivalue;
 							tempDriver.value = drivers[i].parameterValue
-							var newDriver = {};
-							newDriver[tempDriver.urlName] = tempDriver;
-							transformedDrivers.push(newDriver);
-						}
+							transformedDrivers[tempDriver.urlName] = tempDriver;
+
 					}
 
 				return transformedDrivers;
