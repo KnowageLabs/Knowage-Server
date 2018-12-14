@@ -92,6 +92,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.angular=angular;
+	
 	$scope.cockpitStyle={};
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
 
@@ -134,6 +135,12 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	
 	$scope.isUndefined = function(property){
 		return typeof(property)=='undefined' ? true : false;
+	}
+	
+	$scope.screenAvailable=function(){
+		if($scope.$parent.model && ($scope.$parent.model.type == 'selection' || $scope.$parent.model.type == 'selector')) return false;
+		if($scope.$parent.localModel && ($scope.$parent.localModel.type == 'selection' || $scope.$parent.localModel.type == 'selector')) return false;
+		return true;
 	}
 	
 	$scope.changeShowScreenshot = function(){
