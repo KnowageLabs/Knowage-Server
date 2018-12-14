@@ -47,12 +47,22 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
+
+<%!
+	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
+%>
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
+
+try {
+	
 	QbeEngineInstance qbeEngineInstance;
 	QbeEngineConfig qbeEngineConfig;
 	UserProfile profile;
@@ -251,7 +261,11 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 </html>
 
 
-
+<%
+} catch (Exception e) {
+	logger.error("Error while initializing Qbe interface", e);
+}
+%>
 
 	
 
