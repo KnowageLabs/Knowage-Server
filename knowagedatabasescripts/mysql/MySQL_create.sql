@@ -701,7 +701,7 @@ CREATE TABLE SBI_OBJECT_TEMPLATES (
 		OBJ_TEMP_ID 		 INTEGER NOT NULL ,
 		BIOBJ_ID 	         INTEGER,
 	    BIN_ID 	             INTEGER,
-	    NAME 	             VARCHAR(50),  
+	    NAME 	             VARCHAR(1000),  
 	    PROG 	             INTEGER, 
 	    DIMENSION            VARCHAR(20),  
 		CREATION_DATE 		 DATETIME, 
