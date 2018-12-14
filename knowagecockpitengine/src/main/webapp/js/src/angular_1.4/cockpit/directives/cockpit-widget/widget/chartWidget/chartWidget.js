@@ -208,7 +208,8 @@ function cockpitChartWidgetControllerFunction(
 	$scope.realTimeDatasetData;
 	//variable that contains last data of realtime dataset not filtered by selections
 	$scope.realTimeDatasetDataNotFiltered;
-
+	$scope.isIE = window.document.documentMode;
+	
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};

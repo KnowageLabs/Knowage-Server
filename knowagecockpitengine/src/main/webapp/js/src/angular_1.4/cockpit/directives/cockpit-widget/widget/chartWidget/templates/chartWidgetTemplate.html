@@ -12,4 +12,4 @@ layout-column flex>
 
 
 </chart-renderer>
-<canvas class="canvas-for-highcharts" ng-if="enterpriseEdition && d3Charts.indexOf(chartType)==-1" id="canvas_{{ngModel.id}}"></canvas>
+<canvas class="canvas-for-highcharts" ng-if="isIE && enterpriseEdition && d3Charts.indexOf(chartType)==-1" id="canvas_{{ngModel.id}}"></canvas>
