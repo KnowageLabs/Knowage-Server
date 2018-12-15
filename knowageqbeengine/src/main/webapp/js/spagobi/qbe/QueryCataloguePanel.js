@@ -1,37 +1,37 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-  
- 
+
+
+
+
+
+
+
 /**
-  * Object name 
-  * 
+  * Object name
+  *
   * [description]
-  * 
-  * 
+  *
+  *
   * Public Properties
-  * 
+  *
   * [list]
-  * 
-  * 
+  *
+  *
   * Public Methods
-  * 
+  *
   *  [list]
-  * 
-  * 
+  *
+  *
   * Public Events
-  * 
+  *
   *  [list]
-  * 
+  *
   * Authors
-  * 
+  *
   * - Andrea Gioia (adrea.gioia@eng.it)
   */
 
@@ -42,39 +42,39 @@ Sbi.qbe.QueryCataloguePanel = function(config) {
 		// set default values here
 		id: 'QueryCataloguePanel'
 	}, config || {});
-	
+
 	this.services = new Array();
 	var params = {};
 	this.services['getCatalogue'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_CATALOGUE_ACTION'
 		, baseParams: params
 	});
-	
+
 	this.services['setCatalogue'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SET_CATALOGUE_ACTION'
 		, baseParams: params
 	});
-	
+
 	this.services['validateCatalogue'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'VALIDATE_CATALOGUE_ACTION'
 		, baseParams: params
 	});
-	
+
 	this.services['addQuery'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'ADD_QUERY_ACTION'
 		, baseParams: params
 	});
-	
+
 	this.services['deleteQueries'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'DELETE_QUERIES_ACTION'
 		, baseParams: params
 	});
-	
-	
+
+
 	this.addEvents('beforeselect');
-	
+
 	this.initTree(c);
-	
+
 	Ext.apply(c, {
 		layout: 'fit'
 		, border:false
@@ -82,32 +82,32 @@ Sbi.qbe.QueryCataloguePanel = function(config) {
 		, containerScroll: true
 		, items: [this.tree]
 	});
-	
-	
+
+
 	// constructor
 	Sbi.qbe.QueryCataloguePanel.superclass.constructor.call(this, c);
-    
+
     this.addEvents('load');
-    
+
 };
 
 Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
-    
+
 	services: null
 	, treeSelectionModel: null
 	, treeLoader: null
 	, rootNode: null
 	, tree: null
 	, type: 'querycataloguetree'
-	
+
 	// public methods
-	
+
 	, load: function() { // ma quando viene chiamato?
 		this.treeLoader.load(this.rootNode, function(){});
 	}
 
 	, commit: function(callback, scope) {
-		
+
 		var currentQuery = this.getSelectedQuery();
 		var ambiguousFields = [];
 		var ambiguousRoles = [];
@@ -115,7 +115,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			ambiguousFields = this.getStoredAmbiguousFields();
 			ambiguousRoles = this.getStoredRoles();
 		}
-		
+
 		var params = {
 				catalogue: Ext.util.JSON.encode(this.getQueries())
 				, currentQueryId : (currentQuery) ? currentQuery.id : ''
@@ -126,15 +126,15 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		Ext.Ajax.request({
 		    url: this.services['setCatalogue'],
 		    success: this.onCommitSuccessHandler.createDelegate(this, [callback, scope], true), // before invoking callback, we have to resolve ambiguous fields, if any
-		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		    failure: Sbi.exception.ExceptionHandler.handleFailure,
 		    scope: this,
 		    params: params
 		});
-		
+
 	}
-	
+
 	, manageAmbiguousFields: function(callback, scope) {
-		
+
 		var currentQuery = this.getSelectedQuery();
 		if (currentQuery) {
 			ambiguousRoles = this.getStoredRoles();
@@ -148,13 +148,13 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		Ext.Ajax.request({
 		    url: this.services['setCatalogue'],
 		    success: this.onCommitSuccessHandler.createDelegate(this, [callback, scope, true], true), // before invoking callback, we have to resolve ambiguous fields, if any
-		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		    failure: Sbi.exception.ExceptionHandler.handleFailure,
 		    scope: this,
 		    params: params
 		});
-		
+
 	}
-	
+
 	,
 	onCommitSuccessHandler : function (response, options, callback, scope, forceOpenAmbiguous) {
 		var decodedResponce = "";
@@ -163,7 +163,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		var ambiguousWarinig = "";
 		var userRolesSolved = "";
 		var queryString = "";
-		
+
 		if(response.responseText  && response.responseText !=""){
 			decodedResponce = Ext.util.JSON.decode( response.responseText );
 		}
@@ -171,16 +171,16 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		if(decodedResponce.ambiguousFieldsPaths  && decodedResponce.ambiguousFieldsPaths !=""){
 			ambiguousFields  = Ext.util.JSON.decode(decodedResponce.ambiguousFieldsPaths);
 		}
-		
+
 		if(decodedResponce.ambiguousRoles  && decodedResponce.ambiguousRoles !=""){
 			userRolesSolved = Ext.util.JSON.decode(decodedResponce.ambiguousRoles);
 		}
-		
-		
+
+
 		if(decodedResponce.catalogueErrors  && decodedResponce.catalogueErrors !=""){
 			catalogueErrors = Ext.util.JSON.decode(decodedResponce.catalogueErrors);
 		}
-		
+
 		ambiguousWarinig =(decodedResponce.ambiguousWarinig);
 		queryString = decodedResponce.queryString;
 
@@ -191,12 +191,12 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			}
 			Sbi.exception.ExceptionHandler.showErrorMessage(error);
 		}else{
-		
+
 			//open the ambiguous fields wizard but there is no ambiguous fields
 			if (forceOpenAmbiguous && (ambiguousFields.length == 0 )) {
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.qbe.queryeditor.noambiguousfields.msg'),LN('sbi.qbe.queryeditor.noambiguousfields.title'));
 			}
-	
+
 			if ((!forceOpenAmbiguous && decodedResponce.executeDirectly) || (forceOpenAmbiguous && (ambiguousFields.length == 0 ) )) {
 				if (callback) {
 					var callBackParams = {
@@ -209,11 +209,11 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 					callback.call(scope, callBackParams);  // proced execution with the specified callback function
 				}
 			} else {
-				
+
 				ambiguousFields = this.mergeAmbiguousFields(ambiguousFields);
 				var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
 					ambiguousFields : ambiguousFields
-					, ambiguousRoles : userRolesSolved 
+					, ambiguousRoles : userRolesSolved
 					, closeAction : 'close'
 					, modal : true
 				});
@@ -226,7 +226,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 
 	}
-	
+
 	,
 	mergeAmbiguousFields : function (ambiguousFields) {
 		var previousAmbiguousFields = this.getStoredAmbiguousFields();
@@ -235,7 +235,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		ambiguousFieldsObj.merge(cachedObj);
 		return ambiguousFieldsObj.getAmbiguousFieldsAsJSONArray();
 	}
-	
+
 	,
 	onAmbiguousFieldsSolved : function (theWindow, ambiguousFieldsSolved, userRolesSolved, callback, scope) {
 		theWindow.close();
@@ -250,7 +250,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		Sbi.cache.memory.put(query.id+"_roles",  userRolesSolved);
 		//query.ambiguousFields = ambiguousFields;
 	}
-	
+
 	,
 	getStoredAmbiguousFields : function () {
 		var query = this.getSelectedQuery();
@@ -258,7 +258,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		return cached || [];
 		//return query.ambiguousFields || [];
 	}
-	
+
 	,
 	getStoredRoles : function () {
 		var query = this.getSelectedQuery();
@@ -266,30 +266,30 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		return cached || [];
 		//return query.ambiguousFields || [];
 	}
-	
+
 	,getQueryRoles : function (queryId) {
 		var cached = Sbi.cache.memory.get(queryId+"_roles");
 		return cached || [];
 		//return query.ambiguousFields || [];
 	}
-	
+
 	, validate: function(callback, scope) {
 		var params = {};
 		Ext.Ajax.request({
 		    url: this.services['validateCatalogue'],
 		    success: callback,
-		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		    failure: Sbi.exception.ExceptionHandler.handleFailure,
 		    scope: scope,
 		    params: params
-		});   
+		});
 	}
-	
+
 	, addQuery: function(query) {
 		var queryItem;
 		if(query) queryItem = {query: query};
 		this.addQueryItem(queryItem);
 	}
-	
+
 	, insertQuery: function(parentQuery) {
 		var parentQueryItem;
 		if(parentQuery) parentQueryItem = {query: parentQuery};
@@ -303,10 +303,10 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			oldQuery = item.query;
 			item.query = query;
 		}
-		
+
 		return oldQuery;
 	}
-	
+
 	, getQueries: function() {
 		var queries = [];
     	if( this.rootNode.childNodes && this.rootNode.childNodes.length > 0 ) {
@@ -314,21 +314,21 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 				queries.push( this.getQueryById(this.rootNode.childNodes[i].id) );
 			}
 		}
-    	
+
     	return queries;
 	}
-	
+
 	, getQueryById: function(queryId) {
 		var query;
 		var queryNode = this.tree.getNodeById(queryId);
-		
+
 		if(queryNode) {
 			query = queryNode.props.query;
 			query.name = queryNode.text;
 			var cachedGraph = this.getqueryGraph(queryId);
 			var cachedRoles = this.getQueryRoles(queryId);
 			var cachedAmbiguousFields = this.getAmbiguousFields(queryId);
-			
+
 			if(cachedGraph){
 				query.graph =cachedGraph;
 			}
@@ -336,25 +336,25 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			if(cachedRoles){
 				query.relationsRoles = cachedRoles;
 			}
-			
+
 			if(cachedAmbiguousFields){
 				query.ambiguousFields = cachedAmbiguousFields;
 			}
-			
+
 			query.subqueries = [];
 			if( queryNode.childNodes && queryNode.childNodes.length > 0 ) {
 				for(var i = 0; i < queryNode.childNodes.length; i++) {
 					var subquery = this.getQueryById( queryNode.childNodes[i].id );
 					query.subqueries.push( subquery );
 
-					
+
 				}
 			}
 		}
-		
+
 		return query;
 	}
-	
+
 	, getParentQuery: function(queryId) {
 		var query = null;
 		var queryNode = this.tree.getNodeById(queryId);
@@ -366,20 +366,20 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 		return query;
 	}
-	
+
 	, getSelectedQuery: function() {
 		var queryItem = this.getSelectedQueryItem();
 		return queryItem? queryItem.query: undefined;
 	}
-	
-	
+
+
 	, deleteQueries: function(queries) {
 		this.deleteQueryItems(queries);
 	}
-	
-	
+
+
 	// PRIVATE:  item level
-	
+
 	, getQueryItems: function() {
 		var queryItems = [];
     	if( this.rootNode.childNodes && this.rootNode.childNodes.length > 0 ) {
@@ -387,16 +387,16 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 				queryItems.push( this.getQueryItemById(this.rootNode.childNodes[i].id) );
 			}
 		}
-    	
+
     	return queryItems;
 	}
 
 	, getQueryItemById: function(queryId) {
 		var queryItem;
 		var queryNode = this.tree.getNodeById(queryId);
-		
+
 		if(queryNode) {
-			
+
 			queryItem = queryNode.props;
 			queryItem.subqueries = [];
 			if( queryNode.childNodes && queryNode.childNodes.length > 0 ) {
@@ -406,25 +406,25 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 				}
 			}
 		}
-		
+
 		return queryItem;
 	}
-	
+
 	, getSelectedQueryItem: function() {
 		var queryNode = this.tree.getSelectionModel().getSelectedNode();
 		return queryNode? queryNode.props: undefined;
 	}
-	
+
 	, addQueryItem: function(queryItem) {
 		this.insertQueryItem(this.rootNode.id, queryItem);
 	}
-	
-	
+
+
 
 	, insertQueryItem: function(parentQueryItem, queryItem) {
 		var nodeId = (typeof parentQueryItem === 'string')? parentQueryItem: parentQueryItem.query.id;
 		var parentQueryNode = this.tree.getNodeById(nodeId);
-		 
+
 		if(!queryItem) {
 			this.createQueryNode(this.insertQueryNode.createDelegate(this, [parentQueryNode], 0), this);
 		} else {
@@ -437,31 +437,31 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			 		, iconCls: 'icon-query'
 			    }
 			 };
-			 this.insertQueryNode(parentQueryNode, queryNode);			 
+			 this.insertQueryNode(parentQueryNode, queryNode);
 		}
 	}
-	
+
 	, deleteQueryItems: function(queries) {
 		this.deleteQueryNodes(queries);
 	}
-	
-	
-	
+
+
+
 	// PRIVATE:  node level
-	
+
 	, addQueryNode: function(queryNode) {
 		this.insertQueryNode(this.rootNode, queryNode);
 	}
-	
+
 	, insertQueryNode: function(parentQueryNode, queryNode) {
 		if(!queryNode) {
 			this.createQueryNode(this.insertQueryNode.createDelegate(this, [parentQueryNode], 0), this);
-		} else {			
-			parentQueryNode.leaf = false;					
+		} else {
+			parentQueryNode.leaf = false;
 			parentQueryNode.appendChild( queryNode );
 			parentQueryNode.expand();
-			queryNode.select();		
-			
+			queryNode.select();
+
 			var te = this.treeEditor;
 			var edit = function(){
                 te.editNode = queryNode;
@@ -470,7 +470,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			setTimeout(edit, 10);
 		}
 	}
-	
+
 	, createQueryNode: function(callback, scope) {
 		Ext.Ajax.request({
 		   	url: this.services['addQuery'],
@@ -482,20 +482,20 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 					callback.call(scope, queryNode);
 				} else {
 			      	Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-			    }     					
+			    }
    			},
    			failure: Sbi.exception.ExceptionHandler.handleFailure,
    			scope: this
-		});	   
+		});
 	}
-	
+
 	, deleteQueryNodes: function(queries, callback, scope) {
 		var p;
     	if(queries) {
     		if( !(queries instanceof Array) ) {
     			queries = [queries];
     		}
-    		
+
     		for(var i = 0, p = []; i < queries.length; i++) {
     			var query = queries[i];
     			if(typeof query === 'string') {
@@ -509,33 +509,33 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
     		// don't let to erase the root query
     		if(p == 'q1'){
 				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.qbe.queryeditor.eastregion.tools.wanringEraseRoot'), 'Warning');
-    			return;	
+    			return;
     		}
-    		
+
 			Ext.Ajax.request({
 			   	url: this.services['deleteQueries'],
 			   	params: {queries: Ext.util.JSON.encode(p)},
-			
+
 			   	success: function(response, options) {
 			   		var q = Ext.util.JSON.decode( options.params.queries );
 			   		for(var i = 0; i < q.length; i++) {
 			   			var node = this.tree.getNodeById(q[i]);
 			   			node.remove();
 			   		}
-			   		
+
 			   		if(callback) callback.call(scope, q);
 	   			},
 	   			failure: Sbi.exception.ExceptionHandler.handleFailure,
 	   			scope: this
-			});	
+			});
     	}
 	}
-		
+
 
 	// private methods
-	
+
 	, initTree: function(config) {
-		
+
 		this.treeLoader = new Ext.tree.TreeLoader({
 	        dataUrl: this.services['getCatalogue']
 	    });
@@ -551,8 +551,8 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	        if(typeof attr.uiProvider == 'string'){
 	           attr.uiProvider = this.uiProviders[attr.uiProvider] || eval(attr.uiProvider);
 	        }
-	        
-	     
+
+
 	        var resultNode;
 	        if(attr.leaf) {
 	        	resultNode = new Ext.tree.TreeNode(attr);
@@ -562,7 +562,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	        	resultNode.props = attr.attributes;
 	        	//resultNode.attributes = attr.attributes;
 	        }
-	        
+
 	        resultNode.getUI().onDblClick = function(e){
 	            e.preventDefault();
 	            if(this.disabled){
@@ -571,26 +571,26 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	            if(this.checkbox){
 	                this.toggleCheck();
 	            }
-	            
+
 	            this.fireEvent("dblclick", this.node, e);
 	        };
-	        
+
 	        return resultNode;
 	    };
-	    
-	   
-		
+
+
+
 		this.treeSelectionModel = new Ext.tree.DefaultSelectionModel({
 			init : function(tree){
 		        this.tree = tree;
 		        tree.on("dblclick", this.onNodeDbClick, this);
 	    	},
-	    
+
 	    	onNodeDbClick : function(node, e){
 	    		this.select(node);
 	    	}
 		});
-				
+
 		this.rootNode = new Ext.tree.AsyncTreeNode({
 			id			: 'root',
 	        text		: 'Queries',
@@ -598,24 +598,24 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	        expanded	: true,
 	        draggable	: false
 	    });
-		
+
 		this.tree = new Ext.tree.TreePanel({
 	        collapsible: false,
-	        
-	        enableDD: true,	        
+
+	        enableDD: true,
 	        ddGroup: 'gridDDGroup',
 	        dropConfig: {
 				ddGroup: 'gridDDGroup',
 				// avoid in tree drop
 				isValidDropPoint : function(n, pt, dd, e, data){
 					return false;
-				}      
+				}
 	      	},
-	      	
+
 	      	dragConfig: {
 	      		// if dragConfig in set the ddGroup is taken from there and not from the tree
 	      		// so if not defined there the defaut one will be used : 'treeDD'
-	      		ddGroup: 'gridDDGroup', 
+	      		ddGroup: 'gridDDGroup',
 	      		onInitDrag : function(e){
 		            var data = this.dragData;
 		            // when start a new drag we do not want to select the dragged node
@@ -625,16 +625,16 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		            data.node.ui.appendDDGhost(this.proxy.ghost.dom);
 		            this.tree.fireEvent("startdrag", this.tree, data.node, e);
 	      		}
-	      		
+
 	      		, beforeInvalidDrop : function(e, id){
 	      	        // when a drop fails we do not want to select the dragged node
 	      	        //var sm = this.tree.getSelectionModel();
 	      	        //sm.clearSelections();
 	      	        //sm.select(this.dragData.node);
 	      	    }
-	      	}, 
-	      	
-	      	
+	      	},
+
+
 	        animCollapse     : true,
 	        collapseFirst	 : false,
 	        border           : false,
@@ -646,23 +646,23 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	        selModel		 : this.treeSelectionModel,
 	        loader           : this.treeLoader,
 	        root 			 : this.rootNode
-	    });	
-		
+	    });
+
 		// defines the tree sorting
 		new Ext.tree.TreeSorter(this.tree, {
 		    folderSort: true
 		    , dir: 'asc'
 		    , property: 'id'
 		});
-		
+
 		this.tree.type = this.type;
-		
+
 		/*
 		this.tree.on('startdrag', function(tree, node, e) {
 			alert(tree.dragZone.ddGroup);
 		}, this);
 		*/
-		
+
 		// add an inline editor for the nodes
 	    this.treeEditor = new Ext.tree.TreeEditor(this.tree, {/* fieldconfig here */ }, {
 	        allowBlank:false,
@@ -672,42 +672,43 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	    // we do not want editing to start after node clicking
 	    //this.treeEditor.beforeNodeClick = Ext.emptyFn;
 
-		
+
 		this.tree.getSelectionModel().on('beforeselect', this.onSelect, this);
 		this.treeLoader.on('load', this.onLoad, this);
-		
-     	if(parent.globalQbeJson){
+
+		if(parent.globalQbeDataset && parent.globalQbeDataset.qbeJSONQuery){
      		this.treeLoader.on("load",function(){
-     			if(parent.globalQbeJson){
+     			if(parent.globalQbeDataset.qbeJSONQuery){
      				var questo = this;
-     				if(typeof parent.globalQbeJson === "string"){
-     					questo.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
+     				if(typeof parent.globalQbeDataset.qbeJSONQuery === "string"){
+     					questo.setQueriesCatalogue(JSON.parse(parent.globalQbeDataset.qbeJSONQuery));
      				}else{
-     					questo.setQueriesCatalogue(parent.globalQbeJson);
+     					questo.setQueriesCatalogue(parent.globalQbeDataset.qbeJSONQuery);
      				}
-     				
-     				parent.globalQbeJson=null; 
+     				parent.globalQbeDataset.qbeJSONQuery=null;
      			}
+     			questo.setDataset(parent.globalQbeDataset);
      		},this);
-     		
+
+
      	}
-         		
+
 
 	}
-	
+
 	, onLoad: function(loader, node, response) {
 		node.expandChildNodes();
-		     
+
 		if( node.childNodes && node.childNodes.length > 0 ) {
 			//this.tree.getSelectionModel().suspendEvents(false);  // workaround (work-around): when GUI is initialized, the first node is selected twice (why?)
-															     // therefore we suspend (and resume just after) events to avoid this 
+															     // therefore we suspend (and resume just after) events to avoid this
 			this.tree.getSelectionModel().select( node.childNodes[0] );
 			//this.tree.getSelectionModel().resumeEvents();
 		}
-		
+
 		this.fireEvent('load', this);
 	}
-	
+
 	, onSelect: function(sm, newnode, oldnode) {
 		if (newnode.id == this.rootNode.id) {
 			return false;
@@ -715,14 +716,14 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		if (oldnode && oldnode != null && newnode.id == oldnode.id) {
 			return false; // in case the user selects the old node, we don't allow this just to avoid unuseful calls to the server
 		}
-		
+
 		var allowSelection = true;
 		var oldquery = oldnode ? oldnode.props.query: undefined;
 		var b = this.fireEvent('beforeselect', this, newnode.props.query, oldquery);
 		if(b === false) allowSelection = b;
 		return allowSelection;
 	}
-	
+
 	,
 	setQueriesCatalogue : function (queriesCatalogue) {
 		this.clear();
@@ -734,9 +735,15 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 		//var tree = this.tree;
 		this.tree.getSelectionModel().select( root.childNodes[0] );
-		
+
+	},
+	setDataset : function (dataset) {
+		this.dataset = dataset;
+	},
+	getDataset : function () {
+		return this.dataset;
+
 	}
-	
 	,
 	setQueryOnCatalogue: function (parentNode, query) {
 		var queryNode = {
@@ -750,11 +757,11 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		};
 		Sbi.cache.memory.put(query.id+"_roles",  query.relationsRoles);
 		Sbi.cache.memory.put(query.id,  query.ambiguousFields);
-		
-		
+
+
 		parentNode.appendChild( queryNode );
 		parentNode.expand();
-		
+
 		var subqueries = query.subqueries;
 		if (subqueries !== undefined && subqueries !== null && subqueries.length > 0) {
 			for (var i = 0; i < subqueries.length; i++) {
@@ -762,23 +769,23 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			}
 		}
 	}
-	
+
 	,
 	clear : function () {
 		var root = this.tree.getRootNode();
 		root.removeAll(true);
 	}
-	
+
 	, getqueryGraph: function(queryId){
 		var relationships = this.parseGraph(Sbi.cache.memory.get(queryId));
 		return relationships;
 	}
-	
+
 	, getAmbiguousFields: function(queryId){
 		var relationships = Sbi.cache.memory.get(queryId);
 		return relationships;
 	}
-	
+
 	, parseGraph: function(graph){
 		var relationships = new Array();
 		if(graph){
@@ -803,5 +810,5 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 		return relationships;
 	}
-	
+
 });

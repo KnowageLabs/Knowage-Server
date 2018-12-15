@@ -65,7 +65,7 @@ angular
 
 				$scope.editQbeDset = editDSet;
 				if( $scope.selectedDataSet && !isDerived){
-					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+					globalQbeDataset = $scope.selectedDataSet;//.qbeJSONQuery;
 				}
 
 
@@ -141,10 +141,11 @@ angular
 //				frame.contentWindow.qbe.openSaveDataSetWizard('TRUE');
 
 				// NEW IMPLEMENTATION
+				document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
 
 
 
-				if(!$scope.editQbeDset){
+			/*	if(!$scope.editQbeDset){
 					document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
 				} else {
 
@@ -163,14 +164,14 @@ angular
 
 
 											})})
-				}
+				}*/
 
 
 				/**
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a
 				 * result of calling the 'openSaveDataSetWizard' function.
 				 */
-				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
+				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;$scope.closeDocument();})
 
 			}
 

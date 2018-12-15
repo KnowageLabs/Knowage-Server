@@ -223,7 +223,9 @@ try {
 	           		qbe.queryEditorPanel.havingGridPanel.dropTarget = new Sbi.qbe.HavingGridDropTarget(qbe.queryEditorPanel.havingGridPanel);
 
 	         	<%}%>
-	         	qbe.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
+	         	qbe.setDataset(parent.globalQbeDataset);
+	         	qbe.setQueriesCatalogue(JSON.parse(parent.globalQbeDataset.qbeJSONQuery));
+
 	      	});
 	        
             var receiveHandler = function(message) {

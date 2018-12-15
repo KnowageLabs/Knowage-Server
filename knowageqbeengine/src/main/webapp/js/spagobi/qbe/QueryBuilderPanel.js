@@ -1476,7 +1476,13 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 setQueriesCatalogue: function (queriesCatalogue) {
 	this.queryCataloguePanel.setQueriesCatalogue(queriesCatalogue);
 }
-
+,
+setDataset : function (dataset) {
+	this.dataset = dataset;
+},
+getDataset : function () {
+	return this.dataset;
+}
 ,
 getParameters: function () {
 	return new Array();

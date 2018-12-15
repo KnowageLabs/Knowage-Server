@@ -1,37 +1,37 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-  
+
+
+
+
+
+
 
 /**
- * Object name 
- * 
+ * Object name
+ *
  * [description]
- * 
- * 
+ *
+ *
  * Public Properties
- * 
+ *
  * [list]
- * 
- * 
+ *
+ *
  * Public Methods
- * 
+ *
  *  [list]
- * 
- * 
+ *
+ *
  * Public Events
- * 
+ *
  *  [list]
- * 
+ *
  * Authors
- * 
+ *
  * - Andrea Gioia (andrea.gioia@eng.it)
  */
 
@@ -43,18 +43,18 @@ Sbi.qbe.QbePanel = function(config) {
 		// set default values here
 		displayQueryBuilderPanel: true
 		, displayFormBuilderPanel: false
-//		, displayWorksheetPanel: false 
+//		, displayWorksheetPanel: false
 	}, config || {});
 
-	
+
 	if(!Sbi.cache){
 		Sbi.cache = {};
 	}
-	
+
 	if(!Sbi.cache.memory){
 		Sbi.cache.memory = new Sbi.widgets.Cache({});
 	}
-	
+
 	this.services = new Array();
 	var params = {};
 	this.services['getFirstQuery'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -93,9 +93,9 @@ Sbi.qbe.QbePanel = function(config) {
 		id : 'DataStorePanel'
 	}));
 	this.queryResultPanel.on('activate', this.resultPanelActivateHandler, this);
-	
+
 //	this.worksheetPanel = null;
-//	
+//
 //	this.worksheetDesignerPanel = null;
 
 	var items = [];
@@ -119,7 +119,7 @@ Sbi.qbe.QbePanel = function(config) {
 			this.qbeCardsPanel.getLayout().setActiveItem(1);
 		}, this);
 	}
-	
+
 	items.push(this.qbeCardsPanel);
 
 //
@@ -129,9 +129,9 @@ Sbi.qbe.QbePanel = function(config) {
 //		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
 //			id : 'WorksheetDesignerPanel'
 //		}));
-//		
+//
 //	}
-//	
+//
 
 
 //	if (c.displayWorksheetPanel) {
@@ -139,7 +139,7 @@ Sbi.qbe.QbePanel = function(config) {
 //			id : 'WorkSheetPreviewPage',
 //			closable: false
 //		});
-//		
+//
 //		/*
 //		 * Workaround (Work-around) : the following instruction is needed because in some cases, in IE, events are suspended!!!
 //		 * This was causing https://spagobi.eng.it/jira/browse/SPAGOBI-1291 : IE bug: When designing a Worksheet starting from a Qbe document, Worksheet preview is not displayed
@@ -149,14 +149,14 @@ Sbi.qbe.QbePanel = function(config) {
 //		}
 //
 //		this.worksheetPreviewPanel.on('activate', function() {
-//			
+//
 //			this.worksheetDesignerPanel.validate(
 //					function(){
 //						this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
 //					}
 //					, this.worksheetDesignerPanel.showValidationErrors
 //					, this);
-//			
+//
 //		}, this);
 //
 //		//items.push(this.worksheetPreviewPanel);
@@ -175,8 +175,8 @@ Sbi.qbe.QbePanel = function(config) {
 	}
 	*/
 
-	
-//	if (c.displayWorksheetPanel) {		
+
+//	if (c.displayWorksheetPanel) {
 //		var worksheetDesignerConfig = c.worksheet || {};
 //		this.worksheetPanel = new Sbi.worksheet.designer.WorksheetPanel(Ext.apply(worksheetDesignerConfig, {
 //			id : 'WorksheetPanel'
@@ -185,15 +185,15 @@ Sbi.qbe.QbePanel = function(config) {
 //		}));
 //		items.push(this.worksheetPanel);
 //	}
-	
-	
+
+
 	this.tabs = new Ext.TabPanel({
 		border : false
 		, activeTab : 0
 		, items : items
 		, hideMode : !Ext.isIE ? 'nosize' : 'display'
 	});
-		
+
 
 	if (this.queryEditorPanel != null) {
 		this.queryEditorPanel.on('save', function(meta){
@@ -206,7 +206,7 @@ Sbi.qbe.QbePanel = function(config) {
 		this.tabs.on('tabchange', function () {
 
 			var anActiveTab = this.tabs.getActiveTab();
-						
+
 
 			if (anActiveTab.centerRegionPanel !== undefined) {
 				anActiveTab.centerRegionPanel.doLayout();
@@ -233,7 +233,7 @@ Sbi.qbe.QbePanel = function(config) {
 
 				if(anActiveTab.filtersTemplatePanel != null && anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel != null
 						&& anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel.dropTarget === null) {
-					anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel.dropTarget = 
+					anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel.dropTarget =
 						new Sbi.formbuilder.StaticOpenFiltersEditorPanelDropTarget(anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel);
 				}
 			}
@@ -242,26 +242,26 @@ Sbi.qbe.QbePanel = function(config) {
 
 	c = Ext.apply(c, {
 		layout: 'fit',
-		autoScroll: true, 
+		autoScroll: true,
 		margins:'0 4 4 0',
-		items: [this.tabs] 
+		items: [this.tabs]
 	});
 
 	// constructor
 	Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
 
-	
+
 //	this.tabs.on("tabchange",function(object,tab){
 //		try{
 //			if(tab.id == 'WorksheetPanel'){
 //				sendMessage({button: "saveworksheet", property:"visibility", value:"true"},"managebutton");
 //			}else{
 //				sendMessage({button: "saveworksheet", property:"visibility", value:"false"},"managebutton");
-//			}	
+//			}
 //		}catch (e){}
 //
 //	},this)
-	
+
 	/*
 	if (config.isFromCross) {
 		this.loadFirstQuery();
@@ -272,7 +272,7 @@ Sbi.qbe.QbePanel = function(config) {
 /**
  * @class Sbi.qbe.QbePanel
  * @extends Ext.Panel
- * 
+ *
  * Main QBE panel
  */
 Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
@@ -314,7 +314,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 			try {
 				var firstQuery = Ext.util.JSON.decode( response.responseText );
 				if (!Sbi.user.isPowerUser && firstQuery.fields.length == 0) {
-					// user is NOT a power user and the first query is empty: most likely the user is executing 
+					// user is NOT a power user and the first query is empty: most likely the user is executing
 					// a Qbe document, not a saved query
 		        	Ext.MessageBox.show({
 		           		title: LN('sbi.qbe.qbepanel.emptyquerytitle')
@@ -331,7 +331,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 			}
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure      
+		failure: Sbi.exception.ExceptionHandler.handleFailure
 	});
 }
 
@@ -381,7 +381,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		params: {id: query.id},
 		success : this.onAmbiguousFieldsLoaded.createDelegate(this, [query, promptableFilters], true),
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure      
+		failure: Sbi.exception.ExceptionHandler.handleFailure
 	});
 }
 
@@ -499,10 +499,10 @@ getAmbiguousFieldsFromCache : function (query) {
 		Ext.Ajax.request({
 			url: this.services['saveAnalysisState'],
 			success: callback,
-			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			failure: Sbi.exception.ExceptionHandler.handleFailure,
 			scope: scope,
 			params: params
-		});  
+		});
 	};
 
 	this.queryEditorPanel.queryCataloguePanel.commit(function() {
@@ -512,7 +512,7 @@ getAmbiguousFieldsFromCache : function (query) {
 			doSave();
 		}
 
-	}, this);		
+	}, this);
 }
 ,
 
@@ -522,7 +522,7 @@ openSaveDataSetWizard: function(fromMyAnalysis) {
 		this.fromMyAnalysis = fromMyAnalysis;
 	}
 	var queries = this.getQueriesCatalogue();
-	
+	var dataset = this.getDataset();
 	var empty = true;
 	//check if the query is empty
 	if(queries && queries.catalogue && queries.catalogue.queries){
@@ -535,18 +535,18 @@ openSaveDataSetWizard: function(fromMyAnalysis) {
 			}
 		}
 	}
-	
+
 	if(!empty){
-		var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( 
-				{ queries : queries, queryCataloguePanel: this.queryEditorPanel.queryCataloguePanel  } );
-		
-		saveDatasetWindow.on('save', function(theWindow, formState) { 
-			theWindow.close(); 
+		var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow(
+				{ queries : queries, queryCataloguePanel: this.queryEditorPanel.queryCataloguePanel , dataset: dataset } );
+
+		saveDatasetWindow.on('save', function(theWindow, formState) {
+			theWindow.close();
 			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == 'TRUE'){
-				this.fireEvent('save') 
+				this.fireEvent('save')
 			}
 		}, this);
-		
+
 		saveDatasetWindow.show();
 	}else{
 		Sbi.exception.ExceptionHandler.showErrorMessage(LN("sbi.qbe.qbepanel.emptyquerytext"), LN("sbi.qbe.qbepanel.emptyquerytitle"));
@@ -559,13 +559,13 @@ openSaveDataSetWizard: function(fromMyAnalysis) {
 	}
 	var queries = this.getQueriesCatalogue();
 	var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( { queries : queries } );
-	saveDatasetWindow.on('save', function(theWindow, formState) { 
-		theWindow.close(); 
+	saveDatasetWindow.on('save', function(theWindow, formState) {
+		theWindow.close();
 		if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == 'TRUE'){
-			this.fireEvent('save') 
+			this.fireEvent('save')
 		}
 	}, this);
-	
+
 	saveDatasetWindow.show();
 }*/
 
@@ -601,7 +601,7 @@ setInitialQueriesCatalogue: function (initialQueriesCatalogue) {
 	this.initialQueriesCatalogue = initialQueriesCatalogue;
 }
 
-, 
+,
 getQueriesCatalogue: function () {
 	if (this.queryEditorPanel == null) {
 		// query designer panel not displayed, returns the initial catalogue
@@ -631,10 +631,21 @@ setQueriesCatalogue: function (queriesCatalogue) {
 		alert('Query builder panel not instantiated, you cannot invoke setQueriesCatalogue method');
 	}
 }
+,
+setDataset: function (dataset) {
+	if (this.queryEditorPanel != null) {
+		this.queryEditorPanel.setDataset(dataset);
+	} else {
+		alert('Dataset was not set');
+	}
+},
+getDataset: function () {
+	return	this.dataset;
+}
 
 //,
 //setWorksheetState : function (successFn, failureFn, scope) {
-//	
+//
 //	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
 //	this.addSheetAdditionalData(worksheetDefinition,this.worksheetDesignerPanel.worksheetTemplate);
 //	var params = {
@@ -646,7 +657,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //		failure: failureFn,
 //		scope: scope,
 //		params: params
-//	});   
+//	});
 //}
 
 //,
@@ -656,7 +667,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //	var isEqual = false;
 //	if(this.previousWorksheetDefinition!= null){
 //		isEqual = this.compareWorksheetDefinitions(this.previousWorksheetDefinition, worksheetDefinition);
-//	}		
+//	}
 //	if(!isEqual){
 //		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 //		this.previousWorksheetDefinition = worksheetDefinition;
@@ -664,7 +675,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //}
 
 //, validate : function () {
-//	return 	this.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetDesignerPanel.showValidationErrors, this );	
+//	return 	this.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetDesignerPanel.showValidationErrors, this );
 //}
 
 //, getWorksheetTemplateAsString : function () {
@@ -672,7 +683,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //	// check validation before retrieving template
 ////	var errorArray = this.worksheetDesignerPanel.validate();
 //	//	if(errorArray && errorArray.length>0){
-//	//		this.worksheetDesignerPanel.showValidationErrors(errorArray);		
+//	//		this.worksheetDesignerPanel.showValidationErrors(errorArray);
 //	//		return;
 //	//	}
 //
@@ -691,7 +702,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //		//if an exception occours do not add the additional data
 //		Sbi.error("Error adding the additional data");
 //	}
-//	
+//
 //	var template = Ext.util.JSON.encode({
 //		'OBJECT_WK_DEFINITION' : worksheetDefinition,
 //		'OBJECT_QUERY' : queriesCatalogue
@@ -710,8 +721,8 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //			if(additionalData!=undefined && additionalData!=null){
 //				var sheets = sheetTemplate.sheets;
 //				for(var i=0; i<sheets.length; i++){
-//					if(additionalData[i]!=undefined && 	additionalData[i]!=null && 	additionalData[i].data!=undefined && 
-//									additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) &&  sheets[i].content.crosstabDefinition!=undefined && 
+//					if(additionalData[i]!=undefined && 	additionalData[i]!=null && 	additionalData[i].data!=undefined &&
+//									additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) &&  sheets[i].content.crosstabDefinition!=undefined &&
 //												sheets[i].content.crosstabDefinition!=null){
 //						if (additionalData[i].data.crosstabDefinition) {
 //							var crosstabDefinition = additionalData[i].data.crosstabDefinition;
@@ -723,7 +734,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //							}
 //						}
 //					}
-//				}	
+//				}
 //			}
 //		}
 //
@@ -747,8 +758,8 @@ setQueriesCatalogue: function (queriesCatalogue) {
 						}
 						break;
 					}
-				}	
-			}	
+				}
+			}
 		}
 	}
 }
@@ -756,14 +767,14 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //, exportContent: function(mimeType){
 //
 //	if(this.isWorksheetPageActive()){
-//		if( this.worksheetPreviewPanel!=undefined && this.worksheetPreviewPanel!=null && 
+//		if( this.worksheetPreviewPanel!=undefined && this.worksheetPreviewPanel!=null &&
 //				this.worksheetPreviewPanel.getFrame()!=undefined && this.worksheetPreviewPanel.getFrame()!=null &&
 //				this.worksheetPreviewPanel.getFrame().getWindow()!=undefined && this.worksheetPreviewPanel.getFrame().getWindow()!=null &&
 //				this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=undefined && this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=null){
-//					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.un('contentexported', this.sendMessageToParentFrame,this);	
-//					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.on('contentexported', this.sendMessageToParentFrame,this);	
+//					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.un('contentexported', this.sendMessageToParentFrame,this);
+//					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.on('contentexported', this.sendMessageToParentFrame,this);
 //					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.exportContent(mimeType, true);
-//					
+//
 //			}
 //	}else{
 //		sendMessage({}, 'worksheetexporttaberror');
@@ -788,12 +799,12 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //	var cont1 = 0;
 //	var cont2 = 0;
 //	for(var k in w1) {
-//		cont1++; } 
-//	for(var f in w2){ 
+//		cont1++; }
+//	for(var f in w2){
 //		cont2++; }
 //	if(cont1 != cont2){
 //		result = false;
-//	}		
+//	}
 //	if(result == true){
 //		for(var p in w1){
 //			if(result != false){
@@ -803,7 +814,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //						if(w1[p] == null && w2[p] == null){
 //							result = true;
 //							break;
-//						}	
+//						}
 //						else{
 //							result = this.compareWorksheetDefinitions(w1[p], w2[p]);
 //						}
@@ -814,7 +825,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 //					}
 //				}
 //				else if(typeof(w1[p])=='function'){
-//					result = true;					
+//					result = true;
 //					break;
 //				}
 //				else{
