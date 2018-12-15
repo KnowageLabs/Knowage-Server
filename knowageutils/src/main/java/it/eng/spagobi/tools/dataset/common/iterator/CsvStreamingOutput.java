@@ -40,7 +40,7 @@ public class CsvStreamingOutput implements StreamingOutput {
 
 			for (int i = 0; i < fieldCount; i++) {
 				if (i != 0) {
-					writer.write(",");
+					writer.write(";");
 				}
 				IFieldMetaData fieldMeta = iterator.getMetaData().getFieldMeta(i);
 				String columnName = fieldMeta.getAlias() != null ? fieldMeta.getAlias() : fieldMeta.getName();
@@ -53,7 +53,7 @@ public class CsvStreamingOutput implements StreamingOutput {
 				IRecord record = iterator.next();
 				for (int j = 0; j < fieldCount; j++) {
 					if (j != 0) {
-						writer.write(",");
+						writer.write(";");
 					}
 					IField field = record.getFieldAt(j);
 					Object fieldValue = field.getValue();
