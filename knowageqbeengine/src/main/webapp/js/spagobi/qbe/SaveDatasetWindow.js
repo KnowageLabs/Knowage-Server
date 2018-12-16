@@ -411,14 +411,14 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			this.queryCataloguePanel.dataset.scopeId = params.scopeId;
 			//this.queryCataloguePanel.dataset.startDateField = params.startDateField;
 			config.method="POST";
-			config.success = this.datasetUpdateSuccessHandler,
+			config.success = this.datasetUpdateSuccessHandler;
 			config.headers = {
 	            'Content-Type': 'application/json'
 	        };
-			config.jsonData = this.queryCataloguePanel.dataset
+			config.jsonData = this.queryCataloguePanel.dataset;
 		} else {
-			success : this.datasetSavedSuccessHandler,
-			config.params = params
+			config.success = this.datasetSavedSuccessHandler;
+			config.params = params;
 		}
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
 		Ext.Ajax.request(config);

@@ -224,7 +224,7 @@ try {
 
 	         	<%}%>
 	         	qbe.setDataset(parent.globalQbeDataset);
-	         	qbe.setQueriesCatalogue(JSON.parse(parent.globalQbeDataset.qbeJSONQuery));
+	         	qbe.setQueriesCatalogue(parent.globalQbeDataset.qbeJSONQuery);
 
 	      	});
 	        
