@@ -89,9 +89,8 @@ public class ClassLoaderManager {
 			List<DynamicClassLoader> currentClassLoaders = new ArrayList<DynamicClassLoader>();
 			ClassLoader root = null;
 			while (genericClassLoader instanceof DynamicClassLoader) {
-				DynamicClassLoader aDynClassLoader = (DynamicClassLoader) genericClassLoader;
 				if (!previousCL.equals(genericClassLoader)) {
-					currentClassLoaders.add(aDynClassLoader);
+					currentClassLoaders.add((DynamicClassLoader) genericClassLoader);
 				}
 				genericClassLoader = start.getParent();
 			}
