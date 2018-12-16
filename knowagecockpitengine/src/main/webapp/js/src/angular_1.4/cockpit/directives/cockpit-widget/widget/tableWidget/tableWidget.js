@@ -268,11 +268,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(Object.prototype.toString.call( row ) === '[object Array]'){
 				var valuesArray = [];
 				for(var k in row){
-					valuesArray.push(row[k][column.aliasToShow]);
+					valuesArray.push(row[k][column.aliasToShow.toLowerCase()]);
 				}
 				$scope.doSelection(column.aliasToShow, valuesArray, $scope.ngModel.settings.modalSelectionColumn, newValue, row);
 			}else{
-				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.settings.modalSelectionColumn, newValue, row);
+				$scope.doSelection(column.aliasToShow, row[column.aliasToShow.toLowerCase()], $scope.ngModel.settings.modalSelectionColumn, newValue, row);
 			}
 		}
 
