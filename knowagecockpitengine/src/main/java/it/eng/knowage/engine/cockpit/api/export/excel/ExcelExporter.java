@@ -165,9 +165,21 @@ public class ExcelExporter {
 			String widgetId = parameterMap.get("widget")[0];
 			exportWidget(templateString, widgetId, wb);
 		} else {
-			ExcelSheet[] excelSheets = getExcelSheets(templateString);
-			if (excelSheets != null) {
-				importCsvData(excelSheets, wb);
+			/**
+			 * Old implementation. ExcelSheet class creates a grid of Data where all records are represented as Strings even if they are suppose to be numbers
+			 */
+			// ExcelSheet[] excelSheets = getExcelSheets(templateString);
+			// if (excelSheets != null) {
+			// importCsvData(excelSheets, wb);
+			// }
+
+			/**
+			 * New implementation - consider Data types when exporting global cockpit document
+			 */
+			// TODO: Implement logic for DataReader, now everything stays in memory - bad when widget we have large number of Data
+			List<JSONObject> excelSheets = getExcelSheetsList(templateString);
+			if (!excelSheets.isEmpty()) {
+				exportWidgetsToExcel(excelSheets, wb);
 			}
 		}
 
@@ -259,14 +271,26 @@ public class ExcelExporter {
 			JSONArray rows = dataStore.getJSONArray("rows");
 
 			Sheet sheet;
-			if (widgetName != null && !widgetName.isEmpty()) {
-				sheet = wb.createSheet(widgetName);
+			Row header = null;
+			if (exportWidget) {
+				if (widgetName != null && !widgetName.isEmpty()) {
+					sheet = wb.createSheet(widgetName);
+				} else {
+					sheet = wb.createSheet("Data");
+				}
+				// Create HEADER - Column Names
+				header = sheet.createRow((short) 0); // first row
 			} else {
-				sheet = wb.createSheet("Data");
+				String sheetName = dataStore.getString("sheetName");
+				sheet = wb.createSheet(sheetName);
+				// First row for Widget name in case exporting whole Cockpit document
+				Row firstRow = sheet.createRow((short) 0);
+				Cell firstCell = firstRow.createCell(0);
+				firstCell.setCellValue(widgetName);
+				header = sheet.createRow((short) 1);
 			}
 
-			// Create HEADER - Column Names
-			Row header = sheet.createRow((short) 0); // first row
+			// Fill Header
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String columnName = column.getString("header");
@@ -284,7 +308,11 @@ public class ExcelExporter {
 			// FILL RECORDS
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
-				Row row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+				Row row;
+				if (exportWidget)
+					row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+				else
+					row = sheet.createRow(r + 2);
 
 				for (int c = 0; c < columns.length(); c++) {
 					JSONObject column = columns.getJSONObject(c);
@@ -344,13 +372,121 @@ public class ExcelExporter {
 		List<ExcelSheet> sheets = new ArrayList<>(0);
 		try {
 			JSONObject template = new JSONObject(templateString);
-			sheets.addAll(getCsvsFromDatasets(template));
+			/**
+			 * Disabled functionality for including Datasets to be exported when exporting Cockpit document. getCsvsFromDatasets(String template)
+			 */
+			// sheets.addAll(getCsvsFromDatasets(template));
 			sheets.addAll(getCsvsFromWidgets(template));
-		} catch (JSONException | EMFUserError | UnsupportedEncodingException e) {
+		} catch (JSONException | EMFUserError e) {
 			logger.error("Unable to load template", e);
 		}
 
 		return sheets.toArray(new ExcelSheet[0]);
+	}
+
+	private List<JSONObject> getExcelSheetsList(String templateString) {
+		List<JSONObject> sheets = new ArrayList<>(0);
+		try {
+			JSONObject template = new JSONObject(templateString);
+			sheets.addAll(getDatastoresByWidget(template));
+		} catch (Exception e) {
+			logger.error("Unable to load template", e);
+		}
+		return sheets;
+	}
+
+	private List<JSONObject> getDatastoresByWidget(JSONObject template) throws JSONException, EMFUserError {
+		logger.debug("IN");
+		JSONObject configuration = template.getJSONObject("configuration");
+		JSONArray sheets = template.getJSONArray("sheets");
+
+		loadCockpitSelections(configuration);
+
+		List<JSONObject> excelSheets = new ArrayList<>();
+
+		for (int i = 0; i < sheets.length(); i++) {
+			JSONObject sheet = sheets.getJSONObject(i);
+			int sheetIndex = sheet.getInt("index");
+
+			JSONArray widgets = sheet.getJSONArray("widgets");
+			int widgetCounter = 0;
+			for (int j = 0; j < widgets.length(); j++) {
+				JSONObject widget = widgets.getJSONObject(j);
+				String widgetType = widget.getString("type");
+
+				if ("table".equals(widgetType) || "chart".equals(widgetType)) {
+					JSONObject datasetObj = widget.getJSONObject("dataset");
+					int datasetId = datasetObj.getInt("dsId");
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					String datasetLabel = dataset.getLabel();
+
+					JSONObject body = new JSONObject();
+
+					JSONObject aggregations = getAggregationsFromWidget(widget, configuration);
+					logger.debug("aggregations = " + aggregations);
+					body.put("aggregations", aggregations);
+
+					JSONObject parameters = getParametersFromWidget(widget, configuration);
+					logger.debug("parameters = " + parameters);
+					body.put("parameters", parameters);
+
+					JSONObject summaryRow = getSummaryRowFromWidget(widget);
+					if (summaryRow != null) {
+						logger.debug("summaryRow = " + summaryRow);
+						body.put("summaryRow", summaryRow);
+					}
+
+					JSONObject likeSelections = getLikeSelectionsFromWidget(widget, configuration);
+					if (likeSelections != null) {
+						logger.debug("likeSelections = " + likeSelections);
+						body.put("likeSelections", likeSelections);
+					}
+
+					JSONObject selections = getSelectionsFromWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+					body.put("selections", selections);
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+					if (getRealtimeFromTableWidget(datasetId, configuration)) {
+						logger.debug("realtime = true");
+						map.put("realtime", true);
+					}
+
+					int limit = getLimitFromTableWidget(widget);
+					if (limit > 0) {
+						logger.debug("limit = " + limit);
+						map.put("limit", limit);
+					}
+
+					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
+					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
+					datastoreObj.put("sheetName", sheetName);
+					JSONObject content = widget.optJSONObject("content");
+					String widgetName = null;
+					if (content != null) {
+						widgetName = content.getString("name");
+					}
+					datastoreObj.put("widgetName", widgetName);
+					excelSheets.add(datastoreObj);
+				}
+			}
+		}
+
+		logger.debug("OUT");
+		return excelSheets;
+	}
+
+	private void exportWidgetsToExcel(List<JSONObject> excelSheets, Workbook wb) {
+		Iterator<JSONObject> it = excelSheets.iterator();
+		while (it.hasNext()) {
+			JSONObject widgetDatastore = it.next();
+			String widgetName = widgetDatastore.optString("widgetName");
+			if (widgetName == null || widgetName.isEmpty()) {
+				widgetName = "Widget";
+			}
+			createExcelFile(widgetDatastore, wb, widgetName);
+		}
 	}
 
 	private List<ExcelSheet> getCsvsFromDatasets(JSONObject template) throws JSONException, EMFUserError, UnsupportedEncodingException {
