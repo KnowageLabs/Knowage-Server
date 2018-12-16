@@ -71,9 +71,11 @@
 			var aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset);
 			var selections = cockpitModule_datasetServices.getFiltersWithoutParams();
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+			var paramsToSend = angular.fromJson(parametersString);
 			requestUrl.COCKPIT_SELECTIONS = {};
 			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;			
-			requestUrl.COCKPIT_SELECTIONS.parameters = parameters;
+			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
 			requestUrl.COCKPIT_SELECTIONS.selections = selections;
 
 			deferred.resolve(requestUrl);
