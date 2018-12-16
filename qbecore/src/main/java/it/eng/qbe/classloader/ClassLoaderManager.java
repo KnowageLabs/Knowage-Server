@@ -92,7 +92,7 @@ public class ClassLoaderManager {
 				if (!previousCL.equals(genericClassLoader)) {
 					currentClassLoaders.add((DynamicClassLoader) genericClassLoader);
 				}
-				genericClassLoader = start.getParent();
+				genericClassLoader = genericClassLoader.getParent();
 			}
 			root = genericClassLoader;
 
