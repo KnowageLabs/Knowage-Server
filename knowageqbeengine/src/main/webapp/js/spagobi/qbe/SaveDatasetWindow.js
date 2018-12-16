@@ -362,7 +362,11 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
      	}
     	var meta = this.metadataPanel.getValues()
 
-    	formState.meta = Ext.util.JSON.encode(meta);
+		if(this.queryCataloguePanel.dataset){
+			formState.meta = meta
+		} else {
+	    	formState.meta = Ext.util.JSON.encode(meta);
+		}
 
       	return formState;
     }
@@ -388,7 +392,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		params.ambiguousRoles = Ext.util.JSON.encode(ambiguousRoles) ;
 		var config = {
 		        url : this.services['saveDatasetService'],
-		        success : this.datasetSavedSuccessHandler,
+		       // success : this.datasetSavedSuccessHandler,
 		        scope : this,
 		        failure : Sbi.exception.ExceptionHandler.handleFailure
 		}
@@ -400,17 +404,20 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			this.queryCataloguePanel.dataset.isScheduled = params.isScheduled;
 			this.queryCataloguePanel.dataset.label = params.label;
 			this.queryCataloguePanel.dataset.name = params.name;
+			this.queryCataloguePanel.dataset.meta = params.meta;
 			this.queryCataloguePanel.dataset.qbeJSONQuery = params.qbeJSONQuery;
 			//this.queryCataloguePanel.dataset.schedulingCronLine = params.schedulingCronLine;
 			this.queryCataloguePanel.dataset.scopeCd = params.scopeCd;
 			this.queryCataloguePanel.dataset.scopeId = params.scopeId;
 			//this.queryCataloguePanel.dataset.startDateField = params.startDateField;
 			config.method="POST";
+			config.success = this.datasetUpdateSuccessHandler,
 			config.headers = {
 	            'Content-Type': 'application/json'
 	        };
 			config.jsonData = this.queryCataloguePanel.dataset
 		} else {
+			success : this.datasetSavedSuccessHandler,
 			config.params = params
 		}
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
@@ -427,13 +434,38 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		formState.isFlatDataset = false;
 		formState.sourceDatasetLabel = this.sourceDatasetLabel;
 		return formState;
-	}
+	},
+	datasetUpdateSuccessHandler : function (response , options) {
+  		if (response !== undefined && response.responseText !== undefined) {
+  			var content = Ext.util.JSON.decode( response.responseText );
+  			if ( content.success == false) {
+                Ext.MessageBox.show({
+                    title: LN('sbi.generic.error'),
+                    msg: content,
+                    width: 150,
+                    buttons: Ext.MessageBox.OK
+               });
+      		} else {
+      			var theWindow = this;
+      			this.queryCataloguePanel.dataset.meta = content.meta;
+      			Ext.MessageBox.show({
+                        title: LN('sbi.generic.success'),
+                        msg: LN('sbi.generic.operationSucceded'),
+                        width: 200,
+                       buttons: Ext.MessageBox.OK
 
+                });
+      			this.fireEvent('save', this, this.getFormState());
+      		}
+  		} else {
+  			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+  		}
+	}
 	,
 	datasetSavedSuccessHandler : function (response , options) {
   		if (response !== undefined && response.responseText !== undefined) {
   			var content = Ext.util.JSON.decode( response.responseText );
-  			if ( content.success == false|| content.success !== 'true') {
+  			if (content.success !== 'true') {
                 Ext.MessageBox.show({
                     title: LN('sbi.generic.error'),
                     msg: content,

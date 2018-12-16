@@ -171,7 +171,10 @@ angular
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a
 				 * result of calling the 'openSaveDataSetWizard' function.
 				 */
-				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;$scope.closeDocument();})
+				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {
+					$scope.datasetSavedFromQbe = true;
+					if(!$scope.editQbeDset)	$scope.closeDocument();
+				})
 
 			}
 
