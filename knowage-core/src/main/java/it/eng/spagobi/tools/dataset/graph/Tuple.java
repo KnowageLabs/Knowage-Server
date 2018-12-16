@@ -81,7 +81,7 @@ public final class Tuple {
 				tuple.append(valueDelimiter);
 			}
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
-			String delimiter = (value == null || (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter))) ? "" : stringDelimiter;
+			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
 			tuple.append(delimiter);
 			tuple.append(value);
 			tuple.append(delimiter);
