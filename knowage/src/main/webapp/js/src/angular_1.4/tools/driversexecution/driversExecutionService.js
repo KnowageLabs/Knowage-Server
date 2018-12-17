@@ -404,7 +404,11 @@
 								tempDriver.urlName = drivers[i].urlName;
 								tempDriver.type = drivers[i].type;
 								tempDriver.multivalue = drivers[i].multivalue;
-								tempDriver.value = drivers[i].parameterValue
+								if(drivers[i].parameterValue && drivers[i].parameterValue[0].value){
+									tempDriver.value =  drivers[i].parameterValue[0].value;
+								}else{
+									tempDriver.value = drivers[i].parameterValue;
+								}
 								transformedDrivers[tempDriver.urlName] = tempDriver;
 
 						}

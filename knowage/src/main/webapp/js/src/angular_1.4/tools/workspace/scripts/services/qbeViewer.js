@@ -176,8 +176,8 @@ angular
 				}
 
 				queryDriverObj.DRIVERS = drivers;
-				qbeUrlBuilderService.addQueryParams(queryParamObj);
-				qbeUrlBuilderService.addQueryParams(queryDriverObj);
+				urlBuilderService.addQueryParams(queryParamObj);
+				urlBuilderService.addQueryParams(queryDriverObj);
 
 				$scope.documentViewerUrl = urlBuilderService.build();
 				$scope.showDrivers = false

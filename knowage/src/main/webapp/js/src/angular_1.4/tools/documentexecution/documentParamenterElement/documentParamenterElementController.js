@@ -700,7 +700,11 @@
 			$scope.execProperties.executionInstance = {}
 			$scope.execProperties.executionInstance.OBJECT_ID = $scope.execProperties.id;
 			$scope.execProperties.executionInstance.OBJECT_LABEL = $scope.execProperties.name;
+			if($scope.execProperties.dsTypeCd){
+				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.qbeDatamarts
+			}else{
 			$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
+			}
 			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
 			if($scope.execProperties.drivers){
 				$scope.execProperties.parametersData = {};
