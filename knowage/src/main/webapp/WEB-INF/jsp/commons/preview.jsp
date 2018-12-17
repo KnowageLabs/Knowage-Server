@@ -1,9 +1,29 @@
+<%--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular.min.js"></script>
 <!DOCTYPE html>
     <head>
-    	<link rel="stylesheet" href="http://localhost:8080/knowage/themes/commons/css/reset_2018.css">
-        <script src="http://localhost:8080/knowage/node_modules/ag-grid/dist/ag-grid.min.noStyle.js"></script>
-    	<link rel="stylesheet" href="http://localhost:8080/knowage/node_modules/ag-grid/dist/styles/ag-grid.css">
-    	<link rel="stylesheet" href="http://localhost:8080/knowage/node_modules/ag-grid/dist/styles/ag-theme-balham.css">
+    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
+        <script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.noStyle.js"></script>
+    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/styles/ag-grid.css">
+    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/styles/ag-theme-balham.css">
     	<style>
     		html, body {height: 100%;}
 
@@ -40,7 +60,8 @@
 				font-size: 10px;
 				clear:both;
 			}
-			.kn-preview-table-theme .ag-header-cell::after, .kn-preview-table-theme .ag-header-group-cell::after {
+			
+			.kn-preview-table-theme .ag-header-cell::after, .kn-preview-table-theme .ag-header-group-cell::after,.kn-preview-table-theme .ag-header-cell-resize::after {
 				height: 24px;
 				margin-top: 16px;
 			}
@@ -48,21 +69,53 @@
     </head>
     <body>
         <div id="myGrid" style="height: 100%;width:100%;" class="ag-theme-balham kn-preview-table-theme"></div>
+		<script type="text/javascript" charset="utf-8">
+	  
+	  		var url = new URL(window.location.href);
+	  		var datasetLabel = url.searchParams.get("dataset");
+	  		var options = JSON.parse(url.searchParams.get("options"));
+	  		debugger;
 
-	  <script type="text/javascript" charset="utf-8">
-	  
-	  var url = new URL(window.location.href);
-	  var datasetLabel = url.searchParams.get("dataset");
-	  
-	  	var body = {aggregations:{"measures":[{"id":"gross_weight","alias":"gross_weight","columnName":"gross_weight","orderType":"","funct":"NONE","orderColumn":"gross_weight"},{"id":"units_per_case","alias":"units_per_case","columnName":"units_per_case","orderType":"","funct":"NONE","orderColumn":"units_per_case"},{"id":"SRP","alias":"SRP","columnName":"SRP","orderType":"","funct":"NONE","orderColumn":"SRP"}],"categories":[{"id":"product_name","alias":"product_name","columnName":"product_name","orderType":"","funct":"NONE"},{"id":"low_fat","alias":"low_fat","columnName":"low_fat","orderType":"","funct":"NONE"},{"id":"the_date","alias":"the_date","columnName":"the_date","orderType":"","funct":"NONE"},{"id":"DATE(the_date)","alias":"DATE(the_date)","columnName":"DATE(the_date)","orderType":"","funct":"NONE"}],"dataset":"multiTypeDataset"},parameters:{},selections:{}};
-	 
+	    		
+	  		function filterType(type){
+	  			if(type == 'date') return 'agDateColumnFilter';
+	  			if(type == 'float' || type == 'int') return 'agNumberColumnFilter';
+	  			return 'agTextColumnFilter';
+	  		}
+	  		
+	  		function compareDates(filterLocalDateAtMidnight, cellValue){
+	            var dateAsString = cellValue;
+	            var dateParts  = dateAsString.split("/");
+	            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+	            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) return 0
+	            if (cellDate < filterLocalDateAtMidnight) return -1;
+	            if (cellDate > filterLocalDateAtMidnight) return 1;
+	        }
 		
-		  function getColumns(fields) {
+		  	function getColumns(fields) {
 				var columns = [];
 				for(var f in fields){
 					if(typeof fields[f] != 'object') continue;
-					var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].header};
+					var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
 					tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
+					tempCol.filter = filterType(fields[f].type);
+					if(fields[f].type == 'date'){
+						tempCol.filterParams = {
+							comparator: function (filterLocalDateAtMidnight, cellValue) {
+
+					            //dd/mm/yyyy
+					            var dateParts  = cellValue.split("/");
+					            var day = Number(dateParts[2]);
+					            var month = Number(dateParts[1]) - 1;
+					            var year = Number(dateParts[0]);
+					            var cellDate = new Date(day, month, year);
+
+					            if (cellDate < filterLocalDateAtMidnight) return -1;
+					            else if (cellDate > filterLocalDateAtMidnight) return 1;
+					            else return 0;
+					        }
+					    }
+					}
 					columns.push(tempCol);
 				}
 				return columns
@@ -72,7 +125,9 @@
 		  var gridOptions = {
 		    enableSorting: true,
 		    enableFilter: true,
-		    pagination: true,
+		    pagination: options && options.pagination ? true : false,
+		    suppressDragLeaveHidesColumns : true,
+		    enableColResize: true,
             paginationAutoPageSize: true,
             headerHeight: 48,
 		  };
@@ -91,14 +146,18 @@
 						'	</div>'+
 						'</div>';
 			}
-		    // specify the data
-		    fetch('http://localhost:8080/knowage/restful-services/2.0/datasets/multiTypeDataset/data',{
+
+		    fetch('http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data',{
 				  method: "POST",
-				  body: JSON.stringify(body)
+				  //body: {}
 				}).then(function(response) {return response.json()})
 				.then(function(data){
-					gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
-			        gridOptions.api.setRowData(data.rows);
+					if(data.errors){
+						gridOptions.api.showNoRowsOverlay();
+					}else{
+						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
+				        gridOptions.api.setRowData(data.rows);
+					}
 		      })
 		    
 		
