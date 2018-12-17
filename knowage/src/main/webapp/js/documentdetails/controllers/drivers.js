@@ -209,6 +209,10 @@ angular
                     	 self.drivers.splice(i, 1);
                      }
                  }
+                 for (var i = 0; i< driversService.driversPerModel.length;i++) {
+                	 if (driversService.driversPerModel[i].id == driver.id)
+                		 driversService.driversPerModel.splice(i,1);
+                 }
                  if(self.drivers.length > 0){
 	                 self.priorityOfDeletedDriver = driversService.driversForDeleting[driversService.driversForDeleting.length-1].priority;
 	                 for (var d in self.drivers) {

@@ -65,17 +65,23 @@
 			<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
 					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
-			</md-button>
-		  	
+			</md-button>		  	
 	  	</div>
 </md-toolbar>
 
 <md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  layout-fill md-is-locked-open="$mdMedia('gt-md')">
-<div layout=column>
-<div flex=90 >
-      <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
-  </div>
-   <div flex=10>
-<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="executeParameter()">
-	{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-</md-button>	
+	<div layout=column>
+		<div flex=90 >
+		<render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
+	      <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
+	    
+	      
+	    </div>
+	    <div flex=10>
+			<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="executeParameter()">
+				{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+			</md-button>	
+		</div>
+	</div>
+</md-sidenav>
+</div>

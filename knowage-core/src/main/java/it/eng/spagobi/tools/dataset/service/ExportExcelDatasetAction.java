@@ -32,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -58,6 +59,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 		Integer id = this.getAttributeAsInteger(VERSION_ID);
+		JSONObject drivers = this.getAttributeAsJSONObject("DRIVERS");
+		System.out.println(drivers);
 		// GET DATA STORE INFO
 		IDataSetDAO dao = DAOFactory.getDataSetDAO();
 		dao.setUserProfile(this.getUserProfile());

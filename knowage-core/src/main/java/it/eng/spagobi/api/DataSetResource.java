@@ -512,7 +512,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{id}/export")
 	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType) {
+	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType,
+			@QueryParam("DRIVERS") JSONObject drivers) {
 
 		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());

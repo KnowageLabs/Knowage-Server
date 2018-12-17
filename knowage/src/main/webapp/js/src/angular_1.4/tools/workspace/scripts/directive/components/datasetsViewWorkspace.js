@@ -39,7 +39,7 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,urlBuilderService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -621,30 +621,63 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.exportDataset= function(dataset,format){
+    	$scope.formatValueForExport = format;
+    	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataset).then(function(){
+    		if($scope.drivers.length > 0){
+    			$scope.showDriversForExport = true;
+    		}else{
+    			 $scope.exportDatasetWithDrivers(dataset,format);
+    		}
+    	})
+
+    }
+    $scope.exportDatasetWithDrivers = function(dataset){
+    	var format = $scope.formatValueForExport;
     	var id=dataset.id;
        	if(isNaN(id)){
        		id=id.dsId;
        	}
-
-       	if(format == 'CSV') {
+    	if(format == 'CSV') {
        		var url= sbiModule_restServices.getBaseUrl("1.0/datasets/" + id + "/export");
        		console.info("[EXPORT]: Exporting dataset with id " + id + " to CSV");
+       		if($scope.drivers.length>0){
+       			urlBuilderService.setBaseUrl(url);
+       			queryDriverObj = {}
+       			queryDriverObj.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
+       			urlBuilderService.addQueryParams(queryDriverObj);
+       			url = urlBuilderService.build();
+       			$window.open(url);
+       		}else{
+       			$window.open(url);
+       		}
 
-       		$window.open(url);
        	} else if (format == 'XLSX') {
        		var actionName='EXPORT_EXCEL_DATASET_ACTION';
-       		var url= sbiModule_config.adapterPath
-            +'?ACTION_NAME='+actionName
-            +'&SBI_EXECUTION_ID=-1'
-            +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
-            +'&id='+id;
+       		var url= sbiModule_config.adapterPath;
+       		urlBuilderService.setBaseUrl(url);
+       		var urlBaseObject = {}
+       		urlBaseObject["ACTION_NAME"] = actionName;
+       		urlBaseObject["SBI_EXECUTION_ID"] = -1;
+       		urlBaseObject["LIGHT_NAVIGATOR_DISABLED"] = "TRUE";
+       		urlBaseObject["id"] = id;
+       		urlBuilderService.addQueryParams(urlBaseObject);
 
+       		if($scope.drivers.length>0){
+       			queryDriverObj = {}
+       			queryDriverObj.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
+       			urlBuilderService.addQueryParams(queryDriverObj);
+       			url = urlBuilderService.build();
+       			$window.location.href = url;
+       		}else{
+       			$window.location.href=urlBuilderService.build();;
+       		}
        		console.info("[EXPORT]: Exporting dataset with id " + id + " to XLSX");
 
        		$window.location.href=url;
        	} else {
        		console.info("Format " + format + " not supported");
        	}
+    	$scope.showDriversForExport = false;
     }
 
     $scope.previewDataset = function(dataset){
@@ -798,7 +831,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	params.columnsFilterDescription=null;
     	params.typeValueFilter=null;
     	params.typeFilter=null;
-    	params.drivers = driversExecutionService.buildStringParameters($scope.drivers);
+    	params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
 
     	config={};
     	config.params=params;
@@ -1382,7 +1415,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.executeParameter = function(){
 			$scope.showDrivers = false;
 			$scope.dataset.executed = true;
-			$scope.dataset.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
+			$scope.dataset["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
 			$scope.getPreviewSet($scope.datasetInPreview);
 		}
 
@@ -1404,6 +1437,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			 $scope.counter = 0;
 			 $mdDialog.cancel();
 	    }
+
+
 
 	}
 

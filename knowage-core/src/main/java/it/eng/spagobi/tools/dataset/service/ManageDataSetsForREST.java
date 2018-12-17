@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.json.JsonException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -41,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
@@ -118,6 +118,7 @@ public class ManageDataSetsForREST {
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String SERVICE_NAME = "ManageDatasets";
+	public static final String DRIVERS = "DRIVERS";
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
 	public static Logger auditlogger = Logger.getLogger("dataset.audit");
@@ -706,10 +707,9 @@ public class ManageDataSetsForREST {
 			String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 			HashMap<String, Object> driversMap = null;
-			JSONObject driversJSON = json.optJSONObject("parametersString");
-			if (driversJSON != null && driversJSON.length() > 0) {
-				driversMap = (HashMap<String, Object>) parseJsonDriversMap(driversJSON);
-			}
+			JSONObject driversJSON = json.optJSONObject(DRIVERS);
+			driversMap = JSONObjectDeserializator.getHashMapFromJSONObject(driversJSON);
+
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
@@ -1551,22 +1551,22 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private Map parseJsonDriversMap(JSONObject drivers) {
-		HashMap<String, Object> driversMap = new HashMap<>();
-		try {
-			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
-				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
-					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
-						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
-						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
-					} else
-						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
-				}
-			}
-		} catch (JSONException e) {
-			logger.debug("Unsuccessful parsing of JSONObject to map");
-			throw new JsonException(e.getLocalizedMessage(), e);
-		}
-		return driversMap;
-	}
+//	private Map parseJsonDriversMap(JSONObject drivers) {
+//		HashMap<String, Object> driversMap = new HashMap<>();
+//		try {
+//			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
+//				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
+//					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
+//						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
+//						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
+//					} else
+//						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
+//				}
+//			}
+//		} catch (JSONException e) {
+//			logger.debug("Unsuccessful parsing of JSONObject to map");
+//			throw new JsonException(e.getLocalizedMessage(), e);
+//		}
+//		return driversMap;
+//	}
 }

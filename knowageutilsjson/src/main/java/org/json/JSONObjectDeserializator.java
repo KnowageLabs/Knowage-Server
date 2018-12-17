@@ -39,6 +39,7 @@ public class JSONObjectDeserializator {
 		ObjectMapper mapper = JacksonMapper.getMapper();
 
 		try {
+			if (object != null)
 			map = mapper.readValue(object.toString(), new TypeReference<Map<String, Object>>() {
 			});
 		} catch (IOException e) {
@@ -53,12 +54,12 @@ public class JSONObjectDeserializator {
 		ObjectMapper mapper = JacksonMapper.getMapper();
 
 		try {
-			map = mapper.readValue(object, new TypeReference<Map<String, Object>>() {
-			});
+			if (object != null)
+				map = mapper.readValue(object, new TypeReference<Map<String, Object>>() {
+				});
 		} catch (IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}
 		return map;
 	}
-
 }

@@ -78,7 +78,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			@QueryParam("limit") Integer limit, @QueryParam("page") Integer page, @QueryParam("dataSetParameters") String dataSetParameters,
 			@QueryParam("sort") JSONArray sortOptions, @QueryParam("valueFilter") String valueFilter, @QueryParam("columnsFilter") String columnsFilter,
 			@QueryParam("columnsFilterDescription") String columnsFilterDescription, @QueryParam("typeValueFilter") String typeValueFilter,
-			@QueryParam("typeFilter") String typeFilter, @QueryParam("drivers") JSONObject driversMap) {
+			@QueryParam("typeFilter") String typeFilter, @QueryParam("DRIVERS") JSONObject driversMap) {
 
 		logger.debug("Retriving data for the preview");
 

@@ -3067,7 +3067,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.executeParameter = function(){
 			$scope.showDrivers = false;
 			$scope.dataset.executed = true;
-			$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.drivers);
+			$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
 			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(function(response){
 				$scope.getPreviewSet(response.data);
@@ -3196,7 +3196,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 		}
-		$scope.selectedDataSet.parametersString = driversExecutionService.buildStringParameters($scope.selectedDataSet.drivers);
+		$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {

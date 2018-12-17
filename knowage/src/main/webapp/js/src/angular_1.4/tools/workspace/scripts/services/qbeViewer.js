@@ -23,7 +23,7 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,qbeUrlBuilderService) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService) {
 		var driversExecutionService = $injector.get('driversExecutionService');
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
@@ -95,7 +95,7 @@ angular
 			$scope.showDrivers = false;
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
-			qbeUrlBuilderService.setBaseUrl(url);
+			urlBuilderService.setBaseUrl(url);
 
 			var queryParamObj = {};
 			var queryDriverObj = {};
@@ -127,12 +127,13 @@ angular
 
 			var drivers = driversExecutionService.additionalUrlDrivers;
 
-			var driversObject = driversExecutionService.prepareDriversForSending(drivers);
+			var driversObject =  driversExecutionService.prepareDriversForSending(drivers);
 			queryDriverObj.DRIVERS = driversObject;
 
-			qbeUrlBuilderService.addQueryParams(queryDriverObj);
-			qbeUrlBuilderService.addQueryParams(queryParamObj);
-			$scope.documentViewerUrl = qbeUrlBuilderService.build();
+
+		 urlBuilderService.addQueryParams(queryDriverObj);
+			urlBuilderService.addQueryParams(queryParamObj);
+			$scope.documentViewerUrl = urlBuilderService.build();
 
 			$scope.toggleDrivers =function(){
 				$scope.showDrivers = !$scope.showDrivers;
@@ -169,7 +170,7 @@ angular
 			$scope.executeParameter = function(){
 
 				if($scope.drivers){
-					var drivers = driversExecutionService.prepareDriversForSending($scope.drivers);
+					var drivers =   driversExecutionService.prepareDriversForSending($scope.drivers);
 				}else {
 					var drivers = {};
 				}
@@ -178,7 +179,7 @@ angular
 				qbeUrlBuilderService.addQueryParams(queryParamObj);
 				qbeUrlBuilderService.addQueryParams(queryDriverObj);
 
-				$scope.documentViewerUrl = qbeUrlBuilderService.build();
+				$scope.documentViewerUrl = urlBuilderService.build();
 				$scope.showDrivers = false
 				$scope.driverableObject.executed = true;
 			}

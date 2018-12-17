@@ -306,4 +306,40 @@
 			</md-list>
 		</md-content>
 	</md-sidenav>
+	<div layout="column" flex=20 ng-if="showDriversForExport">
+<md-toolbar class="header secondaryToolbar" >
+	
+		<div class="md-toolbar-tools" layout="row" layout-align="space-around center">
+			<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
+				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>						
+			<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
+					ng-click="urlViewPointService.getViewpoints();">
+					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-pencil"></md-icon>
+			</md-button>	
+			<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
+					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
+			</md-button>		  	
+	  	</div>
+</md-toolbar>
+
+<md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  flex md-is-locked-open="$mdMedia('gt-md')">
+<div layout= row layout-align="space-around center"><h4 ><em>{{::translate.load("sbi.execution.parametersselection.export.message")}}</em></h4></div>
+	<div layout=column>
+		<div flex=80 >
+	      <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
+	      	     <render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
+	      
+	    </div>
+	    <div flex=10>
+			<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="exportDatasetWithDrivers(selectedDataset)">
+				{{::translate.load("sbi.execution.parametersselection.exportbutton.message")}}
+			</md-button>	
+		</div>
+	</div>
+</md-sidenav>
+</div>
 </div>

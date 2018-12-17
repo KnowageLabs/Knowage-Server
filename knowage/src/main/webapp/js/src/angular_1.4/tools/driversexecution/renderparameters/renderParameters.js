@@ -9,7 +9,7 @@
 					+ '/js/src/angular_1.4/tools/driversexecution/renderparameters/template/renderParameters.html',
 				controller: renderParametersController,
 				scope: {
-					parameter: '=',
+					param: '=',
 					driverableObject: '=',
 				}
 			}

@@ -16,68 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function(){
-
-	angular.module('qbe_viewer').service('qbeUrlBuilderService',["$httpParamSerializer",function($httpParamSerializer) {
-
-	    var parameters = [];
-	    var httpParamSerializer = $httpParamSerializer;
-		var baseUrl = "";
-		var getQueryString = function(){
-				var queryString = "";
-	      for(var i = 0;i < parameters.length;i++){
-	      	var params = getQueryStringFromObj(parameters[i]);
-	        queryString = queryString + "&" + params;
-	      }
-				return queryString;
-		}
-
-	    var getQueryStringFromObj = function(obj){
-	    	return httpParamSerializer(obj)
-	    }
-
-	    var clearParameters = function(){
-	    	parameters.length = 0;
-	    }
-
-	    var isObject = function(obj){
-			return  typeof obj === 'object' && obj.constructor === Object;
-		}
-
-	    var isEmpty = function(obj){
-	    	return Object.keys(obj).length === 0;
-	    }
-
-	    var isNull = function(obj){
-	    	return obj === null || obj === undefined;
-	    }
-
-	    var isValid = function(value){
-
-	    	return !isNull(value) && isObject(value) && !isEmpty(value)
-	    }
-
-			return {
-
-				setBaseUrl:function(url){
-					baseUrl = url;
-				},
-
-				addQueryParams:function(paramsObj){
-					if(isValid(paramsObj)){
-						parameters.push(paramsObj)
-					}
-
-				},
-
-				build:function(){
-					var url = baseUrl + getQueryString();
-					clearParameters();
-					return url;
-				}
-
-			}
-	}] );
 
 
-})()
+

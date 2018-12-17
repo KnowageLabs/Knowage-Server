@@ -51,6 +51,8 @@
 <md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  layout-fill md-is-locked-open="$mdMedia('gt-md')">
 <div layout=column>
 <div flex=90 > 
+      <render-parameters driverable-object = "selectedDataSet" param = "param" ng-repeat="param in selectedDataSet.pars" ></render-parameters> 
+
       <document-paramenter-element execProperties="driverableObject"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
    </div>
    <div flex=10>
