@@ -223,7 +223,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			if (this.isCalculateResultNumberEnabled()) {
 				logger.debug("Calculation of result set number is enabled");
-				Integer result = sheet.getPhysicalNumberOfRows() - Integer.parseInt(getSkipRows()) - 1;
+				Integer result = rowsLimit - Integer.parseInt(getSkipRows()) - 1;
 				dataStore.getMetaData().setProperty("resultNumber", result);
 			} else {
 				logger.debug("Calculation of result set number is NOT enabled");
