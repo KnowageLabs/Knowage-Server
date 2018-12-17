@@ -127,11 +127,10 @@ angular
 
 			var drivers = driversExecutionService.additionalUrlDrivers;
 
-			var driversObject = driversExecutionService.createObjectFromArray(drivers); // [WIP]  --> driversExecutionService.prepareDriversForSending(drivers);
+			var driversObject = driversExecutionService.prepareDriversForSending(drivers);
 			queryDriverObj.DRIVERS = driversObject;
 
-
-			qbeUrlBuilderService.addQueryParams(driversObject); /// [WIP]  --> qbeUrlBuilderService.addQueryParams(queryDriverObj);
+			qbeUrlBuilderService.addQueryParams(queryDriverObj);
 			qbeUrlBuilderService.addQueryParams(queryParamObj);
 			$scope.documentViewerUrl = qbeUrlBuilderService.build();
 
@@ -170,15 +169,14 @@ angular
 			$scope.executeParameter = function(){
 
 				if($scope.drivers){
-					var drivers = driversExecutionService.buildStringParameters($scope.drivers);  // [WIP should be used after for changing sending object] --->  driversExecutionService.prepareDriversForSending($scope.drivers);
+					var drivers = driversExecutionService.prepareDriversForSending($scope.drivers);
 				}else {
 					var drivers = {};
 				}
 
-				//[WIP] queryDriverObj.DRIVERS = drivers;
+				queryDriverObj.DRIVERS = drivers;
 				qbeUrlBuilderService.addQueryParams(queryParamObj);
-				qbeUrlBuilderService.addQueryParams(drivers);  // [WIP] qbeUrlBuilderService.addQueryParams(queryDriverObj);
-
+				qbeUrlBuilderService.addQueryParams(queryDriverObj);
 
 				$scope.documentViewerUrl = qbeUrlBuilderService.build();
 				$scope.showDrivers = false

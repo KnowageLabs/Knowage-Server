@@ -47,4 +47,18 @@ public class JSONObjectDeserializator {
 		return map;
 	}
 
+	public static HashMap<String, Object> getHashMapFromString(String object) throws IOException {
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		ObjectMapper mapper = JacksonMapper.getMapper();
+
+		try {
+			map = mapper.readValue(object, new TypeReference<Map<String, Object>>() {
+			});
+		} catch (IOException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		return map;
+	}
+
 }

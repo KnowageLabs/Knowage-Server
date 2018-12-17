@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,18 +19,17 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
-import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -92,6 +90,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String MULTI_PARAM = "multiValue";
 	public static final String SERVICE_NAME = "SPAGOBI_SERVICE";
+	public static final String DRIVERS = "DRIVERS";
 	protected boolean handleTimeFilter = true;
 
 	@POST
@@ -428,24 +427,15 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
 		IStatement statement = qbeDataSet.getStatement();
 
-		EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
-		Session session = (Session) entityManager.getDelegate();
 		Map<String, Object> envs = getEnv();
-		String driverName = null;
-		Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
-		Iterator<String> it = filterNames.iterator();
-
-		Map<String, Object> drivers = new HashMap<String, Object>();
-		while (it.hasNext()) {
-			String filterName = it.next();
-			Map<String, String> driverUrlNames = session.getSessionFactory().getFilterDefinition(filterName).getParameterTypes();
-			for (String key : driverUrlNames.keySet()) {
-				driverName = key.toString();
-				drivers.put(driverName, envs.get(driverName));
-			}
+		String stringDrivers = envs.get(DRIVERS).toString();
+		Map<String, Object> drivers = null;
+		try {
+			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		dataSet.setDrivers(drivers);
-//		drivers = transformDriversFromEnv(drivers);
 
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
@@ -904,6 +894,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		JSONObject queryJSON = null;
 		JSONArray subqueriesJSON = null;
 		JSONObject subqueryJSON = null;
+
 		try {
 			jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray pars = jsonEncodedReq.optJSONArray(DataSetConstants.PARS);
@@ -915,7 +906,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				queries = jo.getJSONArray("queries");
 			} else {
 				queries = new JSONArray(catalogue.toString());
-}
+			}
 
 			try {
 

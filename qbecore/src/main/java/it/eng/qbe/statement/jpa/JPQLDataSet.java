@@ -18,6 +18,7 @@
 package it.eng.qbe.statement.jpa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -152,10 +153,14 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
 				for (String key : driverUrlNames.keySet()) {
 					driverName = key.toString();
-					filter.setParameter(driverName, drivers.get(driverName));
+					Map mapOfValues = (Map) drivers.get(driverName);
+					if (mapOfValues.get("value") instanceof List) {
+						filter.setParameterList(driverName, (Collection) mapOfValues.get("value"));
+					} else {
+						filter.setParameter(driverName, mapOfValues.get("value"));
+					}
 				}
 			}
-
 		}
 	}
 

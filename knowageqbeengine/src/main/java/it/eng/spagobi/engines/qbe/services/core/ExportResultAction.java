@@ -27,18 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
-
-import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
-import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
@@ -84,6 +80,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
 	public static final String RESPONSE_TYPE_ATTACHMENT = "RESPONSE_TYPE_ATTACHMENT";
+
+	public static final String DRIVERS = "DRIVERS";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(ExportResultAction.class);
@@ -346,21 +344,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			dataSet.addBinding("parameters", this.getEnv());
 			logger.debug("Executing query ...");
 
-			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
-			Session session = (Session) entityManager.getDelegate();
 			Map<String, Object> envs = getEnv();
-			String driverName = null;
-			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
-			Iterator<String> iter = filterNames.iterator();
-
-			Map<String, Object> drivers = new HashMap<String, Object>();
-			while (iter.hasNext()) {
-				String filterName = iter.next();
-				Map<String, String> driverUrlNames = session.getSessionFactory().getFilterDefinition(filterName).getParameterTypes();
-				for (String key : driverUrlNames.keySet()) {
-					driverName = key.toString();
-					drivers.put(driverName, envs.get(driverName));
-				}
+			String stringDrivers = envs.get(DRIVERS).toString();
+			Map<String, Object> drivers = null;
+			try {
+				drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			dataSet.setDrivers(drivers);
 
