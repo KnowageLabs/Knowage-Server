@@ -946,7 +946,9 @@
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						
 						{
-							y: $serieValue,
+							#if($serieValue!="")
+								y: $serieValue,
+							#end
 							name: "$serieCategoryName",
 							x: "$serieCategoryName",
 							#foreach($valueKey in $dataColumnsMapper.keySet())
