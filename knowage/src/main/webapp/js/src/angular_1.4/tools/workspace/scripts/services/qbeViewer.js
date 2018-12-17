@@ -27,7 +27,9 @@ angular
 
 		this.openQbeInterfaceFromModel = function($scope,url) {
 
-
+			if(globalQbeDataset){
+				globalQbeDataset = null;
+			}
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
