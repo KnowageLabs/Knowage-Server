@@ -280,6 +280,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		MetaData dataStoreMeta = new MetaData();
 
 		int cells = row.getPhysicalNumberOfCells();
+		int lastColumn = row.getLastCellNum();
+
+		if (cells != lastColumn) {
+			cells = lastColumn;
+		}
 		this.setNumberOfColumns(cells);
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
