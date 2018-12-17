@@ -685,7 +685,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
      				}else{
      					questo.setQueriesCatalogue(parent.globalQbeDataset.qbeJSONQuery);
      				}
-     				//parent.globalQbeDataset.qbeJSONQuery=null;
+     				parent.globalQbeDataset.qbeJSONQuery=null;
      			}
      			questo.setDataset(parent.globalQbeDataset);
      		},this);
