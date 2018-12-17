@@ -87,7 +87,7 @@
 		valueCheck="10485760" valueType="STRING" category="GENERIC_CONFIGURATION" />	
 	<CONFIG label="SPAGOBI.API.DATASET.MAX_ROWS_NUMBER" name="DATASET MAX ROWS NUMBER RETURNED"
 		description="Max number of rows returned from the dataset REST service (do not set a value greater than 10000!)" isActive="true"
-		valueCheck="5000" valueType="STRING" category="GENERIC_CONFIGURATION" />
+		valueCheck="500000" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="GIS_LAYER_FILE_MAX_SIZE" name="GIS LAYER FILE MAX SIZE"
 		description="GIS LAYER FILE MAX SIZE" isActive="true" valueCheck="20971520"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
