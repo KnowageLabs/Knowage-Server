@@ -621,9 +621,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.exportDataset= function(dataset,format){
+    	$scope.dataset = dataset;
     	$scope.formatValueForExport = format;
     	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataset).then(function(){
     		if($scope.drivers.length > 0){
+    			$scope.dataset.parametersData = {};
+    			$scope.dataset.parametersData.documentParameters = $scope.drivers;
     			$scope.showDriversForExport = true;
     		}else{
     			 $scope.exportDatasetWithDrivers(dataset,format);
