@@ -213,7 +213,8 @@ function cockpitChartWidgetControllerFunction(
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};
-			
+	
+	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;	
 	$scope.chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
 	$scope.d3Charts = ["wordcloud","parallel","sunburst","chord"]
 	$scope.init=function(element,width,height){
