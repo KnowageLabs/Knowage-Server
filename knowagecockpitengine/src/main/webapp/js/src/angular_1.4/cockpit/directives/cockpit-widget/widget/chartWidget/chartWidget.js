@@ -213,7 +213,9 @@ function cockpitChartWidgetControllerFunction(
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};
-
+			
+	$scope.chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
+	$scope.d3Charts = ["wordcloud","parallel","sunburst","chord"]
 	$scope.init=function(element,width,height){
 		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
 	    	  for (var i = 0; i < $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length; i++) {
