@@ -308,30 +308,46 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		}
 	}
 
-
-
-
 	angular.element(document).ready(function () {
         $scope.getMondrianSchemas();
         loadAllUsers();
 
     });
+	
+	$scope.confirmDelete = function(item,ev) {
+	    var confirm = $mdDialog.confirm()
+	          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+	          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+	          .ariaLabel("confirm_delete")
+	          .targetEvent(ev)
+	          .ok(sbiModule_translate.load("sbi.general.continue"))
+	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+	    $mdDialog.show(confirm).then(function() {
+
+	    	if (item.name) {
+	    		console.log("deleting schemaa");
+	    		$scope.deleteMondrianSchema(item);
+	    	} else if (item.fileName) {
+	    		console.log("deleting version");
+	    		$scope.deleteVersion(item);
+	    	}
+
+	    }, function() {
+
+	    });
+	};
 
 	$scope.catalogueSpeedOptions =  [
-
-
 		{
-
-		label:sbiModule_translate.load("sbi.generic.delete"),
-		icon:'fa fa-trash',
-		//icon:'fa fa-trash-o fa-lg',
-	    // color:'#153E7E',
-	    action:function(item){
-	    $scope.confirmDelete(item,event);
-
-
+			label:sbiModule_translate.load("sbi.generic.delete"),
+			icon:'fa fa-trash',
+			//icon:'fa fa-trash-o fa-lg',
+		    // color:'#153E7E',
+		    action:function(item, event){
+		    	
+		    	$scope.confirmDelete(item,event);
 	    	}
-	 	}
+		}
 
 	];
 
@@ -364,28 +380,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 
 	  ];
 
-	 $scope.confirmDelete = function(item,ev) {
-		    var confirm = $mdDialog.confirm()
-		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
-		          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
-		          .ariaLabel("confirm_delete")
-		          .targetEvent(ev)
-		          .ok(sbiModule_translate.load("sbi.general.continue"))
-		          .cancel(sbiModule_translate.load("sbi.general.cancel"));
-		    $mdDialog.show(confirm).then(function() {
-
-		    	if (item.name) {
-		    		console.log("deleting schemaa");
-		    		$scope.deleteMondrianSchema(item);
-		    	} else if (item.fileName) {
-		    		console.log("deleting version");
-		    		$scope.deleteVersion(item);
-		    	}
-
-		    }, function() {
-
-		    });
-		  };
+	 
 
 
 	$scope.saveMondrianCatalogue = function(){
