@@ -89,12 +89,46 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		borderStyleHeader.setBorderRight(CellStyle.BORDER_THIN);
 		borderStyleHeader.setBorderTop(CellStyle.BORDER_THIN);
 		borderStyleHeader.setAlignment(CellStyle.ALIGN_CENTER);
+
 		CellStyle borderStyleRow = wb.createCellStyle();
 		borderStyleRow.setBorderBottom(CellStyle.BORDER_THIN);
 		borderStyleRow.setBorderLeft(CellStyle.BORDER_THIN);
 		borderStyleRow.setBorderRight(CellStyle.BORDER_THIN);
 		borderStyleRow.setBorderTop(CellStyle.BORDER_THIN);
 		borderStyleRow.setAlignment(CellStyle.ALIGN_RIGHT);
+
+		CellStyle tsCellStyle = wb.createCellStyle();
+		tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
+		tsCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		tsCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		tsCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+		tsCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		tsCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+
+		CellStyle dateCellStyle = wb.createCellStyle();
+		dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
+		dateCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		dateCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		dateCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+		dateCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		dateCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+
+		CellStyle intCellStyle = wb.createCellStyle();
+		intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+		intCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		intCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		intCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+		intCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		intCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+
+		CellStyle decimalCellStyle = wb.createCellStyle();
+		decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+		decimalCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		decimalCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		decimalCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+		decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+
 		if (dataStore != null) {
 			// CREATE HEADER SHEET
 			XSSFRow header = sheet.createRow((short) 0); // first row
@@ -113,32 +147,17 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 						for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
 							Class<?> clazz = dataStore.getMetaData().getFieldType(k);
 							Object value = dataStore.getRecordAt(i).getFieldAt(k).getValue();
+							XSSFCell cell = row.createCell(k);
 
 							try {
 								if (value != null) {
 
 									if (Timestamp.class.isAssignableFrom(clazz)) {
-										CellStyle tsCellStyle = wb.createCellStyle();
-										tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
-										tsCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-										tsCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-										tsCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-										tsCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-										tsCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-										XSSFCell cell = row.createCell(k);
 										String formatedTimestamp = timeStampFormat.format(value);
 										Date ts = timeStampFormat.parse(formatedTimestamp);
 										cell.setCellValue(ts);
 										cell.setCellStyle(tsCellStyle);
 									} else if (Date.class.isAssignableFrom(clazz)) {
-										CellStyle dateCellStyle = wb.createCellStyle();
-										dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
-										dateCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-										dateCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-										dateCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-										dateCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-										dateCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-										XSSFCell cell = row.createCell(k);
 										String formatedDate = dateFormat.format(value);
 										Date date = dateFormat.parse(formatedDate);
 										cell.setCellValue(date);
@@ -148,37 +167,19 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 											|| BigDecimal.class.isAssignableFrom(clazz)) {
 										// Format Numbers
 										if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
-											CellStyle intCellStyle = wb.createCellStyle();
-											intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-											intCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-											intCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-											intCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-											intCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-											intCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-											XSSFCell cell = row.createCell(k);
 											cell.setCellValue(Double.parseDouble(value.toString()));
 											cell.setCellStyle(intCellStyle);
 										} else {
-											CellStyle decimalCellStyle = wb.createCellStyle();
-											decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-											decimalCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-											decimalCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-											decimalCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-											decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-											decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-											XSSFCell cell = row.createCell(k);
 											cell.setCellValue(Double.parseDouble(value.toString()));
 											cell.setCellStyle(decimalCellStyle);
 										}
 
 									} else {
-										XSSFCell cell = row.createCell(k);
 										cell.setCellValue(value.toString());
 										cell.setCellStyle(borderStyleRow);
 									}
 
 								} else {
-									XSSFCell cell = row.createCell(k);
 									cell.setCellStyle(borderStyleRow);
 								}
 							} catch (ParseException e) {
