@@ -172,45 +172,59 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			int rowFetched = 0;
 
-			for (int r = initialRow; r <= rowsLimit; r++) {
+			// Read Header
+			for (int i = initialRow; i <= rowsLimit; i++) {
 
+				Row headerRow = sheet.getRow(i);
+				if (checkIfRowIsEmpty(headerRow)) {
+					continue;
+				}
+
+				if (i == initialRow) {
+
+					try {
+						MetaData dataStoreMeta = parseHeader(dataStore, headerRow);
+						dataStore.setMetaData(dataStoreMeta);
+						if (paginated) {
+							if (offset == 0) {
+								initialRow = initialRow + 1;
+							} else {
+								initialRow = initialRow + offset + 1;
+							}
+						} else {
+							initialRow = initialRow + 1;
+						}
+						break;
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse header row", t);
+					}
+				}
+			}
+
+			// Read Records
+			for (int r = initialRow; r < rowsLimit; r++) {
 				Row row = sheet.getRow(r);
 				if (checkIfRowIsEmpty(row)) {
 					continue;
 				}
-
-				if (r == initialRow) {
-
-					try {
-						MetaData dataStoreMeta = parseHeader(dataStore, row);
-						dataStore.setMetaData(dataStoreMeta);
-					} catch (Throwable t) {
-						throw new RuntimeException("Impossible to parse header row", t);
-					}
-				} else {
-					try {
-						if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-								|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
-										&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
-							IRecord record = parseRow(dataStore, row);
-							dataStore.appendRecord(record);
-							rowFetched++;
-						}
-
-						if (rowFetched == fetchSize)
-							break;
-
-					} catch (Throwable t) {
-						throw new RuntimeException("Impossible to parse row [" + r + "]", t);
-					}
+				try {
+					IRecord record = parseRow(dataStore, row);
+					dataStore.appendRecord(record);
+					rowFetched++;
+					if (rowFetched == fetchSize || (checkMaxResults && rowFetched == maxResults))
+						break;
+				} catch (Throwable t) {
+					throw new RuntimeException("Impossible to parse row [" + r + "]", t);
 				}
 			}
+
 			logger.debug("Read [" + rowFetched + "] records");
 			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 
 			if (this.isCalculateResultNumberEnabled()) {
 				logger.debug("Calculation of result set number is enabled");
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
+				Integer result = sheet.getPhysicalNumberOfRows() - Integer.parseInt(getSkipRows()) - 1;
+				dataStore.getMetaData().setProperty("resultNumber", result);
 			} else {
 				logger.debug("Calculation of result set number is NOT enabled");
 			}

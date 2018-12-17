@@ -82,6 +82,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.allHeadersForStep3Preview = [];
 	$scope.allRowsForStep3Preview = [];
 
+	var dsDoesNotHaveResultNum = true;
+	
 	/**
 	 * The validation status after submitting the Step 2.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -677,7 +679,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	 */
     	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
-
+    	dsDoesNotHaveResultNum = !dsRespHasResultNumb;
     	/**
     	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
     	 * pagination in the toolbar of the preview dataset dialog.
@@ -771,7 +773,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				 * take this property if provided.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				if (response.data.results) {
+				if (dsDoesNotHaveResultNum && response.data.results) {
 					$scope.totalItemsInPreview = response.data.results;
 				}
 
