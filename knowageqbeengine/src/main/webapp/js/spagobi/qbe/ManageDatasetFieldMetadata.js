@@ -136,7 +136,7 @@ Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   					columnObject.name = currentColumnName;
   					for (var j = 0; j < fieldsColumns.columns.length; j++) {
   	  					var element = fieldsColumns.columns[j];
-  	  					if (element.column == currentColumnName){
+  	  					if (element.alias == currentColumnName){
   	  						if(element.pname.toUpperCase() == 'type'.toUpperCase()){
   	  							columnObject.type = element.pvalue;
   	  						}
