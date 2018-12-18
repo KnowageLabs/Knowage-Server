@@ -32,21 +32,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	</style>
     </head>
     <body>
+    	<div class="export-bar">Export bar<button class="md-button">Download svg</button></div>
+    	
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
+        
 		<script type="text/javascript" charset="utf-8">
+			const MAX_ROWS_CLIENT_PAGINATION = 5000;
+			var backEndPagination = {page: 1};
 	  
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("dataset");
-	  		var options = JSON.parse(url.searchParams.get("options"));
+	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	    	
-	  		//Defining filter type depending on the column data type
-	  		function filterType(type){
-	  			if(type == 'date') return 'agDateColumnFilter';
-	  			if(type == 'float' || type == 'int') return 'agNumberColumnFilter';
-	  			return 'agTextColumnFilter';
-	  		}
-		
 	  		//Function to create the colDefs for ag-grid
 		  	function getColumns(fields) {
 				var columns = [];
@@ -78,20 +76,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		  	
 		  	function changeSorting(){
-				var sorting = gridOptions.api.getSortModel();
+		  		if(options.backEndPagination){
+		  			var sorting = gridOptions.api.getSortModel();
+		  		}
 			}
 		
 		  	//Defining ag-grid options
 		  	var gridOptions = {
 			    enableSorting: options && typeof options.sorting != 'undefined' ? options.sorting : true,
-			    enableFilter: options && typeof options.filter != 'undefined' ? options.filter : true,
+			    enableFilter: false,
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
 			    enableColResize: true,
 	            paginationAutoPageSize: true,
 	            headerHeight: 48,
 	            onSortChanged: changeSorting,
-			};
+	        };
 		  
 		  	//Defining the custom template for the table header
 			function headerTemplate(type) { 
@@ -108,20 +108,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						'	</div>'+
 						'</div>';
 			}
-			  
+		  	
+		  	//Pagination template and utility methods
+		  	function paginationTemplate(){
+		  		return 	'<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">'+
+			            '	<span ref="lbFirstRowOnPage">'+((backEndPagination.page-1)*backEndPagination.itemsPerPage+1)+'</span> to <span ref="lbLastRowOnPage">'+maxPageNumber()+'</span> of <span ref="lbRecordCount">'+backEndPagination.totalRows+'</span>'+
+			            '</span>'+
+			            '<span class="ag-paging-page-summary-panel">'+
+			            '	<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
+			            '   <button type="button" class="ag-paging-button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
+			            '   page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
+			            '   <button type="button" class="ag-paging-button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
+			            '   <button type="button" class="ag-paging-button" ref="btLast" '+disableLast()+' onclick="last()">Last</button>'+
+			            '</span>';
+		  	}
+		  	
+		  	function maxPageNumber(){
+				if(backEndPagination.page*backEndPagination.itemsPerPage < backEndPagination.totalRows) return backEndPagination.page*backEndPagination.itemsPerPage;
+				else return backEndPagination.totalRows;
+		  	}
+		  	
+		  	function disableFirst(){
+		  		return backEndPagination.page == 1 ? "disabled=\"disabled\"" : "";
+		  	}
+		  	
+		  	function disableLast(){
+		  		return backEndPagination.page == backEndPagination.totalPages ? "disabled=\"disabled\"" : "";
+		  	}
+		  	
+		  	function first(){
+		  		backEndPagination.page = 1;
+		  		refreshRows();
+			}
+			
+		  	function prev(){
+		  		backEndPagination.page = backEndPagination.page - 1;
+		  		refreshRows();
+			}
+			
+		  	function next(){
+		  		backEndPagination.page = backEndPagination.page + 1;
+		  		refreshRows();
+			}
+			
+		  	function last(){
+		  		backEndPagination.page = backEndPagination.totalPages;
+		  		refreshRows();
+			}
+		  	
 		  	//Function to get the columns metadata and data
+		  	function getUrl(){
+		  		if(options.backEndPagination) {
+		  			return 'http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data?offset='+((backEndPagination.page-1)*backEndPagination.itemsPerPage)+'&size='+backEndPagination.itemsPerPage;
+		  		}else{
+		  			return 'http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data';
+		  		}
+		  	}
+		  	
 			function refreshRows() {
-				fetch('http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data',{
-			  		method: "POST",
-			  		//body: {}
+	  			fetch(getUrl(),{
+			  		method: "POST"
 				})
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					if(data.errors){
 						gridOptions.api.showNoRowsOverlay();
 					}else{
-						if(!gridOptions.columnDefs) gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
-				        gridOptions.api.setRowData(data.rows);
+						if(options.backEndPagination){
+							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+						}else{
+							if(!gridOptions.columnDefs) gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
+							gridOptions.api.setRowData(data.rows);
+							if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
+								gridOptions.pagination = false;
+								options.backEndPagination = true;
+								backEndPagination.totalRows = data.results;
+								backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+								backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage);
+								document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+							}
+						}
 					}
 			    })
 			};
