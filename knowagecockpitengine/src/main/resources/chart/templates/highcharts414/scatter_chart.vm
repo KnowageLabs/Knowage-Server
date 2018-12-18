@@ -763,7 +763,14 @@
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
-		                      	var precision = '0';
+		                      	var precision =  '${yAxis.LABELS.precision}';
+		                      	if(precision.indexOf("yAxis")>-1){
+		                      		precision =  '${yAxis.labels.precision}';
+
+		                      	}  
+			                    if(scaleFactor.indexOf("yAxis")!==-1){
+		                      		scaleFactor = "empty"
+		                      	}
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	

@@ -378,6 +378,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					            	   "fontWeight":""
 					               },
 					               "labels":{
+									   "precision":2,
 										"scaleFactor": "empty",
 					               },
 					               "MAJORGRID":{
@@ -1386,6 +1387,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			            	"fontWeight":""
 						},
 						"labels":{
+							"precision":2,
 							"scaleFactor": "empty",
 						},
 						"MAJORGRID":{
