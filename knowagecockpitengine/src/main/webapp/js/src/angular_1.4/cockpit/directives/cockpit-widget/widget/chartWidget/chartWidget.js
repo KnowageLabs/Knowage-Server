@@ -214,7 +214,7 @@ function cockpitChartWidgetControllerFunction(
 	};
 
 	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
-	$scope.chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
+	$scope.chartType =  $scope.ngModel.content.chartTemplate ? $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase() : "bar";
 	$scope.d3Charts = ["wordcloud","parallel","sunburst","chord"]
 	$scope.init=function(element,width,height){
 		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
