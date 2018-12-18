@@ -637,98 +637,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.useCache==false){
 			params+="&nearRealtime=true";
 		}
-
-		var filtersToSend = {};
-		if(!loadDomainValues && ngModel.updateble){
-			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
-			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(dataset.label));
-			angular.merge(filtersToSend, filters);
-		}
-
-		var limitRows;
-		if(ngModel.limitRows){
-			limitRows = ngModel.limitRows;
-		}else if(ngModel.content && ngModel.content.limitRows){
-			limitRows = ngModel.content.limitRows;
-		}
-		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
-			params += "&limit=" + limitRows.rows;
-		}
-
-		var filters;
-		if(ngModel.filters){
-			filters = ngModel.filters;
-		}else if(ngModel.content && ngModel.content.filters){
-			filters = ngModel.content.filters;
-		}
-		if(filters){
-			for(var i=0;i<filters.length;i++){
-
-				var filterElement=filters[i];
-
-				// if filter.dataset is not defined means filter coming from old interface and then set it to current dataset
-				if(filterElement.dataset == undefined){
-					filterElement.dataset = dataset.label;
-				}
-
-				// if filter.dataset is defined check dataset is current one
-				if(filterElement.dataset != undefined && filterElement.dataset == dataset.label){
-
-					var colName=filterElement.colName;
-					var type=filterElement.type;
-
-					var filterOperator;
-					if(filterElement.filterOperator != undefined){
-						filterOperator=filterElement.filterOperator;
-					}
-					else {
-						if(filterElement.filterVals && filterElement.filterVals.length>0){
-							filterOperator = "=";
-						}
-						else{
-							filterOperator = "";
-						}
-
-					}
-
-					// if type is undefined get it from metadata
-					if(type == undefined){
-						var found = false;
-						for(var j=0; j<dataset.metadata.fieldsMeta.length && !found; j++){
-							var metaElement=dataset.metadata.fieldsMeta[j];
-							if(metaElement.name == colName){
-								filterElement.type = metaElement.type;
-								found = true;
-							}
-						}
-					}
-
-					var filterVals=filterElement.filterVals;
-					if(filterOperator != ""){
-						var values=[];
-						// if filterOperator is IN and filterVals has "," then filterVals must be splitted
-						if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
-							filterVals = filterVals[0].split(",");
-						}
-						angular.forEach(filterVals, function(item){
-							this.push("('" + item + "')");
-						}, values);
-
-						var filter = { filterOperator: filterOperator, filterVals: values};
-
-						if(!filtersToSend[dataset.label]){
-							filtersToSend[dataset.label] = {};
-						}
-
-						if(!filtersToSend[dataset.label][colName]){
-							filtersToSend[dataset.label][colName] = filter;
-						}else{
-							filtersToSend[dataset.label][colName].push(filter);
-						}
-					}
-				}
-			}
-		}
+		
+		var filtersToSend = this.getWidgetSelectionsAndFilters(ngModel, dataset.label, loadDomainValues)
 
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
@@ -813,6 +723,107 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 	}
 
+	// Returns Selections with Filters for Single Widget
+	this.getWidgetSelectionsAndFilters = function(widgetObject, datasetLabel, loadDomainValues) {
+		var filtersToSend = {};
+		
+		if(loadDomainValues == undefined){
+			loadDomainValues = false;
+		}
+		
+		if(!loadDomainValues && widgetObject.updateble){
+			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
+			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
+			angular.merge(filtersToSend, filters);
+		}
+
+		var limitRows;
+		if(widgetObject.limitRows){
+			limitRows = widgetObject.limitRows;
+		}else if(widgetObject.content && widgetObject.content.limitRows){
+			limitRows = widgetObject.content.limitRows;
+		}
+		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+			params += "&limit=" + limitRows.rows;
+		}
+		
+		var filters;
+		if(widgetObject.filters){
+			filters = widgetObject.filters;
+		}else if(widgetObject.content && widgetObject.content.filters){
+			filters = widgetObject.content.filters;
+		}
+		if(filters){
+			for(var i=0;i<filters.length;i++){
+
+				var filterElement=filters[i];
+
+				// if filter.dataset is not defined means filter coming from old interface and then set it to current dataset
+				if(filterElement.dataset == undefined){
+					filterElement.dataset = datasetLabel;
+				}
+
+				// if filter.dataset is defined check dataset is current one
+				if(filterElement.dataset != undefined && filterElement.dataset == datasetLabel){
+
+					var colName=filterElement.colName;
+					var type=filterElement.type;
+
+					var filterOperator;
+					if(filterElement.filterOperator != undefined){
+						filterOperator=filterElement.filterOperator;
+					}
+					else {
+						if(filterElement.filterVals && filterElement.filterVals.length>0){
+							filterOperator = "=";
+						}
+						else{
+							filterOperator = "";
+						}
+
+					}
+
+					// if type is undefined get it from metadata
+					if(type == undefined){
+						var found = false;
+						for(var j=0; j<dataset.metadata.fieldsMeta.length && !found; j++){
+							var metaElement=dataset.metadata.fieldsMeta[j];
+							if(metaElement.name == colName){
+								filterElement.type = metaElement.type;
+								found = true;
+							}
+						}
+					}
+
+					var filterVals=filterElement.filterVals;
+					if(filterOperator != ""){
+						var values=[];
+						// if filterOperator is IN and filterVals has "," then filterVals must be splitted
+						if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
+							filterVals = filterVals[0].split(",");
+						}
+						angular.forEach(filterVals, function(item){
+							this.push("('" + item + "')");
+						}, values);
+
+						var filter = { filterOperator: filterOperator, filterVals: values};
+
+						if(!filtersToSend[datasetLabel]){
+							filtersToSend[datasetLabel] = {};
+						}
+
+						if(!filtersToSend[datasetLabel][colName]){
+							filtersToSend[datasetLabel][colName] = filter;
+						}else{
+							filtersToSend[datasetLabel][colName].push(filter);
+						}
+					}
+				}
+			}
+		}
+		return filtersToSend;
+	} 
+	
 	this.getParametersAsString = function(parameters){
 		var delim = "";
 		var output = "{";
