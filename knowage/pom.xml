@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>6.3.1-SNAPSHOT</version>
+		<version>6.3.0</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
-			<version>6.3.1-SNAPSHOT</version>
+			<version>6.3.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>6.3.1-SNAPSHOT</version>
+			<version>6.3.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -144,14 +144,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageoauth2securityprovider</artifactId>
-			<version>6.3.1-SNAPSHOT</version>
+			<version>6.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageldapsecurityprovider</artifactId>
-			<version>6.3.1-SNAPSHOT</version>
+			<version>6.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		
