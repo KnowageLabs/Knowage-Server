@@ -27,8 +27,9 @@ angular
 
 		this.openQbeInterfaceFromModel = function($scope,url) {
 
-			if(globalQbeDataset){
+			try {
 				globalQbeDataset = null;
+			} catch (e) {
 			}
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
