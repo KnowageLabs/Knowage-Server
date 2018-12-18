@@ -24,9 +24,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -61,9 +61,12 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 	private String xslSheetNumber;
 	private int numberOfColumns = 0;
 	private String fileType;
+	private DataFormatter formatter = null;
 
 	public FileDatasetXlsDataReader(JSONObject jsonConf) {
 		super();
+
+		formatter = new DataFormatter();
 
 		// Get File Dataset Configuration Options
 		if (jsonConf != null) {
@@ -113,11 +116,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			dataStore = readXls(inputDataStream);
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("Inaccessible file", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Cannot read the file", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Cannot read data", e);
 		}
 
 		return dataStore;
@@ -143,28 +146,14 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			int initialRow = 0;
 
-			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty()))) {
-				initialRow = Integer.parseInt(getSkipRows());
+			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty())) && !(getSkipRows().equals(String.valueOf(0)))) {
+				initialRow = Integer.parseInt(getSkipRows()) - 1;
 				logger.debug("Skipping first " + getSkipRows() + " rows");
 			}
 
 			int rowsLimit;
 			if ((getLimitRows() != null) && (!(getLimitRows().isEmpty()))) {
-
-				/**
-				 * This line is commented, since we need an absolute value of the last row that should be taken while now the 0th row is always taken into count
-				 * and always as a header, not as an effective data row. In terms of the existing implementation: number of rows to take from an XLS file should
-				 * be an offset of value 'limitRows' relative to the 'initialRow' that is now the real effective row (data, not header) from which we start
-				 * counting.
-				 *
-				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// ORIGINAL CODE (danristo)
-				// rowsLimit = initialRow + Integer.parseInt(limitRows) - 1;
-				// MODIFIED CODE (danristo)
-				rowsLimit = initialRow + Integer.parseInt(getLimitRows());
-
-				// if the calculated limit exceed the physical number of rows or is equal to zero, just read all the rows
+				rowsLimit = initialRow + Integer.parseInt(getLimitRows()) - 1;
 				if ((rowsLimit > sheet.getPhysicalNumberOfRows()) || rowsLimit == 0) {
 					rowsLimit = sheet.getPhysicalNumberOfRows();
 				}
@@ -183,71 +172,59 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			int rowFetched = 0;
 
-			/**
-			 * Starting point when picking rows from the XLS file is ALWAYS the 0th row - the header of the file (metadata - the names of the columns of the
-			 * file dataset). Inside the for-loop we will check if the row is the header (0th) and if it is, treat it accordingly. Otherwise, skip all rows that
-			 * are between this one and the one that we get as a final row ('rowsLimit').
-			 *
-			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			// ORIGINAL CODE (danristo)
-			// for (int r = initialRow; r <= rowsLimit; r++) {
-			// MODIFIED CODE (danristo)
-			for (int r = 0; r <= rowsLimit; r++) {
-				// check if there is a limit for the rows to fetch in preview
+			// Read Header
+			for (int i = initialRow; i <= rowsLimit; i++) {
 
-				/**
-				 * If we are in between 0th and final row of the XLS file, while skipping all rows that user specified as the ones that should be skipped, take
-				 * all metadata (for initial, zeroth) and data available in their columns.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if (r > initialRow || r == 0) {
-
-					Row row = sheet.getRow(r);
-					if (checkIfRowIsEmpty(row)) {
-						continue;
-					}
-
-					/**
-					 * The zeroth row will always be the header of the XLS file.
-					 *
-					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					// ORIGINAL CODE (danristo)
-					// if (r == initialRow) {
-					// MODIFIED CODE (danristo)
-					if (r == 0) {
-						try {
-							MetaData dataStoreMeta = parseHeader(dataStore, row);
-							dataStore.setMetaData(dataStoreMeta);
-						} catch (Throwable t) {
-							throw new RuntimeException("Impossible to parse header row", t);
-						}
-					} else {
-						try {
-							if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-									|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
-											&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
-								IRecord record = parseRow(dataStore, row);
-								dataStore.appendRecord(record);
-							}
-							rowFetched++;
-
-						} catch (Throwable t) {
-							throw new RuntimeException("Impossible to parse row [" + r + "]", t);
-						}
-					}
-
+				Row headerRow = sheet.getRow(i);
+				if (checkIfRowIsEmpty(headerRow)) {
+					continue;
 				}
 
+				if (i == initialRow) {
+
+					try {
+						MetaData dataStoreMeta = parseHeader(dataStore, headerRow);
+						dataStore.setMetaData(dataStoreMeta);
+						if (paginated) {
+							if (offset == 0) {
+								initialRow = initialRow + 1;
+							} else {
+								initialRow = initialRow + offset + 1;
+							}
+						} else {
+							initialRow = initialRow + 1;
+						}
+						break;
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse header row", t);
+					}
+				}
 			}
+
+			// Read Records
+			for (int r = initialRow; r < rowsLimit; r++) {
+				Row row = sheet.getRow(r);
+				if (checkIfRowIsEmpty(row)) {
+					continue;
+				}
+				try {
+					IRecord record = parseRow(dataStore, row);
+					dataStore.appendRecord(record);
+					rowFetched++;
+					if (rowFetched == fetchSize || (checkMaxResults && rowFetched == maxResults))
+						break;
+				} catch (Throwable t) {
+					throw new RuntimeException("Impossible to parse row [" + r + "]", t);
+				}
+			}
+
 			logger.debug("Read [" + rowFetched + "] records");
 			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 
 			if (this.isCalculateResultNumberEnabled()) {
 				logger.debug("Calculation of result set number is enabled");
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
+				Integer result = rowsLimit - Integer.parseInt(getSkipRows()) - 1;
+				dataStore.getMetaData().setProperty("resultNumber", result);
 			} else {
 				logger.debug("Calculation of result set number is NOT enabled");
 			}
@@ -303,6 +280,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		MetaData dataStoreMeta = new MetaData();
 
 		int cells = row.getPhysicalNumberOfCells();
+		int lastColumn = row.getLastCellNum();
+
+		if (cells != lastColumn) {
+			cells = lastColumn;
+		}
 		this.setNumberOfColumns(cells);
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
@@ -316,15 +298,16 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
 
+			if (valueField == null) {
+				valueField = new String();
+				valueField = "Column " + String.valueOf(c + 1);
+			}
 			FieldMetadata fieldMeta = new FieldMetadata();
-			if (valueField instanceof String) {
-				String fieldName = StringUtils.escapeForSQLColumnName((String) valueField);
-				fieldMeta.setName(fieldName);
-				fieldMeta.setType(String.class);
-			}
-			if (!valueField.equals("")) {
-				dataStoreMeta.addFiedMeta(fieldMeta);
-			}
+			String fieldName = StringUtils.escapeForSQLColumnName(valueField.toString());
+			fieldMeta.setName(fieldName);
+			fieldMeta.setType(String.class);
+
+			dataStoreMeta.addFiedMeta(fieldMeta);
 		}
 
 		return dataStoreMeta;
@@ -349,19 +332,23 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			} catch (Throwable t) {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
-			// update metadata type in order with the real value's type (default was string)
-			if (valueField instanceof String) {
-				if (NumberUtils.isNumber((String) valueField)) {
-					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
-					valueField = new BigDecimal(String.valueOf(valueField));
-				}
-			}
-			if (valueField instanceof Date) {
+
+			if (valueField != null && valueField instanceof Double) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Double.class);
+			} else if (valueField != null && valueField instanceof BigDecimal) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
+			} else if (valueField != null && valueField instanceof Integer) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Integer.class);
+			} else if (valueField != null && valueField instanceof Long) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Long.class);
+			} else if (valueField != null && valueField instanceof Date) {
 				if (valueField instanceof Timestamp) {
 					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Timestamp.class);
 				} else {
 					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
 				}
+			} else {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(String.class);
 			}
 
 			IField field = new Field(valueField);
@@ -376,11 +363,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		Object valueField = null;
 
 		if (cell == null)
-			return "";
+			return null;
 
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_FORMULA:
-			valueField = cell.getCellFormula().toString();
+			valueField = cell.getNumericCellValue();
 			break;
 
 		case Cell.CELL_TYPE_NUMERIC:
@@ -399,26 +386,43 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 					return new Timestamp(date.getTime());
 				}
 			} else {
-				Double numericValue = cell.getNumericCellValue();
-				// testing if the double is an integer value
-				if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-					// the number is an integer, this will remove the .0 trailing zeros
-					int numericInt = numericValue.intValue();
-					valueField = String.valueOf(numericInt);
+				String formatedCell = formatter.formatCellValue(cell);
+				if (formatedCell.contains(".") || formatedCell.contains(",")) {
+					try {
+						valueField = new Double(String.valueOf(formatedCell));
+					} catch (NumberFormatException nfe) {
+						try {
+							valueField = new BigDecimal(String.valueOf(formatedCell));
+						} catch (NumberFormatException e) {
+							valueField = cell.getNumericCellValue();
+						}
+					}
 				} else {
-					valueField = String.valueOf(cell.getNumericCellValue());
+					try {
+						valueField = new Integer(String.valueOf(formatedCell));
+					} catch (NumberFormatException nfe) {
+						try {
+							valueField = new Long(String.valueOf(formatedCell));
+						} catch (NumberFormatException e) {
+							valueField = cell.getNumericCellValue();
+						}
+					}
 				}
 			}
 			break;
 
 		case Cell.CELL_TYPE_STRING:
-			valueField = cell.getStringCellValue();
+			if (org.apache.commons.lang.StringUtils.isBlank(cell.getStringCellValue())) {
+				valueField = "";
+			} else {
+				valueField = cell.getStringCellValue();
+			}
+
 			break;
 
 		case Cell.CELL_TYPE_BLANK:
-			valueField = "";
+			valueField = null;
 			break;
-
 		default:
 		}
 

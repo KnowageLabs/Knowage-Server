@@ -213,22 +213,78 @@
 		<!-- CARD 1 (END) -->
 	     
 		<!-- CARD 2 (START) -->
-	     	<md-card ng-if="datasetWizardView==2" class="validationStep" >
+	     	     	<md-card ng-if="datasetWizardView==2" class="validationStep" >
 	        
 	        	<md-toolbar class="secondaryToolbar">
-	           	<div class="md-toolbar-tools">
-	              	<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
-	              	<span flex></span>
+		           	<div class="md-toolbar-tools">
+		              	<h2 flex>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
+						<span flex>
+							<md-input-container ng-if="validationError">
+								<md-checkbox aria-label="Display only validation errors" ng-model="displayInvalidColumns.value" ng-checked="" ng-change="filterInvalidColumns()">
+									{{translate.load('sbi.ds.wizard.displayValidationErrors')}}
+								</md-checkbox>
+							</md-input-container>							
+						</span>
 	          	 	</div>
 	        	</md-toolbar>         
 	                 
 	        	<md-content flex class="loadFilePadding step2DefDataCardContent">
-	            <form class="step2Height">
-	               <dataset-wizard-meta></dataset-wizard-meta>
-	            </form>
-	        	</md-content>
-	        
+		        	<div ng-if="metadataType.value==1" class="step2Height">
+			            <form class="step2Height">
+							<angular-table
+								id="columnsMeta"
+								ng-model=dataset.meta.columns
+								columns="tableColumns"
+								show-search-bar=false							
+								scope-functions="metaScopeFunctions"
+								no-pagination=false
+								items-per-page=6
+								fixed-item-per-page=true
+								columns-search='["invalidColumn"]'
+								class="step2DefDataTable">														
+							</angular-table>						
+			            </form>				            	            			            
+		            </div>
+		            
+	            	<div ng-if="metadataType.value==2" class="step2DefDataTableContainer">
+		            	<form> 		
+					 		<angular-table
+											flex
+											id="datasetMeta"
+											ng-model=dataset.meta.dataset
+											columns="tableDataset"
+											show-search-bar=false
+											scope-functions="metaScopeFunctions"
+										    no-pagination=false
+											items-per-page=6
+											fixed-item-per-page=true
+										   	class="step2DefDataTable">																					
+							</angular-table>
+						</form>
+						
+					</div>																												
+	        	</md-content>	        
 		</md-card>
+		
+		<div ng-if="datasetWizardView==2" class="md-sidenav-right md-whiteframe-4dp hideErrors" ng-class="{'showErrors': showErrors}">
+			<md-toolbar class="md-theme-light">
+				<div class="md-toolbar-tools">
+	   	 			<h1 md-truncate flex="80">{{columnErrorDetails.errors[0].columnName}}</h1>	       	 	
+	   	 			<md-button class="md-icon-button" flex="20" aria-label="Close" ng-click="closeErrorDetails()"><i class="fa fa-times" aria-hidden="true"></i></md-button>
+	   	 		</div>
+	        </md-toolbar>
+	        <md-content layout-padding>
+	        	<md-list class="md-dense" flex ng-model="columnErrorDetails.errors">
+					<md-list-item class="md-2-line" ng-repeat="cell in columnErrorDetails.errors | limitTo: limit | orderBy:'id'">
+						<div class="md-list-item-text">
+							<h3>Row {{cell.id + columnErrorDetails.skipRows + 2 }}</h3> 
+							<p>{{translate.load(cell[columnString + index])}}</p>
+						</div>
+					</md-list-item> 
+				</md-list>
+				<a ng-if="showMoreErrorsButton()" ng-click="extandErrorList()" class="showMoreErrors" href="">{{translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.showmore")}} : {{remainingErros()}}</a>
+	        </md-content>
+		</div>
 	     	<!-- CARD 2 (END) -->
 	    
 	     	<!-- CARD 3 (START) -->
@@ -249,7 +305,7 @@
 					columns="allHeadersForStep3Preview" 
 					no-pagination=false
 					items-per-page="6"
-								fixed-item-per-page="true"
+					fixed-item-per-page="true"
 					show-search-bar=false
 					full-width="true"
 					relative-header="true">

@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService",datasetFunction]) /// aaddd ,"driversExecutionService"
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", datasetFunction]) /// aaddd ,"driversExecutionService"
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q,driversExecutionService){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -4052,6 +4052,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         			for(i=0;i<this.dsMetaValue.length;i++){
         			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
+        			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="long".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
@@ -4337,20 +4338,34 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				loc.pnameView='<label>{{row.pname}}</label>';
 				loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
 
+				var msg = '';
+				
 				/**
 				 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				if (($scope.validationPassed==true || $scope.validationError==true) && $scope.csvConfChanged==false) {
-
-					var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
-					//{{translate.load('')}}
-
-					// If type is invalid and there are validation errors in response.
-					var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
-
-					var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					
+					var columnName = loc.column;
+					
+					var invalidColumns = $filter('filter')($scope.step2ValidationErrors, {columnName: columnName}, true);
+					
+					var invalidType = false;
+					
+					if (invalidColumns != null && invalidColumns.length > 0 && invalidColumns[0]['column_' + i] != undefined) {																	
+						msg = invalidColumns[0]['column_' + i];
+						invalidType = true;
+						loc.columnErrorDetails = {
+							errors: invalidColumns,
+							skipRows: $scope.dataset.skipRows,
+							index: i
+						};
+					} else {
+						msg = "sbi.workspace.dataset.wizard.metadata.validation.success.title";
+					}
+					
+					var invalidColumnValidContent = '<md-content class="metadataValidationColumn metadataInvalidColumn" ng-click="scopeFunctions.showErrorDetails(row.columnErrorDetails)"><div><div class="leftInavlidIcon"><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '" style="float:right;"></div></md-icon><div class="rightInvalidIcon"><md-icon md-font-icon="fa fa-info fa-1x" class="invalidTypeMetadata"></md-icon></div></div></md-content>';
+					var validColumnValidContent = '<md-content class="metadataValidationColumn metadataValidColumn"><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 
 					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
 					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
@@ -4395,7 +4410,46 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 		}
 	}
-
+	
+	$scope.metaScopeFunctions.showErrorDetails = function(columnErrorDetails) {
+		
+		$mdSidenav('errors-columndetails-sidenav')
+			.open()
+			.then(function(){
+		
+				$scope.columnErrorDetails = columnErrorDetails;
+				$scope.columnString = 'column_';
+				$scope.index = $scope.columnErrorDetails.index;    			
+		    	$scope.invalidColumn = $scope.columnErrorDetails.errors[0].columnName;
+		    	$scope.limit = 10;
+		    	$scope.errorsCount = $scope.columnErrorDetails.errors.length;
+				
+		    	$scope.showMoreErrorsButton = function() {
+		    		return $scope.errorsCount > $scope.limit;
+		    	}
+		    	
+		    	$scope.remainingErros = function() {
+		    		return $scope.errorsCount - $scope.limit;
+		    	}
+		    	
+		    	$scope.extandErrorList = function() {
+		    		if($scope.showMoreErrorsButton()) {
+		    			$scope.limit += $scope.limit;
+		    		} else {
+		    			$scope.limit = $scope.remainingErros();
+		    		}
+		    	}    	    	
+			});		
+	}
+	
+	$scope.closeErrorDetails = function() {		
+		$mdSidenav('errors-columndetails-sidenav')
+			.close()
+			.then(function(){
+				$scope.columnErrorDetails = {};
+			});
+	}
+	
 	/**
 	 * Local function that is used for filtering rows (metadata) for all columns available in the file dataset.
 	 * It will pass only the 'type' and 'fieldType' rows, whilst others will be ignored (filtered).
