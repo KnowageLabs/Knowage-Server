@@ -4285,7 +4285,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					
 					var invalidType = false;
 					
-					if (invalidColumns.length > 0 && invalidColumns[0]['column_' + i] != undefined) {																	
+					if (invalidColumns != null && invalidColumns.length > 0 && invalidColumns[0]['column_' + i] != undefined) {																	
 						msg = invalidColumns[0]['column_' + i];
 						invalidType = true;
 						loc.columnErrorDetails = {
