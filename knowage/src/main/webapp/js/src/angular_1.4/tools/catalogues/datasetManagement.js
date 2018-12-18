@@ -3077,7 +3077,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.dataset = $scope.selectedDataSet;
 			$scope.drivers = $scope.dataset.drivers;
 
-			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
 			$scope.dataset.executed = !$scope.showDrivers;
 
 			$scope.hideDrivers =function(){
@@ -3200,6 +3200,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
+					if(!$scope.selectedDataSet.drivers)
 					$scope.getPreviewSet(response.data);
 					if(response.data.rows.length==0){
 						 $mdDialog.show(

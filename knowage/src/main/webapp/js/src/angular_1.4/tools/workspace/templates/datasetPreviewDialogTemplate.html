@@ -9,7 +9,7 @@
 	    	&nbsp;&nbsp;
 	       	<h2>{{translate.load('sbi.browser.document.dataset')}}: &nbsp; {{datasetInPreview.name}}</h2> 
 	       <span flex></span>
-				<md-button  ng-click="hideDrivers()" class="md-icon-button">
+				<md-button  ng-if = "drivers.length > 0 || dataset.pars.length > 0"  ng-click="hideDrivers()" class="md-icon-button">
 	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
 	       	 	</md-button>
 	       <md-button id="close-preview" ng-click="closeDatasetPreviewDialog()">

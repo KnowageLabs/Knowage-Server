@@ -399,6 +399,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.setDetailOpen = function(isOpen) {
+		if($scope.showDriversForExport) $scope.showDriversForExport = false;
 		if (isOpen && !$mdSidenav('rightDs').isLockedOpen() && !$mdSidenav('rightDs').isOpen()) {
 			$scope.toggleDatasetDetail();
 		}
@@ -710,6 +711,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		$scope.previewPaginationEnabled=false;
     	}
 
+    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
     	$scope.getPreviewSet($scope.datasetInPreview);
 
     	/**
@@ -1422,7 +1424,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.getPreviewSet($scope.datasetInPreview);
 		}
 
-		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
 		$scope.dataset.executed = !$scope.showDrivers;
 
 		$scope.hideDrivers =function(){
