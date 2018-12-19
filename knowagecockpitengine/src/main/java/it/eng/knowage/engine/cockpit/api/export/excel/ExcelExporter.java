@@ -273,54 +273,44 @@ public class ExcelExporter {
 				cell.setCellValue(columnName);
 			}
 
+			// Cell styles for int and float
+			CellStyle intCellStyle = wb.createCellStyle();
+			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+
+			CellStyle floatCellStyle = wb.createCellStyle();
+			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+
 			// FILL RECORDS
-			for (int c = 0; c < columns.length(); c++) {
-				JSONObject column = columns.getJSONObject(c);
-				String type = column.getString("type");
-				String colIndex = column.getString("name"); // column_1, column_2, column_3...
+			for (int r = 0; r < rows.length(); r++) {
+				JSONObject rowObject = rows.getJSONObject(r);
+				Row row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
 
-				// Writing data to Excel vertically - column by column
-				// starting from 1, because first row (0) is Header
-				int counter = 1;
+				for (int c = 0; c < columns.length(); c++) {
+					JSONObject column = columns.getJSONObject(c);
+					String type = column.getString("type");
+					String colIndex = column.getString("name"); // column_1, column_2, column_3...
 
-				for (int r = 0; r < rows.length(); r++) {
-					Row row;
-					if (sheet.getPhysicalNumberOfRows() - 1 > counter - 1) {
-						row = sheet.getRow(counter);
-					} else {
-						row = sheet.createRow(counter);
-					}
-
-					JSONObject rowObject = rows.getJSONObject(r);
+					Cell cell = row.createCell(c);
 					Object value = rowObject.get(colIndex);
 
 					if (value != null) {
 						switch (type) {
 						case "string":
-							Cell cell = row.createCell(c);
 							cell.setCellValue(value.toString());
 							break;
 						case "int":
-							CellStyle intCellStyle = wb.createCellStyle();
-							intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-							Cell intCell = row.createCell(c);
-							intCell.setCellValue(Double.parseDouble(value.toString()));
-							intCell.setCellStyle(intCellStyle);
+							cell.setCellValue(Double.parseDouble(value.toString()));
+							cell.setCellStyle(intCellStyle);
 							break;
 						case "float":
-							CellStyle floatCellStyle = wb.createCellStyle();
-							floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-							Cell floatCell = row.createCell(c);
-							floatCell.setCellValue(Double.parseDouble(value.toString()));
-							floatCell.setCellStyle(floatCellStyle);
+							cell.setCellValue(Double.parseDouble(value.toString()));
+							cell.setCellStyle(floatCellStyle);
 							break;
 						default:
-							Cell commonCell = row.createCell(c);
-							commonCell.setCellValue(value.toString());
+							cell.setCellValue(value.toString());
 							break;
 						}
 					}
-					counter++;
 				}
 			}
 		} catch (Exception e) {
