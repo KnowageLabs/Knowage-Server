@@ -960,7 +960,7 @@
 							x: "$serieCategoryName",
 							#foreach($valueKey in $dataColumnsMapper.keySet())
 							#set ($col =  $dataColumnsMapper.get($valueKey))
-							$valueKey: "$row.get($col)",
+							"$valueKey": "$row.get($col)",
 							#end
 							
 						},
