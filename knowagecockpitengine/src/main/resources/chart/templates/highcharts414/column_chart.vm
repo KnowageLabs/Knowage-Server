@@ -1177,8 +1177,8 @@
 		                      	if(precision.indexOf("yAxis")>-1){
 		                      		precision =  '${yAxis.labels.precision}';
 		                      	} 
-			                    if(scaleFactor.indexOf("yAxis")!==-1){
-		                      		scaleFactor = 2
+			                    if(precision.indexOf("yAxis")!==-1){
+		                      		precision = 2
 		                      	}	
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {

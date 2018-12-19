@@ -768,8 +768,8 @@
 		                      		precision =  '${yAxis.labels.precision}';
 
 		                      	}  
-			                    if(scaleFactor.indexOf("yAxis")!==-1){
-		                      		scaleFactor = "empty"
+			                    if(precision.indexOf("yAxis")!==-1){
+		                      		precision = "empty"
 		                      	}
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
