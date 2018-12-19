@@ -638,7 +638,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params+="&nearRealtime=true";
 		}
 		
-		var filtersToSend = this.getWidgetSelectionsAndFilters(ngModel, dataset.label, loadDomainValues)
+		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset.label, loadDomainValues);
 
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
