@@ -939,6 +939,16 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 
+		Map<String, Object> envs = getEnv();
+		String stringDrivers = envs.get(DRIVERS).toString();
+		Map<String, Object> drivers = null;
+		try {
+			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		dataSet.setDrivers(drivers);
+
 		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
 		DataIterator iterator = null;
 		try {
