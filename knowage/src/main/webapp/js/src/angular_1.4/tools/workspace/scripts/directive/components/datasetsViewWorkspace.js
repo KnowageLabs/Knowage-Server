@@ -662,7 +662,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.dataset = dataset;
     	$scope.formatValueForExport = format;
     	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataset).then(function(){
-    		if($scope.drivers.length > 0){
+    		if($scope.drivers && $scope.drivers.length > 0){
     			$scope.dataset.parametersData = {};
     			$scope.dataset.parametersData.documentParameters = $scope.drivers;
     			$scope.showDriversForExport = true;
@@ -703,7 +703,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
        		urlBaseObject["id"] = id;
        		urlBuilderService.addQueryParams(urlBaseObject);
 
-       		if($scope.drivers.length>0){
+       		if($scope.drivers && $scope.drivers.length>0){
        			queryDriverObj = {}
        			queryDriverObj.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
        			urlBuilderService.addQueryParams(queryDriverObj);
