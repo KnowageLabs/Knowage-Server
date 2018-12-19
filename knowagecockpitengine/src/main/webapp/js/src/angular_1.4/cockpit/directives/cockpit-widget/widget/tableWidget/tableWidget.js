@@ -738,7 +738,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			return finishEdit.promise;
 		}
-
+		var pageTimeout;
 		$scope.$watch('ngModel.settings.pagination.frontEnd', function(newValue, oldValue) {
 			if(newValue != undefined){
 				if(newValue){ // deregistering backend watchers
@@ -751,8 +751,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}else{ // registering backend watchers
 					$scope.watchPagingForBackend = $scope.$watch('ngModel.settings.pagination.enabled + "," + ngModel.settings.pagination.itemsNumber + "," + ngModel.settings.page', function(newValue, oldValue) {
-						if(newValue != undefined && newValue != oldValue){
-							$scope.refreshWidget();
+						if(newValue != undefined && newValue != oldValue && newValue.substring(newValue.lastIndexOf(',')+1) != ''){
+							clearTimeout(pageTimeout);
+							pageTimeout = setTimeout(function () {
+								$scope.refreshWidget();
+						    }, 500);
+							
 						}
 					});
 

@@ -1,7 +1,10 @@
 <nav aria-label="Page navigation" class="cockpitTablePagination" ng-show="settings.pagination.enabled && settings.rowsCount > settings.pagination.itemsNumber">
     <div class="page-select" ng-if="widgetWidth > 315">
         <label>{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}}</label>
-        <md-select ng-model="settings.page" ng-change="goToPage()">
+        <md-input-container flex class="md-block" ng-if="Math.ceil(settings.rowsCount / settings.pagination.itemsNumber) >= 10">
+			<input class="input_class" ng-model="settings.page" />
+		</md-input-container>
+        <md-select ng-model="settings.page" ng-if="Math.ceil(settings.rowsCount / settings.pagination.itemsNumber) < 10">
             <md-option ng-repeat="pages in getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
         </md-select>
     </div>
