@@ -312,7 +312,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
 			if(!isNaN(p1)){
-				if(precision) p1 = parseFloat(p1).toFixed(precision);
+				p1 = parseFloat(p1);
+				if(precision) p1 = p1.toFixed(precision);
 				p1 = p1.toLocaleString();
 			}
 			return p1;
