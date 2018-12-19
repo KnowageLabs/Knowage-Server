@@ -402,6 +402,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<input 	ng-model="selectedDataSet.skipRows" type="number" 
 						                        				step="1" min="0" value="{{selectedDataSet.skipRows}}"
 						                        				ng-change="setFormDirty()">
+				                        				<md-tooltip>{{translate.load("sbi.ds.file.xsl.skiprows.tooltip")}}</md-tooltip>
 							                     	</md-input-container>
 							                  	</div>
 											</div>
