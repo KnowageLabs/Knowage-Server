@@ -767,7 +767,7 @@
 
 		                      	}  
 			                    if(precision.indexOf("yAxis")!==-1){
-		                      		precision = "empty"
+		                      		precision = 2
 		                      	}
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
