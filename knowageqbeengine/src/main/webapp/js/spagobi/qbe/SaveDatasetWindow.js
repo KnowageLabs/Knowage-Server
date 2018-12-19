@@ -547,7 +547,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 
 			if(this.queryCataloguePanel.dataset && this.queryCataloguePanel.dataset.meta.columns){
 				for (var j = 0; j < fieldsMetadata.length; j++) {
-					if(metadata[i].id==fieldsMetadata[j].uniqueName) {
+					if(metadata[i].alias==fieldsMetadata[j].fieldAlias) {
 						metadata[i].pvalue = fieldsMetadata[j].fieldType;
 					}
 				}
