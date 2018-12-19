@@ -19,19 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!DOCTYPE html>
     <head>
+    	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/styles/ag-grid.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/styles/ag-theme-balham.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
-    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/fetch-polyfill/fetch.js"></script>
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
-    		
-
-    	
     	</style>
     </head>
     
@@ -41,12 +38,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
         
 		<script type="text/javascript" charset="utf-8">
+			//GLOBAL VARIABLES 
 			const MAX_ROWS_CLIENT_PAGINATION = 5000;
+			const KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
+			const KNOWAGE_SERVICESURL = '/restful-services';
 			var backEndPagination = {page: 1};
 	  
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("dataset");
+	  		var parameters = JSON.parse(url.searchParams.get("parameters")) || {};
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		if(options && options['exports']) {
 	  			document.getElementById('utility-bar').classList.remove("hidden");
@@ -55,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
 	  			}
 	  		}
+	  		var datasetId;
 	    	
 	  		//Function to create the colDefs for ag-grid
 		  	function getColumns(fields) {
@@ -135,6 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			
 		  	function prev(){
+		  		if(backEndPagination.page == 1) return;
 		  		backEndPagination.page = backEndPagination.page - 1;
 		  		refreshRows();
 			}
@@ -152,16 +155,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	//Function to get the columns metadata and data
 		  	function getUrl(){
 		  		if(options.backEndPagination) {
-		  			return 'http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data?offset='+((backEndPagination.page-1)*backEndPagination.itemsPerPage)+'&size='+backEndPagination.itemsPerPage;
+		  			return KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/'+datasetLabel+'/data?offset='+((backEndPagination.page-1)*backEndPagination.itemsPerPage)+'&size='+backEndPagination.itemsPerPage;
 		  		}else{
-		  			return 'http://localhost:8080/knowage/restful-services/2.0/datasets/'+datasetLabel+'/data';
+		  			return KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/'+datasetLabel+'/data';
 		  		}
 		  	}
 		  	
-			function refreshRows() {
-	  			fetch(getUrl(),{
-			  		method: "POST"
+		  	function getParameters(){
+		  		var tempParams = {};
+		  		for(var i in dataset.pars){
+		  			if(parameters[dataset.pars[i].name]) tempParams[dataset.pars[i].name] = parameters[dataset.pars[i].name];
+		  			else tempParams[dataset.pars[i].name] = dataset.pars[i].defaultValue;
+		  		}
+		  		return {parameters : tempParams};
+		  	}
+		  	
+		  	function getDatasetMetadata(){
+				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel)
+				.then(function(response) {return response.json()})
+				.then(function(data){
+					dataset = data[0];
+					refreshRows(true);
 				})
+			}
+			getDatasetMetadata();
+		  	
+			function refreshRows(init) {
+				if(!init) gridOptions.api.showLoadingOverlay();
+				var fetchParams = {method:"POST"}
+				if(dataset.pars.length > 0) fetchParams.body = JSON.stringify(getParameters());
+	  			fetch(getUrl(),fetchParams)
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					if(data.errors){
@@ -181,16 +204,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
 							}
 						}
+						gridOptions.api.hideOverlay();
 					}
 			    })
 			};
-			refreshRows();
 			
 			function exportDataset(format){
 		       	if(format == 'CSV') {
-		       		var url= "http://localhost:8080/knowage/restful-services/1.0/datasets/4/export";
+		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+dataset.id+'/export';
 		       	} else if (format == 'XLSX') {
-		       		var url= 'http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+4;
+		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+dataset.id;
 		       	}
 		       	window.location.href = url;
 		    }
