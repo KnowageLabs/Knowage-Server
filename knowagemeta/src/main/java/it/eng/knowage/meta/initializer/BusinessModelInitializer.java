@@ -25,6 +25,8 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 
 import it.eng.knowage.meta.exception.KnowageMetaException;
+import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
+import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
 import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
@@ -109,6 +111,12 @@ public class BusinessModelInitializer {
 
 			}
 
+			// Get Package Name
+			String packageName = businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).getValue();
+			// append logical name of the model to the package name to avoid same class load problem
+			packageName = packageName + "." + JavaKeywordsUtils.transformToJavaPropertyName(businessModel.getName());
+			businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).setValue(packageName.toLowerCase());
+
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize business model", t);
 		}
@@ -133,6 +141,12 @@ public class BusinessModelInitializer {
 			businessModel.setPhysicalModel(physicalModel);
 
 			getPropertiesInitializer().addProperties(businessModel);
+
+			// Get Package Name
+			String packageName = businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).getValue();
+			// append logical name of the model to the package name to avoid same class load problem
+			packageName = packageName + "." + JavaKeywordsUtils.transformToJavaPropertyName(businessModel.getName());
+			businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).setValue(packageName.toLowerCase());
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize business model", t);
 		}
