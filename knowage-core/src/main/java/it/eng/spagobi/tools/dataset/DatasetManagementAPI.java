@@ -575,7 +575,12 @@ public class DatasetManagementAPI {
 					if (paramName.equals(parameter.optString("namePar"))) {
 						boolean isMultiValue = parameter.optBoolean("multiValuePar");
 						String paramValue = paramValues.get(paramName);
-						String[] values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+						String[] values = null;
+						if (paramValue == null) {
+							values = new String[0];
+						} else {
+							values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+						}
 
 						String typePar = parameter.optString("typePar");
 						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
