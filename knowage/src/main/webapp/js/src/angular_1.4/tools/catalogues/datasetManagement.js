@@ -3063,6 +3063,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 
 	function DatasetPreviewController($scope,$mdDialog,$http) {
+		
+		$scope.previewUrl = 'http://localhost:8080/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/commons/preview.jsp&dataset='+$scope.selectedDataSet.label;
 
 		$scope.executeParameter = function(){
 			$scope.showDrivers = false;

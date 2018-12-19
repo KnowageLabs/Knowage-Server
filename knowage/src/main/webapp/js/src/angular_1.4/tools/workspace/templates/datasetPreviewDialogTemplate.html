@@ -17,22 +17,11 @@
 	       </md-button>
 	     </div>   
 	   </md-toolbar>
-	   <div ng-if="dataset.executed">
-	   <md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
-				<div class="md-toolbar-tools" layout="row" layout-align="center center">
-				   <md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="disableBack" ng-click="getBackPreviewSet()">
-	         <md-icon class="fa fa-angle-double-left"></md-icon>
-	       </md-button>
-	       <span flex></span>
-	       <div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
-	       <span flex></span>
-	            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-disabled="disableNext" ng-click="getNextPreviewSet()">
-	         <md-icon class="fa fa-angle-double-right"></md-icon>
-	       </md-button>
-	   </div>
-	   </md-toolbar>
-	   <br>
-		<md-content style="overflow-y:hidden;">
+	   <md-card-content>
+	   		<iframe src={{previewUrl}} style="height: calc(100% - 34px); width:100%; border:none;"></iframe>
+	   </md-card-content>
+
+		<!--  md-content style="overflow-y:hidden;">
 		
 		<div layout-fill >
 			<angular-table
@@ -47,8 +36,7 @@
 		 </div>
 		 
 		
-	</md-content>
-</div>
+	</md-content-->
 </md-dialog>
 <div layout="column" flex=20 ng-if="showDrivers">
 <md-toolbar class="header secondaryToolbar" >

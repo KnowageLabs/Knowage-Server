@@ -29,10 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
+    		
+
+    	
     	</style>
     </head>
+    
     <body>
-    	<div class="export-bar">Export bar<button class="md-button">Download svg</button></div>
+    	<div id="utility-bar" class="utility-bar hidden"></div>
     	
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
         
@@ -44,6 +48,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("dataset");
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
+	  		if(options && options['exports']) {
+	  			document.getElementById('utility-bar').classList.remove("hidden");
+	  			document.getElementById('myGrid').classList.add("has-utility-bar");
+	  			for(var e in options['exports']){
+	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
+	  			}
+	  		}
 	    	
 	  		//Function to create the colDefs for ag-grid
 		  	function getColumns(fields) {
@@ -52,24 +63,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(typeof fields[f] != 'object') continue;
 					var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
 					tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
-					tempCol.filter = filterType(fields[f].type);
-					if(fields[f].type == 'date'){
-						tempCol.filterParams = {
-							comparator: function (filterLocalDateAtMidnight, cellValue) {
-
-					            //dd/mm/yyyy
-					            var dateParts  = cellValue.split("/");
-					            var day = Number(dateParts[2]);
-					            var month = Number(dateParts[1]) - 1;
-					            var year = Number(dateParts[0]);
-					            var cellDate = new Date(day, month, year);
-
-					            if (cellDate < filterLocalDateAtMidnight) return -1;
-					            else if (cellDate > filterLocalDateAtMidnight) return 1;
-					            else return 0;
-					        }
-					    }
-					}
 					columns.push(tempCol);
 				}
 				return columns
@@ -192,6 +185,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    })
 			};
 			refreshRows();
+			
+			function exportDataset(format){
+		       	if(format == 'CSV') {
+		       		var url= "http://localhost:8080/knowage/restful-services/1.0/datasets/4/export";
+		       	} else if (format == 'XLSX') {
+		       		var url= 'http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+4;
+		       	}
+		       	window.location.href = url;
+		    }
 			  
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
