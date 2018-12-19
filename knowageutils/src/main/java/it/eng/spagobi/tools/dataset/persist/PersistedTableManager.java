@@ -316,7 +316,7 @@ public class PersistedTableManager implements IPersistedManager {
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
 		int recordCount = (int) datastore.getRecordsCount();
-		
+
 		if (fieldCount == 0 || recordCount == 0) {
 			return new PreparedStatement[0];
 		}
@@ -326,7 +326,7 @@ public class PersistedTableManager implements IPersistedManager {
 		} catch (SQLException e1) {
 			logger.error("Unable to prefill column sizes");
 		}
-		
+
 		PreparedStatement[] toReturn = new PreparedStatement[recordCount];
 		StringBuilder insertSB = new StringBuilder("INSERT INTO ");
 		insertSB.append(getTableName());
@@ -408,7 +408,6 @@ public class PersistedTableManager implements IPersistedManager {
 				if (this.isRowCountColumIncluded()) {
 					statement.setLong(1, i + 1L);
 				}
-				
 
 				List<Integer> sortedIds = new ArrayList<>();
 				for (int j = 0; j < record.getFields().size(); j++) {
@@ -431,18 +430,19 @@ public class PersistedTableManager implements IPersistedManager {
 						String fieldMetaTypeName = fieldMeta.getType().toString();
 						boolean isFieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 
-						Map<String,Integer> newColumnSizes = new HashMap<>();
+						Map<String, Integer> newColumnSizes = new HashMap<>();
 						int fieldIndex = isRowCountColumIncluded() ? j + 1 : j;
 						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName, fieldMetaTypeName, isFieldMetaFieldTypeMeasure,
 								newColumnSizes);
 
 						Integer oldColumnSize = columnSize.get(fieldMetaName);
 						Integer newColumnSize = newColumnSizes.get(fieldMetaName);
-						if(oldColumnSize != null && newColumnSize != null && newColumnSize > oldColumnSize) {
+						if (oldColumnSize != null && newColumnSize != null && newColumnSize > oldColumnSize) {
 							columnSize.remove(fieldMetaName);
 							columnSize.put(fieldMetaName, newColumnSize);
-							try(Statement stmt = connection.createStatement()) {
-								String query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + fieldMetaName + " " + getDBFieldTypeFromAlias(datasource, fieldMeta);
+							try (Statement stmt = connection.createStatement()) {
+								String query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + fieldMetaName + " "
+										+ getDBFieldTypeFromAlias(datasource, fieldMeta);
 								stmt.executeUpdate(query);
 							}
 						}
@@ -493,7 +493,7 @@ public class PersistedTableManager implements IPersistedManager {
 							if (rawField instanceof BigDecimal) {
 								intValue = ((BigDecimal) rawField).intValueExact();
 							} else {
-								intValue = Integer.valueOf((String) rawField);
+								intValue = Integer.valueOf(rawField.toString());
 							}
 							field.setValue(intValue);
 						} catch (Throwable t) {
@@ -507,7 +507,7 @@ public class PersistedTableManager implements IPersistedManager {
 							if (rawField instanceof BigDecimal) {
 								doubleValue = ((BigDecimal) rawField).doubleValue();
 							} else {
-								doubleValue = Double.valueOf((String) rawField);
+								doubleValue = Double.valueOf(rawField.toString());
 							}
 							field.setValue(doubleValue);
 
@@ -656,8 +656,7 @@ public class PersistedTableManager implements IPersistedManager {
 							PersistedTableHelper.addField(statement, j + 1, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
 									columnSize);
 						} else {
-							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
-									columnSize);
+							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure, columnSize);
 						}
 					} catch (Throwable t) {
 						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
@@ -766,7 +765,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 		return dataBase.getDataBaseType(type);
 	}
-	
+
 	private String getDBFieldTypeFromAlias(IDataSource dataSource, IFieldMetaData fieldMetaData) throws DataBaseException {
 		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
 		Integer alias = getColumnSize().get(fieldMetaData.getAlias());
