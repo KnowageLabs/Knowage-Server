@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -464,8 +465,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Acquire required version of the dataset
 	 *
-	 * @param id        The ID of the dataset whose version with the versionId ID should be restored.
-	 * @param versionId The ID of the version of the dataset that should be restored and exchanged for the current one (active).
+	 * @param id
+	 *            The ID of the dataset whose version with the versionId ID should be restored.
+	 * @param versionId
+	 *            The ID of the version of the dataset that should be restored and exchanged for the current one (active).
 	 * @return Serialized dataset that is restored as the old version of the dataset.
 	 * @throws JSONException
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -513,9 +516,20 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType,
-			@QueryParam("DRIVERS") JSONObject drivers) {
+			@QueryParam("DRIVERS") JSONObject driversJson) {
+
+		Map<String, Object> drivers = null;
+
+		try {
+			drivers = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
+
+		dataSet.setDrivers(drivers);
+
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 		Assert.assertNotNull(dataSet, "Impossible to find a dataset with id [" + id + "]");
 		// Assert.assertTrue(dataSet.getParamsMap() == null || dataSet.getParamsMap().isEmpty(), "Impossible to export a dataset with parameters");
@@ -549,8 +563,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete a version for the selected dataset.
 	 *
-	 * @param id        The ID of the selected dataset.
-	 * @param versionId The ID of the version of the selected dataset.
+	 * @param id
+	 *            The ID of the selected dataset.
+	 * @param versionId
+	 *            The ID of the version of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -576,7 +592,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * @param datasetId The datasetId of the selected dataset.
+	 * @param datasetId
+	 *            The datasetId of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */

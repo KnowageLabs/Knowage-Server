@@ -252,6 +252,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		try {
 
 			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+
+			Session session = (Session) entityManager.getDelegate();
+			enableFilters(session);
+
 			IStatement filteredStatement = getStatement();
 			String statementStr = filteredStatement.getQueryString();
 			logger.debug("Compiling query statement [" + statementStr + "]");
