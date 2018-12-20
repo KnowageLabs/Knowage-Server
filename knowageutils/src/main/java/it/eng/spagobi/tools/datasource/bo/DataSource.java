@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.datasource.bo;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import javax.naming.Context;
@@ -28,6 +29,9 @@ import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -546,7 +550,9 @@ public class DataSource implements Serializable, IDataSource {
 	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		((AbstractJDBCDataset) dataSet).setSelectQuery(selectQuery);
-		return executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
+		IDataStore dataStore = executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
+		fixMetaData(dataStore, dataSet, selectQuery);
+		return dataStore;
 	}
 
 	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount) {
@@ -562,6 +568,17 @@ public class DataSource implements Serializable, IDataSource {
 		logger.debug("Data store retrieved successfully");
 		logger.debug("OUT");
 		return dataStore;
+	}
+
+	private void fixMetaData(IDataStore dataStore, IDataSet dataSet, SelectQuery selectQuery) {
+		if(dataSet instanceof JDBCHiveDataSet){
+			IMetaData dataStoreMetaData = dataStore.getMetaData();
+			List<Projection> projections = selectQuery.getProjections();
+			Assert.assertTrue(dataStoreMetaData.getFieldCount() == projections.size(), "Mismatching metadata");
+			for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
+				dataStoreMetaData.getFieldMeta(i).setName(projections.get(i).getAlias());
+			}
+		}
 	}
 
 	@Override
