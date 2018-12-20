@@ -49,7 +49,7 @@
    			</md-radio-group>
 	    </md-input-container>
     
-			<div layout="row">
+		<div layout="row">
 		 	<md-input-container  class="md-block" flex>
 				<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
 				<md-select  ng-model="model.settings.defaultValue">
@@ -61,11 +61,15 @@
 				<label>Grid columns width</label>
 				<input ng-model="model.settings.gridColumnsWidth" />
 			</md-input-container>
-			</div>
-	
-    	<md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
-			<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
-			<input ng-model="model.settings.staticValues" />
-		</md-input-container>
+	    	<md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'" flex>
+				<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
+				<input ng-model="model.settings.staticValues" />
+			</md-input-container>
+			<md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
+            	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
+         	</md-checkbox>
+		</div>
+		
+		
     </md-card-content>
 </md-card>
