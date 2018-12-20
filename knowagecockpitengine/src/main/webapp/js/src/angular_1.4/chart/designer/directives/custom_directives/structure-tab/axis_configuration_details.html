@@ -18,15 +18,15 @@
 	</md-input-container>
 </div>
 
-<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' ">
+<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' || selectedChartType == 'bar' ">
 <md-input-container class="md-block">
 	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMin")}}</label>
-	<input type="number" step="any" name="axis_min"
+	<input  step="any" name="axis_min"
 		ng-model="axisForDisplay.min"/> </md-input-container>
 		
 <md-input-container class="md-block">
 	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMax")}}</label>
-	<input type="number" step="any" name="axis_max"
+	<input  step="any" name="axis_max"
 		ng-model="axisForDisplay.max" /> </md-input-container>		
 
 </div>
