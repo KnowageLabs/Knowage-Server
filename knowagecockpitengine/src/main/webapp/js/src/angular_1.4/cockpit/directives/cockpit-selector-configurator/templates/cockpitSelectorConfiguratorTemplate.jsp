@@ -22,7 +22,7 @@
 	</md-card>
 	<md-card flex>
 		<md-subheader>{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.modality')}}</md-subheader>
-	        <md-card-content class="alternatedInput noPadding">
+	        <md-card-content class="noPadding">
 	        	<div layout="row" class="selTypes" style="padding:8px;" ng-if="!isSelectedColumnTemporal()">
 					<div class="outerIcon" ng-repeat="visType in modalityValue" ng-click="setSelectorType(visType.value)" ng-class="{'selected':model.settings.modalityValue==visType.value}">
 						<div class="selTypesIcon" ng-class="visType.value+'Icon'">
@@ -61,12 +61,16 @@
 					<input ng-model="model.settings.gridColumnsWidth" />
 						
 			    </md-input-container>
+			    <md-input-container class="md-block" ng-if="model.settings.defaultValue=='STATIC' && !isSelectedColumnTemporal()">
+					<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
+					<input ng-model="model.settings.staticValues" />
+				</md-input-container>
+			    <md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
+	            	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
+	         	</md-checkbox>
 		    </div>
 			
-		    <md-input-container class="md-block" ng-if="model.settings.defaultValue=='STATIC' && !isSelectedColumnTemporal()">
-				<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
-				<input ng-model="model.settings.staticValues" />
-			</md-input-container>
+		    
 	    </md-card-content>
     </md-card>
 </md-content>

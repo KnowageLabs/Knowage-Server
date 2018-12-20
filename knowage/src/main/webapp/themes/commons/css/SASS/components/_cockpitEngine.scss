@@ -2390,6 +2390,11 @@
 			  	text-overflow: ellipsis;
 			  	white-space: nowrap;
 		    }
+		    &.white-space-normal {
+		    	span {
+		    		white-space: normal;
+		    	}
+		    }
 		    &:hover {
 				background-color: #ccc;
 				input ~ .checkmark {
