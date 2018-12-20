@@ -449,8 +449,8 @@ public class ExcelExporter {
 					Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 					if (getRealtimeFromTableWidget(datasetId, configuration)) {
-						logger.debug("realtime = true");
-						map.put("realtime", true);
+						logger.debug("nearRealtime = true");
+						map.put("nearRealtime", true);
 					}
 
 					int limit = getLimitFromTableWidget(widget);
@@ -609,8 +609,8 @@ public class ExcelExporter {
 					Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 					if (getRealtimeFromTableWidget(datasetId, configuration)) {
-						logger.debug("realtime = true");
-						map.put("realtime", true);
+						logger.debug("nearRealtime = true");
+						map.put("nearRealtime", true);
 					}
 
 					int limit = getLimitFromTableWidget(widget);
