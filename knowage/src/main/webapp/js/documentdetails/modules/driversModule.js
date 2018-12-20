@@ -108,6 +108,12 @@
 	      			});
 	      		}
 
+	      		driversResource.getDriversforBM = function(basePath,endPath){
+	      			var promise = crudService.get(basePath,endPath).then(function(response){
+	      				driversResource.driversOnObject = response.data;
+	      			});
+	      			return promise;
+	      		}
 	      		driversResource.setDriversOnRelatedObject = function(driversOnRelatedObject){
 	      			driversResource.driversOnObject = driversOnRelatedObject;
 	      		}
@@ -126,6 +132,7 @@
 	               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
+	           				driversService.driversPerModel.push(response.data);
 		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
 		           					if(response.data.priority == driversResource.renderedDrivers[i].priority)
 		           						driversResource.renderedDrivers[i] = response.data;
