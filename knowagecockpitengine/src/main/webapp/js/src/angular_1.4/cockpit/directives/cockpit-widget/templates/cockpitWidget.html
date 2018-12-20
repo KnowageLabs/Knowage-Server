@@ -129,8 +129,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
-		<md-card-title layout="row" layout-align="start center" ng-show="extendedStyle.titles">
-			<md-toolbar class="widgetToolbar" ng-style="extendedStyle.title" layout="row" layout-align="start center">
+		<md-card-title layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-style="extendedStyle.title" >
+			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
 					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
 					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">New Widget</span>
