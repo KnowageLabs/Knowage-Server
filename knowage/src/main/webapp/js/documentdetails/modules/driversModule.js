@@ -132,7 +132,7 @@
 	               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
-	           				driversService.driversPerModel.push(response.data);
+	           				driversResource.driversPerModel.push(response.data);
 		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
 		           					if(response.data.priority == driversResource.renderedDrivers[i].priority)
 		           						driversResource.renderedDrivers[i] = response.data;
