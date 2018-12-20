@@ -12,6 +12,19 @@
 	<artifactId>knowagetalendengine</artifactId>
 	<packaging>war</packaging>
 
+	<build>
+		<finalName>knowagetalendengine</finalName>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
+	
 	<dependencies>
 
 		<dependency>
