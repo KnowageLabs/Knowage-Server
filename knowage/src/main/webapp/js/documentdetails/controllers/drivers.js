@@ -51,7 +51,11 @@ angular
              });
 
             	 }
-             }else {self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}
+             }else {
+
+            	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject}
+            	 else{
+            	 self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
              self.required = true;
 
 
