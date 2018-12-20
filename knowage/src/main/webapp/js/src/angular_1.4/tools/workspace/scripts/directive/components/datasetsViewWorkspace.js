@@ -390,14 +390,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.downloadDatasetFile = function(dataset) {
-		var params = {};		
+		var params = {};
 		params.fileName = dataset.fileName;
 		params.type = dataset.fileType.toLowerCase();
 		var requestParams = '?' + $httpParamSerializer(params);
 		var config = {"responseType": "arraybuffer"};
 		sbiModule_restServices.promiseGet('2.0/datasets', 'download/file' + requestParams, undefined, config)
-			.then(function(response){							
-				var mimeType = response.headers("Content-type");					
+			.then(function(response){
+				var mimeType = response.headers("Content-type");
 				var paramsString = response.headers("Content-Disposition");
 				if (mimeType == 'application/octet-stream' || paramsString == null) {
 					toastr.error('', sbiModule_translate.load("sbi.workspace.dataset.download.error"), $scope.toasterConfig);
@@ -418,14 +418,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 					}
 					if (fileName && fileName.endsWith("." + extensionFile)){
 						fileName = fileName.split("." + extensionFile)[0];
-					}					
+					}
 					sbiModule_download.getBlob(response.data, fileName, fileType, extensionFile);
 				}
 			}, function(response){
 				toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
 			});
 	}
-	
+
 	$scope.showDatasetDetails = function() {
 		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
 	};
@@ -1453,22 +1453,28 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			return promise;
 		}
     function DatasetPreviewController($scope,$mdDialog,$http){
-    	$scope.dataset = $scope.datasetInPreview;
-    	$scope.executeParameter = function(){
-			$scope.showDrivers = false;
+    	if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+
+	    	$scope.dataset = $scope.datasetInPreview;
+	    	$scope.executeParameter = function(){
+				$scope.showDrivers = false;
+				$scope.dataset.executed = true;
+				$scope.dataset["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
+				$scope.getPreviewSet($scope.datasetInPreview);
+			}
+
+			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
+			$scope.dataset.executed = !$scope.showDrivers;
+
+			$scope.hideDrivers =function(){
+				$scope.showDrivers = !$scope.showDrivers;
+				$scope.dataset.executed = true;
+			}
+
+    	}else{
+			$scope.dataset = {}
 			$scope.dataset.executed = true;
-			$scope.dataset["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
-			$scope.getPreviewSet($scope.datasetInPreview);
 		}
-
-		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
-		$scope.dataset.executed = !$scope.showDrivers;
-
-		$scope.hideDrivers =function(){
-			$scope.showDrivers = !$scope.showDrivers;
-			$scope.dataset.executed = true;
-		}
-
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
 			 $scope.previewDatasetColumns=[];

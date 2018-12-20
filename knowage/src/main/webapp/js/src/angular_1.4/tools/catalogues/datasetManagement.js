@@ -3063,33 +3063,36 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 
 	function DatasetPreviewController($scope,$mdDialog,$http) {
+			if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+					$scope.executeParameter = function(){
+						$scope.showDrivers = false;
+						$scope.dataset.executed = true;
+						$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
+						sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+						.then(function(response){
+							$scope.getPreviewSet(response.data);
+						},
+						function(response) {
+							// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
+							$mdDialog.cancel();
+							sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
+						})
+					}
 
-		$scope.executeParameter = function(){
-			$scope.showDrivers = false;
-			$scope.dataset.executed = true;
-			$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
-			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-			.then(function(response){
-				$scope.getPreviewSet(response.data);
-			},
-			function(response) {
-				// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
-				$mdDialog.cancel();
-				sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
-			})
-		}
+						$scope.dataset = $scope.selectedDataSet;
+						$scope.drivers = $scope.dataset.drivers;
 
-			$scope.dataset = $scope.selectedDataSet;
-			$scope.drivers = $scope.dataset.drivers;
+						$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
+						$scope.dataset.executed = !$scope.showDrivers;
 
-			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
-			$scope.dataset.executed = !$scope.showDrivers;
-
-			$scope.hideDrivers =function(){
-				$scope.showDrivers = !$scope.showDrivers;
+						$scope.hideDrivers =function(){
+							$scope.showDrivers = !$scope.showDrivers;
+							$scope.dataset.executed = true;
+						}
+			}else{
+				$scope.dataset = {}
 				$scope.dataset.executed = true;
 			}
-
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
 			 $scope.previewDatasetColumns=[];
