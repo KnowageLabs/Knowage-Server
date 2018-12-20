@@ -1065,16 +1065,16 @@
    		],
    		
 			#end
-			
+			#if($yAxis.min && $yAxis.min != "auto")
+				min:$yAxis.min,
+			#end
 			#set($intValue = 0)
-			#if($chartType=="radar")
-        		min: 0,
-        	#else
-	        	min:$yAxis.min,
-	        	#if($yAxis.min != $yAxis.max)
+			#if($yAxis.max && $yAxis.max!='auto' && $chartType != "radar")
 	        	max:$yAxis.max,
-	        	#end
-        	#end
+	        #end
+			#if( $chartType != "radar")
+			min:0,
+				#end
         
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	#*
@@ -1087,16 +1087,6 @@
         		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         	*#
         	##min: 0,
-        	#if($chartType=="line")
-        	min: $yAxis.min,
-        	#if($yAxis.max>$yAxis.min)
-        	max: $yAxis.max,
-        	#end
-        	
-        	#end
-        	#if($chartType=="radar")
-        		min: 0,
-        	#end
         	title: {
         	    #if($yAxis.TITLE.text != '')
         			text: "$yAxis.TITLE.text",

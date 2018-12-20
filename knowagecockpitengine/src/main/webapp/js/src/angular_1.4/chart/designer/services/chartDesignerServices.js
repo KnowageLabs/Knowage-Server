@@ -370,8 +370,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					               "alias":"Y",
 					               "type":"Serie",
 					               "position":"",
-					               "min":0,
-					               "max":0,
+					               "min":'auto',
+					               "max":'auto',
 					               "style":{
 					            	   "rotate":"",
 					            	   "align":"",
