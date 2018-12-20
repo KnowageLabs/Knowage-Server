@@ -1073,7 +1073,7 @@
 			#if($yAxis.max && $yAxis.max!='auto' && $chartType != "radar")
 	        	max:$yAxis.max,
 	        #end
-			#if( $chartType != "radar")
+			#if( $chartType == "radar")
 			min:0,
 				#end
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
