@@ -163,7 +163,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					body.start = (backEndPagination.page-1)*backEndPagination.itemsPerPage;
 					body.limit = backEndPagination.itemsPerPage;
 				}
-				//if(dataset.parameters.length > 0) fetchParams.body = JSON.stringify(getParameters());
 				fetchParams.body = JSON.stringify(body);
 	  			fetch(KNOWAGE_BASEURL + KNOWAGE_SERVICESURL + '/1.0/datasets/preview',fetchParams)
 				.then(function(response) {return response.json()})
@@ -199,7 +198,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			function exportDataset(format){
 		       	if(format == 'CSV') {
-		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+parameters.id+'/export';
+		       		if(parameters.isIterable) {
+		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+parameters.id+'/export';
+		       		}else{
+		       			alert('Dataset is not exportable in CSV format');
+		       			return;
+		       		}
 		       	} else if (format == 'XLSX') {
 		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+parameters.id;
 		       	}
