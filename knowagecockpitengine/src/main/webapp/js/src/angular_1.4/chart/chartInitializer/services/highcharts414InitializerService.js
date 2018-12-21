@@ -76,6 +76,20 @@ angular.module('chartInitializer')
 		else
 		{
 			if (chartType == 'scatter') delete this.updateData;
+			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
+				var mapAxis = this.setExtremes(chartConf);
+				for (var i =0; i < chartConf.yAxis.length; i++){
+					var min = Math.min.apply(Math, [mapAxis.min[i], chartConf.yAxis[i].plotBands[0].from != 0 ? chartConf.yAxis[i].plotBands[0].from : mapAxis.min[i], chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
+					var max = Math.max.apply(Math, [mapAxis.max[i], chartConf.yAxis[i].plotBands[0].to !=0 ? chartConf.yAxis[i].plotBands[0].to : mapAxis.max[i],  chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
+					if(chartConf.yAxis[i].min && chartConf.yAxis[i].min > min){
+						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
+					}
+					if(chartConf.yAxis[i].max && chartConf.yAxis[i].max < max){
+						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
+					}
+				}
+
+			}
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
 			if(jsonData){
@@ -506,7 +520,26 @@ angular.module('chartInitializer')
        highchartsDrilldownHelper.drillup(chart.breadcrumb);
 
 	}
-
+	this.setExtremes = function (chartConf){
+		var mapAxis=  {min:{},max:{}};
+		for (var i =0; i < chartConf.series.length; i++){
+			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
+			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
+			if(mapAxis.min[chartConf.series[i].yAxis]){
+				if(mapAxis.min[chartConf.series[i].yAxis] < min)
+				mapAxis.min[chartConf.series[i].yAxis] = min;
+			} else {
+				mapAxis.min[chartConf.series[i].yAxis] = min;
+			}
+			if(mapAxis.max[chartConf.series[i].yAxis]){
+				if(mapAxis.max[chartConf.series[i].yAxis].max > max)
+				mapAxis.max[chartConf.series[i].yAxis].max = max;
+			} else {
+				mapAxis.max[chartConf.series[i].yAxis] = max;
+			}
+		}
+		return mapAxis;
+	}
 
 	this.updateData = function(widgetData){
 
