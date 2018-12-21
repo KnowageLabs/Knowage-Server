@@ -34,9 +34,9 @@
        			</md-radio-button>
   				</md-radio-group>
     	</md-input-container>
-    	<md-input-container  class="md-block radioContainer" >
+    	<md-input-container  class="md-block radioContainer">
        		<md-radio-group layout="row" ng-model="model.settings.modalityPresent" layout="row" layout-align="start center"> 
-       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value">
+       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value" ng-hide="model.settings.modalityValue == 'multiValue' && button.value == 'COMBOBOX'">
            			{{button.name}}
        			</md-radio-button>
    			</md-radio-group>

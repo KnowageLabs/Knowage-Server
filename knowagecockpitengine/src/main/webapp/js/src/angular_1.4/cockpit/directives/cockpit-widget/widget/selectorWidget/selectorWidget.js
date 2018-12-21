@@ -459,6 +459,10 @@ angular.module('cockpitModule')
 
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
+		
+		$scope.modalityWatcher = $scope.$watch('model.settings.modalityValue',function(newValue,oldValue){
+			if(newValue == 'multiValue') $scope.model.settings.modalityPresent = 'LIST';
+		})
 
 		$scope.saveConfiguration=function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined ){
@@ -486,12 +490,14 @@ angular.module('cockpitModule')
 			if(!scopeFather.ngModel.isNew){
 				scopeFather.refreshWidget();
 			}
+			$scope.modalityWatcher();
 
 			$scope.$destroy();
 			finishEdit.resolve();
 		}
 
 		$scope.cancelConfiguration=function(){
+			$scope.modalityWatcher();
 			mdPanelRef.close();
 			mdPanelRef.destroy();
 			$scope.$destroy();
