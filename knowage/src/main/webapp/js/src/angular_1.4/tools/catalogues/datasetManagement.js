@@ -3062,7 +3062,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * ========================================
 	 */
 
-	function DatasetPreviewController($scope,$mdDialog,$http) {
+	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
 			if($scope.selectedDataSet.dsTypeCd == "Qbe"){
 					$scope.executeParameter = function(){
 						$scope.showDrivers = false;
@@ -3090,6 +3090,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							$scope.dataset.executed = true;
 						}
 			}else{
+				$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/commons/preview.jsp&parameters=' + encodeURIComponent(JSON.stringify($scope.selectedDataSet)));
 				$scope.dataset = {}
 				$scope.dataset.executed = true;
 			}
