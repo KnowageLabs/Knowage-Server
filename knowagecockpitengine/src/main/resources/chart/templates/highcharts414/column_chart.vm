@@ -1033,7 +1033,7 @@
         {
         
 	        #if($yAxis.plotBands)
-	        
+	        #set($plotBands = true)
 			plotBands: [
 	    	{
 	    		label:
@@ -1063,19 +1063,53 @@
 	   			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
 	   			value: $yAxis.plotLines.get(0).value,
 	   			width: $yAxis.plotLines.get(0).width,
+            	zIndex: 1
 	   		},			
 	   		],
+	   		
+	   		
+			#end
+			#set($Integer1 = 0)
+			#if($yAxis.min==$yAxis.max)
+			#set ($minAndMaxAreSame= true)
 			#end
 			#if($yAxis.min && $yAxis.min != "auto")
-				min:$yAxis.min,
+				#set ($min = $yAxis.min)
+					min: $yAxis.min,
+			#elseif($plotBands)
+				#if($Integer1.parseInt($yAxis.plotBands.get(0).from)<$Integer1.parseInt($yAxis.plotLines.get(0).value))
+					#set ($min = $yAxis.plotBands.get(0).from)
+					min: $yAxis.plotBands.get(0).from,
+				#elseif($Integer1.parseInt($yAxis.plotLines.get(0).width)>0)
+					#set ($min = $yAxis.plotLines.get(0).value)
+					min: $yAxis.plotLines.get(0).value,
+				#end
 			#end
-			#set($intValue = 0)
+			
 			#if($yAxis.max && $yAxis.max!='auto' && $chartType != "radar")
-	        	max:$yAxis.max,
+				#set ($max = $yAxis.max)
+				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+					max:$yAxis.max,
+				#end
+	        #elseif($plotBands)
+	        	#if($Integer1.parseInt($yAxis.plotBands.get(0).to)>$Integer1.parseInt($yAxis.plotLines.get(0).value))
+	        		#set ($max = $yAxis.plotBands.get(0).to)
+					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+						max: $yAxis.plotBands.get(0).to,
+					#end
+				#elseif($Integer1.parseInt($yAxis.plotLines.get(0).width)>0)
+					#set ($max = $yAxis.plotLines.get(0).value)
+					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+						max: $yAxis.plotLines.get(0).value,
+					#end
+				#end
 	        #end
+	        
 			#if( $chartType == "radar")
 			min:0,
-				#end
+			#end
+			
+			
         	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
         	#*
         	linkedTo:0, property was removed in order to provide different values on axis, see example for better understanding on link http://jsfiddle.net/JeLrb/515/
