@@ -39,14 +39,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES 
-			const MAX_ROWS_CLIENT_PAGINATION = 5000;
-			const KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
-			const KNOWAGE_SERVICESURL = '/restful-services';
-			var backEndPagination = {page: 1};
+			const 	MAX_ROWS_CLIENT_PAGINATION = 5000;
+			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
+			const 	KNOWAGE_SERVICESURL = '/restful-services';
+			var 	backEndPagination = {page: 1};
 	  
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
-	  		var datasetLabel = url.searchParams.get("dataset");
+	  		var datasetLabel = url.searchParams.get("datasetLabel");
 	  		var parameters = JSON.parse(url.searchParams.get("parameters")) || {};
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		if(options && options['exports']) {
@@ -69,23 +69,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				return columns
 			}
-		  	
-		  	function changeSorting(){
-		  		if(options.backEndPagination){
-		  			var sorting = gridOptions.api.getSortModel();
-		  		}
-			}
 		
 		  	//Defining ag-grid options
 		  	var gridOptions = {
-			    enableSorting: options && typeof options.sorting != 'undefined' ? options.sorting : true,
+			    enableSorting: false,
 			    enableFilter: false,
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
 			    enableColResize: true,
 	            paginationAutoPageSize: true,
-	            headerHeight: 48,
-	            onSortChanged: changeSorting,
+	            headerHeight: 48
 	        };
 		  
 		  	//Defining the custom template for the table header
@@ -152,25 +145,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  		refreshRows();
 			}
 		  	
-		  	/*function getParameters(){
-		  		var tempParams = {};
-		  		for(var i in dataset.parameters){
-		  			if(parameters[dataset.parameters[i].name]) tempParams[dataset.parameters[i].name] = parameters[dataset.parameters[i].name];
-		  			else tempParams[dataset.parameters[i].name] = dataset.parameters[i].defaultValue;
-		  		}
-		  		return {parameters : tempParams};
-		  	}*/
-		  	
-		  	/*function getDatasetMetadata(){
-				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/?seeTechnical=true&label='+datasetLabel)
+		  	function getDatasetMetadata(){
+				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/pagopt?offset=0&fetchSize=1&filters='+encodeURIComponent(JSON.stringify({"typeFilter":"=","valueFilter":datasetLabel,"columnFilter":"label"})))
 				.then(function(response) {return response.json()})
 				.then(function(data){
-					dataset = data[4];
+					parameters = data.root[0];
 					refreshRows(true);
 				})
 			}
-			getDatasetMetadata();*/
-		  	
+			
 			function refreshRows(init) {
 				if(!init) gridOptions.api.showLoadingOverlay();
 				var fetchParams = {method:"POST"}
@@ -207,13 +190,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 			    })
 			};
-			refreshRows(true);
+			
+			if(datasetLabel){
+		  		getDatasetMetadata();
+		  	}else{
+		  		refreshRows(true);
+		  	}
 			
 			function exportDataset(format){
 		       	if(format == 'CSV') {
-		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+dataset.id+'/export';
+		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+parameters.id+'/export';
 		       	} else if (format == 'XLSX') {
-		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+dataset.id;
+		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+parameters.id;
 		       	}
 		       	window.location.href = url;
 		    }

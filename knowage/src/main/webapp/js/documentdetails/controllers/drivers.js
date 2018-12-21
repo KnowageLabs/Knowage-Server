@@ -41,12 +41,21 @@ angular
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
              if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0){
+
+            	 if(self.drivers.length == 0 ){
+
             crudService.get(requiredPath,basePath).then(function(response){
             	 driversService.driversOnObject = response.data;
             	 self.drivers=driversService.driversOnObject;
             	 self.driversNum = self.drivers.length > 1;
              });
-             }else {self.drivers = driversService.driversOnObject;self.driversNum = self.drivers.length > 1}
+
+            	 }
+             }else {
+
+            	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject}
+            	 else{
+            	 self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
              self.required = true;
 
 
@@ -105,7 +114,7 @@ angular
              $scope.$on('changedModel', function(event, data) {
             	   self.driverRelatedObject = data;
             	   driversService.renderedDrivers =  $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
-            	//   driversService.driverRelatedObject =  self.driverRelatedObject;
+            	   driversService.driverRelatedObject =  self.driverRelatedObject;
             	   self.selectedDriver = undefined;
             	   self.drivers = driversService.renderedDrivers;
             	   requiredPath = "2.0/businessmodels";
@@ -208,6 +217,10 @@ angular
                     	 driversService.driversForDeleting.push(driver);
                     	 self.drivers.splice(i, 1);
                      }
+                 }
+                 for (var i = 0; i< driversService.driversPerModel.length;i++) {
+                	 if (driversService.driversPerModel[i].id == driver.id)
+                		 driversService.driversPerModel.splice(i,1);
                  }
                  if(self.drivers.length > 0){
 	                 self.priorityOfDeletedDriver = driversService.driversForDeleting[driversService.driversForDeleting.length-1].priority;
