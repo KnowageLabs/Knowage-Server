@@ -1071,35 +1071,15 @@
 			#if($yAxis.min==$yAxis.max)
 			#set ($minAndMaxAreSame= true)
 			#end
-			#if($yAxis.min && $yAxis.min != "auto")
+			#if($yAxis.min && $yAxis.min != "auto"  && $yAxis.min!='' )
 				#set ($min = $yAxis.min)
 					min: $yAxis.min,
-			#elseif($plotBands)
-				#if($Integer1.parseInt($yAxis.plotBands.get(0).from)<$Integer1.parseInt($yAxis.plotLines.get(0).value))
-					#set ($min = $yAxis.plotBands.get(0).from)
-					min: $yAxis.plotBands.get(0).from,
-				#elseif($Integer1.parseInt($yAxis.plotLines.get(0).width)>0)
-					#set ($min = $yAxis.plotLines.get(0).value)
-					min: $yAxis.plotLines.get(0).value,
-				#end
 			#end
 			
-			#if($yAxis.max && $yAxis.max!='auto' && $chartType != "radar")
+			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
 				#set ($max = $yAxis.max)
 				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
 					max:$yAxis.max,
-				#end
-	        #elseif($plotBands)
-	        	#if($Integer1.parseInt($yAxis.plotBands.get(0).to)>$Integer1.parseInt($yAxis.plotLines.get(0).value))
-	        		#set ($max = $yAxis.plotBands.get(0).to)
-					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
-						max: $yAxis.plotBands.get(0).to,
-					#end
-				#elseif($Integer1.parseInt($yAxis.plotLines.get(0).width)>0)
-					#set ($max = $yAxis.plotLines.get(0).value)
-					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
-						max: $yAxis.plotLines.get(0).value,
-					#end
 				#end
 	        #end
 	        
