@@ -152,39 +152,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  		refreshRows();
 			}
 		  	
-		  	//Function to get the columns metadata and data
-		  	function getUrl(){
-		  		if(options.backEndPagination) {
-		  			return KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/'+datasetLabel+'/data?offset='+((backEndPagination.page-1)*backEndPagination.itemsPerPage)+'&size='+backEndPagination.itemsPerPage;
-		  		}else{
-		  			return KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/'+datasetLabel+'/data';
-		  		}
-		  	}
-		  	
-		  	function getParameters(){
+		  	/*function getParameters(){
 		  		var tempParams = {};
-		  		for(var i in dataset.pars){
-		  			if(parameters[dataset.pars[i].name]) tempParams[dataset.pars[i].name] = parameters[dataset.pars[i].name];
-		  			else tempParams[dataset.pars[i].name] = dataset.pars[i].defaultValue;
+		  		for(var i in dataset.parameters){
+		  			if(parameters[dataset.parameters[i].name]) tempParams[dataset.parameters[i].name] = parameters[dataset.parameters[i].name];
+		  			else tempParams[dataset.parameters[i].name] = dataset.parameters[i].defaultValue;
 		  		}
 		  		return {parameters : tempParams};
-		  	}
+		  	}*/
 		  	
-		  	function getDatasetMetadata(){
-				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel)
+		  	/*function getDatasetMetadata(){
+				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/?seeTechnical=true&label='+datasetLabel)
 				.then(function(response) {return response.json()})
 				.then(function(data){
-					dataset = data[0];
+					dataset = data[4];
 					refreshRows(true);
 				})
 			}
-			getDatasetMetadata();
+			getDatasetMetadata();*/
 		  	
 			function refreshRows(init) {
 				if(!init) gridOptions.api.showLoadingOverlay();
 				var fetchParams = {method:"POST"}
-				if(dataset.pars.length > 0) fetchParams.body = JSON.stringify(getParameters());
-	  			fetch(getUrl(),fetchParams)
+				var body = parameters;
+				body.limit = -1;
+				if(options.backEndPagination) {
+					body.start = (backEndPagination.page-1)*backEndPagination.itemsPerPage;
+					body.limit = backEndPagination.itemsPerPage;
+				}
+				//if(dataset.parameters.length > 0) fetchParams.body = JSON.stringify(getParameters());
+				fetchParams.body = JSON.stringify(body);
+	  			fetch(KNOWAGE_BASEURL + KNOWAGE_SERVICESURL + '/1.0/datasets/preview',fetchParams)
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					if(data.errors){
@@ -192,6 +190,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}else{
 						if(options.backEndPagination){
 							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+							gridOptions.api.setRowData(data.rows);
 						}else{
 							if(!gridOptions.columnDefs) gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
 							gridOptions.api.setRowData(data.rows);
@@ -208,6 +207,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 			    })
 			};
+			refreshRows(true);
 			
 			function exportDataset(format){
 		       	if(format == 'CSV') {
