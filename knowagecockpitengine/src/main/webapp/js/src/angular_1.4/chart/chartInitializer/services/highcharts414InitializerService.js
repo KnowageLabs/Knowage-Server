@@ -81,10 +81,16 @@ angular.module('chartInitializer')
 				for (var i =0; i < chartConf.yAxis.length; i++){
 					var min = Math.min.apply(Math, [mapAxis.min[i], chartConf.yAxis[i].plotBands[0].from != 0 ? chartConf.yAxis[i].plotBands[0].from : mapAxis.min[i], chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
 					var max = Math.max.apply(Math, [mapAxis.max[i], chartConf.yAxis[i].plotBands[0].to !=0 ? chartConf.yAxis[i].plotBands[0].to : mapAxis.max[i],  chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
-					if(chartConf.yAxis[i].min && chartConf.yAxis[i].min > min){
+					if(chartConf.yAxis[i].min){
+						if(chartConf.yAxis[i].min > min)
+						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
+					} else {
 						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
 					}
-					if(chartConf.yAxis[i].max && chartConf.yAxis[i].max < max){
+					if(chartConf.yAxis[i].max){
+						if(chartConf.yAxis[i].max < max)
+						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
+					} else {
 						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
 					}
 				}
