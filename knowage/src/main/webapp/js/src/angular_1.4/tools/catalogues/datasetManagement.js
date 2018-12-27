@@ -3205,7 +3205,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 		}
-		if(!$scope.selectedDataSet.drivers){
+
 		$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
@@ -3238,14 +3238,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
 				}
 			);
-	}else $mdDialog.show({
-			  scope:$scope,
-			  preserveScope: true,
-		      controller: DatasetPreviewController,
-		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
-		      clickOutsideToClose:false,
-		      escapeToClose :false
-		    });
 	}
 
     $scope.createColumnsForPreview=function(fields){
