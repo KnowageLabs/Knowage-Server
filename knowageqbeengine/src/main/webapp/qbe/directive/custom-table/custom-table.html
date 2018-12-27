@@ -51,10 +51,13 @@
 				columns='basicViewColumns'
 				scope-functions=basicViewScopeFunctions
 				speed-menu-option="treeSpeedMenu"
-				no-pagination=true>
+				no-pagination=true
+				allow-edit=true>
 			</angular-table>	
 				   									
 		</md-card>
+		
+		
 	</div>
 
 	<div layout="row" ng-if="selectedVisualization=='previewData' && smartPreview">
@@ -66,9 +69,7 @@
 	      		<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-sort"></md-icon>
 	      	</md-button>
-	   			<h2>{{field.name}}
-	   			<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
-	   			</h2> 
+	   		<input type="text" ng-model="field.alias" ng-value="field.alias" >
 	   		<span flex></span>
 	   		<md-menu>
 	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">

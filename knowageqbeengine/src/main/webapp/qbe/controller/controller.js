@@ -90,8 +90,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$rootScope.$broadcast('editQueryObj',newValue);
 		for (var i = 0; i < newValue.fields.length; i++) {
 			var meta = {
-					"displayedName":newValue.fields[i].field,
-					"name":newValue.fields[i].field,
+					"displayedName":newValue.fields[i].alias,
+					"name":newValue.fields[i].alias,
 					"fieldType":newValue.fields[i].fieldType,
 					"type":""
 			}
@@ -125,8 +125,22 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			queryModel.length = 0;
 		}
 	}
-
+	function checkForDuplicatedAliases() {
+	    var aliases = [];
+	    for (var i = 0; i < $scope.editQueryObj.fields.length; ++i) {
+	        var value = $scope.editQueryObj.fields[i].alias;
+	        if (aliases.indexOf(value) !== -1) {
+	            return true;
+	        }
+	        aliases.push(value);
+	    }
+	    return false;
+	}
 	window.parent.openPanelForSavingQbeDataset = function (){
+		if(checkForDuplicatedAliases()){
+			sbiModule_messaging.showWarningMessage("Your query contains dupicate aliases", "Worning")
+			return;
+		}
 		var bodySend = angular.copy($scope.bodySend);
 		var finishEdit=$q.defer();
 		var config = {
@@ -159,6 +173,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
      			var queryObject = {
          		    	"id":query.fields[i].id,
          		    	"name":query.fields[i].field,
+         		    	"alias":query.fields[i].alias,
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
          		    	"data":[],
@@ -171,6 +186,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"filters": [],
          		    	"havings": []
          		    }
+
      			if(query.fields[i].temporal){
      				queryObject.temporal = query.fields[i].temporal;
      			}
@@ -379,16 +395,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}
 
 	$scope.addField = function (field,calcField) {
-
-		if($scope.queryModel != undefined  && !query_service.smartView && $scope.queryModel.length>0){
-			for (var i = 0; i < $scope.queryModel.length; i++) {
+		for (var i = 0; i < $scope.queryModel.length; i++) {
+			if($scope.queryModel != undefined  && !query_service.smartView && $scope.queryModel.length>0){
 				$scope.editQueryObj.fields[i].group = $scope.queryModel[i].group;
 				$scope.editQueryObj.fields[i].funct = $scope.queryModel[i].funct;
 				$scope.editQueryObj.fields[i].visible = $scope.queryModel[i].visible;
 				$scope.editQueryObj.fields[i].distinct = $scope.queryModel[i].distinct;
 				$scope.editQueryObj.fields[i].iconCls = $scope.queryModel[i].visible;
 			}
+			$scope.editQueryObj.fields[i].alias = $scope.queryModel[i].alias;
 		}
+
 		if(!calcField){
 			var newField  = {
 				   "id":field.attributes.type === "inLineCalculatedField" ? field.attributes.formState : field.id,
@@ -418,6 +435,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		if(!calcField){
 			$scope.editQueryObj.fields.push(newField);
 		}
+
 	}
 
 	var isColumnType = function(field,columnType){
@@ -505,7 +523,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.$on('openHavings',function(event,field){
 		$scope.openHavings(field);
-		// $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries
 	});
 
     $scope.$on('openFilters',function(event,field){
@@ -601,19 +618,20 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}
 
 	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries, expression, advancedFilters) {
+		field_copy = angular.copy(field);
+		field = {};
 		if(field.hasOwnProperty('attributes')){
-			field_copy = angular.copy(field);
-			field={};
-			field.field = {}
-			field.field.id = field_copy.id;
-			field.field.name = field_copy.text;
-			field.field.entity = field_copy.attributes.entity;
-			field.field.iconCls = field_copy.attributes.iconCls;
-			field.field.color = field_copy.color;
-			field.field.visible= true;
-			field.field.group= false;
-			field.field.order= 1;
-			field.field.filters= [];
+			field.id = field_copy.id;
+			field.name = field_copy.text;
+			field.entity = field_copy.attributes.entity;
+			field.iconCls = field_copy.attributes.iconCls;
+			field.color = field_copy.color;
+			field.visible= true;
+			field.group= false;
+			field.order= 1;
+			field.filters= [];
+		} else {
+			field = field_copy.field
 		}
 		var finishEdit=$q.defer();
 		var config = {
@@ -640,7 +658,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		if (field.hasOwnProperty('attributes')) {
 			field_copy = angular.copy(field);
 			field = {};
-			field = {}
 			field.id = field_copy.id;
 			field.name = field_copy.text;
 			field.entity = field_copy.attributes.entity;

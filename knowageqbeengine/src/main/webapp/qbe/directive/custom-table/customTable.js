@@ -83,7 +83,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		originatorEv = ev;
 		$mdOpenMenu(ev);
 	};
-	
+
 	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
 	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
 
@@ -238,15 +238,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		return finishEdit.promise;
 
 	}
-	
+
 	$scope.openHavings = function(field) {
 		$rootScope.$broadcast('openHavings', field);
 	}
-	
+
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
-	
+
 	$scope.checkDescription = function (field){
 		var desc = 0;
 
@@ -271,13 +271,13 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				filt++;
 			}
 		}
-    	
+
     	for (var i = 0; i < field.havings.length; i++) {
 			if(field.havings[i].leftOperandDescription == field.entity+" : "+field.name){
 				hav++;
 			}
 		}
-    	
+
     	var total = filt + hav;
     	if(total == 0) {
     		return "";
@@ -318,6 +318,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.general.field"),
 	                            	"name":"name"
+	                        	},{
+	                        		"label":$scope.translate.load("kn.qbe.general.alias"),
+	                            	"name":"alias",
+	                            	editable:true,
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
@@ -392,7 +396,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
       		icon:'fa fa-filter',
       		color:'#a3a5a6',
       		action:function(row,event){
-      			
+
       			$scope.basicViewScopeFunctions.openFilters(row);
             }
       	},
@@ -401,11 +405,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
       		icon:'fa fa-check-square',
       		color:'#a3a5a6',
       		action:function(row,event){
-      		
+
       			$scope.basicViewScopeFunctions.openHavings(row);
             },
             visible: function (item) {
-            
+
             	return item.fieldType == 'measure' ? true : false;
             }
 
@@ -495,7 +499,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				$scope.allFilters.push($scope.filterObject);
 
 		}
-		
+
 		for (var i = 0; i < field.havings.length; i++) {
 			$scope.havingObject = {
 				"operator": field.havings[i].operator,
@@ -503,7 +507,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			}
  			$scope.allFilters.push($scope.havingObject);
  		}
-		
+
         if($scope.allFilters.length > 0) {
 	    	$mdDialog.show({
 	            controller: function ($scope, $mdDialog) {

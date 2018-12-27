@@ -33,6 +33,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      			var queryObject = {
          		    	"id":query.fields[i].id,
          		    	"name":query.fields[i].field,
+         		    	"alias":query.fields[i].alias,
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
          		    	"data":[],

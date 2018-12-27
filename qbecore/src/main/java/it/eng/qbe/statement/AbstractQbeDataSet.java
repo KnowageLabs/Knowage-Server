@@ -106,7 +106,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			dataStoreFieldMeta.setAlias(queryFiled.getAlias());
 			if (queryFiled.isSimpleField()) {
 				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryFiled;
-				dataStoreFieldMeta.setName(((SimpleSelectField) queryFiled).getUniqueName());
+				dataStoreFieldMeta.setName(((SimpleSelectField) queryFiled).getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
 				dataStoreFieldMeta.setProperty("uniqueName", dataMartSelectField.getUniqueName());
 				dataStoreFieldMeta.setType(Object.class);
@@ -491,15 +491,15 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		calculateResultNumberOnLoad = enabled;
 	}
 
-//	@Override
-//	public void setRuntimeDrivers(Map<String, String> drivers) {
-//		super.setRuntimeDrivers(drivers);
-//	}
+	// @Override
+	// public void setRuntimeDrivers(Map<String, String> drivers) {
+	// super.setRuntimeDrivers(drivers);
+	// }
 
-//	@Override
-//	public Map<String, String> getRuntimeDrivers() {
-//		return getRuntimeDrivers();
-//	}
+	// @Override
+	// public Map<String, String> getRuntimeDrivers() {
+	// return getRuntimeDrivers();
+	// }
 
 	public void updateParameters(it.eng.qbe.query.Query query, Map parameters) {
 		logger.debug("IN");
@@ -562,8 +562,10 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since executed JDBC dataset does not contain correct metadata (name, alias,
 	 * attribute/measure) therefore we need to merge metadata
 	 *
-	 * @param jdbcMetadata     the metadata retrieved by executing the JDBC dataset
-	 * @param qbeQueryMetaData the metadata of the Qbe query
+	 * @param jdbcMetadata
+	 *            the metadata retrieved by executing the JDBC dataset
+	 * @param qbeQueryMetaData
+	 *            the metadata of the Qbe query
 	 */
 	protected IMetaData mergeMetadata(IMetaData jdbcMetadata, IMetaData qbeQueryMetaData) {
 		int count = jdbcMetadata.getFieldCount();

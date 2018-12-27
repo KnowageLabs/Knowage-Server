@@ -40,7 +40,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.spatial = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1;
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.advancedFilters=angular.copy($scope.ngModel.advancedFilters);
-	$scope.field=$scope.ngModel.field.field;
+	$scope.field=$scope.ngModel.field;
 	$scope.tree=$scope.ngModel.tree.entities;
 	$scope.pars=angular.copy($scope.ngModel.pars);
 	$scope.subqueries = $scope.ngModel.subqueries;
@@ -62,7 +62,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 	if($scope.subqueries.length>0){
 		$scope.targetTypes.push({name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"})
-		
+
 	}
 	$scope.params=false;
 	$scope.targetAF = {};
@@ -173,13 +173,13 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"filterDescripion": "Filter"+$scope.filterIndex,
 				"filterInd": $scope.filterIndex,
 				"promptable": false,
-				"leftOperandValue": $scope.ngModel.field.field.id,
-				"leftOperandDescription": $scope.ngModel.field.field.entity+ " : " + $scope.ngModel.field.field.name,
-				"leftOperandLongDescription": $scope.ngModel.field.field.entity+ " : " + $scope.ngModel.field.field.name,
+				"leftOperandValue": $scope.ngModel.field.id,
+				"leftOperandDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
+				"leftOperandLongDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
-				"leftOperandAlias": $scope.ngModel.field.field.name,
+				"leftOperandAlias": $scope.ngModel.field.name,
 				"leftOperandDataType": "",
 				"operator": "EQUALS TO",
 				"rightOperandValue": [],
@@ -193,8 +193,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"rightOperandDataType": "",
 				"booleanConnector": "AND",
 				"deleteButton": false,
-				"color": $scope.ngModel.field.field.color,
-				"entity": $scope.ngModel.field.field.entity
+				"color": $scope.ngModel.field.color,
+				"entity": $scope.ngModel.field.entity
 			}
 		$scope.filters.push(object);
 	}
@@ -305,20 +305,20 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	var openTableWithValues = function (filter){
 		//$scope.selected.length=filter.rightOperandValue.length;
 		$scope.showTable = true;
-		filters_service.getFieldsValue($scope.ngModel.field.field.id).then(function(response){
+		filters_service.getFieldsValue($scope.ngModel.field.id).then(function(response){
 			$scope.listOfValues = response.data.rows;
 			$scope.valuesGrid.api.setRowData($scope.listOfValues);
 			$scope.valuesGrid.api.forEachNode( function (node) {
 				for (var i = 0; i < filter.rightOperandValue.length; i++) {
 					if (node.data.column_1 === filter.rightOperandValue[i]) {
 						$scope.valuesGrid.api.selectNode(node, true);
-			            
+
 			        }
-					
+
 				}
-		        
+
 		    });
-			
+
 		});
 
 	}
@@ -327,8 +327,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.setLeftValue= function (value,filter){
 		$scope.left = value.id;
 		filter.leftOperandValue = value.id;
-		filter.leftOperandDescription = $scope.ngModel.field.field.entity+ " : "+value.text;
-		filter.leftOperandLongDescription = $scope.ngModel.field.field.entity+ " : "+value.text;
+		filter.leftOperandDescription = $scope.ngModel.field.entity+ " : "+value.text;
+		filter.leftOperandLongDescription = $scope.ngModel.field.entity+ " : "+value.text;
 		filter.leftOperandAlias = value.text;
 	}
 
@@ -365,13 +365,13 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
 			generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
 			Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
-			//$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
+			//$scope.ngModel.field.expression = generateExpressions ($scope.filters);
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
 	var manageSpecOperators = function (filter) {
 		if(filter.rightType == "manual" || filter.rightType == "valueOfField" ) {
-			if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
+			if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' ||
 					filter.operator == 'IN' || filter.operator == 'NOT IN' || filter.rightOperandDescription.indexOf(" ---- ")>-1) {
 				var splitted = filter.rightOperandDescription.split(" ---- ");
 				filter.rightOperandValue.length = 0;
@@ -380,7 +380,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				filter.rightOperandValue.push(filter.rightOperandDescription);
 			}
 		}
-		
+
 	}
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
@@ -450,8 +450,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		{"headerName":$scope.translate.load("kn.qbe.params.name"),"field":"name"},
 		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"defaultValue",  editable: true},
 		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"value",  hide: true},
-		
-		
+
+
 	];
 
 	$scope.applyParams = function (){
@@ -462,11 +462,11 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
 		$scope.ngModel.mdPanelRef.close();
 	};
-	
+
 	$scope.columns = [
 		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:true}
 	];
-	
+
 	$scope.valuesGrid = {
 			rowData: null,
 			angularCompileRows: true,
@@ -481,7 +481,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	        onRowSelected: rowSelected,
 	        onGridSizeChanged: resizeColumns,
 	        onGridReady: resizeColumns
-	        
+
 	};
 	function resizeColumns(){
 	    $scope.valuesGrid.api.sizeColumnsToFit();
@@ -503,7 +503,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.currentFilter.rightOperandLongDescription=$scope.currentFilter.rightOperandDescription;
 		}
 	};
-	
+
 	$scope.paramsPreviewGrid = {
 			rowData: $scope.pars,
 			angularCompileRows: true,
@@ -523,11 +523,11 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	        	} else {
 	        		event.data["value"] = event.data.defaultValue;
 	        	}
-	        	
+
 	        },
-	        
+
 	};
-	
+
 	function resizeColumnsParams(){
 	    $scope.paramsPreviewGrid.api.sizeColumnsToFit();
 	}
