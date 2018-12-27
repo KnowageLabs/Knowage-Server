@@ -33,12 +33,13 @@
 			</md-icon>
 		
 		</div>
+
 		<div layout="row" layout-align="start center">
 			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
-				<md-chips ng-model="parameter.parameterValue" readonly="true">
+				<md-chips ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" readonly="true">
 					 <md-chip-template>
 				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
 			        </md-chip-template>
@@ -162,7 +163,7 @@
 			</md-checkbox>
 		</div>
 	</div>
-	
+
 	<!-- lov combobox single and multiple input -->
 	
 	<div ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="selectParameter">
@@ -174,14 +175,14 @@
 		</div>
 		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
 		<!-- multiple -->
-			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+			<md-select ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
 		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>
 			</md-select>
 			<!-- single -->
-			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
+			<md-select ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
 		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">

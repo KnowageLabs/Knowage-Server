@@ -1,7 +1,7 @@
 
 (function() {
 	angular.module('driversExecutionModule')
-		.service('driversExecutionService',['sbiModule_translate', 'driversDependencyService','$filter',function(sbiModule_translate, driversDependencyService,$filter){
+		.service('driversExecutionService',['sbiModule_translate', 'sbiModule_config', 'driversDependencyService', '$filter',function(sbiModule_translate, sbiModule_config, driversDependencyService, $filter){
 			var executionService = {}
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
@@ -404,7 +404,7 @@
 								tempDriver.urlName = drivers[i].urlName;
 								tempDriver.type = drivers[i].type;
 								tempDriver.multivalue = drivers[i].multivalue;
-								if(drivers[i].parameterValue && drivers[i].parameterValue[0].value){
+								if(drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)){
 									tempDriver.value =  drivers[i].parameterValue[0].value;
 								}else{
 									tempDriver.value = drivers[i].parameterValue;

@@ -207,6 +207,21 @@ angular
 				$scope.showDrivers = false
 				$scope.driverableObject.executed = true;
 			}
+
+			$scope.mandatory = false;
+			$scope.hasMandatory = function() {
+				$scope.mandatoryCounter = 0;
+				for(i = 0; i < $scope.drivers.length; i++) {
+					if($scope.drivers.length > 0 && $scope.drivers[i].mandatory == true) {
+						$scope.mandatoryCounter++;
+					}
+				}
+				if($scope.mandatoryCounter > 0) {
+					$scope.mandatory = true;
+				}
+			}
+			$scope.hasMandatory();
+
 			$scope.saveQbeDocument = function() {
 
 				/**
