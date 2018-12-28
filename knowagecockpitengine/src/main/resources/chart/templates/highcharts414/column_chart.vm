@@ -1479,7 +1479,7 @@
 						#else
 							#set($relatedSerieShowValue = true)
 						#end
-					
+
 						selected:$relatedSerieShowValue,
 						
 						dataLabels:{
@@ -1535,8 +1535,9 @@
 		                      	
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-		                      	
 		                      	var precision = '${relatedSerie.precision}';
+		                      	var showAbsValue = ${relatedSerie.showAbsValue};
+		                      	var showPercentage = ${relatedSerie.showPercentage};
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
@@ -1568,9 +1569,29 @@
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
-		                      	}						
-	                        		                       
-	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
+		                      	
+									}		
+
+		             					   var groupTotal = this.series.data.map(x => x.y).reduce((a, b) => a + b, 0),
+
+		                 				   percentage = 100 * value/groupTotal;	
+
+		                 				   var precisePercentage = percentage.toFixed(precision);		
+
+		                 					if(showAbsValue && showPercentage){
+													return prefixValue + ' ' + newValue + ' '  + precisePercentage + '%' + sufixValue;
+
+											} else if (!showAbsValue && !showPercentage){
+													return prefixValue + ' ' + sufixValue;
+
+											} else if (showAbsValue && !showPercentage){
+													return prefixValue + ' ' + newValue + ' ' + sufixValue;
+
+											} else if(!showAbsValue && showPercentage){
+													return prefixValue + ' ' + precisePercentage + '%' + ' ' + sufixValue;
+
+											}	
+
 			            	},
 		                      
 	                    
