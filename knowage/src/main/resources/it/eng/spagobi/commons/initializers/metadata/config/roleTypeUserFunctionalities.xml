@@ -90,6 +90,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ReadEnginesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+			userFunctionality="ReadEnginesManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="EventsManagement" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="EventsManagement" roleType="ADMIN" />
