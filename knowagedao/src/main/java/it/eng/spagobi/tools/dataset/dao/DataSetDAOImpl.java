@@ -71,6 +71,7 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
+import it.eng.spagobi.tools.tag.SbiDatasetTag;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -1908,6 +1909,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					List<SbiMetaObjDs> listObjDs = DAOFactory.getSbiObjDsDAO().loadObjByDsId(intDsId);
 					for (SbiMetaObjDs objDs : listObjDs) {
 						DAOFactory.getSbiObjDsDAO().deleteObjDs(objDs);
+					}
+
+					// delete Tags associated to Dataset
+					List<SbiDatasetTag> dsTags = DAOFactory.getSbiTagDao().loadDatasetTags(intDsId);
+					for (SbiDatasetTag dsTag : dsTags) {
+						DAOFactory.getSbiTagDao().deleteDatasetTag(dsTag);
 					}
 
 					DataSetEventManager.getInstance().notifyDelete(toReturn);

@@ -156,6 +156,8 @@
 		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelParameterDAOHibImpl"/>
 		<DAO name="MetaModelParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParuseDAOHibImpl"/>
 		<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
+		
+		<DAO name="ISbiTagDAO" implementation="it.eng.spagobi.tools.tag.dao.SbiTagDAOImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

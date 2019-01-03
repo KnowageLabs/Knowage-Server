@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.tools.tag.SbiDatasetTag" table="SBI_DATA_SET_TAG">
+		<composite-id name="dsTagId" class="it.eng.spagobi.tools.tag.SbiDatasetTagId">	
+			<key-property name="dsId" type="integer" column="DS_ID" />
+			<key-property name="versionNum" type="integer" column="VERSION_NUM" />
+			<key-property name="organization" type="string" column="ORGANIZATION" />
+			<key-property name="tagId" type="integer" column="TAG_ID" />
+		</composite-id>
+						
+		<many-to-one name="dataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" update="false" insert="false">
+	    	<column name="DS_ID"/>
+	    	<column name="VERSION_NUM"/>
+	    	<column name="ORGANIZATION"/>
+    	</many-to-one>								      		    
+	    <many-to-one name="tag" class="it.eng.spagobi.tools.tag.SbiTag" update="false" insert="false">
+	    	<column name="TAG_ID"/>
+	    </many-to-one>		
+				
+	    <filter name="tenantFilter" condition="organization=:tenant"/>	    	       
+	</class>
+    <filter-def name="tenantFilter">
+       <filter-param name="tenant" type="string"/>
+    </filter-def>
+</hibernate-mapping>

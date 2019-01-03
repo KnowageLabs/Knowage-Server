@@ -233,6 +233,10 @@
          
          <!-- Whatif workflow mapping -->
          <mapping resource="it/eng/spagobi/whatif/metadata/mapping/SbiWhatifWorkflow.hbm.xml" />
+         
+         <!-- Tags mapping -->
+         <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiTag.hbm.xml" />
+         <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiDataSetTag.hbm.xml" />
         
         <!-- end mapping -->
         

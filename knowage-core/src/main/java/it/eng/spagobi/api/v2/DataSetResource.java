@@ -714,4 +714,14 @@ public class DataSetResource extends AbstractDataSetResource {
 		return dataWriter;
 	}
 
+	/**
+	 * Dataset-Tags: Subresource
+	 */
+	@Path("{dsId}/dstags")
+	@Produces(MediaType.APPLICATION_JSON)
+	public DatasetTagsResource getDatasetTagsResource(@PathParam("dsId") Integer dsId) {
+		logger.debug("Getting DatasetTagsResource Instace...");
+		return new DatasetTagsResource();
+	}
+
 }
