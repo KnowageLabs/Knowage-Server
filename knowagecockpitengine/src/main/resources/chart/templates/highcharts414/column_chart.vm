@@ -1359,7 +1359,7 @@
 			#if($relatedSerieColor && $relatedSerieColor != '')
 				color: '$relatedSerieColor',
 		    #end
-		
+			
 			name: "$relatedSerie.name",
 			#foreach($customColor in $customColors)
 			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
@@ -1453,9 +1453,9 @@
 						#set ($countXvalues = $countXvalues+1)
 					#end
 				#end
-	    	],
+	    	],    	
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
-
+			
 						
 						#*
 							If inside the style template the value of the "Show value"
@@ -1635,7 +1635,7 @@
 				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
 			#end
 			},
-		
+			cropThreshold:$countXvalues,
 		#if($chartType != 'radar') 	
     		#set($referencedAxis = $relatedSerie.axis)
     		yAxis: $yAxisPositions[$referencedAxis]
@@ -1661,6 +1661,7 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
+
 			data: [
 				#foreach($el in  $map.get($valueKey))
 							
@@ -1687,6 +1688,7 @@
 				},
 				#end	
 			], 
+					
 						dataLabels: 
 						{
 		                   
@@ -1822,12 +1824,12 @@
 				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
 			#end
 			},
-		
+
 		#if($chartType != 'radar') 	
     		#set($referencedAxis = $relatedSerie.axis)
-    		yAxis: $yAxisPositions[$referencedAxis]
+    		yAxis: $yAxisPositions[$referencedAxis],
+    		
     	#end
-	    
 		},
 		#end
 	#end
