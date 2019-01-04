@@ -79,8 +79,10 @@ angular.module('chartInitializer')
 			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
+					if(chartConf.yAxis[i].plotBands && mapAxis.min[i] && mapAxis.max[i]){
 					var min = Math.min.apply(Math, [mapAxis.min[i], chartConf.yAxis[i].plotBands[0].from != 0 ? chartConf.yAxis[i].plotBands[0].from : mapAxis.min[i], chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
 					var max = Math.max.apply(Math, [mapAxis.max[i], chartConf.yAxis[i].plotBands[0].to !=0 ? chartConf.yAxis[i].plotBands[0].to : mapAxis.max[i],  chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
+					}
 					if(chartConf.yAxis[i].min){
 						if(chartConf.yAxis[i].min > min)
 						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
