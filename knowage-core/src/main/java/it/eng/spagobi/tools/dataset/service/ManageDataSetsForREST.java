@@ -1306,7 +1306,6 @@ public class ManageDataSetsForREST {
 	 */
 	static String getSingleValue(String value, String type) {
 		String toReturn = "";
-		value = value.trim();
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 			if (!(value.startsWith("'") && value.endsWith("'"))) {
 				toReturn = "'" + value + "'";
