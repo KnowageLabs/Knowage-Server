@@ -193,7 +193,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/countDataSetSearch/{searchValue}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Number getNumberOfDataSetsSearch(@PathParam("searchValue") String searchValue) {
+	public Number getNumberOfDataSetsSearch(@PathParam("searchValue") String searchValue, @QueryParam("tags") List<Integer> tags) {
 		logger.debug("IN");
 
 		try {
@@ -222,7 +222,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
 			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
-			@QueryParam("ordering") JSONObject ordering) {
+			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
 
 		logger.debug("IN");
 
@@ -465,10 +465,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Acquire required version of the dataset
 	 *
-	 * @param id
-	 *            The ID of the dataset whose version with the versionId ID should be restored.
-	 * @param versionId
-	 *            The ID of the version of the dataset that should be restored and exchanged for the current one (active).
+	 * @param id        The ID of the dataset whose version with the versionId ID should be restored.
+	 * @param versionId The ID of the version of the dataset that should be restored and exchanged for the current one (active).
 	 * @return Serialized dataset that is restored as the old version of the dataset.
 	 * @throws JSONException
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -563,10 +561,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete a version for the selected dataset.
 	 *
-	 * @param id
-	 *            The ID of the selected dataset.
-	 * @param versionId
-	 *            The ID of the version of the selected dataset.
+	 * @param id        The ID of the selected dataset.
+	 * @param versionId The ID of the version of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -592,8 +588,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * @param datasetId
-	 *            The datasetId of the selected dataset.
+	 * @param datasetId The datasetId of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */

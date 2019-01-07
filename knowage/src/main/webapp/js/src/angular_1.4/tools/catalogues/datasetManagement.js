@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 agGrid.initialiseAgGridWithAngular1(angular);
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule','agGrid']); //ADDDD ,'driversExecutionModule'
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule','agGrid', 'tagsModule']); //ADDDD ,'driversExecutionModule'
+
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +25,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav", datasetFunction]) /// aaddd ,"driversExecutionService"
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav","tagsHandlerService","urlBuilderService", datasetFunction]) /// aaddd ,"driversExecutionService"
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +43,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService,urlBuilderService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -55,13 +56,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.dateFormatDefault = "dd/MM/yyyy";
 	$scope.timestampFormatDefault = "dd/MM/yyyy HH:mm:ss";
 	$scope.datasetParameters = []
+	$scope.allTags = [];
+	$scope.tags = [];
+
 	var parameterDeletingMessage = "Are you sure you want to delete the dataset parameter ? ";
 	var qbeParameterDeletingMessage = "";
+
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
 		}
 	});
+
+	var getAllTags = function(){
+		sbiModule_restServices.promiseGet("2.0/tags","")
+		.then(function(response) {
+			$scope.allTags = response.data;
+		});
+	}
+    getAllTags();
 
 	$scope.$watch("selectedDataSet.restDirectlyJSONAttributes",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
@@ -1038,9 +1051,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.columnOrdering){
     		columnOrderingLabel = $scope.columnOrdering.name;
     	}
+    	urlBuilderService.setBaseUrl("countDataSetSearch/"+$scope.searchValue);
 
-    	if($scope.searchValue!=""){
-    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+    	if($scope.searchValue!="" || tagsHandlerService.getFilteredTagIds().length > 0){
+    		var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+    		urlBuilderService.addQueryParams(tags);
+    		sbiModule_restServices.promiseGet("1.0/datasets",  urlBuilderService.build())
     		.then(function(response) {
     			$scope.numOfDs = response.data;
     			$scope.loadDatasetList(0, itemsPerPage, searchValue,  columnOrderingLabel,reverseOrdering);
@@ -1080,9 +1096,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    		}, function(response) {
 	    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 	    		});
-			} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0) {
-
-				sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0 ||  tagsHandlerService.getFilteredTagIds().length > 0) {
+	    		var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+	    	urlBuilderService.setBaseUrl("countDataSetSearch/");
+	        var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+	        urlBuilderService.addQueryParams(tags);
+			sbiModule_restServices.promiseGet("1.0/datasets", urlBuilderService.build())
 	    		.then(function(response) {
 	    			$scope.numOfDs = response.data;
 	    			var start = 0;
@@ -1116,6 +1135,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
 
+		if(tagsHandlerService.getFilteredTagIds().length > 0){
+    		queryParams = queryParams+"&tags="+tagsHandlerService.getFilteredTagIds();
+		}
 		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", queryParams)
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
@@ -1126,8 +1148,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.numOfDs = response.data;},function(response){
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						});
-				} else if(filter!=null){
-					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+				} else if(filter!=null || tagsHandlerService.getFilteredTagIds().length > 0){
+					var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/",angular.toJson(tags))
 					.then(function(response) {
 						$scope.numOfDs = response.data;},function(response){
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -1921,7 +1944,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
-
+		getTagsForDataset(item);
 		if($scope.selectedDataSet.pars.length > 0) {
 			$scope.disablePersisting = true;
 		} else {
@@ -2204,6 +2227,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
+
 
 
 	var loadOlderVersions = function(id) {
@@ -2636,6 +2660,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
                                                 sbiModule_messaging.showErrorMessage(responseHDFS.data.errors[0].message, 'Error');
                                             }
                                         );
+                                }
+
+
+                                if(tagsHandlerService.isTagDeleted() || tagsHandlerService.isTagAdded()){
+                                	sbiModule_restServices.promisePost("2.0/datasets", response.data.id + "/dstags/" , angular.toJson(tagsHandlerService.prepareTagsForSending($scope.selectedDataSet.versNum + 1)));
                                 }
 
                                 if( $scope.showDatasetScheduler){
@@ -4602,6 +4631,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
     $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
+
+
+    // TAGS
+
+
+	 var getTagsForDataset = function(dataset){
+
+		 sbiModule_restServices.promiseGet("2.0/datasets",dataset.id+"/dstags?versNum=" + dataset.versNum).then(function(response){
+			 $scope.tags = response.data;
+		 })
+	 }
 
 
 };

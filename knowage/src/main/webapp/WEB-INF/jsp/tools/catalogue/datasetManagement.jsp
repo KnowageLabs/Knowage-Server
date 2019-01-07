@@ -39,7 +39,70 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html ng-app="datasetModule">
 	
 	<head>
-	
+	<style id="jsbin-css">
+.tags{
+  float:left;
+  border:1px solid #ccc;
+  padding:4px;
+  font-family:Arial;
+}
+.tags span.tag{
+  cursor:pointer;
+  display:block;
+  float:left;
+  color:#555;
+  background:#83C9F4;
+  padding:5px 10px;
+  padding-right:30px;
+  margin:4px;
+}
+.tags span.tag:hover{
+  opacity:0.7;
+}
+.tags span.tag:after{
+ position:absolute;
+ border:1px solid;
+ border-radius:10px;
+ padding:0 4px;
+ margin:3px 0 10px 7px;
+ font-size:10px;
+}
+#addTag span.tag:after{
+  content:"×";
+}
+.tags input{
+  background:#eee;
+  border:0;
+  margin:4px;
+  padding:7px;
+  width:auto;
+}
+div#autoTags span.combodiv_span {
+    clear: both;
+    float: left;
+    margin: 0 0 0 4px;
+    padding: 0 0 0 2px;
+    font: 15px openSans,Arial;
+    color: #444444;
+    cursor: pointer;
+    width: 190px;
+    height: 21px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+.combodiv_span {
+    float: left;
+    font-family: openSans, Arial;
+    color: #444444;
+    text-align: left;
+    border: none;
+    background: #fff;
+    font-size: 15px;
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+</style>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 			
 		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
@@ -87,6 +150,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/renderparameters/renderParameters.js")%>"></script>
  
+ <!-- tags -->
+ 	<%@include file="/WEB-INF/jsp/tools/tags/tagsImport.jsp"%>
+
+ 
 		<title>Dataset Catalogue</title>
 		
 		<script>
@@ -104,11 +171,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div loading ng-show="showEl" style="position:fixed; z-index:500; height:100%; width:100%; background-color:black; opacity:0.5;">
 		 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px);"></md-progress-circular>		 
 		</div>			
-	
+		
+								 
+		
 		<angular-list-detail>
-	       
+	        
 	       	<list label="translate.load('sbi.roles.datasets')"  new-function="createNewDataSet">
-	       
+	       	<filter-by-tags></filter-by-tags>{{selectedDataSet.dsTypeCd}}
 		       	<angular-table
 			     	flex
 				 	id="datasetList_id" 
@@ -251,7 +320,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		       						 	</div>
 								       
 								        </md-input-container>
-								   </div>
+								   </div> 
+							
+								   <tag-datasets tags="tags" all-tags="allTags"></tag-datasets>
+		
+								  
+								   
+								   
+								   
+								   
 								</md-card>
 							</md-content>
 							
