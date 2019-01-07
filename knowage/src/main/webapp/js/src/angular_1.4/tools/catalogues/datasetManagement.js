@@ -795,7 +795,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			hideTooltip:true,
 
         	transformer: function() {
-        		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.defaultValue" ng-change="scopeFunctions.setFormDirty()"></md-input-container>';
+        		return '<md-input-container class="md-block" style="margin:0"><input ng-trim="false" ng-model="row.defaultValue" ng-change="scopeFunctions.setFormDirty()"></md-input-container>';
         	}
 		},
 
