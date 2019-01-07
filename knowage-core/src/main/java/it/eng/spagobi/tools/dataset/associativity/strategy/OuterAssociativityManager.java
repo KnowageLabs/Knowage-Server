@@ -18,10 +18,7 @@
 
 package it.eng.spagobi.tools.dataset.associativity.strategy;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -112,6 +109,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				// clear non parameters previously computed values
 				result.clearValues(group);
 
+				Map<String, String> parameters = container.getParameters();
+				container.getDataSet().setParamsMap(new HashMap(parameters));
 				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 
 				logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public final class Tuple {
 
 	@JsonCreator
 	public Tuple(String values) {
-		this(Arrays.asList(StringUtils.split(values, VALUE_DELIMITER)));
+		this(values == null ? new ArrayList<String>() : Arrays.asList(values.split(VALUE_DELIMITER)));
 	}
 
 	public void add(Object value) {

@@ -179,7 +179,10 @@ abstract class AssociativeDatasetContainer implements IAssociativeDatasetContain
 	protected abstract String encapsulateColumnName(String columnName);
 
 	protected SelectQuery getSelectQuery(List<String> columnNames) {
-		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(getTableName());
+		Map<String, String> clonedParams = new HashMap<>(parameters);
+		String tableName = getTableName();
+		dataSet.setParamsMap(clonedParams);
+		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName);
 		if (!filters.isEmpty()) {
 			selectQuery.where(new AndFilter(filters.toArray(new SimpleFilter[0])));
 		}

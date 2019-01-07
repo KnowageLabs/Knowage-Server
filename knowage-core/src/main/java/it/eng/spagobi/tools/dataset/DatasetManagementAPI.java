@@ -1279,6 +1279,7 @@ public class DatasetManagementAPI {
 		}
 
 		if (paramValues.size() > 0) {
+			Map <String, String> newParamValues = new HashMap<>();
 			for (String paramName : paramValues.keySet()) {
 				for (int i = 0; i < parameters.size(); i++) {
 					JSONObject parameter = parameters.get(i);
@@ -1299,19 +1300,19 @@ public class DatasetManagementAPI {
 						for (int j = 0; j < values.length; j++) {
 							String value = values[j].trim();
 							if (!value.isEmpty()) {
-								if (!value.startsWith(delim) && !value.endsWith(delim)) {
-									newValues.add(delim + value + delim);
-								} else {
-									newValues.add(value);
+							if (!value.startsWith(delim) && !value.endsWith(delim)) {
+								newValues.add(delim + value + delim);
+							} else {
+								newValues.add(value);
 								}
 							}
 						}
-						paramValues.put(paramName, StringUtils.join(newValues, ","));
+						newParamValues.put(paramName, StringUtils.join(newValues, ","));
 						break;
 					}
 				}
 			}
-			dataSet.setParamsMap(paramValues);
+			dataSet.setParamsMap(newParamValues);
 		}
 	}
 
@@ -1409,28 +1410,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * if a filter has MAX() or MIN() value convert it by calculating the right value
-	 *
-	 * @param label
-	 * @param parameters
-	 * @param selections
-	 * @param likeSelections
-	 * @param maxRowCount
-	 * @param aggregations
-	 * @param summaryRow
-	 * @param offset
-	 * @param fetchSize
-	 * @param isNearRealtime
-	 * @param groupCriteria
-	 * @param filterCriteriaForMetaModel
-	 * @param summaryRowProjectionCriteria
-	 * @param havingCriteria
-	 * @param havingCriteriaForMetaModel
-	 * @param filterCriteria
-	 * @param projectionCriteria
-	 * @return
 	 */
-
-	// FIXME
 	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
 			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups) {
 

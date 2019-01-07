@@ -55,7 +55,6 @@ import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
- *
  */
 
 public abstract class AbstractAssociativityManager implements IAssociativityManager {
@@ -217,7 +216,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 							String missingParameter = ParametersUtilities.getParameterName(missingColumn);
 							String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
 							HashSet<Tuple> tuples = new HashSet<Tuple>();
-							tuples.add(new Tuple(value));
+							Tuple tuple = new Tuple(value != null && value.startsWith("'") && value.endsWith("'") ? value.substring(1, value.length() - 1) :
+									value);
+							tuples.add(tuple);
 							groupToValues.put(missingColumn, tuples);
 						}
 					}

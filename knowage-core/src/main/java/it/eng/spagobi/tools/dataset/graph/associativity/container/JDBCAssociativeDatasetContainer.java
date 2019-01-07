@@ -82,6 +82,7 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 		ResultSet rs = null;
 		try {
 			logger.debug("Executing query: " + query);
+			logger.debug("Using values: " + values);
 			connection = getDataSource().getConnection();
 			stmt = connection.prepareStatement(query);
 			for (int i = 0; i < values.size(); i++) {
