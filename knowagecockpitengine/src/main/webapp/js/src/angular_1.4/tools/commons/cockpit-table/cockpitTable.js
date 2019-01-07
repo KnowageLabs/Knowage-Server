@@ -256,6 +256,7 @@
                     };
                     
                     scope.hasPrecision = function(column){
+                    	if(column.style && column.style.asString) return false;
                     	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){return true}
                     	return false;
                     }

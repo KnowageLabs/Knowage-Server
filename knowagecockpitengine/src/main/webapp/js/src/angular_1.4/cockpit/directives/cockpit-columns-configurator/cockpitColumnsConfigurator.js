@@ -193,8 +193,8 @@
 		                            		 var temp = '<md-input-container class="md-block"> '
 		                            			 +'<md-select aria-label="aria-label" ng-model="row.fieldType" ng-change="scopeFunctions.fieldTypeChanged()">'
 		                            			 +'<md-option value=""></md-option>'
-		                            			 +'<md-option value="ATTRIBUTE">String</md-option>'
-		                            			 +'<md-option value="MEASURE">Number</md-option>'
+		                            			 +'<md-option value="ATTRIBUTE">Attribute</md-option>'
+		                            			 +'<md-option value="MEASURE">Measure</md-option>'
 		                            			 +'</md-select> </md-input-container>'
 		                            			 return temp;
 		                            	 },
