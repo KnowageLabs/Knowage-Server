@@ -2,7 +2,7 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');

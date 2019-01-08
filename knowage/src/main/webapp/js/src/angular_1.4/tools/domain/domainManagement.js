@@ -1,5 +1,5 @@
 
-var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule', 'angularXRegExp']);
+var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
