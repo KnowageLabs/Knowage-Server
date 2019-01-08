@@ -1564,7 +1564,11 @@
 		                      	
 		                      	}		
 
-		             					   var groupTotal = this.series.data.map(x => x.y).reduce((a, b) => a + b, 0),
+		             					   var groupTotal = this.series.data.map(function (x) {
+														  return x.y;
+														}).reduce(function (a, b) {
+														  return a + b;
+														}, 0);
 		                 				
 		                 				   percentage = 100 * value/groupTotal;	
 		                 				     
