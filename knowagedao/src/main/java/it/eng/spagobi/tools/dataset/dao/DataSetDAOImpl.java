@@ -1405,14 +1405,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				String owner = ((UserProfile) getUserProfile()).getUserId().toString();
 				// hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
 				Query countQuery = session.createQuery(
-						"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner) and sb.label "
-								+ " like '%" + search + "%'");
+						"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner) and upper(sb.label)"
+								+ " like '%" + search.toUpperCase() + "%'");
 				countQuery.setBoolean(0, true);
 				countQuery.setParameterList("idsCat", idsCat);
 				countQuery.setString("owner", owner);
 				resultNumber = (Long) countQuery.uniqueResult();
 			} else {
-				String hql = "select count(*) from SbiDataSet ds where ds.active = ? and ds.label " + " like '%" + search + "%'";
+				String hql = "select count(*) from SbiDataSet ds where ds.active = ? and upper(ds.label) like '%" + search.toUpperCase() + "%'";
 				Query hqlQuery = session.createQuery(hql);
 				hqlQuery.setBoolean(0, true);
 				resultNumber = (Long) hqlQuery.uniqueResult();
@@ -1428,6 +1428,86 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			logger.debug("OUT");
 		}
+		return new Integer(resultNumber.intValue());
+	}
+
+	@Override
+	public Integer countDatasetsSearch(String search, List<Integer> tagIds) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction transaction = null;
+		Long resultNumber;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+			List<Domain> devCategories = new LinkedList<Domain>();
+			boolean isDev = fillDevCategories(devCategories);
+			List idsCat = createIdsCatogriesList(devCategories);
+			String owner = ((UserProfile) getUserProfile()).getUserId().toString();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("select count(distinct dst.dataSet.label) from SbiDatasetTag dst ").append("where dst.dataSet.active = ? ");
+
+			// Search Datasets only by Search Box value
+			if (!search.equals("null") && tagIds.isEmpty()) {
+				if (isDev) {
+					Query countQuery = session.createQuery(
+							"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner) and upper(sb.label)"
+									+ " like '%" + search.toUpperCase() + "%'");
+					countQuery.setBoolean(0, true);
+					countQuery.setParameterList("idsCat", idsCat);
+					countQuery.setString("owner", owner);
+					resultNumber = (Long) countQuery.uniqueResult();
+				} else {
+					String hql = "select count(*) from SbiDataSet ds where ds.active = ? and upper(ds.label) like '%" + search.toUpperCase() + "%'";
+					Query hqlQuery = session.createQuery(hql);
+					hqlQuery.setBoolean(0, true);
+					resultNumber = (Long) hqlQuery.uniqueResult();
+				}
+			} else if (search.equals("null") && !tagIds.isEmpty()) { // Search by selected Tags
+				if (isDev) {
+					sb.append("and (dst.dataSet.category.valueId in (:idsCat) or dst.dataSet.owner = :owner) ").append("and dst.dsTagId.tagId in (:tagIds)");
+					Query query = session.createQuery(sb.toString());
+					query.setBoolean(0, true);
+					query.setParameterList("idsCat", idsCat);
+					query.setString("owner", owner);
+					query.setParameterList("tagIds", tagIds);
+					resultNumber = (Long) query.uniqueResult();
+				} else {
+					sb.append("and dst.dsTagId.tagId in (:tagIds)");
+					Query query = session.createQuery(sb.toString());
+					query.setBoolean(0, true);
+					query.setParameterList("tagIds", tagIds);
+					resultNumber = (Long) query.uniqueResult();
+				}
+			} else { // Search by Search Box value AND selected Tags
+				if (isDev) {
+					sb.append("and (ds.category.valueId in (:idsCat) or dst.dataSet.owner = :owner) ").append("and upper(dst.dataSet.label) like '%")
+							.append(search.toUpperCase()).append("%' ").append("and dst.dsTagId.tagId in (:tagIds)");
+					Query query = session.createQuery(sb.toString());
+					query.setBoolean(0, true);
+					query.setParameterList("idsCat", idsCat);
+					query.setString("owner", owner);
+					query.setParameterList("tagIds", tagIds);
+					resultNumber = (Long) query.uniqueResult();
+				} else {
+					sb.append("and upper(dst.dataSet.label) like '%").append(search.toUpperCase()).append("%' ").append("and dst.dsTagId.tagId in (:tagIds)");
+					Query query = session.createQuery(sb.toString());
+					query.setBoolean(0, true);
+					query.setParameterList("tagIds", tagIds);
+					resultNumber = (Long) query.uniqueResult();
+				}
+			}
+		} catch (Exception e) {
+			if (transaction != null && transaction.isActive())
+				transaction.rollback();
+			throw new SpagoBIDAOException("Error while loading the list of SbiDataSet", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
 		return new Integer(resultNumber.intValue());
 	}
 

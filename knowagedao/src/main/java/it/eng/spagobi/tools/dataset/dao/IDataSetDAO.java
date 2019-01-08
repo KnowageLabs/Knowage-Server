@@ -109,6 +109,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public Integer countDatasetsSearch(String search);
 
+	public Integer countDatasetsSearch(String search, List<Integer> tagIds);
+
 	public boolean hasBIObjAssociated(String dsId);
 
 	public boolean hasBILovAssociated(String dsId);
