@@ -85,17 +85,29 @@ angular.module('chartInitializer')
 
 			if(chartType == 'solidgauge' && chartConf.chart.subtype == 'solid') {
 
-					var seriesOrder = chartConf.series;
+				var seriesOrder = chartConf.series;
+				function sortYFunction (){
+					seriesOrder.sort(function(a,b){
+						return b[0].data[0].y - a[0].data[0].y;
+					})
+				}
+			}
 
-					function sortYFunction (){
-						seriesOrder.sort(function(a,b){
-							return b[0].data[0].y - a[0].data[0].y;
-
-						})
+			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
+				var mapAxis = this.setExtremes(chartConf);
+				for (var i =0; i < chartConf.yAxis.length; i++){
+					var min = Math.min.apply(Math, [mapAxis.min[i], chartConf.yAxis[i].plotBands[0].from != 0 ? chartConf.yAxis[i].plotBands[0].from : mapAxis.min[i], chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
+					var max = Math.max.apply(Math, [mapAxis.max[i], chartConf.yAxis[i].plotBands[0].to !=0 ? chartConf.yAxis[i].plotBands[0].to : mapAxis.max[i],  chartConf.yAxis[i].plotLines[0].width > 0 ? chartConf.yAxis[i].plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
+					if(chartConf.yAxis[i].min && chartConf.yAxis[i].min > min){
+						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
+					}
+					if(chartConf.yAxis[i].max && chartConf.yAxis[i].max < max){
+						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
 					}
 				}
 
 			}
+
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
 			if(jsonData){
@@ -305,7 +317,7 @@ angular.module('chartInitializer')
 						}, this);
 						}
 					}
-					}(Highcharts)); 
+					}(Highcharts));
 
 	}
 
@@ -457,7 +469,7 @@ angular.module('chartInitializer')
 					        } else {
 					          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
 					        }
-
+						}
 						chart.options.drilledCategories.push(series.category);
 
 						var xAxisTitle={
