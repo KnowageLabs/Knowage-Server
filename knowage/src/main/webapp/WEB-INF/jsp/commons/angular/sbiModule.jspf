@@ -248,7 +248,7 @@ sbiM.service('sbiModule_logger',function(){
 });
 
 sbiM.service('kn_regex',function(){
-	this.extendedAlphanumeric = /^([\pL\w\s\-\_\(\)\[\]\;\:\!\?\,\.\'\"\x2F\x5F%])*$/;
+	this.extendedAlphanumeric = /^([\pL\w\s\-\_\(\)\[\]\;\:\!\?\,\.\'\"\/\_])*$/;
 	this.xss = /^((?!<A|<LINK|<IMG|<SCRIPT|&LT;A|&LT;LINK|&LT;IMG|&LT;SCRIPT|{{).)*$/i;
 	this.alphanumeric = /^([a-zA-Z0-9\s\-\_])*$/;
 });

@@ -149,9 +149,9 @@ if(importAngularMaterialForExport == null) {
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
 
-<!-- angular-xregexp -->
+<!-- angular-xregexp
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script--> 
 
 <!-- AG GRID -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
