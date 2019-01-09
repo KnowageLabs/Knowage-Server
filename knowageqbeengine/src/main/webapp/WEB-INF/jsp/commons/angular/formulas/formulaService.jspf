@@ -20,7 +20,6 @@ angular.module('formulas')
 
 .factory('formulaService',function($http,sbiModule_config,sbiModule_restServices){
 	var formulas = angular.fromJson('<%= formulasJson%>');
-
 	var dataSourceId = <%= datasourceId%>;
 	function Formula(formula){
 		this.type = formula.type;
@@ -53,7 +52,7 @@ angular.module('formulas')
 		
 		getCustomFormulas: function(){
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
-   			return sbiModule_restServices.promiseGet("/2.0/configs","KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
+   			return sbiModule_restServices.promiseGet("2.0/configs","KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
    		}
 	};
 });

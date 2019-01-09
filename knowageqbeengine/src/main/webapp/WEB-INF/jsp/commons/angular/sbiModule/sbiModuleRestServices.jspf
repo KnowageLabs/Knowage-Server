@@ -27,7 +27,8 @@ angular.module('sbiModule')
 	}
 
 	function getBaseUrl(endP_path) {		
-		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
+		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path +"/" : alteredContextPath+ "/restful-services/" + endP_path+"/" 
+ 
 		alteredContextPath=null;
 		return burl ;
 	};

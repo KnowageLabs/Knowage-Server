@@ -82,6 +82,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String JCLASS_NAME = "jClassName";
 
 	private static final String QBE_DATA_SOURCE = "qbeDataSource";
+	private static final String QBE_DATA_SOURCE_ID = "qbeDataSourceId";
 	private static final String QBE_DATAMARTS = "qbeDatamarts";
 	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
 	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
@@ -372,10 +373,14 @@ public class DataSetJSONSerializer implements Serializer {
 					// jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					Integer dataSourceId = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
+					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 				} else if (type.equalsIgnoreCase(DataSetConstants.FEDERATED)) {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					Integer dataSourceId = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
+					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
 					result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
 				} else if (type.equalsIgnoreCase(DataSetConstants.WEB_SERVICE)) {

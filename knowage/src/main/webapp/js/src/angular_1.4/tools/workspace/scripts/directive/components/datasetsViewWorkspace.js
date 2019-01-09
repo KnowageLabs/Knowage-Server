@@ -790,13 +790,15 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	var url = null;
 	     if(dataset.dsTypeCd=='Federated'){
 	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-	         +'&FEDERATION_ID='+dataset.federationId;
+	         +'&FEDERATION_ID='+dataset.federationId
+	         +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
 	     } else {
 	      var modelName= dataset.qbeDatamarts;
 	   var dataSource=dataset.qbeDataSource;
 	      url = datasetParameters.buildQbeDataSetServiceUrl
 	           +'&DATAMART_NAME='+modelName
-	           +'&DATASOURCE_LABEL='+ dataSource;
+	           +'&DATASOURCE_LABEL='+ dataSource
+	           +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
 	     }
 	     $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
 	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
