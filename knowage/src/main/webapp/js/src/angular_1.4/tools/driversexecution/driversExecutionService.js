@@ -405,7 +405,7 @@
 								tempDriver.type = drivers[i].type;
 								tempDriver.multivalue = drivers[i].multivalue;
 								if(drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)){
-									tempDriver.value =  drivers[i].parameterValue[0].value;
+									tempDriver.value =  drivers[i].parameterValue[0];
 								}else{
 									tempDriver.value = drivers[i].parameterValue;
 								}

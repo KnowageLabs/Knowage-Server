@@ -161,7 +161,6 @@ angular
 
 			$scope.toggleDrivers =function(){
 				$scope.showDrivers = !$scope.showDrivers;
-				$scope.driverableObject.executed = true;
 			}
 
 			$scope.closeDocument = function() {

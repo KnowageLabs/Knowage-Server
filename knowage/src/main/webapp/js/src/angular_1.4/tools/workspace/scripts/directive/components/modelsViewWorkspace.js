@@ -272,7 +272,6 @@
 			var alreadySelected = (model !== undefined && $scope.selectedModel === model);
 			$scope.selectedModel = model;
 			if (alreadySelected) {
-				$scope.selectedModel=undefined;
 				$scope.setDetailOpenModel(!$scope.showModelDetail);
 			} else {
 				$scope.setDetailOpenModel(model !== undefined);
