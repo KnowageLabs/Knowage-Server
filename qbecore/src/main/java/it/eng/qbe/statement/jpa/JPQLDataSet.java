@@ -141,23 +141,25 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	private void enableFilters(Session session) {
 		Map<String, Object> drivers = this.getDrivers();
-		if (drivers.isEmpty() == false && drivers != null) {
-			Filter filter = null;
-			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
-			Iterator<String> it = filterNames.iterator();
-			String driverName = null;
+		if (drivers != null) {
+			if (drivers.isEmpty() == false) {
+				Filter filter = null;
+				Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
+				Iterator<String> it = filterNames.iterator();
+				String driverName = null;
 
-			while (it.hasNext()) {
-				String filterName = it.next();
-				filter = session.enableFilter(filterName);
-				Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-				for (String key : driverUrlNames.keySet()) {
-					driverName = key.toString();
-					Map mapOfValues = (Map) drivers.get(driverName);
-					if (mapOfValues.get("value") instanceof List) {
-						filter.setParameterList(driverName, (Collection) mapOfValues.get("value"));
-					} else {
-						filter.setParameter(driverName, mapOfValues.get("value"));
+				while (it.hasNext()) {
+					String filterName = it.next();
+					filter = session.enableFilter(filterName);
+					Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
+					for (String key : driverUrlNames.keySet()) {
+						driverName = key.toString();
+						Map mapOfValues = (Map) drivers.get(driverName);
+						if (mapOfValues.get("value") instanceof List) {
+							filter.setParameterList(driverName, (Collection) mapOfValues.get("value"));
+						} else {
+							filter.setParameter(driverName, mapOfValues.get("value"));
+						}
 					}
 				}
 			}
