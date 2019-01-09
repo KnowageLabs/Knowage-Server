@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
+    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
+    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/fetch-polyfill/fetch-polyfill.js"></script>
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
@@ -146,7 +148,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		  	
 		  	function getDatasetMetadata(){
-				fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/pagopt?offset=0&fetchSize=1&filters='+encodeURIComponent(JSON.stringify({"typeFilter":"=","valueFilter":datasetLabel,"columnFilter":"label"})))
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/pagopt?offset=0&fetchSize=1&filters='+encodeURIComponent(JSON.stringify({"typeFilter":"=","valueFilter":datasetLabel,"columnFilter":"label"})))
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					parameters = data.root[0];
@@ -164,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					body.limit = backEndPagination.itemsPerPage;
 				}
 				fetchParams.body = JSON.stringify(body);
-	  			fetch(KNOWAGE_BASEURL + KNOWAGE_SERVICESURL + '/1.0/datasets/preview',fetchParams)
+	  			window.fetch(KNOWAGE_BASEURL + KNOWAGE_SERVICESURL + '/1.0/datasets/preview',fetchParams)
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					if(data.errors){
