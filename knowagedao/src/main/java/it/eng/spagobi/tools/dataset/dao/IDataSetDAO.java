@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -97,6 +98,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner);
 
+	public List<IDataSet> loadFilteredDatasetList(Integer offset, Integer fetchSize, String owner, JSONObject filters, JSONObject ordering,
+			List<Integer> tagIds);
+
 	/**
 	 * @deprecated
 	 */
@@ -106,8 +110,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public Integer countBIObjAssociated(Integer dsId);
 
 	public Integer countDatasets();
-
-	public Integer countDatasetsSearch(String search);
 
 	public Integer countDatasetsSearch(String search, List<Integer> tagIds);
 

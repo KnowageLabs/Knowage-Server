@@ -54,7 +54,6 @@ import org.json.JSONObjectDeserializator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -190,17 +189,15 @@ public class DataSetResource extends AbstractDataSetResource {
 	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
 	 */
 	@GET
-	@Path("/countDataSetSearch/{searchValue}")
+	@Path("/countDataSetSearch")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Number getNumberOfDataSetsSearch(@PathParam("searchValue") String searchValue, @QueryParam("tags") List<Integer> tags) {
+	public Number getNumberOfDataSetsSearch(@QueryParam("searchValue") String searchValue, @QueryParam("tags") List<Integer> tags) {
 		logger.debug("IN");
-
 		try {
-
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			Number numOfDataSets = dsDao.countDatasetsSearch(searchValue);
+			Number numOfDataSets = dsDao.countDatasetsSearch(searchValue, tags);
 			return numOfDataSets;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -233,9 +230,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
 
-			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters, ordering);
+			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters, ordering, tags);
 
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
@@ -465,8 +461,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Acquire required version of the dataset
 	 *
-	 * @param id        The ID of the dataset whose version with the versionId ID should be restored.
-	 * @param versionId The ID of the version of the dataset that should be restored and exchanged for the current one (active).
+	 * @param id
+	 *            The ID of the dataset whose version with the versionId ID should be restored.
+	 * @param versionId
+	 *            The ID of the version of the dataset that should be restored and exchanged for the current one (active).
 	 * @return Serialized dataset that is restored as the old version of the dataset.
 	 * @throws JSONException
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -561,8 +559,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete a version for the selected dataset.
 	 *
-	 * @param id        The ID of the selected dataset.
-	 * @param versionId The ID of the version of the selected dataset.
+	 * @param id
+	 *            The ID of the selected dataset.
+	 * @param versionId
+	 *            The ID of the version of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -588,7 +588,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * @param datasetId The datasetId of the selected dataset.
+	 * @param datasetId
+	 *            The datasetId of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -1132,57 +1133,35 @@ public class DataSetResource extends AbstractDataSetResource {
 		return labelsJSON.toString();
 	}
 
-	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering)
-			throws JSONException, EMFUserError {
-
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering,
+			List<Integer> tags) throws JSONException, EMFUserError {
+		logger.debug("IN");
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
 		}
 		if (limit == null) {
-			// limit = DataSetConstants.LIMIT_DEFAULT;
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
-		JSONObject filtersJSON = null;
 
 		List<IDataSet> items = null;
-		if (true) {
-			filtersJSON = filters;
-			String hsql = filterList(filtersJSON, ordering);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
-		} else {// not filtered
-			items = dsDao.loadPagedDatasetList(start, limit);
-			// items =
-			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
-			// true);
+		try {
+			if (tags.isEmpty() || filters == null) {
+				String hsql = filterList(ordering);
+				items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
+			} else {
+				items = dsDao.loadFilteredDatasetList(start, limit, getUserProfile().getUserId().toString(), filters, ordering, tags);
+			}
+		} catch (Throwable t) {
+			logger.error("Error has occured while getting list of Datasets", t);
+			throw t;
 		}
+		logger.debug("OUT");
 		return items;
 	}
 
-	private String filterList(JSONObject filtersJSON, JSONObject ordering) throws JSONException {
+	private String filterList(JSONObject ordering) throws JSONException {
 		logger.debug("IN");
-		boolean isAdmin = false;
-		try {
-			// Check if user is an admin
-			isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
-		} catch (EMFInternalError e) {
-			logger.error("Error while filtering datasets");
-		}
-		String hsql = " from SbiDataSet h where h.active = true ";
-		// Ad Admin can see other users' datasets
-		/*
-		 * if (!isAdmin) { filter is applyed in the dao because need also to take care about categories hsql = hsql + " and h.owner = '" +
-		 * getUserProfile().getUserUniqueIdentifier().toString() + "'"; }
-		 */
-		if (filtersJSON != null) {
-			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
-			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
-			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
-			if (typeFilter.equals("=")) {
-				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
-			} else if (typeFilter.equals("like")) {
-				hsql += " and upper(h." + columnFilter + ") like '%" + valuefilter.toUpperCase() + "%'";
-			}
-		}
+		StringBuilder sb = new StringBuilder("from SbiDataSet h where h.active = true ");
 
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
@@ -1191,16 +1170,15 @@ public class DataSetResource extends AbstractDataSetResource {
 				columnOrdering = "type";
 			}
 			if (columnOrdering != null && !columnOrdering.isEmpty()) {
+				sb.append("order by h.").append(columnOrdering.toLowerCase());
 				if (reverseOrdering) {
-					hsql += "order by h." + columnOrdering.toLowerCase() + " desc";
-				} else {
-					hsql += "order by h." + columnOrdering.toLowerCase() + " asc";
+					sb.append(" desc");
 				}
 			}
 
 		}
 		logger.debug("OUT");
-		return hsql;
+		return sb.toString();
 	}
 
 }
