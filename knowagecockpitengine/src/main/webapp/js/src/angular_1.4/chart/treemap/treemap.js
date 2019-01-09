@@ -447,9 +447,16 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
    		var point = this.point,
 
-        group = this.series.data.filter(x => x.parent === point.parent);
+   		group = this.series.data.filter(function (x) {
+      	  return x.parent === point.parent;
+        });
 
-		var groupTotal = group.map(x => x.value).reduce((a, b) => a + b, 0),
+   		var groupTotal = group.map(function (x) {
+			  return x.value;
+		}).reduce(function (a, b) {
+		  return a + b;
+		}, 0);
+
         percentage = 100 * point.value/groupTotal;
 
 		if(!chartConf.additionalData.showAbsValue && !chartConf.additionalData.showPercentage){
@@ -545,9 +552,15 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
 						var point = this.point,
 
-	                    group = this.series.data.filter(x => x.parent === point.parent);
+						group = this.series.data.filter(function (x) {
+	                    	  return x.parent === point.parent;
+	                    });
 
-						var groupTotal = group.map(x => x.value).reduce((a, b) => a + b, 0)
+						var groupTotal = group.map(function (x) {
+							  return x.value;
+						}).reduce(function (a, b) {
+						  return a + b;
+						}, 0);
 
 	                    percentage = 100 * point.value/groupTotal;
 
