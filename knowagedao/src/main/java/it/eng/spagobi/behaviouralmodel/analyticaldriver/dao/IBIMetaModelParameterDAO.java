@@ -25,6 +25,6 @@ public interface IBIMetaModelParameterDAO extends ISpagoBIDao {
 
 	public void eraseBIMetaModelParametersByMetaModelId(Integer MetaModelId);
 
-	public SbiParameters getParameterByDriverName(String name);
+	public SbiParameters getParameterByModelAndDriverName(String modelName, String name);
 
 }

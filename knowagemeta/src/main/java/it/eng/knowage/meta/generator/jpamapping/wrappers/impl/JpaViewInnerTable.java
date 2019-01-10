@@ -58,8 +58,10 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	private static Logger logger = LoggerFactory.getLogger(JpaViewInnerTable.class);
 
 	/**
-	 * @param businessView  The business view that contains the physical table
-	 * @param physicalTable The physical table used to write this java class
+	 * @param businessView
+	 *            The business view that contains the physical table
+	 * @param physicalTable
+	 *            The physical table used to write this java class
 	 */
 	protected JpaViewInnerTable(BusinessView businessView, PhysicalTable physicalTable) {
 		super(physicalTable);

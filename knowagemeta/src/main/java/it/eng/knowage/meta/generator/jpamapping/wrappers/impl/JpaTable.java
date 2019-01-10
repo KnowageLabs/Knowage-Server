@@ -319,7 +319,8 @@ public class JpaTable extends AbstractJpaTable {
 
 	@Override
 	public String getParamType(String name) {
-		String type = JpaOuterResource.getParameterByName(name).getParameterTypeCode();
+		String modelName = businessTable.getModel().getName();
+		String type = JpaOuterResource.getParameterByMetaModelIdAndName(modelName, name).getParameterTypeCode();
 		String result = "";
 		switch (type) {
 

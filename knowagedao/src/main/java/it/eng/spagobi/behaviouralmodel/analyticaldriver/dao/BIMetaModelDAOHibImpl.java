@@ -387,9 +387,9 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 	}
 
 	@Override
-	public SbiParameters getParameterByDriverName(String name) {
+	public SbiParameters getParameterByModelAndDriverName(String modelName, String name) {
 
-		String hqlQuery = "from SbiMetaModelParameter s where s.parurlNm =? ";
+		String hqlQuery = "from SbiMetaModelParameter s where s.sbiMetaModel.name = ? and s.parurlNm = ? ";
 		Session session = null;
 		Transaction transaction = null;
 
@@ -397,7 +397,8 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			session = getSession();
 			transaction = session.beginTransaction();
 			Query query = session.createQuery(hqlQuery);
-			query.setString(0, name);
+			query.setString(0, modelName);
+			query.setString(1, name);
 			SbiMetaModelParameter sbiMetaModelParam = (SbiMetaModelParameter) query.uniqueResult();
 
 			Integer paramId = null;

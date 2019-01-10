@@ -77,8 +77,6 @@ public interface IJpaTable {
 
 	String getSchema();
 
-	String getParamType(String name);
-
 	/**
 	 *
 	 * @return return true if the wrapped table has no key
@@ -135,11 +133,14 @@ public interface IJpaTable {
 	/**
 	 * Returns the <code>IJpaColumn</code> objects for the the columns that are not part of any association.
 	 *
-	 * @param genOnly          Whether to include only the columns marked for generation.
+	 * @param genOnly
+	 *            Whether to include only the columns marked for generation.
 	 *
-	 * @param includePk        Whether to include the primary key column(s).
+	 * @param includePk
+	 *            Whether to include the primary key column(s).
 	 *
-	 * @param includeInherited Whether to include the columns associated with java properties that exist in the super class (if any).
+	 * @param includeInherited
+	 *            Whether to include the columns associated with java properties that exist in the super class (if any).
 	 */
 	List<IJpaColumn> getSimpleColumns(boolean genOnly, boolean includePk, boolean includeInherited);
 
@@ -176,4 +177,6 @@ public interface IJpaTable {
 	 * @return the value of the business model property useCatalog, if "true" the catalog name will be included in the mapping (if it has a value)
 	 */
 	public String getUseCatalog();
+
+	String getParamType(String name);
 }

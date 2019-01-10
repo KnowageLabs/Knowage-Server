@@ -25,9 +25,9 @@ public class JpaOuterResource {
 
 	}
 
-	public static SbiParameters getParameterByName(String name) {
+	public static SbiParameters getParameterByMetaModelIdAndName(String modelName, String name) {
 		BIMetaModelDAOHibImpl dao = new BIMetaModelDAOHibImpl();
-		SbiParameters sbiParam = dao.getParameterByDriverName(name);
+		SbiParameters sbiParam = dao.getParameterByModelAndDriverName(modelName, name);
 
 		return sbiParam;
 	}
