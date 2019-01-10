@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular
-	.module('datasets_view_workspace', ['driversExecutionModule'])
+	.module('datasets_view_workspace', ['driversExecutionModule','tagsModule'])
 
 	/**
 	 * The HTML content of the Recent view (recent documents).
@@ -39,7 +39,7 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download,$sce){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download,$sce, tagsHandlerService){
 
 	var urlBuilderService = sbiModule_urlBuilderService;
 	$scope.maxSizeStr = maxSizeStr;
@@ -62,7 +62,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.paginationDisabled = null;
     $scope.ckanFilter = "";
     $scope.newOffset=0;
-
+    $scope.allTags = [];
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
 
@@ -1524,6 +1524,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.leftMenuItemPicked(selectedMenu,true);
 		}
 	}
-
+	var getAllTags = function(){
+		sbiModule_restServices.promiseGet("2.0/tags","")
+		.then(function(response) {
+			$scope.allTags = response.data;
+		});
+	}
+    getAllTags();
 }
 })();

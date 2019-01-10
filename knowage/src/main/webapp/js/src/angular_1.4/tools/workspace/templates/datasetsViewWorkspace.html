@@ -7,7 +7,7 @@
 				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')" md-active="activateMyDatasetsTab">
 				       
 				       <md-tab-body>
-				       
+				       	   	<filter-by-tags></filter-by-tags>
 					 	  <dataset-view flex style='overflow: auto;' ng-model="myDatasets"
 							show-grid-view="showGridView"
 							show-qbe-enabled="true"

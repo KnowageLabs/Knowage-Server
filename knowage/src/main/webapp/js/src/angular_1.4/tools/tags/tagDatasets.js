@@ -47,15 +47,13 @@
 		$scope.addNewTagToList = function(){
 			if(!tagsHandlerService.isTagEmpty($scope.temporaryTag)){
 				var newTag = prepareTagForCreation();
-				tagsHandlerService.addNewTagToList(newTag,$scope.tags);
-				$scope.allTags.push(newTag);
+				tagsHandlerService.addNewTagToList(newTag,$scope.tags,$scope.allTags);
 				resetTemporaryTag();
 			}
 		};
 
 
 		$scope.addOldTagToList = function(tag){
-			//tagsHandlerService.addNewTagToList(tag);
 			$scope.tags.push(tag);
 			resetTemporaryTag();
 		}

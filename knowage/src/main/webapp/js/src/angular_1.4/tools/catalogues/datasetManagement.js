@@ -58,7 +58,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.datasetParameters = []
 	$scope.allTags = [];
 	$scope.tags = [];
-
+	$scope.location = "catalog"
 	var parameterDeletingMessage = "Are you sure you want to delete the dataset parameter ? ";
 	var qbeParameterDeletingMessage = "";
 
@@ -1051,10 +1051,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.columnOrdering){
     		columnOrderingLabel = $scope.columnOrdering.name;
     	}
-    	urlBuilderService.setBaseUrl("countDataSetSearch/"+$scope.searchValue);
+    	urlBuilderService.setBaseUrl("countDataSetSearch/");
 
     	if($scope.searchValue!="" || tagsHandlerService.getFilteredTagIds().length > 0){
+
     		var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+    		var searchValue = {"searchValue" : $scope.searchValue}
+    		urlBuilderService.addQueryParams(searchValue);
     		urlBuilderService.addQueryParams(tags);
     		sbiModule_restServices.promiseGet("1.0/datasets",  urlBuilderService.build())
     		.then(function(response) {
@@ -1101,6 +1104,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    	urlBuilderService.setBaseUrl("countDataSetSearch/");
 	        var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
 	        urlBuilderService.addQueryParams(tags);
+	    	var searchValue = {"searchValue" : $scope.searchValue}
+    		urlBuilderService.addQueryParams(searchValue);
 			sbiModule_restServices.promiseGet("1.0/datasets", urlBuilderService.build())
 	    		.then(function(response) {
 	    			$scope.numOfDs = response.data;
@@ -1134,11 +1139,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			};
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
-
+		urlBuilderService.setBaseUrl("pagopt");
+		urlBuilderService.addQueryParams(queryParams);
 		if(tagsHandlerService.getFilteredTagIds().length > 0){
-    		queryParams = queryParams+"&tags="+tagsHandlerService.getFilteredTagIds();
+    		tags = {"tags":tagsHandlerService.getFilteredTagIds()}
+    		urlBuilderService.addQueryParams(tags);
 		}
-		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", queryParams)
+
+
+		sbiModule_restServices.promiseGet("1.0/datasets",urlBuilderService.build())
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
@@ -1149,8 +1158,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						});
 				} else if(filter!=null || tagsHandlerService.getFilteredTagIds().length > 0){
+					urlBuilderService.setBaseUrl("countDataSetSearch/");
 					var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
-					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/",angular.toJson(tags))
+					urlBuilderService.addQueryParams(tags);
+//					var searchValue = {"searchValue" : $scope.searchValue}
+//		    		urlBuilderService.addQueryParams(searchValue);
+					sbiModule_restServices.promiseGet("1.0/datasets", urlBuilderService.build())
 					.then(function(response) {
 						$scope.numOfDs = response.data;},function(response){
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -2663,8 +2676,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
                                 }
 
 
-                                if(tagsHandlerService.isTagDeleted() || tagsHandlerService.isTagAdded()){
-                                	sbiModule_restServices.promisePost("2.0/datasets", response.data.id + "/dstags/" , angular.toJson(tagsHandlerService.prepareTagsForSending($scope.selectedDataSet.versNum + 1)));
+                                if(tagsHandlerService.isTagDeleted() || $scope.tags.length > 0){
+                                	sbiModule_restServices.promisePost("2.0/datasets", response.data.id + "/dstags/" , angular.toJson(tagsHandlerService.prepareTagsForSending($scope.selectedDataSet.versNum + 1,$scope.tags)));
                                 }
 
                                 if( $scope.showDatasetScheduler){

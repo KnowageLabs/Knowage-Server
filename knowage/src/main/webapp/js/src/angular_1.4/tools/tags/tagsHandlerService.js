@@ -24,7 +24,6 @@
 
 	 var tags = [];
 	 var tagsForDeleting = [];
-	 var tagsForAdding = [];
 	 var tagsForSending = {};
 	 var tagsForFiltering = [];
 
@@ -45,9 +44,9 @@
 					tagsForDeleting.push(tag);
 				},
 
-			 addNewTagToList : function(tag,dsTags){
-				 	tagsForAdding.push(tag);
+			 addNewTagToList : function(tag,dsTags,allTags){
 				 	dsTags.push(tag);
+				 	allTags.push(tag)
 			    },
 
 			 createNewTagObject : function(tagValue){
@@ -64,10 +63,10 @@
 				 return (tag == "" || tag == ',');
 			 	},
 
-			 prepareTagsForSending : function(dsVersionNumber){
+			 prepareTagsForSending : function(dsVersionNumber,tags){
 					 return {
 						 versNum: dsVersionNumber,
-						 tagsToAdd: tagsForAdding,
+						 tagsToAdd: tags,
 						 tagsToRemove: tagsForDeleting
 					 }
 			 	},

@@ -1,19 +1,16 @@
 
-	       	<div>Tags</div>
+	      
 				<div layout = row>
 				
-					<div class="tags" flex= 90>			
+					<div class="tags" flex= 80>			
 						<span ng-repeat = "one in allTags|limitTo:limitation" ng-click="toggleTag(one)">
 							<span class="tag" >{{one.name}}</span>
 							
 						</span>	
 					</div>
 					
-					<div flex=10 ng-if="tags.length > 6">
-						<md-icon aria-label="expand list" md-font-icon="fa fa-angle-up "
-						ng-show="collapsed" ng-click="toggleAllTags()"> </md-icon>
-						<md-icon aria-label="expand list" md-font-icon="fa fa-angle-down "
-						ng-show="!collapsed" ng-click="toggleAllTags()"> </md-icon>
+					<div flex=20 ng-if="allTags.length > 5">
+						<div  class="lower" ng-click="toggleAllTags()"><i ng-class = "colapsed.name"></i>
 					</div>
 					
 				</div>

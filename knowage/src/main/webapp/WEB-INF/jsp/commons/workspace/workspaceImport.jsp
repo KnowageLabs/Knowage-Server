@@ -66,3 +66,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/organizer-view/organizerView.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/components/documentSchedulationTemplate.js")%>"></script>
+
+ <!-- tags -->
+  	<%@include file="/WEB-INF/jsp/tools/tags/tagsImport.jsp"%>

@@ -39,10 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html ng-app="datasetModule">
 	
 	<head>
-	<style id="jsbin-css">
+	<style >
 .tags{
   float:left;
-  border:1px solid #ccc;
   padding:4px;
   font-family:Arial;
 }
@@ -55,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   padding:5px 10px;
   padding-right:30px;
   margin:4px;
+  border-radius:10px;
 }
 .tags span.tag:hover{
   opacity:0.7;
@@ -91,6 +91,7 @@ div#autoTags span.combodiv_span {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
 .combodiv_span {
     float: left;
     font-family: openSans, Arial;
@@ -102,6 +103,27 @@ div#autoTags span.combodiv_span {
     position: relative;
     z-index: 1000;
     width: 100%;
+}
+ .lower{
+ padding:5px;
+ }
+ i  {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 2px;
+  height: 15px;
+  width: 15px;
+}
+.tagsUp {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.tagsDown {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
 </style>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 			
@@ -177,7 +199,7 @@ div#autoTags span.combodiv_span {
 		<angular-list-detail>
 	        
 	       	<list label="translate.load('sbi.roles.datasets')"  new-function="createNewDataSet">
-	       	<filter-by-tags></filter-by-tags>{{selectedDataSet.dsTypeCd}}
+	       	<filter-by-tags></filter-by-tags>
 		       	<angular-table
 			     	flex
 				 	id="datasetList_id" 
@@ -443,7 +465,7 @@ div#autoTags span.combodiv_span {
 					                  	
 									</div>
 									
-									<div layout="row" flex=100 ng-if="selectedDataSet.fileName && selectedDataSet.fileName!='' && !changingFile">
+									<div layout="row" flex=100 ng-if="selectedDataSet.fileName && selectedDataSet.fileName != '' && !changingFile">
 								 		
 								 		<label style="margin-top:14px; margin-bottom:8px">
 								 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{selectedDataSet.fileName}}</strong>
@@ -456,12 +478,9 @@ div#autoTags span.combodiv_span {
 										    <md-button 	ng-click="changeUploadedFile()" class="md-raised" 
 										    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
 					                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
-				             				</md-button>
-			             				
-			           					</div>
-			             				
-									</div>
-									
+				             				</md-button>			             				
+			           					</div>		             				
+									</div>									
 								</md-card>
 								
 								<!-- ELEMENTS FOR SETTING THE 'XLS'/'XLSX' FILE CONFIGURATION -->

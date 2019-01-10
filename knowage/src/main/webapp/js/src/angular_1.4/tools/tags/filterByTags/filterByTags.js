@@ -23,33 +23,85 @@
 			restrict: 'E',
 			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/tags/filterByTags/filterByTags.html',
 			controller: filterTagsController,
-			scope: true
+			scope: {
+
+			}
 		};
 
 	}]);
 
 		function filterTagsController($scope,tagsHandlerService,$timeout){
-			$scope.limitation = 6;
-
+			$scope.limitation = 5;
+			$scope.colapsed = {};
+			$scope.colapsed.name = "tagsUp";
 
 			$scope.toggleAllTags = function(){
-				$scope.colapsed = !$scope.colapsed;
-				if($scope.limitation == 6){
-					$scope.limitation = $scope.tags.length;
-				}else
-					$scope.limitation = 6;
+
+				if($scope.limitation == 5){
+					$scope.limitation = $scope.allTags.length;
+					$scope.colapsed.name = "tagsDown";
+				}else{
+					$scope.limitation = 5;
+					$scope.colapsed.name = "tagsUp";
+				}
 			}
 
 			$scope.toggleTag = function(tag){
 				tagsHandlerService.toggleTag(tag);
+				if(isFromCatalog()){
+					filterForCatalog();
+				}else if(isFromWorkspace()) {
+					filterForWorkspace();
+				}
+
+			}
+
+			var setListByType = function(type,response){
+				switch(type){
+				case "myDataSet":
+					$scope.myDatasets = response;
+					break;
+				case "sharedDataSet":
+					$scope.sharedDatasets = response;
+					break;
+				case "enterpriseDataSet":
+					$scope.enterpriseDatasets = response;
+					break;
+				case "ckanDataSet":
+					$scope.ckanDatasetsList = response;
+					break;
+				case "allDataSet":
+					$scope.datasets = response;
+					break;
+				}
+			}
+
+			var isFromCatalog = function(){
+				return $scope.location == "catalog";
+			}
+
+			var isFromWorkspace = function(){
+				$scope.location == "workspace"
+			}
+
+			var filterForCatalog = function (){
 				$timeout(function () {
 					$scope.datasetLike($scope.searchValue,$scope.itemsPerPage, $scope.currentPageNumber, $scope.columnsSearch, $scope.columnOrdering, $scope.reverseOrdering)
 				 }, 1000);
-				}
+			}
 
-
-
-		}
+			var filterForWorkspace = function(){
+				$timeout(function () {
+					if(tagsHandlerService.getFilteredTagIds().length == 0){
+						$scope.loadInitialForDatasets()
+					}else{
+						$scope.restServices.promiseGet(  toBeCreated,$scope.currentDatasetsTab ).then(function(response){
+							setListByType($scope.currentDatasetsTab,response.data);
+						})
+					}
+				}, 1000);
+			}
+}
 
 
 

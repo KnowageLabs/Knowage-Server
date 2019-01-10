@@ -43,7 +43,92 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html ng-app="workspaceManager">
 
 	<head>
-	
+		<style id="jsbin-css">
+.tags{
+  float:left;
+  padding:4px;
+  font-family:Arial;
+}
+.tags span.tag{
+  cursor:pointer;
+  display:block;
+  float:left;
+  color:#555;
+  background:#83C9F4;
+  padding:5px 10px;
+  padding-right:30px;
+  margin:4px;
+  border-radius:10px;
+}
+.tags span.tag:hover{
+  opacity:0.7;
+}
+.tags span.tag:after{
+ position:absolute;
+ border:1px solid;
+ border-radius:10px;
+ padding:0 4px;
+ margin:3px 0 10px 7px;
+ font-size:10px;
+}
+#addTag span.tag:after{
+  content:"×";
+}
+.tags input{
+  background:#eee;
+  border:0;
+  margin:4px;
+  padding:7px;
+  width:auto;
+}
+div#autoTags span.combodiv_span {
+    clear: both;
+    float: left;
+    margin: 0 0 0 4px;
+    padding: 0 0 0 2px;
+    font: 15px openSans,Arial;
+    color: #444444;
+    cursor: pointer;
+    width: 190px;
+    height: 21px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.combodiv_span {
+    float: left;
+    font-family: openSans, Arial;
+    color: #444444;
+    text-align: left;
+    border: none;
+    background: #fff;
+    font-size: 15px;
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+}
+ .lower{
+ padding:5px;
+ }
+ i  {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 2px;
+  height: 15px;
+  width: 15px;
+}
+.tagsUp {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.tagsDown {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+</style>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<%@include file="/WEB-INF/jsp/commons/workspace/workspaceImport.jsp"%>
 		
