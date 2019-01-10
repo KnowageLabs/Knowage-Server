@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@ page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 
-<%@ page trimDirectiveWhitespaces="true" %>
 <%@ page contentType="applicaton/octet-stream" %>
 <%
 int documentId = Integer.valueOf(request.getParameter("document"));
