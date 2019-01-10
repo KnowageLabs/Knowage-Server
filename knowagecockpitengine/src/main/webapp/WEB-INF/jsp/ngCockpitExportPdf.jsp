@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page import="it.eng.knowage.slimerjs.wrapper.beans.RenderOptions" %>
 <%@ page import="it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter"%>
 
-<%@ page trimDirectiveWhitespaces="true" %>
 <%@ page contentType="applicaton/octet-stream" %>
 <%
 int documentId = Integer.valueOf(request.getParameter("document"));
