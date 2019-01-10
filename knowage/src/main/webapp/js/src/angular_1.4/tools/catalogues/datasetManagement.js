@@ -1139,15 +1139,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			};
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
-		urlBuilderService.setBaseUrl("pagopt");
-		urlBuilderService.addQueryParams(queryParams);
+
 		if(tagsHandlerService.getFilteredTagIds().length > 0){
-    		tags = {"tags":tagsHandlerService.getFilteredTagIds()}
-    		urlBuilderService.addQueryParams(tags);
+    		//queryParams = queryParams+"&tags="+tagsHandlerService.getFilteredTagIds();
+			urlBuilderService.setBaseUrl("");
+			var tagsForSending = {"tags":tagsHandlerService.getFilteredTagIds()}
+    		urlBuilderService.addQueryParams(tagsForSending);
+    		queryParams = queryParams+"&"+urlBuilderService.build().substr(1)
 		}
 
 
-		sbiModule_restServices.promiseGet("1.0/datasets",urlBuilderService.build())
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", queryParams)
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
