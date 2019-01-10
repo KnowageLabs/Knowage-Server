@@ -1533,7 +1533,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					query.setString("search", "%" + search.toUpperCase() + "%");
 					resultNumber = (Long) query.uniqueResult();
 				} else {
-					// sb.append("and upper(ds.label) like '%").append(search.toUpperCase()).append("%' ");
 					sb.append("and upper(ds.label) like :search");
 					Query hqlQuery = session.createQuery(sb.toString());
 					hqlQuery.setBoolean(0, true);

@@ -1146,7 +1146,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		List<IDataSet> items = null;
 		try {
 			if (tags.isEmpty() || filters == null) {
-				String hsql = filterList(ordering);
+				String hsql = getCommonQuery(ordering);
 				items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
 			} else {
 				items = dsDao.loadFilteredDatasetList(start, limit, getUserProfile().getUserId().toString(), filters, ordering, tags);
@@ -1159,7 +1159,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		return items;
 	}
 
-	private String filterList(JSONObject ordering) throws JSONException {
+	private String getCommonQuery(JSONObject ordering) throws JSONException {
 		logger.debug("IN");
 		StringBuilder sb = new StringBuilder("from SbiDataSet h where h.active = true ");
 
