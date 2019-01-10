@@ -23,9 +23,7 @@
 			restrict: 'E',
 			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/tags/filterByTags/filterByTags.html',
 			controller: filterTagsController,
-			scope: {
-
-			}
+			scope: true
 		};
 
 	}]);
