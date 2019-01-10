@@ -1,19 +1,34 @@
 
-	      
-				<div layout = row>
+	  
+<!-- 				<div layout = row> -->
 				
-					<div class="tags" flex= 80>			
-						<span ng-repeat = "one in allTags|limitTo:limitation" ng-click="toggleTag(one)">
-							<span class="tag" >{{one.name}}</span>
+<!-- 					<div class="tags" flex= 80>			 -->
+<!-- 						<span ng-repeat = "one in allTags|limitTo:limitation" ng-click="toggleTag(one)"> -->
+<!-- 							<span class="tag" >{{one.name}}</span> -->
 							
-						</span>	
-					</div>
+<!-- 						</span>	 -->
+<!-- 					</div> -->
 					
-					<div flex=20 ng-if="allTags.length > 5">
-						<div  class="lower" ng-click="toggleAllTags()"><i ng-class = "colapsed.name"></i>
-					</div>
+<!-- 					<div flex=20 ng-if="allTags.length > 5"> -->
+<!-- 						<div  class="lower" ng-click="toggleAllTags()"><i ng-class = "colapsed.name"></i> -->
+<!-- 					</div> -->
 					
-				</div>
+<!-- 				</div> -->
 				
 				
-			
+			<md-chips ng-model="allTags" md-add-on-blur="false" md-on-select="toggleTag($chip)"  md-removable="remove">
+		  <button
+        ng-if="false" md-chip-remove >
+<!--         class="md-chip-remove ng-scope"  -->
+       
+<!--         type="button" -->
+<!--         aria-hidden="true" tabindex="-1"> -->
+        <md-icon md-svg-icon="md-close"></md-icon>
+        <span class="md-visually-hidden ng-binding">Remove</span>
+    </button>
+				 <md-chip-template>
+				 
+       
+         <md-checkbox ng-model="$chip.isSelected">{{$chip.name}}</md-checkbox>
+        </md-chip-template>
+			</md-chips>

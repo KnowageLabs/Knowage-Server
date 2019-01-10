@@ -32,11 +32,11 @@
 			$scope.limitation = 5;
 			$scope.colapsed = {};
 			$scope.colapsed.name = "tagsUp";
-
+			$scope.remove = true;
 			$scope.toggleAllTags = function(){
 
 				if($scope.limitation == 5){
-					$scope.limitation = $scope.allTags.length;
+					$scope.limitation = undefined;
 					$scope.colapsed.name = "tagsDown";
 				}else{
 					$scope.limitation = 5;
@@ -90,7 +90,7 @@
 
 			var filterForWorkspace = function(){
 				$timeout(function () {
-					if(tagsHandlerService.getFilteredTagIds().length == 0){
+					if(tagsHandlerService.getFilteredTagIds($scope.allTags).length == 0){
 						$scope.loadInitialForDatasets()
 					}else{
 						$scope.restServices.promiseGet(  toBeCreated,$scope.currentDatasetsTab ).then(function(response){

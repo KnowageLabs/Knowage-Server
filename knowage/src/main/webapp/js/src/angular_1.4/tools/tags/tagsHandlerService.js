@@ -46,7 +46,6 @@
 
 			 addNewTagToList : function(tag,dsTags,allTags){
 				 	dsTags.push(tag);
-				 	allTags.push(tag)
 			    },
 
 			 createNewTagObject : function(tagValue){
@@ -94,10 +93,11 @@
 				 return tagsForDeleting;
 			 },
 
-			 getFilteredTagIds : function(){
+			 getFilteredTagIds : function(tags){
 				 var tagIds = [];
-				 for(var i = 0;i<tagsForFiltering.length; i++){
-					 tagIds.push(tagsForFiltering[i].tagId)
+				 for(var i = 0;i<tags.length; i++){
+					 if(tags[i].isSelected)
+					 tagIds.push(tags[i].tagId)
 				 }
 				 return tagIds;
 			 }

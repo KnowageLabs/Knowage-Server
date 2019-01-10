@@ -1053,9 +1053,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
     	urlBuilderService.setBaseUrl("countDataSetSearch/");
 
-    	if($scope.searchValue!="" || tagsHandlerService.getFilteredTagIds().length > 0){
+    	if($scope.searchValue!="" || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
 
-    		var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+    		var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
     		var searchValue = {"searchValue" : $scope.searchValue}
     		urlBuilderService.addQueryParams(searchValue);
     		urlBuilderService.addQueryParams(tags);
@@ -1099,10 +1099,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    		}, function(response) {
 	    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 	    		});
-		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0 ||  tagsHandlerService.getFilteredTagIds().length > 0) {
-	    		var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0 ||  tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0) {
+	    		var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
 	    	urlBuilderService.setBaseUrl("countDataSetSearch/");
-	        var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+	        var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
 	        urlBuilderService.addQueryParams(tags);
 	    	var searchValue = {"searchValue" : $scope.searchValue}
     		urlBuilderService.addQueryParams(searchValue);
@@ -1140,10 +1140,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
 
-		if(tagsHandlerService.getFilteredTagIds().length > 0){
+		if(tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
     		//queryParams = queryParams+"&tags="+tagsHandlerService.getFilteredTagIds();
 			urlBuilderService.setBaseUrl("");
-			var tagsForSending = {"tags":tagsHandlerService.getFilteredTagIds()}
+			var tagsForSending = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)}
     		urlBuilderService.addQueryParams(tagsForSending);
     		queryParams = queryParams+"&"+urlBuilderService.build().substr(1)
 		}
@@ -1159,9 +1159,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.numOfDs = response.data;},function(response){
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						});
-				} else if(filter!=null || tagsHandlerService.getFilteredTagIds().length > 0){
+				} else if(filter!=null || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
 					urlBuilderService.setBaseUrl("countDataSetSearch/");
-					var tags = {"tags":tagsHandlerService.getFilteredTagIds()};
+					var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
 					urlBuilderService.addQueryParams(tags);
 					var searchValue = {"searchValue" : $scope.searchValue}
 		    		urlBuilderService.addQueryParams(searchValue);
@@ -2679,7 +2679,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 
                                 if(tagsHandlerService.isTagDeleted() || $scope.tags.length > 0){
-                                	sbiModule_restServices.promisePost("2.0/datasets", response.data.id + "/dstags/" , angular.toJson(tagsHandlerService.prepareTagsForSending($scope.selectedDataSet.versNum + 1,$scope.tags)));
+                                	sbiModule_restServices.promisePost("2.0/datasets", response.data.id + "/dstags/" , angular.toJson(tagsHandlerService.prepareTagsForSending($scope.selectedDataSet.versNum + 1,$scope.tags))).then(function(response){
+                                		var array = response.data;
+                                		for(var i = 0; i < $scope.tags.length; i++){
+                                			var nameForFiltering = $scope.tags[i].name;
+                                			if(!$scope.tags[i].tagId){
+                                				var newTag =  ($filter('filter')(array,{name:nameForFiltering},true))[0]
+                                				$scope.tags[i].tagId = newTag.tagId;
+                                				$scope.allTags.push(newTag);
+                                				//$scope.$apply();
+                                }
+                                		}
+
+                                	});
                                 }
 
                                 if( $scope.showDatasetScheduler){
