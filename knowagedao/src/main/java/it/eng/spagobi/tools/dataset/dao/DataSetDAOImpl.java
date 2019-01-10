@@ -904,7 +904,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
 				entityName = "ds.";
 			} else {
-				sb = new StringBuilder("select dst.dataSet from SbiDatasetTag dst where dst.dataSet.active = true ");
+				sb = new StringBuilder("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = true ");
 				entityName = "dst.dataSet.";
 			}
 
