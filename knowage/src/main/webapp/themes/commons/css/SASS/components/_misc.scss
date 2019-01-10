@@ -1019,6 +1019,9 @@ color-picker {
   }
 }
 
+md-dialog {
+  background: $tabBackground;
+}
 
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
