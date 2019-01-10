@@ -1062,7 +1062,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		sbiModule_restServices.promiseGet("1.0/datasets",  urlBuilderService.build())
     		.then(function(response) {
     			$scope.numOfDs = response.data;
-    			$scope.loadDatasetList(0, itemsPerPage, searchValue,  columnOrderingLabel,reverseOrdering);
+    			$scope.loadDatasetList(0, itemsPerPage, $scope.searchValue,  columnOrderingLabel,reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
