@@ -861,7 +861,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Session session = null;
 		Transaction transaction = null;
 		StringBuilder sb;
+		String entityName = "";
 		String valuefilter = null;
+		String typeFilter = null;
+		String columnFilter = null;
+		List idsCat = null;
+		boolean reverseOrdering = false;
+		String columnOrdering = null;
 		try {
 			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
@@ -874,59 +880,67 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				fetchSize = Integer.MAX_VALUE;
 			}
 
-			session = getSession();
-			transaction = session.beginTransaction();
-			if (tagIds.isEmpty()) {
-				sb = new StringBuilder("from SbiDataSet h where h.active = true ");
-			} else {
-				sb = new StringBuilder("select h.dataSet from SbiDatasetTag h where h.dataSet.active = true ");
-			}
-
-			List idsCat = null;
 			if (!isAdmin) {
 				List<Domain> devCategories = new LinkedList<Domain>();
 				fillDevCategories(devCategories);
-
 				idsCat = createIdsCatogriesList(devCategories);
-
-				if (idsCat == null || idsCat.size() == 0) {
-					sb.append("and h.owner = :owner ");
-				} else {
-					sb.append("and (h.category.valueId IN (:idsCat) or h.owner = :owner) ");
-				}
 			}
 
 			if (filters != null) {
 				valuefilter = (String) filters.get(SpagoBIConstants.VALUE_FILTER);
-				String typeFilter = (String) filters.get(SpagoBIConstants.TYPE_FILTER);
-				String columnFilter = (String) filters.get(SpagoBIConstants.COLUMN_FILTER);
+				typeFilter = (String) filters.get(SpagoBIConstants.TYPE_FILTER);
+				columnFilter = (String) filters.get(SpagoBIConstants.COLUMN_FILTER);
+			}
+
+			if (ordering != null) {
+				reverseOrdering = ordering.optBoolean("reverseOrdering");
+				columnOrdering = ordering.optString("columnOrdering");
+				if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+					columnOrdering = "type";
+				}
+			}
+
+			if (tagIds.isEmpty()) {
+				sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
+				entityName = "ds.";
+			} else {
+				sb = new StringBuilder("select dst.dataSet from SbiDatasetTag dst where dst.dataSet.active = true ");
+				entityName = "dst.dataSet.";
+			}
+
+			if (!isAdmin) {
+				if (idsCat == null || idsCat.size() == 0) {
+					sb.append("and ").append(entityName).append("owner = :owner");
+				} else {
+					sb.append("and ").append(entityName).append("category.valueId in (:idsCat) ").append(entityName).append("owner = :owner) ");
+				}
+			}
+
+			if (filters != null) {
 				if (typeFilter.equals("=")) {
-					sb.append("and h.").append(columnFilter).append(" = :search ");
+					sb.append("and ").append(entityName).append(columnFilter).append(" = :search ");
 				} else if (typeFilter.equals("like")) {
-					sb.append("and upper(h.").append(columnFilter).append(") like :search ");
+					sb.append("and upper(").append(entityName).append(columnFilter).append(") like :search ");
 				}
 			}
 
 			if (!tagIds.isEmpty()) {
-				sb.append("and h.dsTagId.tagId in (:tagIds) ");
+				sb.append("and dst.dsTagId.tagId in (:tagIds) ");
 			}
 
 			if (ordering != null) {
-				boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
-				String columnOrdering = ordering.optString("columnOrdering");
-				if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
-					columnOrdering = "type";
-				}
 				if (columnOrdering != null && !columnOrdering.isEmpty()) {
-					sb.append(" order by h.").append(columnOrdering.toLowerCase());
+					sb.append(" order by ").append(entityName).append(columnOrdering.toLowerCase());
 					if (reverseOrdering) {
 						sb.append(" desc");
 					}
 				}
-
 			}
 
 			offset = offset < 0 ? 0 : offset;
+
+			session = getSession();
+			transaction = session.beginTransaction();
 
 			Query listQuery = session.createQuery(sb.toString());
 			if (idsCat != null && idsCat.size() > 0) {

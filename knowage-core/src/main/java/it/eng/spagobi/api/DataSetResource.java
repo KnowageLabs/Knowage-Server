@@ -1145,7 +1145,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		List<IDataSet> items = null;
 		try {
-			if (tags.isEmpty() || filters == null) {
+			if (tags.isEmpty() && filters == null) {
 				String hsql = getCommonQuery(ordering);
 				items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
 			} else {
