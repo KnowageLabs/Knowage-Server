@@ -24,7 +24,7 @@
 		</md-toolbar>
 	<div layout="row" flex >
 			<div flex=100 ng-if="!driverableObject.executed"></div>
-			<iframe  ng-if="driverableObject.executed || !mandatory" flex=100 class="noBorder" ng-src="{{documentViewerUrl}}" id="documentViewerIframe"></iframe>
+			<iframe  ng-if="driverableObject.executed" flex=100 class="noBorder" ng-src="{{documentViewerUrl}}" id="documentViewerIframe"></iframe>
 					
 			<div layout="column" ng-if="showDrivers">		
 			<md-sidenav  flex layout="column" layout-align = "right" class="md-sidenav-right md-whiteframe-4dp"    md-is-locked-open="$mdMedia('gt-md')">
