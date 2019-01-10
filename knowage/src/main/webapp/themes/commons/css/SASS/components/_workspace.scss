@@ -97,7 +97,10 @@ $organizerHeight : 120px;
 	}	
 		
 	.workspace-submenu{
-	   padding-left:20px;
+	   padding-left:0;
+	   .md-button {
+	   		padding-left: 40px !important;
+	   }
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
