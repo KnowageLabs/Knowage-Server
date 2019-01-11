@@ -21,7 +21,6 @@ public class BusinessModelRuntime extends AbstractBIResourceRuntime<BIMetaModelP
 
 	public BusinessModelRuntime(IEngUserProfile userProfile, Locale locale) {
 		super(userProfile, locale);
-		// TODO Auto-generated constructor stub
 	}
 
 	private final List<BusinessModelDriverRuntime> drivers = null;
@@ -43,7 +42,7 @@ public class BusinessModelRuntime extends AbstractBIResourceRuntime<BIMetaModelP
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(driver.getParID(), role);
 			IMetaModelParuseDAO metaModelParuseDAO = DAOFactory.getMetaModelParuseDao();
-			biParameterExecDependencies.addAll(metaModelParuseDAO.loadMetaModelParuseById(driver.getId()));
+			biParameterExecDependencies.addAll(metaModelParuseDAO.loadMetaModelParuse(driver.getId(), biParameterExecModality.getUseID()));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to get dependencies", e);
 		}
@@ -53,10 +52,5 @@ public class BusinessModelRuntime extends AbstractBIResourceRuntime<BIMetaModelP
 	public void refreshParametersValues(JSONObject jsonObject, boolean transientMode, MetaModel object) {
 		super.refreshParametersValues(jsonObject, transientMode, object);
 	}
-
-//	validateInputs
-//	getDefaultValues
-//	getAdmissibleValues
-//	setValues
 
 }
