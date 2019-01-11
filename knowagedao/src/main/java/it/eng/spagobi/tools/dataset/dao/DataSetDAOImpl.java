@@ -895,7 +895,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (ordering != null) {
 				reverseOrdering = ordering.optBoolean("reverseOrdering");
 				columnOrdering = ordering.optString("columnOrdering");
-				if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+				if (columnOrdering != null && columnOrdering.equalsIgnoreCase("dsTypeCd")) {
 					columnOrdering = "type";
 				}
 			}
@@ -910,9 +910,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (!isAdmin) {
 				if (idsCat == null || idsCat.size() == 0) {
-					sb.append("and ").append(entityName).append("owner = :owner");
+					sb.append("and ").append(entityName).append("owner = :owner ");
 				} else {
-					sb.append("and ").append(entityName).append("category.valueId in (:idsCat) ").append(entityName).append("owner = :owner) ");
+					sb.append("and (").append(entityName).append("category.valueId in (:idsCat) or ").append(entityName).append("owner = :owner) ");
 				}
 			}
 
@@ -961,7 +961,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setMaxResults(fetchSize);
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
-			if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
+			if (sbiDatasetVersions != null && !sbiDatasetVersions.isEmpty()) {
 				for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
 					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
 					toReturn.add(guiDataSet);
@@ -972,9 +972,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", t);
+			throw new SpagoBIDAOException("An unexpected error has occured while loading datasets with tags", t);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
 		}
-
 		logger.debug("OUT");
 		return toReturn;
 	}
