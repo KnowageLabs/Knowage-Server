@@ -1165,7 +1165,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					urlBuilderService.addQueryParams(tags);
 					var searchValue = {"searchValue" : $scope.searchValue}
 		    		urlBuilderService.addQueryParams(searchValue);
-					sbiModule_restServices.promiseGet("1.0/datasets", urlBuilderService.build())
+					var url = (tagsHandlerService.getFilteredTagIds($scope.allTags).length == 0 && ($scope.searchValue == "" || $scope.searchValue == null)) ? "countDataSetSearch/" : urlBuilderService.build();
+					sbiModule_restServices.promiseGet("1.0/datasets",url)
 					.then(function(response) {
 						$scope.numOfDs = response.data;},function(response){
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

@@ -15,20 +15,19 @@
 					
 <!-- 				</div> -->
 				
-				
-			<md-chips ng-model="allTags" md-add-on-blur="false" md-on-select="toggleTag($chip)"  md-removable="remove">
-		  <button
-        ng-if="false" md-chip-remove >
-<!--         class="md-chip-remove ng-scope"  -->
-       
-<!--         type="button" -->
-<!--         aria-hidden="true" tabindex="-1"> -->
-        <md-icon md-svg-icon="md-close"></md-icon>
-        <span class="md-visually-hidden ng-binding">Remove</span>
-    </button>
-				 <md-chip-template>
-				 
-       
-         <md-checkbox ng-model="$chip.isSelected">{{$chip.name}}</md-checkbox>
-        </md-chip-template>
+		<div layout = row> 	
+			<div flex= 80>
+			<md-chips ng-model="tagsArray "  md-add-on-blur="false" md-on-select="toggleTag($chip)"  >
+		 		 <button ng-if="false" md-chip-remove >
+        			<md-icon md-svg-icon="md-close"></md-icon>
+      		  		<span class="md-visually-hidden ng-binding">Remove</span>
+   				</button>
+				<md-chip-template>
+					 <md-checkbox ng-model="$chip.isSelected">{{$chip.name}}</md-checkbox>
+        		</md-chip-template>
 			</md-chips>
+			</div>
+			<div flex=20 ng-if="allTags.length > 5"> 
+ 						<div  class="lower" ng-click="toggleAllTags()"><i ng-class = "colapsed.name"></i> 
+	 		</div>
+		</div>

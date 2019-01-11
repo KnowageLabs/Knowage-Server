@@ -33,14 +33,13 @@
 			$scope.colapsed = {};
 			$scope.colapsed.name = "tagsUp";
 			$scope.remove = true;
+			$scope.tagsArray = $scope.allTags.slice(0,5);
 			$scope.toggleAllTags = function(){
 
-				if($scope.limitation == 5){
-					$scope.limitation = undefined;
-					$scope.colapsed.name = "tagsDown";
+				if($scope.tagsArray.length == 5){
+					$scope.tagsArray = $scope.allTags ;
 				}else{
-					$scope.limitation = 5;
-					$scope.colapsed.name = "tagsUp";
+					$scope.tagsArray = $scope.allTags.slice(0,5);
 				}
 			}
 

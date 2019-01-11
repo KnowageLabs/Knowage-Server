@@ -33,10 +33,10 @@
 
 
 
-	function tagController($scope,tagsHandlerService){
+	function tagController($scope,tagsHandlerService,$mdConstant){
 
 		$scope.temporaryTag = "";
-
+		$scope.separators = [$mdConstant.KEY_CODE.COMMA]
 		$scope.removeTag = function(tag,dsTags){
 				if(tagsHandlerService.isTagExisting(tag,dsTags)){
 					tagsHandlerService.removeTagFromList(tag,dsTags);
@@ -44,12 +44,8 @@
 			}
 		};
 
-		$scope.addNewTagToList = function(){
-			if(!tagsHandlerService.isTagEmpty($scope.temporaryTag)){
-				var newTag = prepareTagForCreation();
-				tagsHandlerService.addNewTagToList(newTag,$scope.tags,$scope.allTags);
-				resetTemporaryTag();
-			}
+		$scope.addNewTagToList = function(tag){
+			return prepareTagForCreation(tag);
 		};
 
 
@@ -62,9 +58,8 @@
 				$scope.temporaryTag = "";
 		}
 
-		var prepareTagForCreation = function(){
-			$scope.temporaryTag = tagsHandlerService.trimComaSing($scope.temporaryTag);
-			return tagsHandlerService.createNewTagObject($scope.temporaryTag);
+		var prepareTagForCreation = function(tag){
+			return tagsHandlerService.createNewTagObject(tag);
 		}
 
 
