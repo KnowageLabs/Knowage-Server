@@ -1032,8 +1032,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 				break;
 		 			}
 		 		}
-
-
 	 		}
 
 	 	}
@@ -2115,6 +2113,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		var parameterItems = $scope.selectedDataSet.pars;
 		var parameterItemsLength = parameterItems.length;
+		if($scope.selectedDataSet.dsTypeCd == "Qbe")
 		 $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
 		for (j=0; j<parameterItemsLength; j++) {
 

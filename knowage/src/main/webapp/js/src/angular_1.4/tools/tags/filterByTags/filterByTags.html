@@ -1,20 +1,4 @@
 
-	  
-<!-- 				<div layout = row> -->
-				
-<!-- 					<div class="tags" flex= 80>			 -->
-<!-- 						<span ng-repeat = "one in allTags|limitTo:limitation" ng-click="toggleTag(one)"> -->
-<!-- 							<span class="tag" >{{one.name}}</span> -->
-							
-<!-- 						</span>	 -->
-<!-- 					</div> -->
-					
-<!-- 					<div flex=20 ng-if="allTags.length > 5"> -->
-<!-- 						<div  class="lower" ng-click="toggleAllTags()"><i ng-class = "colapsed.name"></i> -->
-<!-- 					</div> -->
-					
-<!-- 				</div> -->
-				
 		<div layout = row> 	
 			<div flex= 80>
 			<md-chips ng-model="tagsArray "  md-add-on-blur="false"  readonly="true" ng-click="toggleTag($chip)" >

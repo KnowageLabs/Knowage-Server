@@ -1,40 +1,21 @@
 
-
-<!-- <div flex=100> -->
-<!-- 	 <md-input-container class="md-block" >  -->
-<!-- 			<label>Tags</label>														 Translate -->
-			   
-<!-- 			<div id="addTag" class="tags">			 -->
-<!-- 				<span ng-repeat = "tag in tags" ng-click="removeTag(tag,tags)"> -->
-<!-- 					<span class="tag" >{{tag.name}}</span> -->
-<!-- 				</span>	 -->
-<!-- <br>				 -->
-<!-- 				<div> -->
-<!-- 				 <input type="text"  -->
-<!-- 				 		ng-model="temporaryTag"  -->
-<!-- 				 		ng-keyup="($event.keyCode == 13 || $event.keyCode == 188) ? addNewTagToList() : null"  -->
-<!-- 				 		placeholder="Add a Tag" />												 -->
-							
-				 							 
-<!-- 				</div>		 -->
-<!-- 				<div id="place_2" ng-if="temporaryTag != ''" style=" z-index: 2;  background-color: rgb(255, 255, 255); width: 217px;  overflow: hidden; border: 1px solid rgb(39, 79, 94); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.6) 1px 1px 3px;"> -->
-<!-- 					<div id="autoTags" tabindex="5009" style="overflow-y: hidden; outline: none;" > -->
-<!-- 								<span  class="combodiv_span" ng-repeat = "autoTag in allTags | filter : temporaryTag" ng-click="addOldTagToList(autoTag)"> -->
-<!-- 											<span>{{autoTag.name}}</span> -->
-<!-- 								</span>	 -->
-<!-- 					</div>	 -->
-<!-- 				</div>  -->
-<!-- 			</div>												        -->
-<!-- 	</md-input-container> -->
-<!--  </div> -->
- 
  <div flex=100>
   		<md-input-container class="md-block" > 
   			<label>Tags</label>		
-  			<md-chips ng-model="tags" md-transform-chip="addNewTagToList($chip)" md-separator-keys="separators" md-on-remove="removeTag($chip,tags)"
-              md-removable="true" md-enable-chip-edit="true"
-              input-aria-label="Tags">
-              <md-chip-template>
+  			<md-chips ng-model="tags" md-transform-chip="addNewTagToList($chip)"
+  					  md-separator-keys="separators" md-on-remove="removeTag($chip,tags)"
+              		  md-removable="true" md-enable-chip-edit="true"
+              	 	  input-aria-label="Tags">
+	              <md-autocomplete
+			          md-selected-item="selectedItem"
+			          md-search-text="searchText"
+			          md-items="item in allTags | filter: searchText"
+			          md-item-text="item.name"
+			          input-aria-describedby="Tags"
+			          placeholder="Search for a tag">
+	       		  		<span md-highlight-text="searchText">{{item.name}}</span>
+	    		  </md-autocomplete>
+             	 <md-chip-template>
 					 {{$chip.name}}
         		</md-chip-template>
               </md-chips>

@@ -29,19 +29,19 @@
 	}]);
 
 		function filterTagsController($scope,tagsHandlerService,$timeout){
-			$scope.limitation = 5;
+			$scope.limitation = 8;
 			$scope.colapsed = {};
 			$scope.colapsed.name = "tagsUp";
 			$scope.remove = true;
-			$scope.tagsArray = $scope.allTags.slice(0,5);
+			$scope.tagsArray = $scope.allTags.slice(0,8);
+			var endPath = "";
 			$scope.toggleAllTags = function(){
-
-				if($scope.tagsArray.length == 5){
+				if($scope.tagsArray.length == 8){
 					$scope.colapsed.name = "tagsDown";
 					$scope.tagsArray = $scope.allTags ;
 				}else{
 					$scope.colapsed.name = "tagsUp";
-					$scope.tagsArray = $scope.allTags.slice(0,5);
+					$scope.tagsArray = $scope.allTags.slice(0,8);
 				}
 			}
 
@@ -59,18 +59,22 @@
 				switch(type){
 				case "myDataSet":
 					$scope.myDatasets = response;
+					endPath = 'owned';
 					break;
 				case "sharedDataSet":
 					$scope.sharedDatasets = response;
+					endPath = 'shared';
 					break;
 				case "enterpriseDataSet":
 					$scope.enterpriseDatasets = response;
+					endPath = 'enterprise';
 					break;
 				case "ckanDataSet":
 					$scope.ckanDatasetsList = response;
 					break;
 				case "allDataSet":
 					$scope.datasets = response;
+					endPath = 'all';
 					break;
 				}
 			}
@@ -94,14 +98,17 @@
 					if(tagsHandlerService.getFilteredTagIds($scope.allTags).length == 0){
 						$scope.loadInitialForDatasets()
 					}else{
-						$scope.restServices.promiseGet(  toBeCreated,$scope.currentDatasetsTab ).then(function(response){
+						urlBuilderService.setBaseUrl("filterbytags/"+$scope.currentDatasetsTab);
+						var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
+						urlBuilderService.addQueryParams(tags);
+						$scope.restServices.promiseGet('1.0/datasets',urlBuilderService.build() ).then(function(response){
 							setListByType($scope.currentDatasetsTab,response.data);
 						})
 					}
 				}, 1000);
 			}
+
+			getPathFromTab
 }
-
-
 
 })();
