@@ -134,6 +134,9 @@
 									<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" > 
 								</md-input-container>
+								<md-checkbox class="noMargin" ng-model="selectedColumn.style.asString" aria-label="use as string" ng-if="hasPrecision(selectedColumn)" layout="row" layout-align="start center">
+					            	{{translate.load('sbi.cockpit.style.treatasstring')}}
+					          	</md-checkbox>
 								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
 									<label> Date Format</label>
 									 <md-select ng-model="selectedColumn.dateFormat">
