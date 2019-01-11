@@ -37,8 +37,10 @@
 			$scope.toggleAllTags = function(){
 
 				if($scope.tagsArray.length == 5){
+					$scope.colapsed.name = "tagsDown";
 					$scope.tagsArray = $scope.allTags ;
 				}else{
+					$scope.colapsed.name = "tagsUp";
 					$scope.tagsArray = $scope.allTags.slice(0,5);
 				}
 			}

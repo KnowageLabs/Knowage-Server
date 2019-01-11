@@ -1053,13 +1053,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
     	urlBuilderService.setBaseUrl("countDataSetSearch/");
 
-    	if($scope.searchValue!="" || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
+    	if($scope.searchValue != "" || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
 
     		var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
     		var searchValue = {"searchValue" : $scope.searchValue}
+    		if($scope.searchValue != null)
     		urlBuilderService.addQueryParams(searchValue);
+    		if(tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0)
     		urlBuilderService.addQueryParams(tags);
-    		sbiModule_restServices.promiseGet("1.0/datasets",  urlBuilderService.build())
+    		var url = tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0 || $scope.searchValue != null ?  urlBuilderService.build() : "countDataSets";
+    		sbiModule_restServices.promiseGet("1.0/datasets",  url)
     		.then(function(response) {
     			$scope.numOfDs = response.data;
     			$scope.loadDatasetList(0, itemsPerPage, $scope.searchValue,  columnOrderingLabel,reverseOrdering);

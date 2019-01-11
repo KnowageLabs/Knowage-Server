@@ -43,7 +43,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	var urlBuilderService = sbiModule_urlBuilderService;
 	$scope.maxSizeStr = maxSizeStr;
-
+	$scope.location == "workspace";
 	$scope.translate = sbiModule_translate;
 	$scope.i18n = sbiModule_i18n;
 

@@ -17,7 +17,7 @@
 				
 		<div layout = row> 	
 			<div flex= 80>
-			<md-chips ng-model="tagsArray "  md-add-on-blur="false" md-on-select="toggleTag($chip)"  >
+			<md-chips ng-model="tagsArray "  md-add-on-blur="false"  readonly="true" ng-click="toggleTag($chip)" >
 		 		 <button ng-if="false" md-chip-remove >
         			<md-icon md-svg-icon="md-close"></md-icon>
       		  		<span class="md-visually-hidden ng-binding">Remove</span>
