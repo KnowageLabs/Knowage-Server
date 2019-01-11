@@ -427,13 +427,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
 		IStatement statement = qbeDataSet.getStatement();
 
-		Map<String, Object> envs = getEnv();
-		String stringDrivers = envs.get(DRIVERS).toString();
+		Map<String, String> envs = getEnv();
+		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("Drivers cannot be transformed from string to map");
 		}
 		dataSet.setDrivers(drivers);
 
