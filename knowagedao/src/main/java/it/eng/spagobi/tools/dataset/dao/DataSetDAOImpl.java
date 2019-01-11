@@ -472,6 +472,86 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return results;
 	}
 
+	@Override
+	public List<IDataSet> loadDatasetsByTags(UserProfile user, List<Integer> tagIds, String scope) {
+		logger.debug("IN");
+		List<IDataSet> toReturn = new ArrayList<>();
+		Session session = null;
+		Set<Domain> categoryList = null;
+		String owner = null;
+		String domain = null;
+		try {
+			Assert.assertNotNull(user, "UserProfile object cannot be null");
+
+			StringBuffer statement = new StringBuffer("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = ? ");
+
+			if (scope.equalsIgnoreCase("owned") || scope.equalsIgnoreCase("shared")) {
+				owner = user.getUserId().toString();
+				if (owner != null) {
+					if (scope.equalsIgnoreCase("owned"))
+						statement.append("and dst.dataSet.owner = :owner ");
+					else
+						statement.append("and dst.dataSet.owner != :owner ");
+				}
+			}
+
+			if (scope.equalsIgnoreCase("enterprise") || scope.equalsIgnoreCase("shared")) {
+				statement.append("and dst.dataSet.scope.valueCd = :domain ");
+				if (scope.equalsIgnoreCase("enterprise"))
+					domain = scope.toUpperCase();
+				else
+					domain = "USER";
+
+				categoryList = UserUtilities.getDataSetCategoriesByUser(user);
+				if (categoryList != null && !categoryList.isEmpty()) {
+					statement.append("and dst.dataSet.category.valueCd in (:categories) ");
+				}
+			}
+
+			if (!tagIds.isEmpty()) {
+				statement.append("and dst.dsTagId.tagId in (:tagIds)");
+			}
+
+			session = getSession();
+			Query query = session.createQuery(statement.toString());
+
+			// Always get active versions
+			query.setBoolean(0, true);
+
+			if (owner != null) {
+				query.setString("owner", owner);
+			}
+
+			if (domain != null)
+				query.setString("domain", domain);
+
+			if (categoryList != null && !categoryList.isEmpty()) {
+				Iterator<Domain> it = categoryList.iterator();
+				List<String> categoryValues = new ArrayList<>();
+				while (it.hasNext()) {
+					categoryValues.add(it.next().getValueName());
+				}
+
+				query.setParameterList("categories", categoryValues);
+			}
+
+			if (!tagIds.isEmpty()) {
+				query.setParameterList("tagIds", tagIds);
+			}
+
+			toReturn = executeQuery(query, session);
+		} catch (Exception e) {
+			logger.error("An error has occured while filtering Enterprise Datasets by Tags", e);
+			throw new SpagoBIDAOException("An unexpected error has occured while filtering Datasets by Tags", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	// ========================================================================================
 	// CREATE operations (Crud)
 	// ========================================================================================
@@ -860,7 +940,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List<IDataSet> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
-		StringBuilder sb;
+		StringBuffer sb;
 		String entityName = "";
 		String valuefilter = null;
 		String typeFilter = null;
@@ -901,10 +981,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			if (tagIds.isEmpty()) {
-				sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
+				sb = new StringBuffer("from SbiDataSet ds where ds.active = true ");
 				entityName = "ds.";
 			} else {
-				sb = new StringBuilder("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = true ");
+				sb = new StringBuffer("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = true ");
 				entityName = "dst.dataSet.";
 			}
 
@@ -1522,7 +1602,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Session session = null;
 		Transaction transaction = null;
 		Long resultNumber;
-		StringBuilder sb;
+		StringBuffer sb;
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
@@ -1533,9 +1613,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			// If Tags not selected, make common query, no need for joining
 			if (tagIds.isEmpty()) {
-				sb = new StringBuilder("select count(*) from SbiDataSet ds where ds.active = ? ");
+				sb = new StringBuffer("select count(*) from SbiDataSet ds where ds.active = ? ");
 			} else {
-				sb = new StringBuilder("select count(distinct dst.dataSet.label) from SbiDatasetTag dst where dst.dataSet.active = ? ");
+				sb = new StringBuffer("select count(distinct dst.dataSet.label) from SbiDatasetTag dst where dst.dataSet.active = ? ");
 			}
 
 			// Search Datasets only by Search Box value

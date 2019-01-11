@@ -79,6 +79,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public List<IDataSet> loadDataSetOlderVersions(Integer dsId);
 
+	public List<IDataSet> loadDatasetsByTags(UserProfile user, List<Integer> tagIds, String type);
+
 	// ========================================================================================
 	// CEATE operations (Crud)
 	// ========================================================================================

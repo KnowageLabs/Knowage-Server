@@ -801,6 +801,54 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("filterbytags/owned")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String filterOwnedDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
+		logger.debug("IN");
+		try {
+			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "owned");
+			return serializeDataSets(dataSets, null);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("filterbytags/enterprise")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String filterEnterpriseDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
+		logger.debug("IN");
+		try {
+			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "enterprise");
+			return serializeDataSets(dataSets, null);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("filterbytags/shared")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String filterSharedDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
+		logger.debug("IN");
+		try {
+			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "shared");
+			return serializeDataSets(dataSets, null);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1161,7 +1209,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	private String getCommonQuery(JSONObject ordering) throws JSONException {
 		logger.debug("IN");
-		StringBuilder sb = new StringBuilder("from SbiDataSet h where h.active = true ");
+		StringBuffer sb = new StringBuffer("from SbiDataSet h where h.active = true ");
 
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
