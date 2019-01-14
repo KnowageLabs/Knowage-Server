@@ -515,6 +515,21 @@ public class DataSetResource extends AbstractDataSetResource {
 		return filter;
 	}
 
+	@GET
+	@Path("/{label}/preview")
+	public void openPreview(@PathParam("label") String label) {
+		logger.debug("IN");
+		try {
+			response.setContentType(MediaType.TEXT_HTML);
+			request.getRequestDispatcher("/WEB-INF/jsp/commons/preview.jsp").forward(request, response);
+			response.flushBuffer();
+		} catch (Exception e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
