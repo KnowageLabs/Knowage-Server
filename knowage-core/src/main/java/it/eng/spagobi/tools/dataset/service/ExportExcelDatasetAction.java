@@ -72,7 +72,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("Drivers cannot be transformed from json object to map");
+			throw new SpagoBIServiceException(this.getActionName(), "Impossible to transform drivers from json object to map", e);
 		}
 		dataSet.setDrivers(drivers);
 

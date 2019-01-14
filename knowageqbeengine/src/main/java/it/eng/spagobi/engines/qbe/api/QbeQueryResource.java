@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -434,6 +435,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 		} catch (Exception e) {
 			logger.debug("Drivers cannot be transformed from string to map");
+			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
 		dataSet.setDrivers(drivers);
 
@@ -929,7 +931,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("Impossible to deserialize query");
+			throw new SpagoBIRestServiceException("Impossible to deserialize query", buildLocaleFromSession(), e);
 		}
 
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -945,7 +948,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("Drivers cannot be transformed from string to map");
+			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
 		dataSet.setDrivers(drivers);
 
@@ -964,7 +968,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			if (iterator != null) {
 				iterator.close();
 			}
-			throw e;
+			logger.debug("Query results cannot be exported");
+			throw new SpagoBIRestServiceException("Query results cannot be exported", buildLocaleFromSession(), e);
 		}
 	}
 
