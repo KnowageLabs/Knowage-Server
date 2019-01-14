@@ -2672,5 +2672,10 @@
 				font-size: $mediumFontSize;
 			}
 		}
-	}    
+	}
+	cockpit-selector-widget {
+		.cockpitSelectorWidget {
+			height: 100%;
+		}
+	}
 }
