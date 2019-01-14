@@ -393,10 +393,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.saveConfiguration=function(){
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
+			 $scope.$destroy();
 			 finishEdit.resolve();
    	  	}
    	  	$scope.cancelConfiguration=function(){
    	  		mdPanelRef.close();
+   	  		$scope.$destroy();
    	  		finishEdit.reject();
    	  	}
 
