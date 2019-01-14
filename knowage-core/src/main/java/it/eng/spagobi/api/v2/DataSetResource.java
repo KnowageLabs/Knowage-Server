@@ -516,8 +516,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@GET
-	@Path("/{label}/preview")
-	public void openPreview(@PathParam("label") String label) {
+	@Path("/preview")
+	public void openPreview() {
 		logger.debug("IN");
 		try {
 			response.setContentType(MediaType.TEXT_HTML);
