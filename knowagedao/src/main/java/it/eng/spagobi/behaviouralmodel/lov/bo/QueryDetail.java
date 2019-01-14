@@ -297,19 +297,19 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *      executionInstance) throws Exception;
 	 */
 	@Override
-	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> bIObjectParameters,
-			Locale locale) throws Exception {
-		return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers, Locale locale)
+			throws Exception {
+		return getLovResult(profile, dependencies, drivers, locale, false);
 	}
 
-	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> documentParameters,
-			Locale locale, boolean getAllColumns) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers, Locale locale,
+			boolean getAllColumns) throws Exception {
 		logger.debug("IN");
-		Map<String, String> parameters = getParametersNameToValueMap(documentParameters);
-		String statement = getWrappedStatement(dependencies, documentParameters);
+		Map<String, String> parameters = getParametersNameToValueMap(drivers);
+		String statement = getWrappedStatement(dependencies, drivers);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		if (parameters != null && !parameters.isEmpty()) {
-			Map<String, String> types = getParametersNameToTypeMap(documentParameters);
+			Map<String, String> types = getParametersNameToTypeMap(drivers);
 			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 		}
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
@@ -329,13 +329,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *            The execution instance (useful to retrieve dependencies values)
 	 * @return the in-line view that filters the original lov using the dependencies.
 	 */
-	public String getWrappedStatement(List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters) {
+	public String getWrappedStatement(List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers) {
 		logger.debug("IN");
 		String result = getQueryDefinition();
-		if (dependencies != null && dependencies.size() > 0 && BIObjectParameters != null) {
+		if (dependencies != null && dependencies.size() > 0 && drivers != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
-			buildWhereClause(buffer, dependencies, BIObjectParameters);
+			buildWhereClause(buffer, dependencies, drivers);
 			result = buffer.toString();
 		}
 		logger.debug("OUT.result=" + result);
@@ -357,18 +357,18 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @param executionInstance
 	 *            The execution instance
 	 */
-	private void buildWhereClause(StringBuffer buffer, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters) {
+	private void buildWhereClause(StringBuffer buffer, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers) {
 		buffer.append(" WHERE ");
 		if (dependencies.size() == 1) {
 			AbstractParuse dependency = dependencies.get(0);
-			addFilter(buffer, dependency, BIObjectParameters);
+			addFilter(buffer, dependency, drivers);
 		} else if (dependencies.size() == 2) {
 			AbstractParuse leftPart = dependencies.get(0);
 			AbstractParuse rightPart = dependencies.get(1);
 			String lo = leftPart.getLogicOperator();
-			addFilter(buffer, leftPart, BIObjectParameters);
+			addFilter(buffer, leftPart, drivers);
 			buffer.append(" " + lo + " ");
-			addFilter(buffer, rightPart, BIObjectParameters);
+			addFilter(buffer, rightPart, drivers);
 		} else {
 			// build the expression
 			Iterator iterOps = dependencies.iterator();
@@ -377,7 +377,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				if (op.getPreCondition() != null) {
 					buffer.append(" " + op.getPreCondition() + " ");
 				}
-				addFilter(buffer, op, BIObjectParameters);
+				addFilter(buffer, op, drivers);
 				if (op.getPostCondition() != null) {
 					buffer.append(" " + op.getPostCondition() + " ");
 				}
