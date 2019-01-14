@@ -46,16 +46,16 @@
 					  	
 <!-- 				  	</div> -->
 <!-- 				</md-toolbar> -->
-				<div flex=80  > 
+				<div flex > 
 				      <render-parameters driverable-object = "selectedDataSet" param = "param" ng-repeat="param in selectedDataSet.pars" ></render-parameters> 
 				<form name = "driversForm" >
 				      <document-paramenter-element execProperties="driverableObject"  parameter="parameter" ng-repeat="parameter in drivers"  ng-show="parameter.visible" layout="row" layout-align="start" />
 				</form>
 				</div>
-				<div flex=20 >
-						<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="driversForm.$invalid" ng-click="executeParameter()">
-							{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-						</md-button>	
+				<div>
+					<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="driversForm.$invalid" ng-click="executeParameter()">
+						{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+					</md-button>	
 				</div>
 			
 			    </md-sidenav>
