@@ -17,19 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.metadata;
 
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,6 +32,17 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.tag.SbiTag;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * This is the class used by the DAO to map the table <code>sbi_meta_data</code>. Given the current implementation of the DAO this is the class used by
@@ -108,6 +111,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	private SbiDomains scope = null;
 
 	private SbiFederationDefinition federation = null;
+
+	private Set<SbiTag> tags = new HashSet<>();
 
 	/**
 	 * default constructor.
@@ -483,7 +488,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Used to deserialize raw json data as is
-	 * */
+	 */
 	private static class JsonRawDeserializer extends JsonDeserializer<String> {
 
 		@Override
@@ -661,6 +666,14 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	public void setPersistedHDFS(boolean persistedHDFS) {
 		this.persistedHDFS = persistedHDFS;
+	}
+
+	public Set<SbiTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<SbiTag> tags) {
+		this.tags = tags;
 	}
 
 }

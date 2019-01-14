@@ -506,6 +506,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (categoryList != null && !categoryList.isEmpty()) {
 					statement.append("and dst.dataSet.category.valueCd in (:categories) ");
 				}
+
+				if (scope.equalsIgnoreCase("shared"))
+					statement.append("and dst.dataSet.federation is null ");
 			}
 
 			if (!tagIds.isEmpty()) {
@@ -967,9 +970,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			if (filters != null) {
-				valuefilter = (String) filters.get(SpagoBIConstants.VALUE_FILTER);
-				typeFilter = (String) filters.get(SpagoBIConstants.TYPE_FILTER);
-				columnFilter = (String) filters.get(SpagoBIConstants.COLUMN_FILTER);
+				valuefilter = filters.getString(SpagoBIConstants.VALUE_FILTER);
+				typeFilter = filters.getString(SpagoBIConstants.TYPE_FILTER);
+				columnFilter = filters.getString(SpagoBIConstants.COLUMN_FILTER);
 			}
 
 			if (ordering != null) {

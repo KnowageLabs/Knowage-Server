@@ -88,6 +88,17 @@
             <column name="FEDERATION_ID" not-null="false" />
         </many-to-one>
 
+		<set name="tags" table="SBI_DATA_SET_TAG" lazy="false">
+            <key>
+                <column name="DS_ID" not-null="true" />
+                <column name="VERSION_NUM" not-null="true" />
+                <column name="ORGANIZATION" not-null="true" />
+            </key>
+            <many-to-many entity-name="it.eng.spagobi.tools.tag.SbiTag">
+                <column name="TAG_ID" not-null="true" />
+            </many-to-many>
+        </set>
+	
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

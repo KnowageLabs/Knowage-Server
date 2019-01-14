@@ -12,7 +12,15 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -118,11 +126,14 @@ public abstract class AbstractDataSet implements IDataSet {
 	private FederationDefinition datasetFederation;
 	private UserProfile userProfile;
 
+	private Set tags;
+
 	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
 	public AbstractDataSet() {
 		super();
 		behaviours = new HashMap();
+		tags = new HashSet();
 	}
 
 	@Override
@@ -633,7 +644,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persisted the persisted to set
+	 * @param persisted
+	 *            the persisted to set
 	 */
 	@Override
 	public void setPersisted(boolean persisted) {
@@ -660,7 +672,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param scheduled the scheduled to set
+	 * @param scheduled
+	 *            the scheduled to set
 	 */
 	@Override
 	public void setScheduled(boolean scheduled) {
@@ -696,7 +709,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persistTableName the persistTableName to set
+	 * @param persistTableName
+	 *            the persistTableName to set
 	 */
 	@Override
 	public void setPersistTableName(String persistTableName) {
@@ -712,7 +726,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param configuration the configuration to set
+	 * @param configuration
+	 *            the configuration to set
 	 */
 	@Override
 	public void setConfiguration(String configuration) {
@@ -728,7 +743,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param userIn the userIn to set
+	 * @param userIn
+	 *            the userIn to set
 	 */
 	@Override
 	public void setUserIn(String userIn) {
@@ -744,7 +760,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param dateIn the dateIn to set
+	 * @param dateIn
+	 *            the dateIn to set
 	 */
 	@Override
 	public void setDateIn(Date dateIn) {
@@ -760,7 +777,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param noActiveVersions the noActiveVersions to set
+	 * @param noActiveVersions
+	 *            the noActiveVersions to set
 	 */
 	@Override
 	public void setNoActiveVersions(List noActiveVersions) {
@@ -776,7 +794,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param owner the owner to set
+	 * @param owner
+	 *            the owner to set
 	 */
 	@Override
 	public void setOwner(String owner) {
@@ -842,10 +861,14 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * TemporaryTableManager; in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a
 	 * datasource for writing must be provided.
 	 *
-	 * @param fieldName The dataset's field
-	 * @param start     The offset on results
-	 * @param limit     The limit on result
-	 * @param filter    The optional filter
+	 * @param fieldName
+	 *            The dataset's field
+	 * @param start
+	 *            The offset on results
+	 * @param limit
+	 *            The limit on result
+	 * @param filter
+	 *            The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
 	@Override
@@ -1095,4 +1118,15 @@ public abstract class AbstractDataSet implements IDataSet {
 	public Map<String, Object> getDrivers() {
 		return this.runtimeDrivers;
 	}
+
+	@Override
+	public Set getTags() {
+		return tags;
+	}
+
+	@Override
+	public void setTags(Set tags) {
+		this.tags = tags;
+	}
+
 }

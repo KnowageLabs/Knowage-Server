@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.bo;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -66,7 +67,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param wrappedDataset the wrappedDataset to set
+	 * @param wrappedDataset
+	 *            the wrappedDataset to set
 	 */
 	public void setWrappedDataset(IDataSet wrappedDataset) {
 		this.wrappedDataset = wrappedDataset;
@@ -81,7 +83,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param organization the organization to set
+	 * @param organization
+	 *            the organization to set
 	 */
 	@Override
 	public void setOrganization(String organization) {
@@ -96,7 +99,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 *            the version to set
 	 */
 	public void setVersionNum(Integer version) {
 		this.version = version;
@@ -110,7 +114,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param isActive the isActive to set
+	 * @param isActive
+	 *            the isActive to set
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
@@ -743,5 +748,15 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void setDrivers(Map<String, Object> drivers) {
 		wrappedDataset.setDrivers(drivers);
+	}
+
+	@Override
+	public Set getTags() {
+		return wrappedDataset.getTags();
+	}
+
+	@Override
+	public void setTags(Set tags) {
+		wrappedDataset.setTags(tags);
 	}
 }

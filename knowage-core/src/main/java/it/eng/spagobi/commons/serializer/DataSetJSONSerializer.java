@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -40,6 +41,7 @@ import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
+import it.eng.spagobi.tools.tag.SbiTag;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -138,6 +140,8 @@ public class DataSetJSONSerializer implements Serializer {
 
 	public static final String IS_REALTIME = "isRealtime";
 	public static final String IS_ITERABLE = "isIterable";
+
+	public static final String TAGS = "tags";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -450,6 +454,18 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());
 			result.put(SCOPE_ID, ds.getScopeId());
+
+			Set<SbiTag> dsTags = ds.getTags();
+			JSONArray tags = new JSONArray();
+			Iterator<SbiTag> it = dsTags.iterator();
+			while (it.hasNext()) {
+				SbiTag tag = it.next();
+				JSONObject tagObj = new JSONObject();
+				tagObj.put("tagId", tag.getTagId());
+				tagObj.put("name", tag.getName());
+				tags.put(tagObj);
+			}
+			result.put(TAGS, tags);
 		} catch (Throwable t) {
 			IDataSet ds = (IDataSet) o;
 			if (ds instanceof VersionedDataSet) {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -767,6 +768,18 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		public void setDrivers(Map<String, Object> drivers) {
 
 			setDrivers(drivers);
+		}
+
+		@Override
+		public Set getTags() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setTags(Set tags) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}
