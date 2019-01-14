@@ -102,7 +102,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
  */
 
 @Path("/2.0/datasets")
@@ -137,11 +136,11 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback,
-			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
-			@QueryParam("spatialOnly") boolean spatialOnly) {
+							  @QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
+							  @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
+							  @QueryParam("spatialOnly") boolean spatialOnly) {
 		logger.debug("IN");
 
 		if ("no".equalsIgnoreCase(includeDerived)) {
@@ -177,7 +176,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public String getDataSet(@PathParam("label") String label) {
 		return super.getDataSet(label);
 	}
@@ -186,13 +185,13 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public Response execute(@PathParam("label") String label, String body) {
 		return super.execute(label, body);
 	}
 
 	@POST
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
@@ -228,7 +227,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@PUT
 	@Path("/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
 
@@ -265,7 +264,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	@DELETE
 	@Path("/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public Response deleteDataset(@PathParam("label") String label) {
 		return super.deleteDataset(label);
 	}
@@ -467,7 +466,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	private SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
-			Map<String, String> columnAliasToColumnName) throws JSONException {
+								   Map<String, String> columnAliasToColumnName) throws JSONException {
 		SimpleFilter filter = null;
 
 		if (operatorString != null) {
@@ -519,10 +518,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
-			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
-			@QueryParam("nearRealtime") boolean isNearRealtime) {
+												 @DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
+												 @QueryParam("nearRealtime") boolean isNearRealtime) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -559,9 +558,110 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@POST
+	@Path("/{label}/preview")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	public String getDataStorePreview(@PathParam("label") String label, String body) {
+		try {
+			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
+
+			String aggregations = null;
+			String parameters = null;
+			String likeSelections = null;
+			int start = -1;
+			int limit = -1;
+
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+
+				if (jsonBody.has("start")) {
+					start = jsonBody.getInt("start");
+				}
+
+				if (jsonBody.has("limit")) {
+					limit = jsonBody.getInt("limit");
+				}
+
+				JSONArray jsonFilters = jsonBody.optJSONArray("filters");
+				if (jsonFilters != null && jsonFilters.length() > 0) {
+					JSONObject jsonLikeSelections = new JSONObject();
+
+					for (int i = 0; i < jsonFilters.length(); i++) {
+						JSONObject jsonFilter = jsonFilters.getJSONObject(i);
+						jsonLikeSelections.put(jsonFilter.getString("column"), jsonFilter.get("value"));
+					}
+
+					likeSelections = new JSONObject().put(label, jsonLikeSelections).toString();
+				}
+
+				String sortingColumn = null;
+				String sortingType = null;
+				if (jsonBody.has("sorting")) {
+					JSONObject jsonSorting = jsonBody.optJSONObject("sorting");
+					sortingColumn = jsonSorting.getString("column");
+					sortingType = jsonSorting.getString("order");
+				}
+
+				JSONArray jsonMeasures = new JSONArray();
+				JSONArray jsonCategories = new JSONArray();
+
+				JSONObject jsonDataSets = new JSONObject(getDataSets(null, null, true, null, null, label, true, null, false));
+				JSONObject jsonDataSet = jsonDataSets.getJSONArray("item").getJSONObject(0);
+				JSONArray jsonFields = jsonDataSet.getJSONObject("metadata").getJSONArray("fieldsMeta");
+				for (int i = 0; i < jsonFields.length(); i++) {
+					JSONObject jsonField = jsonFields.getJSONObject(i);
+					JSONObject json = new JSONObject();
+					String alias = jsonField.getString("alias");
+					json.put("id", alias);
+					json.put("alias", alias);
+					json.put("columnName", alias);
+					json.put("orderType", alias.equals(sortingColumn) ? sortingType : "");
+					json.put("orderColumn", alias);
+					json.put("funct", "NONE");
+
+					if ("ATTRIBUTE".equals(jsonField.getString("fieldType"))) {
+						jsonCategories.put(json);
+					} else {
+						jsonMeasures.put(json);
+					}
+				}
+
+				JSONObject jsonAggregations = new JSONObject();
+				jsonAggregations.put("measures", jsonMeasures);
+				jsonAggregations.put("categories", jsonCategories);
+				aggregations = jsonAggregations.toString();
+
+				JSONArray jsonParameters = jsonDataSet.getJSONArray("parameters");
+				JSONArray jsonPars = jsonBody.optJSONArray("pars");
+				if (jsonParameters != null) {
+					JSONObject json = new JSONObject();
+					for (int i = 0; i < jsonParameters.length(); i++) {
+						JSONObject jsonParameter = jsonParameters.getJSONObject(i);
+						String columnName = jsonParameter.getString("name");
+						json.put(columnName, jsonParameter.get("defaultValue"));
+						for (int j = 0; j < jsonPars.length(); j++) {
+							JSONObject jsonPar = jsonPars.getJSONObject(j);
+							if (columnName.equals(jsonPar.getString("name"))) {
+								json.put(columnName, jsonPar.get("value"));
+								break;
+							}
+						}
+					}
+					parameters = json.toString();
+				}
+			}
+
+			timing.stop();
+			return getDataStore(label, parameters, null, likeSelections, -1, aggregations, null, start, limit, true);
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		}
+	}
+
+	@POST
 	@Path("/addDatasetInCache")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
