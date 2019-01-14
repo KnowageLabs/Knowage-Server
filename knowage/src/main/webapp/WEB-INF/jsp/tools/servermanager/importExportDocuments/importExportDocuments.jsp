@@ -59,7 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar>
 
 		<md-content class="mainContainer" flex layout-wrap> <!-- 		md-center-tabs md-stretch-tabs="always" -->
-		<md-tabs layout-fill class="absolute"> <!-- Export -->
+		<md-tabs layout-fill class="absolute"> 
+		<!-- Export -->
 			<md-tab id="exportTab"> 
 		 		<md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
@@ -105,26 +106,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									ng-model="checkboxs.exportBirt" aria-label="Export BIRT">{{translate.load("SBISet.importexport.expBirtTranslation","component_impexp_messages");}}</md-checkbox>
 							    <md-checkbox class="little-check"
 									ng-model="checkboxs.exportScheduler" aria-label="Export sched">{{translate.load("SBISet.importexport.expScheduler","component_impexp_messages");}}</md-checkbox>
+								<md-checkbox class="little-check" 
+									ng-model="checkboxs.exportSelFunc" aria-label="Export in sel fun">{{translate.load("SBISet.importexport.expSelFun", "component_impexp_messages")}}</md-checkbox>
 							</div>
-							<div layout-padding layout-gt-sm="row"
-								layout-align-gt-sm="start center" layout-sm="column">
-								<h4>{{translate.load("sbi.impexpdoc.filterdoc")}}:</h4>
-								<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
-								<md-button class="md-icon-button" ng-click="filterDocuments()">
-							 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
-								 </md-button>
-								 <md-button class="md-icon-button" ng-click="removeFilter()">
-							 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
-								 </md-button>
+							<div layout="row">
+								<div layout-padding layout-gt-sm="row"
+									layout-align-gt-sm="start center" layout-sm="column">
+									<h4>{{translate.load("sbi.impexpdoc.filterdoc")}}:</h4>
+									<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+									<md-button class="md-icon-button" ng-click="filterDocuments()">
+								 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+									 </md-button>
+									 <md-button class="md-icon-button" ng-click="removeFilter()">
+								 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+									 </md-button>
+								</div>
+								
+								<div layout-padding layout-gt-sm="row" layout-align-gt-sm="start center" layout-sm="column">
+									<h4>{{translate.load("sbi.impexpdoc.filterByStatus")}}:</h4>
+									<md-checkbox class="little-check" ng-model="filterByStatus.development" aria-label="Development" ng-true-value="'DEV'" ng-false-value="''" ng-change="filterDoc()">{{translate.load("sbi.impexpdoc.filterByStatus.dev")}}</md-checkbox>
+									<md-checkbox class="little-check" ng-model="filterByStatus.test" aria-label="Test" ng-true-value="'TEST'" ng-false-value="''" ng-change="filterDoc()">{{translate.load("sbi.impexpdoc.filterByStatus.test")}}</md-checkbox>
+									<md-checkbox class="little-check" ng-model="filterByStatus.released" aria-label="Released" ng-true-value="'REL'" ng-false-value="''" ng-change="filterDoc()">{{translate.load("sbi.impexpdoc.filterByStatus.released")}}</md-checkbox>
+								</div>
 							</div>
+							
 							<div layout-padding>
 								<!--
  								<document-tree ng-model="folders" id="impExpTree" create-tree="true"
 									selected-item="selected" multi-select="true" show-files="true">
 								</document-tree>
 								-->
-								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true"
-									selected-item="selected" multi-select="true" show-files="true" force-visibility="true">
+								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true" leaf-key="biObjects" text-search="test" fields-search="['stateCode']"
+									selected-item="selected" multi-select="true" show-files="true" force-visibility="false">
 								</component-tree>
 							</div>
 						</div>

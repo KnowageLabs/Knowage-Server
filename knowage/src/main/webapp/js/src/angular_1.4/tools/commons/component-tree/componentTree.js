@@ -76,6 +76,8 @@
 						var label = (attrs.textToShowKey &&  attrs.textToShowKey.trim() != '')? attrs.textToShowKey.trim() : 'name' ;
 
 						var leafIconCls = (attrs.leafIconCls &&  attrs.leafIconCls != '')? attrs.leafIconCls : 'fa fa-file';
+						
+						scope.stateCode = "stateCode";
 
 						scope.label = label;
 						scope.subfoldersId = subfoldersId;
@@ -517,7 +519,8 @@
 				visible = $scope.fieldsSearch.length == 0 || $scope.textSearch.length == 0;
 				//search the text filter in each fields specify in filterBy object, until visible == false
 				for (var i =0; visible == false && i < $scope.fieldsSearch.length;i++) {
-					visible = element[$scope.fieldsSearch[i]].toUpperCase().indexOf($scope.textSearch.toUpperCase()) > -1;
+					if(element[$scope.fieldsSearch[i]])
+						visible = $scope.textSearch.toUpperCase().indexOf(element[$scope.fieldsSearch[i]].toUpperCase()) > -1;
 				}
 
 				if (element.type == 'folder' && element[$scope.subfoldersId] !==undefined ) {
