@@ -27,6 +27,43 @@
 	 var tagsForSending = {};
 	 var tagsForFiltering = [];
 
+	 var ownedDS = [];
+	 var sharedDS = [];
+	 var enterprise = [];
+	 var allDS = [];
+
+	 var getOriginalDatasets = function(myDs,shared,enterprise,all){
+			ownedDS = angular.copy(myDs);
+			sharedDS = angular.copy(shared);
+			enterprise = angular.copy(enterprise);
+			allDS = angular.copy(all);
+		}
+	 var restoreTags = function(tags){
+		 for(var i = 0; i< tags.length; i++){
+			 if(tags[i].isSelected)
+				 tags[i].isSelected = false;
+		 }
+	 }
+
+	 var restoreData = function(type){
+				switch(type){
+				case "myDataSet":
+					return ownedDS;
+					break;
+				case "sharedDataSet":
+					return sharedDS;
+					break;
+				case "enterpriseDataSet":
+					return enterprise;
+					break;
+				case "ckanDataSet":
+					break;
+				case "allDataSet":
+					return allDS;
+					break;
+				}
+			}
+
 		 return{
 			 setTags : function(sentTags){
 				 tags = sentTags;
@@ -100,11 +137,49 @@
 					 tagIds.push(tags[i].tagId)
 				 }
 				 return tagIds;
+			 },
+
+			setOwnedDS : function(owned){
+				ownedDS = angular.copy(owned);
+			},
+			getOwnedDS : function(){
+				return ownedDS;
+			},
+
+			setSharedDS : function(shared){
+				sharedDS = angular.copy(shared);
+			},
+			getSharedDS : function(){
+				return sharedDS;
+			},
+
+			setEnterpriseDS : function(enterprise){
+				enterpriseDS = angular.copy(enterprise);
+			},
+			getEnterpriseDS : function(){
+				return enterprise;
+			},
+
+			setAllDS : function(all){
+				allDS = angular.copy(all);
+			},
+			getAllDS : function(){
+				return allDS;
+			},
+
+			 getFilteredTags : function(tags){
+				 var tempTags = [];
+				 for(var i = 0;i<tags.length; i++){
+					 if(tags[i].isSelected)
+						 tempTags.push(tags[i])
+				 }
+				 return tempTags;
+			 },
+
+			 restore : function(tags,type,data){
+				 restoreTags(tags);
+				 return restoreData(type,data);
 			 }
-
-
-
-
 		 }
 
 	 }

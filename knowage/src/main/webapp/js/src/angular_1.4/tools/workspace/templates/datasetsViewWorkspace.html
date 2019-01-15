@@ -7,7 +7,7 @@
 				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')" md-active="activateMyDatasetsTab">
 				       
 				       <md-tab-body>
-				       	   	<filter-by-tags></filter-by-tags>
+				       	   	<filter-by-tags tags-array="allTags" current-datasets-tab="currentDatasetsTab" datasets="myDatasets"></filter-by-tags>
 					 	  <dataset-view flex style='overflow: auto;' ng-model="myDatasets"
 							show-grid-view="showGridView"
 							show-qbe-enabled="true"
@@ -31,6 +31,7 @@
 			 		
 				 	<md-tab id="enterprise-dataset" label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
 				     	<md-tab-body>
+				     	 	<filter-by-tags tags-array="allTags" current-datasets-tab="currentDatasetsTab" datasets="enterpriseDatasets"></filter-by-tags>
 					 	  	<dataset-view flex style='overflow: auto;' ng-model="enterpriseDatasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"
@@ -48,6 +49,7 @@
 				 	 
 				 	<md-tab label="{{translate.load('sbi.workspace.dataset.shared')}}" flex ng-click="switchDatasetsTab('sharedDataSet')">
 				      	<md-tab-body>
+				      	 	<filter-by-tags tags-array="allTags" current-datasets-tab="currentDatasetsTab" datasets="sharedDatasets"></filter-by-tags>
 					 	  	<dataset-view flex style='overflow: auto;' ng-model="sharedDatasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"
@@ -127,6 +129,7 @@
 				 	
 				 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
 				      	<md-tab-body>
+				      	 	<filter-by-tags tags-array="allTags" current-datasets-tab="currentDatasetsTab" datasets="datasets"></filter-by-tags>
 					 	  	<dataset-view flex style='overflow: auto;' ng-model="datasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"

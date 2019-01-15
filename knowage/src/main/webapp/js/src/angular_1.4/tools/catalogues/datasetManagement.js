@@ -1041,6 +1041,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.customAttributes = [];
     }
 
+    $scope.filterByTags = function(){
+    	$timeout(function () {
+			$scope.datasetLike($scope.searchValue,$scope.itemsPerPage, $scope.currentPageNumber, $scope.columnsSearch, $scope.columnOrdering, $scope.reverseOrdering)
+		 }, 1000);
+    }
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber, columnsSearch, columnOrdering, reverseOrdering) {
     	$scope.reverseOrdering = reverseOrdering;
     	$scope.columnOrdering = columnOrdering;

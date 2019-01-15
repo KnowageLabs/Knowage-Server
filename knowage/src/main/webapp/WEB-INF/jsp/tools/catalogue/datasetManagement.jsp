@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  .lower{
  padding:5px;
  }
- i  {
+div.lower i  {
   border: solid black;
   border-width: 0 3px 3px 0;
   display: inline-block;
@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<angular-list-detail>
 	        
 	       	<list label="translate.load('sbi.roles.datasets')"  new-function="createNewDataSet">
-	       	<filter-by-tags></filter-by-tags>
+	       	<filter-by-tags tags-array="allTags" current-datasets-tab="'catalog'" filter-function="filterByTags()"></filter-by-tags>
 		       	<angular-table
 			     	flex
 				 	id="datasetList_id" 

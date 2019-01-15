@@ -43,10 +43,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	var urlBuilderService = sbiModule_urlBuilderService;
 	$scope.maxSizeStr = maxSizeStr;
-	$scope.location == "workspace";
+	$scope.location = "workspace";
 	$scope.translate = sbiModule_translate;
 	$scope.i18n = sbiModule_i18n;
-
+	$scope.urlBuilder = urlBuilderService
+	$scope.restServices = sbiModule_restServices;
 	$scope.showCkanIntegration = sbiModule_user.functionalities.indexOf("CkanIntegrationFunctionality")>-1;
 
 	$scope.selectedDataset = undefined;
@@ -147,7 +148,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
-
+			tagsHandlerService.setAllDS(response.data.root)
 			createSourceNameOnDataset($scope.datasets);
 
 			$scope.markNotDerived($scope.datasets);
@@ -199,6 +200,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
+			tagsHandlerService.setOwnedDS(response.data.root)
 			createSourceNameOnDataset($scope.myDatasets);
 			$scope.markNotDerived($scope.myDatasets);
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
@@ -243,6 +245,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.markNotDerived($scope.enterpriseDatasets);
 
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
+			tagsHandlerService.setEnterpriseDS(response.data.root)
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 
@@ -280,6 +283,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			createSourceNameOnDataset($scope.sharedDatasets);
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
+		    tagsHandlerService.setSharedDS($scope.sharedDatasets)
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
 
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
@@ -1066,7 +1070,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.currentDatasetsTab = "myDataSet";
 
     $scope.switchDatasetsTab = function(datasetsTab) {
-
+    	var oldTab = angular.copy($scope.currentDatasetsTab);
     	$scope.currentDatasetsTab = datasetsTab;
 
     	if($scope.selectedDataset !== undefined){
@@ -1080,6 +1084,23 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
+
+    	switch(oldTab){
+		case "myDataSet":
+			$scope.myDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			break;
+		case "sharedDataSet":
+			$scope.sharedDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			break;
+		case "enterpriseDataSet":
+			$scope.enterpriseDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			break;
+		case "ckanDataSet":
+			break;
+		case "allDataSet":
+			$scope.datasets = angular.copy( tagsHandlerService.restore($scope.allTags,oldTab));
+			break;
+		}
 
     }
 
