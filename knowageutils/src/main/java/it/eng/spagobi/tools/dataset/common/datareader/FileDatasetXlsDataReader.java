@@ -131,7 +131,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		DataStore dataStore = null;
 		int maxResults = this.getMaxResults();
 		boolean checkMaxResults = false;
-		if ((maxResults > 0)) {
+		if (maxResults > 0) {
 			checkMaxResults = true;
 		}
 
@@ -145,9 +145,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			Sheet sheet = getSheet(wb);
 
 			int initialRow = 0;
+			int skipRows = 0;
 
 			if ((getSkipRows() != null) && (!(getSkipRows().isEmpty())) && !(getSkipRows().equals(String.valueOf(0)))) {
-				initialRow = Integer.parseInt(getSkipRows()) - 1;
+				skipRows = Integer.parseInt(getSkipRows());
+				initialRow = skipRows - 1;
 				logger.debug("Skipping first " + getSkipRows() + " rows");
 			}
 
@@ -223,7 +225,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			if (this.isCalculateResultNumberEnabled()) {
 				logger.debug("Calculation of result set number is enabled");
-				Integer result = rowsLimit - Integer.parseInt(getSkipRows()) - 1;
+				Integer result = rowsLimit - skipRows - 1;
 				dataStore.getMetaData().setProperty("resultNumber", result);
 			} else {
 				logger.debug("Calculation of result set number is NOT enabled");
