@@ -245,7 +245,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.markNotDerived($scope.enterpriseDatasets);
 
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
-			tagsHandlerService.setEnterpriseDS(response.data.root)
+			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets)
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 

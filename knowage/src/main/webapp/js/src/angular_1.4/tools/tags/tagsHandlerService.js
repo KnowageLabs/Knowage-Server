@@ -29,13 +29,13 @@
 
 	 var ownedDS = [];
 	 var sharedDS = [];
-	 var enterprise = [];
+	 var enterpriseDS = [];
 	 var allDS = [];
 
 	 var getOriginalDatasets = function(myDs,shared,enterprise,all){
 			ownedDS = angular.copy(myDs);
 			sharedDS = angular.copy(shared);
-			enterprise = angular.copy(enterprise);
+			enterpriseDS = angular.copy(enterprise);
 			allDS = angular.copy(all);
 		}
 	 var restoreTags = function(tags){
@@ -54,7 +54,7 @@
 					return sharedDS;
 					break;
 				case "enterpriseDataSet":
-					return enterprise;
+					return enterpriseDS;
 					break;
 				case "ckanDataSet":
 					break;
@@ -157,7 +157,7 @@
 				enterpriseDS = angular.copy(enterprise);
 			},
 			getEnterpriseDS : function(){
-				return enterprise;
+				return enterpriseDS;
 			},
 
 			setAllDS : function(all){
@@ -176,9 +176,9 @@
 				 return tempTags;
 			 },
 
-			 restore : function(tags,type,data){
+			 restore : function(tags,type){
 				 restoreTags(tags);
-				 return restoreData(type,data);
+				 return restoreData(type);
 			 }
 		 }
 
