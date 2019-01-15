@@ -472,6 +472,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return results;
 	}
 
+	/**
+	 * @param scope
+	 *            Sent from DatasetResource <br>
+	 *            Can be: "all", "owned", "enterprise" and "shared", depends on Tab from Workspace/Datasets (MyDataset, Shared, Enterprise, All)
+	 */
 	@Override
 	public List<IDataSet> loadDatasetsByTags(UserProfile user, List<Integer> tagIds, String scope) {
 		logger.debug("IN");
@@ -480,6 +485,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Set<Domain> categoryList = null;
 		String owner = null;
 		String domain = null;
+		String[] domains = null;
 		try {
 			Assert.assertNotNull(user, "UserProfile object cannot be null");
 
@@ -495,20 +501,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			if (scope.equalsIgnoreCase("enterprise") || scope.equalsIgnoreCase("shared")) {
+			if (scope.equalsIgnoreCase("enterprise") || scope.equalsIgnoreCase("shared") || scope.equalsIgnoreCase("all")) {
 				statement.append("and dst.dataSet.scope.valueCd = :domain ");
 				if (scope.equalsIgnoreCase("enterprise"))
 					domain = scope.toUpperCase();
-				else
+				else if (scope.equalsIgnoreCase("shared"))
 					domain = "USER";
+				else {
+					domains = new String[2];
+					domains[0] = "USER";
+					domains[1] = "ENTERPRISE";
+					statement.append("and (dst.dataSet.scope.valueCd = :user or dst.dataSet.scope.valueCd = :enterprise) ");
+				}
 
 				categoryList = UserUtilities.getDataSetCategoriesByUser(user);
 				if (categoryList != null && !categoryList.isEmpty()) {
 					statement.append("and dst.dataSet.category.valueCd in (:categories) ");
 				}
-
-				if (scope.equalsIgnoreCase("shared"))
-					statement.append("and dst.dataSet.federation is null ");
 			}
 
 			if (!tagIds.isEmpty()) {
@@ -527,6 +536,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (domain != null)
 				query.setString("domain", domain);
+
+			if (domains != null && domains.length > 0) {
+				query.setString("user", domains[0]);
+				query.setString("enterprise", domains[1]);
+			}
 
 			if (categoryList != null && !categoryList.isEmpty()) {
 				Iterator<Domain> it = categoryList.iterator();
