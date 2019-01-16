@@ -1387,7 +1387,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			            	"fontWeight":""
 						},
 						"labels":{
-							"precision":2,
+							"precision":0,
 							"scaleFactor": "empty",
 						},
 						"MAJORGRID":{
