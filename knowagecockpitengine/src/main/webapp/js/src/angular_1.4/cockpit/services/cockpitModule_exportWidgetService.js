@@ -19,10 +19,10 @@
 (function(){
 	angular.module("cockpitModule")
 		.service("cockpitModule_exportWidgetService", ['$q', '$httpParamSerializer', '$mdToast', 'sbiModule_config', 'sbiModule_user', 'sbiModule_download', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_cockpitDocument', 'cockpitModule_datasetServices', 'cockpitModule_widgetSelection', exportWidgetService]);
-	
+
 	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection) {
 		var objToReturn = {};
-		
+
 		objToReturn.exportWidgetToExcel = function (type, widget) {
 			/**
 			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
@@ -32,10 +32,10 @@
 					var requestParams = '?' + $httpParamSerializer(requestConfig);
 					var config = {"responseType": "arraybuffer"};
 					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
-					
+
 					sbiModule_restServices.promiseGet('1.0/cockpit/export', 'excel' + requestParams, undefined, config)
-						.then(function(response){							
-							var mimeType = response.headers("Content-type");							
+						.then(function(response){
+							var mimeType = response.headers("Content-type");
 							var fileName = 'exported_widget';
 							if (widget.content) {
 								fileName = widget.content.name;
@@ -46,11 +46,11 @@
 							$mdToast.cancel(exportingToast);
 							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');
 						});
-				});			
+				});
 		}
-			
+
 		var createRequest = function (type, widget, exportWidget) {
-			var deferred = $q.defer();			
+			var deferred = $q.defer();
 			var requestUrl = {
 					user_id: sbiModule_user.userUniqueIdentifier,
 					outputType: type,
@@ -59,32 +59,31 @@
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language
-			}      
-			
-			if (exportWidget) {
-				requestUrl.exportWidget = exportWidget;				
 			}
-			
+
+			if (exportWidget) {
+				requestUrl.exportWidget = exportWidget;
+			}
+
 			var dsId = widget.dataset.dsId;
 			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
-			var dsLabel = dataset.label;
 
 			var aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset);
 			cleanAggregation(widget, aggregation);
 
 			var loadDomainValues = widget.type == "selector" ? true : false;
-			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dsLabel, loadDomainValues);
-			
+			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 			var paramsToSend = angular.fromJson(parametersString);
 			requestUrl.COCKPIT_SELECTIONS = {};
-			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;			
-			requestUrl.COCKPIT_SELECTIONS.parameters = parameters;
+			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
+			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
 			requestUrl.COCKPIT_SELECTIONS.selections = selections;
 
 			deferred.resolve(requestUrl);
-			
+
 			return deferred.promise;
 		}
 
@@ -126,4 +125,5 @@
 		
 		return objToReturn;		
 	}	
+
 })();

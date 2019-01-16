@@ -699,17 +699,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params+="&nearRealtime=true";
 		}
 
-		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset.label, loadDomainValues);
-		
-		var limitRows;
-        if(ngModel.limitRows){
-            limitRows = ngModel.limitRows;
-        }else if(ngModel.content && ngModel.content.limitRows){
-            limitRows = ngModel.content.limitRows;
-        }
-        if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
-            params += "&limit=" + limitRows.rows;
-        }
+		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
@@ -797,17 +787,27 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	// Returns Selections with Filters for Single Widget
-	this.getWidgetSelectionsAndFilters = function(widgetObject, datasetLabel, loadDomainValues) {
+	this.getWidgetSelectionsAndFilters = function(widgetObject, dataset, loadDomainValues) {
 		var filtersToSend = {};
-		
+		var datasetLabel = dataset.label;
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
-		
+
 		if(!loadDomainValues && widgetObject.updateble){
 			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
 			angular.merge(filtersToSend, filters);
+		}
+
+		var limitRows;
+		if(widgetObject.limitRows){
+			limitRows = widgetObject.limitRows;
+		}else if(widgetObject.content && widgetObject.content.limitRows){
+			limitRows = widgetObject.content.limitRows;
+		}
+		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+			params += "&limit=" + limitRows.rows;
 		}
 
 		var filters;
@@ -886,7 +886,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return filtersToSend;
 	}
-	
+
 	this.getParametersAsString = function(parameters){
 		var delim = "";
 		var output = "{";
