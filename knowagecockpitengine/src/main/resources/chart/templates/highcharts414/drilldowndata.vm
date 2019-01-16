@@ -511,7 +511,7 @@
      "tooltip": {
 			"valuePrefix": "$mainSerie.prefixChar",
 			"valueSuffix": "$mainSerie.postfixChar",
-			"valueDecimals": $mainSerie.precision,
+			"valueDecimals": '$mainSerie.precision',
 			"scaleFactor": '$mainSerie.scaleFactor',
 			"ttBackColor": "$mainSerie.TOOLTIP.backgroundColor",
 			#if ($mainSerie.TOOLTIP.showAbsValueTooltip)

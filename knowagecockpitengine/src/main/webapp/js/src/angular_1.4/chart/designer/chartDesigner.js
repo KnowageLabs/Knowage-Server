@@ -84,8 +84,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 	$scope.saveChartTemplate = function() {
 		$scope.attachCategoriesToTemplate();
-		if($scope.selectedChartType == 'scatter'){		
-			$scope.attachSeriesToTemplate();	
+		if($scope.selectedChartType == 'scatter'){
+			$scope.attachSeriesToTemplate();
 		}
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
@@ -209,10 +209,10 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 
 
 	window.attachCategories = function() {
-		
+
 		$scope.attachCategoriesToTemplate();
-		if($scope.selectedChartType == 'scatter'){		
-			$scope.attachSeriesToTemplate();	
+		if($scope.selectedChartType == 'scatter'){
+			$scope.attachSeriesToTemplate();
 		}
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		var chartObj = angular.copy($scope.chartTemplate);
@@ -320,11 +320,11 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 					}
 					if($scope.chartTemplate.VALUES.CATEGORY.groupbyNames=="") {
 						if($scope.categories[i].name!="") {
-							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.categories[i].name;
+							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.categories[i].column;
 						}
 					} else {
 						if($scope.categories[i].name!="") {
-							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.chartTemplate.VALUES.CATEGORY.groupbyNames + ", " + $scope.categories[i].name;
+							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.chartTemplate.VALUES.CATEGORY.groupbyNames + ", " + $scope.categories[i].column;
 						}
 					}
 				}
