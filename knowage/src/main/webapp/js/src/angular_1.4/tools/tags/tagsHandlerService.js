@@ -18,9 +18,7 @@
 (function() {
  var module = angular.module('tagsModule');
 
- module.service('tagsHandlerService',tagsHandlerService)
-
-	 function tagsHandlerService(){
+ module.service('tagsHandlerService',['$filter',function($filter){
 
 	 var tags = [];
 	 var tagsForDeleting = [];
@@ -70,7 +68,8 @@
 			 	},
 
 			 isTagExisting : function(tag,dsTags){
-					return dsTags.indexOf(tag) != -1;
+				 tagId = tag.tagId;
+					return ($filter('filter')(dsTags,{tagId:tagId})).length > 0
 				},
 
 			 removeTagFromList : function(tag,dsTags){
@@ -102,8 +101,7 @@
 			 prepareTagsForSending : function(dsVersionNumber,tags){
 					 return {
 						 versNum: dsVersionNumber,
-						 tagsToAdd: tags,
-						 tagsToRemove: tagsForDeleting
+						 tagsToAdd: tags
 					 }
 			 	},
 
@@ -182,5 +180,5 @@
 			 }
 		 }
 
-	 }
+	 }])
  })();

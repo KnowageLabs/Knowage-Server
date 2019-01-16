@@ -2695,10 +2695,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
                                 				var newTag =  ($filter('filter')(array,{name:nameForFiltering},true))[0]
                                 				$scope.tags[i].tagId = newTag.tagId;
                                 				$scope.allTags.push(newTag);
-                                				//$scope.$apply();
                                 }
                                 		}
-
+                                		$scope.filterByTags();
                                 	});
                                 }
 
@@ -4672,10 +4671,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 
 	 var getTagsForDataset = function(dataset){
-
-		 sbiModule_restServices.promiseGet("2.0/datasets",dataset.id+"/dstags?versNum=" + dataset.versNum).then(function(response){
-			 $scope.tags = response.data;
-		 })
+			 $scope.tags = dataset.tags;
 	 }
 
 

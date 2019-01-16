@@ -38,9 +38,8 @@
 		$scope.selectedItem ;
 		$scope.separators = [$mdConstant.KEY_CODE.COMMA,$mdConstant.KEY_CODE.ENTER]
 		$scope.removeTag = function(tag,dsTags){
-				if(tagsHandlerService.isTagExisting(tag,dsTags)){
-					tagsHandlerService.removeTagFromList(tag,dsTags);
-					tagsHandlerService.setTagForDeleting(tag,dsTags);
+				if(tagsHandlerService.isTagExisting(tag,$scope.allTags)){
+					tagsHandlerService.setTagForDeleting(tag,$scope.allTags);
 			}
 		};
 

@@ -38,6 +38,7 @@
 			$scope.colapsed.name = "tagsUp";
 			$scope.remove = true;
 			$scope.allTags=[];
+			var filteringTags = angular.copy($scope.tagsArray);
 			$scope.allTags = angular.copy($scope.tagsArray);
 			$scope.tagsArray = $scope.allTags.slice(0,8);
 
@@ -46,10 +47,10 @@
 			$scope.toggleAllTags = function(){
 				if($scope.tagsArray.length == 8){
 					$scope.colapsed.name = "tagsDown";
-					$scope.tagsArray = $scope.allTags ;
+					$scope.tagsArray = filteringTags ;
 				}else{
 					$scope.colapsed.name = "tagsUp";
-					$scope.tagsArray = $scope.allTags.slice(0,8);
+					$scope.tagsArray = filteringTags.slice(0,8);
 				}
 			}
 
