@@ -637,8 +637,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.useCache==false){
 			params+="&nearRealtime=true";
 		}
-		
-		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset.label, loadDomainValues);
+
+		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
@@ -724,13 +724,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	// Returns Selections with Filters for Single Widget
-	this.getWidgetSelectionsAndFilters = function(widgetObject, datasetLabel, loadDomainValues) {
+	this.getWidgetSelectionsAndFilters = function(widgetObject, dataset, loadDomainValues) {
 		var filtersToSend = {};
-		
+		var datasetLabel = dataset.label;
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
-		
+
 		if(!loadDomainValues && widgetObject.updateble){
 			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
@@ -746,7 +746,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
 			params += "&limit=" + limitRows.rows;
 		}
-		
+
 		var filters;
 		if(widgetObject.filters){
 			filters = widgetObject.filters;
@@ -822,8 +822,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 		return filtersToSend;
-	} 
-	
+	}
+
 	this.getParametersAsString = function(parameters){
 		var delim = "";
 		var output = "{";
