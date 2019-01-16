@@ -42,14 +42,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES 
 			const 	MAX_ROWS_CLIENT_PAGINATION = 5000;
+			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
 			const 	KNOWAGE_SERVICESURL = '/restful-services';
+			var 	FIELDS;
+			var		DATASET;
 			var 	backEndPagination = {page: 1};
+			var 	filters = [];
 	  
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("datasetLabel");
-	  		var parameters = JSON.parse(url.searchParams.get("parameters")) || {};
+	  		var parameters = JSON.parse(url.searchParams.get("parameters"));
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		if(options && options['exports']) {
 	  			document.getElementById('utility-bar').classList.remove("hidden");
@@ -62,6 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	
 	  		//Function to create the colDefs for ag-grid
 		  	function getColumns(fields) {
+	  			if(!FIELDS) FIELDS = fields;
 				var columns = [];
 				for(var f in fields){
 					if(typeof fields[f] != 'object') continue;
@@ -69,19 +74,122 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
 					columns.push(tempCol);
 				}
-				return columns
+				return columns;
 			}
 		
 		  	//Defining ag-grid options
 		  	var gridOptions = {
-			    enableSorting: false,
-			    enableFilter: false,
+			    enableSorting: true,
+			    enableFilter: true,
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
 			    enableColResize: true,
 	            paginationAutoPageSize: true,
-	            headerHeight: 48
+	            headerHeight: 48,
+	            onSortChanged: changeSorting,
+	            defaultColDef: {
+	                filter: customFilter
+	            },
 	        };
+		  	
+		  	//Defining custom column filter
+		  	function customFilter(){}
+
+		  	customFilter.prototype.init = function (params) {
+		  	    this.valueGetter = params.valueGetter;
+		  	    this.filterText = null;
+		  	    this.setupGui(params);
+		  	};
+
+		  	customFilter.prototype.setupGui = function (params) {
+		  	    this.gui = document.createElement('div');
+		  	    this.gui.innerHTML =
+		  	        '<div style="padding: 4px; width: 200px;">' +
+		  	        '	<div><input style="margin: 4px 0px 4px 0px;width:192px" type="text" id="filterText" /></div>' +
+		  	        '</div>';
+
+		  	    this.eFilterText = this.gui.querySelector('#filterText');
+		  	    this.eFilterText.addEventListener("changed", listener);
+		  	    this.eFilterText.addEventListener("paste", listener);
+		  	    this.eFilterText.addEventListener("input", listener);
+		  	    this.eFilterText.addEventListener("keydown", listener);
+		  	    this.eFilterText.addEventListener("keyup", listener);
+				this.col = params.colDef.headerName;
+				
+		  	    var that = this;
+		  	  	var timeout = null;
+		  	    function listener(event) {
+		  	        that.filterText = event.target.value;
+		  	        if(options.backEndPagination){
+		  	        	clearTimeout(timeout);
+			  	     	
+				  	    timeout = setTimeout(function () {
+				  	    	var currentIndex;
+				  	    	for(var k in filters){
+				  	    		if(filters[k].column == that.col){
+				  	    			currentIndex = k;
+				  	    			break;
+				  	    		}
+				  	    	}
+				  	    	if(currentIndex){
+				  	    		if(that.filterText == '') filters.splice(currentIndex,1);
+				  	    		else filters[currentIndex].value = that.filterText;
+				  	    	}else filters.push({'column': that.col, 'value':that.filterText})
+				  	        getData();
+				  	    }, SEARCH_WAIT_TIMEOUT);
+		  	        }else{
+		  	        	params.filterChangedCallback();
+		  	        }
+		  	    }
+		  	};
+
+		  	customFilter.prototype.getGui = function () {
+		  	    return this.gui;
+		  	};
+
+		  	customFilter.prototype.isFilterActive = function () {
+		  		return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+		  	};
+		  	
+		  	customFilter.prototype.getModel = function() {
+		  	    var model = {value: this.filterText.value};
+		  	    return model;
+		  	};
+
+		  	customFilter.prototype.doesFilterPass = function (params) {
+		  	    // make sure each word passes separately, ie search for firstname, lastname
+		  	    var passed = true;
+		  	    var valueGetter = this.valueGetter;
+		  	    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+		  	        var value = valueGetter(params);
+		  	        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+		  	            passed = false;
+		  	        }
+		  	    });
+
+		  	    return passed;
+		  	};
+		  	
+		  	customFilter.prototype.setModel = function(model) {
+		  	    this.eFilterText.value = model.value;
+		  	};
+		
+		  	//Defining custom sorting for backend 
+			function changeSorting(){
+				if(options.backEndPagination){
+					var sorting = gridOptions.api.getSortModel();
+					backEndPagination.sorting = {
+							'column' : sorting.length>0 ? getColumnName(sorting[0].colId) : '',
+							'order' : sorting.length>0 ? sorting[0]['sort'] : ''};
+					getData();
+				}
+			}
+			
+			function getColumnName(colNum){
+				for(var k in FIELDS){
+					if(FIELDS[k].dataIndex && FIELDS[k].dataIndex == colNum) return FIELDS[k].header;
+				}
+			}
 		  
 		  	//Defining the custom template for the table header
 			function headerTemplate(type) { 
@@ -128,86 +236,89 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	
 		  	function first(){
 		  		backEndPagination.page = 1;
-		  		refreshRows();
+		  		getData();
 			}
 			
 		  	function prev(){
 		  		if(backEndPagination.page == 1) return;
 		  		backEndPagination.page = backEndPagination.page - 1;
-		  		refreshRows();
+		  		getData();
 			}
 			
 		  	function next(){
 		  		backEndPagination.page = backEndPagination.page + 1;
-		  		refreshRows();
+		  		getData();
 			}
 			
 		  	function last(){
 		  		backEndPagination.page = backEndPagination.totalPages;
-		  		refreshRows();
+		  		getData();
 			}
-		  	
-		  	function getDatasetMetadata(){
+			
+		  	//Defining the service call to datastore
+		  	function getData(init){
+				var fetchParams = {method:"POST",body:{}};
+				if(init){
+					if(!options.backEndPagination) {
+						fetchParams.body.start = 0;
+						fetchParams.body.limit = -1;
+					}
+				}
+				if(!init) gridOptions.api.showLoadingOverlay();
+				if(options.backEndPagination){
+					fetchParams.body.start = (backEndPagination.page-1) * backEndPagination.itemsPerPage;
+					fetchParams.body.limit = backEndPagination.page * backEndPagination.itemsPerPage;
+					if(filters.length > 0) fetchParams.body.filters = filters;
+					if(backEndPagination.sorting) fetchParams.body.sorting = backEndPagination.sorting;
+				}
+				if(parameters){
+					fetchParams.body.pars = parameters;
+				}
+				fetchParams.body = JSON.stringify(fetchParams.body);
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)
+				.then(function(response) {return response.json()})
+				.then(function(data){
+					backEndPagination.totalRows = data.results;
+					if(options.backEndPagination){
+						gridOptions.api.setRowData(data.rows);
+						backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+						backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
+						document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+					}else{
+						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
+						gridOptions.api.setRowData(data.rows);
+						if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
+							gridOptions.pagination = false;
+							options.backEndPagination = true;
+							backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+							backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
+							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+						}
+					}
+					gridOptions.api.hideOverlay();
+				})
+			}
+
+	  		getData(true);
+	  		
+	  		if(options.exports){
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/pagopt?offset=0&fetchSize=1&filters='+encodeURIComponent(JSON.stringify({"typeFilter":"=","valueFilter":datasetLabel,"columnFilter":"label"})))
 				.then(function(response) {return response.json()})
 				.then(function(data){
-					parameters = data.root[0];
-					refreshRows(true);
+					DATASET = data.root[0];
 				})
-			}
-			
-			function refreshRows(init) {
-				if(!init) gridOptions.api.showLoadingOverlay();
-				var fetchParams = {method:"POST"}
-				var body = parameters;
-				body.limit = -1;
-				if(options.backEndPagination) {
-					body.start = (backEndPagination.page-1)*backEndPagination.itemsPerPage;
-					body.limit = backEndPagination.itemsPerPage;
-				}
-				fetchParams.body = JSON.stringify(body);
-	  			window.fetch(KNOWAGE_BASEURL + KNOWAGE_SERVICESURL + '/1.0/datasets/preview',fetchParams)
-				.then(function(response) {return response.json()})
-				.then(function(data){
-					if(data.errors){
-						gridOptions.api.showNoRowsOverlay();
-					}else{
-						if(options.backEndPagination){
-							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
-							gridOptions.api.setRowData(data.rows);
-						}else{
-							if(!gridOptions.columnDefs) gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
-							gridOptions.api.setRowData(data.rows);
-							if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
-								gridOptions.pagination = false;
-								options.backEndPagination = true;
-								backEndPagination.totalRows = data.results;
-								backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
-								backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage);
-								document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
-							}
-						}
-						gridOptions.api.hideOverlay();
-					}
-			    })
-			};
-			
-			if(datasetLabel){
-		  		getDatasetMetadata();
-		  	}else{
-		  		refreshRows(true);
-		  	}
+	  		}
 			
 			function exportDataset(format){
-		       	if(format == 'CSV') {
-		       		if(parameters.isIterable) {
-		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+parameters.id+'/export';
+				if(format == 'CSV') {
+					if(DATASET.isIterable) {
+		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id+'/export';
 		       		}else{
 		       			alert('Dataset is not exportable in CSV format');
 		       			return;
 		       		}
-		       	} else if (format == 'XLSX') {
-		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+parameters.id;
+	       		}else if (format == 'XLSX') {
+		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id;
 		       	}
 		       	window.location.href = url;
 		    }
