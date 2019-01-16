@@ -103,9 +103,10 @@
 	      		}
 
 	      		driversResource.getDriversOnRelatedObject = function(basePath,endPath){
-	      			crudService.get(basePath,endPath).then(function(response){
+	      			var promise = crudService.get(basePath,endPath).then(function(response){
 	      				driversResource.driversOnObject = response.data;
 	      			});
+	      			return promise;
 	      		}
 
 	      		driversResource.getDriversforBM = function(basePath,endPath){

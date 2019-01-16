@@ -17,7 +17,7 @@
                 <input ng-required = "'true'" name="label" ng-model="selectedCondition.viewLabel" type="text" ng-change="addToChangedVisualDepedencies(selectedCondition)">
             </md-input-container>
             <div layout="row">
-                <md-input-container flex  ng-if='!document.category'>
+                <md-input-container flex  >
                     <label>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}}</label>
                     <md-select ng-model="selectedCondition.parFatherId" ng-change="addToChangedVisualDepedencies(selectedCondition)">
                         <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">

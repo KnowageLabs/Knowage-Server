@@ -53,7 +53,7 @@ angular
             	 }
              }else {
 
-            	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject}
+            	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject; self.driversNum = self.drivers.length > 1;}
             	 else{
             	 self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
              self.required = true;
