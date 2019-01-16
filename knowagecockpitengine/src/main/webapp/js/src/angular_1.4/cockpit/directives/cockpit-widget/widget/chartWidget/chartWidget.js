@@ -252,6 +252,8 @@ function cockpitChartWidgetControllerFunction(
 			$scope.ngModel.dataset.label = $scope.ngModel.dataset.dsLabel;
 			var filtersParams = cockpitModule_datasetServices.getWidgetSelectionsAndFilters($scope.ngModel,$scope.ngModel.dataset, false);
 
+			var filtersParams = cockpitModule_datasetServices.getWidgetSelectionsAndFilters($scope.ngModel,$scope.ngModel.dataset, false);
+
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			var objForDrill = {};
 			objForDrill.aggregations = aggregations;
