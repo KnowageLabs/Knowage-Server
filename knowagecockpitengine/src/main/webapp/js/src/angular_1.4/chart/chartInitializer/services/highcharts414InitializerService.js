@@ -53,7 +53,7 @@ angular.module('chartInitializer')
 		if(!exportWebApp) {
 			adjustChartSize(element,chartConf);
 		}
-		var chartType = chartConf.chart.type.toLowerCase();
+		var chartType = renderObj.chartTemplate.type.toLowerCase();
 
 		if (chartType == 'treemap')
 		{
@@ -87,15 +87,15 @@ angular.module('chartInitializer')
 
 					if(chartConf.yAxis[i].min){
 						if(chartConf.yAxis[i].min > min)
-						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
+						chartConf.yAxis[i].min =  min-0.1;
 					} else {
-						chartConf.yAxis[i].min = min<0 ? min-0.1 : min-0.1;
+						chartConf.yAxis[i].min = min-0.1;
 					}
 					if(chartConf.yAxis[i].max){
 						if(chartConf.yAxis[i].max < max)
-						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
+						chartConf.yAxis[i].max = max+0.1;
 					} else {
-						chartConf.yAxis[i].max = max<0 ? max+0.1 : max+0.1;
+						chartConf.yAxis[i].max = max+0.1;
 					}
 				}
 
@@ -536,14 +536,14 @@ angular.module('chartInitializer')
 			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
 			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
 			if(mapAxis.min[chartConf.series[i].yAxis]){
-				if(mapAxis.min[chartConf.series[i].yAxis] < min)
+				if(mapAxis.min[chartConf.series[i].yAxis] > min)
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			} else {
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			}
 			if(mapAxis.max[chartConf.series[i].yAxis]){
-				if(mapAxis.max[chartConf.series[i].yAxis].max > max)
-				mapAxis.max[chartConf.series[i].yAxis].max = max;
+				if(mapAxis.max[chartConf.series[i].yAxis] < max)
+				mapAxis.max[chartConf.series[i].yAxis] = max;
 			} else {
 				mapAxis.max[chartConf.series[i].yAxis] = max;
 			}
