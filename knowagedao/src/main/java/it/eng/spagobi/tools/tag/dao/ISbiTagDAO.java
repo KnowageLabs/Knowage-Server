@@ -45,7 +45,7 @@ public interface ISbiTagDAO extends ISpagoBIDao {
 
 	public List<SbiDatasetTag> loadDatasetTags(Integer dsId);
 
-	public List<SbiTag> addOrRemoveDatasetTags(SbiDataSetId dsId, JSONArray tagsToAdd, JSONArray tagsToRemove);
+	public List<SbiTag> associateTagsToDatasetVersion(SbiDataSetId dsId, JSONArray tagsToAdd);
 
 	public void removeDatasetTags(Integer dsId, Session curSession);
 

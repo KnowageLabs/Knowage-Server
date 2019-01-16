@@ -88,8 +88,7 @@ public class DatasetTagsResource extends AbstractSpagoBIResource {
 
 			SbiDataSetId datasetId = new SbiDataSetId(dsId, versNum, organization);
 			JSONArray tagsToAdd = body.getJSONArray("tagsToAdd");
-			JSONArray tagsToRemove = body.getJSONArray("tagsToRemove");
-			toReturn = tagDao.addOrRemoveDatasetTags(datasetId, tagsToAdd, tagsToRemove);
+			toReturn = tagDao.associateTagsToDatasetVersion(datasetId, tagsToAdd);
 		} catch (Exception e) {
 			logger.error("Error has occurred while associating Tags for Dataset [" + dsId + "], version number: [" + versNum + "]", e);
 			throw new SpagoBIRestServiceException("Cannot associate Tags to Dataset", buildLocaleFromSession(), e);

@@ -198,8 +198,11 @@ public class SbiTagDAOImpl extends AbstractHibernateDAO implements ISbiTagDAO {
 		return toReturn;
 	}
 
+	/**
+	 * @return List of new inserted Tags
+	 */
 	@Override
-	public List<SbiTag> addOrRemoveDatasetTags(SbiDataSetId dsId, JSONArray tagsToAdd, JSONArray tagsToRemove) {
+	public List<SbiTag> associateTagsToDatasetVersion(SbiDataSetId dsId, JSONArray tagsToAdd) {
 		logger.debug("IN");
 		Session session = null;
 		Transaction tx = null;
@@ -238,16 +241,6 @@ public class SbiTagDAOImpl extends AbstractHibernateDAO implements ISbiTagDAO {
 				dsTag.setDataSet(dataSet);
 				dsTag.setTag(tag);
 				session.save(dsTag);
-				session.flush();
-			}
-
-			// Remove Tags
-			for (int j = 0; j < tagsToRemove.length(); j++) {
-				JSONObject tagJsonObj = tagsToRemove.getJSONObject(j);
-				Integer tagIdToRemove = tagJsonObj.getInt("tagId");
-				SbiDatasetTagId dsTagIdToRemove = new SbiDatasetTagId(dsId.getDsId(), dsId.getVersionNum(), dsId.getOrganization(), tagIdToRemove);
-				SbiDatasetTag dsTagToRemove = new SbiDatasetTag(dsTagIdToRemove);
-				session.delete(dsTagToRemove);
 				session.flush();
 			}
 
