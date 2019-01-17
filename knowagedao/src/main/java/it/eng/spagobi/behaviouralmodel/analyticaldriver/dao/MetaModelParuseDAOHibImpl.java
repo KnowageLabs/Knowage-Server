@@ -132,7 +132,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			}
 
 			SbiMetaModelParameter metaModelParameter = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
-			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getUseModeId());
+			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getId());
 			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParFatherId());
 
 			sbiMetamodelParuse.setFilterColumn(aMetaModelParuse.getFilterColumn());
