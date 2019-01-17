@@ -5,7 +5,7 @@
 	     <div class="md-toolbar-tools layout-align-center-center layout-row">
 	      	
 	      	
-	      	<i class="fa fa-database"></i>
+	      	<i class="fa fa-database"></i> 	{{dataset.dsTypeCd}}
 	    	&nbsp;&nbsp;
 	       	<h2>{{translate.load('sbi.browser.document.dataset')}}: &nbsp; {{selectedDataSet.label}}</h2> 
 	       <span flex></span>
@@ -17,7 +17,7 @@
 	       </md-button>
 	     </div>   
 	   </md-toolbar>
-		<md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-if="dataset.executed && selectedDataSet.dsTypeCd.toLowerCase() == 'qbe'" ng-show="previewPaginationEnabled" >
+		<md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-if="dataset.executed && dataset.dsTypeCd.toLowerCase() == 'qbe'" ng-show="previewPaginationEnabled" >
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
 		   		<md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="disableBack" ng-click="getBackPreviewSet()">
         				<md-icon class="fa fa-angle-double-left"></md-icon>
@@ -30,8 +30,8 @@
 	       		</md-button>
 	   		</div>
 	   	</md-toolbar>
-	   	
-	   <md-card-content ng-show="selectedDataset.dsTypeCd.toLowerCase() != 'qbe'">
+	  
+	   <md-card-content ng-show="dataset.dsTypeCd.toLowerCase() != 'qbe'">
 	   		<div ag-grid="gridOptions" class="ag-theme-balham kn-preview-table-theme" style="width:100%;height:calc(100% - 64px)"></div>
 			<div ref="south" class="ag-theme-balham ag-noBorders">
 				<div>
@@ -49,7 +49,7 @@
 	   		
 	   </md-card-content>
 
-		<md-content style="overflow-y:hidden;" ng-if="selectedDataSet.dsTypeCd.toLowerCase() == 'qbe'">
+		<md-content style="overflow-y:hidden;" ng-if="dataset.dsTypeCd.toLowerCase() == 'qbe' && dataset.executed">
 		
 		<div layout-fill >
 			<angular-table

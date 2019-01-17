@@ -879,8 +879,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.previewUrl = '';
     	config={};
     	config.params=params;
-    	
-    	
+
+
     	sbiModule_restServices.promiseGet("selfservicedatasetpreview/values", dataset.label,"",config)
 			.then(function(response) {
 
@@ -1456,7 +1456,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			return promise;
 		}
     function DatasetPreviewController($scope,$mdDialog,$http,$sce){
-    	if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
+    	if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
 
 	    	$scope.dataset = $scope.datasetInPreview;
 	    	$scope.executeParameter = function(){
@@ -1476,14 +1476,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     	}else{
     		$scope.urlParams = 'datasetLabel=' + $scope.datasetInPreview.label;
-        	if(Object.keys(params).length === 0 && params.constructor === Object) {
-        		$scope.urlParams += '&parameters=' + encodeURIComponent(JSON.stringify(params));
+        	if(Object.keys($scope.datasetInPreview.pars).length === 0 && $scope.datasetInPreview.pars.constructor === Object) {
+        		$scope.urlParams += '&parameters=' + encodeURIComponent(JSON.stringify($scope.datasetInPreview.pars));
         	}
         	if(true){
         		var exports = ['CSV','XLSX'];
         		$scope.urlParams += '&options=' + encodeURIComponent(JSON.stringify({exports:exports}));
         	}
-        	
+
         	$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 			$scope.dataset = {}
 			$scope.dataset.executed = true;
