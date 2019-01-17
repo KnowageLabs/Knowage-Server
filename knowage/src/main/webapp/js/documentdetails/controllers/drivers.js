@@ -431,6 +431,8 @@ angular
      				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
      			}else{
      				$scope.selectedDataCondition.useModeId = selectedParuse[0].useID;
+     				var paruseColumnsTmp =  getLovColumns(selectedParuse[0])
+     				if(paruseColumnsTmp != undefined)
      				$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] =  getLovColumns(selectedParuse[0])[0];
      				$scope.driversService.paruseColumns = $scope.paruseColumns;
      				$scope.selectedDataCondition.persist = {};
