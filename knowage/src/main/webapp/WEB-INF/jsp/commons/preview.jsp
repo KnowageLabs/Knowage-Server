@@ -62,8 +62,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
 	  			}
 	  		}
-	  		var datasetId;
 	    	
+	  		//Utility methods
+	  		function isEmpty(obj) {
+	  		    for(var key in obj) {
+	  		        if(obj.hasOwnProperty(key)) return false;
+	  		    }return true;
+	  		}
+	  		
 	  		//Function to create the colDefs for ag-grid
 		  	function getColumns(fields) {
 	  			if(!FIELDS) FIELDS = fields;
@@ -271,7 +277,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(filters.length > 0) fetchParams.body.filters = filters;
 					if(backEndPagination.sorting) fetchParams.body.sorting = backEndPagination.sorting;
 				}
-				if(parameters){
+				if(!isEmpty(parameters)){
 					fetchParams.body.pars = parameters;
 				}
 				fetchParams.body = JSON.stringify(fetchParams.body);
@@ -302,23 +308,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		getData(true);
 	  		
 	  		if(options.exports){
-				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/pagopt?offset=0&fetchSize=1&filters='+encodeURIComponent(JSON.stringify({"typeFilter":"=","valueFilter":datasetLabel,"columnFilter":"label"})))
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets?asPagedList=true&seeTechnical=true&label=' + datasetLabel)
 				.then(function(response) {return response.json()})
 				.then(function(data){
-					DATASET = data.root[0];
+					DATASET = data.item[0];
 				})
 	  		}
 			
 			function exportDataset(format){
 				if(format == 'CSV') {
 					if(DATASET.isIterable) {
-		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id+'/export';
+		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id.dsId+'/export';
 		       		}else{
 		       			alert('Dataset is not exportable in CSV format');
 		       			return;
 		       		}
 	       		}else if (format == 'XLSX') {
-		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id;
+		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id.dsId;
 		       	}
 		       	window.location.href = url;
 		    }

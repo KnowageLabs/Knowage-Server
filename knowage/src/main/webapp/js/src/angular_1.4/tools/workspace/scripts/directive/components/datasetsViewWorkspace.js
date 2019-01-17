@@ -39,7 +39,7 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,urlBuilderService, $httpParamSerializer, sbiModule_download){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,urlBuilderService, $httpParamSerializer, sbiModule_download,$sce){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -773,7 +773,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			  scope:$scope,
 			  preserveScope: true,
 		      controller: DatasetPreviewController,
-		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
 		      clickOutsideToClose:false,
 		      escapeToClose :false,
 		      //fullscreen: true,
@@ -876,10 +876,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	params.typeValueFilter=null;
     	params.typeFilter=null;
     	params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
-
+    	$scope.previewUrl = '';
     	config={};
     	config.params=params;
-
+    	
+    	
     	sbiModule_restServices.promiseGet("selfservicedatasetpreview/values", dataset.label,"",config)
 			.then(function(response) {
 
@@ -1454,8 +1455,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			})
 			return promise;
 		}
-    function DatasetPreviewController($scope,$mdDialog,$http){
-    	if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+    function DatasetPreviewController($scope,$mdDialog,$http,$sce){
+    	if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
 
 	    	$scope.dataset = $scope.datasetInPreview;
 	    	$scope.executeParameter = function(){
@@ -1474,6 +1475,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			}
 
     	}else{
+    		$scope.urlParams = 'datasetLabel=' + $scope.datasetInPreview.label;
+        	if(Object.keys(params).length === 0 && params.constructor === Object) {
+        		$scope.urlParams += '&parameters=' + encodeURIComponent(JSON.stringify(params));
+        	}
+        	if(true){
+        		var exports = ['CSV','XLSX'];
+        		$scope.urlParams += '&options=' + encodeURIComponent(JSON.stringify({exports:exports}));
+        	}
+        	
+        	$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 			$scope.dataset = {}
 			$scope.dataset.executed = true;
 		}

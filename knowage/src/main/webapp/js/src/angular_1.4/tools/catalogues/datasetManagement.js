@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule']); //ADDDD ,'driversExecutionModule'
+agGrid.initialiseAgGridWithAngular1(angular);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule','agGrid']); //ADDDD ,'driversExecutionModule'
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -3063,7 +3063,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 
 	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
-			if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
 					$scope.executeParameter = function(){
 						$scope.showDrivers = false;
 						$scope.dataset.executed = true;
@@ -3090,7 +3090,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							$scope.dataset.executed = true;
 						}
 			}else{
-				$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/commons/preview.jsp&parameters=' + encodeURIComponent(JSON.stringify($scope.selectedDataSet)));
 				$scope.dataset = {}
 				$scope.dataset.executed = true;
 			}
@@ -3132,7 +3131,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
-		if($scope.selectedDataSet.dsTypeCd == "Qbe"){
+		if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
 			var hasParameters = false;
 		}else{
 		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
@@ -3210,7 +3209,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
-
+					 $scope.gridOptions = {
+				        enableColResize: true,
+				        enableSorting: false,
+					    enableFilter: false,
+					    pagination: false,
+					    suppressDragLeaveHidesColumns : true,
+				        headerHeight: 48,
+				        columnDefs :getColumns(response.data.metaData.fields),
+				    	rowData: response.data.rows
+					};
+								    
+				    function getColumns(fields) {
+						var columns = [];
+						for(var f in fields){
+							if(typeof fields[f] != 'object') continue;
+							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
+							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
+							columns.push(tempCol);
+						}
+						return columns;
+					}
 					$scope.getPreviewSet(response.data);
 					if(response.data.rows.length==0){
 						 $mdDialog.show(
@@ -3250,6 +3269,21 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
 
     }
+    
+    function headerTemplate(type) { 
+		return 	'<div class="ag-cell-label-container data-type-'+type+'" role="presentation">'+
+				'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
+				'    <div ref="eLabel" class="ag-header-cell-label" role="presentation">'+
+				'       <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>'+
+				'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
+				'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
+				'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
+				'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" ></span>'+
+				'  		<span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" ></span>'+
+				'		<span class="ag-cell-type">'+type+'</span>'+
+				'	</div>'+
+				'</div>';
+	}
 
     $scope.getPreviewSet = function(data){
     	if(data!=null){
@@ -3268,9 +3302,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
 	   		 	$scope.disableNext = false;
 	       	}
-
        	}
 	    angular.copy($scope.newDatasetMeta.rows,$scope.previewDatasetModel);
+	    if($scope.gridOptions && $scope.gridOptions.api) {
+	    	$scope.gridOptions.api.setRowData($scope.previewDatasetModel);
+	    }
 	    if( !$scope.previewDatasetColumns || $scope.previewDatasetColumns.length==0){
 	    	$scope.createColumnsForPreview($scope.newDatasetMeta.metaData.fields);
 	    }
