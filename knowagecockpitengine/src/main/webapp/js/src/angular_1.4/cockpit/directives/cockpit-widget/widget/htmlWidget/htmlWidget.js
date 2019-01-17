@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 		
 		//Regular Expressions used
+		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?\s?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
@@ -98,13 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.hideWidgetSpinner();
 					});
 			}else {
-				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
-				if($scope.ngModel.htmlToRender){
-					$scope.checkParamsPlaceholders($scope.ngModel.htmlToRender).then(function(placeholderResultHtml){
-						$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + placeholderResultHtml +" </div>"));
-					})
-				}
-				$scope.hideWidgetSpinner();
+				$scope.manageHtml();
 			}
 		}
 
@@ -118,13 +113,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					)
 			}
-			var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
-			
-			 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
-			wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
-			wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
-			
-			$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
+			if($scope.ngModel.htmlToRender){
+				var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
+				
+				 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
+				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
+				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
+				
+				$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
 					function(resultHtml){
 						$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
 							function(placeholderResultHtml){
@@ -135,6 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						)
 					}
 				)
+			}
 		}
 
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
@@ -269,6 +266,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.checkPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
+				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
 			})
@@ -309,7 +307,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(p3){
 				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)] : 'null';
 			}else{
-				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
+				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
 			if(!isNaN(p1)){
 				p1 = parseFloat(p1);
@@ -351,7 +349,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.reinit();
-
 	}
 
 	function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){

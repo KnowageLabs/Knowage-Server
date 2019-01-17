@@ -13,18 +13,18 @@
 					<md-content class="noPadding" layout="row" layout-fill>
 						<div layout="column" flex>
 							<md-card>
-								<md-toolbar class="ternaryToolbar"> 
+								<md-toolbar class="ternaryToolbar clickable" ng-click="toggleCss()"> 
 							      <div class="md-toolbar-tools">
 							        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
 							        <span flex></span>
-							        <md-button class="md-icon-button" ng-click="toggleCss()">
+							        <md-button class="md-icon-button" >
 							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
 							        </md-button>
 							      </div>
 							    </md-toolbar>
 								<md-card-content class="noPadding" ng-if="newModel.cssOpened">
 								<div layout="row" layout-align="center center">
-									<div class="kn-info" flex=80>{{translate.load('kn.cockpit.html.cssprefix')}} <span class="widgetId">#w{{newModel.id}}</span></div>
+									<div class="kn-info" flex=80>{{translate.load('kn.cockpit.html.cssprefix')}} <span class="widgetId">#[kn-widget-id]</span></div>
 								</div>
 								<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
 								</md-card-content>
