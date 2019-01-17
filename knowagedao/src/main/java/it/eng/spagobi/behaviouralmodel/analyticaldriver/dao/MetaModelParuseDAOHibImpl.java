@@ -123,12 +123,12 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			String hql = "from SbiMetamodelParuse s  where s.id=? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
+			hqlQuery.setInteger(0, aMetaModelParuse.getId().intValue());
 
 			SbiMetamodelParuse sbiMetamodelParuse = (SbiMetamodelParuse) hqlQuery.uniqueResult();
 			if (sbiMetamodelParuse == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParuse",
-						"the MetaModelParuse with id " + aMetaModelParuse.getUseModeId() + " does not exist.");
+						"the MetaModelParuse with id " + aMetaModelParuse.getId() + " does not exist.");
 			}
 
 			SbiMetaModelParameter metaModelParameter = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
