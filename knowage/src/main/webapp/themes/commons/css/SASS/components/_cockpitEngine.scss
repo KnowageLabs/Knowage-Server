@@ -1543,6 +1543,13 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-cockpit {
+		md-select-menu {
+			md-content{
+				background-color: white;
+			}
+		}
+	}
     cockpit-table {
 	    .cockpitTableContainer {
 	    	table.cockpitTable {
