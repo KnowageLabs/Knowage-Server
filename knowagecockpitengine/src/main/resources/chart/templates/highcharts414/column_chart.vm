@@ -1159,29 +1159,25 @@
         	},
         	
         	labels: {
-        		
+
         		formatter: function () {
 			                    var value = this.value;	
 			                    var newValue = "";	
-		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
-		                      	if(scaleFactor.indexOf("yAxis")==-1){
-		                      		scaleFactor =  '${yAxis.LABELS.scaleFactor}';
-		                  		}else{
+		                      	var scaleFactor =  $isCockpit ? '${yAxis.labels.scaleFactor}' : '${yAxis.LABELS.scaleFactor}'
+		                      	if(scaleFactor.indexOf("yAxis")!=-1){
 		                      		scaleFactor = "empty"
-		                      	}
+		                  		}
 		                      	var prefixValue = '';
 		                      	var sufixValue = '';
 		                      	
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
+		                      	var precision =  $isCockpit ? '${yAxis.labels.precision}' : '${yAxis.LABELS.precision}'
 		                      	
-		                      	var precision =  '${yAxis.LABELS.precision}';
-		                      	if(precision.indexOf("yAxis")==-1){
-		                      		precision =  '${yAxis.LABELS.precision}';
-		                      	} else {
+		                      	if(precision.indexOf("yAxis")!=-1){
 		                      		precision = 0
-		                      	}	
+		                      	} 
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
