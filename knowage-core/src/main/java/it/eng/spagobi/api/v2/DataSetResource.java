@@ -344,6 +344,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonSbiDataSet.put("isRealtime", dataSet.isRealtime());
 				jsonSbiDataSet.put("isCachingSupported", dataSet.isCachingSupported());
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
+				jsonSbiDataSet.put("isIterable", dataSet.isIterable());
 				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
