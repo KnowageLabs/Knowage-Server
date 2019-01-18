@@ -23,8 +23,9 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService,$mdSidenav) {
 		var driversExecutionService = $injector.get('driversExecutionService');
+		var driversDependencyService = $injector.get('driversDependencyService');
 
 		var comunicator = windowCommunicationService;
 		var consoleHandler = {}
@@ -121,6 +122,17 @@ angular
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 
+
+			driverableObject.currentView = {};
+			driverableObject.currentView.status = 'BUSINESSMODEL';
+			driverableObject.parameterView = {};
+			driverableObject.parameterView.status='';
+//			driverableObject.isParameterRolePanelDisabled = {};
+//			driverableObject.isParameterRolePanelDisabled.status = true;
+
+			$scope.currentView = driverableObject.currentView;
+			$scope.parameterView = driverableObject.parameterView;
+
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
@@ -190,11 +202,13 @@ angular
 					}
 				}
 			}
-			$scope.executeParameter = function(){
+
+
+			$scope.execute = function() {
 
 				if($scope.drivers){
-					var drivers =   driversExecutionService.prepareDriversForSending($scope.drivers);
-				}else {
+					var drivers = driversExecutionService.prepareDriversForSending($scope.drivers);
+				} else {
 					var drivers = {};
 				}
 
@@ -206,6 +220,79 @@ angular
 				$scope.showDrivers = false
 				$scope.driverableObject.executed = true;
 			}
+
+			$scope.clearListParametersForm = function() {
+				if($scope.drivers.length > 0) {
+					for(var i = 0; i < $scope.drivers.length; i++) {
+						driversExecutionService.resetParameter($scope.drivers[i]);
+						//INIT VISUAL CORRELATION PARAMS
+//						driversDependencyService.updateVisualDependency($scope.drivers[i], $scope.drivers);
+					}
+				}
+			};
+
+			$scope.createNewViewpoint = function() {
+				$mdDialog.show({
+					skipHide: true,
+					preserveScope : true,
+					templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
+					controllerAs : 'vpCtrl',
+					controller : function($mdDialog) {
+						var vpctl = this;
+						vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
+						vpctl.name = sbiModule_translate.load("sbi.execution.viewpoints.name");
+						vpctl.description = sbiModule_translate.load("sbi.execution.viewpoints.description");
+						vpctl.visibility = sbiModule_translate.load("sbi.execution.subobjects.visibility");
+						vpctl.publicOpt = sbiModule_translate.load("sbi.execution.subobjects.visibility.public");
+						vpctl.privateOpt = sbiModule_translate.load("sbi.execution.subobjects.visibility.private");
+						vpctl.cancelOpt = sbiModule_translate.load("sbi.ds.wizard.cancel");
+						vpctl.submitOpt = sbiModule_translate.load("sbi.generic.update");
+						vpctl.submit = function() {
+							vpctl.newViewpoint.OBJECT_LABEL = driverableObject.executionInstance.OBJECT_LABEL;
+							vpctl.newViewpoint.ROLE = driverableObject.selectedRole.name;
+							vpctl.newViewpoint.VIEWPOINT = driversExecutionService.buildStringParameters($scope.drivers);
+							sbiModule_restServices.post("1.0/metamodelviewpoint", "addViewpoint", vpctl.newViewpoint)
+									.success(function(data, status, headers, config) {
+										if(data.errors && data.errors.length > 0 ) {
+											sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
+										}else{
+											$mdDialog.hide();
+//											documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+										}
+									})
+									.error(function(data, status, headers, config) {
+										sbiModule_restServices.errorHandler("Errors : " + status,"sbi.execution.viewpoints.msg.error.save");
+									});
+						};
+
+						vpctl.annulla = function($event) {
+							$mdDialog.hide();
+							$scope.newViewpoint = JSON.parse(JSON.stringify(driversExecutionService.emptyViewpoint));
+						};
+					},
+
+					templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
+				});
+			};
+
+//			$scope.frameLoaded = true;
+
+			$scope.getViewpoints = function() {
+				$scope.driverableObject.currentView.status = 'PARAMETERS';
+				$scope.driverableObject.parameterView.status='FILTER_SAVED';
+
+				sbiModule_restServices.get("1.0/metamodelviewpoint", "getViewpoints",
+						"label=" + driverableObject.executionInstance.OBJECT_LABEL + "&role="+ driverableObject.selectedRole.name)
+						.success(function(data, status, headers, config) {
+							console.log('data viewpoints '  ,  data.viewpoints);
+							driversExecutionService.gvpCtrlViewpoints = data.viewpoints;
+//							if($mdSidenav('parametersPanelSideNav').isOpen()) {
+//								$scope.toggleParametersPanel(false);
+//							}
+						})
+						.error(function(data, status, headers, config) {});
+			};
+
 
 			$scope.saveQbeDocument = function() {
 

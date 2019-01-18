@@ -26,16 +26,16 @@
 		var documentExecuteServicesObj = {
 
 
-				decodeRequestStringToJson: function (str) {
-					var parametersJson = {};
-
-					var arrParam = str.split('%26');
-					for(var i=0; i<arrParam.length; i++){
-						var arrJsonElement = arrParam[i].split('%3D');
-						parametersJson[arrJsonElement[0]]=arrJsonElement[1];
-					}
-					return parametersJson;
-				},
+//				decodeRequestStringToJson: function (str) {
+//					var parametersJson = {};
+//
+//					var arrParam = str.split('%26');
+//					for(var i=0; i<arrParam.length; i++){
+//						var arrJsonElement = arrParam[i].split('%3D');
+//						parametersJson[arrJsonElement[0]]=arrJsonElement[1];
+//					}
+//					return parametersJson;
+//				},
 
 				showToast: function(text, time) {
 					var timer = time == undefined ? 6000 : time;
@@ -337,7 +337,10 @@
 					"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ execProperties.selectedRole.name)
 					.success(function(data, status, headers, config) {
 						console.log('data viewpoints '  ,  data.viewpoints);
-						serviceScope.gvpCtrlViewpoints = data.viewpoints;
+//						serviceScope.gvpCtrlViewpoints = data.viewpoints;
+						driversExecutionService.gvpCtrlViewpoints = data.viewpoints;
+						// angular.copy(data.viewpoints,driversExecutionService.gvpCtrlViewpoints);
+
 //						execProperties.showParametersPanel.status = false;
 						if($mdSidenav('parametersPanelSideNav').isOpen()) {
 							docExecute_paramRolePanelService.toggleParametersPanel(false);

@@ -61,6 +61,7 @@
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.paramRolePanelService = docExecute_paramRolePanelService;
 		$scope.urlViewPointService = docExecute_urlViewPointService;
+		$scope.driversExecutionService = driversExecutionService;
 		$scope.currentView = execProperties.currentView;
 		$scope.parameterView = execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
@@ -108,6 +109,12 @@
 
 		//menu Toggle override
 		$scope.closeMdMenu = function() { $mdMenu.hide(); };
+
+
+		$scope.execute = function(role, params) {
+			docExecute_urlViewPointService.executionProcesRestV1(role, params);
+		}
+
 
 		$scope.isOrganizerEnabled = function () {
 			if(!$scope.addToWorkspaceEnabled){

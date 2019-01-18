@@ -7,6 +7,18 @@
 			executionService.jsonDatumValue = null;
 			executionService.jsonDatumDesc = null;
 			executionService.additionalUrlDrivers =[];
+
+			executionService.gvpCtrlViewpoints = [];
+
+			executionService.emptyViewpoint = {
+						NAME : "",
+						DESCRIPTION: "",
+						SCOPE : "",
+						OBJECT_LABEL : "",
+						ROLE :"",
+						VIEWPOINT : JSON.parse("{}")
+			};
+
 			var isParameterSelectionValueLov = function(parameter) {return  parameter.valueSelection.toLowerCase() == 'lov'};
 			var isParameterSelectionTypeTree = function(parameter) {return parameter.selectionType.toLowerCase() == 'tree'};
 			var isParameterSelectionTypeLookup = function(parameter) {return parameter.selectionType.toLowerCase() == 'lookup'};

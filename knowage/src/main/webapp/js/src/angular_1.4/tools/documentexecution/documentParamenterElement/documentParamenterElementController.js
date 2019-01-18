@@ -700,6 +700,23 @@
 			$scope.execProperties.executionInstance = {}
 			$scope.execProperties.executionInstance.OBJECT_ID = $scope.execProperties.id;
 			$scope.execProperties.executionInstance.OBJECT_LABEL = $scope.execProperties.name;
+
+			$scope.execProperties.initResetFunctionVisualDependency = {};
+			$scope.execProperties.initResetFunctionVisualDependency.status=false;
+			$scope.execProperties.initResetFunctionDataDependency = {};
+			$scope.execProperties.initResetFunctionDataDependency.status=false;
+			$scope.execProperties.initResetFunctionLovDependency = {};
+			$scope.execProperties.initResetFunctionLovDependency.status=false;
+			$scope.execProperties.returnFromDataDepenViewpoint = {};
+			$scope.execProperties.returnFromDataDepenViewpoint.status = false;
+			$scope.execProperties.returnFromLovDepenViewpoint = {};
+			$scope.execProperties.returnFromLovDepenViewpoint.status = false;
+			$scope.execProperties.isParameterRolePanelDisabled = {};
+			$scope.execProperties.isParameterRolePanelDisabled.status = false;
+
+			$scope.execProperties.returnFromVisualViewpoint = {};
+			$scope.execProperties.returnFromVisualViewpoint.status = false;
+
 			if($scope.execProperties.dsTypeCd){
 				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.qbeDatamarts
 			}else{

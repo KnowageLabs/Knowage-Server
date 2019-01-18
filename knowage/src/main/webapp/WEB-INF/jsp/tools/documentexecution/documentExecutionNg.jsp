@@ -452,7 +452,7 @@ if(executionRoleNames.size() > 0) {
                                         
                 <div flex layout ng-if="currentView.status == 'PARAMETERS'"> 
                     <div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>
-                        <parameter-view-point-handler flex layout="column"/>
+                        <parameter-view-point-handler flex layout="column" execProperties="execProperties" execute="execute"/>
                     </div>
                     <div ng-if="parameterView.status == 'SCHEDULER'" layout flex>
                         <document-scheduler flex layout="column"/>
