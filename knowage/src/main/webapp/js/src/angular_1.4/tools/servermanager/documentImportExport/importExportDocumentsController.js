@@ -172,7 +172,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			waitExport : false,
 			viewDownload : false
 	}
-	//var tempFolders = [];
+	var selectedFiles = [];
+	
 	$scope.checkboxs={
 			exportSubObj : false,
 			exportSnapshots : false,
@@ -262,8 +263,33 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	$scope.filterDoc = function() {
 		$scope.test = filteringDocuments($scope.filterByStatus);
 	}
+	
+	
+	var goingThroughTree = function(folders) {
+		var checkedDocs = [];
+		var objArray = [];
+		
+		for(var i=0; i<folders.length; i++) {
+			checkedDocs = $filter('filter')(folders[i].biObjects, {checked: true}, true);
+			objArray = setObjectPath(folders[i].path, checkedDocs);
+			if(folders[i].subfolders.length > 0)
+				goingThroughTree(folders[i].subfolders);
+		}
+	}
+	
+	var setObjectPath = function(paths, checkedDocs) {
+		
+		var singlePath = [paths];
+		
+		for(var i=0; i<checkedDocs.length; i++) {
+			checkedDocs[i].functionalities = singlePath;
+			var obj = {"id": checkedDocs[i].id, "folder": paths}
+			selectedFiles.push(obj);
+		}
+	}
 
 	$scope.exportFiles= function(){
+		
 		var config={
 				"DOCUMENT_ID_LIST":[],
 				"EXPORT_FILE_NAME":$scope.exportName,
@@ -275,10 +301,23 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 				"EXPORT_SELECTED_FUNCTIONALITY": $scope.checkboxs.exportSelFunc
 		};
 		
-		for (var i =0 ; i < $scope.selected.length;i++){
-			if ($scope.selected[i].type == "biObject"){
-				config.DOCUMENT_ID_LIST.push(""+$scope.selected[i].id);
+		goingThroughTree($scope.folders);
+		
+		if(!$scope.checkboxs.exportSelFunc){
+			for (var i =0 ; i < $scope.selected.length;i++){
+				if ($scope.selected[i].type == "biObject")
+					config.DOCUMENT_ID_LIST.push(""+$scope.selected[i].id);
 			}
+		}
+		
+		if($scope.checkboxs.exportSelFunc) {
+			config.DOCUMENT_ID_LIST = [];
+			for(var i=0; i<selectedFiles.length; i++) {
+				//if($scope.selected[i].type == "biObject") {
+					config.DOCUMENT_ID_LIST.push(selectedFiles[i]);
+				//}
+			}
+			
 		}
 
 		$scope.flags.waitExport=true;
@@ -296,7 +335,6 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 //			$scope.showToast("ERRORS "+status,4000);
 //		})
 
-
 		sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","export",config)
 		.then(function(response) {
 			if (response.data.hasOwnProperty("errors")) {
@@ -313,6 +351,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 
 
 	}
+	
 
 	$scope.submitDownForm = function(form){
 		$scope.flags.submitForm= true;
