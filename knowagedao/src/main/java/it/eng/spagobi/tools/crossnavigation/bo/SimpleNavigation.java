@@ -21,6 +21,8 @@ public class SimpleNavigation {
 
 	private Integer id;
 	private String name;
+	private String description;
+	private String breadcrumb;
 	private Integer type;
 	private String fromDoc;
 	private Integer fromDocId;
@@ -30,9 +32,11 @@ public class SimpleNavigation {
 	public SimpleNavigation() {
 	}
 
-	public SimpleNavigation(Integer id, String name, Integer type, String fromDoc, Integer fromDocId, String toDoc) {
+	public SimpleNavigation(Integer id, String name, String description, String breadcrumb,  Integer type, String fromDoc, Integer fromDocId, String toDoc) {
 		this.id = id;
 		this.name = name;
+		this.description = description;
+		this.breadcrumb = breadcrumb;
 		this.type = type;
 		this.fromDoc = fromDoc;
 		this.toDoc = toDoc;
@@ -52,6 +56,36 @@ public class SimpleNavigation {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+	/**
+	 * @return the breadcrumb
+	 */
+	public String getBreadcrumb() {
+		return breadcrumb;
+	}
+
+	/**
+	 * @param breadcrumb the breadcrumb to set
+	 */
+	public void setBreadcrumb(String breadcrumb) {
+		this.breadcrumb = breadcrumb;
 	}
 
 	public Integer getType() {

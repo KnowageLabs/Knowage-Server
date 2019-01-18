@@ -19,6 +19,10 @@
         
         <property name="name" type="string" column="NAME" unique="true" length="40" not-null="true"/>
         
+        <property name="description" type="string" column="DESCRIPTION" length="200"/>
+        
+        <property name="breadcrumb" type="string" column="BREADCRUMB" length="200"/>
+        
         <property name="type" type="int" column="TYPE" />
         
 

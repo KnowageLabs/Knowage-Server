@@ -146,22 +146,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-card-content>
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
-					<div flex="50">
-						<md-input-container class="md-block"> 
+					<div flex="50" layout="column">
+						<md-input-container class="md-block">  
 							<label>{{translate.load("sbi.crossnavigation.name");}}</label>
 							<input md-maxlength="40" type="text" name="name" ng-model="ctrl.detail.simpleNavigation.name" required > 
 							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
 						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.name.invalid");}}</div>
+						    </div> 
+						</md-input-container>
+						<md-input-container class="md-block"> 
+							<label>{{translate.load("sbi.crossnavigation.description");}}</label>
+							<input md-maxlength="200" type="text" name="description" ng-model="ctrl.detail.simpleNavigation.description" > 
+							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
+						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.description.invalid");}}</div>
 						    </div>
 						</md-input-container>
 					</div>
-					<div flex="50">
-					      <md-input-container class="md-block" >
+					<div flex="50"  layout="column">
+					      <md-input-container class="md-block" style="height:50px">
 							<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
 					        <md-select ng-model="ctrl.crossmodality" ng-model-options="{trackBy: '$value.value'}">
 					          <md-option ng-value="crossMode" ng-repeat="crossMode in crossModes">{{crossMode.label}}</md-option>
-					        </md-select>						      
+					        </md-select>			      
 					      </md-input-container>
+					      <md-input-container class="md-block"> 
+							<label>{{translate.load("sbi.crossnavigation.breadcrumb");}}</label>
+							<input md-maxlength="200" type="text" name="breadcrumb" ng-model="ctrl.detail.simpleNavigation.breadcrumb" > 
+							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
+						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.breadcrumb.invalid");}}</div>
+						    </div> 
+						</md-input-container>
 					</div>					
 				</div>
 	

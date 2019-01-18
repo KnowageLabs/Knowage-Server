@@ -6,15 +6,19 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" table="SBI_CROSS_NAVIGATION">
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" table="SBI_CROSS_NAVIGATION"> 
         
         <id name="id" type="integer">
            <column name="ID" />
         </id>
         
         <property name="name" type="string" column="NAME" length="40" not-null="true"/>
+        
+        <property name="description" type="string" column="DESCRIPTION" length="200" />
 
-  <property name="type" type="int" column="TYPE" />
+        <property name="breadcrumb" type="string" column="BREADCRUMB" length="200"/>
+        
+ 		<property name="type" type="int" column="TYPE" />
 	    
        
 	</class>
