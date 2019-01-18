@@ -84,6 +84,7 @@
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjState.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSubreports.hbm.xml"/>
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiViewpoints.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelViewpoints.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFunctions.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFuncRole.hbm.xml" />
         <mapping resource="it/eng/spagobi/monitoring/metadata/mapping/SbiAudit.hbm.xml" />

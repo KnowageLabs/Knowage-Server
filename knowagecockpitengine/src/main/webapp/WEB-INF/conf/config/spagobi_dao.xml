@@ -28,6 +28,8 @@
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl" />
 		<DAO name="ViewpointDAO"
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.ViewpointDAOHimpl" />
+		<DAO name="MetaModelViewpointDAO"
+			implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelViewpointDAOHibImpl" />
 		<DAO name="DataSourceDAO"
 			implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl" />
 		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl" />

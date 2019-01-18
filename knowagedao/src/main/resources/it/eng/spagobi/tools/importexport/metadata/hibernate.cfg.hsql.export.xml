@@ -128,6 +128,7 @@
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizations.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizationsRoles.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiViewpoints.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelViewpoints.hbm.xml" />
                 <!-- Federation definition -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFederationDefinition.hbm.xml"/>
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSetFederation.hbm.xml"/>
