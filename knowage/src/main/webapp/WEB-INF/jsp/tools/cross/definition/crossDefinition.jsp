@@ -47,7 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/crossnavigation/cross-definition.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/cross/definition/CrossDefinition.js")%>"></script>
 
 </head>
@@ -58,40 +57,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%} %>
 <script type="text/ng-template" id="nodes_renderer1.html">
 <!--<i class="fa fa-times-circle" ng-show="par.type==2" ng-click="ctrl.deleteFixedValue(par))"></i>-->
-<md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
-    <div>
-		<span class="fa fa-bars"></span>
+<md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row" layout-align="start center">
+		<i class="fa fa-bars"></i>
 	    {{par.name}}
-    </div>
 	<span flex class="flex"></span>
-    <div >
         {{ctrl.getTypeLabel(par.type)}}
-    </div>
 </md-toolbar>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
-    <div >
-	  {{par.name}}
-    </div>
+  <div layout="row" layout-align="start center" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
+	{{par.name}}
 	<span flex class="flex"></span>
-    <div >
-        {{ctrl.getTypeLabel(par.type)}}
-    </div>
+    {{ctrl.getTypeLabel(par.type)}}
   </div>
   <ol ui-tree-nodes="" ng-model="par.links" ng-class="{hidden: collapsed}" ng-if="!par.links.length" >
       <li ng-repeat="node in par.links" ui-tree-node >
       </li>
   </ol>
 
-  <div class="tree-node tree-node-content crossnavigation-parameter link" ng-if="par.links.length" layout="row">
-    <div >
+  <div class="tree-node tree-node-content crossnavigation-parameter link" ng-if="par.links.length" layout="row" layout-align="start center">
 	  {{par.links[0].name}}
-	  <span class="fa fa-link"></span>
+	  <i class="fa fa-link"></i>
 	  {{par.name}}
-    </div>
     <span flex class="flex"></span>
-    <i class="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></i>
+	<md-button class="md-icon-button">
+    	<md-icon md-font-icon="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></md-icon>
+	</md-button>
   </div>
 	
 </script>

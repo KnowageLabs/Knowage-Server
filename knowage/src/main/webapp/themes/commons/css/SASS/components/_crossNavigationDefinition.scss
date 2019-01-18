@@ -11,7 +11,7 @@
 		background-color: lighten($secondaryColor,10%); 
 		color: rgba($lightTextColor,0.87);
 		font-size: $baseFontSize;
-		padding:5px 16px 0 16px!important;
+		padding:0 16px;
 		font-weight:$tabFontWeight;
 		min-height:33px!important;          
 		&.highlight-selected-parameter {
@@ -21,8 +21,18 @@
 			color: $darkTextColor; 
 			background-color: $detailBackground;
 		}
-		.fa-link {
-			color: #3F51B5;
+		.fa-link, .fa-bars {
+			padding: 4px;
+			outline: none;
+		}
+		.md-button {
+			height: 32px;
+			padding: 4px;
+			.md-ripple-container {
+				height: 32px !important;
+			    width: 32px !important;
+			    margin: 2px 0 0 4px;
+			}
 		}
 	}
 	.loadingSpinner {
