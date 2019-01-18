@@ -52,6 +52,9 @@ Temporary Items
 .project
 .gitignore
 .eclipse
+.metadata
+
+Servers
 
 # IntelliJ Idea files
 .idea/
