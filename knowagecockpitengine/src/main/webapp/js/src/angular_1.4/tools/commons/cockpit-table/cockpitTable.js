@@ -162,12 +162,12 @@
 						}
 
 						//check if the selected element exists in the selectedCells array, remove it in case.
-						if((scope.selectedCells.indexOf(row[column.aliasToShow.toLowerCase()])==-1 && !scope.settings.modalSelectionColumn) || (scope.settings.modalSelectionColumn && scope.selectedRows.indexOf(row)==-1)){
-							scope.selectedCells.push(row[column.aliasToShow.toLowerCase()]);
+						if((scope.selectedCells.indexOf(row[column.aliasToShow])==-1 && !scope.settings.modalSelectionColumn) || (scope.settings.modalSelectionColumn && scope.selectedRows.indexOf(row)==-1)){
+							scope.selectedCells.push(row[column.aliasToShow]);
 							scope.selectedRows.push(row);
 
 						}else{
-							scope.selectedCells.splice(scope.selectedCells.indexOf(row[column.aliasToShow.toLowerCase()]),1);
+							scope.selectedCells.splice(scope.selectedCells.indexOf(row[column.aliasToShow]),1);
 							scope.selectedRows.splice(scope.selectedRows.indexOf(row),1);
 							//if there are no selection left set bulk selection to false to avoid the selection button to show
 							if(scope.selectedCells.length==0) scope.bulkSelection=false;
@@ -187,7 +187,7 @@
                 			if(scope.settings.modalSelectionColumn){
                     			return (scope.settings.modalSelectionColumn == column.name && scope.selectedRows.indexOf(row)!=-1)?true:false;
                     		}else{
-                    			return (column.aliasToShow == scope.bulkSelection.aliasToShow && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow.toLowerCase()])!=-1)?true:false;
+                    			return (column.aliasToShow == scope.bulkSelection.aliasToShow && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
                     		}
                 		}
                 	}

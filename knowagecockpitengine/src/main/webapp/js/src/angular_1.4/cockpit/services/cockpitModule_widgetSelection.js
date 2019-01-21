@@ -829,7 +829,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				for(var i in datasetLabelAndColumnNames){
 					var datasetLabelAndColumnName = datasetLabelAndColumnNames[i];
 					var split = datasetLabelAndColumnName.split(".");
-					if(split[0]==datasetLabel && split[1].toLowerCase()==columnName.toLowerCase()){
+					if(split[0]==datasetLabel && split[1]==columnName){
 						result = selections[datasetLabelAndColumnName]
 					}
 				}
@@ -840,8 +840,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		if(selections && selections[datasetLabel]){
 		    if(selections[datasetLabel][columnName]){
                 result = selections[datasetLabel][columnName];
-            } else if(selections[datasetLabel][columnName.toLowerCase()]){
-                result = selections[datasetLabel][columnName.toLowerCase()];
+            } else if(selections[datasetLabel][columnName]){
+                result = selections[datasetLabel][columnName];
             }
         }
 

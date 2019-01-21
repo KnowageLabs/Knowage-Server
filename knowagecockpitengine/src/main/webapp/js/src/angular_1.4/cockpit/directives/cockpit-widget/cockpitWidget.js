@@ -690,12 +690,12 @@ function cockpitWidgetControllerFunction(
 				doCross = true;
 				// get value to pass to cross navigation
 				if(row){
-					if(row[crossColumnOrAlias.toLowerCase()]){
-						columnValue = row[crossColumnOrAlias.toLowerCase()];
+					if(row[crossColumnOrAlias]){
+						columnValue = row[crossColumnOrAlias];
 					}else{
 						columnValue = [];
 						for(var j in row){
-							columnValue.push(row[j][crossColumnOrAlias.toLowerCase()]);
+							columnValue.push(row[j][crossColumnOrAlias]);
 						}
 					}
 				}
