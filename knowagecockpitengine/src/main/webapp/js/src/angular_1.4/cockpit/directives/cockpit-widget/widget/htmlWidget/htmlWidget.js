@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.showPreview = function(datasetLabel){
 		    $mdDialog.show({
 		      controller: function(scope){
-		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+datasetLabel;
+		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
 		    	  scope.closePreview = function(){
 		    		  $mdDialog.hide();
 		    	  }
@@ -103,6 +103,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true
 		    })
+		}
+		
+		$scope.select = function(column,value){
+			$scope.doSelection(column, value || $scope.htmlDataset.rows[0][$scope.getColumnFromName(column,$scope.htmlDataset)], null, null, null, null, $scope.ngModel.dataset.dsId, null);
 		}
 		
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
@@ -297,6 +301,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    }
 				  if (allElements[j] && allElements[j].hasAttribute("kn-cross")){
 				    	allElements[j].setAttribute("ng-click", "doSelection()");
+				    }
+				  if (allElements[j] && allElements[j].hasAttribute("kn-selection-column")){
+					  	var columnSelectionLabel = allElements[j].getAttribute("kn-selection-column");
+					  	var columnSelectionValue = allElements[j].getAttribute("kn-selection-value");
+					  	allElements[j].setAttribute("ng-click", columnSelectionValue ? "select('"+ columnSelectionLabel +"','"+columnSelectionValue +"')" : "select('"+ columnSelectionLabel +"')");
 				    }
 				  j++;
 				  
