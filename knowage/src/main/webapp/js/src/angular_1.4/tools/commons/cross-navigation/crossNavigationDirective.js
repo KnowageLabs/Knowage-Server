@@ -74,7 +74,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				console.log("otherOutputParameters: ", otherOutputParameters);
 				for (var n in navObj){
 					if (navObj[n].crossText){
-						//replace parameters placeholders if exist
+						//replace parameters placeholders if exist in navigation popup selection
 						var paramsRegex = /\$P\{([a-zA-Z0-9\_\-]*)}/g;
 						navObj[n].crossText = navObj[n].crossText.replace(paramsRegex,function(match,p1){
 							if (Array.isArray(outputParameter)){
@@ -84,6 +84,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return outputParameter[o][name];
 									}
 								}
+								return ""; //clean placeholder
 							}else if(outputParameter[p1]) return outputParameter[p1];
 
 							if (Array.isArray(inputParameter)){
@@ -93,6 +94,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return inputParameter[o].parameterValue;
 									}
 								}
+								return ""; //clean placeholder
 							}else if(inputParameter[p1]) return inputParameter[p1];
 
 							if (Array.isArray(otherOutputParameters)){
@@ -102,6 +104,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return otherOutputParameters[o][name];
 									}
 								}
+								return ""; //clean placeholder
 							}else if(otherOutputParameters[p1]) return otherOutputParameters[p1];
 							return match;
 						});
@@ -110,7 +113,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					}
 
 					if (navObj[n].crossBreadcrumb){
-						//replace parameters placeholders if exist
+						//replace parameters placeholders if exist in breadcrumbs
 						var paramsRegex = /\$P\{([a-zA-Z0-9\_\-]*)}/g;
 						navObj[n].crossBreadcrumb = navObj[n].crossBreadcrumb.replace(paramsRegex,function(match,p1){
 							if (Array.isArray(outputParameter)){
@@ -120,6 +123,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return outputParameter[o][name];
 									}
 								}
+								return ""; //clean placeholder
 							}else if(outputParameter[p1]) return outputParameter[p1];
 
 							if (Array.isArray(inputParameter)){
@@ -129,6 +133,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return inputParameter[o].parameterValue;
 									}
 								}
+								return ""; //clean placeholder
 							}else if(inputParameter[p1]) return inputParameter[p1];
 
 							if (Array.isArray(otherOutputParameters)){
@@ -138,6 +143,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 											return otherOutputParameters[o][name];
 									}
 								}
+								return ""; //clean placeholder
 							}else if(otherOutputParameters[p1]) return otherOutputParameters[p1];
 							return match;
 						});
@@ -411,9 +417,11 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		function jsonToURI(jsonObj){
 			return encodeURIComponent(JSON.stringify(jsonObj))
 			.replace(/'/g,"%27")
-			.replace(/"/g,"%22")
-			.replace(/%3D/g,"=")
-			.replace(/%26/g,"&");
+			.replace(/"/g,"%22");
+//			.replace(/'/g,"%27")
+//			.replace(/"/g,"%22")
+//			.replace(/%3D/g,"=")
+//			.replace(/%26/g,"&");
 		}
 
 		this.internalNavigateTo=function(params,targetDocLabel){
