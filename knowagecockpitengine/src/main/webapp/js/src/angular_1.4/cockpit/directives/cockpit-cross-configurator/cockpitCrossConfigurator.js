@@ -163,13 +163,15 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			chart = $scope.localModel.chartTemplate;
 		}
 		$scope.chartProperties=cockpitModule_crossServices.getChartParameters(chart.type, chart);
-	}else{
-	   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
-		   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
-	   }else{
-		   $scope.model.dataset= {};
-		   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
-	   }
+	}else {
+		if($scope.model){
+		   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
+			   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+		   }else{
+			   $scope.model.dataset= {};
+			   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
+		   }
+		}
 	}
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
 

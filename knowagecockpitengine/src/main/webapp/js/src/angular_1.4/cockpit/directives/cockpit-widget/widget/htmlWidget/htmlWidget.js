@@ -36,6 +36,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		})
+		
+		.directive('bindHtmlCompile', ['$compile', function ($compile) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                scope.$watch(function () {
+                    return scope.$eval(attrs.bindHtmlCompile);
+                }, function (value) {
+                    element.html(value && value.toString());
+                    var compileScope = scope;
+                    if (attrs.bindHtmlScope) {
+                        compileScope = scope.$eval(attrs.bindHtmlScope);
+                    }
+                    $compile(element.contents())(compileScope);
+                });
+            }
+        };
+    }])
+    
 	function cockpitHtmlWidgetControllerFunction(
 			$scope,
 			$mdDialog,
@@ -63,12 +82,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
-				
+
+		if(!$scope.ngModel.cross) $scope.ngModel.cross = {};
 		//dataset initializing and backward compatibilities checks
-		if(!$scope.ngModel.dataset){$scope.ngModel.dataset = {}};
+		if(!$scope.ngModel.dataset) $scope.ngModel.dataset = {};
 		if($scope.ngModel.datasetId){
 			$scope.ngModel.dataset.dsId = $scope.ngModel.datasetId;
 			delete $scope.ngModel.datasetId;
+		}
+		
+		$scope.showPreview = function(datasetLabel){
+		    $mdDialog.show({
+		      controller: function(scope){
+		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+datasetLabel;
+		    	  scope.closePreview = function(){
+		    		  $mdDialog.hide();
+		    	  }
+		      },
+		      templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true
+		    })
 		}
 		
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
@@ -131,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						)
 					}
 				)
-			}
+			}else $scope.hideWidgetSpinner();
 		}
 
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
@@ -174,6 +208,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								$scope.aggregationDataset = data;
 								allElements = $scope.parseRepeat(allElements);
 								allElements = $scope.parseIf(allElements);
+								allElements = $scope.parsePreview(allElements);
 								resolve(parsedHtml);
 							},function(error){
 								$scope.hideWidgetSpinner();
@@ -182,6 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}else{
 					allElements = $scope.parseRepeat(allElements);
 					allElements = $scope.parseIf(allElements);
+					allElements = $scope.parseAttrs(allElements);
 					resolve(parsedHtml);
 				}
 			})
@@ -244,6 +280,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    		allElements[j].parentNode.removeChild(allElements[j]);
 				    		j--;
 				    	}
+				    }
+				  j++;
+				  
+			 } while (j<nodesNumber);
+			return allElements;
+		}
+		
+		$scope.parseAttrs = function(allElements) {
+			var j = 0;
+			var nodesNumber = allElements.length;
+			do {
+				  if (allElements[j] && allElements[j].hasAttribute("kn-preview")){
+				    	var datasetPreviewLabel = allElements[j].getAttribute("kn-preview");
+				    	allElements[j].setAttribute("ng-click", "showPreview('" + datasetPreviewLabel + "')");
+				    }
+				  if (allElements[j] && allElements[j].hasAttribute("kn-cross")){
+				    	allElements[j].setAttribute("ng-click", "doSelection()");
 				    }
 				  j++;
 				  
