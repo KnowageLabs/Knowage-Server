@@ -35,30 +35,30 @@
 	    </thead>
 	    <tbody>
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
-	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="::getCellStyle(column,row[column.aliasToShow.toLowerCase()])" ng-class="{'highlight': isCellSelected(row,column)}">
+	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="::getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">
-	                 	<span ng-if="::hasPrecision(column)">	{{row[column.aliasToShow.toLowerCase()] | number:checkPrecision(column)}} </span>
-	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow.toLowerCase()]}} </span>
+	                 	<span ng-if="::hasPrecision(column)">	{{row[column.aliasToShow] | number:checkPrecision(column)}} </span>
+	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="{'justify-content':column.style['justify-content'] || 'flex-start'}">
-		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow.toLowerCase()].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
+		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
-			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow.toLowerCase()] | number:checkPrecision(column)}}</span>
-			                <span ng-if="::!hasPrecision(column) && column.type == 'java.util.Date'">{{::datify(row[column.aliasToShow.toLowerCase()],'DD/MM/YYYY') | date:column.dateFormat}}</span>
-			                <span ng-if="::!hasPrecision(column) && column.type == 'java.sql.Timestamp'">{{::datify(row[column.aliasToShow.toLowerCase()],'DD/MM/YYYY HH:mm:ss.SSS') | date:column.dateFormat}}</span>
-			                <span ng-if="::!hasPrecision(column) && column.type != 'java.util.Date' && column.type != 'java.sql.Timestamp'">{{row[column.aliasToShow.toLowerCase()]}}</span>
+			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow] | number:checkPrecision(column)}}</span>
+			                <span ng-if="::!hasPrecision(column) && column.type == 'java.util.Date'">{{::datify(row[column.aliasToShow],'DD/MM/YYYY') | date:column.dateFormat}}</span>
+			                <span ng-if="::!hasPrecision(column) && column.type == 'java.sql.Timestamp'">{{::datify(row[column.aliasToShow],'DD/MM/YYYY HH:mm:ss.SSS') | date:column.dateFormat}}</span>
+			                <span ng-if="::!hasPrecision(column) && column.type != 'java.util.Date' && column.type != 'java.sql.Timestamp'">{{row[column.aliasToShow]}}</span>
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
 		                </span>
-		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow.toLowerCase()].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow.toLowerCase()])"></i>
+		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
 		                    
 		                <div class="barChart" ng-if="(column.visType == 'Chart' || column.visType == 'Text & Chart')  && column.barchart && column.barchart != {}" flex ng-class="{'flex':column.text.enabled}">
 		                    <div class="progressTrack" ng-style="{'height':column.barchart.style['height'],'display':'flex','justify-content':column.style.td['justify-content']}">
-		                        <div class="progressFill" ng-style="{'height':column.barchart.style['height'],'line-height':column.barchart.style['height'],'width':getBarChartFill(row[column.aliasToShow.toLowerCase()],column.barchart.minValue,column.barchart.maxValue),'background-color':getBarchartColor(column,row[column.aliasToShow.toLowerCase()]), 'color':column.barchart.style['color']}">
+		                        <div class="progressFill" ng-style="{'height':column.barchart.style['height'],'line-height':column.barchart.style['height'],'width':getBarChartFill(row[column.aliasToShow],column.barchart.minValue,column.barchart.maxValue),'background-color':getBarchartColor(column,row[column.aliasToShow]), 'color':column.barchart.style['color']}">
 		                        </div>
 		                    </div>
 		                </div>
 		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].icon">
-		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow.toLowerCase()]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow.toLowerCase()]).iconColor}"></md-icon>
+		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
 	                </div>
 	
@@ -72,8 +72,8 @@
 			<tr ng-if="settings.summary.enabled" class="summary">
 	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn" >
 		            <div ng-if="::hasPrecision(column)">
-		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow.toLowerCase()] | number:checkPrecision(column)}}</md-tooltip>
-	            			{{settings.summary.row[column.aliasToShow.toLowerCase()] | number:checkPrecision(column)}}
+		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}</md-tooltip>
+	            			{{settings.summary.row[column.aliasToShow] | number:checkPrecision(column)}}
 		            </div>
 	            </td>
 	        </tr>
