@@ -340,9 +340,9 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		function jsonToURI(jsonObj){
 			return encodeURIComponent(JSON.stringify(jsonObj))
 			.replace(/'/g,"%27")
-			.replace(/"/g,"%22")
-			.replace(/%3D/g,"=")
-			.replace(/%26/g,"&");
+			.replace(/"/g,"%22");
+//			.replace(/%3D/g,"=")
+//			.replace(/%26/g,"&");
 		}
 
 		this.internalNavigateTo=function(params,targetDocLabel){
