@@ -69,6 +69,9 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 						return;
 					}
 				}
+				console.log("outputParameter: ", outputParameter);
+				console.log("inputParameter: ", inputParameter);
+				console.log("otherOutputParameters: ", otherOutputParameters);
 				for (var n in navObj){
 					if (navObj[n].crossText){
 						//replace parameters placeholders if exist
@@ -86,8 +89,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 							if (Array.isArray(inputParameter)){
 								for (o in inputParameter){
 									for(var name in inputParameter[o]){
-										if (name == p1)
-											return inputParameter[o][name];
+										if (inputParameter[o].label == p1)
+											return inputParameter[o].parameterValue;
 									}
 								}
 							}else if(inputParameter[p1]) return inputParameter[p1];
@@ -122,8 +125,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 							if (Array.isArray(inputParameter)){
 								for (o in inputParameter){
 									for(var name in inputParameter[o]){
-										if (name == p1)
-											return inputParameter[o][name];
+										if (inputParameter[o].label == p1)
+											return inputParameter[o].parameterValue;
 									}
 								}
 							}else if(inputParameter[p1]) return inputParameter[p1];
@@ -139,7 +142,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 							return match;
 						});
 					}else{
-						navObj[n].crossBreadcrumb = navObj[n].name; //default: force the docName as old management
+						navObj[n].crossBreadcrumb = navObj[n].document.name; //default: force the docName as old management
 					}
 				}
 
