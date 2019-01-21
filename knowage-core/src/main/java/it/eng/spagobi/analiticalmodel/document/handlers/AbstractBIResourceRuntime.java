@@ -161,7 +161,9 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 							descrs.add(anObject.toString());
 						}
 					}
-				} else if (oDescr instanceof Integer) {
+//				} else if (oDescr instanceof Integer) {
+//					descrs.add(oDescr);
+				} else if (oDescr instanceof Number) {
 					descrs.add(oDescr);
 				} else {
 					// should be in thew form of ;
