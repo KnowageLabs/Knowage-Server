@@ -65,6 +65,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
 
+    $scope.showExportDriverPanel = false;
+
     /**
      * Flag that will tell us if we are entering the Dataset wizard from the Editing or from Creating phase (changing or adding a new dataset, respectively).
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -427,7 +429,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.showDatasetDetails = function() {
-		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
+		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid() && !$scope.showExportDriverPanel;
 	};
 
 
@@ -658,7 +660,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         return $scope.currentTab==="myDataSet";
     }
 
+
+
     $scope.exportDataset= function(dataset,format){
+    	$scope.showExportDriverPanel = true;
     	$scope.dataset = dataset;
     	$scope.formatValueForExport = format;
     	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataset).then(function(){
@@ -673,6 +678,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     }
     $scope.exportDatasetWithDrivers = function(dataset){
+    	$scope.showExportDriverPanel = false;
     	var format = $scope.formatValueForExport;
     	var id=dataset.id;
        	if(isNaN(id)){
