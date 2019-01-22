@@ -76,7 +76,7 @@ angular
 			saveHadler.handleMessage = function(message){
 				if(message.pars) {
 					$scope.parameterItems = message.pars;
-					$scope.selectedDataset.qbeJSONQuery = message.qbeQuery;
+					$scope.selectedDataSet.qbeJSONQuery = message.qbeQuery;
 				}
 			}
 			comunicator.addMessageHandler(saveHadler);
@@ -89,8 +89,8 @@ angular
 			}else{
 
 				$scope.editQbeDset = editDSet;
-				if( $scope.selectedDataset && !isDerived){
-					globalQbeJson = $scope.selectedDataset.qbeJSONQuery;
+				if( $scope.selectedDataSet && !isDerived){
+					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
 				}
 
 				$mdDialog
@@ -104,7 +104,7 @@ angular
 							fullscreen: true,
 							locals:{
 								url:url,
-								driverableObject:$scope.selectedDataset,
+								driverableObject:$scope.selectedDataSet,
 								   }
 						}
 					)
@@ -122,18 +122,18 @@ angular
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 
-			driverableObject.currentView = {};
-			driverableObject.currentView.status = 'BUSINESSMODEL';
-			driverableObject.parameterView = {};
-			driverableObject.parameterView.status='';
-
-			$scope.currentView = driverableObject.currentView;
-			$scope.parameterView = driverableObject.parameterView;
-
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
 			if(driverableObject){
+
+				driverableObject.currentView = {};
+				driverableObject.currentView.status = 'BUSINESSMODEL';
+				driverableObject.parameterView = {};
+				driverableObject.parameterView.status='';
+
+				$scope.currentView = driverableObject.currentView;
+				$scope.parameterView = driverableObject.parameterView;
 
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
@@ -177,7 +177,7 @@ angular
 				$mdDialog.hide();
 
 				if($scope.isFromDataSetCatalogue) {
-					//$scope.selectedDataset.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 					comunicator.sendMessage("close");
 				} else {
 					if ($scope.datasetSavedFromQbe==true) {
@@ -313,8 +313,8 @@ angular
 					window.openPanelForSavingQbeDataset();
 				} else {
 
-					$scope.selectedDataset.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
-					sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataset))
+					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+					sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
 					.then(
 							function(response) {
 

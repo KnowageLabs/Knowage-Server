@@ -68,6 +68,7 @@
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
+			$scope.selectedModel = businessModel;
 			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel)
 			.then(function(){
 				businessModel.parametersData={}
