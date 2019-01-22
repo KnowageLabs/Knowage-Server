@@ -1039,8 +1039,20 @@
 			text-transform: none;
 		}
 		.availableFunctions {
+			background-color: white;
+    		box-shadow: -1px 1px 3px #ccc;
 			.description {
 				font-size: $mediumFontSize;
+			}
+			.expandableSubheader {
+				outline: none;
+				cursor: pointer;
+				._md-subheader-inner {
+					width: 100%;
+					i {
+						float: right;
+					}
+				}
 			}
 		}
 	}    
@@ -2653,11 +2665,6 @@
 	.htmlWidgetConfiguration {
 		section {
 			height: 100%;
-		}
-		.availableFunctions {
-			._md-subheader-content {
-				
-			}
 		}
    		.htmlEditor {
    			.CodeMirror {

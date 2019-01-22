@@ -67,11 +67,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_translate,
 			sbiModule_restServices,
 			cockpitModule_datasetServices,
+			cockpitModule_generalServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
 			cockpitModule_properties){
+		
+		$scope.getTemplateUrl = function(template){
+	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
+	  	}		
+		
 		
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
@@ -99,14 +105,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		  $mdDialog.hide();
 		    	  }
 		      },
-		      templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true
 		    })
 		}
 		
 		$scope.select = function(column,value){
-			$scope.doSelection(column, value || $scope.htmlDataset.rows[0][$scope.getColumnFromName(column,$scope.htmlDataset)], null, null, null, null, $scope.ngModel.dataset.dsId, null);
+			$scope.doSelection(column, value || $scope.htmlDataset.rows[0][$scope.getColumnFromName(column,$scope.htmlDataset).name], null, null, null, null, $scope.ngModel.dataset.dsId, null);
 		}
 		
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
@@ -176,7 +182,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getColumnFromName = function(name,ds,aggregation){
 			for(var i in ds.metaData.fields){
 				if(typeof ds.metaData.fields[i].header != 'undefined' && ds.metaData.fields[i].header == (aggregation ? name+'_'+aggregation : name)){
-					return ds.metaData.fields[i].name;
+					return {'name':ds.metaData.fields[i].name,'type':ds.metaData.fields[i].type };
 				}
 			}
 		}
@@ -236,7 +242,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var i=0;
 			do {
 				if(!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
-				if (allElements[i] && allElements[i].hasAttribute("kn-repeat")){
+				if(allElements[i] && allElements[i].hasAttribute("kn-repeat")){
 					if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
 						allElements[i].removeAttribute("kn-repeat");
 						var limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= $scope.htmlDataset.rows.length) ? allElements[i].getAttribute('limit') : $scope.htmlDataset.rows.length;
@@ -246,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    		var tempRow = angular.copy(repeatedElement);
 				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
 				    			var precisionPlaceholder = '';
-				    			if(precision) precisionPlaceholder = " precision='"+precision+"'";
+				    			if(precision) precisionPlaceholder = " precision='" + precision + "'";
 								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\'" + precisionPlaceholder + "]";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
@@ -351,10 +357,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
 			if(aggr){
-				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)] : 'null';
+				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr).name])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr).name] : 'null';
 			}
-			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
-				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)];
+			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]){
+				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name];
 			}else {
 				p1 = 'null';
 			}
@@ -366,12 +372,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.replacer = function(match, p1, p2, p3, precision) {
+			var columnInfo;
 			if(p3){
-				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)] : 'null';
+				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,p3);
+				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : 'null';
 			}else{
-				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
+				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
+				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : 'null';
 			}
-			if(!isNaN(p1)){
+			if(columnInfo.type == 'int' || columnInfo.type == 'float'){
 				p1 = parseFloat(p1);
 				if(precision) p1 = p1.toFixed(precision);
 				p1 = p1.toLocaleString();
@@ -396,7 +405,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					attachTo:  angular.element(document.body),
 					controller: htmlWidgetEditControllerFunction,
 					disableParentScroll: true,
-					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetEditPropertyTemplate.html',
+					templateUrl: $scope.getTemplateUrl('htmlWidgetEditPropertyTemplate'),
 					position: $mdPanel.newPanelPosition().absolute().center(),
 					fullscreen :true,
 					hasBackdrop: true,
@@ -411,56 +420,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.reinit();
-	}
-
-	function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){
-		$scope.translate=sbiModule_translate;
-		$scope.newModel = angular.copy(model);
-
-		if($scope.newModel.cssOpened) $scope.newModel.cssOpened = false;
-
-		$scope.toggleCss = function() {
-			$scope.newModel.cssOpened = !$scope.newModel.cssOpened;
-		}
-
-        //codemirror initializer
-        $scope.codemirrorLoaded = function(_editor) {
-            $scope._doc = _editor.getDoc();
-            $scope._editor = _editor;
-            _editor.focus();
-            $scope._doc.markClean()
-            _editor.on("beforeChange", function() {});
-            _editor.on("change", function() {});
-        };
-
-        //codemirror options
-        $scope.editorOptionsCss = {
-            theme: 'eclipse',
-            lineWrapping: true,
-            lineNumbers: true,
-            mode: {name:'css'},
-            onLoad: $scope.codemirrorLoaded
-        };
-        $scope.editorOptionsHtml = {
-            theme: 'eclipse',
-            lineWrapping: true,
-            lineNumbers: true,
-            mode: {name: "xml", htmlMode: true},
-            onLoad: $scope.codemirrorLoaded
-        };
-
-		$scope.saveConfiguration=function(){
-			 mdPanelRef.close();
-			 angular.copy($scope.newModel,model);
-			 $scope.$destroy();
-			 finishEdit.resolve();
-   	  	}
-   	  	$scope.cancelConfiguration=function(){
-   	  		mdPanelRef.close();
-   	  		$scope.$destroy();
-   	  		finishEdit.reject();
-   	  	}
-
 	}
 
 	/**

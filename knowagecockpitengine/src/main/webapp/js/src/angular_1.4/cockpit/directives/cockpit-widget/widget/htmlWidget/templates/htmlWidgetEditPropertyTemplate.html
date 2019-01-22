@@ -29,7 +29,6 @@
 								<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
 								</md-card-content>
 							</md-card>
-						
 							<md-card class="htmlEditor">
 								<md-toolbar class="ternaryToolbar"> 
 							      <div class="md-toolbar-tools"> 
@@ -38,46 +37,39 @@
 							      </div>
 							    </md-toolbar>
 								<md-card-content class="noPadding">
-								<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="reloadCodemirror" flex></textarea>
+								<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="newModel.htmlToRender" flex></textarea>
 								</md-card-content>
 							</md-card>
 						</div>
-						<md-sidenav
-					        class="md-sidenav-right availableFunctions"
-					        md-component-id="right"
-					        md-is-locked-open="$mdMedia('gt-md')"
-					        md-whiteframe="1">
-					
+						<div class="availableFunctions" flex="20">
 					      <md-toolbar class="secondaryToolbar">
 					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.html.availabletags')}}</h1>
 					      </md-toolbar>
-					      <md-content>
-					      	<md-subheader>[kn-column='STRING' row='NUMBER']</md-subheader>
-					        <p layout-padding class="description">
-					          {{translate.load('kn.cockpit.html.tag1.desc')}}
-					        </p>
-					        <md-divider></md-divider>
-					        <md-subheader>[kn-parameter='STRING']</md-subheader>
-					        <p layout-padding class="description">
-					          {{translate.load('kn.cockpit.html.tag2.desc')}}
-					        </p>
-					        <md-divider></md-divider>
-					      	<md-subheader>&lt;div kn-repeat="CONDITION" (limit="NUMBER")&gt; ... &lt;/div&gt;</md-subheader>
-					        <p layout-padding class="description">
-					          {{translate.load('kn.cockpit.html.tag3.desc')}}
-					        </p>
-					        <md-divider></md-divider>
-					        <md-subheader>[kn-repeat-index]</md-subheader>
-					        <p layout-padding class="description">
-					          {{translate.load('kn.cockpit.html.tag4.desc')}}
-					        </p>
-					        <md-subheader>&lt;div kn-if="CONDITION"&gt; ... &lt;/div&gt;</md-subheader>
-					        <p layout-padding class="description">
-					          {{translate.load('kn.cockpit.html.tag5.desc')}}
-					        </p>
-					      </md-content>
-					
-					    </md-sidenav>
+					  		<md-subheader class="expandableSubheader" ng-repeat-start="tag in helper.tags" layout="row" ng-click="toggleTag(tag)">{{tag.label}}<i class="fa" ng-class="{'fa-chevron-up':tag.opened,'fa-chevron-down':!tag.opened}"></i></md-subheader>
+					  		<div layout="column" style="background-color: white;" ng-if="tag.opened">
+						  		<p layout-padding class="description">
+						          {{tag.description}}
+						        </p>
+						        <div class="kn-noItems" ng-if="tag.hidden">{{tag.hiddenMessage}}</div>
+				  				<div layout="row" ng-if="!tag.hidden" style="padding:8px" layout-wrap>
+					  				<md-input-container ng-repeat="input in tag.inputs" class="md-block" ng-class="input.flex">
+										<label>{{input.name}}</label>
+										<md-select ng-if="input.type == 'select'" ng-model="helper[tag.name][input.name]" >
+											<md-option ng-repeat="opt in input.options" ng-value="opt.name">{{opt.name}}</md-option>
+										</md-select>
+										<input ng-if="input.type == 'number'" type="number" ng-model="helper[tag.name][input.name]"/>
+										<input ng-if="input.type == 'text'" type="text" ng-model="helper[tag.name][input.name]"/>
+										<textarea ng-if="input.type == 'area'" ng-model="helper[tag.name][input.name]" md-maxlength="150" rows="3"></textarea>
+									</md-input-container>
+								</div>
+								<div layout="row" ng-if="!tag.hidden">
+									<md-button style="width: 100%;line-height: 22px;height: 30px;" ng-click="insertCode(tag)">
+				  					Insert
+				  					</md-button>
+								</div>
+							</div>
+							<md-divider ng-repeat-end></md-divider>
+					    </div>
 				    </md-content>
 				    
 					    </section>
