@@ -707,7 +707,7 @@ public class DocumentUrlManager {
 							descrs.add(anObject.toString());
 						}
 					}
-				} else if (oDescr instanceof Integer) {
+				} else if (oDescr instanceof Number) {
 					descrs.add(oDescr);
 				} else {
 					// should be in thew form of ;
