@@ -7,6 +7,10 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
+	   			<md-button class="md-icon-button" ng-click="openDialogJoinDefinitions(ngModel)">
+	   				<md-tooltip> {{translate.load("kn.qbe.custom.table.toolbar.join.definition")}}</md-tooltip>
+					<md-icon md-font-icon="fas fa fa-share-alt"></md-icon>
+				</md-button>
 	   			<md-button ng-click="showSQLQuery()">{{translate.load("kn.qbe.custom.table.toolbar.sql")}}
 <!-- 					<md-icon md-font-icon="fas fa fa-database"></md-icon> -->
 				</md-button>

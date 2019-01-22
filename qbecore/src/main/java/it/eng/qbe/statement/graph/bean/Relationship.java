@@ -19,6 +19,8 @@ package it.eng.qbe.statement.graph.bean;
 
 import java.util.List;
 
+import javax.persistence.criteria.JoinType;
+
 import org.jgrapht.graph.DefaultEdge;
 
 import it.eng.qbe.model.structure.IModelEntity;
@@ -31,7 +33,7 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 
 	private String type;
 	private String name;
-
+	private JoinType joinType = JoinType.INNER;
 	List<IModelField> sourceFields;
 	List<IModelField> targetFields;
 
@@ -92,6 +94,21 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 
 	public void setTargetJoinPath(String targetJoinPath) {
 		this.targetJoinPath = targetJoinPath;
+	}
+
+	/**
+	 * @return the joinType
+	 */
+	public JoinType getJoinType() {
+		return joinType;
+	}
+
+	/**
+	 * @param joinType
+	 *            the joinType to set
+	 */
+	public void setJoinType(JoinType joinType) {
+		this.joinType = joinType;
 	}
 
 	public String getName() {

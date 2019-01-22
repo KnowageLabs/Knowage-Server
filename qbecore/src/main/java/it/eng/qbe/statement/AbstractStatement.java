@@ -23,19 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jgrapht.Graph;
-
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.qbe.statement.graph.bean.Relationship;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.spagobi.utilities.objects.Couple;
 
 /**
@@ -94,11 +89,8 @@ public abstract class AbstractStatement implements IStatement {
 	private void updateQueryQraph() {
 
 		QueryGraph queryGraph = null;
-		IModelStructure modelStructure = this.dataSource.getModelStructure();
-		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(this.dataSource.getConfiguration().getModelName(), false);
-		Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
-		Set<IModelEntity> entities = this.query.getQueryEntities(this.dataSource);
-		queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(graph, entities);
+		queryGraph = GraphUtilities.getCoverGraph(dataSource, query);
+
 		this.query.setQueryGraph(queryGraph);
 
 	}

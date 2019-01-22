@@ -16,16 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular
-	.module('directive', [
-		'qbe_custom_table',
-		'qbe_expander_list',
-		'qbe_filter',
-		'qbe_having',
-		'qbe_advanced_visualization',
-		'qbe_filter_visualization',
-		'qbe_parameters',
-		'qbe_calculated_field_editor',
-		'group',
-		'save',
-        'relationshipsModule']);
+(function(){
+	angular.module('relationshipsModule',[])
+})()

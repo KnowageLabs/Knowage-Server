@@ -20,11 +20,10 @@ package it.eng.qbe.statement.jpa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.persistence.criteria.JoinType;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.traverse.GraphIterator;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
@@ -50,28 +49,35 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 	public String buildClause(Query query, Map entityAliasesMaps) {
 
 		QueryGraph queryGraph = query.getQueryGraph();
-		if (queryGraph != null) {
-			List<Relationship> relationships = queryGraph.getConnections();
-			Map<String, String> queryEntityAliases = (Map) entityAliasesMaps.get(query.getId());
-			// boolean hasJoinPaths = query.getQueryGraph().hasJoinPaths();
-			boolean hasJoinPaths = false;
-			if (hasJoinPaths) {
-				return this.buildClause(relationships, queryEntityAliases, entityAliasesMaps);
-			}
+		Map<String, String> queryEntityAliases = (Map) entityAliasesMaps.get(query.getId());
+		if (queryGraph != null && queryGraph.hasJoinPaths()) {
+
+			return this.buildClause(queryGraph, queryEntityAliases, entityAliasesMaps);
 		}
 
 		return super.buildClause(query, entityAliasesMaps);
 
 	}
 
-	public String buildClause(List<Relationship> relationships, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
+	public String buildClause(QueryGraph queryGraph, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
+
+		GraphIterator<IModelEntity, Relationship> iterator = new TopologicalOrderIterator<>(queryGraph);
+		GraphIteratorListener listener = new GraphIteratorListener(entityAliasesMaps, queryEntityAliases);
+		iterator.addTraversalListener(listener);
+		IModelEntity firstEntity = null;
+		if (iterator.hasNext()) {
+			firstEntity = iterator.next();
+		}
+
+		while (iterator.hasNext()) {
+			iterator.next();
+		}
 
 		List<String> fromClauseElements = new ArrayList<>();
 
-		IModelEntity firstEntity = relationships.get(0).getSourceEntity();
 		String fistEntityName = firstEntity.getName();
 		String firtEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, firstEntity);
-		List<String> joinStatments = createJoinStatements(relationships, queryEntityAliases, entityAliasesMaps);
+		List<String> joinStatments = listener.getJoinStatments();
 
 		fromClauseElements.add(FROM);
 		fromClauseElements.add(fistEntityName);
@@ -80,30 +86,6 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 
 		return StringUtils.join(fromClauseElements, " ");
 
-	}
-
-	private List<String> createJoinStatements(List<Relationship> relationships, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
-
-		List<String> joinStatments = new ArrayList<>();
-		for (Relationship relationship : relationships) {
-
-			JoinRelationshipTypeMapping joinRelationshipTypeMapping = new JoinRelationshipTypeMapping();
-			JoinType joinType = joinRelationshipTypeMapping.getJoinType(relationship.getType());
-
-			String sourceEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, relationship.getSourceEntity());
-			String targetEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, relationship.getTargetEntity());
-			StringTokenizer st1 = new StringTokenizer(relationship.getTargetJoinPath(), ".");
-			st1.nextToken();
-			String targetPropertyName = st1.nextToken();
-			JPQLJoinPath joinPath = new JPQLJoinPath(sourceEntityAlias, targetPropertyName);
-			JPQLJoin join = new JPQLJoin();
-
-			join.setJoinType(joinType);
-			join.setJoinPath(joinPath);
-			join.setTargetEntityAllias(targetEntityAlias);
-			joinStatments.add(join.toString());
-		}
-		return joinStatments;
 	}
 
 	private String getAlias(Map entityAliasesMaps, Map<String, String> queryEntityAliases, IModelEntity entity) {

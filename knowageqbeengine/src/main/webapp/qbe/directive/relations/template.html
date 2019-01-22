@@ -1,0 +1,42 @@
+<div layout="column">
+	<form name="joinForm"  >
+	<md-input-container layout="row">
+		<md-icon  md-font-icon="fa fa-search"></md-icon>
+		   
+      	<input name="search" ng-model="search.$">
+      
+		
+		<md-icon  md-font-icon="fa fa-times" ng-click="search.$ = ''"></md-icon>
+	</md-input-container>
+	<md-content>
+	<md-list>
+		
+		<md-Divider></md-Divider>
+		<md-list-item ng-repeat="relation in relations |filter:search:'true'" layout="row" class="md-no-proxy ">
+			<label flex=5>{{$index +1 }}</label>
+			<md-input-container>
+      			<md-select  name='joinType' ng-model="relation.joinType">
+              		<md-option ng-repeat="type in joinTypes" value="{{type}}">
+                {{type}}
+              </md-option>
+            </md-select>
+       		
+			
+          
+            </md-input-container>
+             	<label flex>{{relation.attributes.sourceEntity}}&nbsp --- &nbsp{{relation.attributes.entity}}</label>
+             
+				<md-button ng-if="!$first && search.$ === ''" class="md-icon-button" ng-click="moveUp(relations,$index)">
+					<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+				</md-button>
+				<md-button ng-if="!$last && search.$ === ''" class="md-icon-button" ng-click="moveDown(relations,$index)">
+					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+				</md-button>
+				<md-checkbox ng-model=relation.isConsidered ></md-checkbox>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+		</md-list>
+		</md-content>
+		</form>
+	</div>

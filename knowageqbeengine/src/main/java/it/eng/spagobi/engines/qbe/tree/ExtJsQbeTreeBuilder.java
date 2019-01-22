@@ -524,11 +524,14 @@ public class ExtJsQbeTreeBuilder {
 		String iconCls = "relation";
 		String sourceText = relation.getSourceFieldsString();
 		String targetText = relation.getTargetFieldsString();
-
+		String relationId = relation.getId();
 		String targetEntityLabel = getEntityLabel(relation.getTargetFields().get(0).getParent());
+		String sourceEntityLabel = getEntityLabel(relation.getSourceFields().get(0).getParent());
+		String targetEntityUniqueName = relation.getTargetFields().get(0).getParent().getUniqueName();
 		String relationString = targetEntityLabel;
 		String relationEntityString = "-->" + targetEntityLabel;
 		String relationName = relation.getName();
+		String relationJoinType = relation.getJoinType().toString();
 
 		if (needRelationInLabel) {
 			relationEntityString = relationEntityString + "(" + relationName + ")";
@@ -541,19 +544,22 @@ public class ExtJsQbeTreeBuilder {
 
 		JSONObject fieldNode = new JSONObject();
 		try {
-			fieldNode.put("id", relationString);
+			fieldNode.put("id", relationId);
 			fieldNode.put("text", relationEntityString);
 			fieldNode.put("iconCls", iconCls);
 			fieldNode.put("leaf", true);
 			fieldNode.put("qtip", relationTooltip);
 			fieldNode.put("relationName", relationName);
 			fieldNode.put("sourceFields", sourceText);
-			fieldNode.put("targetEntity", targetEntityLabel);
+			fieldNode.put("targetEntity", targetEntityUniqueName);
 			fieldNode.put("targetFields", targetText);
+			fieldNode.put("joinType", relationJoinType);
+			fieldNode.put("isConsidered", true);
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
 			nodeAttributes.put("type", NODE_TYPE_RELATION_FIELD);
+			nodeAttributes.put("sourceEntity", sourceEntityLabel);
 			nodeAttributes.put("entity", targetEntityLabel);
 			nodeAttributes.put("field", relationString);
 			nodeAttributes.put("longDescription", relationString);

@@ -290,6 +290,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('openDialogForParams');
 	}
 
+	$scope.openDialogJoinDefinitions = function (model){
+		$rootScope.$broadcast('openDialogJoinDefinitions');
+	}
+
 	$scope.$watch('ngModel',function(newValue,oldValue){
 		if(newValue[0]){
 			$scope.isChecked = newValue[0].distinct;

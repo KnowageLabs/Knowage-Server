@@ -22,6 +22,7 @@ angular
 
 		["$scope",
 		"$rootScope",
+		"$filter",
 		"entity_service",
 		"query_service",
 		"filters_service",
@@ -40,10 +41,12 @@ angular
 		"$mdPanel",
 		"$q",
 		"byNotExistingMembersFilter",
+		"selectedEntitiesRelationshipsService",
+		"queryEntitiesService",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter){
+function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -57,21 +60,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulasFromXml();
+	$scope.selectedRelationsService = selectedEntitiesRelationshipsService;
+	$scope.queryEntitiesService = queryEntitiesService;
 	var comunicator = windowCommunicationService;
-	comunicator.sendMessage("Hi from qbe");
-
-	var consoleHandler = {}
-	consoleHandler.handleMessage = function(message){
-		if(message === 'close'){
-			var saveObj = {};
-			saveObj.qbeQuery = {catalogue: {queries: [$scope.editQueryObj]}};;
-			saveObj.pars = $scope.pars;
-			comunicator.sendMessage(saveObj);
-		}
-		console.log(message)
-	}
-	comunicator.addMessageHandler(consoleHandler);
-
 
 	formulaService.getCustomFormulas().then(function(response) {
 		$scope.customFormulas = [];
@@ -537,6 +528,45 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$scope.openDialogForParams($scope.pars);
 	})
 
+	$scope.$on('openDialogJoinDefinitions',function(event){
+		$scope.openDialogJoinDefinitions($scope.pars);
+	})
+
+
+	$scope.openDialogJoinDefinitions = function(){
+
+    	queryEntitiesService.getQueryEntitiesUniqueNames($scope.query.id,$scope.bodySend).then(function(response){
+    		var selectedEntities = response.data;
+
+    		$mdDialog.show({
+                controller: function ($scope, $mdDialog) {
+
+                	$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
+                	$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
+                    $scope.ok= function(){
+                		$scope.editQueryObj.graph = angular.copy($filter('filter')($scope.filteredRelations,{isConsidered:true}));
+
+                        $mdDialog.hide();
+                    }
+
+                	$scope.cancel= function(){
+                		console.log($scope.joinForm.FormController)
+                		//$scope.joinForm.$setPristine();
+                        $mdDialog.hide();
+                    }
+                },
+
+                scope: $scope,
+                preserveScope:true,
+                templateUrl:  sbiModule_config.contextName +'/qbe/templates/joinDefinitionsDialog.html',
+
+                clickOutsideToClose:true
+            })
+
+    	})
+
+    }
+
 	$scope.openDialogForParams = function(pars){
     	var finishEdit=$q.defer();
 		var config = {
@@ -736,7 +766,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.relation.name"), "name": "relationName"},
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.source.fields"), "name": "sourceFields"},
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.entity"), "name": "targetEntity"},
-    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "targetFields"}
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "targetFields"},
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "joinType"}
     ]
 
     $scope.showInfo = function(item, ev) {

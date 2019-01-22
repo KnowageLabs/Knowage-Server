@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/group/group.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/save/save.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/having/having.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/relations/relationshipsModule.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/relations/joinTypeDefinition.js"></script>
+
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
@@ -44,7 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/queries/queryObject.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/save/saveService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/parameter/parameterService.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/relationships/selectedEntitiesRelationshipsModule.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/relationships/selectedEntitiesRelationshipsService.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/relationships/queryEntitiesService.js"></script>
 <!-- FILTERS -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/filters/byNotExistingMembers.js"></script>
 

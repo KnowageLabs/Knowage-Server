@@ -1,5 +1,6 @@
 package it.eng.spagobi.engines.qbe.api;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +96,26 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	protected boolean handleTimeFilter = true;
 
 	@POST
+	@Path("/queryEntities")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getQueryEntities(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("currentQueryId") String id) {
+		Query query = null;
+		List<String> entityNames = null;
+		it.eng.qbe.datasource.IDataSource dataSource = getEngineInstance().getDataSource();
+		try {
+			query = getQueryFromJson(id, query, RestUtilities.readBodyAsJSONObject(req));
+			entityNames = GraphManager.getQueryEntitiesUniqueNames(dataSource, query);
+
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), e.getMessage(), e);
+		} catch (IOException e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), e.getMessage(), e);
+		}
+
+		return entityNames;
+	}
+
+	@POST
 	@Path("/executeQuery")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response executeQuery(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("start") String startS, @QueryParam("limit") String limitS,
@@ -109,14 +130,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		Integer resultNumber = null;
 		JSONObject gridDataFeed = new JSONObject();
 		JSONObject jsonEncodedReq = null;
-		JSONArray catalogue;
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
-		JSONArray queries = null;
-		JSONObject queryJSON = null;
-		JSONArray subqueriesJSON = null;
-		JSONObject subqueryJSON = null;
-		logger.debug("IN");
 
 		try {
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeQueryAction.totalTime");
@@ -125,39 +140,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			JSONArray pars = jsonEncodedReq.optJSONArray(DataSetConstants.PARS);
 			addParameters(pars);
 
-			catalogue = jsonEncodedReq.getJSONArray("catalogue");
-			if (catalogue == null) {
-				catalogue = jsonEncodedReq.getJSONArray("qbeJSONQuery");
-				JSONObject jo = new JSONObject(catalogue);
-				jo = jo.getJSONObject("catalogue");
-				queries = jo.getJSONArray("queries");
-			} else {
-				queries = new JSONArray(catalogue.toString());
-			}
-
-			logger.debug("catalogue" + " = [" + catalogue + "]");
-
-			try {
-
-				for (int i = 0; i < queries.length(); i++) {
-					queryJSON = queries.getJSONObject(i);
-					if (queryJSON.get("id").equals(id)) {
-						query = deserializeQuery(queryJSON);
-					} else {
-						subqueriesJSON = queryJSON.getJSONArray("subqueries");
-						for (int j = 0; j < subqueriesJSON.length(); j++) {
-							subqueryJSON = subqueriesJSON.getJSONObject(j);
-							if (subqueryJSON.get("id").equals(id)) {
-								query = deserializeQuery(subqueryJSON);
-							}
-						}
-					}
-				}
-			} catch (SerializationException e) {
-				String message = "Impossible to deserialize query";
-				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
-
-			}
+			query = getQueryFromJson(id, query, jsonEncodedReq);
 
 			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -217,6 +200,55 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("OUT");
 		}
 
+	}
+
+	/**
+	 * @param id
+	 * @param query
+	 * @param jsonEncodedReq
+	 * @return
+	 * @throws JSONException
+	 */
+	private Query getQueryFromJson(String id, Query query, JSONObject jsonEncodedReq) throws JSONException {
+		JSONArray catalogue;
+		JSONArray queries;
+		JSONObject queryJSON;
+		JSONArray subqueriesJSON;
+		JSONObject subqueryJSON;
+		catalogue = jsonEncodedReq.getJSONArray("catalogue");
+		if (catalogue == null) {
+			catalogue = jsonEncodedReq.getJSONArray("qbeJSONQuery");
+			JSONObject jo = new JSONObject(catalogue);
+			jo = jo.getJSONObject("catalogue");
+			queries = jo.getJSONArray("queries");
+		} else {
+			queries = new JSONArray(catalogue.toString());
+		}
+
+		logger.debug("catalogue" + " = [" + catalogue + "]");
+
+		try {
+
+			for (int i = 0; i < queries.length(); i++) {
+				queryJSON = queries.getJSONObject(i);
+				if (queryJSON.get("id").equals(id)) {
+					query = deserializeQuery(queryJSON);
+				} else {
+					subqueriesJSON = queryJSON.getJSONArray("subqueries");
+					for (int j = 0; j < subqueriesJSON.length(); j++) {
+						subqueryJSON = subqueriesJSON.getJSONObject(j);
+						if (subqueryJSON.get("id").equals(id)) {
+							query = deserializeQuery(subqueryJSON);
+						}
+					}
+				}
+			}
+		} catch (SerializationException e) {
+			String message = "Impossible to deserialize query";
+			throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
+
+		}
+		return query;
 	}
 
 	private void addParameters(JSONArray parsListJSON) {

@@ -1,0 +1,18 @@
+<md-dialog style="min-width:500px;">
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load("kn.qbe.relationsbetweenentitieswizard.title")}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding> 
+    	
+       <join-type-definition ng-model="filteredRelations" join-form = "joinForm"></join-type-definition>
+     
+    </md-dialog-content>
+    
+   <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button class="md-raised" ng-click="ok()">{{translate.load("sbi.general.ok")}}</md-button>
+        <md-button class="md-raised" ng-click="cancel()">{{translate.load("sbi.general.cancel")}}</md-button>
+    </md-dialog-actions>
+</md-dialog>

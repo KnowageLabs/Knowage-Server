@@ -16,16 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular
-	.module('directive', [
-		'qbe_custom_table',
-		'qbe_expander_list',
-		'qbe_filter',
-		'qbe_having',
-		'qbe_advanced_visualization',
-		'qbe_filter_visualization',
-		'qbe_parameters',
-		'qbe_calculated_field_editor',
-		'group',
-		'save',
-        'relationshipsModule']);
+(function(){
+	angular.module('selectedEntitiesRelationshipsModule').service('queryEntitiesService',function(sbiModule_restServices,sbiModule_config){
+
+
+		var getUniqueNames = function(id,bodySend){
+			var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+id
+
+			return sbiModule_restServices.promisePost('qbequery/queryEntities',q,bodySend);
+
+
+		}
+
+		return {
+			getQueryEntitiesUniqueNames : getUniqueNames
+		}
+
+	})
+
+})()
