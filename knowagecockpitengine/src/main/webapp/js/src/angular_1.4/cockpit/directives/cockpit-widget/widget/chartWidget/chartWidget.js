@@ -987,7 +987,8 @@ function cockpitChartWidgetControllerFunction(
 				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
 					columnValue = date_format;
 				}else {
-					columnValue = event.point.category.name;
+					//selection
+					columnValue = event.point.category;
 				}
 			}else{
 				var columnValue  = {};
