@@ -180,7 +180,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportCrossNav : false,
 			exportBirt : false,
 			exportScheduler : false,
-			exportSelFunc: true
+			exportSelFunc: false
 	};
 	
 	$scope.filterDocuments = function(){
