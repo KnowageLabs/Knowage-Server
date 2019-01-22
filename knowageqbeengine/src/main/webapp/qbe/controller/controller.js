@@ -363,11 +363,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		  $scope.queryModel.splice(indexOfFieldInModel, 1);
 		}
 
-	  while(findWithAttr($scope.editQueryObj.filters,'leftOperandValue', data.id)>=0){
-			$scope.editQueryObj.filters.splice(findWithAttr($scope.editQueryObj.filters,'leftOperandValue', data.id),1)
-		}
 
-	  expression_service.generateExpressions($scope.editQueryObj.filters,$scope.editQueryObj.expression,$scope.advancedFilters)
 
 
 	});
@@ -659,7 +655,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries, expression, advancedFilters) {
 		field_copy = angular.copy(field);
 		field = {};
-		if(field.hasOwnProperty('attributes')){
+		if(field_copy.hasOwnProperty('attributes')){
 			field.id = field_copy.id;
 			field.name = field_copy.text;
 			field.entity = field_copy.attributes.entity;
