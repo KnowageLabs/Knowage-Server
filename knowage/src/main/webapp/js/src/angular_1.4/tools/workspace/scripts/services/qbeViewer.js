@@ -122,18 +122,18 @@ angular
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 
+			driverableObject.currentView = {};
+			driverableObject.currentView.status = 'BUSINESSMODEL';
+			driverableObject.parameterView = {};
+			driverableObject.parameterView.status='';
+
+			$scope.currentView = driverableObject.currentView;
+			$scope.parameterView = driverableObject.parameterView;
+
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
 			if(driverableObject){
-
-				driverableObject.currentView = {};
-				driverableObject.currentView.status = 'BUSINESSMODEL';
-				driverableObject.parameterView = {};
-				driverableObject.parameterView.status='';
-
-				$scope.currentView = driverableObject.currentView;
-				$scope.parameterView = driverableObject.parameterView;
 
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
