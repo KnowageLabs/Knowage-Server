@@ -94,7 +94,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
-			resultNumber = getResultNumber(statementStr, jpqlQuery, entityManager);
+			resultNumber = getResultNumber(jpqlQuery);
 			logger.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
 		}
@@ -166,53 +166,13 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		}
 	}
 
-	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
+	private int getResultNumber(Query jpqlQuery) {
 		int resultNumber = 0;
-
 		try {
-			logger.debug("Reading result number using an inline-view");
-			resultNumber = getResultNumberUsingInlineView(statementStr, entityManager);
-			logger.debug("Result number sucesfully read using an inline view (resultNumber=[" + resultNumber + "])");
-		} catch (Throwable t1) {
-			logger.warn("Error reading result number using inline view", t1);
-
-			logger.debug("Reading result number executing the original query");
-			try {
-				resultNumber = (jpqlQuery).getResultList().size();
-			} catch (Throwable t2) {
-				logger.error(t2);
-				throw new RuntimeException("Impossible to read result number", t2);
-			}
-			logger.debug("Result number sucesfully read using the original query(resultNumber=[" + resultNumber + "])");
+			resultNumber = jpqlQuery.getResultList().size();
+		} catch (Exception e) {
+			throw new RuntimeException("Impossible to get result number", e);
 		}
-
-		return resultNumber;
-	}
-
-	/**
-	 * Get the result number with an in line view
-	 *
-	 * @param jpqlQuery
-	 * @param entityManager
-	 * @return
-	 * @throws Exception
-	 */
-	private int getResultNumberUsingInlineView(String jpqlQuery, EntityManager entityManager) throws Exception {
-		int resultNumber = 0;
-		logger.debug("IN: counting query result");
-
-		JPQL2SQLStatementRewriter translator = new JPQL2SQLStatementRewriter(entityManager);
-		String sqlQueryString = translator.rewrite(jpqlQuery);
-		javax.persistence.Query countQuery = entityManager.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") temp");
-
-		logger.debug("Count query prepared and parameters setted...");
-		logger.debug("Executing query...");
-		resultNumber = ((Number) countQuery.getResultList().get(0)).intValue();
-		logger.debug("Query " + "SELECT COUNT(*) FROM (" + sqlQueryString + ")" + " executed");
-		logger.debug("Result number is " + resultNumber);
-		resultNumber = resultNumber < 0 ? 0 : resultNumber;
-		logger.debug("OUT: returning " + resultNumber);
-
 		return resultNumber;
 	}
 
