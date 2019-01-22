@@ -25,4 +25,4 @@
  */
 
 angular
-	.module('services', ['entities','queries','filters','saveservice','formulas','parameters','selectedEntitiesRelationshipsModule']);
+	.module('services', ['entities','queries','filters','saveservice','formulas','parameters','selectedEntitiesRelationshipsModule','expressions']);

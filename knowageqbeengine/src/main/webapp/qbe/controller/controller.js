@@ -43,10 +43,11 @@ angular
 		"byNotExistingMembersFilter",
 		"selectedEntitiesRelationshipsService",
 		"queryEntitiesService",
+		"expression_service",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService){
+function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService,expression_service){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -361,6 +362,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		  $scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
 		  $scope.queryModel.splice(indexOfFieldInModel, 1);
 		}
+
+	  while(findWithAttr($scope.editQueryObj.filters,'leftOperandValue', data.id)>=0){
+			$scope.editQueryObj.filters.splice(findWithAttr($scope.editQueryObj.filters,'leftOperandValue', data.id),1)
+		}
+
+	  expression_service.generateExpressions($scope.editQueryObj.filters,$scope.editQueryObj.expression,$scope.advancedFilters)
+
+
 	});
 
 	$rootScope.$on('group', function (event, data) {

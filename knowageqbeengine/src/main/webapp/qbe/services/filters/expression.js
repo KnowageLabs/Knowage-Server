@@ -21,7 +21,7 @@ filters.service('expression_service',function(){
 			expressionObject.value = filters[0].booleanConnector;
 			var sameOperator = 0;
 			for (var i = 0; i < filters.length-1; i++) {
-				
+
 				//exclude last filter from booleanOperator check
 				if(filters[i+2]){
 					if(filters[i].booleanConnector==filters[i+1].booleanConnector){
@@ -29,7 +29,7 @@ filters.service('expression_service',function(){
 					}
 				} else {
 					sameOperator++;
-				}				
+				}
 			}
 			if(sameOperator==filters.length-1){
 				for (var i = 0; i < expressionArray.length; i++) {
@@ -39,16 +39,77 @@ filters.service('expression_service',function(){
 							childNodes:[]
 					}
 					expressionObject.childNodes.push(childNode);
-				}				
+				}
 			} else {
-				
+
 				expressionObject.childNodes = buildExpressionTree(expressionArray);
 			}
 		}
-		
+
 		return expressionObject;
 	};
-	
+
+	this.generateExpressions = function (filters, expression, advancedFilters){
+
+		advancedFilters.length = 0;
+
+		for (var i = 0; i < filters.length; i++) {
+			var advancedFilter = {
+					type:"item",
+					id: filters[i].filterId.substring(6),
+					columns:[[]],
+					name: filters[i].filterId,
+					connector: filters[i].booleanConnector,
+					color: filters[i].color,
+					entity: filters[i].entity,
+					leftValue: filters[i].leftOperandAlias,
+					operator: filters[i].operator,
+					rightValue: filters[i].rightOperandDescription
+			};
+			advancedFilters.push(advancedFilter);
+		}
+
+	 // if filters are empty set expression to empty object
+		if(advancedFilters.length==0){
+			angular.copy({},expression);
+		} else {
+			var nodeConstArray = [];
+			for (var i = 0; i < advancedFilters.length; i++) {
+				var nodeConstObj = {};
+				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
+				nodeConstObj.type = "NODE_CONST";
+				nodeConstObj.childNodes = [];
+				nodeConstArray.push(nodeConstObj);
+			}
+			if (advancedFilters.length==1){
+				angular.copy(nodeConstArray[0],expression);
+			} else if (advancedFilters.length>1) {
+				var nop = {};
+				nop.value = "";
+				nop.type = "NODE_OP";
+				nop.childNodes = [];
+				var nopForInsert = {};
+				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
+					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
+						nop.value = advancedFilters[i].connector;
+						nop.childNodes.push(nodeConstArray[i]);
+						if(nopForInsert.value){
+							nop.childNodes.push(nopForInsert);
+						}
+						nopForInsert = angular.copy(nop);
+						nop.value = "";
+						nop.type = "NODE_OP";
+						nop.childNodes.length = 0;
+					} else {
+						nop.childNodes.push(nodeConstArray[i]);
+					}
+				}
+				angular.copy(nopForInsert,expression);
+			}
+		}
+
+	};
+
 	var buildExpressionTree = function(expressionArray){
 		var childNodes = [];
 		//first filter
@@ -57,9 +118,9 @@ filters.service('expression_service',function(){
 				value:expressionArray[0].name,
 				childNodes:[]
 		}
-		
+
 		childNodes.push(childNode);
-		
+
 		var currentOperator = expressionArray[0].operator;
 		for (var i = 1; i < expressionArray.length; i++) {
 			if(currentOperator==expressionArray[i].operator){
@@ -86,20 +147,20 @@ filters.service('expression_service',function(){
 							value: currentOperator,
 							childNodes: []
 					}
-					
+
 				}
-				
+
 				childNodes.push(opChildNode);
 				break;
 			}
 		}
 		return childNodes;
 	}
-	
+
 	var buildChildNode = function (currentOperator, currentExpressionObject, nextExpressionObject) {
-		
+
 		if(currentOperator==currentExpressionObject.operator){
-			
+
 		} else {
 			currentOperator = currentExpressionObject.operator;
 		}
