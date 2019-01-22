@@ -134,9 +134,9 @@
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
 	           				driversResource.driversPerModel.push(response.data);
-		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
-		           					if(response.data.priority == driversResource.renderedDrivers[i].priority)
-		           						driversResource.renderedDrivers[i] = response.data;
+		           				for(var i = 0;i < driversResource.rederedDrivers.length; i++){
+		           					if(response.data.label == driversResource.rederedDrivers[i].label)
+		           						driversResource.rederedDrivers[i] = response.data;
 		           				}
 
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);

@@ -47,6 +47,7 @@
                 {{dd.translate.load("sbi.documentdetails.drivers.noselected")}}
             </div>
         </div>
+       
         <md-card ng-if="dd.selectedDriver">
             <md-card-content layout="column">
                 <md-input-container class="md-block">
@@ -59,8 +60,15 @@
                
                     <label>{{dd.selectedDriver.parameter.name}}</label>
 					<md-select ng-required="dd.required" name="analyticalDriver" ng-model="dd.selectedDriver.parameter.name"  ng-change="dd.addToChangedDrivers(dd.selectedDriver);" >
-                        <md-option ng-repeat="analyticaldriver in dd.analyticalDrivers track by $index" ng-value="analyticaldriver" >
-                            {{ analyticaldriver }}
+							  <md-select-header>
+					            <input flex ng-model="dd.searchTerm"
+					                   type="text"
+					                   placeholder="Search for analytical driver"
+					                   onkeydown="event.stopPropagation()"
+					                   >
+		         			</md-select-header>
+                        <md-option ng-repeat="analyticaldriver in dd.analyticalDrivers | filter: dd.searchTerm track by analyticaldriver" ng-value="analyticaldriver" >
+                        {{analyticaldriver}}
                         </md-option>
                     </md-select>
                 </md-input-container>

@@ -55,8 +55,12 @@ angular
 
             	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject; self.driversNum = self.drivers.length > 1;}
             	 else{
-            	 self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
+            		  requiredPath = "2.0/businessmodels";
+            		  self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
+             			driversService.rederedDrivers = self.drivers;
              self.required = true;
+
+
 
 
              var getDriverNames = function(driversOnObject){
@@ -68,13 +72,15 @@ angular
 		            return driverNames;
 		            	 }
              }
-
+             self.clearSearch = function(){
+            	 self.searchTerm = "";
+             }
              self.addDriver = function() {
             	 if(driversService.driverRelatedObject.hasOwnProperty('modelLocked')){
 
          	 		if(driversService.driverRelatedObject.id){
     					 if (self.drivers) {
-    	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
+    	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length + 1 ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
     	                     var index = self.drivers.length;
     	                  self.driversNum = self.drivers.length > 1;
     	                     self.selectDriver( index );
@@ -88,7 +94,7 @@ angular
           }else{
 				 if(driversService.driverRelatedObject.id){
 					 if (self.drivers) {
-	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length +1 ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':true,'multivalue':false });
 	                     var index = self.drivers.length;
 	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver( index );
@@ -118,7 +124,7 @@ angular
             	   self.selectedDriver = undefined;
             	   self.drivers = driversService.renderedDrivers;
             	   requiredPath = "2.0/businessmodels";
-            	   self.driversNum = self.drivers.length > 1
+            	   self.driversNum = self.drivers.length > 1;
              });
 
              $scope.$on('setDocumentPath', function(event, data) {
@@ -345,10 +351,11 @@ angular
             	 var selectedConditionIndex = selectedCondition;
             	 $scope.driversService = DriversService;
                  $scope.document = driversService.driverRelatedObject;
-                 $scope.drivers = driversService.driversOnObject;
-                 $scope.selectedDriver = selectedDriver;
+                 $scope.drivers = driversService.rederedDrivers;
+                 var selectedDriverName = selectedDriver.label;
+                 $scope.selectedDriver = $filter('filter')(driversService.rederedDrivers,{label:selectedDriverName})[0];
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
-                 $scope.availableOperators = ['greater', 'less', 'equal', 'contains','notcontains'];
+                 $scope.availableOperators = ['equal','greater', 'less', 'contains','notcontains'];
                  driversService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.visusalDependencyObjects.length;i++){
@@ -439,7 +446,8 @@ angular
      				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
      			}
 
-     			$scope.availableOperators = ['greater','greaterequal','less','lessequal','equal', 'contains','notcontains','starts with','ends with'];                 driversService.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
+     			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','notcontains','starts with','ends with'];
+     			driversService.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
                 	 var counter = 0;
@@ -464,7 +472,7 @@ angular
                 	 $mdDialog.cancel();
                 }
                  $scope.hide = function() {
-                	 if(!$scope.selectedDataCondition.newDependency)
+
                 	 setDataDependencyProperties($scope.selectedDataCondition);
                 	 $mdDialog.hide();
                 	 }
