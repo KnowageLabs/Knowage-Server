@@ -29,8 +29,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 /**
  * The rendering function for the WORDCLOUD chart.
- * @param chartConf JSON containing data (parameters) about the chart. 
- * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
+ * @param chartConf JSON containing data (parameters) about the chart.
+ * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips).
  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
 function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCrossNavigationTo){
@@ -38,33 +38,33 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 	var maxic = 0;
 	var minValue=0;
 	var maxWordLength = 0;
-	
+
 	for (var i=0; i<chartConf.data[0].length; i++){
-		
+
 		if (chartConf.data[0][i].value > maxic){
-			
+
 			maxic = chartConf.data[0][i].value;
-			
-		}		
-		
+
+		}
+
         if (chartConf.data[0][i].value < minValue){
-			
+
 			minValue = chartConf.data[0][i].value;
-			
+
 		}
         if (chartConf.data[0][i].name.length > maxWordLength){
-         	
+
         	maxWordLength = chartConf.data[0][i].name.length;
-			
+
 		}
-		
-	}    
-    
+
+	}
+
 	/**
 	 * Normalize height and/or width of the chart if the dimension type for that dimension is
 	 * "percentage". This way the chart will take the appropriate percentage of the screen's
 	 * particular dimension (height/width).
-	 * 
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 
@@ -73,37 +73,37 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 	}
 	else {
 		var heightNormalized = chartConf.chart.height ? Number(chartConf.chart.height) : panel.offsetHeight;
-	}	
-	
+	}
+
 	if (chartConf.chart.widthDimType == "percentage") {
 		var widthNormalized = chartConf.chart.width ? panel.offsetWidth*Number(chartConf.chart.width)/100 : panel.offsetWidth;
 	}
 	else {
 		var widthNormalized = chartConf.chart.width ? Number(chartConf.chart.width) : panel.offsetWidth;
 	}
-	
+
 	/**
-     * Correction for width and height if the other one is fixed and bigger than the window dimension value. 
-     * E.g. if the height of the chart is higher than the height of the window height, the width needs to 
+     * Correction for width and height if the other one is fixed and bigger than the window dimension value.
+     * E.g. if the height of the chart is higher than the height of the window height, the width needs to
      * be corrected, since the vertical scrollbar appears. Without this correction, the chart will be cut
      * and not entirely presented, and the horizontal scrollbar will be present as well (and it should not
      * be, since the width should just expand as much as the window is wide).
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
     var widthCorrection = 0, heightCorrection = 0, overflowXHidden = "auto", overflowYHidden = "auto";
-    
+
     if (!chartConf.chart.isCockpit && heightNormalized > panel.offsetHeight && widthNormalized==panel.offsetWidth) {
     	widthCorrection = 16;
     	overflowXHidden = "hidden";
     }
-    
+
     if (!chartConf.chart.isCockpit && widthNormalized > panel.offsetWidth && heightNormalized==panel.offsetHeight) {
     	heightCorrection = 16;
     	overflowYHidden = "hidden";
     }
-	
+
 		(function() {
-               
+
 			function cloud() {
 				var size = [widthNormalized-widthCorrection, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 						+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6],
@@ -123,7 +123,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
                 w=timeInterval;
                 h=fontSize;
 				cloud.start = function() {
-			
+
 					var board = zeroArray((size[0] >> 5) * size[1]),
 					bounds = null,
 					n = Math.min(words.length, chartConf.chart.maxWords),
@@ -150,30 +150,30 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 						var start = +new Date,
 						d;
 						while (+new Date - start < timeInterval && ++i < n && timer) {
-						
+
 							d = data[i];
-							
+
 					  var condition;
-					  
+
 					  if(chartConf.chart.preventOverlap){
 						    d.x = (size[0]) >> 1;
 					        d.y = (size[1]) >> 1;
-					        
+
 					  } else{
 						  d.x = (size[0] * (Math.random() + .5)) >> 1;
 		                    d.y = (size[1] * (Math.random() + .5)) >> 1;
-						  
-					  }   
-						
-						
+
+					  }
+
+
 						cloudSprite(d, data, i);
 							if(chartConf.chart.preventOverlap){
 								condition=d.hasText && place(board, d, bounds);
-								
+
 							}else{
 								condition=d.hasText;
 							}
-							
+
 							if (condition) {
 								tags.push(d);
 								event.word(d);
@@ -186,7 +186,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 						}
 						if (i >= n) {
 							cloud.stop();
-							
+
 							event.end(tags, bounds);
 						}
 					}
@@ -207,7 +207,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				};
 
 				function place(board, tag, bounds) {
-			
+
 					var perimeter = [{x: 0, y: 0}, {x: size[0], y: size[1]}],
 					startX = tag.x,
 					startY = tag.y,
@@ -227,11 +227,11 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 
 						tag.x = startX + dx;
 						tag.y = startY + dy;
-						
-						
+
+
 						if (tag.x + tag.x0 < 0 || tag.y + tag.y0 < 0 ||
 								tag.x + tag.x1 > size[0] || tag.y + tag.y1 > size[1]) continue;
-						
+
 						// TODO only check for collisions within current bounds.
 						if (!bounds || !cloudCollide(tag, board, size[0])) {
 							if (!bounds || collideRects(tag, bounds)) {
@@ -293,7 +293,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 					if (!arguments.length) return rotate;
 					rotate = d3.functor(x);
 					return cloud;
-					
+
 				};
 
 				cloud.text = function(x) {
@@ -363,8 +363,8 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 					c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
 					var w = c.measureText(d.text + "m").width * ratio,
 					h = d.size << 1;
-					
-					if (d.rotate) 
+
+					if (d.rotate)
 					{
 						var sr = Math.sin(d.rotate * cloudRadians),
 						cr = Math.cos(d.rotate * cloudRadians),
@@ -374,13 +374,13 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 						hsr = h * sr;
 						w = (Math.max(Math.abs(wcr + hsr), Math.abs(wcr - hsr)) + 0x1f) >> 5 << 5;
 						h = ~~Math.max(Math.abs(wsr + hcr), Math.abs(wsr - hcr));
-					} 
-					else 
+					}
+					else
 					{
 						w = (w + 0x1f) >> 5 << 5;
 					}
-					
-					if (h > maxh) 
+
+					if (h > maxh)
 						maxh = h;
 					if (x + w >= (cw << 5)) {
 						x = 0;
@@ -535,13 +535,13 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 
 			if (typeof module === "object" && module.exports) module.exports = cloud;
 			else (d3.layout || (d3.layout = {})).cloud = cloud;
-		})();    
+		})();
 
 		var actualCloudSizeHeight = heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6;
-		
-		
-		var actualCloudSize = Math.min(actualCloudSizeHeight, widthNormalized); 
+
+
+		var actualCloudSize = Math.min(actualCloudSizeHeight, widthNormalized);
 		var maxfontsize=0;
 		if(maxWordLength<8){
 			maxfontsize = Math.round(actualCloudSize/5);
@@ -551,13 +551,13 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		}
 		if(maxWordLength>=12){
 			maxfontsize = Math.round(actualCloudSize/10);
-	
+
 		}
 		var minfontsize=Math.round(actualCloudSize/50);
 		var fill = d3.scale.category20();
-        
+
 		var wordFontSize= d3.scale.linear().domain([minValue,maxic]).range([minfontsize,maxfontsize]);
-		
+
 		var layout=d3.layout.cloud().size([widthNormalized-widthCorrection, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
@@ -569,7 +569,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 			if(chartConf.chart.wordLayout==='horizontalAndVertical'){
 				return 90*Math.round(Math.random());
 			}
-			
+
 			if(chartConf.chart.minAngle==chartConf.chart.maxAngle){
 				return chartConf.chart.minAngle;
 			}
@@ -581,23 +581,23 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		.font("Impact")
 		.fontSize(function(d) { return d.size; })
 		.on("end", draw);
-			
+
 		layout.start();
 
 		function draw(words,e) {
 			var randomId= Math.round((Math.random())*10000);
-		
+
 			/**
 			 * Create an invisible HTML form that will sit on the page where the chart (in this case, the WORDCLOUD) is rendered.
 			 * This form will serve us as a media through which the data and customization for the rendered chart will be sent
-			 * towards the Highcharts exporting service that will take the HTML of the WORDCLOUD chart, render it and take a snapshot 
+			 * towards the Highcharts exporting service that will take the HTML of the WORDCLOUD chart, render it and take a snapshot
 			 * that will be sent back towards the client (our browser) in a proper format (PDF or PNG) and downloaded to the local
 			 * machine.
-			 * 
-			 * This way, when the user clicks on the export option for the rendered chart, the JS code ("chartExecutionController.js") 
-			 * that fills the form (that we set here as a blank structure) will eventually submit it towards the Highcharts export 
+			 *
+			 * This way, when the user clicks on the export option for the rendered chart, the JS code ("chartExecutionController.js")
+			 * that fills the form (that we set here as a blank structure) will eventually submit it towards the Highcharts export
 			 * service. The result is the exported chart. This code will catch the form by the ID that we set here.
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			d3.select(panel)
@@ -611,41 +611,42 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				.append("input").attr("type","hidden").attr("name","chartHeight")
 				.append("input").attr("type","hidden").attr("name","chartWidth");
 
-			
+
 			/**
 			 * The body inside of which the chart will be rendered.
 			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */			
-			d3.select(panel)		
+			 */
+			d3.select(panel)
 				.style("overflow-x",overflowXHidden)
 				.style("overflow-y",overflowYHidden)
 				.append("div").attr("id","main"+randomId)
 				.attr("class","d3-container")
 				.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 				.style("height",heightNormalized)
-				.style("width",widthNormalized-widthCorrection)			
-				.style("font-family", chartConf.chart.style.fontFamily)	
+				.style("width",widthNormalized-widthCorrection)
+				.style("overflow","hidden")
+				.style("font-family", chartConf.chart.style.fontFamily)
 				.style("font-style", chartConf.chart.style.fontStyle)
 	    		.style("font-weight", chartConf.chart.style.fontWeight)
 	    		.style("text-decoration", chartConf.chart.style.textDecoration)
 				.style("background-color", chartConf.chart.style.backgroundColor); // danristo
-			
+
 			if (chartConf.data[0].length < 1)
 			{
 				var emptyMsgFontSize = parseInt(chartConf.emptymessage.style.fontSize);
 				//var emptyMsgDivHeight = parseInt(chartConf.emptymessage.height);
 				//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 				var emptyMsgTotal = emptyMsgFontSize;
-				
+
 				var emptyMsgFontWeight = null;
 				var emptyMsgFontStyle = null;
 				var emptyMsgTextDecoration = null;
-				
+
 				/**
 				 * For EMPTYMESSAGE tag
 				 */
 				emptyMsgFontWeight = (chartConf.emptymessage.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
-				
+
 				if (chartConf.emptymessage.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
 				{
 					emptyMsgFontStyle = "italic";
@@ -654,9 +655,9 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				{
 					emptyMsgFontStyle = "normal";
 				}
-				
+
 				emptyMsgTextDecoration = (chartConf.emptymessage.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
-				
+
 				// Set title
 				d3.select("#main"+randomId).append("div")
 					.style("height",emptyMsgTotal)
@@ -669,24 +670,24 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		    		.style("font-weight", emptyMsgFontWeight)
 		    		.style("text-decoration", emptyMsgTextDecoration)
 		    		.style("font-size",emptyMsgFontSize)
-					.text(chartConf.emptymessage.text);	
+					.text(chartConf.emptymessage.text);
 			}
 			else
-			{												
+			{
 				var titleFontWeight = null;
 				var titleFontStyle = null;
 				var titleTextDecoration = null;
-				
+
 				var subtitleFontWeight = null;
 				var subtitleFontStyle = null;
 				var subtitleTextDecoration = null;
-				
+
 				/**
 				 * For TITLE tag
 				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 				titleFontWeight = (chartConf.title.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
-				
+
 				if (chartConf.title.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
 				{
 					titleFontStyle = "italic";
@@ -695,15 +696,15 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				{
 					titleFontStyle = "normal";
 				}
-				
+
 				titleTextDecoration = (chartConf.title.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
-				
+
 				/**
 				 * For SUBTITLE TAG
 				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 				subtitleFontWeight = (chartConf.subtitle.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
-				
+
 				if (chartConf.subtitle.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
 				{
 					subtitleFontStyle = "italic";
@@ -712,9 +713,9 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				{
 					subtitleFontStyle = "normal";
 				}
-				
+
 				subtitleTextDecoration = (chartConf.subtitle.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
-								
+
 				// Set title
 				d3.select("#main"+ randomId).append("div")
 					.style("color",chartConf.title.style.color)
@@ -724,10 +725,10 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		    		.style("font-style",titleFontStyle)
 		    		.style("font-weight",titleFontWeight)
 		    		.style("text-decoration", titleTextDecoration)
-					.text(chartConf.title.text);	
-								
+					.text(chartConf.title.text);
+
 				// Set subtitle
-				d3.select("#main"+randomId).append("div")					
+				d3.select("#main"+randomId).append("div")
 					.style("color",chartConf.subtitle.style.color)
 					.style("text-align",chartConf.subtitle.style.align)
 		    		.style("font-family",chartConf.subtitle.style.fontFamily)
@@ -736,30 +737,30 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		    		.style("text-decoration", subtitleTextDecoration)
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
-			
-		
-				
+
+
+
 		var bacground=d3.select("#main"+randomId)
 			.append("div").attr("id","chart"+randomId).attr("class","d3chartclass")
 			.append("svg")
             .attr("width", widthNormalized-widthCorrection)
 			.attr("height", heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
-         
-		
+
+
 		var tooltip=d3.select("#chart"+randomId)
 			.append("div")
 			.attr("class","tooltip")
 			.style("opacity","0");
-		
-		
+
+
 		var tooltipBackgroundColor=(chartConf.tooltip.backgroundColor)?chartConf.tooltip.backgroundColor:"rgba(255, 255, 255, 0.85)";
 		var tolltipFontStyle=chartConf.tooltip.fontStyle?chartConf.tooltip.fontStyle:'';
 		var tolltipFontWeight=chartConf.tooltip.fontWeight?chartConf.tooltip.fontWeight:'';
 	    var tolltipTextDecoration=chartConf.tooltip.textDecoration?chartConf.tooltip.textDecoration:'';
 	    var tooltipBorderWidth=chartConf.tooltip.borderWidth?chartConf.tooltip.borderWidth:'1';
 	    var tooltipBorderRadius=chartConf.tooltip.borderRadius?chartConf.tooltip.borderRadius:'3';
-	    
+
 	    d3.select(panel).selectAll(".tooltip")
 			.style("position","fixed")
 			.style("text-align",chartConf.tooltip.align)
@@ -779,7 +780,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 			.style("font-style",tolltipFontStyle)
 			.style("font-weight",tolltipFontWeight)
 			.style("text-decoration",tolltipTextDecoration);
-		
+
 		    var wordArea=bacground
 			.append("g")
 			//.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
@@ -795,20 +796,20 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
     		.style("text-decoration", chartConf.chart.style.textDecoration)
 			.style("fill", function(d, i) { return fill(i); })
 			.attr("text-anchor", "middle");
-		    
-		    
+
+
 			wordArea.transition().duration(1e3)
 				.attr("transform", function(d) {
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
-				.style("font-size", function(d) { return d.size + "px"; })	
+				.style("font-size", function(d) { return d.size + "px"; })
 				.text(function(d) { return d.text.toLowerCase(); })
-			
-		   
+
+
 			wordArea.on('click', function(d){
 
 				if(chartConf.chart.isCockpit==true){
 					if(chartConf.chart.outcomingEventsEnabled){
-						
+
 					paramethers=fetchParamethers(d);
 					var selectParam_cross={
 							categoryName:paramethers.categoryName,
@@ -835,7 +836,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 						groupingCategoryName:paramethers.groupingCategoryName,
 						groupingCategoryValue:paramethers.groupingCategoryValue
 					};
-					
+
 					handleCrossNavigationTo(navigParams);
 				}
 				/**
@@ -843,154 +844,154 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				else {
-					
+
 					/**
-					 * Collect all needed data for the cross-navigation (all output parameters for the WORDCLOUD chart document) and 
+					 * Collect all needed data for the cross-navigation (all output parameters for the WORDCLOUD chart document) and
 					 * forward them towards the cross-navigation handler. The data represents all the output parameter categories and
 					 * the series item value and name pairs.
 					 */
 					var outputParams = fetchParamethers(d);
 					handleCrossNavigationTo(outputParams);
-					
+
 				}
-				
+
 			});
-			
+
 			wordArea.on('mouseover',function(d){
-				
+
 				var tooltipText;
-				
+
 				for(j=0;j<chartConf.data[0].length;j++){
-					
-					if(chartConf.data[0][j].name===d.text) {	
-						
+
+					if(chartConf.data[0][j].name===d.text) {
+
 						/**
-						 * The displaying of the numeric (series) values in the table of the WORDCLOUD chart is redefined, so now it considers the 
+						 * The displaying of the numeric (series) values in the table of the WORDCLOUD chart is redefined, so now it considers the
 						 * precision, prefix, suffix (postfix), thousands separator, formatting localization and scale factor. [JIRA 1060 and 1061]
 						 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
 						var value = Number(chartConf.data[0][j].value);
-						
+
 						var text = "";
 						tooltipText = chartConf.data[0][j].value;
-						
+
 						var prefix = chartConf.tooltip.prefix;
 						var postfix = chartConf.tooltip.postfix;
 						var precision = chartConf.tooltip.precision;
 						var scaleFactor = chartConf.tooltip.scaleFactor;
-												
+
 						if (prefix) {
 				 		   text += prefix +" ";
 				 	   	}
-				   	   		
-				   	   	/* 
-			   	    		The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
-			   	    		"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+
+				   	   	/*
+			   	    		The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega),
+			   	    		"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display
 			   	    		these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
 			   	    		is included into the formatting of the number that is going to be displayed, as well as precision.
 				   	    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			   			*/
 				   		switch(scaleFactor.toUpperCase()) {
-				   	  	
-				   	  		case "EMPTY":   					   	  			
-				   	  			text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});					   	  			
+
+				   	  		case "EMPTY":
+				   	  			text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
 				   	  			break;
-				   	  			
-				   	  		case "K":					   	  			
-				   	  			text += (value/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});					   	  			
-				   	  			text += "k";					   	  			
+
+				   	  		case "K":
+				   	  			text += (value/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
+				   	  			text += "k";
 				   	  			break;
-				   	  			
+
 				  			case "M":
-				  				text += (value/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
+				  				text += (value/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
 				   	  			text += "M";
 				   	  			break;
-				   	  			
-				  			case "G":					   	  			
-				   	  			text += (value/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
-				   	  			text += "G";				   	  			
+
+				  			case "G":
+				   	  			text += (value/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
+				   	  			text += "G";
 				   	  			break;
-				   	  			
+
 							case "T":
-								text += (value/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });					
-								text += "T";					   				
+								text += (value/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+								text += "T";
 				   	  			break;
-				   	  			
-							case "P":		
-				   	  			text += (value/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });	   	  			
+
+							case "P":
+				   	  			text += (value/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
 				   	  			text += "P";
 				   	  			break;
-				   	  			
+
 							case "E":
 			   					text += (value/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
-			   					text += "E";					   					
+			   					text += "E";
 				   	  			break;
-				   	  			
-							default:					   				
-								text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });					   					
+
+							default:
+								text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
 				   	  			break;
-			   	  	
+
 			   	  		}
-			   					
+
 			   			text += (postfix!="" ? " " : "") + postfix;
-						
+
 					}
-					
+
 				}
-				
+
 				tooltip.transition().duration(50).style("opacity","1");
-    				
+
 				var ttText = tooltip.text(text);
-			  				
+
 				/**
-				 * Call the function that enables positioning of the 
+				 * Call the function that enables positioning of the
 				 * tooltip according to its dimensions.
-				 */			
+				 */
 				var chartHeight = Number(heightNormalized);
 				var chartWidth = Number(widthNormalized-widthCorrection);
-				
-				positionTheTooltip(d3.event.layerX,d3.event.layerY,ttText);							
-				
-//					.style("left", (d3.event.pageX) + "px")     
+
+				positionTheTooltip(d3.event.layerX,d3.event.layerY,ttText);
+
+//					.style("left", (d3.event.pageX) + "px")
 //					.style("top", (d3.event.pageY - 25) + "px");
-				
+
 			});
-			
+
 			wordArea.on('mouseleave',function(d){
-				
-				tooltip.transition().duration(50).style("opacity","0");				
-				
+
+				tooltip.transition().duration(50).style("opacity","0");
+
 			});
-			
-			}	
+
+			}
 		}
-		
+
 		function fetchSelectionParamethers(d){
-			
+
 			var param={};
-			
+
 			for(j=0; j<chartConf.data[0].length; j++) {
-				
+
 				if(chartConf.data[0][j].name === d.text) {
-					
+
 					//param.categoryValue=chartConf.data[0][j].name;
 					//param.categoryName= chartConf.data[0][j].categoryName;
 					//param.serieValue=chartConf.data[0][j].value;
-					
+
 					for(k=0; k<chartConf.data[0][j].categoryName.length; k++){
-						param[chartConf.data[0][j].categoryName[k]] = chartConf.data[0][j].name;						
+						param[chartConf.data[0][j].categoryName[k]] = chartConf.data[0][j].name;
 					}
-					
+
 				}
-				
-			}			
-			
+
+			}
+
 			return param;
 		}
-		
+
 		// OLD IMPLEMENTATION: commented by danristo
 //		function fetchParamethers(d){
-//			
+//
 //			var param={
 //					"categoryName" : null,
 //					"categoryValue":null,
@@ -1007,40 +1008,40 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 //			}
 //			return param;
 //		}
-		
+
 		/**
 		 * Improved old implementation so it can handle the new cross-navigation handling implementation.
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		function fetchParamethers(d) {
-			
+
 			var param = {
-					
+
 				"categoryName": null,
 				"categoryValue": null,
 				"serieName": null,
 				"serieValue": null,
 				"groupingCategoryName": null,
 				"groupingCategoryValue": null
-				
+
 			};
-			
+
 			for (j=0;j<chartConf.data[0].length;j++) {
-				
+
 				if(chartConf.data[0][j].name===d.text) {
-					
+
 					var item = chartConf.data[0][j];
-					
+
 					param.categoryName = item.categoryName[0];
-					param.categoryValue = item.name;				
+					param.categoryValue = item.name;
 					param.serieValue = item.value;
 					param.serieName = item.seriesItemName;
-					
+
 				}
-				
+
 			}
-			
+
 			return param;
 		}
-		
+
 	}
