@@ -195,7 +195,8 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			newHibMetaModel.setPostCondition(aMetaModelParuse.getPostCondition());
 			newHibMetaModel.setLogicOperator(aMetaModelParuse.getLogicOperator());
 			updateSbiCommonInfo4Insert(newHibMetaModel);
-			aSession.save(newHibMetaModel);
+			Integer paruseId = (Integer) aSession.save(newHibMetaModel);
+			aMetaModelParuse.setId(paruseId);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -208,7 +209,6 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 					aSession.close();
 			}
 		}
-
 	}
 
 	@Override
