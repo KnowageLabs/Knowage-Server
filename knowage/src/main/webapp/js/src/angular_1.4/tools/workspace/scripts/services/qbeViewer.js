@@ -23,19 +23,19 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService,$mdSidenav) {
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService,$mdSidenav,qbeViewerMessagingHandler) {
 		var driversExecutionService = $injector.get('driversExecutionService');
 		var driversDependencyService = $injector.get('driversDependencyService');
-
 		var comunicator = windowCommunicationService;
-		var consoleHandler = {}
-		consoleHandler.name = "console"
-		consoleHandler.handleMessage = function(message){
-			console.log(message)
-		}
+//		var comunicator = windowCommunicationService;
+//		var consoleHandler = {}
+//		consoleHandler.name = "console"
+//		consoleHandler.handleMessage = function(message){
+//			console.log(message)
+//		}
 
 
-		comunicator.addMessageHandler(consoleHandler);
+	//	comunicator.addMessageHandler(consoleHandler);
 
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
@@ -71,19 +71,8 @@ angular
 
 		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
 
-			var saveHadler = {}
-			saveHadler.name = "save"
-			saveHadler.handleMessage = function(message){
-				if(message.pars) {
-					$scope.parameterItems = message.pars;
-					$scope.selectedDataSet.qbeJSONQuery = message.qbeQuery;
-				}
-			}
-			comunicator.addMessageHandler(saveHadler);
-			$scope.$on("$destroy",function(){
-				console.log("destroying controller")
-				comunicator.removeMessageHandler(saveHadler);
-			})
+
+
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
 			}else{
@@ -109,7 +98,7 @@ angular
 						}
 					)
 					.then(function() {
-						comunicator.removeMessageHandler(saveHadler);
+
 					});
 
 			}
@@ -117,27 +106,50 @@ angular
 
 		function openQbeInterfaceController($scope,url,driverableObject,$timeout) {
 
+
+
+//			$scope.$on("$destroy",function(){
+//				console.log("destroying controller")
+//				comunicator.removeMessageHandler(saveHadler);
+//			})
+
 			$scope.showDrivers = false;
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 
+<<<<<<< Updated upstream
+=======
+
+//			driverableObject.isParameterRolePanelDisabled = {};
+//			driverableObject.isParameterRolePanelDisabled.status = true;
+
+
+>>>>>>> Stashed changes
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
 			if(driverableObject){
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 				driverableObject.currentView = {};
 				driverableObject.currentView.status = 'BUSINESSMODEL';
 				driverableObject.parameterView = {};
 				driverableObject.parameterView.status='';
+<<<<<<< Updated upstream
 
 				$scope.currentView = driverableObject.currentView;
 				$scope.parameterView = driverableObject.parameterView;
 
+=======
+>>>>>>> Stashed changes
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
 
+				$scope.currentView = driverableObject.currentView;
+				$scope.parameterView = driverableObject.parameterView;
 				if(driverableObject.dsTypeCd ){
 					    $scope.drivers = driverableObject.drivers
 						queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
@@ -164,7 +176,7 @@ angular
 			queryDriverObj.DRIVERS = driversObject;
 
 
-		 urlBuilderService.addQueryParams(queryDriverObj);
+			urlBuilderService.addQueryParams(queryDriverObj);
 			urlBuilderService.addQueryParams(queryParamObj);
 			$scope.documentViewerUrl = urlBuilderService.build();
 
@@ -312,22 +324,9 @@ angular
 				if(!$scope.editQbeDset){
 					window.openPanelForSavingQbeDataset();
 				} else {
+					comunicator.sendMessage("saveDS");
+				//	$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 
-					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
-					sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
-					.then(
-							function(response) {
-
-								sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
-									.then(
-											function(responseDS) {
-
-												$log.info("Dataset saved successfully");
-												$scope.datasetSavedFromQbe=true;
-												$scope.closeDocument();
-
-
-											})})
 				}
 
 
@@ -338,6 +337,29 @@ angular
 				//document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
 
 			}
+			$scope.$on("$destroy",function(){
+				console.log("destroying controller")
+				comunicator.removeMessageHandler(messagingHandler);
+			})
+
+			var persistDataSet = function(){
+				sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
+				.then(
+						function(response) {
+
+							sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+								.then(
+										function(responseDS) {
+
+											$log.info("Dataset saved successfully");
+											$scope.datasetSavedFromQbe=true;
+											$scope.closeDocument();
+							//				comunicator.removeMessageHandler(saveHadler);
+
+										})})
+			}
+			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler($scope.selectedDataSet,$scope.parameterItems,persistDataSet);
+			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 
 		}
 

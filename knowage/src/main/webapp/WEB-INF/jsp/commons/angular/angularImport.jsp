@@ -143,6 +143,8 @@ if(importAngularMaterialForExport == null) {
 
 <!-- qbe viewer -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerCommunicationService.js")%>"></script> 
+
 <!-- xml2js -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/jquery-2.1.3.min.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
