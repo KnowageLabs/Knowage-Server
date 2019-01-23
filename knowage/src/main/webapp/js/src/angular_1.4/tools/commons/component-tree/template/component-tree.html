@@ -23,7 +23,7 @@
 				ng-click="toogleSort(node)" class="fa fa-sort-desc"></md-icon>
 		</div>
 		<div ng-click="openFolder(node,true)" class="line-container" ng-class="{'selectedNode': selectedItem.id!=undefined ? (selectedItem.id == node.id) : (selectedItem.$$hashKey == node.$$hashKey) }">
-			<span>&nbsp;{{node[label]}}&nbsp;{{'('}}&nbsp;{{node[stateCode]}}&nbsp;{{')'}}</span>
+			<span>&nbsp;{{node[label]}}&nbsp;{{node[stateCode]}}</span>
 		</div>
 	</div>
 	<div class="menu-container"
