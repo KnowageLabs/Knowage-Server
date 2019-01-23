@@ -81,10 +81,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
-		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?\s?\])/g;
-		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?\])/g;
+		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
+		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
+		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
-		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+precision=\'(\d)\')?\])/g;
+		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
@@ -195,20 +196,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var parser = new DOMParser()
 				var parsedHtml = parser.parseFromString(rawHtml, "text/html"); 
 				var allElements = parsedHtml.getElementsByTagName('*');
-				var aggregationsReg = rawHtml.match($scope.aggregationRegex);
+				var aggregationsReg = rawHtml.match($scope.aggregationsRegex);
 				if(aggregationsReg) {
 					var tempModel = angular.copy($scope.ngModel);
 					delete tempModel.settings;
 					tempModel.content.columnSelectedOfDataset = [];
 					var tempDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
 					for(var a in aggregationsReg){
-						var aggRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1})?(?:\s+precision=\'(\d)\')?\])/;
-						var aggregationReg = aggRegex.exec(aggregationsReg[a]);
+						var aggregationReg = $scope.aggregationRegex.exec(aggregationsReg[a]);
 						for(var m in tempDataset.metadata.fieldsMeta){
 							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
 								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
 								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
-								tempModel.content.columnSelectedOfDataset.push(angular.copy(tempDataset.metadata.fieldsMeta[m]));
+								var exists = false;
+								for(var c in tempModel.content.columnSelectedOfDataset){
+									if(tempModel.content.columnSelectedOfDataset[c].alias == aggregationReg[1]+'_'+aggregationReg[2]) exists = true;
+								}	
+								if(!exists) tempModel.content.columnSelectedOfDataset.push(angular.copy(tempDataset.metadata.fieldsMeta[m]));
 							}
 						}
 					}
@@ -218,7 +222,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								$scope.aggregationDataset = data;
 								allElements = $scope.parseRepeat(allElements);
 								allElements = $scope.parseIf(allElements);
-								allElements = $scope.parsePreview(allElements);
+								allElements = $scope.parseAttrs(allElements);
 								resolve(parsedHtml);
 							},function(error){
 								$scope.hideWidgetSpinner();
@@ -351,16 +355,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
-		$scope.calcReplacer = function(match,p1,precision){
+		$scope.calcReplacer = function(match,p1,precision,format){
+			if(format) return precision ? parseFloat(eval(p1)).toFixed(precision).toLocaleString() : parseFloat(eval(p1)).toLocaleString();
 			return (precision && !isNaN(eval(p1)))? parseFloat(eval(p1)).toFixed(precision) : eval(p1);
 		}
 		
 		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
+			var columnInfo;
 			if(aggr){
-				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr).name])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr).name] : 'null';
+				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,aggr);
+				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : 'null';
 			}
 			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]){
-				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name];
+				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
+				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
 			}else {
 				p1 = 'null';
 			}
@@ -371,7 +379,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return typeof(cockpitModule_analyticalDrivers[p1]) == 'string' ? '\''+cockpitModule_analyticalDrivers[p1]+'\'' : cockpitModule_analyticalDrivers[p1];
 		}
 		
-		$scope.replacer = function(match, p1, p2, p3, precision) {
+		$scope.replacer = function(match, p1, p2, p3, precision,format) {
 			var columnInfo;
 			if(p3){
 				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,p3);
@@ -381,9 +389,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : 'null';
 			}
 			if(columnInfo.type == 'int' || columnInfo.type == 'float'){
-				p1 = parseFloat(p1);
-				if(precision) p1 = p1.toFixed(precision);
-				p1 = p1.toLocaleString();
+				if(format) p1 = precision ? parseFloat(p1).toFixed(precision).toLocaleString() : parseFloat(p1).toLocaleString();
+				else p1 = precision ? parseFloat(p1).toFixed(precision) : parseFloat(p1);
 			}
 			return p1;
 			
