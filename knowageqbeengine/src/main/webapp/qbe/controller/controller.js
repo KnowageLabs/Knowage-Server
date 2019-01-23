@@ -116,6 +116,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 		$scope.filters = $scope.editQueryObj.filters;
 		$scope.havings = $scope.editQueryObj.havings;
+
 		if(query_service.smartView){
 
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
@@ -132,6 +133,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	},true)
 
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
+
 		if(query.fields.length>0){
 			return query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
 		}else{
@@ -258,12 +260,20 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 		if(data.length>0 && query_service.smartView){
 			for (var i = 0; i < data.length; i++) {
-				$scope.editQueryObj.fields[i].group = data[i].group;
-				$scope.editQueryObj.fields[i].funct = data[i].funct;
-				$scope.editQueryObj.fields[i].visible = data[i].visible;
-				$scope.editQueryObj.fields[i].distinct = data[i].distinct;
+				for(var j =0;j < $scope.editQueryObj.fields.length;j++){
+					if($scope.editQueryObj.fields[j].id === data[i].id){
+						$scope.editQueryObj.fields[j].group = data[i].group;
+						$scope.editQueryObj.fields[j].funct = data[i].funct;
+						$scope.editQueryObj.fields[j].visible = data[i].visible;
+						$scope.editQueryObj.fields[j].distinct = data[i].distinct;
+						$scope.editQueryObj.fields[j].order = data[i].order;
+					}
+				}
+
 			}
 		}
+
+		$scope.editQueryObj.fields = $filter('orderBy')($scope.editQueryObj.fields,'order')
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
 		} else {
@@ -281,6 +291,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				$scope.editQueryObj.fields[i].order = data.fields[i].order;
 			}
 		}
+
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
 	});
 
