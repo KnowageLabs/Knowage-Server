@@ -640,6 +640,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
+		var limitRows;
+        if(ngModel.limitRows){
+            limitRows = ngModel.limitRows;
+        }else if(ngModel.content && ngModel.content.limitRows){
+            limitRows = ngModel.content.limitRows;
+        }
+        if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+            params += "&limit=" + limitRows.rows;
+        }
+
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
 				&& ngModel.search.columns && ngModel.search.columns.length>0){
@@ -735,16 +745,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
 			angular.merge(filtersToSend, filters);
-		}
-
-		var limitRows;
-		if(widgetObject.limitRows){
-			limitRows = widgetObject.limitRows;
-		}else if(widgetObject.content && widgetObject.content.limitRows){
-			limitRows = widgetObject.content.limitRows;
-		}
-		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
-			params += "&limit=" + limitRows.rows;
 		}
 
 		var filters;
