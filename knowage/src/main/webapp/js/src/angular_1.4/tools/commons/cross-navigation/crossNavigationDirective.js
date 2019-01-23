@@ -72,6 +72,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				console.log("outputParameter: ", outputParameter);
 				console.log("inputParameter: ", inputParameter);
 				console.log("otherOutputParameters: ", otherOutputParameters);
+
 				for (var n in navObj){
 					if (navObj[n].crossText){
 						//replace parameters placeholders if exist in navigation popup selection
@@ -81,27 +82,25 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 								for (o in outputParameter){
 									for(var name in outputParameter[o]){
 										if (name == p1)
-											return outputParameter[o][name];
+											return outputParameter[o][name] || '';
 									}
 								}
-								return ""; //clean placeholder
 							}else if(outputParameter[p1]) return outputParameter[p1];
 
 							if (Array.isArray(inputParameter)){
 								for (o in inputParameter){
 									for(var name in inputParameter[o]){
 										if (inputParameter[o].label == p1)
-											return inputParameter[o].parameterValue;
+											return inputParameter[o].parameterValue || '';
 									}
 								}
-								return ""; //clean placeholder
 							}else if(inputParameter[p1]) return inputParameter[p1];
 
 							if (Array.isArray(otherOutputParameters)){
 								for (o in otherOutputParameters){
 									for(var name in otherOutputParameters[o]){
 										if (name == p1)
-											return otherOutputParameters[o][name];
+											return otherOutputParameters[o][name] || '';
 									}
 								}
 								return ""; //clean placeholder
@@ -120,27 +119,25 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 								for (o in outputParameter){
 									for(var name in outputParameter[o]){
 										if (name == p1)
-											return outputParameter[o][name];
+											return outputParameter[o][name] || '';
 									}
 								}
-								return ""; //clean placeholder
 							}else if(outputParameter[p1]) return outputParameter[p1];
 
 							if (Array.isArray(inputParameter)){
 								for (o in inputParameter){
 									for(var name in inputParameter[o]){
 										if (inputParameter[o].label == p1)
-											return inputParameter[o].parameterValue;
+											return inputParameter[o].parameterValue || '';
 									}
 								}
-								return ""; //clean placeholder
 							}else if(inputParameter[p1]) return inputParameter[p1];
 
 							if (Array.isArray(otherOutputParameters)){
 								for (o in otherOutputParameters){
 									for(var name in otherOutputParameters[o]){
 										if (name == p1)
-											return otherOutputParameters[o][name];
+											return otherOutputParameters[o][name] || '';
 									}
 								}
 								return ""; //clean placeholder

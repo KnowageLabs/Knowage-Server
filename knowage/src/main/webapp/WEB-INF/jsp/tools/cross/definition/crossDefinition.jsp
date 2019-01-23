@@ -157,6 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.description");}}</label>
 							<input md-maxlength="200" type="text" name="description" ng-model="ctrl.detail.simpleNavigation.description" > 
+							<md-icon md-font-icon="fa fa-info-circle"  class="md-knowage-theme" ng-click="ctrl.showHints('Description')"></md-icon>
 							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
 						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.description.invalid");}}</div>
 						    </div>
@@ -172,6 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					      <md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.breadcrumb");}}</label>
 							<input md-maxlength="200" type="text" name="breadcrumb" ng-model="ctrl.detail.simpleNavigation.breadcrumb" > 
+							<md-icon md-font-icon="fa fa-info-circle" class="md-knowage-theme" ng-click="ctrl.showHints('Breadcrumb')"></md-icon>
 							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
 						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.breadcrumb.invalid");}}</div>
 						    </div> 
