@@ -198,6 +198,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
          		    	"distinct":$scope.editQueryObj.distinct,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
+         		    	"ordering":query.fields[i].order,
          		    	"filters": [],
          		    	"havings": []
          		    }
@@ -257,7 +258,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	});
 
 	$rootScope.$on('smartView', function (event, data) {
-
+		var temp = []
 		if(data.length>0 && query_service.smartView){
 			for (var i = 0; i < data.length; i++) {
 				for(var j =0;j < $scope.editQueryObj.fields.length;j++){
@@ -266,14 +267,17 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$scope.editQueryObj.fields[j].funct = data[i].funct;
 						$scope.editQueryObj.fields[j].visible = data[i].visible;
 						$scope.editQueryObj.fields[j].distinct = data[i].distinct;
-						$scope.editQueryObj.fields[j].order = data[i].order;
+						$scope.editQueryObj.fields[j].order = data[i].ordering;
+						temp.push($scope.editQueryObj.fields[j]);
 					}
 				}
 
 			}
+			$scope.editQueryObj.fields = temp;
+
 		}
 
-		$scope.editQueryObj.fields = $filter('orderBy')($scope.editQueryObj.fields,'order')
+
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
 		} else {
@@ -288,7 +292,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
 				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
 				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
-				$scope.editQueryObj.fields[i].order = data.fields[i].order;
+				$scope.editQueryObj.fields[i].order = data.fields[i].ordering;
 			}
 		}
 
