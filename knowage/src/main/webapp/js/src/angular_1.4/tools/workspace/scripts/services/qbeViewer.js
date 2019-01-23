@@ -118,33 +118,19 @@ angular
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 
-<<<<<<< Updated upstream
-=======
 
 //			driverableObject.isParameterRolePanelDisabled = {};
 //			driverableObject.isParameterRolePanelDisabled.status = true;
 
 
->>>>>>> Stashed changes
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
 			if(driverableObject){
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 				driverableObject.currentView = {};
 				driverableObject.currentView.status = 'BUSINESSMODEL';
 				driverableObject.parameterView = {};
 				driverableObject.parameterView.status='';
-<<<<<<< Updated upstream
-
-				$scope.currentView = driverableObject.currentView;
-				$scope.parameterView = driverableObject.parameterView;
-
-=======
->>>>>>> Stashed changes
 				driverableObject.executed = true;
 				$scope.driverableObject = driverableObject;
 

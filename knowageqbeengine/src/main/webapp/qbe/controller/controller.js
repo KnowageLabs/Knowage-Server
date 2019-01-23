@@ -64,9 +64,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.selectedRelationsService = selectedEntitiesRelationshipsService;
 	$scope.queryEntitiesService = queryEntitiesService;
 	var comunicator = windowCommunicationService;
-<<<<<<< Updated upstream
-
-=======
 	comunicator.sendMessage("Hi from qbe");
 
 	var consoleHandler = {}
@@ -88,17 +85,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 	comunicator.addMessageHandler(consoleHandler);
 
-//	var workspaceDShandler = {}
-//	workspaceDShandler.handleMessage = function(message){
-//		if(message === 'saveDS'){
-//			var saveObj = {};
-//			saveObj.qbeQuery = {catalogue: {queries: [$scope.editQueryObj]}};;
-//			comunicator.sendMessage(saveObj);
-//		}
-//		console.log(message)
-//	}
-//	comunicator.addMessageHandler(workspaceDShandler);
->>>>>>> Stashed changes
+
 	formulaService.getCustomFormulas().then(function(response) {
 		$scope.customFormulas = [];
 		if(response.data.data){
