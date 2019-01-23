@@ -37,7 +37,7 @@ public class PersistedTableHelper {
 	private static transient Logger logger = Logger.getLogger(PersistedTableHelper.class);
 	
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
-								boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
+			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
 		try {
 			if (fieldValue == null) {
 				insertStatement.setObject(fieldIndex + 1, null);
@@ -88,6 +88,15 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("Date")) {
 				if (fieldValue instanceof java.sql.Date) {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
+				} else if (fieldValue instanceof java.util.Date) {
+					// JDK 8 version
+					/*
+					 * Instant instant = date.toInstant(); ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault()); LocalDate localDate =
+					 * zdt.toLocalDate();
+					 */
+					DateTime dateTime = new DateTime(fieldValue, DateTimeZone.getDefault());
+					java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
+					insertStatement.setDate(fieldIndex + 1, sqlDate);
 				} else {
 					java.util.Date date = new java.util.Date(fieldValue.toString());
 					// JDK 8 version
