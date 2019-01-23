@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				The progress circular animation will be shown until all the data for the Workspace is collected. 
 				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			-->		
-			<div loading ng-show="showEl || processing" class="loadingMask">
+			<div loading ng-if="showEl || processing" class="loadingMask">
 			 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" class="progressCircularWorkspace"></md-progress-circular>		 
 			</div>
 			
@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								The progress circular animation will be shown until all the data for the Workspace is collected. 
 								@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 							-->		
-							<div ng-show="searching || clearSearch" class="searchMask"> <!-- || clearSearch -->
+							<div ng-if="searching || clearSearch" class="searchMask"> <!-- || clearSearch -->
 							 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" class="progressCircularWorkspaceSearch">
 							 	</md-progress-circular>		 
 							</div>
