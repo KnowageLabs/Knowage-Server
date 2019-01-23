@@ -455,6 +455,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "iconCls":field.iconCls,
 				   "longDescription":field.attributes.longDescription,
 				   "distinct":$scope.editQueryObj.distinct,
+				   "leaf":field.leaf
 				}
 		}
 		if(!field.hasOwnProperty('id')){
