@@ -17,6 +17,23 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -36,23 +53,6 @@ import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -75,6 +75,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					SimpleNavigation sn = new SimpleNavigation();
 					sn.setId(cn.getId());
 					sn.setName(cn.getName());
+					sn.setDescription(cn.getDescription());
+					sn.setBreadcrumb(cn.getBreadcrumb());
 					sn.setType(cn.getType());
 					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
 						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
@@ -127,6 +129,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 				SbiCrossNavigation cn = new SbiCrossNavigation();
 				cn.setName(nd.getSimpleNavigation().getName());
+				cn.setDescription(nd.getSimpleNavigation().getDescription());
+				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
 				if (nd.getToPars() != null) {
@@ -156,6 +160,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					throw new SpagoBIDAOException("Write error: record not found");
 				}
 				cn.setName(nd.getSimpleNavigation().getName());
+				cn.setDescription(nd.getSimpleNavigation().getDescription());
+				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
@@ -251,7 +257,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 					}
 
-					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getType(), fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc
+					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(), fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc
 							.getLabel()));
 
 				}
@@ -368,6 +374,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
 						jsonCnParam.put("documentId", sbiObj.getBiobjId());
 						jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
+						jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
+						jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
 						jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
 						jsonCnParam.put("crossId", crossId);
 						jsonCnParam.put("navigationParams", new JSONObject());

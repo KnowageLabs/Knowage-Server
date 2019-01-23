@@ -47,7 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/crossnavigation/cross-definition.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/cross/definition/CrossDefinition.js")%>"></script>
 
 </head>
@@ -58,40 +57,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%} %>
 <script type="text/ng-template" id="nodes_renderer1.html">
 <!--<i class="fa fa-times-circle" ng-show="par.type==2" ng-click="ctrl.deleteFixedValue(par))"></i>-->
-<md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
-    <div>
-		<span class="fa fa-bars"></span>
+<md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row" layout-align="start center">
+	<i class="fa fa-bars"></i>    
 	    {{par.name}}
-    </div>
+
 	<span flex class="flex"></span>
-    <div >
+
         {{ctrl.getTypeLabel(par.type)}}
-    </div>
+
 </md-toolbar>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
-    <div >
+  <div layout="row" layout-align="start center" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
 	  {{par.name}}
-    </div>
-	<span flex class="flex"></span>
-    <div >
+		<span flex class="flex"></span>
         {{ctrl.getTypeLabel(par.type)}}
-    </div>
   </div>
   <ol ui-tree-nodes="" ng-model="par.links" ng-class="{hidden: collapsed}" ng-if="!par.links.length" >
       <li ng-repeat="node in par.links" ui-tree-node >
       </li>
   </ol>
 
-  <div class="tree-node tree-node-content crossnavigation-parameter link" ng-if="par.links.length" layout="row">
+  <div class="tree-node tree-node-content crossnavigation-parameter link" ng-if="par.links.length" layout="row" layout-align="start center">
     <div >
 	  {{par.links[0].name}}
-	  <span class="fa fa-link"></span>
+	  <i class="fa fa-link"></i>
 	  {{par.name}}
     </div>
     <span flex class="flex"></span>
-    <i class="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></i>
+   	<md-button class="md-icon-button">
+    	<md-icon md-font-icon="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></md-icon>
+	</md-button>
   </div>
 	
 </script>
@@ -155,22 +151,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-card-content>
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
-					<div flex="50">
+					<div flex="50" layout="column">
 						<md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.name");}}</label>
 							<input md-maxlength="40" type="text" name="name" ng-model="ctrl.detail.simpleNavigation.name" required > 
 							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
 						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.name.invalid");}}</div>
+						    </div> 
+						</md-input-container>
+						<md-input-container class="md-block"> 
+							<label>{{translate.load("sbi.crossnavigation.description");}}</label>
+							<input md-maxlength="200" type="text" name="description" ng-model="ctrl.detail.simpleNavigation.description" > 
+							<md-icon md-font-icon="fa fa-info-circle"  class="md-knowage-theme" ng-click="ctrl.showHints('Description')"></md-icon>
+							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
+						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.description.invalid");}}
+						    	</div>
 						    </div>
+						    
 						</md-input-container>
 					</div>
-					<div flex="50">
-					      <md-input-container class="md-block" >
+					<div flex="50"  layout="column">
+					      <md-input-container class="md-block" style="height:50px">
 							<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
 					        <md-select ng-model="ctrl.crossmodality" ng-model-options="{trackBy: '$value.value'}">
 					          <md-option ng-value="crossMode" ng-repeat="crossMode in crossModes">{{crossMode.label}}</md-option>
 					        </md-select>						      
 					      </md-input-container>
+					      <md-input-container class="md-block"> 
+							<label>{{translate.load("sbi.crossnavigation.breadcrumb");}}</label>
+							<input md-maxlength="200" type="text" name="breadcrumb" ng-model="ctrl.detail.simpleNavigation.breadcrumb" > 
+							<md-icon md-font-icon="fa fa-info-circle" class="md-knowage-theme" ng-click="ctrl.showHints('Breadcrumb')"></md-icon>
+							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
+						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.breadcrumb.invalid");}}</div>
+						    </div> 
+						</md-input-container>
 					</div>					
 				</div>
 	

@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.tools.crossnavigation.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-
 import java.util.Set;
+
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiCrossNavigation extends SbiHibernateModel {
 
@@ -30,6 +30,8 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	private Integer id;
 
 	private String name;
+	private String description;
+	private String breadcrumb;
 	private Integer type;
 	private Set<SbiCrossNavigationPar> sbiCrossNavigationPars;
 
@@ -64,6 +66,35 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the breadcrumb
+	 */
+	public String getBreadcrumb() {
+		return breadcrumb;
+	}
+
+	/**
+	 * @param breadcrumb the breadcrumb to set
+	 */
+	public void setBreadcrumb(String breadcrumb) {
+		this.breadcrumb = breadcrumb;
+	}
+
 
 	public Integer getType() {
 		return type;
