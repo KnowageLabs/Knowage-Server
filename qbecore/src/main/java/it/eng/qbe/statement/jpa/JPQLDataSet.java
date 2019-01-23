@@ -157,6 +157,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 						Map mapOfValues = (Map) drivers.get(driverName);
 						if (mapOfValues.get("value") instanceof List) {
 							filter.setParameterList(driverName, (Collection) mapOfValues.get("value"));
+						} else if (mapOfValues.get("value") instanceof Map) {
+							Map defaultValue = (Map) mapOfValues.get("value");
+							filter.setParameter(driverName, defaultValue.get("value"));
 						} else {
 							filter.setParameter(driverName, mapOfValues.get("value"));
 						}
