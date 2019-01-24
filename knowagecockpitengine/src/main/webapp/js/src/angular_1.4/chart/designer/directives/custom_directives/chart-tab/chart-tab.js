@@ -1,7 +1,7 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,11 +22,11 @@ angular.module('chart-tab', [])
 		restrict: 'AE',
 		replace: true,
 		templateUrl: function(){
-		      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.html' 
-	      },   
+		      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.html'
+	      },
 		controller: chartTabControllerFunction
 	}
-		
+
 });
 
 function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData,StructureTabService,chartEngineSettings){
@@ -38,10 +38,10 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	$scope.minMaxCategories = {};
 	$scope.minMaxSeries = {};
 	$scope.$watch('selectedChartType',function(newValue,oldValue){
-		
+
 		$scope.libInUse=$scope.chartLibNamesConfig[$scope.selectedChartType];
 		$scope.minMaxCategories = {};
-		$scope.minMaxSeries = {};		
+		$scope.minMaxSeries = {};
 		switch(newValue){
 		case 'parallel':
 			$scope.minMaxCategories.min = 1;
@@ -92,7 +92,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			if($scope.chartLibNamesConfig.pie=="chartJs") {
 				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.min = 1;
-				$scope.minMaxSeries.max = 1; 
+				$scope.minMaxSeries.max = 1;
 			} else {
 				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.min = 1;
@@ -103,7 +103,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.minMaxCategories.max = 2;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
-			break;	
+			break;
 		default:
 			break;
 		}
@@ -114,17 +114,17 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.minMaxCategories = {};
 			$scope.minMaxSeries = {};
 			if(newValue.groupCategories){
-				$scope.minMaxCategories.max = 2; 
-				$scope.minMaxCategories.min = 2; 
+				$scope.minMaxCategories.max = 2;
+				$scope.minMaxCategories.min = 2;
 				$scope.minMaxSeries.min = 1;
 			} else if (newValue.groupSeries){
-				$scope.minMaxCategories.max = 1; 
-				$scope.minMaxCategories.min = 1; 
+				$scope.minMaxCategories.max = 1;
+				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.max = 2;
 				$scope.minMaxSeries.min = 2;
 			} else if (newValue.groupSeriesCateg){
-				$scope.minMaxCategories.max = 2; 
-				$scope.minMaxCategories.min = 2; 
+				$scope.minMaxCategories.max = 2;
+				$scope.minMaxCategories.min = 2;
 				$scope.minMaxSeries.max = 1;
 				$scope.minMaxSeries.min = 1;
 			}else {
@@ -132,12 +132,12 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxSeries.min = 1;
 			}
 		}
-		
+
 	},true)
 
-	
+
 	var setConfigurationButtons = function(type) {
-		
+
 		switch (type) {
 		case 'parallel':
 			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
@@ -174,22 +174,66 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'chord':
 			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;	
+			break;
 		default:
 			break;
 		}
-		
+
 }
-	
+
+	$scope.getChartTemplate = function (type) {
+		var base = "";
+		switch (type) {
+			case 'parallel':
+				base = StructureTabService.getParallelTemplate();
+				break;
+			case 'sunburst':
+				base = StructureTabService.getSunburstTemplate();
+				break;
+			case 'scatter':
+				base = StructureTabService.getScatterTemplate();
+				break;
+			case 'treemap':
+				base = StructureTabService.getTreemapTemplate();
+				break;
+			case 'wordcloud':
+				base = StructureTabService.getWordCloudTemplate();
+				break;
+			case 'gauge':
+				base = StructureTabService.getGaugeTemplate();
+				break;
+			case 'line':
+				base = StructureTabService.getBaseTemplate();
+				break;
+			case 'heatmap':
+				base = StructureTabService.getHeatmapTemplate();
+				break;
+			case 'radar':
+				base = StructureTabService.getRadarTemplate();
+				break;
+			case 'bar':
+				base = StructureTabService.getBaseTemplate();
+				break;
+			case 'pie':
+				base = StructureTabService.getBaseTemplate();
+				break;
+			case 'chord':
+				base = StructureTabService.getChordTemplate();
+				break;
+			default:
+				break;
+		}
+		return base;
+	};
+
 	var checkDocumentType = function(){
-		
+
 		if($scope.isCockpitEng){
 
 			if (parent.angular.element(window.frameElement).scope().localMod.chartTemplate!=undefined) {
 				var chart = angular.copy(parent.angular.element(window.frameElement).scope().localMod.chartTemplate.CHART);
 
 				$scope.chartTemplate = angular.copy(chart);
-				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
 
@@ -197,11 +241,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
 
+				$scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
-
-
+				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate
 			} else {
-				
+
 				$scope.chartTemplate = StructureTabService.getBaseTemplate();
 				$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 				$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
@@ -209,29 +253,29 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
 				$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
-				
+
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());				
+				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
 			}
 		}else{
-			
+
 			var templateObj = angular.fromJson(template);
 			$scope.chartTemplate = templateObj.CHART;
 			console.log("chart template: ",$scope.chartTemplate);
-			
+
 			if ($scope.chartTemplate) {
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
 				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
 					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
-
+				$scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
 				setConfigurationButtons($scope.selectedChartType);
-				
+
 			}
 			else {
-				
+
 				$scope.chartTemplate = StructureTabService.getBaseTemplate();
 				/*
 					@author: radmila.selakovic@mht.net
@@ -243,13 +287,13 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
 				$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());				
-			}	
+				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
+			}
 		}
-		
-		
+
+
 	}
-	
+
 	checkDocumentType();
 	sbiModule_restServices.promiseGet("../api/1.0/chart/pages/types", "")
 	.then(function(response) {
@@ -264,61 +308,61 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			    }
 			}
 		}
-		
+
 		$scope.chartTypes.sort();
 		for (var i = 0; i < $scope.chartTypes.length; i++) {
 			if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 				$scope.selectedChartType = $scope.chartTypes[i];
-				setConfigurationButtons($scope.selectedChartType);					
+				setConfigurationButtons($scope.selectedChartType);
 			}
 		}
-		
+
 	}, function(response) {
-		
+
 		var message = "";
-		
+
 		if (response.status==500) {
 			message = response.statusText;
 		}
 		else {
 			message = response.data.errors[0].message;
 		}
-		
+
 		sbiModule_messaging.showErrorMessage(message, 'Error');
-		
+
 	});
-	
+
 	sbiModule_restServices.promiseGet("../api/chart/style", "")
 	.then(function(response) {
 		$scope.chartStyles = response.data;
 		getDefaultStyleForEmpty();
-		
+
 	}, function(response) {
-		
+
 		var message = "";
-		
+
 		if (response.status==500) {
 			message = response.statusText;
 		}
 		else {
 			message = response.data.errors[0].message;
 		}
-		
+
 		sbiModule_messaging.showErrorMessage(message, 'Error');
-		
+
 	});
-	
+
 	$scope.getObjectProperties = function (obj1, obj2) {
 		for (var attrname in obj2) {
 			if(!(typeof obj1[attrname] == 'object')){
-				obj1[attrname] = obj2[attrname]; 
+				obj1[attrname] = obj2[attrname];
 			} else {
 				$scope.getObjectProperties(obj1[attrname], obj2[attrname]);
 			}
-			
+
 		}
 	}
-	
+
 	var getDefaultStyleForEmpty = function() {
 		$scope.styleTemplate = "";
 		var type = $scope.chartTemplate.type.toLowerCase();
@@ -328,10 +372,10 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 					$scope.styleTemplate = $scope.chartStyles[i].CHARTSTYLE.TEMPLATE;
 					var genericStyle = $scope.styleTemplate.generic.CHART;
 					var chartSpecificStyle = $scope.styleTemplate[type].CHART;
-					for (var attrname in chartSpecificStyle) { 
-						genericStyle[attrname] = chartSpecificStyle[attrname]; 
+					for (var attrname in chartSpecificStyle) {
+						genericStyle[attrname] = chartSpecificStyle[attrname];
 					}
-				
+
 					$scope.getObjectProperties($scope.chartTemplate, genericStyle);
 
 				}
@@ -341,15 +385,15 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				if($scope.chartStyles[i].CHARTSTYLE.name==$scope.chartTemplate.styleName){
 					$scope.styleTemplate = $scope.chartStyles[i].CHARTSTYLE.TEMPLATE;
 				}
-				
+
 			}
 		}
 	}
-	
+
 	$scope.filterStyles = function(item) {
 		return item.CHARTSTYLE.name != 'default' || $scope.chartStyles.length==1
 	}
-	
+
 	$scope.changeStyle = function(style) {
 		if($scope.checkChanged() == -1){
 			console.log("Form is clean")
@@ -361,18 +405,18 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.styleTemplate = style.CHARTSTYLE.TEMPLATE;
 		} else {
 			return;
-		}		
+		}
 		var genericStyle = $scope.styleTemplate.generic.CHART;
 		var chartSpecificStyle = $scope.styleTemplate[type].CHART;
-		for (var attrname in chartSpecificStyle) { 
-			genericStyle[attrname] = chartSpecificStyle[attrname]; 
+		for (var attrname in chartSpecificStyle) {
+			genericStyle[attrname] = chartSpecificStyle[attrname];
 		}
 
 
 		$scope.getObjectProperties($scope.chartTemplate, genericStyle);
 	}
 	$scope.selectChartType = function(chart) {
-		
+
 		var ifNeededTrimDownCategoriesToSizeNeededByChartType = function () {
 			var categoriesLimit = 0;
 			if(chart == "pie" || chart == "sunburst" || chart == "wordcloud" || chart == "scatter") {
@@ -389,7 +433,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 					}
 				}
 				$scope.categories = newCategories;
-			}	
+			}
 		}
 		var ifNeededTrimDownSeriesToSizeNeededByChartType = function () {
 			var seriesLimit = 0;
@@ -408,126 +452,68 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				}
 				$scope.chartTemplate.VALUES.SERIE = newSeries;
 			}
-				
+
 		}
 		$scope.selectedChartType = chart;
 		var styleName = $scope.chartTemplate.styleName;
-		var serie = "";
+		var serie = $scope.chartTemplate.VALUES.SERIE;
+		angular.copy($scope.getChartTemplate($scope.selectedChartType), $scope.chartTemplate);
+		$scope.chartTemplate.VALUES.SERIE = serie;
+		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 		switch (chart) {
 		case 'parallel':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getParallelTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			
 			break;
 		case 'sunburst':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getSunburstTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			
 			break;
 		case 'scatter':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getScatterTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			
 			break;
 		case 'treemap':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy( StructureTabService.getTreemapTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownSeriesToSizeNeededByChartType();
-			
 			break;
 		case 'wordcloud':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getWordCloudTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
 			ifNeededTrimDownSeriesToSizeNeededByChartType();
-			
-			break;
-		case 'gauge':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getGaugeTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			
 			break;
 		case 'line':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
 			$scope.chartTemplate.type="LINE";
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			
 			break;
 		case 'heatmap':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getHeatmapTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			//$scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			
 			break;
 		case 'radar':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getRadarTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			
 			break;
 		case 'bar':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
 			$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			break;
 		case 'pie':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
 			$scope.chartTemplate.type="PIE";
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
 			ifNeededTrimDownSeriesToSizeNeededByChartType();
-			
 			break;
 		case 'chord':
-			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getChordTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
 			ifNeededTrimDownSeriesToSizeNeededByChartType();
-			
-			break;	
+			break;
 		default:
 			break;
 		}
 		$scope.changeStyle(styleName);
 		$scope.chartTemplate.styleName = $scope.clearStyleTag(styleName);
-		
+
 		//$scope.nodeOptions.refresh();
 		setConfigurationButtons($scope.selectedChartType);
 		$scope.selectedConfigurationButton = "";
 	}
-		
+
+
 }
