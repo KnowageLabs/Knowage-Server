@@ -37,7 +37,8 @@ angular
 				persistFunction();
 			}
 			var datasetCatalogUpdateProces = function(message,dataset,parameters){
-				parameters = updateDSPars(message);
+				//parameters = updateDSPars(message);
+				angular.copy(message.pars,parameters)
 				dataset.qbeJSONQuery = updateDSQuery(message);
 			}
 

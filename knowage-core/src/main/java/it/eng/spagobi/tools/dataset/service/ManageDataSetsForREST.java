@@ -922,7 +922,7 @@ public class ManageDataSetsForREST {
 
 		try {
 			parametersMap = new HashMap<>();
-
+			String dsType = json.getString(DataSetConstants.DS_TYPE_CD);
 			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
 			if (parsListJSON == null) {
 				return parametersMap;
@@ -957,9 +957,9 @@ public class ManageDataSetsForREST {
 
 				String value = "";
 				if (multivalue) {
-					value = getMultiValue(tempVal, type);
+					value = getMultiValue(tempVal, type, dsType);
 				} else {
-					value = getSingleValue(tempVal, type);
+					value = getSingleValue(tempVal, type, dsType);
 				}
 
 				logger.debug("name: " + name + " / value: " + value);
@@ -1236,11 +1236,11 @@ public class ManageDataSetsForREST {
 	 * @param type
 	 * @return
 	 */
-	static String getSingleValue(String value, String type) {
+	static String getSingleValue(String value, String type, String dsType) {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
-			if (!(value.startsWith("'") && value.endsWith("'"))) {
+			if ((!(value.startsWith("'") && value.endsWith("'"))) && !dsType.equals(DataSetConstants.QBE)) {
 				toReturn = "'" + value + "'";
 			} else {
 				toReturn = value;
@@ -1269,16 +1269,16 @@ public class ManageDataSetsForREST {
 		return toReturn;
 	}
 
-	private String getMultiValue(String value, String type) {
+	private String getMultiValue(String value, String type, String dsType) {
 		String toReturn = "";
 
 		String[] tempArrayValues = value.split(",");
 		for (int j = 0; j < tempArrayValues.length; j++) {
 			String tempValue = tempArrayValues[j];
 			if (j == 0) {
-				toReturn = getSingleValue(tempValue, type);
+				toReturn = getSingleValue(tempValue, type, dsType);
 			} else {
-				toReturn = toReturn + "," + getSingleValue(tempValue, type);
+				toReturn = toReturn + "," + getSingleValue(tempValue, type, dsType);
 			}
 		}
 
@@ -1550,22 +1550,22 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-//	private Map parseJsonDriversMap(JSONObject drivers) {
-//		HashMap<String, Object> driversMap = new HashMap<>();
-//		try {
-//			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
-//				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
-//					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
-//						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
-//						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
-//					} else
-//						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
-//				}
-//			}
-//		} catch (JSONException e) {
-//			logger.debug("Unsuccessful parsing of JSONObject to map");
-//			throw new JsonException(e.getLocalizedMessage(), e);
-//		}
-//		return driversMap;
-//	}
+	// private Map parseJsonDriversMap(JSONObject drivers) {
+	// HashMap<String, Object> driversMap = new HashMap<>();
+	// try {
+	// for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
+	// if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
+	// if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
+	// String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
+	// driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
+	// } else
+	// driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
+	// }
+	// }
+	// } catch (JSONException e) {
+	// logger.debug("Unsuccessful parsing of JSONObject to map");
+	// throw new JsonException(e.getLocalizedMessage(), e);
+	// }
+	// return driversMap;
+	// }
 }
