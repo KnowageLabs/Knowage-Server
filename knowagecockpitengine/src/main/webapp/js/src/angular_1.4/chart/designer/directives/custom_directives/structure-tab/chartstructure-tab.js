@@ -345,48 +345,7 @@ function structureTabControllerFunction($scope, sbiModule_translate, sbiModule_r
 			console.log($scope.seriesContainers[i]);
 			for (var j = 0; j < $scope.seriesContainers[i].series.length; j++) {
 				if ($scope.seriesContainers[i].series[j] == item.alias) {
-					var base = "";
-					switch ($scope.selectedChartType) {
-						case 'parallel':
-							base = StructureTabService.getParallelTemplate();
-							break;
-						case 'sunburst':
-							base = StructureTabService.getSunburstTemplate();
-							break;
-						case 'scatter':
-							base = StructureTabService.getScatterTemplate();
-							break;
-						case 'treemap':
-							base = StructureTabService.getTreemapTemplate();
-							break;
-						case 'wordcloud':
-							base = StructureTabService.getWordCloudTemplate();
-							break;
-						case 'gauge':
-							base = StructureTabService.getGaugeTemplate();
-							break;
-						case 'line':
-							base = StructureTabService.getBaseTemplate();
-							break;
-						case 'heatmap':
-							base = StructureTabService.getHeatmapTemplate();
-							break;
-						case 'radar':
-							base = StructureTabService.getRadarTemplate();
-							break;
-						case 'bar':
-							base = StructureTabService.getBaseTemplate();
-							break;
-						case 'pie':
-							base = StructureTabService.getBaseTemplate();
-							break;
-						case 'chord':
-							base = StructureTabService.getChordTemplate();
-							break;
-						default:
-							break;
-					}
-
+					var base = $scope.getChartTemplate($scope.selectedChartType.toLowerCase());
 					var temp = base.VALUES.SERIE[0];
 					temp.axis = $scope.seriesContainers[i].name;
 					temp.column = item.alias;
