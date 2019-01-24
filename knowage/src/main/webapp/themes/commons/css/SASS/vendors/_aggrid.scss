@@ -19,6 +19,9 @@
 			    background-color: $secondaryColor;
 			    color: $lightTextColor;
 			}
+			.ag-row-selected {
+				background-color: $tableSelectedElementColor;
+			}
 		}
 		.ag-header {
 		    background-color: $baseColor;

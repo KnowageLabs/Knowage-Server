@@ -49,12 +49,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <body class="kn-news-management" ng-app="newsManagement" id="ng-app">
 	<angular-list-detail ng-controller="newsManagementController" full-screen="false"  >
-       <list label="News Management" new-function="newNews">
-
+       	<list label="Management" new-function="newNews">
+			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:calc(100% - 16px);height:calc(100% - 48px);"></div>
 		</list>
 		
-        <detail label="{{selectedNews.title || 'New News'}}" save-function="saveFunc" cancel-function="cancelFunc">
-			
+        <detail label="News" save-function="saveFunc" cancel-function="cancelFunc">
+			<div layout-fill class="containerDiv">
+				<md-card>
+					<md-card-content>
+						{{selectedNews}}
+					</md-card-content>
+				</md-card>
+			</div>
 		</detail>
 	</angular-list-detail>
 </body>

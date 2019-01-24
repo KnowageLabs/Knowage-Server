@@ -1,383 +1,72 @@
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial','sbiModule','angular-list-detail','angular_list'])
-.config(['$mdThemingProvider', function($mdThemingProvider) {
-    $mdThemingProvider.theme('knowage')
-    $mdThemingProvider.setDefaultTheme('knowage');
-}])
-.controller('navigationController'
-		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast', 'sbiModule_i18n', 'sbiModule_messaging',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n, sbiModule_messaging){
-			var ctr = this;
-			var s = $scope;
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-			var newRecord = function(){
-				ctr.tmpfixedValue = '';
-				return {'newRecord':true};
-			};
+(function() {
+	agGrid.initialiseAgGridWithAngular1(angular);
+	angular
+		.module('newsManagement', ['ngMaterial','sbiModule','angular-list-detail','agGrid'])
+		.config(function($mdThemingProvider) {
+		    $mdThemingProvider.theme('knowage');
+		    $mdThemingProvider.setDefaultTheme('knowage');
+		})
+		.controller('newsManagementController', NewsManagementController)
 
+	function NewsManagementController($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n, sbiModule_messaging){
+		$scope.translate = sbiModule_translate;
+		$scope.stubbedNews = [
+			{'title':'My first news','author':'biadmin','creationDate':new Date()},
+			{'title':'My Second news','author':'biadmin','creationDate':new Date()},
+			{'title':'My Third news','author':'biadmin','creationDate':new Date()},
+			{'title':'My Fourth news','author':'biuser','creationDate':new Date()},
+			{'title':'My Fifth news','author':'biadmin','creationDate':new Date()}
+		]
+		
+		$scope.columns = [
+			{"headerName":'Title',"field": 'title', "tooltipField":'title'},
+			{"headerName":'Author',"field": 'author', "tooltipField":'author'},
+			{"headerName":'Creation Date',"field": 'creationDate', "tooltipField":'creationDate',cellRenderer: dateFormat}
+		]
+		
+		function dateFormat(node){
+			return moment(node.createdAt).format('MM/DD/YYYY HH:mm')
+		}
+		
+		function resizeColumns(){
+			$scope.listGridOptions.api.sizeColumnsToFit();
+		}
+		
+		$scope.listGridOptions = {
+			enableColResize: false,
+            enableSorting: true,
+            pagination: true,
+            paginationAutoPageSize: true,
+            rowSelection: 'single',
+            onGridSizeChanged: resizeColumns,
+            onRowSelected: selectNews,
+            columnDefs: $scope.columns,
+            rowData: $scope.stubbedNews
+		}
+		
+		function selectNews(node){
+			$scope.selectedNews = node.data;
+			$scope.$apply();
+		}
+		
+	}
 
-
-
-			s.translate = sbiModule_translate;
-			s.i18n = sbiModule_i18n;
-
-			$scope.crossModes = [{label:s.translate.load("sbi.crossnavigation.modality.normal"),value:0},
-								 {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1},
-			                    ];
-
-
-			ctr.list = [];
-			ctr.detail = newRecord();
-			ctr.crossmodality = $scope.crossModes[0];
-			ctr.dragging = false;
-
-			ctr.addFixedParam = function(){
-				if(ctr.tmpfixedValue != 'undefined' && ctr.tmpfixedValue != '' && ctr.tmpfixedValue != null){
-					if(!ctr.detail.fromPars)ctr.detail.fromPars=[];
-					ctr.detail.fromPars.push({'id':ctr.detail.simpleNavigation.fromDocId,'name':ctr.tmpfixedValue,'type':2,'fixedValue':ctr.tmpfixedValue});
-					ctr.tmpfixedValue = '';
-				}
-			};
-
-			ctr.showHints = function(obj){
-				var msg = "";
-				var hintTitle = "";
-				if (obj == 'Description'){
-					msg = sbiModule_translate.load("sbi.crossnavigation.description.hint");
-					hintTitle = sbiModule_translate.load("sbi.crossnavigation.description.hintTitle");
-				}else{
-					msg = sbiModule_translate.load("sbi.crossnavigation.breadcrumb.hint");
-					hintTitle = sbiModule_translate.load("sbi.crossnavigation.breadcrumb.hintTitle");
-				}
-
-				$mdDialog.show(
-						  $mdDialog
-						    .alert({
-						    	 locals:{},
-						    	 clickOutsideToClose:true,
-						    	 template:
-						             '<md-dialog aria-label="Hint dialog">' +
-						             '  <md-dialog-content>'+
-						             '		<md-toolbar class="primaryToolbar">'+
-						             '			<div class="md-toolbar-tools">'+
-						             ' 				<h2>'+
-						             '   				<span>'+hintTitle+'</span>'+
-						             ' 				</h2>'+
-						             '			</div>'+
-						             '		</md-toolbar>'+
-						             '    	<p>'+ msg+ '</p>'+
-						             '  </md-dialog-content>' +
-						             '  <md-dialog-actions>' +
-						             '    <md-button ng-click="closeDialog()" class="md-raised">' +
-						             '      Close' +
-						             '    </md-button>' +
-						             '  </md-dialog-actions>' +
-						             '</md-dialog>',
-						             controller: hintDialogController
-						      })
-						);
-
-				function hintDialogController ($scope,$mdDialog) {
-			        $scope.closeDialog = function() {
-			          $mdDialog.hide();
-			        }
-				}
-			}
-
-			ctr.navigationList = {
-				columns : [{"label":s.translate.load("sbi.crossnavigation.lst.name"),"name":"name"}
-						  ,{"label":s.translate.load("sbi.crossnavigation.lst.doc.a"),"name":"fromDoc"}
-						  ,{"label":s.translate.load("sbi.crossnavigation.lst.doc.b"),"name":"toDoc"}],
-				searchColumns : ["name","fromDoc","toDoc"],
-				loadingSpinner : false,
-				loadNavigationList : function(){
-					ctr.navigationList.loadingSpinner = true;
-					sbiModule_restServices.promiseGet('1.0/crossNavigation/listNavigation', "", null)
-					.then(function(response) {
-						ctr.navigationList.loadingSpinner = false;
-						ctr.list = response.data;
-
-						$scope.i18n.loadI18nMap().then(function() {
-
-							for (var i = 0 ; i < ctr.list.length; i ++ ){
-								ctr.list[i].name = s.i18n.getI18n(ctr.list[i].name);
-							}
-
-						}); // end of load I 18n
-
-
-					},function(response){
-						ctr.navigationList.loadingSpinner = false;
-					});
-				},
-				loadSelectedNavigation : function(item){
-					ctr.detailLoadingSpinner = true;
-					sbiModule_restServices.promiseGet('1.0/crossNavigation/'+item.id+'/load', "", null)
-					.then(function(response) {
-						$angularListDetail.goToDetail();
-						var data = response.data;
-						ctr.detailLoadingSpinner = false;
-						ctr.detail = data;
-						ctr.crossmodality = $scope.crossModes[data.simpleNavigation.type];
-
-					},function(response){
-						console.log(response);
-					});
-				},
-				dsSpeedMenu :  [{
-                	label : s.translate.load('sbi.crossnavigation.action.delete'),
-                	icon :'fa fa-trash',
-                	action : function(item, event){ctr.navigationList.removeItem(item, event);}
-                }],
-                removeItem : function(item, event){
-					sbiModule_restServices.promisePost('1.0/crossNavigation/remove', "", "{'id':"+item.id+"}")
-					.then(function(response) {
-						ctr.navigationList.loadNavigationList();
-						$scope.showActionOK("sbi.crossnavigation.remove.ok");
-					},function(response){
-						$scope.showActionOK("sbi.crossnavigation.remove.ko");
-					});
-				}
-			};
-
-			ctr.navigationList.loadNavigationList();
-
-			ctr.newNavigation = function(){
-				ctr.detail = newRecord();
-				$angularListDetail.goToDetail();
-
-			};
-
-
-
-			ctr.saveFunc = function(){
-
-				ctr.detail.simpleNavigation.type = ctr.crossmodality.value;
-				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
-				.then(function(response){
-					$scope.showActionOK("sbi.crossnavigation.save.ok");
-					ctr.navigationList.loadNavigationList();
-					ctr.detail = newRecord();
-					ctr.crossmodality = $scope.crossModes[0];
-					$angularListDetail.goToList();
-				},function(response){
-					$scope.showActionOK(response.data.errors);
-				});
-			};
-			ctr.cancelFunc = function(){
-				ctr.detail = newRecord();
-				ctr.crossmodality = $scope.crossModes[0];
-				$angularListDetail.goToList();
-			};
-
-			function loadInputParameters(documentLabel,callbackFunction){
-				sbiModule_restServices.promiseGet('1.0/documents/'+documentLabel+'/parameters', "", null)
-				.then(function(response) {
-					var data = response.data;
-					var parameters = [];
-					for(var i=0;i<data.results.length;i++){
-						parameters.push({'id':data.results[i].id,'name':data.results[i].label,'type':1, 'parType':data.results[i].parType});
-					}
-					callbackFunction(parameters);
-				},function(response){});
-			}
-
-			function loadOutputParameters(documentId,callbackFunction){
-				sbiModule_restServices.promiseGet('2.0/documents/'+documentId+'/listOutParams', "", null)
-				.then(function(response) {
-					var data = response.data;
-					var parameters = [];
-					for(var i=0;i<data.length;i++){
-						parameters.push({'id':data[i].id,'name':data[i].name,'type':0, 'parType':data[i].type.valueCd});
-					}
-					callbackFunction(parameters);
-				},function(response){});
-			}
-
-			ctr.listLeftDocuments = function(){
-				ctr.listDocuments(function(item, listId, closeDialog){
-					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
-					ctr.detail.simpleNavigation.fromDocId = item.DOCUMENT_ID;
-					ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
-					loadInputParameters(item.DOCUMENT_LABEL,function(data){
-						ctr.detail.fromPars = data;
-						loadOutputParameters(item.DOCUMENT_ID,function(data){
-							ctr.detail.fromPars = ctr.detail.fromPars.concat(data);
-							closeDialog();
-						});
-					});
-				});
-			};
-
-			ctr.listRightDocuments = function(){
-				ctr.listDocuments(function(item, listId, closeDialog){
-					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
-					ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
-					loadInputParameters(item.DOCUMENT_LABEL,function(data){
-						ctr.detail.toPars = data;
-						closeDialog();
-					});
-				});
-			};
-
-			ctr.listDocuments = function(clickOnSelectedDocFunction,item){
-				$mdDialog.show({
-					controller: DialogController,
-					templateUrl: 'dialog1.tmpl.html',
-					parent: angular.element(document.body),
-					clickOutsideToClose:false,
-					locals: {
-						clickOnSelectedDoc: clickOnSelectedDocFunction
-						,translate: s.translate
-					}
-				});
-
-				function DialogController(scope, $mdDialog, clickOnSelectedDoc, translate) {
-					scope.closeDialog = function() {
-						$mdDialog.hide();
-					};
-					scope.changeDocPage=function(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering){
-						if(searchValue==undefined || searchValue.trim().lenght==0 ){
-							searchValue='';
-						}
-						var item="Page="+currentPageNumber+"&ItemPerPage="+itemsPerPage+"&label=" + searchValue;
-						scope.loadListDocuments(item);
-					};
-					scope.clickOnSelectedDoc = clickOnSelectedDoc;
-					scope.translate = translate;
-					scope.loading = true;
-					scope.totalCount = 0
-					scope.loadListDocuments = function(item){
-						sbiModule_restServices.promiseGet("2.0/documents", "listDocument",item).then(
-								function(response){
-									scope.loading = false;
-									scope.listDoc = response.data.item;
-									scope.totalCount = response.data.itemCount;
-								},
-
-								function(response){
-										sbiModule_restServices.errorHandler(response.data,"")
-									}
-								)
-					}
-
-				}
-			};
-
-			ctr.treeOptions = {
-					beforeDrop: function(event) {
-						if(ctr.selectedItem >= 0){
-							//if(ctr.selectedItem != ""){
-							var fromType =  event.source.cloneModel.parType;
-							var fromName = event.source.cloneModel.name;
-							var toType = ctr.detail.toPars[ctr.selectedItem].parType;
-							var toName = ctr.detail.toPars[ctr.selectedItem].name;
-
-							if(fromType && toType && fromType == 'NUM' && toType == 'STRING'){
-								sbiModule_messaging.showErrorMessage(fromName +' '+ sbiModule_translate.load("sbi.crossnavigation.crossparameters.typeProblem") + ' ' +toName);
-							}
-							else{
-								ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];
-							}
-							//}
-						}
-						return false;
-					},
-					dragStop: function(){
-						ctr.unselectAll();
-					}
-			};
-
-			ctr.treeOptions2 = {
-				accept: function(sourceNodeScope, destNodesScope, destIndex){
-					//alert(destNodesScope.depth());
-					if(
-							//destNodesScope.depth()==0
-							//&&
-							!ctr.hasLink(destIndex)){
-						ctr.selectItem(destIndex);
-					}else{
-						ctr.unselectAll();
-					}
-					return false;
-				}
-			};
-
-			ctr.hasLink = function(i){
-				var item = ctr.detail.toPars[i];
-				return item && item.links && item.links.length > 0;
-			};
-
-			ctr.selectItem = function(index){
-				ctr.selectedItem = index;
-			};
-
-			ctr.unselectAll = function(){
-				ctr.selectedItem = '';
-			};
-
-			ctr.removeLink = function(id){
-				for(var i=0;i<ctr.detail.toPars.length;i++){
-					if(ctr.detail.toPars[i].id==id){
-						ctr.detail.toPars[i].links=[];
-					}
-				}
-			};
-
-//			ctr.deletFixedValue = function(par){
-//				var found = false;
-//				var indexToDelete = undefined;
-//				for(var i=0;i<ctr.detail.fromPars.length && !found;i++){
-//					var forPar = ctr.detail.fromPars[i];
-//					if(forPar.name == par.name){
-//						indexToDelete = i;
-//						found = true;
-//					}
-//				}
-//				if(indexToDelete != undefined){
-//					ctr.detail.fromPars.splice(indexToDelete,1);
-//				}
-//			}
-
-			ctr.getTypeLabel = function(type){
-				if(type==0){
-					return s.translate.load('sbi.crossnavigation.output');
-				}else if(type==1){
-					return s.translate.load('sbi.crossnavigation.input');
-				}else{
-					return s.translate.load('sbi.crossnavigation.fixed');
-				}
-			};
-
-			$scope.showActionOK = function(msg) {
-				var delay = 3000;
-				var content = '';
-				if(Object.prototype.toString.call(msg) === '[object Array]'){
-					for(var i=0;i<msg.length;i++){
-						if(i!=0){
-							content += ' - ';
-							delay += 1000;
-						}
-						if(Object.prototype.toString.call(msg[i])==='[object Object]'){
-							content += sbiModule_translate.load(msg[i].message);
-						}else{
-							content += sbiModule_translate.load(msg[i]);
-						}
-					}
-				}else{
-					content = sbiModule_translate.load(msg);
-				}
-				var toast = $mdToast.simple()
-				.content(content)
-				.action('OK')
-				.highlightAction(false)
-				.hideDelay(delay)
-				.position('top');
-
-				$mdToast.show(toast).then(function(response) {
-					if ( response == 'ok' ) {
-					}
-				});
-			};
-		}]);
+})();
