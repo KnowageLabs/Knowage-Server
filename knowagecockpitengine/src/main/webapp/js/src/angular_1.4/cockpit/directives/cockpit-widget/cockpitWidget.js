@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('cockpitModule')
-.config( ['$compileProvider', function( $compileProvider ){   
+.config( ['$compileProvider', function( $compileProvider ){
         	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
     	}
 ])
@@ -254,7 +254,7 @@ function cockpitWidgetControllerFunction(
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
-	    
+
 	if(!cockpitModule_backwardCompatibility.compareVersion(cockpitModule_properties.CURRENT_KNOWAGE_VERSION,$scope.ngModel.knowageVersion)){
 		$scope.ngModel = cockpitModule_backwardCompatibility.updateModel($scope.ngModel);
 	}
@@ -317,7 +317,7 @@ function cockpitWidgetControllerFunction(
 		$scope.activeSearch = false;
 		$scope.refreshWidget();
 	}
-	
+
 	$scope.showScreenshotButton = function(){
 		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection') return false;
 		if(typeof($scope.ngModel.style.showScreenshot) == 'undefined' ) {
@@ -375,10 +375,9 @@ function cockpitWidgetControllerFunction(
 		switch(eventType){
 		case "REFRESH"  :
 			if($scope.refresh==undefined){
-				/*$timeout(function(){
-					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-				},1000);*/
-				$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
+				$timeout(function(){
+					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
+				},1000);
 
 			}else{
 
@@ -1363,7 +1362,7 @@ function cockpitWidgetControllerFunction(
 	      locals: {ngModel:$scope.ngModel}
 	    })
 	}
-	
+
 	$scope.captureScreenShot = function(ev,model){
 		model.loadingScreen = true;
 		var element = document.querySelector('#w'+model.id+' .placedWidget');
@@ -1377,8 +1376,8 @@ function cockpitWidgetControllerFunction(
 			        tempCtx.clearRect(0, 0, 0, 0);
 			    });
 			}});
-			
-		    
+
+
 		}else{
 			html2canvas(element,{
 				imageTimeout: 0,
@@ -1394,15 +1393,15 @@ function cockpitWidgetControllerFunction(
 			});
 		}
 		delete model.loadingScreen;
-		
-		
-		
+
+
+
 	};
-	
+
 	$scope.exportToExcel = function(event, ngModel) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel);
 	}
-	
+
 };
 
 })();

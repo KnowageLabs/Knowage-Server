@@ -69,7 +69,7 @@ angular.module('chartRendererModule')
 							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
-						
+
 						if(scope.chartTemplate.CHART.groupSeriesCateg && scope.chartConf.series.length > 0){
 							scope.chartConf.colorsCopy = angular.copy(scope.chartConf.colors);
 							if(scope.colorMap){
@@ -89,9 +89,9 @@ angular.module('chartRendererModule')
 									scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
 								}
 							}
-							
+
 						}
-						
+
 						var renderObject = {};
 						renderObject.chartConf = scope.chartConf;
 						renderObject.element = element[0];
@@ -100,7 +100,7 @@ angular.module('chartRendererModule')
 						renderObject.widgetData = scope.widgetData;
 						renderObject.chartTemplate = scope.chartTemplate.CHART;
 						if(selectionsAndParams){
-							renderObject.selectionsAndParams = selectionsAndParams;								
+							renderObject.selectionsAndParams = selectionsAndParams;
 						}
 
 						if(chartConf.plotOptions && chartConf.series && chartConf.series[0] && chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
@@ -173,6 +173,15 @@ angular.module('chartRendererModule')
 
 			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf,selectionsAndParams){
 
+				var initObject = { data:data,isRealtime:isRealtime,chartConf:chartConf,selectionsAndParams:selectionsAndParams }
+				scope.init(initObject)
+
+			})
+
+
+
+			scope.init = function(initObject){
+
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
 					scope.noLib = false;
@@ -181,20 +190,21 @@ angular.module('chartRendererModule')
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
 					}*/
-					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,false,chartConf,selectionsAndParams);
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,initObject.data,initObject.isRealtime,false,initObject.chartConf,initObject.selectionsAndParams);
 
 				}else{
 					element[0].innerHTML = "no library implementation";
 				}
 
-
-			})
+			}
 
 			scope.$on('filters',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
-
-
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
-
+				if(!scope.chartInitializer){
+					var initObject = { data:data,isRealtime:isRealtime,chartConf:chartConf,selectionsAndParams:selectionsAndParams }
+					scope.init(initObject)
+				}else{
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
+				}
 			})
 
 			scope.$on('selections',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
@@ -224,13 +234,13 @@ angular.module('chartRendererModule')
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
-			
+
 			scope.$on('drillClick',function(event,data){
 
 				scope.chartInitializer.chart.drillable = data.drillable;
 				scope.chartInitializer.chart.cliccable = data.cliccable;
 			})
-			
+
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
