@@ -173,6 +173,11 @@ angular.module('chartRendererModule')
 
 			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf,selectionsAndParams){
 
+				var initObject = { data:data,isRealtime:isRealtime,chartConf:chartConf,selectionsAndParams:selectionsAndParams }
+				scope.init(initObject)
+									})
+				scope.init = function(initObject){
+
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
 					scope.noLib = false;
@@ -181,19 +186,22 @@ angular.module('chartRendererModule')
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
 					}*/
-					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,false,chartConf,selectionsAndParams);
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,initObject.data,initObject.isRealtime,false,initObject.chartConf,initObject.selectionsAndParams);
 
 				}else{
 					element[0].innerHTML = "no library implementation";
 				}
 
-
-			})
+			}
 
 			scope.$on('filters',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
-
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
+				if(!scope.chartInitializer){
+				var initObject = { data:data,isRealtime:isRealtime,chartConf:chartConf,selectionsAndParams:selectionsAndParams }
+				scope.init(initObject)
+					}else{
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,true,chartConf,selectionsAndParams);
+				}
 
 			})
 
@@ -224,13 +232,13 @@ angular.module('chartRendererModule')
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
-			
+
 			scope.$on('drillClick',function(event,data){
 
 				scope.chartInitializer.chart.drillable = data.drillable;
 				scope.chartInitializer.chart.cliccable = data.cliccable;
 			})
-			
+
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
