@@ -398,7 +398,10 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			}
 
 			//altrnateRow & grid border
-			if($scope.ngModel.content.style.showAlternateRows &&  $scope.ngModel.content.style.measuresRow!=undefined && Object.keys($scope.ngModel.content.style.measuresRow).length>0 ){
+			if($scope.ngModel.content.style.showGrid ||
+			   ($scope.ngModel.content.style.showAlternateRows &&
+			    $scope.ngModel.content.style.measuresRow!=undefined &&
+			    Object.keys($scope.ngModel.content.style.measuresRow).length>0)){
 				var rowList=angular.element($scope.subCockpitWidget[0].querySelectorAll("tr"));
 				var tmpOddRow=false;
 				angular.forEach(rowList,function(row,index){
@@ -457,12 +460,14 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					}
 					if(dataColumnList.length>0){
 						//alternateRow
-						if(tmpOddRow && $scope.ngModel.content.style.measuresRow["odd-background-color"]!= ""){
-							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["odd-background-color"])
-						}else if ($scope.ngModel.content.style.measuresRow["even-background-color"]!= ""){
-							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["even-background-color"])
+						if ($scope.ngModel.content.style.showAlternateRows){
+							if(tmpOddRow && $scope.ngModel.content.style.measuresRow["odd-background-color"]!= ""){
+								angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["odd-background-color"])
+							}else if ($scope.ngModel.content.style.measuresRow["even-background-color"]!= ""){
+								angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["even-background-color"])
+							}
+							tmpOddRow=!tmpOddRow;
 						}
-						tmpOddRow=!tmpOddRow;
 
 						//border cell style
 						$scope.applyBorderStyle(dataColumnList);
