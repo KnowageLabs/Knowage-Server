@@ -268,6 +268,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$scope.editQueryObj.fields[j].visible = data[i].visible;
 						$scope.editQueryObj.fields[j].distinct = data[i].distinct;
 						$scope.editQueryObj.fields[j].order = data[i].ordering;
+						$scope.editQueryObj.fields[j].alias = data[i].alias;
 						temp.push($scope.editQueryObj.fields[j]);
 					}
 				}
