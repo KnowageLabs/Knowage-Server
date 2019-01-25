@@ -470,6 +470,8 @@ angular.module('chartInitializer')
 					}
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
+						var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+						var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
 
 						if(chart.options.drilledCategories.length==0){
 							 if(series.firstLevelCategory){
@@ -543,8 +545,8 @@ angular.module('chartInitializer')
 	this.setExtremes = function (chartConf){
 		var mapAxis=  {min:{},max:{}};
 		for (var i =0; i < chartConf.series.length; i++){
-			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
-			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) { return o.y; }));
+			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
+			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
 			if(mapAxis.min[chartConf.series[i].yAxis]){
 				if(mapAxis.min[chartConf.series[i].yAxis] < min)
 				mapAxis.min[chartConf.series[i].yAxis] = min;
