@@ -994,10 +994,10 @@
             categories: [
             	#foreach($element in $map.entrySet())
             		{ 
-						name: '$element.key',
+						name: "$element.key",
 						categories: [
 							#foreach($element in $element.value)
-								'$element',
+								"$element",
 							#end
 						]
 					},
@@ -1655,7 +1655,7 @@
 		#if($valueKey!="null")
 		{
 			selected: $selectedValue,
-			name: '$valueKey',
+			name: "$valueKey",
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 
@@ -1670,7 +1670,7 @@
 						y: $el.y,
 					#end
 					
-					name: '$el.name',
+					name: "$el.name",
 					
 					datetype:"$datetype",
 					#if($isDateTime==true)
