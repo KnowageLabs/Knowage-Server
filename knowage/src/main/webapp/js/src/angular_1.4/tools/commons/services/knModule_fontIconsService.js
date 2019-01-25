@@ -37,9 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"},{"label":"check","className":"fa fa-check","unicode":"\uf00c"},{"label":"times","className":"fa fa-times","unicode":"\uf00d"},
 						{"label":"warning","className":"fa fa-warning","unicode":"\uf071"},{"label":"exclamation","className":"fa fa-exclamation-circle","unicode":"\uf06a"},
 						{"label":"plus","className":"fa fa-plus","unicode":"\uf067"},{"label":"bars","className":"fa fa-bars","unicode":"\uf0c9"},{"label":"minus","className":"fa fa-minus","unicode":"\uf068"},
-						{"label":"down","className":"fa fa-chevron-down","unicode":"\uf078"},{"label":"up","className":"fa fa-chevron-up","unicode":"\uf077"},
-						{"label":"arrow down","className":"fa fa-arrow-down","unicode":"\uf063"},{"label":"arrow up","className":"fa fa-arrow-up","unicode":"\uf062"},{"label":"plane","className":"fa fa-plane","unicode":"\uf072"},
-						{"label":"thumbs up","className":"fa fa-thumbs-up","unicode":"\uf164"},{"label":"thumbs down","className":"fa fa-thumbs-down","unicode":"\uf165"},{"label":"folder open","className":"fa fa-folder-open","unicode":"\uf07c"},
+						{"label":"down","className":"fa fa-chevron-down","unicode":"\uf078"},{"label":"right","className":"fa fa-chevron-right","unicode":"\uf054"},{"label":"left","className":"fa fa-chevron-left","unicode":"\uf053"},
+						{"label":"up","className":"fa fa-chevron-up","unicode":"\uf077"},{"label":"arrow down","className":"fa fa-arrow-down","unicode":"\uf063"},{"label":"arrow up","className":"fa fa-arrow-up","unicode":"\uf062"},
+						{"label":"arrow right","className":"fa fa-arrow-right","unicode":"\uf061"},{"label":"arrow left","className":"fa fa-arrow-left","unicode":"\uf060"},{"label":"thumbs up","className":"fa fa-thumbs-up","unicode":"\uf164"},{"label":"thumbs down","className":"fa fa-thumbs-down","unicode":"\uf165"},{"label":"folder open","className":"fa fa-folder-open","unicode":"\uf07c"},
 						{"label":"filter","className":"fa fa-filter","unicode":"\uf0b0"},{"label":"external link","className":"fa fa-external-link","unicode":"\uf08e"}]
 				},{"name":"Appliances","className":"ai",
 					"icons":[
