@@ -3,6 +3,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -17,6 +18,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -313,7 +315,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			session = getSession();
 			transaction = session.beginTransaction();
 			hibMetaModel = (SbiMetaModel) session.load(SbiMetaModel.class, MetaModelId);
-			List<SbiMetaModelParameter> metaModelParameters = hibMetaModel.getSbiMetaModelParameters();
+			Set metaModelParameters = hibMetaModel.getSbiMetaModelParameters();
 
 			logger.debug("delete all metaModelParameters for MetaModel with label " + hibMetaModel.getName());
 
@@ -336,6 +338,37 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 					session.close();
 			}
 		}
+	}
+
+	@Override
+	public void eraseBIMetaModelParameterDependencies(BIMetaModelParameter aBIMetaModelParameter, Session aSession) {
+		logger.debug("IN");
+		logger.debug("Delete dependencies for meta model parameter with id " + aBIMetaModelParameter.getId());
+		SbiMetaModelParameter hibMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aBIMetaModelParameter.getId());
+
+		if (hibMetaModelPar == null) {
+			logger.error("the BIMetaModelParameter with id=" + aBIMetaModelParameter.getId() + " does not exist.");
+		}
+
+		// delete all MetaModelParuse object (data dependencies) of the biMetaModelParameter
+		MetaModelParuseDAOHibImpl metaModelParuseDAO = new MetaModelParuseDAOHibImpl();
+		List metaModelParuses = metaModelParuseDAO.loadAllParuses(hibMetaModelPar.getMetaModelParId());
+		Iterator itMetaModelParuses = metaModelParuses.iterator();
+		while (itMetaModelParuses.hasNext()) {
+			MetaModelParuse aMetaModelParuse = (MetaModelParuse) itMetaModelParuses.next();
+			metaModelParuseDAO.eraseMetaModelParuse(aMetaModelParuse);
+		}
+
+		// delete also all MetaModelParView (visibility dependencies) of the biMetaModelParameter
+		IMetaModelParviewDAO metaModelParviewDAO = DAOFactory.getMetaModelParviewDao();
+		List metaModelParview = metaModelParviewDAO.loadMetaModelParviews(hibMetaModelPar.getMetaModelParId());
+		Iterator itMetaModelParviews = metaModelParview.iterator();
+		while (itMetaModelParviews.hasNext()) {
+			MetaModelParview aMetaModelParview = (MetaModelParview) itMetaModelParviews.next();
+			metaModelParviewDAO.eraseMetaModelParview(aMetaModelParview.getId());
+		}
+		logger.debug("OUT");
+
 	}
 
 	public void recalculateBiParametersPriority(Integer MetaModelId, Session aSession) {

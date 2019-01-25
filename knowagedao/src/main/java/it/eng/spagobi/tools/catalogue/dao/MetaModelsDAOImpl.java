@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.catalogue.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -679,6 +680,29 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			}
 
 			SbiMetaModel hibModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
+
+			Set metaModelParameters = hibModel.getSbiMetaModelParameters();
+			if (metaModelParameters != null) {
+				// delete dependencies between drivers
+				Iterator itMetaModelParDep = metaModelParameters.iterator();
+				BIMetaModelDAOHibImpl metaModelParDAO = new BIMetaModelDAOHibImpl();
+				while (itMetaModelParDep.hasNext()) {
+					SbiMetaModelParameter aSbiObjPar = (SbiMetaModelParameter) itMetaModelParDep.next();
+					BIMetaModelParameter aBIMetaModelParameter = new BIMetaModelParameter();
+					aBIMetaModelParameter.setId(aSbiObjPar.getMetaModelParId());
+					metaModelParDAO.eraseBIMetaModelParameterDependencies(aBIMetaModelParameter, session);
+				}
+
+				// delete drivers associated to business model
+				Iterator itMetaModelPar = metaModelParameters.iterator();
+				while (itMetaModelPar.hasNext()) {
+					SbiMetaModelParameter aSbiObjPar = (SbiMetaModelParameter) itMetaModelPar.next();
+					BIMetaModelParameter aBIMetaModelParameter = new BIMetaModelParameter();
+					aBIMetaModelParameter.setId(aSbiObjPar.getMetaModelParId());
+					metaModelParDAO.eraseBIMetaModelParameter(aBIMetaModelParameter);
+				}
+			}
+
 			if (hibModel == null) {
 				logger.warn("Model with id [" + modelId + "] not found");
 			} else {
@@ -712,6 +736,18 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setName(hibModel.getName());
 			toReturn.setDescription(hibModel.getDescription());
 			toReturn.setCategory(hibModel.getCategory());
+
+			List metaModelParameters = new ArrayList();
+			Set hibMetaModelPars = hibModel.getSbiMetaModelParameters();
+			if (hibMetaModelPars != null) {
+				for (Iterator it = hibMetaModelPars.iterator(); it.hasNext();) {
+					SbiMetaModelParameter aSbiMetaModelPar = (SbiMetaModelParameter) it.next();
+					BIMetaModelParameter par = toBIMetaModelParameter(aSbiMetaModelPar);
+					metaModelParameters.add(par);
+				}
+				toReturn.setDrivers(metaModelParameters);
+			}
+
 			if (hibModel.getDataSource() != null) {
 				toReturn.setDataSourceLabel(DataSourceDAOHibImpl.toDataSource(hibModel.getDataSource()).getLabel());
 				toReturn.setDataSourceId(DataSourceDAOHibImpl.toDataSource(hibModel.getDataSource()).getDsId());
@@ -722,6 +758,26 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	public BIMetaModelParameter toBIMetaModelParameter(SbiMetaModelParameter hibMetaModelPar) {
+		BIMetaModelParameter aBIMetaModelParameter = new BIMetaModelParameter();
+		aBIMetaModelParameter.setId(hibMetaModelPar.getMetaModelParId());
+		aBIMetaModelParameter.setLabel(hibMetaModelPar.getLabel());
+		aBIMetaModelParameter.setModifiable(new Integer(hibMetaModelPar.getModFl().intValue()));
+		aBIMetaModelParameter.setMultivalue(new Integer(hibMetaModelPar.getMultFl().intValue()));
+		aBIMetaModelParameter.setBiMetaModelID(hibMetaModelPar.getSbiMetaModel().getId());
+		aBIMetaModelParameter.setParameterUrlName(hibMetaModelPar.getParurlNm());
+		aBIMetaModelParameter.setParID(hibMetaModelPar.getSbiParameter().getParId());
+		aBIMetaModelParameter.setRequired(new Integer(hibMetaModelPar.getReqFl().intValue()));
+		aBIMetaModelParameter.setVisible(new Integer(hibMetaModelPar.getViewFl().intValue()));
+		aBIMetaModelParameter.setPriority(hibMetaModelPar.getPriority());
+		aBIMetaModelParameter.setProg(hibMetaModelPar.getProg());
+		Parameter parameter = new Parameter();
+		parameter.setId(hibMetaModelPar.getSbiParameter().getParId());
+		parameter.setType(hibMetaModelPar.getSbiParameter().getParameterTypeCode());
+		aBIMetaModelParameter.setParameter(parameter);
+		return aBIMetaModelParameter;
 	}
 
 	@Override

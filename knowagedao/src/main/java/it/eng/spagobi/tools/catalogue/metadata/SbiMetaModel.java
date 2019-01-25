@@ -17,9 +17,8 @@
  */
 package it.eng.spagobi.tools.catalogue.metadata;
 
-import java.util.List;
+import java.util.Set;
 
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
@@ -41,7 +40,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 
 	private String modelLocker;
 
-	private List<SbiMetaModelParameter> biMetaModelParameters = null;
+	private Set sbiMetaModelParameters = null;
 	// Constructors
 
 	public SbiMetaModel() {
@@ -134,16 +133,12 @@ public class SbiMetaModel extends SbiHibernateModel {
 		this.modelLocker = modelLocker;
 	}
 
-	public List<SbiMetaModelParameter> getSbiMetaModelParameters() {
-		return biMetaModelParameters;
+	public Set getSbiMetaModelParameters() {
+		return this.sbiMetaModelParameters;
 	}
 
-	public void setBiMetaModelParameters(List<SbiMetaModelParameter> biMetaModelParameters) {
-		this.biMetaModelParameters = biMetaModelParameters;
-	}
-
-	public List<SbiMetaModelParameter> getBiMetaModelParameters() {
-		return biMetaModelParameters;
+	public void setSbiMetaModelParameters(Set sbiMetaModelParameters) {
+		this.sbiMetaModelParameters = sbiMetaModelParameters;
 	}
 
 }

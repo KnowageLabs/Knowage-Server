@@ -77,10 +77,10 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 
 	public Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent);
 
-	MetaModel loadMetaModelForExecutionByIdAndRole(Integer id, String role);
+	public MetaModel loadMetaModelForExecutionByIdAndRole(Integer id, String role);
 
-	MetaModel loadMetaModelForDetail(Integer id);
+	public MetaModel loadMetaModelForDetail(Integer id);
 
-	MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role);
+	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role);
 
 }

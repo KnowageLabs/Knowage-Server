@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class name="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel"
 		table="SBI_META_MODELS">
-		<id name="id" type="int">
+		<id name="id" type="integer">
 			<column name="ID" />
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
@@ -65,6 +65,13 @@
 		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
 		   <column name="DATA_SOURCE_ID" not-null="false"/>
 		 </many-to-one>
+		 
+		 <set inverse="true" name="sbiMetaModelParameters" sort="unsorted">
+   			<key>
+    			<column name="metamodel_id" not-null="true"/>
+   			</key>
+   			<one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter"/>
+ 		 </set>
 		 
 		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
