@@ -69,6 +69,10 @@ Before start to contribute, please read and sign the
 The official documentantion is available at
 [Read the Docs](http://knowage-suite.readthedocs.io/).
 
+## Roadmap
+
+The Knowage project roadmap is described [here](ROADMAP.md).
+
 ## More
 
 Please visit [the project website](http://www.knowage-suite.com) for information
