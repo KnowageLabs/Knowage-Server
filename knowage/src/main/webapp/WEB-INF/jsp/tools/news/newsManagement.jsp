@@ -42,6 +42,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html >
 
 <head>
+	<!-- include libraries(jQuery, bootstrap) -->
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/news/newsManagement.js")%>"></script>
 	
@@ -50,14 +54,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="kn-news-management" ng-app="newsManagement" id="ng-app">
 	<angular-list-detail ng-controller="newsManagementController" full-screen="false"  >
        	<list label="Management" new-function="newNews">
-			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:calc(100% - 16px);height:calc(100% - 48px);"></div>
+			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
 		</list>
 		
         <detail label="News" save-function="saveFunc" cancel-function="cancelFunc">
 			<div layout-fill class="containerDiv">
 				<md-card>
+					<md-subheader><span>Composition</span></md-subheader>
 					<md-card-content>
-						{{selectedNews}}
+						<md-input-container class="md-block" style="margin-bottom: 32px;">
+							<label>News Title</label>
+							<input type="text" ng-model="selectedNews.title"/>
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>News Description</label>
+							<textarea ng-model="selectedNews.description" md-maxlength="140" rows="2" placeholder="This is the text that will appear on the news notification"></textarea>
+						</md-input-container>
+						<summernote ng-model="selectedNews.html" config="options"></summernote>
+					</md-card-content>
+				</md-card>
+				<md-card>
+					<md-subheader>Permissions</md-subheader>
+					<md-card-content>
+						TBD
 					</md-card-content>
 				</md-card>
 			</div>

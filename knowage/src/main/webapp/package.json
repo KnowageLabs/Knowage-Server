@@ -38,6 +38,7 @@
     "angular-material": "1.1.10",
     "angular-messages": "1.7.2",
     "angular-sanitize": "1.7.2",
+    "angular-summernote": "^0.8.1",
     "angular-ui-codemirror": "0.3.0",
     "angular-xregexp": "1.0.0",
     "canvg": "^1.5.3",

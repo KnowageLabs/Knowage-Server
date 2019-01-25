@@ -111,6 +111,9 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/ngWYSIWYG/wysiwyg.min.js"></script>	
 <link rel="stylesheet" type="text/css" href="<%=spagoBiContext%>/js/lib/angular/ngWYSIWYG/editor.min.css">
 
+
+
+
 <!-- 		angular-drag-and-drop-lists -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>	
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">	
