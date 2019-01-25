@@ -259,7 +259,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$rootScope.$on('smartView', function (event, data) {
 		var temp = []
-		if(data.length>0 && query_service.smartView){
+
 			for (var i = 0; i < data.length; i++) {
 				for(var j =0;j < $scope.editQueryObj.fields.length;j++){
 					if($scope.editQueryObj.fields[j].id === data[i].id){
@@ -276,7 +276,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			}
 			$scope.editQueryObj.fields = temp;
 
-		}
+
 
 
 		if(query_service.smartView){
