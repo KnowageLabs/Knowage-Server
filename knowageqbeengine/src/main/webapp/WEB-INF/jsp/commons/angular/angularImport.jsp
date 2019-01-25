@@ -46,7 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Angular table -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/pagination/dirPagination.js"></script> 
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script> 
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/kn-table/knTable.js"></script> 
 
 <script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script>
 

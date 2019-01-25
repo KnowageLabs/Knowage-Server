@@ -64,7 +64,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.selectedRelationsService = selectedEntitiesRelationshipsService;
 	$scope.queryEntitiesService = queryEntitiesService;
 	var comunicator = windowCommunicationService;
-	comunicator.sendMessage("Hi from qbe");
 
 	var consoleHandler = {}
 	consoleHandler.handleMessage = function(message){
@@ -105,7 +104,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			var meta = {
 					"displayedName":newValue.fields[i].alias,
 					"name":newValue.fields[i].alias,
-					"fieldType":newValue.fields[i].fieldType,
+					"fieldType":newValue.fields[i].fieldType.toUpperCase(),
 					"type":""
 			}
 			$scope.meta.push(meta);
@@ -552,7 +551,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     		"qbeJSONQuery":{},
         	"pars": $scope.pars,
         	"meta": $scope.meta,
-        	"schedulingCronLine":"0 * * * * ?"
+        	"schedulingCronLine":"0 * * * * ?",
     };
 
     $scope.$on('openHavings',function(event,field){

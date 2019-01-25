@@ -1,84 +1,535 @@
-<form name=datasetForm >
+<form name="datasetForm">
+
 <md-card layout-fill layout="column" class="flexCard" style="position:absolute">
-<md-card-content flex layout="column" class="noPadding">
+	<md-card-content flex layout="column" class="noPadding">
 	
-	<md-content flex layout="column">
-	<md-card>
-<div flex=100>
-			<md-input-container class="md-block">
-		    	<label>{{translate.load("kn.qbe.save.label")}}</label>
-				<input ng-model="savingQbeDataSet.label" ng-required="true" ng-change="setFormDirty()">
-				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.label">
-  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
-						 				</div>
-			</md-input-container>
-		</div>
-		
-		<div flex=100>
-			<md-input-container class="md-block">
-		    	<label>{{translate.load("kn.qbe.save.name")}}</label>
-				<input ng-model="savingQbeDataSet.name" ng-required="true" ng-change="setFormDirty()">
-				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.name">
-  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
-						 				</div>
-			</md-input-container>
-		</div>
-		
-		<div flex=100>
-			<md-input-container class="md-block">
-		    	<label>{{translate.load("kn.qbe.save.description")}}</label>
-				<textarea 	ng-model="savingQbeDataSet.description" md-maxlength="150" rows="3" 
-							md-select-on-focus ng-change="setFormDirty()"></textarea>
-			</md-input-container>
-		</div>
-		
-		<div flex=100>
-			<label class="workspaceLabelForCheckBox">
-    			{{translate.load("kn.ds.hdfs")}}:
-   			</label> 
-               		
-	         <md-input-container class="small counter workspacePersistCheckboxContainer">
-	             <md-checkbox 	aria-label="Checkbox HDFS" 
-	              		ng-model="savingQbeDataSet.exportToHdfs" ng-checked="" class="workspaceCheckbox">
-				</md-checkbox>
-	          </md-input-container>
-		</div>
-		
-	<!-- 	<div flex=100>
-	       <md-input-container class="md-block" > 
-	       		<label>{{translate.load("kn.qbe.save.scope")}}</label>
-		       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-		        	ng-required = "true" ng-change="changeDatasetScope(); setFormDirty()"
-		        	ng-model="savingQbeDataSet.scopeCd">   
-		        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
-		        	</md-option>
-		       	</md-select>  
-	       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.scopeCd">
-    						 	<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
-   						 	</div>
-	        </md-input-container>
-	   </div>
-	  
-	   <div flex=100>
-	       <md-input-container class="md-block" > 
-	       <label>{{translate.load("kn.qbe.save.category")}}</label>
-	       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
-	        			ng-required="isCategoryRequired" ng-model="savingQbeDataSet.catTypeVn"
-	        	 		ng-change="setFormDirty()">   
-	        <md-option 
-	        	ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
-	        </md-option>
-	       </md-select>  
-	       
-	       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !savingQbeDataSet.catTypeVn">
-   						 	<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
-  						 	</div>
-	       
-	        </md-input-container>
-	   </div> -->
-	</md-card>
-	
-	</md-content>
+		<md-content flex layout="column">
+			<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTab">
+				<!-- GENERIC TAB - DATASET DETAILS -->
+				<md-tab label='{{translate.load("kn.qbe.savedatasetwindow.generic");}}'>
+					<md-card layout-padding>
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("kn.qbe.save.label")}}</label>
+									<input ng-model="savingQbeDataSet.label" ng-required="true" ng-change="setFormDirty()">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.label">
+	  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
+					 				</div>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("kn.qbe.save.name")}}</label>
+									<input ng-model="savingQbeDataSet.name" ng-required="true" ng-change="setFormDirty()">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.name">
+					  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
+											 				</div>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("kn.qbe.save.description")}}</label>
+									<textarea 	ng-model="savingQbeDataSet.description" md-maxlength="150" rows="3" 
+												md-select-on-focus ng-change="setFormDirty()"></textarea>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<label class="workspaceLabelForCheckBox">
+					    			{{translate.load("kn.ds.hdfs")}}:
+					   			</label> 
+					               		
+						         <md-input-container class="small counter workspacePersistCheckboxContainer">
+						             <md-checkbox 	aria-label="Checkbox HDFS" 
+						              		ng-model="savingQbeDataSet.exportToHdfs" ng-checked="" class="workspaceCheckbox">
+									</md-checkbox>
+						          </md-input-container>
+							</div>
+						
+						<div ng-if="userLogged.isTechnical">	
+							<div flex=100>
+							       <md-input-container class="md-block" > 
+							       		<label>{{translate.load("kn.qbe.save.scope")}}</label>
+								       	<md-select placeholder ="{{translate.load('kn.qbe.save.scope')}}"
+								        	ng-required = "true" ng-change="changeDatasetScope(); setFormDirty()"
+								        	ng-model="savingQbeDataSet.scopeCd">   
+								        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+								        	</md-option>
+								       	</md-select>  
+							       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.scopeCd">
+			    						 	<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
+			   						 	</div>
+							        </md-input-container>
+							   </div>
+							  
+							   <div flex=100>
+							       <md-input-container class="md-block" > 
+							       <label>{{translate.load("kn.qbe.save.category")}}</label>
+							       <md-select 	placeholder ="{{translate.load('kn.qbe.save.category')}}"
+							        			ng-required="isCategoryRequired" ng-model="savingQbeDataSet.categoryCd"
+							        	 		ng-change="setFormDirty()">   
+							        	<md-option ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+							       </md-select>  
+							       	<div ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !savingQbeDataSet.categoryCd">
+		   						 		<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
+		  						 	</div>
+							        </md-input-container>
+							   </div>
+						  </div>
+					</md-card>
+				</md-tab>
+				
+				<!-- PERSISTENCE / SCHEDULING -->
+				<md-tab label='{{translate.load("kn.qbe.savedatasetwindow.persistence");}}'>
+					<md-card layout-padding>
+						<!-- PERSIST -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							<md-card layout-padding style="margin-top:0">
+							
+								<div flex=100 style="display:flex;">
+								
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('kn.ds.isPersisted')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Persisted" 
+					                     					ng-model="savingQbeDataSet.isPersisted" ng-checked="" 
+					                     					ng-change="setFormDirty()"
+					                     					ng-disabled="disablePersisting">
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+								</div>
+								
+								<div ng-show="savingQbeDataSet.isPersisted">
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("kn.ds.persistTableName")}}</label>
+											<input ng-model="savingQbeDataSet.persistTable" ng-required="savingQbeDataSet.isPersisted" ng-change="setFormDirty()">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.persistTable">
+		       						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+								
+								</div>
+							</md-card>
+						</md-content>
+						
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="userLogged.isAbleToSchedulate && (savingQbeDataSet.isPersisted || savingQbeDataSet.isPersistedHDFS)">
+							
+							<md-toolbar class="secondaryToolbar">
+						     	
+						          	<div class="md-toolbar-tools">
+							            
+							            <h2>{{translate.load('kn.ds.persist.cron.scheduling.title')}}</h2>
+							            
+						         		<span flex></span>
+							         
+						          	</div>
+						          	
+					        </md-toolbar>
+						         
+							<md-card layout-padding style="margin:0; display:inline-table; width:100%">
+							
+								<div flex=100>
+								
+									<div layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('kn.ds.isScheduled')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Scheduling" 
+					                     					ng-model="savingQbeDataSet.isScheduled" ng-checked="" 
+					                     					ng-change="setFormDirty()">
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+									<!-- SCHEDULING -->
+									<!-- Show all Scheduling options if the Scheduling is checked -->
+									<div ng-if="savingQbeDataSet.isScheduled">
+									
+										<!-- CALENDAR (DATE PICKER) -->
+										<div flex=100 style="display:flex;padding-bottom:8;margin-bottom:8">
+											
+											<div style="float:left" flex=50>
+												<label>{{translate.load('kn.ds.persist.cron.startdate')}}:</label>												
+												<md-datepicker ng-model="savingQbeDataSet.startDateField" md-placeholder="Enter date"
+		            											ng-change="setFormDirty();checkPickedStartDate();"
+		            											md-open-on-focus ng-required="savingQbeDataSet.isScheduled==true">
+												</md-datepicker>
+												<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="savingQbeDataSet.isScheduled==true && !savingQbeDataSet.startDateField">
+		       						 				<div ng-message="required">{{translate.load("kn.qbe.general.reqired");}}</div>
+	   						 					</div>
+											
+											</div>
+											
+											<div style="float:right" flex=50>
+												<label>{{translate.load('kn.ds.persist.cron.enddate')}}:</label>												
+												<md-datepicker ng-model="savingQbeDataSet.endDateField" md-placeholder="Enter date"
+		            											ng-change="setFormDirty();checkPickedEndDate();"
+		            											md-open-on-focus ng-required="savingQbeDataSet.isScheduled==true">
+												</md-datepicker>
+												<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="savingQbeDataSet.isScheduled==true && !savingQbeDataSet.endDateField">
+		       						 				<div ng-message="required">{{translate.load("kn.qbe.general.reqired");}}</div>
+	   						 					</div>
+											</div>
+											
+										</div>
+										
+										<!-- MINUTE -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('kn.ds.persist.cron.minutes')}}:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if="!scheduling.minutesCustom">
+														<strong>{{translate.load('kn.ds.persist.cron.everyminute')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select minute(s)"
+											        	ng-required="savingQbeDataSet.isScheduled" ng-if="scheduling.minutesCustom" multiple=true
+											        	ng-model="scheduling.minutesSelected" style="margin:0; width:80%" title="{{scheduling.minutesSelected}}"
+											        	>   
+											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}" ng-mousedown="setFormDirty()">
+											        		{{$index}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+							           						{{minutesCustom}}
+							           					
+								                  			<md-input-container class="small counter" style="margin:8;" >
+								                     			<md-checkbox 	aria-label="Checkbox 2" ng-model="scheduling.minutesCustom"								                     						
+									                     						ng-mousedown="setFormDirty()">
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=scheduling.minutesCustom>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="minutesClearSelections();setFormDirty()" 
+											      					ng-mousedown="setFormDirty()" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('kn.formbuilder.editorpanel.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+										
+										</md-whiteframe>	
+										
+										<!-- HOUR -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+										
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('kn.ds.persist.cron.hours')}}:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.hoursCustom>
+														<strong>{{translate.load('kn.ds.persist.cron.everyhour')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select hours(s)"
+											        	ng-required = "savingQbeDataSet.isScheduled" ng-if=scheduling.hoursCustom multiple=true
+											        	ng-model="scheduling.hoursSelected" style="margin:0; width:80%" title="{{scheduling.hoursSelected}}">   
+											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}" ng-mousedown="setFormDirty()">
+											        		{{$index}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+										                     					ng-model="scheduling.hoursCustom" ng-checked="" 
+										                     					ng-mousedown="setFormDirty()">
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=scheduling.hoursCustom>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="hoursClearSelections();setFormDirty()" 
+											      					ng-show="savingQbeDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('kn.formbuilder.editorpanel.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+										
+										</md-whiteframe>	
+										
+										<!-- DAY -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('kn.ds.persist.cron.days')}}:
+													</label>												
+												</div>
+												
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.daysCustom>
+														<strong>{{translate.load('kn.ds.persist.cron.everyday')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select day(s)"
+											        	ng-required = "savingQbeDataSet.isScheduled" ng-if=scheduling.daysCustom multiple=true
+											        	ng-model="scheduling.daysSelected" style="margin:0; width:80%" title="{{scheduling.daysSelected}}">   
+											        	<md-option ng-repeat="l in days" value="{{l}}" ng-mousedown="setFormDirty()">
+											        		{{l}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     						ng-model="scheduling.daysCustom" ng-checked="" 
+									                     						ng-mousedown="setFormDirty()">
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=scheduling.daysCustom>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="daysClearSelections();setFormDirty()" 
+											      					ng-show="savingQbeDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('kn.formbuilder.editorpanel.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+										
+										</md-whiteframe>	
+										
+										<!-- MONTH -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('kn.ds.persist.cron.months')}}:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.monthsCustom>
+														<strong>{{translate.load('kn.ds.persist.cron.everymonth')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select month(s)"
+											        	ng-required = "savingQbeDataSet.isScheduled" ng-if=scheduling.monthsCustom multiple=true
+											        	ng-model="scheduling.monthsSelected" style="margin:0; width:80%" title="{{scheduling.monthsSelected}}">   
+											        	<md-option ng-repeat="l in months" value="{{l.value}}" ng-mousedown="setFormDirty()">
+											        		{{l.name}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+										                     					ng-model="scheduling.monthsCustom" ng-checked="" 
+										                     					ng-mousedown="setFormDirty()">
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=scheduling.monthsCustom>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="monthsClearSelections();setFormDirty()" 
+											      					ng-show="savingQbeDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('kn.formbuilder.editorpanel.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>											
+											
+										</md-whiteframe>	
+										
+										<!-- WEEKDAY -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8; margin-bottom:8;">
+																					
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('kn.ds.persist.cron.weekdays')}}:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.weekdaysCustom>
+														<strong>{{translate.load('kn.ds.persist.cron.everyweekday')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select weekday(s)"
+											        	ng-required = "savingQbeDataSet.isScheduled" ng-if=scheduling.weekdaysCustom multiple=true
+											        	ng-model="scheduling.weekdaysSelected" style="margin:0; width:80%" title="{{scheduling.weekdaysSelected}}">   
+											        	<md-option ng-repeat="l in weekdays" value="{{l.value}}" ng-mousedown="setFormDirty()">
+											        		{{l.name}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+										                     					ng-model="scheduling.weekdaysCustom" ng-checked="" 
+										                     					ng-mousedown="setFormDirty()">
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=scheduling.weekdaysCustom>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="weekdaysClearSelections();setFormDirty()" 
+											      					ng-show="savingQbeDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('kn.formbuilder.editorpanel.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+										
+										</md-whiteframe>	
+										
+										<div flex=100 style="margin-top:8px; display:flex">
+											
+											<md-input-container class="md-block" flex-gt-sm>								
+									           	<label>{{translate.load("kn.ds.isScheduled")}}</label>											
+												<input ng-model="scheduling.cronDescriptionDate" readonly="readonly">				    						 	
+								         	</md-input-container>
+											
+										</div>
+										
+										<div flex=100 style="display:flex">
+											
+											<md-input-container class="md-block" flex-gt-sm>
+										    	<label>{{translate.load("kn.ds.persist.cron.nextfire")}}</label>
+												<input ng-model="scheduling.cronDescriptionTime" readonly="readonly">
+											</md-input-container>
+											
+										</div>
+									
+									</div>
+								</div>
+							</md-card>
+						</md-content>
+						
+					</md-card>
+				</md-tab>
+				
+				<!-- METADATA -->
+				<md-tab label='{{translate.load("kn.qbe.savedatasetwindow.metadata");}}'>
+					<md-card layout-padding>
+						<kn-table 
+							id="qbeDSMeta"
+							columns="metaDataColumns"
+							model="savingQbeDataSet.meta">
+						</kn-table>
+					</md-card>
+				</md-tab>
+				
+			</md-tabs>
+		</md-content>
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
 	      <md-button ng-click="closeSaving()" class="md-raised">

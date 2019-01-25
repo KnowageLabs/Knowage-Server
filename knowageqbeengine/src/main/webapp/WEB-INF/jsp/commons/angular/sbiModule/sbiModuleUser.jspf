@@ -27,6 +27,8 @@ angular.module('sbiModule')
 	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	user.isTechnicalUser = <%=request.getParameter("isTechnicalUser")%>;
+	
 	// 	set roles
 	user.roles =[];
 	<% for(Object rol : userRoles) { 	%>
