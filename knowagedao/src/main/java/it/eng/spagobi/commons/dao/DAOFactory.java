@@ -87,6 +87,7 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -116,8 +117,7 @@ public class DAOFactory {
 	 * Given, for a defined BO, its DAO name, creates the correct DAO instance
 	 *
 	 *
-	 * @param daoName
-	 *            The BO DAO name
+	 * @param daoName The BO DAO name
 	 * @return An object representing the DAO instance
 	 */
 
@@ -272,8 +272,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IViewpointDAO getViewpointDAO() {
 		return (IViewpointDAO) createDAOInstance("ViewpointDAO");
@@ -284,8 +283,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the meta model viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IMetaModelViewpointDAO getMetaModelViewpointDAO() {
 		return (IMetaModelViewpointDAO) createDAOInstance("MetaModelViewpointDAO");
@@ -322,6 +320,15 @@ public class DAOFactory {
 	 */
 	public static ISbiDataSetDAO getSbiDataSetDAO() {
 		return (ISbiDataSetDAO) createDAOInstance("SbiDataSetDAO");
+	}
+
+	/**
+	 * Get the SbiNews dao
+	 * 
+	 * @return the sbiNews dao
+	 */
+	public ISbiNewsDAO getSbiNewsDAO() {
+		return (ISbiNewsDAO) createDAOInstance("SbiNewsDAO");
 	}
 
 	/**
@@ -384,8 +391,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiGeoMapsDAO getSbiGeoMapsDAO() {
 		return (ISbiGeoMapsDAO) createDAOInstance("GeoMapDAO");
@@ -396,8 +402,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiGeoFeaturesDAO getSbiGeoFeaturesDAO() {
 		return (ISbiGeoFeaturesDAO) createDAOInstance("GeoFeatureDAO");
@@ -408,8 +413,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiGeoMapFeaturesDAO getSbiGeoMapFeaturesDAO() {
 		return (ISbiGeoMapFeaturesDAO) createDAOInstance("GeoMapFeatureDAO");
@@ -420,8 +424,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IUserFunctionalityDAO getUserFunctionalityDAO() {
 		return (IUserFunctionalityDAO) createDAOInstance("UserFunctionalityDAO");
@@ -498,8 +501,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined object metadata
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IObjMetadataDAO getObjMetadataDAO() {
 		return (IObjMetadataDAO) createDAOInstance("ObjMetadataDAO");
@@ -510,8 +512,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined object metadata
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IObjMetacontentDAO getObjMetacontentDAO() {
 		return (IObjMetacontentDAO) createDAOInstance("ObjMetacontentDAO");
@@ -522,8 +523,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined SbiUser
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiUserDAO getSbiUserDAO() {
 		return (ISbiUserDAO) createDAOInstance("SbiUserDAO");
@@ -534,8 +534,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined SbiAttribute
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiAttributeDAO getSbiAttributeDAO() {
 		return (ISbiAttributeDAO) createDAOInstance("SbiAttributeDAO");
@@ -546,8 +545,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined SbiConfig
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IConfigDAO getSbiConfigDAO() {
 		return (IConfigDAO) createDAOInstance("SbiConfigDAO");
@@ -558,8 +556,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined Udp
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IUdpDAO getUdpDAO() {
 		return (IUdpDAO) createDAOInstance("UdpDAO");
@@ -570,8 +567,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined UdpValue
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IUdpValueDAO getUdpDAOValue() {
 		return (IUdpValueDAO) createDAOInstance("UdpDAOValue");
@@ -582,8 +578,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined KpiError
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	/**
@@ -591,8 +586,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the I18nmessage
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static I18NMessagesDAO getI18NMessageDAO() {
 		return (I18NMessagesDAO) createDAOInstance("I18NMessagesDAO");
@@ -603,8 +597,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the progress Thread
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static IProgressThreadDAO getProgressThreadDAO() {
 		return (IProgressThreadDAO) createDAOInstance("ProgressThreadDAO");
@@ -615,8 +608,7 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the scheduler
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISchedulerDAO getSchedulerDAO() {
 		return (ISchedulerDAO) createDAOInstance("SchedulerDAO");
