@@ -44,6 +44,10 @@ public class SbiNews extends SbiHibernateModel {
 
 	}
 
+	public SbiNews(Integer id) {
+		this.id = id;
+	}
+
 	public SbiNews(Integer id, String name) {
 		this.id = id;
 		this.name = name;
