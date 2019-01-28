@@ -129,7 +129,6 @@ public class ChartEngineDataUtil {
 			String drilldownCategoryName = category.getString("name");
 			Object selectedCategory = null;
 			String[] gbys = groupBys.split(", ");
-			String[] gbyNames = (groupByNames != null && !groupByNames.isEmpty()) ? groupByNames.split(",") : gbys;
 			int i;
 			for (i = 0; i < jaBreadcrumb.length(); i++) {
 				JSONObject drilldown = (JSONObject) jaBreadcrumb.get(i);
@@ -138,7 +137,7 @@ public class ChartEngineDataUtil {
 				String selectedSerie = drilldown.getString("selectedSerie");
 				String dateFormat = drilldown.optString("dateFormatJava");
 				String gby = gbys[i];
-				String gbyName = (gbyNames.length > i) ? gbyNames[i] : gbys[i];
+				String gbyName = gbys[i];
 
 				drilldownParams.put(drilldownCategory, selectedName);
 
@@ -183,7 +182,7 @@ public class ChartEngineDataUtil {
 				jsonData = cockpitExecutionClient.getDataFromDataset(aggregationsToSend, aggregationsJson.getString("dataset"), userId, queryParams);
 
 			} else {
-			IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
+				IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
 				jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 			}
 

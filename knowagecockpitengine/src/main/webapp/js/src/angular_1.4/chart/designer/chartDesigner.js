@@ -321,11 +321,11 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 					}
 					if($scope.chartTemplate.VALUES.CATEGORY.groupbyNames=="") {
 						if($scope.categories[i].name!="") {
-							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.categories[i].name;
+							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.categories[i].column;
 						}
 					} else {
 						if($scope.categories[i].name!="") {
-							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.chartTemplate.VALUES.CATEGORY.groupbyNames + ", " + $scope.categories[i].name;
+							$scope.chartTemplate.VALUES.CATEGORY.groupbyNames = $scope.chartTemplate.VALUES.CATEGORY.groupbyNames + ", " + $scope.categories[i].column;
 						}
 					}
 				}

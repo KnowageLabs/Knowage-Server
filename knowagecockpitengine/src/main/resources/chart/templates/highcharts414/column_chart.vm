@@ -1161,11 +1161,8 @@
         		formatter: function () {
 			                    var value = this.value;	
 			                    var newValue = "";	
-		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
-		                      	if(scaleFactor.indexOf("yAxis")>-1){
-		                      		scaleFactor =  '${yAxis.labels.scaleFactor}';
-		                      	} 
-			                    if(scaleFactor.indexOf("yAxis")!==-1){
+		                      	var scaleFactor =  $isCockpit ? '${yAxis.labels.scaleFactor}' : '${yAxis.LABELS.scaleFactor}'
+		                      	if(scaleFactor.indexOf("yAxis")!=-1){
 		                      		scaleFactor = "empty"
 		                      	}
 		                      	var prefixValue = '';
@@ -1175,12 +1172,9 @@
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
-		                      	var precision =  '${yAxis.LABELS.precision}';
-		                      	if(precision.indexOf("yAxis")>-1){
-		                      		precision =  '${yAxis.labels.precision}';
-		                      	} 
-			                    if(precision.indexOf("yAxis")!==-1){
-		                      		precision = 2
+		                      	var precision =  $isCockpit ? '${yAxis.labels.precision}' : '${yAxis.LABELS.precision}'
+		                      	if(precision.indexOf("yAxis")!=-1){
+		                      		precision = 0
 		                      	}
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
@@ -1527,9 +1521,6 @@
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
 		                      	var precision = '${relatedSerie.precision}';
-		                      	
-		                      	var showAbsValue = ${relatedSerie.showAbsValue};
-		                      	
 		                      	var showPercentage = ${relatedSerie.showPercentage};
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
@@ -1574,19 +1565,11 @@
 		                 				     
 		                 				   var precisePercentage = percentage.toFixed(precision);		
 		                 				   
-		                 					if(showAbsValue && showPercentage){
-													return prefixValue + ' ' + newValue + ' '  + precisePercentage + '%' + sufixValue;
-											
-											} else if (!showAbsValue && !showPercentage){
-													return prefixValue + ' ' + sufixValue;
-
-											} else if (showAbsValue && !showPercentage){
-													return prefixValue + ' ' + newValue + ' ' + sufixValue;
-													
-											} else if(!showAbsValue && showPercentage){
-													return prefixValue + ' ' + precisePercentage + '%' + ' ' + sufixValue;
-													
-											}		                       
+		                 					if(showPercentage){
+												return prefixValue + ' ' + precisePercentage + '%' + sufixValue;										
+											} else {
+												return prefixValue + ' ' + newValue + ' ' + sufixValue;
+											}	                       
 	                   
 			            	},
 		                      
