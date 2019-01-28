@@ -403,7 +403,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					controller: newsDialogController
 				});
 
-				function newsDialogController(scope, $mdDialog, sbiModule_translate, title, okMessage) {
+				function newsDialogController(scope, $mdDialog, sbiModule_translate) {
 	        	    scope.translate = sbiModule_translate;   
 	        	    
 	        	    scope.openDetail = function(message){
