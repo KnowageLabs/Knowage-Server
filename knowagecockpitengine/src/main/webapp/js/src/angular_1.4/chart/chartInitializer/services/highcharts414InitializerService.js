@@ -186,8 +186,8 @@ angular.module('chartInitializer')
 		                },
 		                theme: {
 		                    fill: 'white',
-		                    font-size: 12,
-		                    stroke-width: 1,
+		                    "font-size": 12,
+		                    "stroke-width": 1,
 		                    stroke: 'silver',
 		                    r: 0,
 		                    states: {
