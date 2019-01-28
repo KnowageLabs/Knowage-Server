@@ -64,7 +64,15 @@
 		  <many-to-one
 		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
 		   <column name="DATA_SOURCE_ID" not-null="false"/>
-		 </many-to-one>		 
+		 </many-to-one>
+		 
+		 <set inverse="true" name="sbiMetaModelParameters" sort="unsorted">
+   			<key>
+    			<column name="METAMODEL_ID" not-null="true"/>
+   			</key>
+   			<one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter"/>
+ 		 </set>
+		 
 		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
 	<filter-def name="tenantFilter">
