@@ -477,6 +477,7 @@
 
     plotOptions: {
         pie: {
+          showInLegend: true,
             #if($chart.show3D)
 				depth: $chart.depth,
 			#end
