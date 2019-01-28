@@ -418,7 +418,9 @@ angular.module('chartInitializer')
 		}
 	};
 
-
+	var drilledSerie = "";
+	var storeMinAndMax = {};
+	var indexOfAxis = 0;
 	this.handleDrilldown = function(e){
 		var drillable = this.drillable != undefined ?
 				this.drillable : (this.options.chart.additionalData.isCockpit ?
