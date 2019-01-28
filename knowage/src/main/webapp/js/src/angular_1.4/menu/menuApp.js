@@ -32,6 +32,8 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 		}
     }]);
 
+myApp.filter('trustAsHtml', function($sce) { return $sce.trustAsHtml; });
+
 myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
@@ -379,7 +381,9 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					$scope.externalUrl(url)
 				} else if (type == "info"){
 					$scope.info();
-				} else if (type == "callExternalApp"){
+				} else if(type == "news"){
+					$scope.news();
+				}else if (type == "callExternalApp"){
 					$scope.callExternalApp(url)
 				} else if (type == "goHome"){
 					$scope.goHome(url);
@@ -388,6 +392,55 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
+			}
+			
+			$scope.news = function(){
+				$scope.toggleMenu();
+				var parentEl = angular.element(document.body);
+				$mdDialog.show({
+					parent: parentEl,
+					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/news.jsp',
+					controller: newsDialogController
+				});
+
+				function newsDialogController(scope, $mdDialog, sbiModule_translate, title, okMessage) {
+	        	    scope.translate = sbiModule_translate;   
+	        	    
+	        	    scope.openDetail = function(message){
+	        	    	message.opened = !message.opened;
+	        	    }
+	        	    
+	        	    scope.news = [{
+	        	    	label: 'Notifications',
+	        	    	day: '01/01/2010',
+	        	    	news:[{
+	        	    		id:1,
+	        	    		time: '01/01/2010',
+	        	    		title:'my message',
+	        	    		description: 'clearly a test message',
+	        	    		unread: true,
+	        	    		html: '<div style="margin:auto; width:250px; display:block"><div class="card-header"><h4 class="my-0 font-weight-normal">Pro</h4></div><div class="card-body"><h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1><ul class="list-unstyled mt-3 mb-4">              <li>20 users included</li>              <li>10 GB of storage</li>              <li>Priority email support</li>              <li>Help center access</li>            </ul>            <button type="button" class="btn btn-lg btn-block btn-primary">Get started</button>          </div>        </div>'
+	        	    	},{
+	        	    		id:2,
+	        	    		time: '02/01/2010',
+	        	    		title:'my message',
+	        	    		description: 'clearly a test message'
+	        	    	}]
+	        	    },{
+	        	    	label: 'Warnings',
+	        	    	news:[{
+	        	    		title:'my message',
+	        	    		description: 'clearly a test message'
+	        	    	},{
+	        	    		title:'my message',
+	        	    		description: 'clearly a test message'
+	        	    	}]
+	        	    }];
+	        	    
+        	        scope.closeDialog = function() {
+        	          $mdDialog.hide();
+        	        }
+        	      }
 			}
         }
     };

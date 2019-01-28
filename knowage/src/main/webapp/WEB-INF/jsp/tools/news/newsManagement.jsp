@@ -52,31 +52,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 
 <body class="kn-news-management" ng-app="newsManagement" id="ng-app">
-	<angular-list-detail ng-controller="newsManagementController" full-screen="false"  >
-       	<list label="Management" new-function="newNews">
+	<angular-list-detail ng-controller="newsManagementController" full-screen="false" ng-cloak>
+       	<list label="'News Management'" new-function="newNews">
 			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
 		</list>
 		
         <detail label="News" save-function="saveFunc" cancel-function="cancelFunc">
-			<div layout-fill class="containerDiv">
+			<div layout-fill class="containerDiv" ng-show="selectedNews">
+				<div ng-show="folderDocuments.length==0" class="emptyContainer">
+					<div class="outerIcon">
+						<div class="emptyIconSvg"></div>
+					</div>
+					<div class="emptyIconText">
+						{{translate.load("sbi.browser.document.noDocument")}}
+					</div>
+				</div>
 				<md-card>
-					<md-subheader><span>Composition</span></md-subheader>
+					<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="selectedNews.active">Active</md-switch></md-subheader>
 					<md-card-content>
-						<md-input-container class="md-block" style="margin-bottom: 32px;">
-							<label>News Title</label>
-							<input type="text" ng-model="selectedNews.title"/>
-						</md-input-container>
+						<div layout="row">
+							<md-input-container flex="50">
+								<label>News Title</label>
+								<input type="text" ng-model="selectedNews.title"/>
+							</md-input-container>
+							<md-input-container flex="20">
+								<label>Expiration date</label>
+								<md-datepicker ng-model="selectedNews.expirationDate"></md-datepicker>
+							</md-input-container>
+							<md-input-container flex="30">
+								<label>Type</label>
+								<md-select ng-model="selectedNews.type">
+									<md-option ng-repeat="opt in ['news','notification','warning','announcement']" ng-value="opt">{{opt}}</md-option>
+								</md-select>
+							</md-input-container>
+						</div>
+						
 						<md-input-container class="md-block">
 							<label>News Description</label>
 							<textarea ng-model="selectedNews.description" md-maxlength="140" rows="2" placeholder="This is the text that will appear on the news notification"></textarea>
 						</md-input-container>
-						<summernote ng-model="selectedNews.html" config="options"></summernote>
+						<summernote ng-model="selectedNews.html" config="wysiwygOptions"></summernote>
 					</md-card-content>
 				</md-card>
 				<md-card>
 					<md-subheader>Permissions</md-subheader>
 					<md-card-content>
-						TBD
+						<div ag-grid="premissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
 					</md-card-content>
 				</md-card>
 			</div>

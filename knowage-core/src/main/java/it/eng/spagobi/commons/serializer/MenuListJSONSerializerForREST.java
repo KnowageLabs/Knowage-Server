@@ -643,6 +643,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			i18n.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(i18n);
 		}
+		
+		//if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
+			JSONObject news = new JSONObject();
+			news.put(ICON_CLS, "inbox");
+			news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
+			news.put(ICON_ALIGN, "top");
+			news.put(SCALE, "large");
+			news.put(TARGET, "_self");
+			news.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
+			news.put(FIRST_URL, contextName + HREF_I18N);
+			news.put(LINK_TYPE, "news");
+			tempMenuList.put(news);
+		//}
 
 		// end
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);

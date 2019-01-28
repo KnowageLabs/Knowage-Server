@@ -55,6 +55,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
     <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
     <USER_FUNCTIONALITY productType="KnowageBD" name="NewsManagement" description="NewsManagement" />
+    <USER_FUNCTIONALITY productType="KnowageBD" name="NewsVisualization" description="NewsVisualization" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -112,6 +113,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="NewsManagement" description="NewsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="NewsVisualization" description="NewsVisualization" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -156,6 +158,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="NewsManagement" description="NewsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="NewsVisualization" description="NewsVisualization" />
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
@@ -198,7 +201,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="NotifyContextBrokerAction" description="NotifyContextBrokerAction" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="NewsManagement" description="NewsManagement" />
-	
+	<USER_FUNCTIONALITY productType="KnowagePM" name="NewsVisualization" description="NewsVisualization" />
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
@@ -251,6 +254,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="NewsManagement" description="NewsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="NewsVisualization" description="NewsVisualization" />
 		
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
@@ -296,5 +300,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="NewsManagement" description="NewsManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="NewsVisualization" description="NewsVisualization" />
 	
 </USER_FUNCTIONALITIES>

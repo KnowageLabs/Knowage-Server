@@ -57,7 +57,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"MANAGE_INTERNATIONALIZATION",label:"manageInternationalization",visible:false, category:"MANAGE"},
 	               {dbname:"CREATE_SELF_SERVICE_COCKPIT",label:"createSelfSelviceCockpit",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SELF_SERVICE_GEOREPORT",label:"createSelfSelviceGeoreport",visible:false, category:"ITEMS"},
-	               {dbname:"CREATE_SELF_SERVICE_KPI",label:"createSelfSelviceKpi",visible:false, category:"ITEMS"}
+	               {dbname:"CREATE_SELF_SERVICE_KPI",label:"createSelfSelviceKpi",visible:false, category:"ITEMS"},
+	               {dbname:"SEE_NEWS",label:"newsVisualization",visible:false, category:"ITEMS"}
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
