@@ -20,9 +20,10 @@ package it.eng.spagobi.tools.news.dao;
 
 import java.util.List;
 
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 
-public interface ISbiNewsDAO {
+public interface ISbiNewsDAO extends ISpagoBIDao {
 
 	public List<SbiNews> getAllNews();
 

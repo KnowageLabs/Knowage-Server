@@ -18,7 +18,7 @@
 		<property name="user" type="string" column="USER" length="100"></property>
 		
 		<many-to-one name="sbiNews" class="it.eng.spagobi.tools.news.metadata.SbiNews" update="false" insert="false">
-			<column name="ID" not-null="true"></column>
+			<column name="NEWS_ID" not-null="true"></column>
 		</many-to-one>
 		
 		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

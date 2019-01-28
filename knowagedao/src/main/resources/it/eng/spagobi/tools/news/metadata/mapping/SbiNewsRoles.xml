@@ -14,7 +14,7 @@
 		</composite-id>
 		
 		<many-to-one name="sbiNews" class="it.eng.spagobi.tools.news.metadata.SbiNews" update="false" insert="false">
-			<column name="ID" not-null="true"></column>
+			<column name="NEWS_ID" not-null="true"></column>
 		</many-to-one>
 		
 		<many-to-one name="sbiExtRoles" class="it.eng.spagobi.commons.metadata.SbiExtRoles" update="false" insert="false">

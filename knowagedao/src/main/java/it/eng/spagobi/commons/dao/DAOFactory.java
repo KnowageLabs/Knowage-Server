@@ -324,10 +324,10 @@ public class DAOFactory {
 
 	/**
 	 * Get the SbiNews dao
-	 * 
+	 *
 	 * @return the sbiNews dao
 	 */
-	public ISbiNewsDAO getSbiNewsDAO() {
+	public static ISbiNewsDAO getSbiNewsDAO() {
 		return (ISbiNewsDAO) createDAOInstance("SbiNewsDAO");
 	}
 

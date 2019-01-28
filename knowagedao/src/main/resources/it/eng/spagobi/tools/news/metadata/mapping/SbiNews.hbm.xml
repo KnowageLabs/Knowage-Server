@@ -60,7 +60,7 @@
 		</component>
 		
 		<many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" update="false" insert="false">
-	        	<column name="VALUE_ID" not-null="true"></column>
+	        	<column name="CATEGORY_ID" not-null="true"></column>
 		</many-to-one>
 		
 		<filter name="tenantFilter" condition="organization=:tenant"></filter>
