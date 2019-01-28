@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             onGridSizeChanged: resizeColumns,
             onSelectionChanged: selectNews,
             columnDefs: $scope.columns,
-            rowData: $scope.stubbedNews
+            localeText : {noRowsToShow: $scope.translate.load('kn.table.norows')}
 		}
 		
 		$scope.premissionGridOptions = {
@@ -100,6 +100,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    fontNames: ['Roboto','Comic Sans MS','Sacramento'],
 		    fontNamesIgnoreCheck : ['Roboto','Comic Sans MS','Sacramento']
 		};
+		
+		$scope.getNews = function(){
+			sbiModule_restServices.promiseGet("2.0", "news")
+			.then(function(response) {
+				debugger;
+				$scope.listGridOptions.setRowData(response.data);
+			}, function(response) {
+				$scope.listGridOptions.api.showNoRowsOverlay();
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+
+			});
+		}
+		$scope.getNews();
 		
 		$scope.getRoles = function () {
 			sbiModule_restServices.promiseGet("2.0", "roles")
