@@ -171,8 +171,24 @@ angular.module('chartInitializer')
 				drillUpButton:{
 					 position:
 		                {
-		                   align: "left"
+		                   align: "right",
 		                },
+		                theme: {
+		                    fill: 'white',
+		                    font-size: 12,
+		                    stroke-width: 1,
+		                    stroke: 'silver',
+		                    r: 0,
+		                    states: {
+		                        hover: {
+		                            fill: '#ccc'
+		                        },
+		                        select: {
+		                            stroke: '#039',
+		                            fill: '#ccc'
+		                        }
+		                    }
+		                }
 
 			}
 			},
@@ -504,7 +520,7 @@ angular.module('chartInitializer')
 			            }
 
 
-			            chart.drillUpButton.textSetter(backText);
+			            chart.drillUpButton.textSetter("← " +backText);
 
 						chart.hideLoading();
 					});
@@ -520,7 +536,7 @@ angular.module('chartInitializer')
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
-		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
+		chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
             	text:axisTitle
