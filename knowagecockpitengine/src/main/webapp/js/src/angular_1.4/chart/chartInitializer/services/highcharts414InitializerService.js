@@ -469,34 +469,36 @@ angular.module('chartInitializer')
 					}
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
-						var yaxis = chart.yAxis;
-						var chartSeries = chart.series;
-						drilledSerie = series.serieName;
-						if(!chart.drilledSerie){
-							for (var i = 0; i<yaxis.length; i++){
-								for (var j = 0; j<chartSeries.length; j++){
-									if((chartSeries[j].name == drilledSerie) && yaxis[i]==chartSeries[j].yAxis){
-										chart.drilledSerie = drilledSerie;
-										indexOfAxis = i;
+						if(chart.userOptions.chart.type!="pie"){
+							var yaxis = chart.yAxis;
+							var chartSeries = chart.series;
+							drilledSerie = series.serieName;
+							if(!chart.drilledSerie){
+								for (var i = 0; i<yaxis.length; i++){
+									for (var j = 0; j<chartSeries.length; j++){
+										if((chartSeries[j].name == drilledSerie) && yaxis[i]==chartSeries[j].yAxis){
+											chart.drilledSerie = drilledSerie;
+											indexOfAxis = i;
+										}
 									}
 								}
 							}
+
+							var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+							var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+
+							var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
+							var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
+
+							storeMinAndMax[series.name]={min:minDrill*0.5,max:maxDrill*1.1}
+							setTimeout(function () {
+		                        chart.yAxis[indexOfAxis].update({
+		                            max: maxDrill*1.1,
+		                            min: minDrill*0.5,
+		                        });
+		                        chart.redraw()
+		                    }, 0);
 						}
-
-						var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
-						var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
-
-						var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
-						var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
-
-						storeMinAndMax[series.name]={min:minDrill*0.5,max:maxDrill*1.1}
-						setTimeout(function () {
-	                        chart.yAxis[indexOfAxis].update({
-	                            max: maxDrill*1.1,
-	                            min: minDrill*0.5,
-	                        });
-	                        chart.redraw()
-	                    }, 0);
 
 						if(chart.options.drilledCategories.length==0){
 							 if(series.firstLevelCategory){
@@ -555,17 +557,19 @@ angular.module('chartInitializer')
 		var yAxisTitle={
 				text: ' '
 		};
+		if(chart.userOptions.chart.type!="pie"){
+			setTimeout(function () {
+	            chart.yAxis[indexOfAxis].update({
+	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
+	            	min: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].min : chart.extremes[indexOfAxis].min,
+	            });
+	           if(!chart.breadcrumb[chart.breadcrumb.length-1]) {
+	        	   delete chart.drilledSerie
+	           }
+	           chart.redraw()
+	        }, 0);
+		}
 
-		setTimeout(function () {
-            chart.yAxis[indexOfAxis].update({
-                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
-            	min: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].min : chart.extremes[indexOfAxis].min,
-            });
-           if(!chart.breadcrumb[chart.breadcrumb.length-1]) {
-        	   delete chart.drilledSerie
-           }
-           chart.redraw()
-        }, 0);
        if(chart.drilldownLevels.length==0 && chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
     	   chart.yAxis[0].setTitle(yAxisTitle);
        }
