@@ -128,7 +128,6 @@
 				createSchedulingCroneLine();
 			}
 			
-			console.log($scope.savingQbeDataSet);
 			save_service.saveQbeDataSet($scope.savingQbeDataSet);
 			$scope.ngModel.mdPanelRef.close();
 		}
@@ -206,14 +205,16 @@
 		$scope.minutes = new Array(60);
 
 		$scope.minutesClearSelections = function() {
-			$scope.minutesSelected = [];
+			$scope.scheduling.minutesSelected = [];
+			$scope.scheduling.minutesCustom = undefined;
 		}
 
 		// Setting for hours for Scheduling
 		$scope.hours = new Array(24);
 
 		$scope.hoursClearSelections = function() {
-			$scope.hoursSelected = [];
+			$scope.scheduling.hoursSelected = [];
+			$scope.scheduling.hoursCustom = undefined;
 		}
 
 		$scope.days = new Array();
@@ -228,7 +229,8 @@
 		populateDays();
 
 		$scope.daysClearSelections = function() {
-			$scope.daysSelected = [];
+			$scope.scheduling.daysSelected = [];
+			$scope.scheduling.daysCustom = undefined;
 		}
 
 		// Setting for month for Scheduling
@@ -252,7 +254,8 @@
 		populateMonths();
 
 		$scope.monthsClearSelections = function() {
-			$scope.monthsSelected = [];
+			$scope.scheduling.monthsSelected = [];
+			$scope.scheduling.monthsCustom = undefined;
 		}
 
 		// Setting for month for Scheduling
@@ -271,7 +274,8 @@
 		populateWeekdays();
 
 		$scope.weekdaysClearSelections = function() {
-			$scope.weekdaysSelected = [];
+			$scope.scheduling.weekdaysSelected = [];
+			$scope.scheduling.weekdaysCustom = undefined;
 		}
 		
 		var createSchedulingCroneLine = function() {
