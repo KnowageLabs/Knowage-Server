@@ -25,7 +25,7 @@
 	<div layout="row" flex >
 			<div flex=100 ng-if="!driverableObject.executed"></div>
 			<md-content layout="column" flex ng-show="currentView.status == 'BUSINESSMODEL'">  
-				<iframe  ng-show="driverableObject.executed" flex=100 class="noBorder" ng-src="{{documentViewerUrl}}" id="documentViewerIframe">
+				<iframe ng-if="driverableObject.executed" flex=100 class="noBorder" ng-src="{{documentViewerUrl}}" id="documentViewerIframe">
 				</iframe>
 			</md-content>
 			<div flex layout ng-if="currentView.status == 'PARAMETERS'"> 
