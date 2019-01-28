@@ -35,7 +35,7 @@
 					          	<md-tooltip md-direction="bottom">
 					          	{{translate.load("kn.qbe.filters.tootip")}}
 								</md-tooltip>
-				                 <md-option ng-repeat="operator in getConditionOptions()" value="{{operator.value}}" >{{operator.name}}
+				                 <md-option ng-repeat="operator in getConditionOptionsbyField(field.id)" value="{{operator.value}}" >{{operator.name}}
 				                 </md-option>
 				                 
 				             </md-select>   

@@ -235,6 +235,24 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			return filters_service.getOperators;
 		}
 	}
+
+	$scope.getConditionOptionsbyField = function(fieldId){
+
+		if($scope.spatial && entity_service.isEntityType($scope.tree,fieldId,"geographic_dimension")){
+			return filters_service.getOperators.concat(filters_service.getSpatialOperators);
+		} else {
+			return filters_service.getOperators;
+		}
+
+	}
+
+
+
+
+
+
+
+
 	$scope.fillInput = function (filter, type, value){
 		switch (value) {
 		case "subquery":
