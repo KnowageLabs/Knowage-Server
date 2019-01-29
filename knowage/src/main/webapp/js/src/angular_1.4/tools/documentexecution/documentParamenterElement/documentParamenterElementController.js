@@ -725,6 +725,7 @@
 			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
 
 			if($scope.execProperties.parametersData == null){
+				$scope.execProperties.parametersData = {};
 				$scope.execProperties.parametersData.documentParameters = $scope.execProperties.drivers;
 			}
 
