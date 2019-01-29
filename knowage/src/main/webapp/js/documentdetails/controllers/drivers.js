@@ -268,7 +268,7 @@ angular
              self.editCondition = function(ev, selectedDriver, selectedCondition) {
             	 var tempParameter = selectedDriver.parameter;
             	 var labelSelected = selectedDriver.label
-                 $scope.selectedDriver =$filter('filter')(driversService.renderedDrivers,{label:labelSelected})[0];
+                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0];
             	  $scope.selectedDriver.parameter = tempParameter;
                  self.selectedDriver = $scope.selectedDriver
                  if (!selectedCondition && selectedCondition != 0) {
@@ -303,7 +303,7 @@ angular
              self.editDataCondition = function(ev, selectedDriver, selectedDataCondition) {
             	 var tempParameter = selectedDriver.parameter;
             	 var labelSelected = selectedDriver.label
-                 $scope.selectedDriver =$filter('filter')(driversService.renderedDrivers,{label:labelSelected})[0] ;
+                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
             	  $scope.selectedDriver.parameter = tempParameter;
                  self.selectedDriver = $scope.selectedDriver
 
