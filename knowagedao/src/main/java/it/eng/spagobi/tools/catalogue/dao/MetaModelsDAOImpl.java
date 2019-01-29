@@ -20,7 +20,6 @@ package it.eng.spagobi.tools.catalogue.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -681,7 +680,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 			SbiMetaModel hibModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
 
-			Set metaModelParameters = hibModel.getSbiMetaModelParameters();
+			List<SbiMetaModelParameter> metaModelParameters = hibModel.getSbiMetaModelParameters();
 			if (metaModelParameters != null) {
 				// delete dependencies between drivers
 				Iterator itMetaModelParDep = metaModelParameters.iterator();
@@ -738,7 +737,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setCategory(hibModel.getCategory());
 
 			List metaModelParameters = new ArrayList();
-			Set hibMetaModelPars = hibModel.getSbiMetaModelParameters();
+			List<SbiMetaModelParameter> hibMetaModelPars = hibModel.getSbiMetaModelParameters();
 			if (hibMetaModelPars != null) {
 				for (Iterator it = hibMetaModelPars.iterator(); it.hasNext();) {
 					SbiMetaModelParameter aSbiMetaModelPar = (SbiMetaModelParameter) it.next();

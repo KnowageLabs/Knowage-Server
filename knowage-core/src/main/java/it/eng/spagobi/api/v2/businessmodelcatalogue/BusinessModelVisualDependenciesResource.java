@@ -69,11 +69,12 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 	public MetaModelParview addVisualDependeciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParview parameterViewObject) {
 		logger.debug("IN");
 		IMetaModelParviewDAO parameterViewDAO;
-
+		Integer newId = null;
 		Assert.assertNotNull(parameterViewObject, "Visual Dependencies can not be null");
 		try {
 			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
-			parameterViewDAO.insertMetaModelParview(parameterViewObject);
+			newId = parameterViewDAO.insertMetaModelParview(parameterViewObject);
+			parameterViewObject.setId(newId);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be created", e);
 			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);

@@ -104,7 +104,7 @@
                 <div class="md-toolbar-tools " layout="row ">
                     <h2 >{{dd.translate.load("sbi.documentdetails.drivers.data")}}</h2>
                     <span flex></span>
-                    <md-button ng-click="dd.editDataCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
+                    <md-button ng-disabled="!dd.selectedDriver.id" ng-click="dd.editDataCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
                 </div>
             </md-toolbar>
             <md-card-content layout="column" class="noPadding">
@@ -141,7 +141,7 @@
                 <div class="md-toolbar-tools "  layout="row ">
                     <h2 >{{dd.translate.load("sbi.documentdetails.drivers.visibility")}}</h2>
                     <span flex></span>
-                    <md-button ng-click="dd.editCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
+                    <md-button ng-disabled="!dd.selectedDriver.id" ng-click="dd.editCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
                 </div>
                 </div>
             </md-toolbar>

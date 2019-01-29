@@ -40,6 +40,7 @@ angular
              self.selectedVisualCondition = driversService.selectedVisualCondition;
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
+
              if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0){
 
             	 if(self.drivers.length == 0 ){
@@ -62,7 +63,10 @@ angular
 
 
 
-
+             var setSelectedDriver = function(driver){
+            	 self.selectedDriver = driver;
+             }
+             driversService.setSelectedDriver = setSelectedDriver;
              var getDriverNames = function(driversOnObject){
             	 var driverNames=[];
 		            if(driversService.driverRelatedObject.id){
@@ -199,10 +203,10 @@ angular
 			                         basePath = self.driverRelatedObject.id + "/" + basePath + querryParams;
 			                         baseDataPath = self.driverRelatedObject.id + "/" + baseDataPath + querryParams;
 
-			                         //if (driversService.visusalDependencyObjects[self.selectedDriver.id] ) //&& driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0
+			                         if (driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0)
 			                         getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
 
-			                        // if(driversService.dataDependencyObjects[self.selectedDriver.id]) // && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0
+			                         if(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0)
 			                         getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
 			                         break;
 	                            }
@@ -263,16 +267,19 @@ angular
              }
 
              self.editCondition = function(ev, selectedDriver, selectedCondition) {
+            	 var labelSelected = selectedDriver.label
+                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
+                 self.selectedDriver = $scope.selectedDriver
                  if (!selectedCondition && selectedCondition != 0) {
-                     if (driversService.visusalDependencyObjects[selectedDriver.id]) {
-                    	 driversService.visusalDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
+                     if (driversService.visusalDependencyObjects[ $scope.selectedDriver.id]) {
+                    	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id].push({'newDependency':'true'})
                          self.visibilityConditions = driversService.visusalDependencyObjects;
                      } else {
-                    	 driversService.visusalDependencyObjects[selectedDriver.id] = [];
-                    	 driversService.visusalDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
+                    	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id] = [];
+                    	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id].push({'newDependency':'true'})
                      }
-                     if(driversService.visusalDependencyObjects[selectedDriver.id].length >0){
-                         selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id].length - 1;
+                     if(driversService.visusalDependencyObjects[ $scope.selectedDriver.id].length >0){
+                         selectedCondition = driversService.visusalDependencyObjects[ $scope.selectedDriver.id].length - 1;
                          }else{
                         	 selectedCondition = 0;
                          }
@@ -283,7 +290,7 @@ angular
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
-                             selectedDriver: selectedDriver,
+                             selectedDriver:  $scope.selectedDriver,
                              selectedCondition: selectedCondition
                          }
                      })
@@ -293,15 +300,18 @@ angular
              };
 
              self.editDataCondition = function(ev, selectedDriver, selectedDataCondition) {
+            	 var labelSelected = selectedDriver.label
+                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
+                 self.selectedDriver = $scope.selectedDriver
                  if (!(angular.isNumber(selectedDataCondition))) {
-                     if (!driversService.dataDependencyObjects[selectedDriver.id] || driversService.dataDependencyObjects[selectedDriver.id].length == 0) {
-                    	 driversService.dataDependencyObjects[selectedDriver.id] = [];
-                    	 driversService.dataDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
+                     if (!driversService.dataDependencyObjects[$scope.selectedDriver.id] || driversService.dataDependencyObjects[$scope.selectedDriver.id].length == 0) {
+                    	 driversService.dataDependencyObjects[$scope.selectedDriver.id] = [];
+                    	 driversService.dataDependencyObjects[$scope.selectedDriver.id].push({'newDependency':'true'})
                          self.dataConditions = driversService.dataDependencyObjects;
                     	 selectedDataCondition = 0;
                      }else if(driversService.dataDependencyObjects.length >0){
-                    	 driversService.dataDependencyObjects[selectedDriver.id].push({'newDependency':'true'})
-                     selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id].length - 1;
+                    	 driversService.dataDependencyObjects[$scope.selectedDriver.id].push({'newDependency':'true'})
+                     selectedDataCondition = driversService.dataDependencyObjects[$scope.selectedDriver.id].length - 1;
                      }
                  }else{
                 	 selectedDataCondition = selectedDataCondition;
@@ -314,7 +324,7 @@ angular
                          clickOutsideToClose: true,
                          locals: {
                         	 columns:$scope.paruseColumns,
-                             selectedDriver: selectedDriver,
+                             selectedDriver: $scope.selectedDriver,
                              selectedDataCondition: selectedDataCondition,
                              getLovColumns:$scope.getLovColumnsForParuse
                          }
@@ -351,7 +361,7 @@ angular
             	 var selectedConditionIndex = selectedCondition;
             	 $scope.driversService = DriversService;
                  $scope.document = driversService.driverRelatedObject;
-                 $scope.drivers = driversService.rederedDrivers;
+                 $scope.drivers = $scope.driversService.driversOnObject;
                  var selectedDriverName = selectedDriver.label;
                  $scope.selectedDriver = $filter('filter')(driversService.rederedDrivers,{label:selectedDriverName})[0];
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
@@ -409,19 +419,20 @@ angular
                  $scope.document = driversService.driverRelatedObject;// /****************************
                  $scope.drivers = [];
                  angular.copy(driversService.driversOnObject,  $scope.drivers);
-                 $scope.selectedDriver = selectedDriver;
+                 var labelSelected = selectedDriver.label
+                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
                  $scope.driverName = $scope.selectedDriver.label;
                  $scope.analyticalDrivers = driversService.analyticalDrivers;
                  $scope.lovIdAndColumns = driversService.lovIdAndColumns;
                  $scope.paruses = driversService.driverParuses;
                  $scope.dataDependencyModel = {};
-                 $scope.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
+                 $scope.selectedDataCondition = driversService.dataDependencyObjects[$scope.selectedDriver.id][selectedDataCondition];
 
                  if(columns.length > 0){
                 	 $scope.paruseColumns = columns;
                 }else
                 	$scope.paruseColumns = {};
-                	$scope.paruseColumns[selectedDriver.id] = {};
+                	$scope.paruseColumns[ $scope.selectedDriver.id] = {};
 
                  var selectedParuse = [];
      			for(var j = 0; j < $scope.driversService.driverParuses.length;j++){
@@ -432,7 +443,7 @@ angular
                 // var selectedParuse = driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID);
 
      			if($scope.selectedDataCondition.useModeId){
-     				$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
+     				$scope.paruseColumns[ $scope.selectedDriver.id][$scope.selectedDataCondition.useModeId] = $scope.selectedDataCondition.filterColumn;
      				$scope.driversService.paruseColumns = $scope.paruseColumns;
      				$scope.selectedDataCondition.persist = {};
      				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
@@ -440,33 +451,33 @@ angular
      				$scope.selectedDataCondition.useModeId = selectedParuse[0].useID;
      				var paruseColumnsTmp =  getLovColumns(selectedParuse[0])
      				if(paruseColumnsTmp != undefined)
-     				$scope.paruseColumns[selectedDriver.id][$scope.selectedDataCondition.useModeId] =  getLovColumns(selectedParuse[0])[0];
+     				$scope.paruseColumns[ $scope.selectedDriver.id][$scope.selectedDataCondition.useModeId] =  getLovColumns(selectedParuse[0])[0];
      				$scope.driversService.paruseColumns = $scope.paruseColumns;
      				$scope.selectedDataCondition.persist = {};
      				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
      			}
 
      			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','notcontains','starts with','ends with'];
-     			driversService.selectedDataCondition = driversService.dataDependencyObjects[selectedDriver.id][selectedDataCondition];
+     			driversService.selectedDataCondition = driversService.dataDependencyObjects[ $scope.selectedDriver.id][selectedDataCondition];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
                 	 var counter = 0;
                 	 for(var i = 0; i < $scope.paruses.length; i++){
-                		 if(selectedDriver.parID == $scope.paruses[i].id)
+                		 if( $scope.selectedDriver.parID == $scope.paruses[i].id)
                 			 counter++;
                 	 }
                 	 return counter;
                  }
 
                  for( var j = 0; j< $scope.drivers.length; j++){
-                	 if($scope.drivers[j].label == selectedDriver.label){
+                	 if($scope.drivers[j].label ==  $scope.selectedDriver.label){
                 		 $scope.drivers.splice(j,1);
                 	 }
                  }
                  $scope.close = function(selectedCondition) {
-                	 for(var i = 0; i < driversService.dataDependencyObjects[selectedDriver.id].length;i++){
+                	 for(var i = 0; i < driversService.dataDependencyObjects[ $scope.selectedDriver.id].length;i++){
 	                	 if( $scope.selectedDataCondition.newDependency && selectedConditionIndex == i)
-	                		 driversService.dataDependencyObjects[selectedDriver.id].splice(i, 1);
+	                		 driversService.dataDependencyObjects[ $scope.selectedDriver.id].splice(i, 1);
 
                 	 }
                 	 $mdDialog.cancel();
@@ -494,10 +505,7 @@ angular
 
                 	 var dataProgram;
                 	 var dataObjects = driversService.dataDependencyObjects[$scope.selectedDriver.id];
-                	 for(var i = 0; i<dataObjects.length;i++){
-                		 if(dataDependency== dataObjects[i])
-                			 dataProgram = i+1;
-                	 }
+                	 dataProgram = dataObjects.length > 0 ? dataObjects.length:1;
                 	 dataDependency.prog = dataProgram;
 	                 dataDependency.parId = $scope.selectedDriver.id;
 	                 dataDependency.parFatherUrlName = $filter('filter')($scope.drivers,{id:dataDependency.parFatherId})[0].parameterUrlName

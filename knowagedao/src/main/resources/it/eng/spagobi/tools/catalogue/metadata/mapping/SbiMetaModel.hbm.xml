@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class name="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel"
 		table="SBI_META_MODELS">
-		<id name="id" type="integer">
+		<id name="id" type="int">
 			<column name="ID" />
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>

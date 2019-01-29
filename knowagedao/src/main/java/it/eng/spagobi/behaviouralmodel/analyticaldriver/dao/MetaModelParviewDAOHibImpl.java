@@ -73,8 +73,7 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			aSession.delete(sbiMetaModelParview);
 			// create the new object
 			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
-			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					metaModelParview.getParFatherId());
+			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
 						"the BIMetaModelParameter with " + " does not exist.");
@@ -107,16 +106,17 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 
 	}
 
+	@SuppressWarnings("finally")
 	@Override
-	public void insertMetaModelParview(MetaModelParview metaModelParview) throws HibernateException {
+	public Integer insertMetaModelParview(MetaModelParview metaModelParview) throws HibernateException {
+		Integer id = null;
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
-			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					metaModelParview.getParFatherId());
+			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
 						"the MetaModelParameter with " + "id=" + metaModelParview.getParFatherId() + " does not exist.");
@@ -131,7 +131,7 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			view.setProg(metaModelParview.getProg());
 			view.setViewLabel(metaModelParview.getViewLabel());
 			updateSbiCommonInfo4Insert(view);
-			aSession.save(view);
+			id = (Integer) aSession.save(view);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -143,6 +143,7 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 				if (aSession.isOpen())
 					aSession.close();
 			}
+			return id;
 		}
 
 	}

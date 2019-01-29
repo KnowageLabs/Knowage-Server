@@ -13,7 +13,7 @@ public interface IMetaModelParviewDAO extends ISpagoBIDao {
 
 	public void modifyMetaModelParview(MetaModelParview metaModelParview);
 
-	public void insertMetaModelParview(MetaModelParview metaModelParview) throws HibernateException;
+	public Integer insertMetaModelParview(MetaModelParview metaModelParview) throws HibernateException;
 
 	public void eraseMetaModelParview(Integer parviewId) throws HibernateException;
 

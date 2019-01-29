@@ -138,7 +138,7 @@
 		           					if(response.data.label == driversResource.rederedDrivers[i].label)
 		           						driversResource.rederedDrivers[i] = response.data;
 		           				}
-
+		           				driversResource.setSelectedDriver(response.data);
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
 	           					var driverIndex = -1;
 	                       	 for(var i = 0; i < driversResource.driversOnObject.length;i++){
@@ -249,7 +249,8 @@
             				if(driversResource.driverParuses[k].useID == persistances[j])
             					paruse.push(driversResource.driverParuses[k]);
             			}
-
+            			if(paruse.length == 0)
+            				continue;
 	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
 	      	       			newDataDependency.useModeId= paruse[0].useID;
 	      			        		if(isNew){
