@@ -299,9 +299,12 @@ angular
              };
 
              self.editDataCondition = function(ev, selectedDriver, selectedDataCondition) {
+            	 var tempParameter = selectedDriver.parameter;
             	 var labelSelected = selectedDriver.label
                  $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
+            	  $scope.selectedDriver.parameter = tempParameter;
                  self.selectedDriver = $scope.selectedDriver
+
                  if (!(angular.isNumber(selectedDataCondition))) {
                      if (!driversService.dataDependencyObjects[$scope.selectedDriver.id] || driversService.dataDependencyObjects[$scope.selectedDriver.id].length == 0) {
                     	 driversService.dataDependencyObjects[$scope.selectedDriver.id] = [];
@@ -468,11 +471,11 @@ angular
                 	 return counter;
                  }
 
-                 for( var j = 0; j< $scope.drivers.length; j++){
-                	 if($scope.drivers[j].label ==  $scope.selectedDriver.label){
-                		 $scope.drivers.splice(j,1);
-                	 }
-                 }
+//                 for( var j = 0; j< $scope.drivers.length; j++){
+//                	 if($scope.drivers[j].label ==  $scope.selectedDriver.label){
+//                		 $scope.drivers.splice(j,1);
+//                	 }
+//                 }
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.dataDependencyObjects[ $scope.selectedDriver.id].length;i++){
 	                	 if( $scope.selectedDataCondition.newDependency && selectedConditionIndex == i)
