@@ -3,6 +3,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -314,7 +315,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			session = getSession();
 			transaction = session.beginTransaction();
 			hibMetaModel = (SbiMetaModel) session.load(SbiMetaModel.class, MetaModelId);
-			List<SbiMetaModelParameter> metaModelParameters = hibMetaModel.getSbiMetaModelParameters();
+			Set<SbiMetaModelParameter> metaModelParameters = hibMetaModel.getSbiMetaModelParameters();
 
 			logger.debug("delete all metaModelParameters for MetaModel with label " + hibMetaModel.getName());
 
