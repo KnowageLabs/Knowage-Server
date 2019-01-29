@@ -2,6 +2,7 @@ package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,6 +49,8 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.ModelFieldPaths;
+import it.eng.qbe.statement.graph.PathInspector;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
@@ -154,13 +158,12 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 
 			Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
-			Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getEngineInstance().getDataSource());
-			Set<IModelField> modelFields = modelFieldsMap.keySet();
-			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
-
-			modelEntities.addAll(sqlModality.getSqlFilterEntities(query, getEngineInstance().getDataSource()));
+			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
+			ambiguousFields = getAmbiguousFields(filteredQuery);
+			if (ambiguousFields.size() > 0) {
+				throw new SpagoBIRuntimeException("There is ambiguity present in the query");
+			}
 			// updateQueryGraphInQuery(filteredQuery, true, modelEntities);
-
 			Map<String, Map<String, String>> inlineFilteredSelectFields = filteredQuery.getInlineFilteredSelectFields();
 
 			boolean thereAreInlineTemporalFilters = inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0;
@@ -200,6 +203,54 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("OUT");
 		}
 
+	}
+
+	public Set<ModelFieldPaths> getAmbiguousFields(Query filteredQuery) {
+		logger.debug("IN");
+
+		Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getEngineInstance().getDataSource());
+		Set<IModelEntity> modelEntities = GraphManager.getQueryEntities(getEngineInstance().getDataSource(), filteredQuery);
+		try {
+
+			String modelName = getEngineInstance().getDataSource().getConfiguration().getModelName();
+
+			Set<IModelField> modelFields = modelFieldsMap.keySet();
+
+			Assert.assertNotNull(modelFields, "No field specified in teh query");
+			Set<ModelFieldPaths> ambiguousModelField = new HashSet<ModelFieldPaths>();
+			if (modelFields != null) {
+
+				Graph<IModelEntity, Relationship> graph = getEngineInstance().getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false)
+						.getRootEntitiesGraph();
+
+				PathInspector pathInspector = new PathInspector(graph, modelEntities);
+				Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> ambiguousMap = pathInspector.getAmbiguousEntitiesAllPathsMap();
+
+				Iterator<IModelField> modelFieldsIter = modelFields.iterator();
+
+				while (modelFieldsIter.hasNext()) {
+					IModelField iModelField = modelFieldsIter.next();
+					IModelEntity me = iModelField.getParent();
+					Set<GraphPath<IModelEntity, Relationship>> paths = ambiguousMap.get(me);
+					if (paths != null) {
+						Set<IQueryField> queryFields = modelFieldsMap.get(iModelField);
+						if (queryFields != null) {
+							Iterator<IQueryField> queryFieldsIter = queryFields.iterator();
+							while (queryFieldsIter.hasNext()) {
+								ambiguousModelField.add(new ModelFieldPaths(queryFieldsIter.next(), iModelField, paths));
+							}
+						}
+					}
+				}
+			}
+
+			return ambiguousModelField;
+
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Error while getting ambiguous fields", t);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	/**
