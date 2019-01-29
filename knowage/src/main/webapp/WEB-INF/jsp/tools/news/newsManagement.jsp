@@ -73,11 +73,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div layout="row">
 							<md-input-container flex="50">
 								<label>News Title</label>
-								<input type="text" ng-model="selectedNews.title"/>
+								<input type="text" ng-model="selectedNews.name"/>
 							</md-input-container>
 							<md-input-container flex="20">
 								<label>Expiration date</label>
-								<md-datepicker ng-model="selectedNews.expirationDate"></md-datepicker>
+								<md-datepicker ng-model="tempExpirationDate"></md-datepicker>
 							</md-input-container>
 							<md-input-container flex="30">
 								<label>Type</label>

@@ -28,19 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function NewsManagementController($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n, sbiModule_messaging){
 		$scope.translate = sbiModule_translate;
-		
-		$scope.stubbedNews = [
-			{'title':'My first news','author':'biadmin','creationDate':new Date()},
-			{'title':'My Second news','author':'biadmin','creationDate':new Date()},
-			{'title':'My Third news','author':'biadmin','creationDate':new Date()},
-			{'title':'My Fourth news','author':'biuser','creationDate':new Date()},
-			{'title':'My Fifth news','author':'biadmin','creationDate':new Date(),'html':'<h1>Test</h1><p>ciao</p>',roles:[{'role':'administrator','active':true}]}
-		]
-		
+	
 		$scope.columns = [
-			{"headerName":'Title',"field": 'title', "tooltipField":'title'},
-			{"headerName":'Author',"field": 'author', "tooltipField":'author'},
-			{"headerName":'Creation Date',"field": 'creationDate', "tooltipField":'creationDate',cellRenderer: dateFormat},
+			{"headerName":'Title',"field": 'name', "tooltipField":'name'},
+			{"headerName":'Expiration Date',"field": 'expirationDate', "tooltipField":'expirationDate',cellRenderer: dateFormat},
 			{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 				suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false}
 		]
@@ -69,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function dateFormat(node){
-			return moment(node.createdAt).format('DD/MM/YYYY HH:mm')
+			return moment(node.value).format('MM/DD/YYYY HH:mm')
 		}
 		
 		function resizeColumns(grid){
@@ -82,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function selectNews(node){
 			$scope.selectedNews = $scope.listGridOptions.api.getSelectedRows()[0];
+			$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
 			$scope.premissionGridOptions.api.setRowData($scope.rolesList);
 			$scope.$apply();
 		}
@@ -104,8 +96,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getNews = function(){
 			sbiModule_restServices.promiseGet("2.0", "news")
 			.then(function(response) {
-				debugger;
-				$scope.listGridOptions.setRowData(response.data);
+				if(response.data.length == 0) $scope.listGridOptions.api.showNoRowsOverlay();
+				else $scope.listGridOptions.api.setRowData(response.data);
 			}, function(response) {
 				$scope.listGridOptions.api.showNoRowsOverlay();
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
