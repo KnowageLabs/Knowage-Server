@@ -473,11 +473,11 @@ angular
                 	 return counter;
                  }
 
-//                 for( var j = 0; j< $scope.drivers.length; j++){
-//                	 if($scope.drivers[j].label ==  $scope.selectedDriver.label){
-//                		 $scope.drivers.splice(j,1);
-//                	 }
-//                 }
+                 for( var j = 0; j< $scope.drivers.length; j++){
+                	 if($scope.drivers[j].label ==  $scope.selectedDriver.label){
+                		 $scope.drivers.splice(j,1);
+                	 }
+                 }
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.dataDependencyObjects[ $scope.selectedDriver.id].length;i++){
 	                	 if( $scope.selectedDataCondition.newDependency && selectedConditionIndex == i)
