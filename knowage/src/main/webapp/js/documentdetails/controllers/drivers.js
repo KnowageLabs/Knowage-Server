@@ -203,10 +203,10 @@ angular
 			                         basePath = self.driverRelatedObject.id + "/" + basePath + querryParams;
 			                         baseDataPath = self.driverRelatedObject.id + "/" + baseDataPath + querryParams;
 
-			                         if (driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0)
+			                         if (!(driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0))
 			                         getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
 
-			                         if(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0)
+			                         if(!(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0))
 			                         getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
 			                         break;
 	                            }
@@ -238,7 +238,6 @@ angular
 	                     if (self.drivers[d].priority > self.priorityOfDeletedDriver) {
 	                         self.drivers[d].priority--;
 	                     }
-
 	                 }
                  }
              }
@@ -268,7 +267,7 @@ angular
 
              self.editCondition = function(ev, selectedDriver, selectedCondition) {
             	 var labelSelected = selectedDriver.label
-                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
+                 $scope.selectedDriver =$filter('filter')(driversService.rederedDrivers,{label:labelSelected})[0] ;
                  self.selectedDriver = $scope.selectedDriver
                  if (!selectedCondition && selectedCondition != 0) {
                      if (driversService.visusalDependencyObjects[ $scope.selectedDriver.id]) {

@@ -703,12 +703,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				}
 			}
 
-			if (hibModel == null) {
-				logger.warn("Model with id [" + modelId + "] not found");
-			} else {
-				session.delete(hibModel);
-			}
-
+			session.delete(hibModel);
 			transaction.commit();
 		} catch (Exception e) {
 			logException(e);
