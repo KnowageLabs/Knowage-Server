@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -161,8 +162,14 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			logger.debug("Setting parameters");
 			ds.setParamsMap(parametersMap);
 
-			logger.debug("Setting drivers");
-			ds.setDrivers(driversRuntimeMap);
+			Set<String> driverUrlNames = driversRuntimeMap.keySet();
+			for (String driverName : driverUrlNames) {
+				Map mapOfValues = (Map) driversRuntimeMap.get(driverName);
+				if (mapOfValues.containsKey("value")) {
+					logger.debug("Setting drivers");
+					ds.setDrivers(driversRuntimeMap);
+				}
+			}
 
 			logger.debug("Loading the data");
 			ds.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
@@ -378,22 +385,22 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 		return locale;
 	}
 
-//	private Map parseJsonDriversMap(JSONObject drivers) {
-//		HashMap<String, Object> driversMap = new HashMap<>();
-//		try {
-//			for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
-//				if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
-//					if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
-//						String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
-//						driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
-//					} else
-//						driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
-//				}
-//			}
-//		} catch (JSONException e) {
-//			logger.debug("Unsuccessful parsing of JSONObject to map");
-//			throw new JsonException(e.getLocalizedMessage(), e);
-//		}
-//		return driversMap;
-//	}
+	// private Map parseJsonDriversMap(JSONObject drivers) {
+	// HashMap<String, Object> driversMap = new HashMap<>();
+	// try {
+	// for (int i = 0; i < JSONObject.getNames(drivers).length; i++) {
+	// if (drivers.getString(JSONObject.getNames(drivers)[i]) != "" && (i & 1) == 0) {
+	// if (drivers.get(JSONObject.getNames(drivers)[i]) instanceof JSONArray) {
+	// String arrayValue = drivers.getJSONArray(JSONObject.getNames(drivers)[i]).getJSONObject(0).getString("value");
+	// driversMap.put(JSONObject.getNames(drivers)[i], arrayValue);
+	// } else
+	// driversMap.put(JSONObject.getNames(drivers)[i], drivers.getString(JSONObject.getNames(drivers)[i]));
+	// }
+	// }
+	// } catch (JSONException e) {
+	// logger.debug("Unsuccessful parsing of JSONObject to map");
+	// throw new JsonException(e.getLocalizedMessage(), e);
+	// }
+	// return driversMap;
+	// }
 }
