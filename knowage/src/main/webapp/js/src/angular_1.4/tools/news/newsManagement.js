@@ -30,16 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 	
 		$scope.columns = [
-			{"headerName":'Title',"field": 'name', "tooltipField":'name'},
-			{"headerName":'Expiration Date',"field": 'expirationDate', "tooltipField":'expirationDate',cellRenderer: dateFormat},
+			{"headerName":'Title',"field": 'name', "tooltipField":'name', "suppressMovable":true, filter: 'agTextColumnFilter'},
+			{"headerName":'Expiration Date',"field": 'expirationDate', "tooltipField":'expirationDate',cellRenderer: dateFormat,"suppressMovable":true, filter:'agDateColumnFilter'},
 			{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
-				suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false}
+				suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
 		]
 		
 		$scope.listGridOptions = {
 			angularCompileRows: true,
 			enableColResize: false,
             enableSorting: true,
+            enableFilter: true,
             pagination: true,
             paginationAutoPageSize: true,
             rowSelection: 'single',
@@ -49,10 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             localeText : {noRowsToShow: $scope.translate.load('kn.table.norows')}
 		}
 		
-		$scope.premissionGridOptions = {
+		$scope.permissionGridOptions = {
 			angularCompileRows: true,
             onGridSizeChanged: resizeColumns,
-            columnDefs: [{"headerName":'Role',"field": 'name', "tooltipField":'name'},{"headerName":'',"field": '', "tooltipField":'', cellRenderer:checkboxRenderer,width: 50}]
+            columnDefs: [{"headerName":'Role',"field": 'name', "tooltipField":'name', filter: 'agTextColumnFilter'},{"headerName":'',"field": '', "tooltipField":'', cellRenderer:checkboxRenderer,width: 50}]
 		}
 		
 		function buttonRenderer(params){
@@ -74,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function selectNews(node){
 			$scope.selectedNews = $scope.listGridOptions.api.getSelectedRows()[0];
 			$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
-			$scope.premissionGridOptions.api.setRowData($scope.rolesList);
+			$scope.permissionGridOptions.api.setRowData($scope.rolesList);
 			$scope.$apply();
 		}
 
@@ -92,6 +93,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    fontNames: ['Roboto','Comic Sans MS','Sacramento'],
 		    fontNamesIgnoreCheck : ['Roboto','Comic Sans MS','Sacramento']
 		};
+		
+		$scope.newNews = function(){
+			$scope.selectedNews = {};
+			$scope.permissionGridOptions.api.setRowData($scope.rolesList);
+		}
 		
 		$scope.getNews = function(){
 			sbiModule_restServices.promiseGet("2.0", "news")
@@ -123,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.saveFunc = function(){
-			debugger;
+			
 		}
 
 	}

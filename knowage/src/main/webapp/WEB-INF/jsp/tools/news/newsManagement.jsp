@@ -56,24 +56,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        	<list label="'News Management'" new-function="newNews">
 			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
 		</list>
-		
-        <detail label="News" save-function="saveFunc" cancel-function="cancelFunc">
-			<div layout-fill class="containerDiv" ng-show="selectedNews">
-				<div ng-show="folderDocuments.length==0" class="emptyContainer">
-					<div class="outerIcon">
-						<div class="emptyIconSvg"></div>
+        <detail label="'News Detail'" save-function="saveFunc" cancel-function="cancelFunc">
+			<div layout-fill class="containerDiv">
+				<div ng-if="!selectedNews" class="noNews">
+					<div class="emptyIconSvg">
 					</div>
 					<div class="emptyIconText">
-						{{translate.load("sbi.browser.document.noDocument")}}
+						{{::translate.load('sbi.home.news.nonews.selected')}}
 					</div>
 				</div>
-				<md-card>
+				<md-card ng-show="selectedNews">
 					<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="selectedNews.active">Active</md-switch></md-subheader>
 					<md-card-content>
 						<div layout="row">
 							<md-input-container flex="50">
 								<label>News Title</label>
-								<input type="text" ng-model="selectedNews.name"/>
+								<input type="text" ng-model="selectedNews.name" required/>
 							</md-input-container>
 							<md-input-container flex="20">
 								<label>Expiration date</label>
@@ -94,10 +92,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<summernote ng-model="selectedNews.html" config="wysiwygOptions"></summernote>
 					</md-card-content>
 				</md-card>
-				<md-card>
+				<md-card ng-show="selectedNews">
 					<md-subheader>Permissions</md-subheader>
 					<md-card-content>
-						<div ag-grid="premissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
+						<div ag-grid="permissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
 					</md-card-content>
 				</md-card>
 			</div>
