@@ -15,6 +15,9 @@ kn-table {
 		&.kn-table-full-width {
 			margin: 0;
 		}
+		&.kn-table-full-height {
+			height: 100%;
+		}
 		&.kn-table-shadowed {
 			box-shadow: 0px 3px 3px $shadowsColor;
 		}
@@ -216,5 +219,14 @@ kn-table {
 @-moz-document url-prefix() {
 	.kn-firefox-height-fix:not(.kn-table) {
 		height: calc(100vh - 105px);
+	}
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-table-container {
+		&.kn-table-full-height {
+			height: 100%;
+			width: auto;
+		}
 	}
 }
