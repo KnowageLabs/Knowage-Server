@@ -13,7 +13,7 @@ Knowage evolves to meet the latest analytical needs thanks to the innovation and
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, by Q1 2019:
+The following list of features is planned to be addressed in the short term, by Q1 2019:
 
 * improvements on cross navigation to customize the target's name;
 
@@ -27,7 +27,7 @@ The following list of features are planned to be addressed in the short term, by
 
 ## Medium term
 
-The following list of features are planned to be addressed in the medium term, by Q2 2019:
+The following list of features is planned to be addressed in the medium term, by Q2 2019:
 
 * cockpit enhancement: 
 
@@ -53,7 +53,7 @@ The following list of features are planned to be addressed in the medium term, b
 
 In the following, Knowage will grow on other hot topics, such as:
 
-* data discovery and advanced visualization over Elastichsearch for distributed indexes;
+* data discovery and advanced visualization over Elasticsearch for distributed indexes;
 
 * native R/phyton widget in self-service cockpits;
 
