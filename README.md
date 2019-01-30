@@ -24,8 +24,8 @@ This project is part of [FIWARE](https://www.fiware.org/). For more information
 check the FIWARE Catalogue entry for
 [Context Processing, Analysis and Visualization](https://github.com/Fiware/catalogue/tree/master/processing).
 
-|  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/knowage) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/knowage-server-docker/) |
-|---|---|---|---|
+|  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/knowage) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
+|---|---|---|---|---|
 
 ## Modules available
 
@@ -68,10 +68,6 @@ Before start to contribute, please read and sign the
 
 The official documentantion is available at
 [Read the Docs](http://knowage-suite.readthedocs.io/).
-
-## Roadmap
-
-The Knowage project roadmap is described [here](ROADMAP.md).
 
 ## More
 
