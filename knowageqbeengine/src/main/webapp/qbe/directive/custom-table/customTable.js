@@ -69,8 +69,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.firstExecution = true;
 
 	$scope.$watch('smartPreview',function(newValue,oldValue){
-		query_service.setSmartView(newValue);
-		$rootScope.$emit('smartView', $scope.ngModel);
+		if(newValue !==oldValue){
+			query_service.setSmartView(newValue);
+			$rootScope.$emit('smartView', $scope.ngModel);
+		}
+
 	},true)
 
 	$scope.translate = sbiModule_translate;
