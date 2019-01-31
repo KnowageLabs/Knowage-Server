@@ -78,7 +78,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/save")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertNews(@javax.ws.rs.core.Context HttpServletRequest req) {
