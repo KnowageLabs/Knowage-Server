@@ -821,27 +821,28 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.getSelectionValues = function(datasetLabel, columnName){
 		var result = null;
 
-		var selections = cockpitModule_template.configuration.aggregations;
-		for(var i=0;i<selections.length;i++){
-			var selections = selections[i].selection;
+		var aggregations = cockpitModule_template.configuration.aggregations;
+		for(var i=0; i<aggregations.length; i++){
+			var selections = aggregations[i].selection;
 			if(selections!=undefined){
 				var datasetLabelAndColumnNames = Object.keys(selections);
-				for(var i in datasetLabelAndColumnNames){
-					var datasetLabelAndColumnName = datasetLabelAndColumnNames[i];
+				for(var j in datasetLabelAndColumnNames){
+					var datasetLabelAndColumnName = datasetLabelAndColumnNames[j];
 					var split = datasetLabelAndColumnName.split(".");
 					if(split[0]==datasetLabel && split[1]==columnName){
 						result = selections[datasetLabelAndColumnName]
+						break;
 					}
 				}
 			}
 		}
 
-		selections = cockpitModule_template.configuration.filters;
-		if(selections && selections[datasetLabel]){
-		    if(selections[datasetLabel][columnName]){
-                result = selections[datasetLabel][columnName];
-            } else if(selections[datasetLabel][columnName]){
-                result = selections[datasetLabel][columnName];
+        if(result == undefined){
+            selections = cockpitModule_template.configuration.filters;
+            if(selections && selections[datasetLabel]){
+                if(selections[datasetLabel][columnName]){
+                    result = selections[datasetLabel][columnName];
+                }
             }
         }
 
