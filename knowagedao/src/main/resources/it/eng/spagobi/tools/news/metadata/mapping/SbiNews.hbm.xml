@@ -65,7 +65,7 @@
 	        
 		</component>
 		
-		<set name="sbiNewsRoles" inverse="true">
+		<set name="sbiNewsRoles" inverse="true" lazy="true" fetch="selected">
 			<key>
 				<column name="ID" not-null="true"></column>
 			</key>
