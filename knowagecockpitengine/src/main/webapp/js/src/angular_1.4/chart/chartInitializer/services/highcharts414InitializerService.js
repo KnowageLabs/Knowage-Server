@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts414',['highchartsDrilldownHelper','jsonChartTemplate',function(highchartsDrilldownHelper,jsonChartTemplate){
+.service('highcharts414',['highchartsDrilldownHelper','jsonChartTemplate','$q',function(highchartsDrilldownHelper,jsonChartTemplate,$q){
 
 	this.chart = null;
 	var chartConfConf = null;
@@ -485,71 +485,86 @@ angular.module('chartInitializer')
 					}
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
-						if(chart.userOptions.chart.type!="pie"){
-							var yaxis = chart.yAxis;
-							var chartSeries = chart.series;
-							drilledSerie = series.serieName;
-							if(!chart.drilledSerie){
-								for (var i = 0; i<yaxis.length; i++){
-									for (var j = 0; j<chartSeries.length; j++){
-										if((chartSeries[j].name == drilledSerie) && yaxis[i]==chartSeries[j].yAxis){
-											chart.drilledSerie = drilledSerie;
-											indexOfAxis = i;
+						var calculateMinMax = function (series){
+							var deferred = $q.defer();
+							if(chart.userOptions.chart.type!="pie"){
+								var yaxis = chart.yAxis;
+								var chartSeries = chart.series;
+								drilledSerie = series.serieName;
+								if(!chart.drilledSerie){
+									for (var i = 0; i<yaxis.length; i++){
+										for (var j = 0; j<chartSeries.length; j++){
+											if((chartSeries[j].name == drilledSerie) && yaxis[i]==chartSeries[j].yAxis){
+												chart.drilledSerie = drilledSerie;
+												indexOfAxis = i;
+											}
 										}
 									}
 								}
+
+								var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+								var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+
+								var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
+								var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
+
+								storeMinAndMax[series.name]={min:minDrill*0.5,max:maxDrill*1.1}
+								/*setTimeout(function () {
+						            chart.yAxis[indexOfAxis].update({
+						                max: maxDrill*1.1,
+						                min: minDrill*0.5,
+						            });
+						            chart.redraw()
+						        }, 0);*/
+								deferred.resolve({max:maxDrill*1.1,min:minDrill*0.5})
+
+
+							} else {
+								deferred.resolve()
 							}
-
-							var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
-							var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
-
-							var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
-							var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
-
-							storeMinAndMax[series.name]={min:minDrill*0.5,max:maxDrill*1.1}
-							setTimeout(function () {
-		                        chart.yAxis[indexOfAxis].update({
-		                            max: maxDrill*1.1,
-		                            min: minDrill*0.5,
-		                        });
-		                        chart.redraw()
-		                    }, 0);
+							return deferred.promise;
 						}
+						calculateMinMax(series).then(function(result){
+							if(result){
+								chart.yAxis[indexOfAxis].update({
+									max:result.max ,
+									min: result.min,
+								});
+							}
+							
+							if(chart.options.drilledCategories.length==0){
+								 if(series.firstLevelCategory){
+									 chart.options.drilledCategories.push(series.firstLevelCategory);
+						        } else {
+						          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
+						        }
+							}
+							chart.options.drilledCategories.push(series.category);
 
-						if(chart.options.drilledCategories.length==0){
-							 if(series.firstLevelCategory){
-								 chart.options.drilledCategories.push(series.firstLevelCategory);
-					        } else {
-					          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
-					        }
+							var xAxisTitle={
+								text:series.category
+						    };
+						    var yAxisTitle={
+						    		text:series.serieName
+						    };
+						    if(chart.xAxis[0].userOptions.title.customTitle==false){
+						    	chart.xAxis[0].setTitle(xAxisTitle);
+						    }
+						    if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
+						    	chart.yAxis[0].setTitle(yAxisTitle);
+						    }
 
-						}
+						    chart.addSeriesAsDrilldown(e.point, series);
 
-						chart.options.drilledCategories.push(series.category);
-
-						var xAxisTitle={
-							text:series.category
-			            };
-			            var yAxisTitle={
-			            		text:series.serieName
-			            };
-			            if(chart.xAxis[0].userOptions.title.customTitle==false){
-			            	chart.xAxis[0].setTitle(xAxisTitle);
-			            }
-			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
-			            	chart.yAxis[0].setTitle(yAxisTitle);
-			            }
-
-			            chart.addSeriesAsDrilldown(e.point, series);
-
-			            if(series.firstLevelCategory){
-			            	var backText="Back to: <b>"+series.firstLevelCategory+"</b>";
-			            } else {
-			            	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
-			            }
-			            chart.drillUpButton.textSetter("← " +backText);
-
-						chart.hideLoading();
+						    if(series.firstLevelCategory){
+						    	var backText="Back to: <b>"+series.firstLevelCategory+"</b>";
+						    } else {
+						    	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+						    }
+						    chart.drillUpButton.textSetter("← " +backText);
+							chart.hideLoading();
+				            chart.redraw()
+						})
 					});
 			}
 		}
