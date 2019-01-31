@@ -535,9 +535,9 @@
 				color:'$customColor.customValue',
 			#end
 			#end
-	    	
-	    	
-	    		name: '$relatedSerie.name',
+
+			name: "$escapeTool.javascript($relatedSerie.name)",
+			
 	    		#if(!$exportWebApp)   		
 		    	point:
 		    	{
@@ -1036,8 +1036,7 @@
 	    	    #if($categoriesNumber!=$zeroValues)
 	    	    #foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
-					#set( $serieName = $serieName.replace("\", "\\") )
-					#set( $serieName = $serieName.replace("""", "\""") )
+					#set( $serieName = $escapeTool.javascript($serieName))
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{
 

@@ -994,10 +994,13 @@
             categories: [
             	#foreach($element in $map.entrySet())
             		{ 
-						name: "$element.key",
+
+						name: "$escapeTool.javascript($element.key)",
+
 						categories: [
 							#foreach($element in $element.value)
-								"$element",
+
+							"$escapeTool.javascript($element)",
 							#end
 						]
 					},
@@ -1363,8 +1366,9 @@
 			#if($relatedSerieColor && $relatedSerieColor != '')
 				color: '$relatedSerieColor',
 		    #end
-		
-			name: "$relatedSerie.name",
+
+			name: "$escapeTool.javascript($relatedSerie.name)",
+
 			#foreach($customColor in $customColors)
 			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
 				color:'$customColor.customValue',
@@ -1417,8 +1421,8 @@
 					#if( $row.get($serieColumnsMapped))
 						#set ($serieValue = $row.get($serieColumnsMapped))
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
-						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
-						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+				
+						#set( $serieCategoryName = $escapeTool.javascript($serieCategoryName))
 
 						{
 							##drilldown: $enableDrilldown,
@@ -1438,8 +1442,10 @@
 							#end
 							#if($relatedSerieType=="line")
 								x: $counterX,
-							#end							
+							#end
+
 							name: "$serieCategoryName",
+							
 							datetype:"$datetype",
 							#if($isDateTime==true)
 							#if($datetype=="string")
@@ -1655,7 +1661,8 @@
 		#if($valueKey!="null")
 		{
 			selected: $selectedValue,
-			name: "$valueKey",
+
+			name: "$escapeTool.javascript($valueKey)",
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 
@@ -1669,9 +1676,8 @@
 					#if($el.y!="")	
 						y: $el.y,
 					#end
-					
-					name: "$el.name",
-					
+
+					name: "$escapeTool.javascript($el.name)",
 					datetype:"$datetype",
 					#if($isDateTime==true)
 					#if($datetype=="string")
