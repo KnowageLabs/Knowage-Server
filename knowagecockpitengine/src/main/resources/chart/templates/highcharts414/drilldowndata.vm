@@ -73,7 +73,7 @@
 	#if($indexAxis==1)
 	firstLevelCategory: '$categorieColumns.column',
 	#end
-	serieName:	"$$drilldownSerie = $escapeTool.javascript($drilldownSerie)",
+	serieName:	"$drilldownSerie = $escapeTool.javascript($drilldownSerie)",
      pointRange: 1,
      #if($chart.CHART.type.toLowerCase()!='pie')
      "dataLabels": {
