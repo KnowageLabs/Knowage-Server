@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelParameterDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 
 public class JpaOuterResource {
@@ -26,7 +26,7 @@ public class JpaOuterResource {
 	}
 
 	public static SbiParameters getParameterByMetaModelIdAndName(String modelName, String name) {
-		BIMetaModelDAOHibImpl dao = new BIMetaModelDAOHibImpl();
+		BIMetaModelParameterDAOHibImpl dao = new BIMetaModelParameterDAOHibImpl();
 		SbiParameters sbiParam = dao.getParameterByModelAndDriverName(modelName, name);
 
 		return sbiParam;

@@ -22,8 +22,8 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMetaModelParameterDAO {
-	static private Logger logger = Logger.getLogger(BIMetaModelDAOHibImpl.class);
+public class BIMetaModelParameterDAOHibImpl extends AbstractHibernateDAO implements IBIMetaModelParameterDAO {
+	static private Logger logger = Logger.getLogger(BIMetaModelParameterDAOHibImpl.class);
 
 	@Override
 	public SbiMetaModelParameter loadById(Integer id) throws HibernateException {

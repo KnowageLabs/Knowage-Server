@@ -153,7 +153,7 @@
 		<DAO name="CalendarDAO" implementation="it.eng.spagobi.tools.calendar.dao.CalendarDAOImpl" />
 		<DAO name="DossierActivityDAO" implementation="it.eng.spagobi.dossier.dao.SbiDossierActivityDAOHibImpl"/>
 		<DAO name="ExportersDAO" implementation="it.eng.spagobi.engines.config.dao.SbiExportersDAOHibImpl"/>
-		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl"/>
+		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelParameterDAOHibImpl"/>
 		<DAO name="MetaModelParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParuseDAOHibImpl"/>
 		<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
 	</DAO-CONF>

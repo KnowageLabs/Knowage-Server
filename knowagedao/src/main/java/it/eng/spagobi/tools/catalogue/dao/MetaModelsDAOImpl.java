@@ -36,7 +36,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelParameterDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -72,7 +72,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModelParameter hibMetaModelPar = null;
 			Iterator it = hibMetaModelPars.iterator();
 			BIMetaModelParameter tmpBIMetaModelParameter = null;
-			BIMetaModelDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelDAOHibImpl();
+			BIMetaModelParameterDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelParameterDAOHibImpl();
 			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
 			List metaModelParameters = new ArrayList();
 			Parameter aParameter = null;
@@ -139,7 +139,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModelParameter hibMetaModelPar = null;
 			Iterator it = hibMetaModelPars.iterator();
 			BIMetaModelParameter tmpBIMetaModelParameter = null;
-			BIMetaModelDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelDAOHibImpl();
+			BIMetaModelParameterDAOHibImpl aBIMetaModelParameterDAOHibImpl = new BIMetaModelParameterDAOHibImpl();
 			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
 			List metamodelParameters = new ArrayList();
 			Parameter aParameter = null;
@@ -685,7 +685,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (metaModelParameters != null) {
 				// delete dependencies between drivers
 				Iterator itMetaModelParDep = metaModelParameters.iterator();
-				BIMetaModelDAOHibImpl metaModelParDAO = new BIMetaModelDAOHibImpl();
+				BIMetaModelParameterDAOHibImpl metaModelParDAO = new BIMetaModelParameterDAOHibImpl();
 				while (itMetaModelParDep.hasNext()) {
 					SbiMetaModelParameter aSbiObjPar = (SbiMetaModelParameter) itMetaModelParDep.next();
 					BIMetaModelParameter aBIMetaModelParameter = new BIMetaModelParameter();

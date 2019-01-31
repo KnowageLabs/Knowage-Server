@@ -147,7 +147,7 @@
 		<DAO name="AlertDAO" implementation="it.eng.spagobi.tools.alert.dao.AlertDAOImpl"/>
 		<DAO name="IFunctionsOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.FunctionsOrganizerDAOHibImpl"/>
 		<DAO name="IWhatifWorkflowDAO" implementation="it.eng.spagobi.whatif.dao.WhatifWorkflowDAOHibImpl"/>
-		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl"/>
+		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelParameterDAOHibImpl"/>
 		<DAO name="MetaModelParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParuseDAOHibImpl"/>
 		<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
 		
