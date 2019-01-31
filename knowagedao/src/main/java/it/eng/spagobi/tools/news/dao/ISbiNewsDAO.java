@@ -27,7 +27,7 @@ import it.eng.spagobi.tools.news.metadata.SbiNews;
 
 public interface ISbiNewsDAO extends ISpagoBIDao {
 
-	public List<SbiNews> getAllNews();
+	public List getAllNews();
 
 	public void deleteNew(Integer newsId);
 

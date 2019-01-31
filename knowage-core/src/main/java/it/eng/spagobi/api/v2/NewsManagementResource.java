@@ -41,7 +41,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.tools.news.bo.News;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
-import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -63,9 +62,22 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			ISbiNewsDAO dao = DAOFactory.getSbiNewsDAO();
 			dao.setUserProfile(profile);
 
-			List<SbiNews> allNews = dao.getAllNews();
+			List<News> allNews = dao.getAllNews();
+			JSONArray jsonArray = new JSONArray();
 
-			return Response.ok(allNews).build();
+			for (int i = 0; i < allNews.size(); i++) {
+				JSONObject jsonObject = new JSONObject();
+				News news = allNews.get(i);
+
+				jsonObject.put("id", news.getId());
+				jsonObject.put("title", news.getTitle());
+				jsonObject.put("description", news.getDescription());
+
+				jsonArray.put(jsonObject);
+
+			}
+
+			return Response.ok(jsonArray.toString()).build();
 
 		} catch (Exception e) {
 			logger.error("Error has occured while returing news", e);

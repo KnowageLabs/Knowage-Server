@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.tools.news.dao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,21 +50,21 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SbiNews> getAllNews() {
+	public List getAllNews() {
 
 		logger.debug("IN");
-		List listOfNews = null;
+		List listOfNews = new ArrayList<>();
 		Session session = null;
 
 		try {
 			session = getSession();
-			String hql = "select s.id, s.name, s.description from SbiNews s";
+			String hql = " from SbiNews s";
 			Query query = session.createQuery(hql);
 
-			List<SbiNews> hibList = query.list();
-			Iterator<SbiNews> iterator = hibList.iterator();
+			List hibList = query.list();
+			Iterator iterator = hibList.iterator();
 			while (iterator.hasNext()) {
-				SbiNews hibNews = iterator.next();
+				SbiNews hibNews = (SbiNews) iterator.next();
 				if (hibNews != null) {
 					News news = toNews(hibNews);
 					listOfNews.add(news);
