@@ -179,8 +179,12 @@
 
 	    #foreach($row in $data.rows)
 	    	#set ($categoryName = $row.get($categorieColumnsMapped))
+	    	#*
 	    	#set( $categoryName = $categoryName.replace("\", "\\") )
 	    	#set( $categoryName = $categoryName.replace("""", "\""") )
+	    	*#
+	    	#set( $categoryName = $escapeTool.javascript($categoryName))	
+	    	
 	    	"$categoryName",
 	    #end
     	],
