@@ -101,11 +101,22 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		Transaction transaction = null;
 		Session session = null;
 		SbiNews newsForDelete;
+		List<SbiNewsRoles> toReturn = new ArrayList<>();
 
 		try {
 
 			session = getSession();
 			transaction = session.beginTransaction();
+
+			String hql2 = "from SbiNewsRoles sRoles WHERE sRoles.newsRolesId.newsId = :newId";
+			Query query2 = session.createQuery(hql2);
+			query2.setInteger("newId", newsId);
+			toReturn = query2.list();
+
+			for (int i = 0; i < toReturn.size(); i++) {
+				session.delete(toReturn.get(i));
+			}
+
 			String hql = "from SbiNews s where s.id = :newId";
 			Query query = session.createQuery(hql);
 			query.setInteger("newId", newsId);

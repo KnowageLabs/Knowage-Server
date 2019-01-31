@@ -148,7 +148,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 	}
 
 	@DELETE
-	@Path("/delete/{id}")
+	@Path("/{id}")
 	public Response deleteNews(@PathParam("id") Integer id) {
 
 		ISbiNewsDAO iNewsDao = null;
