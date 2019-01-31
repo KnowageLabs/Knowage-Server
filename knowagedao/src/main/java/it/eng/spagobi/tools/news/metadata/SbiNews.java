@@ -19,6 +19,8 @@
 package it.eng.spagobi.tools.news.metadata;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
@@ -34,11 +36,12 @@ public class SbiNews extends SbiHibernateModel {
 	private String description;
 	private boolean active;
 	private String news;
-	private Integer priority;
+	private NewsPriority priority;
 	private boolean manual;
 	private Date expirationDate;
 	private Integer categoryId;
 	private SbiDomains sbiDomains;
+	private Set sbiNewsRoles = new HashSet(0);
 
 	public SbiNews() {
 
@@ -97,11 +100,11 @@ public class SbiNews extends SbiHibernateModel {
 		this.news = news;
 	}
 
-	public Integer getPriority() {
+	public NewsPriority getPriority() {
 		return priority;
 	}
 
-	public void setPriority(Integer priority) {
+	public void setPriority(NewsPriority priority) {
 		this.priority = priority;
 	}
 
@@ -135,6 +138,14 @@ public class SbiNews extends SbiHibernateModel {
 
 	public void setSbiDomains(SbiDomains sbiDomains) {
 		this.sbiDomains = sbiDomains;
+	}
+
+	public Set getSbiNewsRoles() {
+		return sbiNewsRoles;
+	}
+
+	public void setSbiNewsRoles(Set sbiNewsRoles) {
+		this.sbiNewsRoles = sbiNewsRoles;
 	}
 
 }

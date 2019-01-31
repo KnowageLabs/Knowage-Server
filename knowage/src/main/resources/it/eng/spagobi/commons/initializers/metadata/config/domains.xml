@@ -567,6 +567,14 @@
 		domainNm="Layer Category" valueDs="Default Layer Category" />
 			
 
+	<DOMAIN valueCd="Announcement" valueNm="sbidomains.news.announcement" 
+		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.announcement"></DOMAIN>
+		
+	<DOMAIN valueCd="Notification" valueNm="sbidomains.news.notification" 
+		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.notification"></DOMAIN>
+		
+	<DOMAIN valueCd="Warning" valueNm="sbidomains.news.warning" 
+		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.warning"></DOMAIN>
 			
 			
 </DOMAINS>

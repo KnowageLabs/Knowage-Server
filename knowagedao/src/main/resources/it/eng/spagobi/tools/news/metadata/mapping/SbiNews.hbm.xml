@@ -19,10 +19,16 @@
 		<property name="description" type="string" column="DESCRIPTION" length="400"></property>
 		<property name="active" type="boolean" column="ACTIVE"></property>
 		<property name="news" type="string" column="NEWS" length="4000"></property>
-		<property name="priority" type="int" column="PRIORITY"></property>
 		<property name="manual" type="boolean" column="MANUAL"></property>
 		<property name="expirationDate" type="date" column="EXPIRATION_DATE"></property>
 		<property name="categoryId" type="int" column="CATEGORY_ID"></property>
+		
+		<property name="priority" column="PRIORITY">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">it.eng.spagobi.tools.news.metadata.NewsPriority</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
 		
 		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 			
@@ -58,6 +64,13 @@
 	        </property>
 	        
 		</component>
+		
+		<set name="sbiNewsRoles" inverse="true">
+			<key>
+				<column name="ID" not-null="true"></column>
+			</key>
+			<one-to-many class="it.eng.spagobi.tools.news.metadata.SbiNewsRoles"/>
+		</set>
 		
 		<many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" update="false" insert="false">
 	        	<column name="CATEGORY_ID" not-null="true"></column>

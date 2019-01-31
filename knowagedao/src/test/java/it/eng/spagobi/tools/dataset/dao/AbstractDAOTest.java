@@ -39,7 +39,7 @@ public abstract class AbstractDAOTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -49,7 +49,7 @@ public abstract class AbstractDAOTest extends TestCase {
 		mappings.put("DataSetDAO", "it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl");
 		mappings.put("SbiNewsDAO", "it.eng.spagobi.tools.news.dao.SbiNewsDAOImpl");
 		DAOConfig.setMappings(mappings);
-		TenantManager.setTenant(new Tenant("SPAGOBI"));
+		TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
 	}
 
 	// Test cases
