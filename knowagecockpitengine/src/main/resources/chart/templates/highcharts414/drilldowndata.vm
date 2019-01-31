@@ -61,7 +61,8 @@
 #set($serieColumnsMapped=$dataColumnsMapper.get($serieWithAgg))
 
 {
-	name:	'$selectedCategory',
+	name:	"$selectedCategory = $escapeTool.javascript($selectedCategory)",
+
 	xAxis: $indexAxis,
 	#if($drilldownCategoryName != '')
 	#set ($category=$drilldownCategoryName.replaceAll(" ",""))
@@ -72,7 +73,7 @@
 	#if($indexAxis==1)
 	firstLevelCategory: '$categorieColumns.column',
 	#end
-	serieName:'$drilldownSerie',
+	serieName:	"$$drilldownSerie = $escapeTool.javascript($drilldownSerie)",
      pointRange: 1,
      #if($chart.CHART.type.toLowerCase()!='pie')
      "dataLabels": {
@@ -533,7 +534,7 @@
 			#if($serieValue!="")
 				y: $serieValue,
 			#end
-			name: '$serieName',
+			name:	"$serieName = $escapeTool.javascript($serieName)",
 			#if($category == $categoryDate)
 				#if($serieName.length()>10)
 				#set($date = $serieName.replace(" " , "-").replace(":" , "-").replace(":" , "-").replace("." , "-").split("-"))
