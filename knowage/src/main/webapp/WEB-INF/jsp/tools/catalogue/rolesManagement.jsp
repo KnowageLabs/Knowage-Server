@@ -557,6 +557,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <label>{{translate.load("sbi.roles.functionsCatalogUsage")}}</label>
                    </div> 
                </div>
+               
 			
 				</md-card>
 				 </md-content> </md-tab> 

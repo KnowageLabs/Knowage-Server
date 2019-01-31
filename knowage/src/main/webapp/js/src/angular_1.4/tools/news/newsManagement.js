@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 	
 		$scope.columns = [
-			{"headerName":'Title',"field": 'name', "tooltipField":'name', "suppressMovable":true, filter: 'agTextColumnFilter'},
+			{"headerName":'Title',"field": 'title', "tooltipField":'title', "suppressMovable":true, filter: 'agTextColumnFilter'},
 			{"headerName":'Expiration Date',"field": 'expirationDate', "tooltipField":'expirationDate',cellRenderer: dateFormat,"suppressMovable":true, filter:'agDateColumnFilter'},
 			{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 				suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function buttonRenderer(params){
-			return 	'<md-button class="md-icon-button" ng-click="deleteRow($event,\''+params.data.valueId+'\')"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+			return 	'<md-button class="md-icon-button" ng-click="deleteRow($event,\''+params.data.id+'\')"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
 		}
 		
 		function dateFormat(node){
@@ -72,7 +72,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;"><input type="checkbox" ng-model="selectedNews.roles['+params.rowIndex+'].active"/></div>';
 		}
 		
-		function selectNews(node){
+		function selectNews(){
+			sbiModule_restServices.promiseGet("2.0", "news/"+$scope.listGridOptions.api.getSelectedRows()[0].id)
+			.then(function(response) {
+				$scope.selectedNews
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
 			$scope.selectedNews = $scope.listGridOptions.api.getSelectedRows()[0];
 			$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
 			$scope.permissionGridOptions.api.setRowData($scope.rolesList);
@@ -123,13 +129,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		$scope.getRoles();
 		
-		$scope.deleteRow = function(e){
+		$scope.deleteRow = function(e, item){
 			e.preventDefault();
 			e.stopImmediatePropagation();
+			sbiModule_restServices.promiseDelete("2.0", "news/delete/"+item ).then(function(){
+
+			})
 		}
 		
 		$scope.saveFunc = function(){
-			
+			sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(){
+
+			},function(response){
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			})
 		}
 
 	}
