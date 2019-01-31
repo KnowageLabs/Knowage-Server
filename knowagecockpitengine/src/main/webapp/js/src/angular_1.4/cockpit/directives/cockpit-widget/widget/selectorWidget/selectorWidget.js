@@ -299,6 +299,8 @@ angular.module('cockpitModule')
 				if(!angular.equals($scope.selectedValues, values)){
 					$scope.selectedValues = angular.copy(values);
 				}
+			}else{
+			    $scope.selectedValues = [];
 			}
 		}
 
