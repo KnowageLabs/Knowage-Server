@@ -921,8 +921,10 @@
 		#if($relatedSerieColor && $relatedSerieColor != '')
 			color: '$relatedSerieColor',
 	    #end
-		
+			#*
 			name: '$relatedSerie.name',
+			*#
+			name: "$escapeTool.javascript($relatedSerie.name)",
 			#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 
 	    	 #if($chart.isCockpitEngine != 'true')
@@ -954,7 +956,11 @@
 							#if($serieValue!="")
 								y: $serieValue,
 							#end
+							#*
 							name: "$serieCategoryName",
+							*#
+							name: "$escapeTool.javascript($serieCategoryName)",
+							
 							x: "$serieCategoryName",
 							#foreach($valueKey in $dataColumnsMapper.keySet())
 							#set ($col =  $dataColumnsMapper.get($valueKey))
@@ -973,8 +979,11 @@
 			  
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+					#*
 					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
-					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )	
+					*#
+					#set( $serieCategoryName = $escapeTool.javascript($serieCategoryName))				
 						#if($chart.isCockpitEngine=="true")
 						#set($date = $serieCategoryName.split("/"))
 						#set($day = $date.get(0))

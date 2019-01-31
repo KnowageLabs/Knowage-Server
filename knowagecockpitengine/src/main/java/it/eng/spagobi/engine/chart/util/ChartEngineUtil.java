@@ -35,6 +35,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -144,6 +145,7 @@ public class ChartEngineUtil {
 			velocityContext.put("datasettransformer", new DataSetTransformer());
 			velocityContext.put("ChartEngineUtil", ChartEngineUtil.class);
 			velocityContext.put(Integer.class.getSimpleName(), Integer.class);
+			velocityContext.put("escapeTool", new EscapeTool());
 
 			if (jsonToConvert != null) {
 				mapTemplate = convertJsonToMap(jsonToConvert, true);
