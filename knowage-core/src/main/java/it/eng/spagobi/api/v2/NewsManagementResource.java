@@ -63,8 +63,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			ISbiNewsDAO dao = DAOFactory.getSbiNewsDAO();
 			dao.setUserProfile(profile);
 
-			List<SbiNews> allNews = new ArrayList<>();
-			allNews = dao.getAllNews();
+			List<SbiNews> allNews = dao.getAllNews();
 
 			return Response.ok(allNews).build();
 

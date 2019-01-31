@@ -18,8 +18,8 @@
 
 package it.eng.spagobi.tools.news.dao;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -52,19 +52,28 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	public List<SbiNews> getAllNews() {
 
 		logger.debug("IN");
-		List<SbiNews> listOfNews = new ArrayList<SbiNews>();
+		List listOfNews = null;
 		Session session = null;
 
 		try {
 			session = getSession();
-			String hql = "from SbiNews";
+			String hql = "select s.id, s.name, s.description from SbiNews s";
 			Query query = session.createQuery(hql);
-			listOfNews = query.list();
+
+			List<SbiNews> hibList = query.list();
+			Iterator<SbiNews> iterator = hibList.iterator();
+			while (iterator.hasNext()) {
+				SbiNews hibNews = iterator.next();
+				if (hibNews != null) {
+					News news = toNews(hibNews);
+					listOfNews.add(news);
+				}
+			}
 
 		} catch (HibernateException e) {
 			logException(e);
 
-			throw new SpagoBIRuntimeException(e);
+			throw new SpagoBIRuntimeException("Cannot return all news", e);
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
@@ -72,6 +81,16 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 		logger.debug("OUT");
 		return listOfNews;
+	}
+
+	private News toNews(SbiNews hibNews) {
+
+		News news = new News();
+		news.setId(hibNews.getId());
+		news.setTitle(hibNews.getName());
+		news.setDescription(hibNews.getDescription());
+
+		return news;
 	}
 
 	@Override
