@@ -84,6 +84,33 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		return listOfNews;
 	}
 
+	@Override
+	public News getNewsById(Integer id) {
+
+		logger.debug("IN");
+		News news = null;
+		Session session = null;
+
+		try {
+			session = getSession();
+			String hql = "from SbiNews s WHERE s.id = :id";
+			Query query = session.createQuery(hql);
+			query.setInteger("id", id);
+			news = (News) query.uniqueResult();
+
+		} catch (HibernateException e) {
+			logException(e);
+			throw new SpagoBIRuntimeException("Cannot return news by id", e);
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
+		return news;
+	}
+
 	private News toNews(SbiNews hibNews) {
 
 		News news = new News();

@@ -35,4 +35,6 @@ public interface ISbiNewsDAO extends ISpagoBIDao {
 
 	public News saveNews(News aNews) throws EMFUserError;
 
+	public News getNewsById(Integer id);
+
 }

@@ -88,6 +88,29 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getNewsById(@PathParam("id") Integer id) {
+
+		logger.debug("IN");
+		ISbiNewsDAO sbiNewsDAO = null;
+
+		try {
+			UserProfile profile = getUserProfile();
+			sbiNewsDAO = DAOFactory.getSbiNewsDAO();
+			sbiNewsDAO.setUserProfile(profile);
+			News news = sbiNewsDAO.getNewsById(id);
+
+			return Response.ok(news).build();
+
+		} catch (Exception e) {
+			logger.error("Error while geting news by id");
+			throw new SpagoBIRestServiceException("Cannot return news by specific id", buildLocaleFromSession(), e);
+		}
+
+	}
+
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -124,7 +147,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			}
 
 			news.setTitle(requestBodyJSON.getString("title"));
-			news.setStatus(requestBodyJSON.optString("status"));
+			news.setStatus(requestBodyJSON.optString("active"));
 			news.setType(requestBodyJSON.optInt("type"));
 			news.setHtml(requestBodyJSON.optString("html"));
 
@@ -136,7 +159,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 			news = newsDao.saveNews(news);
 
-			return Response.ok(news).build();
+			return Response.ok(news.getId()).build();
 
 		} catch (Exception e) {
 			logger.error("Error while posting news");
