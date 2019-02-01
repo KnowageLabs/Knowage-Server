@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </md-tab-label>
             
-            <md-tab-body>
+            <md-tab-body ng-if="chartTemplate">
                 <div flex><chartstructure-tab></chartstructure-tab></div>
             </md-tab-body>
 			
@@ -107,13 +107,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </md-tab-label>
             
-            <md-tab-body>
+            <md-tab-body ng-if="chartTemplate">
                 <div flex><configuration-tab></configuration-tab></div>
             </md-tab-body>
 			
 			</md-tab> 
 
-			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()"><advanced-tab></advanced-tab> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()"><advanced-tab ng-if="chartTemplate"></advanced-tab> </md-tab> 
 		</md-tabs>
 		</form>
 
