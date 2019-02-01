@@ -300,7 +300,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,aggr);
 				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : 'null';
 			}
-			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
+			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]){
 				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
 				p1 = typeof($scope.htmlDataset.rows[p2||0][columnInfo.name]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
 			}else {
