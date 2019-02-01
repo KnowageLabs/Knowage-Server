@@ -58,6 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
         <detail label="'News Detail'" save-function="saveFunc" cancel-function="cancelFunc">
 			<div layout-fill class="containerDiv">
+				<div layout="row" layout-align="center center" layout-fill style="z-index:10;background-color:rgba(0,0,0,.3); position:absolute;" ng-if="loading">
+			      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+			    </div>
 				<div ng-if="!selectedNews" class="noNews">
 					<div class="emptyIconSvg">
 					</div>
