@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div layout="row">
 							<md-input-container flex="50">
 								<label>News Title</label>
-								<input type="text" ng-model="selectedNews.name" required/>
+								<input type="text" ng-model="selectedNews.title" required/>
 							</md-input-container>
 							<md-input-container flex="20">
 								<label>Expiration date</label>

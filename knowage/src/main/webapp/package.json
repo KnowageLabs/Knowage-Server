@@ -49,6 +49,7 @@
     "jsonformatter": "0.6.0",
     "moment": "2.22.2",
     "ngdraggable": "0.1.10",
+    "summernote": "^0.8.11",
     "xregexp": "4.2.0"
   },
   "author": "knowage labs <knowage@eng.it>",

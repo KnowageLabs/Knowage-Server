@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function buttonRenderer(params){
+			debugger;
 			return 	'<md-button class="md-icon-button" ng-click="deleteRow($event,\''+params.data.id+'\')"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
 		}
 		
@@ -73,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function selectNews(){
-			sbiModule_restServices.promiseGet("2.0", "news/"+$scope.listGridOptions.api.getSelectedRows()[0].id)
+			sbiModule_restServices.promiseGet("2.0", "news" ,$scope.listGridOptions.api.getSelectedRows()[0].id)
 			.then(function(response) {
 				$scope.selectedNews
 			}, function(response) {
@@ -132,14 +133,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.deleteRow = function(e, item){
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			sbiModule_restServices.promiseDelete("2.0", "news/delete/"+item ).then(function(){
-
+			sbiModule_restServices.promiseDelete("2.0", "news/" + item ).then(function(){
+				$scope.getNews();
 			})
 		}
 		
 		$scope.saveFunc = function(){
-			sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(){
-
+			var test = {
+				    "title": "My third news",
+				    "description": "informations!",
+				    "type": 1,
+				    "html": "<p>hello world</p>",
+				    "expirationDate": new Date().getTime(),
+				    "roles": []
+				}
+			sbiModule_restServices.promisePost("2.0", "news", test).then(function(){
+				$scope.getNews();
 			},function(response){
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			})
