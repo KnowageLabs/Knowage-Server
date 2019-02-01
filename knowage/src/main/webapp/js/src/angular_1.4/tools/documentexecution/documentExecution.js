@@ -113,6 +113,7 @@
 
 		$scope.execute = function(role, params) {
 			docExecute_urlViewPointService.executionProcesRestV1(role, params);
+			docExecute_paramRolePanelService.toggleParametersPanel(false);
 		}
 
 
