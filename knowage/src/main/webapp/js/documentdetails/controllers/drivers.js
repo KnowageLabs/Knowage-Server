@@ -40,7 +40,7 @@ angular
              self.selectedVisualCondition = driversService.selectedVisualCondition;
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
-
+             self.drivers = [];
              if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0){
 
             	 if(self.drivers.length == 0 ){
