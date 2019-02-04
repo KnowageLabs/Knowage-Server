@@ -128,6 +128,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		return newsToReturn;
 	}
 
+	@Override
 	public News toBasicNews(SbiNews hibNews) {
 
 		News news = new News();
@@ -288,14 +289,14 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			Iterator<Role> iterator = roles.iterator();
 			while (iterator.hasNext()) {
 				Role businessRole = iterator.next();
-				SbiExtRoles r;
+				SbiExtRoles sbiExtRole;
 				try {
-					r = rolesDao.loadSbiExtRoleById(businessRole.getId());
+					sbiExtRole = rolesDao.loadSbiExtRoleById(businessRole.getId());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					throw new SpagoBIRuntimeException("Cannot get Role", e);
 				}
-				extRoles.add(r);
+				extRoles.add(sbiExtRole);
 			}
 			hibNews.setSbiNewsRoles(extRoles);
 			if (aNews.getId() != null) {

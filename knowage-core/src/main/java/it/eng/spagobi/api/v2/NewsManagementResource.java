@@ -161,7 +161,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			news.setStatus(requestBodyJSON.optString("active"));
 			news.setType(requestBodyJSON.optInt("type"));
 			news.setHtml(requestBodyJSON.optString("html"));
-			news.setId(requestBodyJSON.optInt("id"));
+			news.setId(!requestBodyJSON.optString("id").equals("") ? requestBodyJSON.optInt("id") : null);
 
 			if (requestBodyJSON.optLong("expirationDate") != 0) {
 				long miliSec = requestBodyJSON.optLong("expirationDate");
