@@ -2,10 +2,10 @@ package it.eng.spagobi.tools.news.bo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.tools.news.metadata.NewsPriority;
 
 public class News implements Serializable {
@@ -24,7 +24,7 @@ public class News implements Serializable {
 	private Date expirationDate;
 	private String html;
 	private Boolean active;
-	private Role[] roles = null;
+	private Set roles = null;
 	private NewsPriority priority;
 
 	public News() {
@@ -95,11 +95,11 @@ public class News implements Serializable {
 		this.active = active;
 	}
 
-	public Role[] getRoles() {
+	public Set getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Role[] roles) {
+	public void setRoles(Set roles) {
 		this.roles = roles;
 	}
 

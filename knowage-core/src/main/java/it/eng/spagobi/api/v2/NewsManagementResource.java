@@ -15,9 +15,10 @@
 
 package it.eng.spagobi.api.v2;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -39,8 +40,12 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.news.bo.News;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
+import it.eng.spagobi.tools.news.manager.INewsManager;
+import it.eng.spagobi.tools.news.manager.NewsManagerTechImpl;
+import it.eng.spagobi.tools.news.manager.NewsManagerUserImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -59,10 +64,16 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		try {
 			UserProfile profile = getUserProfile();
-			ISbiNewsDAO dao = DAOFactory.getSbiNewsDAO();
-			dao.setUserProfile(profile);
+			INewsManager newsMan = null;
 
-			List<News> allNews = dao.getAllNews();
+			if (UserUtilities.isTechnicalUser(profile)) {
+				newsMan = new NewsManagerTechImpl();
+
+			} else {
+				newsMan = new NewsManagerUserImpl();
+			}
+
+			List<News> allNews = newsMan.getAllNews(profile);
 			JSONArray jsonArray = new JSONArray();
 
 			for (int i = 0; i < allNews.size(); i++) {
@@ -130,7 +141,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			News news = new News();
 			news.setDescription(requestBodyJSON.getString("description"));
 
-			List<Role> listRoles = new ArrayList<>();
+			Set<Role> listRoles = new HashSet<>();
 
 			if (requestBodyJSON.getJSONArray("roles") != null) {
 				JSONArray roles = requestBodyJSON.getJSONArray("roles");
@@ -143,13 +154,14 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 					listRoles.add(r);
 				}
 
-				news.setRoles(listRoles.toArray(sequenceOfRoles));
+				news.setRoles(listRoles);
 			}
 
 			news.setTitle(requestBodyJSON.getString("title"));
 			news.setStatus(requestBodyJSON.optString("active"));
 			news.setType(requestBodyJSON.optInt("type"));
 			news.setHtml(requestBodyJSON.optString("html"));
+			news.setId(requestBodyJSON.optInt("id"));
 
 			if (requestBodyJSON.optLong("expirationDate") != 0) {
 				long miliSec = requestBodyJSON.optLong("expirationDate");

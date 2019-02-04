@@ -15,7 +15,7 @@
 			</generator>
 		</id>
 		
-		<property name="name" type="string" column="NAME" length="200" unique="true"></property>
+		<property name="name" type="string" column="NAME" length="200"></property>
 		<property name="description" type="string" column="DESCRIPTION" length="400"></property>
 		<property name="active" type="boolean" column="ACTIVE"></property>
 		<property name="news" type="string" column="NEWS" length="4000"></property>
@@ -65,7 +65,7 @@
 	        
 		</component>
 		
-		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="true" lazy="true" fetch="select">
+		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="false" lazy="true" fetch="select" cascade="all">
 			<key>
 				<column name="NEWS_ID" not-null="true"></column>
 			</key>

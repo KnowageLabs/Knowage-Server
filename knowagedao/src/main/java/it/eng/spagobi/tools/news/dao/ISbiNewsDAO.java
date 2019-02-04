@@ -20,7 +20,6 @@ package it.eng.spagobi.tools.news.dao;
 
 import java.util.List;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.news.bo.News;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
@@ -33,7 +32,9 @@ public interface ISbiNewsDAO extends ISpagoBIDao {
 
 	public void createOrUpdate(SbiNews sbiNews);
 
-	public News saveNews(News aNews) throws EMFUserError;
+	public News saveNews(News aNews);
+
+	public News toBasicNews(SbiNews aNews);
 
 	public News getNewsById(Integer id);
 

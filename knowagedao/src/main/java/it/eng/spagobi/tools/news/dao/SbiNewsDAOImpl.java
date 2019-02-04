@@ -25,24 +25,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.tools.news.bo.News;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.tools.news.metadata.SbiNewsRoles;
-import it.eng.spagobi.tools.news.metadata.SbiNewsRolesId;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO {
@@ -132,7 +128,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		return newsToReturn;
 	}
 
-	private News toBasicNews(SbiNews hibNews) {
+	public News toBasicNews(SbiNews hibNews) {
 
 		News news = new News();
 		news.setId(hibNews.getId());
@@ -167,7 +163,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		news.setExpirationDate(hibNews.getExpirationDate());
 
 		try {
-			List<Role> listOfRoles = new ArrayList<Role>();
+			Set listOfRoles = new HashSet();
 			Set<SbiExtRoles> setOfRoles = hibNews.getSbiNewsRoles();
 			Iterator<SbiExtRoles> iterator = setOfRoles.iterator();
 			while (iterator.hasNext()) {
@@ -177,12 +173,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 				listOfRoles.add(role);
 			}
 
-			Role[] roles = new Role[listOfRoles.size()];
-			for (int i = 0; i < listOfRoles.size(); i++) {
-				roles[i] = listOfRoles.get(i);
-			}
-
-			news.setRoles(roles);
+			news.setRoles(listOfRoles);
 
 		} catch (Exception e) {
 			logException(e);
@@ -208,14 +199,14 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql2 = "from SbiNewsRoles sRoles WHERE sRoles.newsRolesId.newsId = :newId";
-			Query query2 = session.createQuery(hql2);
-			query2.setInteger("newId", newsId);
-			toReturn = query2.list();
-
-			for (int i = 0; i < toReturn.size(); i++) {
-				session.delete(toReturn.get(i));
-			}
+//			String hql2 = "from SbiExtRoles expRoles WHERE expRoles.extRoleId = :newId";
+//			Query query2 = session.createQuery(hql2);
+//			query2.setInteger("newId", newsId);
+//			toReturn = query2.list();
+//
+//			for (int i = 0; i < toReturn.size(); i++) {
+//				session.delete(toReturn.get(i));
+//			}
 
 			String hql = "from SbiNews s where s.id = :newId";
 			Query query = session.createQuery(hql);
@@ -275,11 +266,12 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public News saveNews(News aNews) throws EMFUserError {
+	public News saveNews(News aNews) {
 
 		Session session = null;
 		Transaction transaction = null;
 
+		IRoleDAO rolesDao = DAOFactory.getRoleDAO();
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
@@ -291,16 +283,33 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			hibNews.setPriority(null);
 			hibNews.setExpirationDate(aNews.getExpirationDate());
 			hibNews.setCategoryId(aNews.getType());
-
+			Set roles = aNews.getRoles();
+			Set extRoles = new HashSet<>();
+			Iterator<Role> iterator = roles.iterator();
+			while (iterator.hasNext()) {
+				Role businessRole = iterator.next();
+				SbiExtRoles r;
+				try {
+					r = rolesDao.loadSbiExtRoleById(businessRole.getId());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					throw new SpagoBIRuntimeException("Cannot get Role", e);
+				}
+				extRoles.add(r);
+			}
+			hibNews.setSbiNewsRoles(extRoles);
+			if (aNews.getId() != null) {
+				hibNews.setId(aNews.getId());
+			}
 			updateSbiCommonInfo4Insert(hibNews);
-			session.save(hibNews);
+			session.saveOrUpdate(hibNews);
 
-			aNews.setId(hibNews.getId());
-
-			Set newsRoleForSaving = new HashSet();
-			Set tmp = savingNewsRoles(session, hibNews, aNews);
-			newsRoleForSaving.addAll(tmp);
-			hibNews.setSbiNewsRoles(newsRoleForSaving);
+			/*
+			 * aNews.setId(hibNews.getId());
+			 *
+			 * Set newsRoleForSaving = new HashSet(); Set tmp = savingNewsRoles(session, hibNews, aNews); newsRoleForSaving.addAll(tmp);
+			 * hibNews.setSbiNewsRoles(newsRoleForSaving);
+			 */
 
 			transaction.commit();
 
@@ -309,7 +318,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 			if (transaction != null)
 				transaction.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new SpagoBIRuntimeException("Cannot save news", e);
 
 		} finally {
 			if (session != null && session.isOpen())
@@ -320,48 +329,29 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 	}
 
-	@SuppressWarnings("deprecation")
-	private Set savingNewsRoles(Session session, SbiNews hibNews, News aNews) {
-
-		Set newsRoleForSaving = new HashSet();
-		Criterion domainCriterion = null;
-		Criteria criteria = null;
-
-		try {
-			logger.debug("IN");
-			criteria = session.createCriteria(SbiNewsRoles.class);
-			Role[] sequenceOfRoles = null;
-			sequenceOfRoles = aNews.getRoles();
-
-			for (int i = 0; i < sequenceOfRoles.length; i++) {
-				Role role = sequenceOfRoles[i];
-				domainCriterion = Expression.eq("extRoleId", role.getId());
-				criteria = session.createCriteria(SbiExtRoles.class);
-				criteria.add(domainCriterion);
-				SbiExtRoles hibRole = (SbiExtRoles) criteria.uniqueResult();
-
-				SbiNewsRolesId sbiNewsRolesId = new SbiNewsRolesId();
-				sbiNewsRolesId.setNewsId(hibNews.getId());
-				sbiNewsRolesId.setExtRoleId(role.getId());
-
-				SbiNewsRoles sbiNewsRoles = new SbiNewsRoles();
-				sbiNewsRoles.setNewsRolesId(sbiNewsRolesId);
-				sbiNewsRoles.setSbiNews(hibNews);
-				sbiNewsRoles.setSbiExtRoles(hibRole);
-
-				updateSbiCommonInfo4Insert(sbiNewsRoles);
-				session.save(sbiNewsRoles);
-				newsRoleForSaving.add(sbiNewsRoles);
-			}
-
-		} catch (Exception e) {
-			logException(e);
-			throw new SpagoBIRuntimeException(e.getMessage());
-		}
-
-		logger.debug("OUT");
-
-		return newsRoleForSaving;
-	}
+	/*
+	 * @SuppressWarnings("deprecation") private Set savingNewsRoles(Session session, SbiNews hibNews, News aNews) {
+	 *
+	 * /* Set newsRoleForSaving = new HashSet(); Criterion domainCriterion = null; Criteria criteria = null;
+	 *
+	 * try { logger.debug("IN"); criteria = session.createCriteria(SbiNewsRoles.class); Set sequenceOfRoles = aNews.getRoles(); for (int i = 0; i <
+	 * sequenceOfRoles.length; i++) { Role role = sequenceOfRoles[i]; domainCriterion = Expression.eq("extRoleId", role.getId()); criteria =
+	 * session.createCriteria(SbiExtRoles.class); criteria.add(domainCriterion); SbiExtRoles hibRole = (SbiExtRoles) criteria.uniqueResult();
+	 *
+	 * SbiNewsRolesId sbiNewsRolesId = new SbiNewsRolesId(); sbiNewsRolesId.setNewsId(hibNews.getId()); sbiNewsRolesId.setExtRoleId(role.getId());
+	 *
+	 * SbiNewsRoles sbiNewsRoles = new SbiNewsRoles(); sbiNewsRoles.setNewsRolesId(sbiNewsRolesId); sbiNewsRoles.setSbiNews(hibNews);
+	 * sbiNewsRoles.setSbiExtRoles(hibRole);
+	 *
+	 * updateSbiCommonInfo4Insert(sbiNewsRoles); session.save(sbiNewsRoles); newsRoleForSaving.add(sbiNewsRoles); }
+	 *
+	 * } catch (Exception e) { logException(e); throw new SpagoBIRuntimeException(e.getMessage()); }
+	 *
+	 * logger.debug("OUT");
+	 *
+	 * return newsRoleForSaving;
+	 *
+	 * }
+	 */
 
 }
