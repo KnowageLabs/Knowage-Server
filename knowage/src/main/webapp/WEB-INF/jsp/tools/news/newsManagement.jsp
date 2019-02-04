@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
         <detail label="'News Detail'" save-function="saveFunc" cancel-function="cancelFunc">
 			<div layout-fill class="containerDiv">
-				<div layout="row" layout-align="center center" layout-fill style="z-index:10;background-color:rgba(0,0,0,.3); position:absolute;" ng-if="loading">
+				<div layout="row" layout-align="center center" layout-fill style="z-index:510;background-color:rgba(0,0,0,.3); position:absolute;" ng-if="loading">
 			      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 			    </div>
 				<div ng-if="!selectedNews" class="noNews">
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</div>
 				<md-card ng-show="selectedNews">
-					<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="selectedNews.active">Active</md-switch></md-subheader>
+					<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="tempStatus">Active</md-switch></md-subheader>
 					<md-card-content>
 						<div layout="row">
 							<md-input-container flex="50">
@@ -82,8 +82,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-input-container>
 							<md-input-container flex="30">
 								<label>Type</label>
-								<md-select ng-model="selectedNews.type">
-									<md-option ng-repeat="opt in ['news','notification','warning','announcement']" ng-value="opt">{{opt}}</md-option>
+								<md-select ng-model="selectedNews.priority">
+									<md-option ng-repeat="opt in priorityMapping" ng-value="opt.id">{{opt.value}}</md-option>
 								</md-select>
 							</md-input-container>
 						</div>

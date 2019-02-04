@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function NewsManagementController($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n, sbiModule_messaging,knModule_aggridLabels){
 		$scope.translate = sbiModule_translate;
 		$scope.loading = false;
+		
+		$scope.priorityMapping = [{"id":0,"value":"News"},{"id":1,"value":"Notification"},{"id":2,"value":"Warning"}];
 	
 		$scope.columns = [
 			{"headerName":'Title',"field": 'title', "tooltipField":'title', "suppressMovable":true},
@@ -78,12 +80,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_restServices.promiseGet("2.0", "news/" + $scope.listGridOptions.api.getSelectedRows()[0].id)
 			.then(function(response) {
 				$scope.selectedNews = response.data;
+				$scope.remapRoles();
+				$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
+				$scope.tempStatus = $scope.selectedNews.status == 0 ? true : false;
 				$scope.loading = false;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				$scope.loading = false;
 			});
-			$scope.tempPermissions = $scope.rolesList;
+		}
+		
+		$scope.remapRoles = function(){
+			$scope.tempPermissions = angular.copy($scope.rolesList);
 			for(var r in $scope.tempPermissions){
 				for(var k in $scope.selectedNews.roles){
 					if($scope.selectedNews.roles[k].id == $scope.tempPermissions[r].id){
@@ -91,10 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			
-			$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
 			$scope.permissionGridOptions.api.setRowData($scope.tempPermissions);
-			$scope.$apply();
 		}
 
 		$scope.wysiwygOptions = {
@@ -105,8 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        ['fontname', ['fontname']],
 		        ['fontsize', ['fontsize']],
 		        ['color', ['color']],
-		        ['para', ['ul', 'ol', 'paragraph']],
-		        ['insert',['picture','link','hr']]
+		        ['para', ['ul', 'ol', 'paragraph']]
 		      ],
 		    fontNames: ['Roboto','Comic Sans MS','Sacramento'],
 		    fontNamesIgnoreCheck : ['Roboto','Comic Sans MS','Sacramento']
@@ -114,6 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		$scope.newNews = function(){
 			$scope.selectedNews = {};
+			$scope.remapRoles();
 			$scope.permissionGridOptions.api.setRowData($scope.rolesList);
 		}
 		
@@ -156,16 +161,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.selectedNews.roles.push({'id':$scope.tempPermissions[r].id,'name':$scope.tempPermissions[r].name});
 				}
 			}
-			var test = {
-					"id": 17,
-				    "title": $scope.selectedNews.title,
-				    "description": $scope.selectedNews.description,
-				    "type": 1,
-				    "html": $scope.selectedNews.html,
-				    "expirationDate": moment($scope.selectedNews.expirationDate).valueOf(),
-				    "roles": $scope.selectedNews.roles
-				}
-			sbiModule_restServices.promisePost("2.0", "news", test).then(function(){
+			$scope.selectedNews.status = $scope.tempStatus ? 1 : 0;
+			sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(){
 				$scope.getNews();
 				sbiModule_messaging.showSuccessMessage('The news has been saved', 'Success' ,5000);
 			},function(response){
