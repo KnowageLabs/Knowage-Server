@@ -862,7 +862,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 		});
 	};
 });
-sbiM.service('urlBuilderService',["$httpParamSerializer",function($httpParamSerializer) {
+sbiM.service('sbiModule_urlBuilderService',["$httpParamSerializer",function($httpParamSerializer) {
 
     var parameters = [];
     var httpParamSerializer = $httpParamSerializer;

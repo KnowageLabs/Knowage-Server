@@ -22,11 +22,12 @@
  */
 
 angular
-	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule', 'businessModelOpeningModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$log, $httpParamSerializer,$injector,urlBuilderService,windowCommunicationService,$mdSidenav,qbeViewerMessagingHandler) {
+	.module('qbe_viewer', ['ngMaterial' ,'sbiModule', 'businessModelOpeningModule', 'datasetSaveModule', 'datasetSchedulerModule'])
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$log, $httpParamSerializer,$injector,sbiModule_urlBuilderService,windowCommunicationService,$mdSidenav,qbeViewerMessagingHandler, $mdPanel, $q, datasetSave_service, datasetScheduler_service) {
 		var driversExecutionService = $injector.get('driversExecutionService');
 		var driversDependencyService = $injector.get('driversDependencyService');
 		var comunicator = windowCommunicationService;
+		var urlBuilderService = sbiModule_urlBuilderService;
 //		var comunicator = windowCommunicationService;
 //		var consoleHandler = {}
 //		consoleHandler.name = "console"
@@ -117,12 +118,76 @@ angular
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
-
-
+			var savingPanelConfig;
 //			driverableObject.isParameterRolePanelDisabled = {};
 //			driverableObject.isParameterRolePanelDisabled.status = true;
-
-
+			
+			var initNewDataSet = function() {
+				if ($scope.selectedDataSet == undefined || angular.equals($scope.selectedDataSet, {})) {
+					$scope.selectedDataSet = {
+							dsTypeCd: "Qbe",
+							qbeDatamarts: driverableObject.name,
+							qbeDataSource: driverableObject.dataSourceLabel,
+							currentView: driverableObject.currentView,
+							parameterView: driverableObject.parameterView,
+							executed: driverableObject.executed
+					};
+				}
+			}
+			
+			initNewDataSet();
+			
+			var openPanelForSavingQbeDataset = function() {
+				savingPanelConfig = {
+						attachTo:  angular.element(document.body),
+						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
+						position: $mdPanel.newPanelPosition().absolute().center(),
+						fullscreen: true,
+						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
+							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
+							
+							$scope.closePanel = function(){
+								mdPanelRef.close();
+							}
+							
+							$scope.saveDataSet = function() {
+								datasetSave_service.persistDataSet($scope.model.selectedDataSet)
+												.then(function(response){
+													var dsId = response.data.id;
+													
+													if ($scope.model.selectedDataSet.isScheduled) {
+														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
+														datasetScheduler_service.schedulDataset(dsId)
+															.then(function(response){
+																sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
+																$scope.closePanel();
+																closeDocumentFn();
+															}, function(response){
+																sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+															});
+													} else {
+														sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
+														$scope.closePanel();
+														closeDocumentFn();
+													}
+													
+													$scope.model.selectedDataSet = {};
+												}, function(error){
+													sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
+												});
+							}
+						},
+						locals: {selectedDataSet: $scope.selectedDataSet, closeDocumentFn: $scope.closeDocument},
+						hasBackdrop: true,
+						clickOutsideToClose: true,
+						escapeToClose: true,
+						focusOnOpen: true,
+						preserveScope: true,
+				};
+				
+				$mdPanel.open(savingPanelConfig);
+			}
+			
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
@@ -178,23 +243,21 @@ angular
 					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 					comunicator.sendMessage("close");
 				} else {
-					if ($scope.datasetSavedFromQbe==true) {
+					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+					$scope.selectedDataSet = {};
+					
+					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
 
-						console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+					if($scope.currentOptionMainMenu=="models"){
 
-						$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
-
-						if($scope.currentOptionMainMenu=="models"){
-
-							if ($scope.currentModelsTab=="federations") {
-								// If the suboption of the Data option is Federations.
-								$scope.getFederatedDatasets();
-							}
-
+						if ($scope.currentModelsTab=="federations") {
+							// If the suboption of the Data option is Federations.
+							$scope.getFederatedDatasets();
 						}
 
-						$scope.datasetSavedFromQbe = false;
 					}
+
+					$scope.datasetSavedFromQbe = false;
 				}
 			}
 
@@ -288,41 +351,21 @@ angular
 
 
 			$scope.saveQbeDocument = function() {
-
+				
+				if ($scope.editQbeDset) 
+					$scope.datasetSavedFromQbe=false;
+				else
+					$scope.datasetSavedFromQbe=true;
+				
 				/**
-				 * Take the frame that keeps the QBE ExtJS page (inside the 'qbe' property - defined inside the qbe.jsp), so we can access functions
-				 * inside the QbePanel.js (the page). We need 'openSaveDataSetWizard' function in order to save the dataset from the QBE.
+				 * COMMUNICATOR LOGIC
+				 * Step 1: Send message to QBE, so QBE Engine is going to update JsonQBEQuery and Meta
 				 */
-				/**
-				 * These two lines are commented, since the IE has a problem with taking the 'contentWindow' property of the current frame.
-				 * At the same time, extraction of the 'contentWindow' through the 'document' object works fine (and represents almost the
-				 * same solution) in all three browsers: IE, Mozilla, Chrome.
-				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// OLD IMPLEMENTATION
-//				var frame = window.frames['documentViewerIframe'];
-//				frame.contentWindow.qbe.openSaveDataSetWizard('TRUE');
-
-				// NEW IMPLEMENTATION
-
-
-
-				if(!$scope.editQbeDset){
-					window.openPanelForSavingQbeDataset();
-				} else {
-					comunicator.sendMessage("saveDS");
-				//	$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
-
-				}
-
-
-				/**
-				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a
-				 * result of calling the 'openSaveDataSetWizard' function.
-				 */
-				//document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
-
+				comunicator.sendMessage("saveDS");
+				// Step 2: After QBE finish, open Panel for Save - initPanelForSavingQbeDataset()
 			}
+	
+			
 			$scope.$on("$destroy",function(){
 				console.log("destroying controller")
 				comunicator.removeMessageHandler(messagingHandler);
@@ -344,7 +387,8 @@ angular
 
 										})})
 			}
-			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler($scope.selectedDataSet,$scope.parameterItems,persistDataSet);
+									
+			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler($scope.selectedDataSet,$scope.parameterItems, openPanelForSavingQbeDataset);
 			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 
 		}

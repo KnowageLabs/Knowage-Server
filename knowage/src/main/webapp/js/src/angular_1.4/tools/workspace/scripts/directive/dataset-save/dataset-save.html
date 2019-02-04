@@ -1,0 +1,168 @@
+<div>
+<form name="datasetForm">
+<md-card layout-fill layout="column" class="flexCard" style="position:absolute">
+	<md-card-content flex layout="column" class="noPadding">
+	
+		<md-content flex layout="column">
+			<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTab">
+				<!-- GENERIC TAB - DATASET DETAILS -->
+				<md-tab label='{{translate.load("sbi.generic.details");}}'>
+					<md-card layout-padding>
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.label")}}</label>
+									<input ng-model="model.label" ng-required="true" ng-change="setFormDirty()" ng-disabled="isInEditingMode()">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.label">
+	  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+					 				</div>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.name")}}</label>
+									<input ng-model="model.name" ng-required="true" ng-change="setFormDirty()">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.name">
+  						 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+					 				</div>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.description")}}</label>
+									<textarea 	ng-model="model.description" md-maxlength="150" rows="3" 
+												md-select-on-focus ng-change="setFormDirty()"></textarea>
+								</md-input-container>
+							</div>
+							
+							<div flex=100>
+								<label class="workspaceLabelForCheckBox">
+					    			{{translate.load("sbi.ds.hdfs")}}:
+					   			</label> 
+					               		
+						         <md-input-container class="small counter workspacePersistCheckboxContainer">
+						             <md-checkbox 	aria-label="Checkbox HDFS" 
+						              		ng-model="model.exportToHdfs" ng-checked="" class="workspaceCheckbox">
+									</md-checkbox>
+						          </md-input-container>
+							</div>
+						
+						<div ng-if="userLogged.isTechnical == 'true'">	
+							<div flex=100>
+							       <md-input-container class="md-block" > 
+							       		<label>{{translate.load("sbi.ds.scope")}}</label>
+								       	<md-select placeholder ="{{translate.load('sbi.generic.scope')}}"
+								        	ng-required = "true" ng-change="changeDatasetScope(); setScopeId(model.scopeCd)"
+								        	ng-model="model.scopeCd">   
+								        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+								        	</md-option>
+								       	</md-select>  
+							       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.scopeCd">
+			    						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+			   						 	</div>
+							        </md-input-container>
+							   </div>
+							  
+							   <div flex=100>
+							       <md-input-container class="md-block" > 
+							       <label>{{translate.load("sbi.generic.category")}}</label>
+							       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
+							        			ng-required="isCategoryRequired" ng-model="model.categoryCd"
+							        	 		ng-change="setCategoryId(model.categoryCd)">   
+							        	<md-option ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+							       </md-select>  
+							       	<div ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !model.categoryCd">
+		   						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+		  						 	</div>
+							        </md-input-container>
+							   </div>
+						  </div>
+					</md-card>
+				</md-tab>
+				
+				<!-- PERSISTENCE / SCHEDULING -->
+				<md-tab label='{{translate.load("sbi.ds.persistence");}}'>
+					<md-card layout-padding>
+						<!-- PERSIST -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							<md-card layout-padding style="margin-top:0">
+							
+								<div flex=100 style="display:flex;">
+								
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('sbi.ds.isPersisted')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Persisted" 
+					                     					ng-model="model.isPersisted" ng-checked="" 
+					                     					ng-change="setFormDirty()"
+					                     					ng-disabled="disablePersisting">
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+								</div>
+								
+								<div ng-show="model.isPersisted">
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
+											<input ng-model="model.persistTableName" ng-required="model.isPersisted" ng-change="setFormDirty()">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.persistTable">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+								</div>
+								
+								<!-- SCHEDULING -->
+								<div layout-align="start center" ng-if="userLogged.isAbleToSchedulate && (model.isPersisted || model.isPersistedHDFS)">
+			                		<label>
+			                			{{translate.load('sbi.ds.isScheduled')}}: 
+			               			</label> 
+			                		<md-input-container class="small counter" style="padding-left:8px;">
+				                   		<md-checkbox 	aria-label="Scheduling" 
+				                    					ng-model="model.isScheduled" ng-checked="" 
+				                    					ng-change="setFormDirty()">
+										</md-checkbox>
+			                		</md-input-container>
+								</div>
+								<div ng-if="model.isScheduled && model.isPersisted">
+									<dataset-scheduler model="model"></dataset-scheduler>
+								</div>
+							</md-card>
+						</md-content>						
+					</md-card>
+				</md-tab>
+				
+				<!-- METADATA -->
+				<md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>
+					<md-card layout-padding>
+						<kn-table 
+							id="qbeDSMeta"
+							columns="metaDataColumns"
+							model="model.meta">
+						</kn-table>
+					</md-card>
+				</md-tab>
+				
+			</md-tabs>
+		</md-content>
+	</md-card-content>
+	 <md-card-actions layout="row" layout-align="end center">
+	      <md-button ng-click="close()" class="md-raised">
+	       {{translate.load("sbi.general.cancel")}}
+	      </md-button>
+	      <md-button ng-click="saveDataSet()"  ng-disabled=!datasetForm.$valid  class="md-primary md-raised">
+		    {{translate.load("sbi.generic.save")}}
+	      </md-button>
+	</md-card-actions>
+</md-card>
+</form>
+</div>

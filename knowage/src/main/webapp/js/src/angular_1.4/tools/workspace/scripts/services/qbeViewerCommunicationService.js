@@ -6,7 +6,7 @@ angular
 			var dataset;
 			var parameters;
 
-			crudHandler.initalizeHandler = function(dataset,parameters,persistFunction){
+			crudHandler.initalizeHandler = function(dataset,parameters, openPanelForSavingQbeDataset){
 				setDataset(dataset);
 				setParameters(parameters);
 				var saveHandler = {};
@@ -16,7 +16,7 @@ angular
 					if(isFromDatasetCatalog(message)) {
 						datasetCatalogUpdateProces(message,dataset,parameters)
 					}else if(isFromWorkspace(message)){
-						workspaceDSUpdateProces(message,dataset,persistFunction);
+						workspaceDSUpdateProces(message, dataset, openPanelForSavingQbeDataset);
 					}
 				}
 				return saveHandler;
@@ -32,9 +32,10 @@ angular
 			var updateDSPars = function(message){
 				return message.pars;
 			}
-			var workspaceDSUpdateProces = function(message,dataset,persistFunction){
+			var workspaceDSUpdateProces = function(message, dataset, openPanelForSavingQbeDataset){
 				dataset.qbeJSONQuery = updateDSQuery(message);
-				persistFunction();
+				dataset.meta = message.meta;
+				openPanelForSavingQbeDataset();
 			}
 			var datasetCatalogUpdateProces = function(message,dataset,parameters){
 				//parameters = updateDSPars(message);

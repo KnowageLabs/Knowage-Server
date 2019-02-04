@@ -39,8 +39,9 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,urlBuilderService, $httpParamSerializer, sbiModule_download,$sce){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download,$sce){
 
+	var urlBuilderService = sbiModule_urlBuilderService;
 	$scope.maxSizeStr = maxSizeStr;
 
 	$scope.translate = sbiModule_translate;

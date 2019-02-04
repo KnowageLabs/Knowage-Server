@@ -145,6 +145,16 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerCommunicationService.js")%>"></script> 
 
+<!-- dataset save -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/dataset-save/datasetSaveModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/dataset-save/datasetSave.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/services/datasetSave_service.js")%>"></script>
+
+<!-- dataset scheduler -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetSchedulerModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetScheduler.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetScheduler_service.js")%>"></script>
+
 <!-- xml2js -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/jquery-2.1.3.min.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
