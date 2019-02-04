@@ -20,7 +20,7 @@
 		<property name="active" type="boolean" column="ACTIVE"></property>
 		<property name="news" type="string" column="NEWS" length="4000"></property>
 		<property name="manual" type="boolean" column="MANUAL"></property>
-		<property name="expirationDate" type="date" column="EXPIRATION_DATE"></property>
+		<property name="expirationDate" type="timestamp" column="EXPIRATION_DATE"></property>
 		<property name="categoryId" type="int" column="CATEGORY_ID"></property>
 		
 		<property name="priority" column="PRIORITY">
@@ -65,17 +65,20 @@
 	        
 		</component>
 		
-		<set name="sbiNewsRoles" inverse="true">
+		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="true" lazy="true" fetch="select">
 			<key>
-				<column name="ID" not-null="true"></column>
+				<column name="NEWS_ID" not-null="true"></column>
 			</key>
-			<one-to-many class="it.eng.spagobi.tools.news.metadata.SbiNewsRoles"/>
+			<many-to-many class="it.eng.spagobi.commons.metadata.SbiExtRoles">
+				<column name="EXT_ROLE_ID" not-null="true"></column>
+			</many-to-many>
+		
 		</set>
 		
-		<many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" update="false" insert="false">
-	        	<column name="CATEGORY_ID" not-null="true"></column>
-		</many-to-one>
 		
+		<many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" update="false" insert="false" >
+	        <column name="CATEGORY_ID" not-null="true"></column>
+		</many-to-one>
 		<filter name="tenantFilter" condition="organization=:tenant"></filter>
 	
 	</class>

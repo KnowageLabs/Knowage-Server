@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiNews extends SbiHibernateModel {
@@ -41,7 +42,7 @@ public class SbiNews extends SbiHibernateModel {
 	private Date expirationDate;
 	private Integer categoryId;
 	private SbiDomains sbiDomains;
-	private Set sbiNewsRoles = new HashSet(0);
+	private Set<SbiExtRoles> sbiNewsRoles = new HashSet<SbiExtRoles>(0);
 
 	public SbiNews() {
 
@@ -140,11 +141,11 @@ public class SbiNews extends SbiHibernateModel {
 		this.sbiDomains = sbiDomains;
 	}
 
-	public Set getSbiNewsRoles() {
+	public Set<SbiExtRoles> getSbiNewsRoles() {
 		return sbiNewsRoles;
 	}
 
-	public void setSbiNewsRoles(Set sbiNewsRoles) {
+	public void setSbiNewsRoles(Set<SbiExtRoles> sbiNewsRoles) {
 		this.sbiNewsRoles = sbiNewsRoles;
 	}
 

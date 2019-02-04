@@ -37,6 +37,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.tools.news.bo.News;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
@@ -66,7 +67,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			while (iterator.hasNext()) {
 				SbiNews hibNews = (SbiNews) iterator.next();
 				if (hibNews != null) {
-					News news = toNews(hibNews);
+					News news = toBasicNews(hibNews);
 					listOfNews.add(news);
 				}
 			}
@@ -86,20 +87,40 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 	@Override
 	public News getNewsById(Integer id) {
-
+		SbiNews sbiNews = null;
 		logger.debug("IN");
-		News news = null;
+		News newsToReturn = null;
 		Session session = null;
+		Transaction transaction = null;
 
 		try {
 			session = getSession();
+			transaction = session.beginTransaction();
+
 			String hql = "from SbiNews s WHERE s.id = :id";
 			Query query = session.createQuery(hql);
 			query.setInteger("id", id);
-			news = (News) query.uniqueResult();
+			sbiNews = (SbiNews) query.uniqueResult();
+			// SbiNews sbiNews = (SbiNews) criteria.uniqueResult();
+			// SbiNews sbiNews = (SbiNews) session.load(SbiNews.class, id);
+
+			if (sbiNews == null)
+				return null;
+
+			newsToReturn = toAdvancedNews(sbiNews);
+			transaction.commit();
+
+//			String hql = "from SbiNews s WHERE s.id = :id";
+//			Query query = session.createQuery(hql);
+//			query.setInteger("id", id);
+//			news = (News) query.uniqueResult();
 
 		} catch (HibernateException e) {
 			logException(e);
+
+			if (transaction != null)
+				transaction.rollback();
+
 			throw new SpagoBIRuntimeException("Cannot return news by id", e);
 
 		} finally {
@@ -108,16 +129,68 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		}
 
 		logger.debug("OUT");
+		return newsToReturn;
+	}
+
+	private News toBasicNews(SbiNews hibNews) {
+
+		News news = new News();
+		news.setId(hibNews.getId());
+		news.setTitle(hibNews.getName());
+		news.setDescription(hibNews.getDescription());
+		/*
+		 * news.setType(hibNews.getCategoryId()); news.setHtml(hibNews.getNews()); news.setExpirationDate(hibNews.getExpirationDate());
+		 *
+		 * List listOfRoles = new ArrayList(); Set setOfRoles = hibNews.getSbiNewsRoles(); Iterator iterator = setOfRoles.iterator(); while (iterator.hasNext())
+		 * { SbiNewsRoles hibNewsRoles = (SbiNewsRoles) iterator.next(); SbiExtRoles hibRoles = hibNewsRoles.getSbiExtRoles(); RoleDAOHibImpl roleDAO = new
+		 * RoleDAOHibImpl(); Role role = roleDAO.toRole(hibRoles); listOfRoles.add(role); }
+		 *
+		 * Role[] roles = new Role[listOfRoles.size()]; for (int i = 0; i < listOfRoles.size(); i++) { roles[i] = (Role) listOfRoles.get(i); }
+		 *
+		 * news.setRoles(roles);
+		 */
+
 		return news;
 	}
 
-	private News toNews(SbiNews hibNews) {
+	private News toAdvancedNews(SbiNews hibNews) {
+
+		logger.debug("IN");
 
 		News news = new News();
 		news.setId(hibNews.getId());
 		news.setTitle(hibNews.getName());
 		news.setDescription(hibNews.getDescription());
 
+		news.setType(hibNews.getCategoryId());
+		news.setHtml(hibNews.getNews());
+		news.setExpirationDate(hibNews.getExpirationDate());
+
+		try {
+			List<Role> listOfRoles = new ArrayList<Role>();
+			Set<SbiExtRoles> setOfRoles = hibNews.getSbiNewsRoles();
+			Iterator<SbiExtRoles> iterator = setOfRoles.iterator();
+			while (iterator.hasNext()) {
+				SbiExtRoles sbiExtrole = iterator.next();
+				RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
+				Role role = roleDAO.toBasicRole(sbiExtrole);
+				listOfRoles.add(role);
+			}
+
+			Role[] roles = new Role[listOfRoles.size()];
+			for (int i = 0; i < listOfRoles.size(); i++) {
+				roles[i] = listOfRoles.get(i);
+			}
+
+			news.setRoles(roles);
+
+		} catch (Exception e) {
+			logException(e);
+			logger.error("Error while getting role for news", e);
+			throw new SpagoBIRuntimeException("Cannot return role for news", e);
+		}
+
+		logger.debug("OUT");
 		return news;
 	}
 
