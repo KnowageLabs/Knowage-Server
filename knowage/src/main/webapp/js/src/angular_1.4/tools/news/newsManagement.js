@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 		$scope.loading = false;
 		
-		$scope.priorityMapping = [{"id":0,"value":"News"},{"id":1,"value":"Notification"},{"id":2,"value":"Warning"}];
+		$scope.typeMapping = [{"id":1,"value":"News"},{"id":2,"value":"Notification"},{"id":3,"value":"Warning"}];
 	
 		$scope.columns = [
 			{"headerName":'Title',"field": 'title', "tooltipField":'title', "suppressMovable":true},
@@ -75,14 +75,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;"><input type="checkbox" ng-model="tempPermissions['+params.rowIndex+'].active"/></div>';
 		}
 		
-		function selectNews(){
+		function selectNews(params){
 			$scope.loading = true;
-			sbiModule_restServices.promiseGet("2.0", "news/" + $scope.listGridOptions.api.getSelectedRows()[0].id)
+			sbiModule_restServices.promiseGet("2.0", "news/" + (params.id || $scope.listGridOptions.api.getSelectedRows()[0].id))
 			.then(function(response) {
 				$scope.selectedNews = response.data;
 				$scope.remapRoles();
 				$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
-				$scope.tempStatus = $scope.selectedNews.status == 0 ? true : false;
+				$scope.tempStatus = $scope.selectedNews.status == 1 ? true : false;
 				$scope.loading = false;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.wysiwygOptions = {
-		    height: 300,
+		    height: 250,
 		    toolbar: [
 		        ['style', ['bold', 'italic', 'underline', 'clear']],
 		        ['font', ['strikethrough', 'superscript', 'subscript']],
@@ -155,19 +155,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.saveFunc = function(){
-			$scope.selectedNews.roles = [];
-			for(var r in $scope.tempPermissions){
-				if($scope.tempPermissions[r].active) {
-					$scope.selectedNews.roles.push({'id':$scope.tempPermissions[r].id,'name':$scope.tempPermissions[r].name});
+			if($scope.newsForm.$valid){
+				$scope.selectedNews.roles = [];
+				$scope.selectedNews.expirationDate = moment($scope.tempExpirationDate).valueOf();
+				for(var r in $scope.tempPermissions){
+					if($scope.tempPermissions[r].active) {
+						$scope.selectedNews.roles.push({'id': $scope.tempPermissions[r].id,'name': $scope.tempPermissions[r].name});
+					}
 				}
+				$scope.selectedNews.status = $scope.tempStatus ? 2 : 1;
+				sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(response){
+					$scope.getNews();
+					if(!$scope.selectedNews.id) selectNews({id:response.data});
+					sbiModule_messaging.showSuccessMessage('The news has been saved', 'Success' ,5000);
+				},function(response){
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				})
+			}else{
+				sbiModule_messaging.showErrorMessage('Some required fields are missing', 'Error');
 			}
-			$scope.selectedNews.status = $scope.tempStatus ? 1 : 0;
-			sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(){
-				$scope.getNews();
-				sbiModule_messaging.showSuccessMessage('The news has been saved', 'Success' ,5000);
-			},function(response){
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			})
 		}
 
 	}

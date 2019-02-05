@@ -57,51 +57,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
 		</list>
         <detail label="'News Detail'" save-function="saveFunc" cancel-function="cancelFunc">
-			<div layout-fill class="containerDiv">
-				<div layout="row" layout-align="center center" layout-fill style="z-index:510;background-color:rgba(0,0,0,.3); position:absolute;" ng-if="loading">
-			      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-			    </div>
-				<div ng-if="!selectedNews" class="noNews">
-					<div class="emptyIconSvg">
-					</div>
-					<div class="emptyIconText">
-						{{::translate.load('sbi.home.news.nonews.selected')}}
-					</div>
-				</div>
-				<md-card ng-show="selectedNews">
-					<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="tempStatus">Active</md-switch></md-subheader>
-					<md-card-content>
-						<div layout="row">
-							<md-input-container flex="50">
-								<label>News Title</label>
-								<input type="text" ng-model="selectedNews.title" required/>
-							</md-input-container>
-							<md-input-container flex="20">
-								<label>Expiration date</label>
-								<md-datepicker ng-model="tempExpirationDate"></md-datepicker>
-							</md-input-container>
-							<md-input-container flex="30">
-								<label>Type</label>
-								<md-select ng-model="selectedNews.priority">
-									<md-option ng-repeat="opt in priorityMapping" ng-value="opt.id">{{opt.value}}</md-option>
-								</md-select>
-							</md-input-container>
+        	<form name="newsForm">
+				<div layout-fill class="containerDiv">
+					<div layout="row" layout-align="center center" layout-fill style="z-index:510;background-color:rgba(0,0,0,.3); position:absolute;" ng-if="loading">
+				      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				    </div>
+					<div ng-if="!selectedNews" class="noNews">
+						<div class="emptyIconSvg">
 						</div>
-						
-						<md-input-container class="md-block">
-							<label>News Description</label>
-							<textarea ng-model="selectedNews.description" md-maxlength="140" rows="2" placeholder="This is the text that will appear on the news notification"></textarea>
-						</md-input-container>
-						<summernote ng-model="selectedNews.html" config="wysiwygOptions"></summernote>
-					</md-card-content>
-				</md-card>
-				<md-card ng-show="selectedNews">
-					<md-subheader>Permissions</md-subheader>
-					<md-card-content>
-						<div ag-grid="permissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
-					</md-card-content>
-				</md-card>
-			</div>
+						<div class="emptyIconText">
+							{{::translate.load('sbi.home.news.nonews.selected')}}
+						</div>
+					</div>
+					<md-card ng-show="selectedNews">
+						<md-subheader class="switchSubheader"><span>Composition</span><span flex></span><md-switch ng-model="tempStatus">Active</md-switch></md-subheader>
+						<md-card-content>
+							<div layout="row">
+								<md-input-container flex="50">
+									<label>News Title</label>
+									<input type="text" ng-model="selectedNews.title" required/>
+								</md-input-container>
+								<md-input-container flex="20">
+									<label>Expiration date</label>
+									<md-datepicker ng-model="tempExpirationDate" required></md-datepicker>
+								</md-input-container>
+								<md-input-container flex="30">
+									<label>Type</label>
+									<md-select ng-model="selectedNews.type" required>
+										<md-option ng-repeat="opt in typeMapping" ng-value="opt.id">{{opt.value}}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							
+							<md-input-container class="md-block">
+								<label>News Description</label>
+								<textarea ng-model="selectedNews.description" md-maxlength="140" rows="2" placeholder="This is the text that will appear on the news notification"></textarea>
+							</md-input-container>
+							<summernote ng-model="selectedNews.html" config="wysiwygOptions"></summernote>
+						</md-card-content>
+					</md-card>
+					<md-card ng-show="selectedNews">
+						<md-subheader>Permissions</md-subheader>
+						<md-card-content>
+							<div ag-grid="permissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
+						</md-card-content>
+					</md-card>
+				</div>
+			</form>
 		</detail>
 	</angular-list-detail>
 </body>
