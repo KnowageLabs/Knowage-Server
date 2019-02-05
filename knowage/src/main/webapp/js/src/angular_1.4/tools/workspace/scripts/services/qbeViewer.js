@@ -121,7 +121,7 @@ angular
 			var savingPanelConfig;
 //			driverableObject.isParameterRolePanelDisabled = {};
 //			driverableObject.isParameterRolePanelDisabled.status = true;
-			
+
 			var initNewDataSet = function() {
 				if ($scope.selectedDataSet == undefined || angular.equals($scope.selectedDataSet, {})) {
 					$scope.selectedDataSet = {
@@ -134,9 +134,9 @@ angular
 					};
 				}
 			}
-			
+
 			initNewDataSet();
-			
+
 			var openPanelForSavingQbeDataset = function() {
 				savingPanelConfig = {
 						attachTo:  angular.element(document.body),
@@ -145,23 +145,23 @@ angular
 						fullscreen: true,
 						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
 							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
-							
+
 							$scope.closePanel = function(){
 								mdPanelRef.close();
 							}
-							
+
 							$scope.saveDataSet = function() {
 								if ($scope.model.selectedDataSet.isPersisted && !$scope.model.selectedDataSet.hasOwnProperty('pars'))
 									$scope.model.selectedDataSet.pars = [];
-								
+
 								datasetSave_service.persistDataSet($scope.model.selectedDataSet)
 												.then(function(response){
 													var dsId = response.data.id;
-																										
+
 													if ($scope.model.selectedDataSet.isScheduled) {
 														if (!$scope.model.selectedDataSet.hasOwnProperty('id'))
 															$scope.model.selectedDataSet.id = dsId;
-														
+
 														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
 														datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
 															.then(function(response){
@@ -190,10 +190,10 @@ angular
 						focusOnOpen: true,
 						preserveScope: true,
 				};
-				
+
 				$mdPanel.open(savingPanelConfig);
 			}
-			
+
 			var queryParamObj = {};
 			var queryDriverObj = {};
 
@@ -226,12 +226,8 @@ angular
 					$scope.driverableObject.executed = false;
 			}
 
-
-			var drivers = driversExecutionService.additionalUrlDrivers;
-
-			var driversObject =  driversExecutionService.prepareDriversForSending(drivers);
+			var driversObject =  driversExecutionService.prepareDriversForSending($scope.drivers);
 			queryDriverObj.DRIVERS = driversObject;
-
 
 			urlBuilderService.addQueryParams(queryDriverObj);
 			urlBuilderService.addQueryParams(queryParamObj);
@@ -251,7 +247,7 @@ angular
 				} else {
 					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
 					$scope.selectedDataSet = {};
-					
+
 					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
 
 					if($scope.currentOptionMainMenu=="models"){
@@ -357,12 +353,12 @@ angular
 
 
 			$scope.saveQbeDocument = function() {
-				
-				if ($scope.editQbeDset) 
+
+				if ($scope.editQbeDset)
 					$scope.datasetSavedFromQbe=false;
 				else
 					$scope.datasetSavedFromQbe=true;
-				
+
 				/**
 				 * COMMUNICATOR LOGIC
 				 * Step 1: Send message to QBE, so QBE Engine is going to update JsonQBEQuery and Meta
@@ -370,8 +366,8 @@ angular
 				comunicator.sendMessage("saveDS");
 				// Step 2: After QBE finish, open Panel for Save - initPanelForSavingQbeDataset()
 			}
-	
-			
+
+
 			$scope.$on("$destroy",function(){
 				console.log("destroying controller")
 				comunicator.removeMessageHandler(messagingHandler);
@@ -393,7 +389,7 @@ angular
 
 										})})
 			}
-									
+
 			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler($scope.selectedDataSet,$scope.parameterItems, openPanelForSavingQbeDataset);
 			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 

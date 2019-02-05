@@ -6,7 +6,6 @@
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
 			executionService.jsonDatumDesc = null;
-			executionService.additionalUrlDrivers =[];
 
 			executionService.gvpCtrlViewpoints = [];
 
@@ -178,19 +177,17 @@
 			};
 
 			executionService.hasMandatoryDrivers = function(drivers){
-				var showSideBar = false;
+				var showSideBar = true;
 				if(drivers){
 					for(var i = 0; i < drivers.length;i++){
 						if(drivers[i].mandatory){
 							if(drivers[i].defaultValues && drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
-								executionService.additionalUrlDrivers.push(parseParameterSingleDefaultValue([drivers[i]]));
-							}else{
-								showSideBar = true;
+								showSideBar = false;
 							}
 						}
 					}
 				}
-				return showSideBar
+				return showSideBar;
 			};
 
 			executionService.createObjectFromArray = function(drivers){
@@ -201,15 +198,6 @@
 					returnObject[driverName] = driverValue;
 				}
 				return returnObject
-			}
-
-			var parseParameterSingleDefaultValue = function(rawDrivers){
-				var drivers = executionService.buildStringParameters(rawDrivers);
-				var driverName = Object.keys(drivers)[0];
-				var driverValue = drivers[Object.keys(drivers)[0]][0].value;
-				var driverObject = {};
-				driverObject[driverName] = driverValue;
-				return driverObject;
 			}
 
 			var resetWithoutDefaultValues = function(parameter){
@@ -411,7 +399,6 @@
 				var transformedDrivers = {};
 					if(drivers){
 						for(var i = 0; i < drivers.length; i++){
-
 								var tempDriver = {}
 								tempDriver.urlName = drivers[i].urlName;
 								tempDriver.type = drivers[i].type;
