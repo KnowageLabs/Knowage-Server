@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <md-fab-actions>	
 
-			<md-button class="md-icon-button "  aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE && (ngModel.type=='table' || ngModel.type=='chart' || ngModel.type=='pivot')" ng-click="expandWidget();$event.stopPropagation();" >
+			<md-button class="md-icon-button "  aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE && (ngModel.type =='table' || ngModel.type =='chart' || ngModel.type =='pivot' || ngModel.type == 'document')" ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
