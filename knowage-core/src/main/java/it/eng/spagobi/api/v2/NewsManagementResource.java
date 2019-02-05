@@ -92,7 +92,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error has occured while returing news", e);
-			throw new SpagoBIRestServiceException("Cannot return news", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -117,7 +117,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error while geting news by id");
-			throw new SpagoBIRestServiceException("Cannot return news by specific id", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 		}
 
 	}
@@ -148,7 +148,6 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 				Role[] sequenceOfRoles = new Role[roles.length()];
 
 				for (int i = 0; i < roles.length(); i++) {
-					// String roleID = roles.getJSONObject(i).getString("name");
 					int roleID = roles.getJSONObject(i).getInt("id");
 					Role r = rolesDao.loadByID(roleID);
 					listRoles.add(r);
@@ -175,7 +174,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error while posting news");
-			throw new SpagoBIRestServiceException("Cannot post news", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -198,7 +197,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("The error has occured while deleting news", e);
-			throw new SpagoBIRestServiceException("Cannon delete news", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
