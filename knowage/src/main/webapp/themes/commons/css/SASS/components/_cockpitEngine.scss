@@ -234,6 +234,9 @@
 				padding:8px;
 				background-color: rgba(0,0,0,.3) !important;
 				z-index: 9999 !important;
+				&>md-card{
+					background-color: $tabBackground !important;
+				}
 			}
 			&>md-card{
 				&>md-card-content{
