@@ -1420,7 +1420,6 @@
 	    	  	#end
 
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
-	    	 #*$datasettransformer.print($dataColumnsMapper)*#
 	    	   	#foreach($row in $rows)
 	    	   	
 					#if( $row.get($serieColumnsMapped))
