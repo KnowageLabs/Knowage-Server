@@ -42,14 +42,14 @@
 		$scope.scheduling = {};
 		
 		$scope.checkPickedEndDate = function() {
-			if (new Date($scope.model.endDateField) < new Date($scope.model.startDateField)) {
-				$scope.model.startDateField = null;
+			if (new Date($scope.model.endDate) < new Date($scope.model.startDate)) {
+				$scope.model.startDate = null;
 			}
 		}
 
 		$scope.checkPickedStartDate = function() {
-			if (new Date($scope.model.startDateField) > new Date($scope.model.endDateField)) {
-				$scope.model.endDateField = null;
+			if (new Date($scope.model.startDate) > new Date($scope.model.endDate)) {
+				$scope.model.endDate = null;
 			}
 		}
 		

@@ -68,8 +68,7 @@
 							       <md-input-container class="md-block" > 
 							       <label>{{translate.load("sbi.generic.category")}}</label>
 							       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
-							        			ng-required="isCategoryRequired" ng-model="model.categoryCd"
-							        	 		ng-change="setCategoryId(model.categoryCd)">   
+							        			ng-required="isCategoryRequired" ng-model="model.catTypeVn">   
 							        	<md-option ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 							       </md-select>  
 							       	<div ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !model.categoryCd">

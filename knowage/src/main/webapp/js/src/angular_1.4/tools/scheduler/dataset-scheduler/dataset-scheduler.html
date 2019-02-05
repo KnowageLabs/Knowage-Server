@@ -25,22 +25,22 @@
 					
 					<div style="float:left" flex=50>
 						<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>												
-						<md-datepicker ng-model="model.startDateField" md-placeholder="Enter date"
+						<md-datepicker ng-model="model.startDate" md-placeholder="Enter date"
         											ng-change="setFormDirty();checkPickedStartDate();"
         											md-open-on-focus ng-required="model.isScheduled==true">
 						</md-datepicker>
-						<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.startDateField">
+						<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.startDate">
 					 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	 					</div>
 					</div>
 					
 					<div style="float:right" flex=50>
 						<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
-						<md-datepicker ng-model="model.endDateField" md-placeholder="Enter date"
+						<md-datepicker ng-model="model.endDate" md-placeholder="Enter date"
         											ng-change="setFormDirty();checkPickedEndDate();"
         											md-open-on-focus ng-required="model.isScheduled==true">
 						</md-datepicker>
-						<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.endDateField">
+						<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.endDate">
 					 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
  						</div>
 					</div>

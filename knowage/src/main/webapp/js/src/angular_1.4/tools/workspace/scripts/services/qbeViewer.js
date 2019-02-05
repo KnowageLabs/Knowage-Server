@@ -151,17 +151,24 @@ angular
 							}
 							
 							$scope.saveDataSet = function() {
+								if ($scope.model.selectedDataSet.isPersisted && !$scope.model.selectedDataSet.hasOwnProperty('pars'))
+									$scope.model.selectedDataSet.pars = [];
+								
 								datasetSave_service.persistDataSet($scope.model.selectedDataSet)
 												.then(function(response){
 													var dsId = response.data.id;
-													
+																										
 													if ($scope.model.selectedDataSet.isScheduled) {
+														if (!$scope.model.selectedDataSet.hasOwnProperty('id'))
+															$scope.model.selectedDataSet.id = dsId;
+														
 														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
-														datasetScheduler_service.schedulDataset(dsId)
+														datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
 															.then(function(response){
 																sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
 																$scope.closePanel();
 																closeDocumentFn();
+																$scope.model.selectedDataSet = {};
 															}, function(response){
 																sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 															});
@@ -169,9 +176,8 @@ angular
 														sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
 														$scope.closePanel();
 														closeDocumentFn();
+														$scope.model.selectedDataSet = {};
 													}
-													
-													$scope.model.selectedDataSet = {};
 												}, function(error){
 													sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
 												});

@@ -99,13 +99,7 @@
 				}
 			}
 		}
-		
-		$scope.setCategoryId = function(categoryCd) {
-			for (var i = 0; i < $scope.categoryList.length; i++) {
-				if ($scope.categoryList[i].VALUE_CD == categoryCd)
-					$scope.model.categoryId = $scope.categoryList[i].VALUE_ID;
-			}
-		}
+	
 		
 		var serializeDatasetMeta = function(datasetMeta) {
 			var newDsMeta = [];
@@ -146,9 +140,7 @@
 		
 		$scope.changeDatasetScope = function() {
 			if (($scope.model.scopeCd.toUpperCase()=="ENTERPRISE"
-					|| $scope.model.scopeCd.toUpperCase()=="TECHNICAL")
-						&& (!$scope.model.scopeCd
-								|| $scope.model.scopeCd=="")) {
+					|| $scope.model.scopeCd.toUpperCase()=="TECHNICAL")) {
 				$scope.isCategoryRequired = true;
 			}
 			else {

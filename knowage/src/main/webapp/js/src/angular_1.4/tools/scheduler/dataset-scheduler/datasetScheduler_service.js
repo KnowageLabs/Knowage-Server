@@ -24,8 +24,8 @@
 				   scheduler = schedul;
 			   }
 			   
-			   this.schedulDataset = function(id) {
-				   return sbiModule_restServices.promisePost('scheduleree/persistence/dataset/id', id);
+			   this.schedulDataset = function(dataset) {
+				   return sbiModule_restServices.promisePost('scheduleree/persistence/dataset/id', dataset.id, angular.toJson(dataset));
 			   }
 			   
 			   this.unschedulDataset = function(dataSet) {
