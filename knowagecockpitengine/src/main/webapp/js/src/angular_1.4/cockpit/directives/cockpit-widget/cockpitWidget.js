@@ -319,7 +319,7 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.showScreenshotButton = function(){
-		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection') return false;
+		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection' || $scope.ngModel.type =='document') return false;
 		if(typeof($scope.ngModel.style.showScreenshot) == 'undefined' ) {
 			return cockpitModule_template.configuration.showScreenshot;
 		}else return $scope.ngModel.style.showScreenshot;
