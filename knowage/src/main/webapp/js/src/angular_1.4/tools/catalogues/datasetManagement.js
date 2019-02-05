@@ -227,19 +227,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	// Setting for minutes for Scheduling
 	$scope.minutes = new Array(60);
 
-	// TODO:
+
 	$scope.minutesClearSelections = function() {
-		console.log("Clear minutes (TODO)");
-		$scope.minutesSelected = [];
+		$scope.scheduling.minutesSelected = [];
+		$scope.scheduling.minutesCustom = undefined;
 	}
 
 	// Setting for hours for Scheduling
 	$scope.hours = new Array(24);
 
-	// TODO:
+
 	$scope.hoursClearSelections = function() {
-		console.log("Clear hours (TODO)");
-		$scope.hoursSelected = [];
+		$scope.scheduling.hoursSelected = [];
+		$scope.scheduling.hoursCustom = undefined;
 	}
 
 	$scope.days = new Array();
@@ -255,10 +255,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateDays();
 
-	// TODO:
+
 	$scope.daysClearSelections = function() {
-		console.log("Clear days (TODO)");
-		$scope.daysSelected = [];
+		$scope.scheduling.daysSelected = [];
+		$scope.scheduling.daysCustom = undefined;
 	}
 
 	// Setting for month for Scheduling
@@ -283,10 +283,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateMonths();
 
-	// TODO:
+
 	$scope.monthsClearSelections = function() {
-		console.log("Clear months (TODO)");
-		$scope.monthsSelected = [];
+		$scope.scheduling.monthsSelected = [];
+		$scope.scheduling.monthsCustom = undefined;
 	}
 
 	// Setting for month for Scheduling
@@ -306,10 +306,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateWeekdays();
 
-	// TODO:
+
 	$scope.weekdaysClearSelections = function() {
-		console.log("Clear weekdays (TODO)");
-		$scope.weekdaysSelected = [];
+		$scope.scheduling.weekdaysSelected = [];
+		$scope.scheduling.weekdaysCustom = undefined;
 	}
 
 	// CKAN DATASET CONFIG
@@ -2571,6 +2571,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				indexOfExistingDSInAT = $scope.datasetsListTemp.length-1;
 			}
 
+			if (typeof $scope.selectedDataSet.startDate == 'string' || typeof $scope.selectedDataSet.endDate == 'string') {
+				$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
+				$scope.selectedDataSet.endDate = new Date($scope.selectedDataSet.endDate);
+			}
+			
 			/**
 			 * Reconfigure the start and end date by substracting the time difference for the data that will be stringified (since stringify() or
 			 * angular.toJson()), since this stringification introduces this time time offset. (danristo)
