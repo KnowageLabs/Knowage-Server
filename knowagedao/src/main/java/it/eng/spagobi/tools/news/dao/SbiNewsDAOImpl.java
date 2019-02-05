@@ -215,7 +215,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			newsForDelete = (SbiNews) query.uniqueResult();
 
 			session.delete(newsForDelete);
-			session.flush();
+			// session.flush();
 			transaction.commit();
 
 		} catch (HibernateException e) {
@@ -302,6 +302,9 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			if (aNews.getId() != null) {
 				hibNews.setId(aNews.getId());
 			}
+
+			aNews.setId(hibNews.getId());
+
 			updateSbiCommonInfo4Insert(hibNews);
 			session.saveOrUpdate(hibNews);
 
