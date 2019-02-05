@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.typeMapping = [{"id":1,"value":"News"},{"id":2,"value":"Notification"},{"id":3,"value":"Warning"}];
 	
 		$scope.columns = [
-			{"headerName":'Title',"field": 'title', "tooltipField":'title', "suppressMovable":true},
-			{"headerName":'Description',"field": 'description', "tooltipField":'description',"suppressMovable":true},
+			{"headerName":$scope.translate.load('sbi.news.title'),"field": 'title', "tooltipField":'title', "suppressMovable":true},
+			{"headerName":$scope.translate.load('sbi.news.description'),"field": 'description', "tooltipField":'description',"suppressMovable":true},
 			{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 				suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
 		]
@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.permissionGridOptions = {
 			angularCompileRows: true,
             onGridSizeChanged: resizeColumns,
-            columnDefs: [{"headerName":'Role',"field": 'name', "tooltipField":'name', filter: 'agTextColumnFilter'},{"headerName":'',"field": '', "tooltipField":'', cellRenderer:checkboxRenderer,width: 50}]
+            columnDefs: [{"headerName":$scope.translate.load('sbi.news.role'),"field": 'name', "tooltipField":'name', filter: 'agTextColumnFilter'},{"headerName":'',"field": '', "tooltipField":'', cellRenderer:checkboxRenderer,width: 50}]
 		}
 		
 		function buttonRenderer(params){
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.tempStatus = $scope.selectedNews.status == 1 ? true : false;
 				$scope.loading = false;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 				$scope.loading = false;
 			});
 		}
@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				else $scope.listGridOptions.api.setRowData(response.data);
 			}, function(response) {
 				$scope.listGridOptions.api.showNoRowsOverlay();
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 
 			});
 		}
@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			.then(function(response) {
 				$scope.rolesList = response.data;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 
 			});
 		}
@@ -149,9 +149,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.deleteRow = function(e, item){
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			sbiModule_restServices.promiseDelete("2.0", "news/" + item ).then(function(){
-				$scope.getNews();
-			})
+			
+			var confirm = $mdDialog.confirm()
+				.title($scope.translate.load('sbi.news.delete.title'))
+				.targetEvent(event)
+				.textContent($scope.translate.load('sbi.news.delete.text'))
+				.ok($scope.translate.load("sbi.general.yes"))
+				.cancel($scope.translate.load("sbi.general.No"));
+			
+			$mdDialog
+				.show(confirm)
+				.then(function(){
+					sbiModule_restServices.promiseDelete("2.0", "news/" + item ).then(function(){
+						$scope.getNews();
+						if(item == $scope.selectedNews.id) delete $scope.selectedNews;
+					})
+				},
+				function(){})
+			
 		}
 		
 		$scope.saveFunc = function(){
@@ -167,12 +182,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(response){
 					$scope.getNews();
 					if(!$scope.selectedNews.id) selectNews({id:response.data});
-					sbiModule_messaging.showSuccessMessage('The news has been saved', 'Success' ,5000);
+					sbiModule_messaging.showSuccessMessage($scope.translate.load('sbi.news.success.text'), $scope.translate.load('sbi.general.success') ,5000);
 				},function(response){
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 				})
 			}else{
-				sbiModule_messaging.showErrorMessage('Some required fields are missing', 'Error');
+				sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.news.error.missing'), $scope.translate.load('sbi.general.error'));
 			}
 		}
 
