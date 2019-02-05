@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
+<hibernate-mapping >
 	
 	<class name="it.eng.spagobi.tools.news.metadata.SbiNews" table="SBI_NEWS">
 	
@@ -65,7 +65,7 @@
 	        
 		</component>
 		
-		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="false" lazy="true" fetch="select" cascade="all">
+		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="false" lazy="true" fetch="select" cascade="none">
 			<key>
 				<column name="NEWS_ID" not-null="true"></column>
 			</key>
