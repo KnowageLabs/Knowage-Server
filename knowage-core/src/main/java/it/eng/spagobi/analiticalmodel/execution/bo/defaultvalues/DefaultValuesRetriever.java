@@ -28,7 +28,9 @@ import org.apache.log4j.Logger;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.AbstractBIResourceRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
@@ -37,6 +39,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -137,22 +140,26 @@ public class DefaultValuesRetriever {
 	 * GET DEFAULT VALUE FROM DOCUMENT_URL_MANAGER
 	 */
 
-	public DefaultValuesList getDefaultValuesDum(AbstractDriver analyticalDocumentParameter, IDrivableBIResource object, IEngUserProfile profile, Locale locale,
-			String role) {
+	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile, Locale locale, String role) {
 		logger.debug("IN");
-		DocumentRuntime dum = new DocumentRuntime(profile, locale);
+		AbstractBIResourceRuntime dum = null;
+		if (object instanceof BIObject) {
+			dum = new DocumentRuntime(profile, locale);
+		} else if (object instanceof MetaModel) {
+			dum = new BusinessModelRuntime(profile, locale);
+		}
 		DefaultValuesList defaultValues = null;
 		try {
-			ILovDetail lovForDefault = dum.getLovDetailForDefault(analyticalDocumentParameter);
+			ILovDetail lovForDefault = dum.getLovDetailForDefault(driver);
 			if (lovForDefault != null) {
 				logger.debug("A LOV for default values is defined : " + lovForDefault);
 				defaultValues = getDefaultValuesFromDefaultLovDum(object, profile, lovForDefault, locale);
 			} else {
 				logger.debug("No LOV for default values defined");
-				String formulaForDefault = analyticalDocumentParameter.getParameter().getDefaultFormula();
+				String formulaForDefault = driver.getParameter().getDefaultFormula();
 				if (formulaForDefault != null) {
 					IDefaultFormulaDum defaultFormulaDum = DefaultFormulasDum.get(formulaForDefault);
-					defaultValues = defaultFormulaDum.getDefaultValues(analyticalDocumentParameter, dum, profile, object, locale, role);
+					defaultValues = defaultFormulaDum.getDefaultValues(driver, dum, profile, object, locale, role);
 				}
 			}
 		} catch (Exception e) {
@@ -191,8 +198,8 @@ public class DefaultValuesRetriever {
 		return defaultValues;
 	}
 
-	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile, IDrivableBIResource object,
-			Locale locale, String role) {
+	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile,
+			IDrivableBIResource object, Locale locale, String role) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = dum.getLovDetail(biparam);
