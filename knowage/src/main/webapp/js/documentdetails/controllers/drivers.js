@@ -54,7 +54,7 @@ angular
             	 }
              }else {
 
-            	 if(self.driverRelatedObject.engine){self.drivers = driversService.driversOnObject; self.driversNum = self.drivers.length > 1;}
+            	 if(self.driverRelatedObject.engine){ self.drivers =self.driverRelatedObject.drivers; self.driversNum = self.drivers.length > 1;}
             	 else{
             		  requiredPath = "2.0/businessmodels";
             		  self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
