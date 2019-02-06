@@ -244,18 +244,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	// Setting for minutes for Scheduling
 	$scope.minutes = new Array(60);
 
+	// TODO:
 	$scope.minutesClearSelections = function() {
-		$scope.scheduling.minutesSelected = [];
-		$scope.scheduling.minutesCustom = undefined;
+		console.log("Clear minutes (TODO)");
+		$scope.minutesSelected = [];
 	}
 
 	// Setting for hours for Scheduling
 	$scope.hours = new Array(24);
 
-	
+	// TODO:
 	$scope.hoursClearSelections = function() {
-		$scope.scheduling.hoursSelected = [];
-		$scope.scheduling.hoursCustom = undefined;
+		console.log("Clear hours (TODO)");
+		$scope.hoursSelected = [];
 	}
 
 	$scope.days = new Array();
@@ -271,10 +272,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateDays();
 
-	
+	// TODO:
 	$scope.daysClearSelections = function() {
-		$scope.scheduling.daysSelected = [];
-		$scope.scheduling.daysCustom = undefined;
+		console.log("Clear days (TODO)");
+		$scope.daysSelected = [];
 	}
 
 	// Setting for month for Scheduling
@@ -299,10 +300,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateMonths();
 
-
+	// TODO:
 	$scope.monthsClearSelections = function() {
-		$scope.scheduling.monthsSelected = [];
-		$scope.scheduling.monthsCustom = undefined;
+		console.log("Clear months (TODO)");
+		$scope.monthsSelected = [];
 	}
 
 	// Setting for month for Scheduling
@@ -322,10 +323,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	populateWeekdays();
 
-
+	// TODO:
 	$scope.weekdaysClearSelections = function() {
-		$scope.scheduling.weekdaysSelected = [];
-		$scope.scheduling.weekdaysCustom = undefined;
+		console.log("Clear weekdays (TODO)");
+		$scope.weekdaysSelected = [];
 	}
 
 	// CKAN DATASET CONFIG
@@ -1029,7 +1030,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.customAttributes = [];
     }
 
-    var oldValue = "";
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber, columnsSearch, columnOrdering, reverseOrdering) {
     	$scope.reverseOrdering = reverseOrdering;
     	$scope.columnOrdering = columnOrdering;
@@ -1055,7 +1055,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
     	$scope.currentItemsPerPage = itemsPerPage;
-    	//if($scope.currentPageNumber != currentPageNumber){
+    	if($scope.currentPageNumber != currentPageNumber){
 	    	$scope.currentPageNumber = currentPageNumber;
 	    	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
 	    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
@@ -1094,7 +1094,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 	    		});
 			}
-    //	}
+    	}
 	}
 
 	/*
@@ -2607,12 +2607,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			else {
 				indexOfExistingDSInAT = $scope.datasetsListTemp.length-1;
 			}
-			
-			if (typeof $scope.selectedDataSet.startDate == 'string' || typeof $scope.selectedDataSet.endDate == 'string') {
-				$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
-				$scope.selectedDataSet.endDate = new Date($scope.selectedDataSet.endDate);
-			}
-			
+
 			/**
 			 * Reconfigure the start and end date by substracting the time difference for the data that will be stringified (since stringify() or
 			 * angular.toJson()), since this stringification introduces this time time offset. (danristo)
