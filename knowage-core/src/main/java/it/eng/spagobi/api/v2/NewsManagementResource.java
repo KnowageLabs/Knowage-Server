@@ -41,7 +41,8 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.news.bo.News;
+import it.eng.spagobi.tools.news.bo.AdvancedNews;
+import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.manager.INewsManager;
 import it.eng.spagobi.tools.news.manager.NewsManagerTechImpl;
@@ -73,12 +74,12 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 				newsMan = new NewsManagerUserImpl();
 			}
 
-			List<News> allNews = newsMan.getAllNews(profile);
+			List<BasicNews> allNews = newsMan.getAllNews(profile);
 			JSONArray jsonArray = new JSONArray();
 
 			for (int i = 0; i < allNews.size(); i++) {
 				JSONObject jsonObject = new JSONObject();
-				News news = allNews.get(i);
+				BasicNews news = allNews.get(i);
 
 				jsonObject.put("id", news.getId());
 				jsonObject.put("title", news.getTitle());
@@ -111,7 +112,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			UserProfile profile = getUserProfile();
 			sbiNewsDAO = DAOFactory.getSbiNewsDAO();
 			sbiNewsDAO.setUserProfile(profile);
-			News news = sbiNewsDAO.getNewsById(id);
+			BasicNews news = sbiNewsDAO.getNewsById(id);
 
 			return Response.ok(news).build();
 
@@ -138,8 +139,8 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			newsDao.setUserProfile(getUserProfile());
 
-			News news = new News();
-			news.setDescription(requestBodyJSON.getString("description"));
+			AdvancedNews advancedNews = new AdvancedNews();
+			advancedNews.setDescription(requestBodyJSON.getString("description"));
 
 			Set<Role> listRoles = new HashSet<>();
 
@@ -153,24 +154,24 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 					listRoles.add(r);
 				}
 
-				news.setRoles(listRoles);
+				advancedNews.setRoles(listRoles);
 			}
 
-			news.setTitle(requestBodyJSON.getString("title"));
-			news.setStatus(requestBodyJSON.optString("active"));
-			news.setType(requestBodyJSON.optInt("type"));
-			news.setHtml(requestBodyJSON.optString("html"));
-			news.setId(!requestBodyJSON.optString("id").equals("") ? requestBodyJSON.optInt("id") : null);
+			advancedNews.setTitle(requestBodyJSON.getString("title"));
+			advancedNews.setActive(requestBodyJSON.optBoolean("active"));
+			advancedNews.setType(requestBodyJSON.optInt("type"));
+			advancedNews.setHtml(requestBodyJSON.optString("html"));
+			advancedNews.setId(!requestBodyJSON.optString("id").equals("") ? requestBodyJSON.optInt("id") : null);
 
 			if (requestBodyJSON.optLong("expirationDate") != 0) {
 				long miliSec = requestBodyJSON.optLong("expirationDate");
 				Date result = new Date(miliSec);
-				news.setExpirationDate(result);
+				advancedNews.setExpirationDate(result);
 			}
 
-			news = newsDao.saveNews(news);
+			advancedNews = newsDao.saveNews(advancedNews);
 
-			return Response.ok(news.getId()).build();
+			return Response.ok(advancedNews.getId()).build();
 
 		} catch (Exception e) {
 			logger.error("Error while posting news");

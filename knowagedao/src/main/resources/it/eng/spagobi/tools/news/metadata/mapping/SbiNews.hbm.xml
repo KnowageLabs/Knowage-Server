@@ -23,13 +23,6 @@
 		<property name="expirationDate" type="timestamp" column="EXPIRATION_DATE"></property>
 		<property name="categoryId" type="int" column="CATEGORY_ID"></property>
 		
-		<property name="priority" column="PRIORITY">
-			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">it.eng.spagobi.tools.news.metadata.NewsPriority</param>
-				<param name="useNamed">true</param>
-			</type>
-		</property>
-		
 		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 			
 			<property name="userIn" type="string">

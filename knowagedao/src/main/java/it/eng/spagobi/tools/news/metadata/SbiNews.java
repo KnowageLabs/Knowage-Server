@@ -37,7 +37,6 @@ public class SbiNews extends SbiHibernateModel {
 	private String description;
 	private boolean active;
 	private String news;
-	private NewsPriority priority;
 	private boolean manual;
 	private Date expirationDate;
 	private Integer categoryId;
@@ -99,14 +98,6 @@ public class SbiNews extends SbiHibernateModel {
 
 	public void setNews(String news) {
 		this.news = news;
-	}
-
-	public NewsPriority getPriority() {
-		return priority;
-	}
-
-	public void setPriority(NewsPriority priority) {
-		this.priority = priority;
 	}
 
 	public boolean isManual() {

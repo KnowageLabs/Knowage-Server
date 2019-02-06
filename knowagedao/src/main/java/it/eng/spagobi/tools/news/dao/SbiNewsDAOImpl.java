@@ -36,7 +36,8 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.tools.news.bo.News;
+import it.eng.spagobi.tools.news.bo.AdvancedNews;
+import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -62,7 +63,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			while (iterator.hasNext()) {
 				SbiNews hibNews = (SbiNews) iterator.next();
 				if (hibNews != null) {
-					News news = toBasicNews(hibNews);
+					BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription()); // KONST 3
 					listOfNews.add(news);
 				}
 			}
@@ -81,10 +82,10 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public News getNewsById(Integer id) {
+	public BasicNews getNewsById(Integer id) {
 		SbiNews sbiNews = null;
 		logger.debug("IN");
-		News newsToReturn = null;
+		BasicNews newsToReturn = null;
 		Session session = null;
 		Transaction transaction = null;
 
@@ -121,9 +122,9 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public News toBasicNews(SbiNews hibNews) {
+	public BasicNews toBasicNews(SbiNews hibNews) {
 
-		News news = new News();
+		BasicNews news = new BasicNews();
 		news.setId(hibNews.getId());
 		news.setTitle(hibNews.getName());
 		news.setDescription(hibNews.getDescription());
@@ -131,11 +132,11 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		return news;
 	}
 
-	private News toAdvancedNews(SbiNews hibNews) {
+	private AdvancedNews toAdvancedNews(SbiNews hibNews) {
 
 		logger.debug("IN");
 
-		News news = new News();
+		AdvancedNews news = new AdvancedNews();
 		news.setId(hibNews.getId());
 		news.setTitle(hibNews.getName());
 		news.setDescription(hibNews.getDescription());
@@ -237,7 +238,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public News saveNews(News aNews) {
+	public AdvancedNews saveNews(AdvancedNews aNews) {
 
 		Session session = null;
 		Transaction transaction = null;
@@ -251,7 +252,6 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			hibNews.setName(aNews.getTitle());
 			hibNews.setDescription(aNews.getDescription());
 			hibNews.setNews(aNews.getHtml());
-			hibNews.setPriority(null);
 			hibNews.setExpirationDate(aNews.getExpirationDate());
 			hibNews.setCategoryId(aNews.getType());
 			Set roles = aNews.getRoles();

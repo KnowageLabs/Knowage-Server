@@ -11,7 +11,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.tools.news.bo.News;
+import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -19,7 +19,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class NewsManagerUserImpl implements INewsManager {
 
 	@Override
-	public List<News> getAllNews(UserProfile userProf) {
+	public List<BasicNews> getAllNews(UserProfile userProf) {
 		try {
 			List listOfRoles = (List) userProf.getRoles();
 			IRoleDAO roleDao = DAOFactory.getRoleDAO();
@@ -31,19 +31,21 @@ public class NewsManagerUserImpl implements INewsManager {
 			for (int i = 0; i < listOfRoles.size(); i++) {
 				Role role = roleDao.loadByName((String) listOfRoles.get(i));
 				SbiExtRoles extRoles = roleDao.loadSbiExtRoleById(role.getId());
-				Set setOfRoles = extRoles.getSbiNewsRoles();
+				Set setOfNews = extRoles.getSbiNewsRoles();
 
-				tmpSet.addAll(setOfRoles);
+				tmpSet.addAll(setOfNews);
 
 			}
 			Iterator<SbiNews> iterator = tmpSet.iterator();
 			while (iterator.hasNext()) {
 				SbiNews sbiNews = iterator.next();
-				News bussinesNews;
+				BasicNews bussinesNews;
 				try {
 					bussinesNews = newsDao.toBasicNews(sbiNews);
+					// get for sbiNewsRead by sbiNeswId by user
+					// bussinesNews.setType(sbiNews.getCategoryId());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+
 					throw new SpagoBIRuntimeException(e.getMessage(), e);
 				}
 				listOfNews.add(bussinesNews);

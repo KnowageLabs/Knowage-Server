@@ -4,7 +4,7 @@ import java.util.List;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.news.bo.News;
+import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 
 public class NewsManagerTechImpl implements INewsManager {
@@ -15,7 +15,7 @@ public class NewsManagerTechImpl implements INewsManager {
 		ISbiNewsDAO dao = DAOFactory.getSbiNewsDAO();
 		dao.setUserProfile(userProf);
 
-		List<News> allNews = dao.getAllNews();
+		List<BasicNews> allNews = dao.getAllNews();
 
 		return allNews;
 

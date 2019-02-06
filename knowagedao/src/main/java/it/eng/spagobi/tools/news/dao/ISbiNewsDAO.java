@@ -21,7 +21,8 @@ package it.eng.spagobi.tools.news.dao;
 import java.util.List;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.news.bo.News;
+import it.eng.spagobi.tools.news.bo.AdvancedNews;
+import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 
 public interface ISbiNewsDAO extends ISpagoBIDao {
@@ -32,10 +33,10 @@ public interface ISbiNewsDAO extends ISpagoBIDao {
 
 	public void createOrUpdate(SbiNews sbiNews);
 
-	public News saveNews(News aNews);
+	public AdvancedNews saveNews(AdvancedNews aNews);
 
-	public News toBasicNews(SbiNews aNews);
+	public BasicNews toBasicNews(SbiNews aNews);
 
-	public News getNewsById(Integer id);
+	public BasicNews getNewsById(Integer id);
 
 }
