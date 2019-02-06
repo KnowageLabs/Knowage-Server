@@ -38,6 +38,12 @@ Sbi.sdk.apply(Sbi.sdk.services, {
             name: 'LOGIN_ACTION_WEB',
             baseParams: {NEW_SESSION: 'TRUE'}
         };
+        
+        this.services.authenticateByToken = {
+			type: 'ACTION',
+	        name: 'LOGIN_ACTION_BY_TOKEN',
+	        baseParams: {NEW_SESSION: 'TRUE'}
+        };
 
         this.services.execute = {
             type: 'ACTION',

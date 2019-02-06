@@ -130,6 +130,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
 		logger.debug("userId: " + userId);
 		SpagoBIUserProfile profile = null;
+
 		try {
 
 			// check if user is public then create public profile
@@ -200,6 +201,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 			logger.error(e.getMessage(), e);
 			return null;
 		}
+
 		logger.debug("OUT");
 		return profile;
 
@@ -207,7 +209,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationToken(String token) {
-		return null;
+		return this.createUserProfile(token);
 	}
 
 }
