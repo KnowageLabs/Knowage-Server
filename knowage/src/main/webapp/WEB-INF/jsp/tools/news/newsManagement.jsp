@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="kn-news-management" ng-app="newsManagement" id="ng-app">
 	<angular-list-detail ng-controller="newsManagementController" full-screen="false" ng-cloak>
        	<list label="'News Management'" new-function="newNews">
-			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
+			<div ag-grid="listGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-hide-outline" style="padding:8px;width:100%;height:calc(100% - 32px);"></div>
 		</list>
         <detail label="'News Detail'" save-function="saveFunc">
         	<form name="newsForm">
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</div>
 					</div>
 					<md-card ng-show="selectedNews">
-						<md-subheader class="switchSubheader"><span>{{::translate.load('sbi.news.settings')}}</span><span flex></span><md-switch ng-model="tempStatus">{{::translate.load('sbi.news.active')}}</md-switch></md-subheader>
+						<md-subheader class="switchSubheader"><span>{{::translate.load('sbi.news.settings')}}</span><span flex></span><md-switch ng-model="selectedNews.active">{{::translate.load('sbi.news.active')}}</md-switch></md-subheader>
 						<md-card-content>
 							<div layout="row">
 								<md-input-container flex="50">
@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-card ng-show="selectedNews">
 						<md-subheader>{{::translate.load('sbi.news.roles')}}</md-subheader>
 						<md-card-content>
-							<div ag-grid="permissionGridOptions" class="ag-theme-balham" style="width:100%;height:200px;"></div>
+							<div ag-grid="permissionGridOptions" class="ag-theme-balham ag-hide-selection ag-hide-outline" style="width:100%;height:200px;"></div>
 						</md-card-content>
 					</md-card>
 				</div>

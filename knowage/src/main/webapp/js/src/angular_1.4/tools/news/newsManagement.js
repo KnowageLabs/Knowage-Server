@@ -54,9 +54,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.permissionGridOptions = {
-			angularCompileRows: true,
             onGridSizeChanged: resizeColumns,
-            columnDefs: [{"headerName":$scope.translate.load('sbi.news.role'),"field": 'name', "tooltipField":'name', filter: 'agTextColumnFilter'},{"headerName":'',"field": '', "tooltipField":'', cellRenderer:checkboxRenderer,width: 50}]
+            rowSelection: 'multiple',
+            rowMultiSelectWithClick: true,
+            columnDefs: [{"headerName":$scope.translate.load('sbi.news.role'),"field": 'name', "tooltipField":'name', filter: 'agTextColumnFilter'},
+            	{"headerName":'',"field": '', "tooltipField":'',width: 50,headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: false,checkboxSelection: true}]
 		}
 		
 		function buttonRenderer(params){
@@ -71,10 +73,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			grid.api.sizeColumnsToFit();
 		}
 		
-		function checkboxRenderer(params){
-			return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;"><input type="checkbox" ng-model="tempPermissions['+params.rowIndex+'].active"/></div>';
-		}
-		
 		function selectNews(params){
 			$scope.loading = true;
 			sbiModule_restServices.promiseGet("2.0", "news/" + (params.id || $scope.listGridOptions.api.getSelectedRows()[0].id))
@@ -82,7 +80,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.selectedNews = response.data;
 				$scope.remapRoles();
 				$scope.tempExpirationDate = new Date($scope.selectedNews.expirationDate);
-				$scope.tempStatus = $scope.selectedNews.status == 1 ? true : false;
 				$scope.loading = false;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
@@ -91,15 +88,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.remapRoles = function(){
-			$scope.tempPermissions = angular.copy($scope.rolesList);
-			for(var r in $scope.tempPermissions){
-				for(var k in $scope.selectedNews.roles){
-					if($scope.selectedNews.roles[k].id == $scope.tempPermissions[r].id){
-						$scope.tempPermissions[r].active = true;
+			var tempSelectedRoles = angular.copy($scope.selectedNews.roles);
+			$scope.permissionGridOptions.api.setRowData($scope.rolesList);
+			$scope.permissionGridOptions.api.forEachNode( function(rowNode, index) {
+				for(var r in tempSelectedRoles){
+					if(rowNode.data.id == tempSelectedRoles[r].id){
+						rowNode.setSelected(true);
+						continue;
 					}
-				}
-			}
-			$scope.permissionGridOptions.api.setRowData($scope.tempPermissions);
+				}			    
+			});
 		}
 
 		$scope.wysiwygOptions = {
@@ -126,11 +124,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_restServices.promiseGet("2.0", "news")
 			.then(function(response) {
 				if(response.data.length == 0) $scope.listGridOptions.api.showNoRowsOverlay();
-				else $scope.listGridOptions.api.setRowData(response.data);
+				$scope.listGridOptions.api.setRowData(response.data);
 			}, function(response) {
 				$scope.listGridOptions.api.showNoRowsOverlay();
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
-
 			});
 		}
 		$scope.getNews();
@@ -161,8 +158,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				.show(confirm)
 				.then(function(){
 					sbiModule_restServices.promiseDelete("2.0", "news/" + item ).then(function(){
-						$scope.getNews();
 						if(item == $scope.selectedNews.id) delete $scope.selectedNews;
+						$scope.getNews();
 					})
 				},
 				function(){})
@@ -173,12 +170,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.newsForm.$valid){
 				$scope.selectedNews.roles = [];
 				$scope.selectedNews.expirationDate = moment($scope.tempExpirationDate).valueOf();
-				for(var r in $scope.tempPermissions){
-					if($scope.tempPermissions[r].active) {
-						$scope.selectedNews.roles.push({'id': $scope.tempPermissions[r].id,'name': $scope.tempPermissions[r].name});
-					}
+				var tempPermissions = $scope.permissionGridOptions.api.getSelectedRows();
+				for(var r in tempPermissions){
+					$scope.selectedNews.roles.push({'id': tempPermissions[r].id,'name': tempPermissions[r].name});
 				}
-				$scope.selectedNews.status = $scope.tempStatus ? 2 : 1;
 				sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function(response){
 					$scope.getNews();
 					if(!$scope.selectedNews.id) selectNews({id:response.data});

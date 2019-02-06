@@ -1,3 +1,4 @@
+$aggrid-border-color: #d9dcde;
 .ag-theme-balham {
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.ag-header {
@@ -11,6 +12,18 @@
 			min-height: 24px;
 			line-height: 24px;
 			padding: 0;
+		}
+	}
+	&.ag-hide-selection {
+		.ag-row-selected {
+			border-bottom-color: $aggrid-border-color;
+			background-color: initial;
+		}
+	}
+	&.ag-hide-outline {
+		.ag-cell-focus{
+			border: 1px solid transparent;
+			outline: none;
 		}
 	}
 	&.ag-theme-knowage {
