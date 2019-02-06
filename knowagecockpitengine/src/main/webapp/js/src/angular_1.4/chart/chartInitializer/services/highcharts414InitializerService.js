@@ -107,18 +107,18 @@ angular.module('chartInitializer')
 
 					if(chartConf.yAxis[i].min){
 						if(chartConf.yAxis[i].min > finalMin)
-						chartConf.yAxis[i].min =  finalMin*0.5;
+							chartConf.yAxis[i].min =  finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
 					} else {
-						chartConf.yAxis[i].min = finalMin*0.5;
+						chartConf.yAxis[i].min = finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
 					}
 					if(chartConf.yAxis[i].max){
 						if(chartConf.yAxis[i].max < finalMax)
-						chartConf.yAxis[i].max = finalMax*1.1;
+						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 					} else {
-						chartConf.yAxis[i].max = finalMax*1.1;
+						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 					}
 
-					infoFroDrill.push({"min":finalMin*0.5,"max":finalMax *1.1,"plotBands":plotBands,"plotLines":plotLines})
+					infoFroDrill.push({"min":finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5,"max":finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9,"plotBands":plotBands,"plotLines":plotLines})
 				}
 				isBasic = true;
 			}
@@ -520,7 +520,7 @@ angular.module('chartInitializer')
 							var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
 							var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
 
-							storeMinAndMax[series.name]={min:minDrill*0.5,max:maxDrill*1.1}
+							storeMinAndMax[series.name]={min:minDrill>=0 ? minDrill * 0.5 : minDrill * 1.5,max:maxDrill>=0 ? maxDrill * 1.1 : maxDrill * 0.9}
 							setTimeout(function () {
 		                        chart.yAxis[indexOfAxis].update({
 		                            max: maxDrill*1.1,
