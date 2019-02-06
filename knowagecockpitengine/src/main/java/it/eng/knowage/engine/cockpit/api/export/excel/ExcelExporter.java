@@ -294,20 +294,25 @@ public class ExcelExporter {
 					Object value = rowObject.get(colIndex);
 
 					if (value != null) {
+						String s = value.toString();
 						switch (type) {
 						case "string":
-							cell.setCellValue(value.toString());
+							cell.setCellValue(s);
 							break;
 						case "int":
-							cell.setCellValue(Double.parseDouble(value.toString()));
+							if(!s.trim().isEmpty()) {
+								cell.setCellValue(Double.parseDouble(s));
+							}
 							cell.setCellStyle(intCellStyle);
 							break;
 						case "float":
-							cell.setCellValue(Double.parseDouble(value.toString()));
+							if(!s.trim().isEmpty()) {
+								cell.setCellValue(Double.parseDouble(s));
+							}
 							cell.setCellStyle(floatCellStyle);
 							break;
 						default:
-							cell.setCellValue(value.toString());
+							cell.setCellValue(s);
 							break;
 						}
 					}
