@@ -108,6 +108,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 		}
+		
+		doLoginByToken = function() {
+			var tokenEl = document.getElementById('token');
+			var token = tokenEl.value;
+			
+			/*
+		    * the callback invoked uppon request termination
+		    *
+			* @param xhr the XMLHttpRequest object
+		    */
+			var cb = function(result, args, success) {
+		        
+				if(success === true) {
+					var authenticationEl =  document.getElementById('authentication');
+					var examplesEl =  document.getElementById('examples');
+					authenticationEl.style.display = "none";
+					examplesEl.style.display = "inline";
+				} else {
+					alert('ERROR: Wrong token');
+				}
+		    };
+						
+			Sbi.sdk.api.authenticateByToken({
+				params: {
+					token: token
+				}
+				, callback: {
+					fn: cb
+					, scope: this
+					//, args: {arg1: 'A', arg2: 'B', ...}
+				}
+		    });
+		}
 	</script>
 </head>
 
@@ -123,6 +156,14 @@ Name: <input type="text" id='user' name="user" size="30" value="biuser"/><br/>
 Password: <input type="password" id="password" name="password" size="30" value="biuser"/><br/>
 <input type="button" value="Login" onclick="javascript:doLogin()"/>
 </form>
+<br/>
+<br/>
+<span><b>Login in Knowage using JWT token.</b></span>
+<form id="authenticationFormByToken">
+JWT token: <input type="text" id="token" name="token" size="110"/><br/>
+<input type="button" value="Login" onclick="javascript:doLoginByToken()"/>
+</form>
+<br/>
 </div>
 
 <div id="examples" style="display:none">

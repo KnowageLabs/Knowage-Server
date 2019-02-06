@@ -91,6 +91,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	, callbackOk: cb
 		    })
 		}
+		
+		doLoginByToken = function() {
+			var tokenEl = document.getElementById('token');
+			var token = tokenEl.value;
+			
+			/*
+		    * the callback invoked uppon request termination
+		    *
+			* @param xhr the XMLHttpRequest object
+		    */
+			var cb = function(xhr) {
+		    	var description = document.getElementById('introduction');
+				var authenticationEl =  document.getElementById('authentication');
+				var examplesEl =  document.getElementById('examples');
+				authenticationEl.style.display = "none";
+				description.style.display = "none";
+				examplesEl.style.display = "inline";
+			};
+						
+			Sbi.sdk.cors.api.authenticateByToken({
+				token: 'token=' + token
+		    	, headers: [{
+		    		name: 'Content-Type',
+		    		value: 'application/x-www-form-urlencoded'
+		    	}]
+		    	, callbackOk: cb
+		    });
+		}
 	</script>
 </head>
 
@@ -120,8 +148,13 @@ Password: <input type="password" id="password" name="password" size="30" value="
 </form>
 <br/>
 <br/>
+<span><b>Login in Knowage using JWT token.</b></span>
+<form id="authenticationFormByToken">
+JWT token: <input type="text" id="token" name="token" size="110"/><br/>
+<input type="button" value="Login" onclick="javascript:doLoginByToken()"/>
+</form>
+<br/>
 </div>
-
 
 <div id="examples" style="display:none">
 <b>Examples without Basic Authentication</b>

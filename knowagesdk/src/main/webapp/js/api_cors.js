@@ -48,6 +48,18 @@ Sbi.sdk.apply(Sbi.sdk.cors.api, {
 			body: config.credentials
 		});
 	}
+	
+	, authenticateByToken: function(config) {
+		var serviceUrl = Sbi.sdk.services.getServiceUrl('authenticateByToken', config.params);
+		Sbi.sdk.cors.asyncRequest({
+			method: 'POST',
+			url: serviceUrl,
+			headers: config.headers,
+			callbackOk: config.callbackOk,
+			callbackError: config.callbackError,
+			body: config.token
+		});
+	}
 
 	/**
 	 * It returns the list of datasets. This time config contains two callback functions: callbackOk and callbackError. This is because with CORS it is possible to know when the server returns an error, so we can define the behavior to have if there is an error. However, it is not mandatory to specify the callbackError function: there is a default one that create a pop up with status code and text describing the error.

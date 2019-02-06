@@ -23,6 +23,12 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback.fn, config.callback.scope, config.callback.args);
 	}
 
+	, authenticateByToken: function(config) {
+		var serviceUrl = Sbi.sdk.services.getServiceUrl('authenticateByToken', config.params);
+		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback.fn, config.callback.scope, config.callback.args);
+	}
+
+
 	/**
 	 * This callback is called a response is returned by the server.
 	 * @callback ResponseCallback
