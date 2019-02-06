@@ -41,7 +41,6 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
@@ -263,13 +262,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			}
 			Set<IModelEntity> unjoinedEntities = getUnjoinedRootEntities(rootEntityAlias);
 
-			SqlFilterModelAccessModality sqlFilterModality = new SqlFilterModelAccessModality();
-			unjoinedEntities.addAll(sqlFilterModality.getSqlFilterEntities(query, parentStatement.getDataSource()));
-
 			if (unjoinedEntities.size() > 1) {
-
-				queryGraph = sqlFilterModality.setGraphWithSqlQueryEntities(unjoinedEntities, parentStatement);
-				query.setQueryGraph(queryGraph);
 
 				if (queryGraph == null) {
 					logger.debug("NO GRAPH FOUND IN THE QUERY. creating a default one");
@@ -429,7 +422,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 		return whereClause;
 	}
 
-	private Set<IModelEntity> getUnjoinedRootEntities(Map entityAliases) {
+	public Set<IModelEntity> getUnjoinedRootEntities(Map entityAliases) {
 
 		Set<IModelEntity> unjoinedEntities = new HashSet();
 

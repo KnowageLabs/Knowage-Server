@@ -18,6 +18,7 @@
 package it.eng.qbe.statement;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,8 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.graph.GraphUtilities;
+import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
+import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -65,8 +67,7 @@ public abstract class AbstractStatement implements IStatement {
 	/**
 	 * Instantiates a new basic statement.
 	 *
-	 * @param dataMartModel
-	 *            the data mart model
+	 * @param dataMartModel the data mart model
 	 */
 	protected AbstractStatement(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -75,10 +76,8 @@ public abstract class AbstractStatement implements IStatement {
 	/**
 	 * Create a new statement from query bound to the specific datamart-model
 	 *
-	 * @param dataMartModel
-	 *            the data mart model
-	 * @param query
-	 *            the query
+	 * @param dataMartModel the data mart model
+	 * @param query         the query
 	 */
 	protected AbstractStatement(IDataSource dataSource, Query query) {
 		this.dataSource = dataSource;
@@ -89,10 +88,39 @@ public abstract class AbstractStatement implements IStatement {
 	private void updateQueryQraph() {
 
 		QueryGraph queryGraph = null;
-		queryGraph = GraphUtilities.getCoverGraph(dataSource, query);
+		HashSet<IModelEntity> modifiableEntities;
+
+		modifiableEntities = getEntites();
+
+		queryGraph = updateQueryGraphWithSqlFilter(modifiableEntities);
 
 		this.query.setQueryGraph(queryGraph);
 
+	}
+
+	/**
+	 * @param modifiableEntities
+	 * @return
+	 */
+	private QueryGraph updateQueryGraphWithSqlFilter(HashSet<IModelEntity> modifiableEntities) {
+		QueryGraph queryGraph;
+		SqlFilterModelAccessModality sqlFilterModality = new SqlFilterModelAccessModality();
+		modifiableEntities.addAll(sqlFilterModality.getSqlFilterEntities(dataSource, modifiableEntities));
+		queryGraph = sqlFilterModality.setGraphWithSqlQueryEntities(modifiableEntities, this);
+		return queryGraph;
+	}
+
+	/**
+	 * @return
+	 */
+	private HashSet<IModelEntity> getEntites() {
+		HashSet<IModelEntity> modifiableEntities;
+		if (GraphManager.getGraphEntities(dataSource, query).size() > 0) {
+			modifiableEntities = new HashSet<IModelEntity>(GraphManager.getGraphEntities(dataSource, query));
+		} else {
+			modifiableEntities = new HashSet<IModelEntity>(query.getQueryEntities(dataSource));
+		}
+		return modifiableEntities;
 	}
 
 	@Override

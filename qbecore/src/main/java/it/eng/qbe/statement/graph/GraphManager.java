@@ -116,10 +116,8 @@ public class GraphManager {
 	/**
 	 * If the query graph contains only the selected entities return true
 	 *
-	 * @param modelEntities
-	 *            the collection of the entities involved in the query
-	 * @param queryGraph
-	 *            the query graph
+	 * @param modelEntities the collection of the entities involved in the query
+	 * @param queryGraph    the query graph
 	 * @return
 	 */
 	public static boolean isDirectlyExecutable(Collection<IModelEntity> modelEntities, QueryGraph queryGraph) {
@@ -135,7 +133,7 @@ public class GraphManager {
 	public static List<String> getQueryEntitiesUniqueNames(IDataSource dataSource, Query query) {
 
 		List<String> entityUniqueNames = new ArrayList<>();
-		Set<IModelEntity> entities = getQueryEntities(dataSource, query);
+		Set<IModelEntity> entities = getGraphEntities(dataSource, query);
 		Iterator<IModelEntity> it = entities.iterator();
 
 		while (it.hasNext()) {
@@ -147,7 +145,7 @@ public class GraphManager {
 
 	}
 
-	public static Set<IModelEntity> getQueryEntities(IDataSource dataSource, Query query) {
+	public static Set<IModelEntity> getGraphEntities(IDataSource dataSource, Query query) {
 		QueryGraph queryGraph = null;
 		queryGraph = GraphUtilities.getCoverGraph(dataSource, query);
 		return queryGraph.vertexSet();

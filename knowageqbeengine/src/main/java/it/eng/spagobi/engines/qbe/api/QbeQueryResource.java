@@ -209,7 +209,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		logger.debug("IN");
 
 		Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getEngineInstance().getDataSource());
-		Set<IModelEntity> modelEntities = GraphManager.getQueryEntities(getEngineInstance().getDataSource(), filteredQuery);
+		Set<IModelEntity> modelEntities = GraphManager.getGraphEntities(getEngineInstance().getDataSource(), filteredQuery);
 		try {
 
 			String modelName = getEngineInstance().getDataSource().getConfiguration().getModelName();
