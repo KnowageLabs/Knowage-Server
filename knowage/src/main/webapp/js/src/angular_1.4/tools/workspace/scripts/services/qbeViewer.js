@@ -143,7 +143,7 @@ angular
 						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
 						position: $mdPanel.newPanelPosition().absolute().center(),
 						fullscreen: true,
-						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
+						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
 							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
 
 							$scope.closePanel = function(){
@@ -157,33 +157,44 @@ angular
 								datasetSave_service.persistDataSet($scope.model.selectedDataSet)
 												.then(function(response){
 													var dsId = response.data.id;
-
+													if (savedFromQbe)
+														$scope.model.selectedDataSet.id = dsId;
+													
 													if ($scope.model.selectedDataSet.isScheduled) {
-														if (!$scope.model.selectedDataSet.hasOwnProperty('id'))
-															$scope.model.selectedDataSet.id = dsId;
-
 														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
 														datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
 															.then(function(response){
 																sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
 																$scope.closePanel();
-																closeDocumentFn();
-																$scope.model.selectedDataSet = {};
+																if (!savedFromQbe) {
+																	clearModel();
+																	closeQbe();
+																}
 															}, function(response){
 																sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 															});
 													} else {
 														sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
 														$scope.closePanel();
-														closeDocumentFn();
-														$scope.model.selectedDataSet = {};
+														if (!savedFromQbe) {
+															clearModel();
+															closeQbe();
+														}
 													}
 												}, function(error){
 													sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
 												});
 							}
+							
+							var closeQbe = function() {
+								return closeDocumentFn();
+							}
+							
+							var clearModel = function() {
+								$scope.model.selectedDataSet = {};
+							}
 						},
-						locals: {selectedDataSet: $scope.selectedDataSet, closeDocumentFn: $scope.closeDocument},
+						locals: {selectedDataSet: $scope.selectedDataSet, closeDocumentFn: $scope.closeDocument, savedFromQbe: $scope.datasetSavedFromQbe},
 						hasBackdrop: true,
 						clickOutsideToClose: true,
 						escapeToClose: true,
@@ -258,8 +269,6 @@ angular
 						}
 
 					}
-
-					$scope.datasetSavedFromQbe = false;
 				}
 			}
 
@@ -364,7 +373,7 @@ angular
 				 * Step 1: Send message to QBE, so QBE Engine is going to update JsonQBEQuery and Meta
 				 */
 				comunicator.sendMessage("saveDS");
-				// Step 2: After QBE finish, open Panel for Save - initPanelForSavingQbeDataset()
+				// Step 2: After QBE finish, open Panel for Save - openPanelForSavingQbeDataset()
 			}
 
 
