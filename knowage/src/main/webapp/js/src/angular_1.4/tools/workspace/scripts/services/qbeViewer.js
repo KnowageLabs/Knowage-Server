@@ -226,7 +226,7 @@ angular
 				}
 
 				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
-
+				$scope.showFilterIcon = driversExecutionService.hasMandatoryDrivers($scope.drivers);
 			}
 
 
