@@ -409,8 +409,13 @@ angular
 
              $scope.getLovColumnsForParuse = function(paruse){
             	 for(var i = 0; i < driversService.lovIdAndColumns.length;i++){
-            		 if(paruse.idLov == driversService.lovIdAndColumns[i].id)
-            			 return driversService.lovIdAndColumns[i].columns;
+            		 if(paruse.idLov == driversService.lovIdAndColumns[i].id){
+            			 if(driversService.lovIdAndColumns[i].columns != undefined){
+            				 return driversService.lovIdAndColumns[i].columns;
+            			 }else
+            				 return ["VALUE","DESCRIPTION"]
+            		 }
+
             	 }
 
              }
@@ -498,10 +503,13 @@ angular
                  		}
                  $scope.getLovColumnsForParuse = function(paruse){
                 	 for(var i = 0; i < driversService.lovIdAndColumns.length;i++){
-                		 if(paruse.idLov == driversService.lovIdAndColumns[i].id)
-                			 return driversService.lovIdAndColumns[i].columns;
+                		 if(paruse.idLov == driversService.lovIdAndColumns[i].id){
+                			 if(driversService.lovIdAndColumns[i].columns != undefined){
+                				 return driversService.lovIdAndColumns[i].columns;
+                			 }else
+                				 return ["VALUE","DESCRIPTION"]
+                		 }
                 	 }
-
                  }
 
                  var setDataDependencyProperties = function(dataDependency){
