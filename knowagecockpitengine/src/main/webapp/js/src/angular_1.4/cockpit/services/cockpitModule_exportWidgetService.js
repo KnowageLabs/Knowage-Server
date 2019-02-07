@@ -67,7 +67,9 @@
 
 			var dsId = widget.dataset.dsId;
 			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+
 			var aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset);
+			cleanAggregation(widget, aggregation);
 
 			var loadDomainValues = widget.type == "selector" ? true : false;
 			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
@@ -85,6 +87,41 @@
 			return deferred.promise;
 		}
 
+		var cleanAggregation = function (widget, aggregation) {
+		    if(widget.type == "chart"
+                && widget.content
+                && widget.content.chartTemplate
+                && widget.content.chartTemplate.CHART
+                && widget.content.chartTemplate.CHART.type == "SCATTER"){
+                var usedCategories = [];
+                for(var i in widget.content.chartTemplate.CHART.VALUES.CATEGORY){
+                    var category = widget.content.chartTemplate.CHART.VALUES.CATEGORY[i];
+                    if(category.fakeCategory == false){
+                        usedCategories.push(category.column);
+                    }
+                }
+
+                for(var i=aggregation.categories.length-1; i>=0; i--){
+                    if(usedCategories.indexOf(aggregation.categories[i].columnName) == -1){
+                        aggregation.categories.splice(i, 1);
+                    }
+                }
+
+                var usedMeasures = [];
+                for(var i in widget.content.chartTemplate.CHART.VALUES.SERIE){
+                    var serie = widget.content.chartTemplate.CHART.VALUES.SERIE[i];
+                    if(serie.fakeSerie == false){
+                        usedMeasures.push(serie.column);
+                    }
+                }
+
+                for(var i=aggregation.measures.length-1; i>=0; i--){
+                    if(usedMeasures.indexOf(aggregation.measures[i].columnName) == -1){
+                        aggregation.measures.splice(i, 1);
+                    }
+                }
+		    }
+        }
 
 		return objToReturn;
 	}
