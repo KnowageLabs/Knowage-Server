@@ -26,6 +26,8 @@ import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRe
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
@@ -285,7 +287,12 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 			// check if to retrieve defaultValues, if it is not LOOKUP or if it is from Cross
 			boolean retrieveAdmissibleValue = false;
-			boolean lookupAndCrossCase = (isFromCross && ("LOOKUP".equalsIgnoreCase(selectionType)));
+			boolean lookupAndCrossCase = false;
+			if (driver instanceof BIObjectParameter) {
+				lookupAndCrossCase = (isFromCross && ("LOOKUP".equalsIgnoreCase(selectionType)));
+			} else if (driver instanceof BIMetaModelParameter) {
+				lookupAndCrossCase = ("LOOKUP".equalsIgnoreCase(selectionType));
+			}
 			logger.debug("Is lookup and cross case? " + lookupAndCrossCase);
 			boolean otherPreLoadCase = (("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType)
 					|| "SLIDER".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)));
