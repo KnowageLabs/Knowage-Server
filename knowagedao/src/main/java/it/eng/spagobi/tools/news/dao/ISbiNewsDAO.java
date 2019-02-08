@@ -29,11 +29,11 @@ public interface ISbiNewsDAO extends ISpagoBIDao {
 
 	public List<BasicNews> getAllNews();
 
-	public void deleteNews(Integer newsId);
+	public void deleteNews(Integer newsId, UserProfile profile);
 
 	public AdvancedNews saveNews(AdvancedNews aNews);
 
-	public AdvancedNews getNewsById(Integer id);
+	public AdvancedNews getNewsById(Integer id, UserProfile profile);
 
 	public List<BasicNews> getAllNews(UserProfile profile);
 

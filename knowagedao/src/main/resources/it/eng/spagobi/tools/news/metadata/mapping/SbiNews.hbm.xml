@@ -58,7 +58,7 @@
 	        
 		</component>
 		
-		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="false" lazy="true" fetch="select" cascade="none">
+		<set name="sbiNewsRoles" table="sbi_news_roles" inverse="false" lazy="false" fetch="select" >
 			<key>
 				<column name="NEWS_ID" not-null="true"></column>
 			</key>
@@ -68,7 +68,7 @@
 		
 		</set>
 		
-		<set name="read" table="sbi_news_read" inverse="false" >
+		<set name="read" table="sbi_news_read" inverse="true" cascade="save-update">
 			<key>
 				<column name="NEWS_ID" not-null="true"></column>
 			</key>

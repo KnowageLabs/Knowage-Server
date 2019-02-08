@@ -94,18 +94,18 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getNewsById(@PathParam("id") Integer id, @QueryParam("check") boolean check) {
+	public Response getNewsById(@PathParam("id") Integer id, @QueryParam("isTechnical") boolean isTechnical) {
 
 		logger.debug("IN");
 		ISbiNewsDAO sbiNewsDAO = null;
 
 		try {
-			UserProfile profile = getUserProfile();
+
 			sbiNewsDAO = DAOFactory.getSbiNewsDAO();
 			// can user see it or not
-			AdvancedNews news = sbiNewsDAO.getNewsById(id);
+			AdvancedNews news = sbiNewsDAO.getNewsById(id, getUserProfile());
 
-			if (check)
+			if (isTechnical)
 				return Response.ok(news).build();
 
 			else {
@@ -195,7 +195,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		try {
 			iNewsDao = DAOFactory.getSbiNewsDAO();
-			iNewsDao.deleteNews(id);
+			iNewsDao.deleteNews(id, getUserProfile());
 
 			return Response.ok().build();
 

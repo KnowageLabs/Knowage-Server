@@ -30,6 +30,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -37,6 +38,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.news.bo.AdvancedNews;
 import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
@@ -82,14 +84,14 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public AdvancedNews getNewsById(Integer id) {
+	public AdvancedNews getNewsById(Integer id, UserProfile profile) {
 
 		logger.debug("IN");
 
 		AdvancedNews newsToReturn = null;
 
 		try {
-			newsToReturn = toAdvancedNews(getSbiNewsById(id));
+			newsToReturn = toAdvancedNews(getSbiNewsById(id, profile));
 
 		} catch (HibernateException e) {
 			logException(e);
@@ -101,7 +103,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		return newsToReturn;
 	}
 
-	public SbiNews getSbiNewsById(Integer id) {
+	public SbiNews getSbiNewsById(Integer id, UserProfile profile) {
 
 		logger.debug("IN");
 
@@ -118,10 +120,6 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			Query query = session.createQuery(hql);
 			query.setInteger("id", id);
 			sbiNews = (SbiNews) query.uniqueResult();
-
-			if (sbiNews == null)
-				throw new SpagoBIRuntimeException("Cannot be null");
-
 			transaction.commit();
 
 		} catch (HibernateException e) {
@@ -137,8 +135,13 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 				session.close();
 		}
 
-		logger.debug("OUT");
-		return sbiNews;
+		if (UserUtilities.isTechnicalUser(profile) || getAvailableNews(sbiNews, profile) != null) {
+			logger.debug("OUT");
+			return sbiNews;
+
+		} else {
+			throw new SpagoBIRuntimeException("You are not allowed to get this news");
+		}
 	}
 
 	private AdvancedNews toAdvancedNews(SbiNews hibNews) {
@@ -178,7 +181,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public void deleteNews(Integer newsId) {
+	public void deleteNews(Integer newsId, UserProfile profile) {
 
 		logger.debug("IN");
 		Transaction transaction = null;
@@ -195,7 +198,14 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			query.setInteger("newId", newsId);
 			newsForDelete = (SbiNews) query.uniqueResult();
 
-			session.delete(newsForDelete);
+			if (UserUtilities.isTechnicalUser(profile) || getAvailableNews(newsForDelete, profile) != null) {
+
+				session.delete(newsForDelete);
+
+			} else {
+				throw new SpagoBIRuntimeException("You are not allowed to get this news");
+			}
+
 			transaction.commit();
 
 		} catch (HibernateException e) {
@@ -314,16 +324,21 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			Iterator iterator = hibList.iterator();
 			while (iterator.hasNext()) {
 				SbiNews hibNews = (SbiNews) iterator.next();
+				hibNews = getAvailableNews(hibNews, profile);
 				if (hibNews != null) {
-					Set<SbiExtRoles> setOfExtRoles = hibNews.getSbiNewsRoles();
-					Iterator<SbiExtRoles> roleIterator = setOfExtRoles.iterator();
-					while (roleIterator.hasNext()) {
-						if (listOfRoles.contains(roleIterator.next().getName())) {
-							BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
-							setOfNews.add(basicNews);
-						}
-					}
+					BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+					setOfNews.add(basicNews);
 				}
+//				if (hibNews != null) {
+//					Set<SbiExtRoles> setOfExtRoles = hibNews.getSbiNewsRoles();
+//					Iterator<SbiExtRoles> roleIterator = setOfExtRoles.iterator();
+//					while (roleIterator.hasNext()) {
+//						if (listOfRoles.contains(roleIterator.next().getName())) {
+//							BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+//							setOfNews.add(basicNews);
+//						}
+//					}
+//				}
 			}
 
 		} catch (HibernateException e) {
@@ -341,6 +356,30 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 		logger.debug("OUT");
 		return new ArrayList<BasicNews>(setOfNews);
+	}
+
+	public SbiNews getAvailableNews(SbiNews hibNews, IEngUserProfile profile) {
+
+		List listOfRoles;
+		SbiNews sbiNews = null;
+		try {
+			listOfRoles = (List) profile.getRoles();
+			if (hibNews != null) {
+				Set<SbiExtRoles> setOfExtRoles = hibNews.getSbiNewsRoles();
+				Iterator<SbiExtRoles> roleIterator = setOfExtRoles.iterator();
+				while (roleIterator.hasNext()) {
+					if (listOfRoles.contains(roleIterator.next().getName())) {
+						sbiNews = hibNews;
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot get available news", e);
+		}
+
+		return sbiNews;
+
 	}
 
 }

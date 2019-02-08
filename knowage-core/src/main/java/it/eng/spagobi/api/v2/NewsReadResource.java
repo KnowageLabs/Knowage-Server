@@ -34,7 +34,7 @@ public class NewsReadResource extends AbstractSpagoBIResource {
 		try {
 
 			newsReadDao = DAOFactory.getSbiNewsReadDAO();
-			newsReadDao.insert(id);
+			newsReadDao.insert(id, getUserProfile());
 
 			return Response.ok(id).build();
 
@@ -59,7 +59,7 @@ public class NewsReadResource extends AbstractSpagoBIResource {
 		try {
 
 			newsReadDao = DAOFactory.getSbiNewsReadDAO();
-			List<Integer> listOfReads = newsReadDao.getReadNews("biuser");
+			List<Integer> listOfReads = newsReadDao.getReadNews(getUserProfile());
 
 			return listOfReads;
 

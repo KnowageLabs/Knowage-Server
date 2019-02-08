@@ -9,7 +9,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.tools.news.metadata.SbiNewsRead;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -19,7 +21,7 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 	private static Logger logger = Logger.getLogger(SbiNewsReadDAOImpl.class);
 
 	@Override
-	public Integer insert(Integer id) {
+	public Integer insert(Integer id, UserProfile profile) {
 
 		Session session = null;
 		Transaction transaction = null;
@@ -27,20 +29,26 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 
 		try {
 			SbiNewsDAOImpl newsDAO = new SbiNewsDAOImpl();
-			sbiNews = newsDAO.getSbiNewsById(id);
+			sbiNews = newsDAO.getSbiNewsById(id, profile);
 
 			if (sbiNews.getId() != null) {
 
-				session = getSession();
-				transaction = session.beginTransaction();
+				if (UserUtilities.isTechnicalUser(profile) || newsDAO.getAvailableNews(sbiNews, profile) != null) {
 
-				SbiNewsRead newsRead = new SbiNewsRead();
-				newsRead.setUser("biuser");
-				newsRead.setNewsId(id);
+					session = getSession();
+					transaction = session.beginTransaction();
 
-				updateSbiCommonInfo4Insert(newsRead);
-				session.save(newsRead);
-				transaction.commit();
+					SbiNewsRead newsRead = new SbiNewsRead();
+					newsRead.setUser(String.valueOf(profile.getUserId()));
+					newsRead.setNewsId(id);
+
+					updateSbiCommonInfo4Insert(newsRead);
+					session.save(newsRead);
+					transaction.commit();
+
+				} else {
+					throw new SpagoBIRuntimeException("You are not allowed to get this news");
+				}
 
 			} else {
 
@@ -62,7 +70,7 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 	}
 
 	@Override
-	public List<Integer> getReadNews(String user) {
+	public List<Integer> getReadNews(UserProfile profile) {
 
 		logger.debug("IN");
 
@@ -77,7 +85,7 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 
 			String hql = "Select newsId from SbiNewsRead s WHERE s.user = :user";
 			Query query = session.createQuery(hql);
-			query.setString("user", user);
+			query.setString("user", String.valueOf(profile.getUserId()));
 			listOfReads = query.list();
 
 			transaction.commit();
