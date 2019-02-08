@@ -27,8 +27,17 @@ public class SbiNewsRead extends SbiHibernateModel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String user;
+
+	private Integer newsReadID;
 	private Integer newsId;
-	private SbiNews sbiNews;
+
+	public Integer getNewsId() {
+		return newsId;
+	}
+
+	public void setNewsId(Integer newsId) {
+		this.newsId = newsId;
+	}
 
 	public SbiNewsRead() {
 
@@ -36,7 +45,6 @@ public class SbiNewsRead extends SbiHibernateModel {
 
 	public SbiNewsRead(String user, Integer newsId) {
 		this.user = user;
-		this.newsId = newsId;
 	}
 
 	public String getUser() {
@@ -47,20 +55,12 @@ public class SbiNewsRead extends SbiHibernateModel {
 		this.user = user;
 	}
 
-	public Integer getNewsId() {
-		return newsId;
+	public Integer getNewsReadID() {
+		return newsReadID;
 	}
 
-	public void setNewsId(Integer newsId) {
-		this.newsId = newsId;
-	}
-
-	public SbiNews getSbiNews() {
-		return sbiNews;
-	}
-
-	public void setSbiNews(SbiNews sbiNews) {
-		this.sbiNews = sbiNews;
+	public void setNewsReadID(Integer newsReadID) {
+		this.newsReadID = newsReadID;
 	}
 
 }

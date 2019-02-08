@@ -6,8 +6,8 @@
 
 	<class name="it.eng.spagobi.tools.news.metadata.SbiNewsRead" table="SBI_NEWS_READ">
 	
-		<id name="newsId" type="integer">
-			<column name="NEWS_ID"></column>
+		<id name="newsReadID" type="integer">
+			<column name="id"></column>
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
 				<param name="segment_value">SBI_NEWS_READ</param>
@@ -16,11 +16,9 @@
 		</id>
 		
 		<property name="user" type="string" column="USER" length="100"></property>
+		<property name="newsId" type="integer" column="NEWS_ID" length="11"></property>
 		
-		<many-to-one name="sbiNews" class="it.eng.spagobi.tools.news.metadata.SbiNews" update="false" insert="false">
-			<column name="NEWS_ID" not-null="true"></column>
-		</many-to-one>
-		
+	
 		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 			
 			<property name="userIn" type="string">

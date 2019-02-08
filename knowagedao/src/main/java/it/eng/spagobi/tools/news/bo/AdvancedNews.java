@@ -1,3 +1,18 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2019 Engineering Ingegneria Informatica S.p.A.
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.eng.spagobi.tools.news.bo;
 
 import java.util.Date;
@@ -13,7 +28,6 @@ public class AdvancedNews extends BasicNews {
 	private static final long serialVersionUID = 1L;
 	static protected Logger logger = Logger.getLogger(AdvancedNews.class);
 
-	private Integer type;
 	private Date expirationDate;
 	private String html;
 	private Boolean active;
@@ -23,12 +37,15 @@ public class AdvancedNews extends BasicNews {
 
 	}
 
-	public Integer getType() {
-		return type;
+	public AdvancedNews(Integer id) {
+		super(id);
 	}
 
-	public void setType(Integer type) {
-		this.type = type;
+	public AdvancedNews(Date expirationDate, String html, Boolean active, Set roles) {
+		this.expirationDate = expirationDate;
+		this.html = html;
+		this.active = active;
+		this.roles = roles;
 	}
 
 	public Date getExpirationDate() {

@@ -88,6 +88,7 @@ import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
+import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -326,9 +327,20 @@ public class DAOFactory {
 	 * Get the SbiNews dao
 	 *
 	 * @return the sbiNews dao
+	 *
 	 */
 	public static ISbiNewsDAO getSbiNewsDAO() {
 		return (ISbiNewsDAO) createDAOInstance("SbiNewsDAO");
+	}
+
+	/**
+	 * Get the SbiNewsRead dao
+	 *
+	 * @return the SbiNews dao
+	 */
+
+	public static ISbiNewsReadDAO getSbiNewsReadDAO() {
+		return (ISbiNewsReadDAO) createDAOInstance("SbiNewsReadDAO");
 	}
 
 	/**

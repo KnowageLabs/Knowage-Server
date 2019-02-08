@@ -68,6 +68,14 @@
 		
 		</set>
 		
+		<set name="read" table="sbi_news_read" inverse="false" >
+			<key>
+				<column name="NEWS_ID" not-null="true"></column>
+			</key>
+			<one-to-many class="it.eng.spagobi.tools.news.metadata.SbiNewsRead" />
+		
+		</set>
+		
 		
 		<many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" update="false" insert="false" >
 	        <column name="CATEGORY_ID" not-null="true"></column>

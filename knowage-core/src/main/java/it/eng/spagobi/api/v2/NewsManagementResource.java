@@ -28,6 +28,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -40,60 +41,50 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.news.bo.AdvancedNews;
 import it.eng.spagobi.tools.news.bo.BasicNews;
 import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.manager.INewsManager;
-import it.eng.spagobi.tools.news.manager.NewsManagerTechImpl;
-import it.eng.spagobi.tools.news.manager.NewsManagerUserImpl;
+import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/2.0/news")
 public class NewsManagementResource extends AbstractSpagoBIResource {
 
-	private final String charset = "; charset=UTF-8";
 	static protected Logger logger = Logger.getLogger(NewsManagementResource.class);
 
 	@GET
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNews() {
 
 		logger.debug("IN");
 
 		try {
 			UserProfile profile = getUserProfile();
-			INewsManager newsMan = null;
-
-			if (UserUtilities.isTechnicalUser(profile)) {
-				newsMan = new NewsManagerTechImpl();
-
-			} else {
-				newsMan = new NewsManagerUserImpl();
-			}
+			INewsManager newsMan = new NewsManagerImpl();
 
 			List<BasicNews> allNews = newsMan.getAllNews(profile);
-			JSONArray jsonArray = new JSONArray();
+			// JSONArray jsonArray = new JSONArray();
 
-			for (int i = 0; i < allNews.size(); i++) {
-				JSONObject jsonObject = new JSONObject();
-				BasicNews news = allNews.get(i);
+//			for (int i = 0; i < allNews.size(); i++) {
+//				JSONObject jsonObject = new JSONObject();
+//				BasicNews news = allNews.get(i);
+//
+//				jsonObject.put("id", news.getId());
+//				jsonObject.put("title", news.getTitle());
+//				jsonObject.put("description", news.getDescription());
+//
+//				jsonArray.put(jsonObject);
+//
+//			}
 
-				jsonObject.put("id", news.getId());
-				jsonObject.put("title", news.getTitle());
-				jsonObject.put("description", news.getDescription());
-
-				jsonArray.put(jsonObject);
-
-			}
-
-			return Response.ok(jsonArray.toString()).build();
+			return Response.ok(allNews).build();
 
 		} catch (Exception e) {
 			logger.error("Error has occured while returing news", e);
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot get all news", buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -102,8 +93,8 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getNewsById(@PathParam("id") Integer id) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNewsById(@PathParam("id") Integer id, @QueryParam("check") boolean check) {
 
 		logger.debug("IN");
 		ISbiNewsDAO sbiNewsDAO = null;
@@ -111,14 +102,28 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 		try {
 			UserProfile profile = getUserProfile();
 			sbiNewsDAO = DAOFactory.getSbiNewsDAO();
-			sbiNewsDAO.setUserProfile(profile);
-			BasicNews news = sbiNewsDAO.getNewsById(id);
+			// can user see it or not
+			AdvancedNews news = sbiNewsDAO.getNewsById(id);
 
-			return Response.ok(news).build();
+			if (check)
+				return Response.ok(news).build();
+
+			else {
+
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("id", news.getId());
+				jsonObject.put("title", news.getTitle());
+				jsonObject.put("description", news.getDescription());
+				jsonObject.put("type", news.getType());
+				jsonObject.put("html", news.getHtml());
+				jsonObject.put("expirationDate", news.getExpirationDate());
+
+				return Response.ok(jsonObject.toString()).build();
+			}
 
 		} catch (Exception e) {
 			logger.error("Error while geting news by id");
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot get news with specified id" + id, buildLocaleFromSession(), e);
 		}
 
 	}
@@ -137,7 +142,6 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			newsDao = DAOFactory.getSbiNewsDAO();
 			rolesDao = DAOFactory.getRoleDAO();
-			newsDao.setUserProfile(getUserProfile());
 
 			AdvancedNews advancedNews = new AdvancedNews();
 			advancedNews.setDescription(requestBodyJSON.getString("description"));
@@ -175,7 +179,7 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error while posting news");
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occured while posting new news", buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -191,14 +195,13 @@ public class NewsManagementResource extends AbstractSpagoBIResource {
 
 		try {
 			iNewsDao = DAOFactory.getSbiNewsDAO();
-			iNewsDao.setUserProfile(getUserProfile());
-			iNewsDao.deleteNew(id);
+			iNewsDao.deleteNews(id);
 
 			return Response.ok().build();
 
 		} catch (Exception e) {
 			logger.error("The error has occured while deleting news", e);
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot delete specified news", buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");

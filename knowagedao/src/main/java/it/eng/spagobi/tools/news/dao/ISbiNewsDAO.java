@@ -20,23 +20,21 @@ package it.eng.spagobi.tools.news.dao;
 
 import java.util.List;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.news.bo.AdvancedNews;
 import it.eng.spagobi.tools.news.bo.BasicNews;
-import it.eng.spagobi.tools.news.metadata.SbiNews;
 
 public interface ISbiNewsDAO extends ISpagoBIDao {
 
-	public List getAllNews();
+	public List<BasicNews> getAllNews();
 
-	public void deleteNew(Integer newsId);
-
-	public void createOrUpdate(SbiNews sbiNews);
+	public void deleteNews(Integer newsId);
 
 	public AdvancedNews saveNews(AdvancedNews aNews);
 
-	public BasicNews toBasicNews(SbiNews aNews);
+	public AdvancedNews getNewsById(Integer id);
 
-	public BasicNews getNewsById(Integer id);
+	public List<BasicNews> getAllNews(UserProfile profile);
 
 }

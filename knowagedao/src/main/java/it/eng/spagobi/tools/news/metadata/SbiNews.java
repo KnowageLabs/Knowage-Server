@@ -42,6 +42,7 @@ public class SbiNews extends SbiHibernateModel {
 	private Integer categoryId;
 	private SbiDomains sbiDomains;
 	private Set<SbiExtRoles> sbiNewsRoles = new HashSet<SbiExtRoles>(0);
+	private Set<SbiNewsRead> read = new HashSet<>();
 
 	public SbiNews() {
 
@@ -138,6 +139,14 @@ public class SbiNews extends SbiHibernateModel {
 
 	public void setSbiNewsRoles(Set<SbiExtRoles> sbiNewsRoles) {
 		this.sbiNewsRoles = sbiNewsRoles;
+	}
+
+	public Set<SbiNewsRead> getRead() {
+		return read;
+	}
+
+	public void setRead(Set<SbiNewsRead> read) {
+		this.read = read;
 	}
 
 }

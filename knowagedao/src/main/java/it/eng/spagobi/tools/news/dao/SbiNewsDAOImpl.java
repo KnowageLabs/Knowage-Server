@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -45,12 +46,11 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 	private static Logger logger = Logger.getLogger(SbiNewsDAOImpl.class);
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List getAllNews() {
+	public List<BasicNews> getAllNews() {
 
 		logger.debug("IN");
-		List listOfNews = new ArrayList<>();
+		List<BasicNews> listOfNews = new ArrayList<>();
 		Session session = null;
 
 		try {
@@ -63,7 +63,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			while (iterator.hasNext()) {
 				SbiNews hibNews = (SbiNews) iterator.next();
 				if (hibNews != null) {
-					BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription()); // KONST 3
+					BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
 					listOfNews.add(news);
 				}
 			}
@@ -71,7 +71,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		} catch (HibernateException e) {
 			logException(e);
 
-			throw new SpagoBIRuntimeException("Cannot return all news", e);
+			throw new SpagoBIRuntimeException("Cannot load all news", e);
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
@@ -82,10 +82,31 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public BasicNews getNewsById(Integer id) {
-		SbiNews sbiNews = null;
+	public AdvancedNews getNewsById(Integer id) {
+
 		logger.debug("IN");
-		BasicNews newsToReturn = null;
+
+		AdvancedNews newsToReturn = null;
+
+		try {
+			newsToReturn = toAdvancedNews(getSbiNewsById(id));
+
+		} catch (HibernateException e) {
+			logException(e);
+			throw new SpagoBIRuntimeException("Cannot get news with id " + id, e);
+
+		}
+
+		logger.debug("OUT");
+		return newsToReturn;
+	}
+
+	public SbiNews getSbiNewsById(Integer id) {
+
+		logger.debug("IN");
+
+		SbiNews sbiNews = null;
+
 		Session session = null;
 		Transaction transaction = null;
 
@@ -99,9 +120,8 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			sbiNews = (SbiNews) query.uniqueResult();
 
 			if (sbiNews == null)
-				return null;
+				throw new SpagoBIRuntimeException("Cannot be null");
 
-			newsToReturn = toAdvancedNews(sbiNews);
 			transaction.commit();
 
 		} catch (HibernateException e) {
@@ -110,7 +130,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			if (transaction != null)
 				transaction.rollback();
 
-			throw new SpagoBIRuntimeException(e.getMessage());
+			throw new SpagoBIRuntimeException("Cannot get news with id " + id, e);
 
 		} finally {
 			if (session != null && session.isOpen())
@@ -118,18 +138,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		}
 
 		logger.debug("OUT");
-		return newsToReturn;
-	}
-
-	@Override
-	public BasicNews toBasicNews(SbiNews hibNews) {
-
-		BasicNews news = new BasicNews();
-		news.setId(hibNews.getId());
-		news.setTitle(hibNews.getName());
-		news.setDescription(hibNews.getDescription());
-
-		return news;
+		return sbiNews;
 	}
 
 	private AdvancedNews toAdvancedNews(SbiNews hibNews) {
@@ -161,7 +170,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		} catch (Exception e) {
 			logException(e);
 			logger.error("Error while getting role for news", e);
-			throw new SpagoBIRuntimeException(e.getMessage());
+			throw new SpagoBIRuntimeException("Cannot get roles", e);
 		}
 
 		logger.debug("OUT");
@@ -169,7 +178,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	}
 
 	@Override
-	public void deleteNew(Integer newsId) {
+	public void deleteNews(Integer newsId) {
 
 		logger.debug("IN");
 		Transaction transaction = null;
@@ -195,40 +204,10 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			if (transaction != null)
 				transaction.rollback();
 
-			throw new SpagoBIRuntimeException(e.getMessage());
+			throw new SpagoBIRuntimeException("Error occured while deleting news", e);
 
 		} finally {
 
-			if (session != null && session.isOpen())
-				session.close();
-		}
-
-		logger.debug("OUT");
-
-	}
-
-	@Override
-	public void createOrUpdate(SbiNews sbiNews) {
-
-		logger.debug("IN");
-		Transaction transaction = null;
-		Session session = null;
-
-		try {
-			session = getSession();
-			transaction = session.beginTransaction();
-			updateSbiCommonInfo4Insert(sbiNews);
-			session.save(sbiNews);
-			session.flush();
-			transaction.commit();
-
-		} catch (HibernateException e) {
-			logException(e);
-			if (transaction != null)
-				transaction.rollback();
-			throw new SpagoBIRuntimeException(e.getMessage());
-
-		} finally {
 			if (session != null && session.isOpen())
 				session.close();
 		}
@@ -245,6 +224,9 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 		IRoleDAO rolesDao = DAOFactory.getRoleDAO();
 		try {
+
+			logger.debug("IN");
+
 			session = getSession();
 			transaction = session.beginTransaction();
 
@@ -267,7 +249,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 				} catch (Exception e) {
 
-					throw new SpagoBIRuntimeException(e.getMessage());
+					throw new SpagoBIRuntimeException("Error occured while saving news", e);
 				}
 				extRoles.add(sbiExtRole);
 			}
@@ -287,15 +269,78 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 			if (transaction != null)
 				transaction.rollback();
-			throw new SpagoBIRuntimeException(e.getMessage());
+			throw new SpagoBIRuntimeException("Cannot save news", e);
 
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
 		}
 
+		logger.debug("OUT");
 		return aNews;
 
+	}
+
+	@Override
+	public List<BasicNews> getAllNews(UserProfile profile) {
+
+		logger.debug("IN");
+		Set<BasicNews> setOfNews = new HashSet<>();
+		Session session = null;
+
+		try {
+			List listOfRoles = (List) profile.getRoles();
+//			IRoleDAO roleDao = DAOFactory.getRoleDAO();
+//			ISbiNewsDAO newsDao = DAOFactory.getSbiNewsDAO();
+//
+//			Set<SbiExtRoles> setOfRoles = new HashSet<>();
+//
+//			for (int i = 0; i < listOfRoles.size(); i++) {
+//				Role role = roleDao.loadByName((String) listOfRoles.get(i));
+//				SbiExtRoles extRoles = roleDao.loadSbiExtRoleById(role.getId());
+//
+//				setOfRoles.add(extRoles);
+//
+//			}
+			session = getSession();
+			String hql = " from SbiNews s where s.active=true and s.expirationDate >= current_date";
+			Query query = session.createQuery(hql);
+
+			// String hql = "from SbiNews s where s.sbiNewsRoles = :kolekciju_roles_idijeva";
+
+			// query.setParameterList("kolekciju_roles_idijeva", KOLEKCIJA)
+
+			List hibList = query.list();
+			Iterator iterator = hibList.iterator();
+			while (iterator.hasNext()) {
+				SbiNews hibNews = (SbiNews) iterator.next();
+				if (hibNews != null) {
+					Set<SbiExtRoles> setOfExtRoles = hibNews.getSbiNewsRoles();
+					Iterator<SbiExtRoles> roleIterator = setOfExtRoles.iterator();
+					while (roleIterator.hasNext()) {
+						if (listOfRoles.contains(roleIterator.next().getName())) {
+							BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+							setOfNews.add(basicNews);
+						}
+					}
+				}
+			}
+
+		} catch (HibernateException e) {
+			logException(e);
+			throw new SpagoBIRuntimeException("Cannot return all news", e);
+
+		} catch (Exception e) {
+			logException(e);
+			throw new SpagoBIRuntimeException("Error occured while getting news", e);
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
+		return new ArrayList<BasicNews>(setOfNews);
 	}
 
 }
