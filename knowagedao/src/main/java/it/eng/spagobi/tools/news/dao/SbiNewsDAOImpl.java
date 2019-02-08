@@ -155,6 +155,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 		news.setType(hibNews.getCategoryId());
 		news.setHtml(hibNews.getNews());
+		news.setActive(hibNews.isActive());
 		news.setExpirationDate(hibNews.getExpirationDate());
 
 		try {
@@ -245,6 +246,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			hibNews.setDescription(aNews.getDescription());
 			hibNews.setNews(aNews.getHtml());
 			hibNews.setExpirationDate(aNews.getExpirationDate());
+			hibNews.setActive(aNews.getActive());
 			hibNews.setCategoryId(aNews.getType());
 			Set roles = aNews.getRoles();
 			Set extRoles = new HashSet<>();
