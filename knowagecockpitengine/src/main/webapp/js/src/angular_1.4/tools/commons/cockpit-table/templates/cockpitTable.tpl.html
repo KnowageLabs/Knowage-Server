@@ -41,14 +41,14 @@
 	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="{'justify-content':column.style['justify-content'] || 'flex-start'}">
-		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
+		                <div flex ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow] | number:checkPrecision(column)}}</span>
 			                <span ng-if="::!hasPrecision(column) && column.type == 'java.util.Date'">{{::datify(row[column.aliasToShow],'DD/MM/YYYY') | date:column.dateFormat}}</span>
 			                <span ng-if="::!hasPrecision(column) && column.type == 'java.sql.Timestamp'">{{::datify(row[column.aliasToShow],'DD/MM/YYYY HH:mm:ss.SSS') | date:column.dateFormat}}</span>
 			                <span ng-if="::!hasPrecision(column) && column.type != 'java.util.Date' && column.type != 'java.sql.Timestamp'">{{row[column.aliasToShow]}}</span>
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
-		                </span>
+		                </div>
 		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
 		                    
 		                <div class="barChart" ng-if="(column.visType == 'Chart' || column.visType == 'Text & Chart')  && column.barchart && column.barchart != {}" flex ng-class="{'flex':column.text.enabled}">
@@ -60,8 +60,10 @@
 		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].icon">
 		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
+		                <div flex="10" ng-click="selectCell($event,row,column)">
+		                	<md-icon class="fa fa-mouse-pointer"></md-icon>
+		                </div>
 	                </div>
-	
 	            </td>
 	        </tr>
 	    </tbody>
