@@ -1,3 +1,4 @@
+
 /*
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
@@ -75,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function selectNews(params){
 			$scope.loading = true;
-			sbiModule_restServices.promiseGet("2.0", "news/" + (params.id || $scope.listGridOptions.api.getSelectedRows()[0].id))
+			sbiModule_restServices.promiseGet("2.0", "news/" + (params.id || $scope.listGridOptions.api.getSelectedRows()[0].id) + "?isTechnical=true")
 			.then(function(response) {
 				$scope.selectedNews = response.data;
 				$scope.remapRoles();

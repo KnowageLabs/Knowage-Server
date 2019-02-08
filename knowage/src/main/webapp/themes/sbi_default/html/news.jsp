@@ -30,25 +30,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{{::translate.load('sbi.home.news.nonews')}}
 			</div>
 		</div>
-		 <md-tabs ng-if="news.length > 0">
-	      <md-tab label="{{category.label}}" ng-repeat="category in news" >
-	        <md-content>
+		 <!--  md-tabs ng-if="news.length > 0">
+	      <md-tab label="{{category.label}}" ng-repeat="category in news" -->
+	        <md-content ng-if="news.length > 0">
 	         <md-list flex class="noPadding">
-        			<md-list-item class="md-2-line" ng-class="{'newMessage': news.unread}" ng-repeat-start="news in category.news | orderBy: 'time'" ng-click="openDetail(news)">
-          				<div class="md-avatar fa fa-2x fa-envelope" alt="{{item.who}}" ></div>
+        			<md-list-item class="md-2-line" ng-class="{'newMessage': news.unread}" ng-repeat-start="n in news | orderBy: 'time'" ng-click="openDetail(n, $index)">
+          				<div class="md-avatar fa fa-2x fa-envelope" ></div>
 			          	<div class="md-list-item-text" layout="column">
-			            	<h3>{{ news.title }}</h3>
-			            	<p>{{ news.description }}</p>
+			            	<h3>{{ n.title }}</h3>
+			            	<p>{{ n.description }}</p>
 			          	</div>
 			          	<md-divider ></md-divider>
 			        </md-list-item>
-			        <div class="newsContainer" ng-repeat-end ng-if="news.opened" ng-bind-html="news.html | trustAsHtml">
+			        <div class="newsContainer" ng-repeat-end ng-if="n.opened" ng-bind-html="n.html | trustAsHtml">
 			        	
 			        </div>
         		</md-list>
 	        </md-content>
-      	</md-tab>
-      </md-tabs>
+      	<!--  /md-tab>
+      </md-tabs-->
       
 	</md-dialog-content>
 	<md-dialog-actions>

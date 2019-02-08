@@ -406,8 +406,16 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				function newsDialogController(scope, $mdDialog, sbiModule_translate) {
 	        	    scope.translate = sbiModule_translate;   
 	        	    
-	        	    scope.openDetail = function(message){
-	        	    	message.opened = !message.opened;
+	        	    scope.openDetail = function(message, index){
+	        	    	if(!message.opened){
+	        	    		sbiModule_restServices.promisePost("2.0", "newsRead/"+message.id).then(function(response){
+		        	    		
+		        	    	})
+		        	    	sbiModule_restServices.promiseGet("2.0", "news/" + message.id + "?isTechnical=false").then(function(response){
+		        	    		scope.news[index].html = response.data.html;
+		        	    	})
+		        	    	message.opened = !message.opened;
+	        	    	}
 	        	    }
 	        	    
 	        	    sbiModule_restServices.promiseGet("2.0", "news")
@@ -417,6 +425,9 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 	    					if(response.data[n].type){}
 	    				}
 	    				scope.news = response.data;
+	    				sbiModule_restServices.promiseGet("2.0", "newsRead").then(function(readNews){
+	    					
+	    				})
 	    			}, function(response) {
 	    				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 	    			});
