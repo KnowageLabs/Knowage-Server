@@ -136,7 +136,7 @@ div.lower i  {
 		<angular-list-detail>
 	        
 	       	<list label="translate.load('sbi.roles.datasets')"  new-function="createNewDataSet">
-	       	<filter-by-tags tags-array="allTags" current-datasets-tab="'catalog'" filter-function="filterByTags()"></filter-by-tags>
+	       	<filter-by-tags tags-array="allTags" current-datasets-tab="'catalog'" filter-function="filterByTags()" inverse="true"></filter-by-tags>
 		       	<angular-table
 			     	flex
 				 	id="datasetList_id" 

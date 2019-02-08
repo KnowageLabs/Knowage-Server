@@ -1,17 +1,12 @@
-
-		<div layout = row> 	
-			<div flex= 80>
-			<md-chips ng-model="tagsArray "  md-add-on-blur="false"  readonly="true" ng-click="toggleTag($chip)" >
-		 		 <button ng-if="false" md-chip-remove >
-        			<md-icon md-svg-icon="md-close"></md-icon>
-      		  		<span class="md-visually-hidden ng-binding">Remove</span>
-   				</button>
-				<md-chip-template>
-					 <md-checkbox ng-model="$chip.isSelected">{{$chip.name}}</md-checkbox>
-        		</md-chip-template>
-			</md-chips>
-			</div>
-			<div flex=20 ng-if="allTags.length > 5"> 
- 						<div  class="lower" ng-click="toggleAllTags()"><i class="arrowTag" ng-class = "colapsed.name"></i> 
-	 		</div>
-		</div>
+<div layout="row" layout-padding ng-class="{'inverse-flex': inverse}" ng-if="tagsArray"> 
+	<div flex>
+		<span class="kn-chip noSelect" ng-repeat="tag in tagsArray | limitTo:tagsVisible track by $index" ng-click="toggleTag(tag)" ng-class="{'tagSelected':tag.isSelected}">
+			{{tag.name}}
+		</span>
+		<span ng-if="tagsVisible != 100"> ... </span>
+	</div>
+	<md-button class="md-icon-button" ng-click="toggleAllTags()">
+		<md-icon ng-if="tagsVisible == 100" md-font-icon="fa fa-chevron-up" ></md-icon>
+		<md-icon ng-if="tagsVisible != 100" md-font-icon="fa fa-chevron-down" ></md-icon>
+	</md-button>
+</div>

@@ -27,37 +27,34 @@
 					tagsArray : '=',
 					currentDatasetsTab : '=',
 					datasets : '=?',
-					filterFunction : '&?'
+					filterFunction : '&?',
+					inverse: '@?'
 				}
 		};
 	}]);
 
 		function filterTagsController($scope,tagsHandlerService,sbiModule_restServices,urlBuilderService,$timeout,$filter){
-			$scope.limitation = 8;
+			var tagLimit = 8;
+			$scope.tagsVisible = tagLimit;
 			$scope.colapsed = {};
 			$scope.colapsed.name = "tagsUp";
 			$scope.remove = true;
 			$scope.allTags=[];
 			var filteringTags = angular.copy($scope.tagsArray);
 			$scope.allTags = angular.copy($scope.tagsArray);
-			$scope.tagsArray = $scope.allTags.slice(0,8);
 
 			var endPath = "";
 
 			$scope.toggleAllTags = function(){
-				if($scope.tagsArray.length == 8){
-					$scope.colapsed.name = "tagsDown";
-					$scope.tagsArray = filteringTags ;
-				}else{
-					$scope.colapsed.name = "tagsUp";
-					$scope.tagsArray = filteringTags.slice(0,8);
-				}
+				if($scope.tagsVisible == tagLimit) $scope.tagsVisible = 100;
+				else $scope.tagsVisible = tagLimit;
 			}
 
 			$scope.toggleTag = function(tag){
+				tag.isSelected = !tag.isSelected;
 				tagsHandlerService.toggleTag(tag);
 				if(isFromCatalog()){
-				$scope.filterFunction()
+					$scope.filterFunction()
 				}else if(isFromWorkspace()) {
 					filterForWorkspace();
 				}
@@ -98,15 +95,7 @@
 					if(tagsHandlerService.getFilteredTagIds($scope.tagsArray).length == 0){
 						restoreOriginalDatasets($scope.currentDatasetsTab);
 					}else{
-						filterExistingDatasets($scope.currentDatasetsTab)  //for frontend filtering
-
-						//FOR BACKEND FILTERING IF NEEDED EVER
-			/*			urlBuilderService.setBaseUrl("filterbytags/"+endPath);
-						var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.tagsArray)};
-						urlBuilderService.addQueryParams(tags);
-						sbiModule_restServices.promiseGet('1.0/datasets',urlBuilderService.build() ).then(function(response){
-							setListByType($scope.currentDatasetsTab,response.data.root);
-						})*/
+						filterExistingDatasets($scope.currentDatasetsTab) 
 					}
 				}, 1000);
 			}
@@ -166,29 +155,6 @@
 					}
 					return tempDataSets;
 				}
-
-
-// FOR BACKEND FILTERING
-//				var setListByType = function(type,response){
-			//
-//							switch(type){
-//							case "myDataSet":
-//								$scope.$parent.myDatasets = response;
-//								break;
-//							case "sharedDataSet":
-//								$scope.$parent.sharedDatasets = response;
-//								break;
-//							case "enterpriseDataSet":
-//								$scope.$parent.enterpriseDatasets = response;
-//								break;
-//							case "ckanDataSet":
-//								$scope.$parent.ckanDatasetsList = response;
-//								break;
-//							case "allDataSet":
-//								$scope.$parent.datasets = response;
-//								break;
-//							}
-//						}
 
 }
 

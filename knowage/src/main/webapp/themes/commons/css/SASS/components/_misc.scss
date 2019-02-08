@@ -1022,6 +1022,30 @@ color-picker {
 md-dialog {
   background: $tabBackground;
 }
+filter-by-tags {
+  .inverse-flex {
+    flex-direction: row-reverse;
+  }
+  .kn-chip {
+    padding: 4px 8px;
+    background-color: $ternaryColor;
+    cursor: pointer;
+    margin-right: 4px;
+    line-height: 30px;
+    border-radius: 50px;
+    font-size: $mediumFontSize;
+    outline: none;
+    &:hover {
+      background-color: lighten($ternaryColor, 10%);
+    }
+    &.tagSelected {
+      background-color: $baseColor;
+      color: $lightTextColor;
+      
+    }
+  }
+}
+
 
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
