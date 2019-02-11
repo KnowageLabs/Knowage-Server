@@ -153,6 +153,9 @@
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
 			<ITEM	title="#menu.Alert" functionality="AlertManagement" 
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/alertDefinition.jsp" />
+			<ITEM	title="#menu.NewsManagement" 
+					functionality="NewsManagement" 
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/news/newsManagement.jsp" />
 		</ITEM>
 		
 		<ITEM	code="server_settings" 

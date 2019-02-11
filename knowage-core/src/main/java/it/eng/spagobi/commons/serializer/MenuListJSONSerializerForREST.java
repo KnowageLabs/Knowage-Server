@@ -601,6 +601,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
+		
+		//if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
+			JSONObject news = new JSONObject();
+			news.put(ICON_CLS, "inbox");
+			news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
+			news.put(ICON_ALIGN, "top");
+			news.put(SCALE, "large");
+			news.put(TARGET, "_self");
+			news.put(LINK_TYPE, "news");
+			tempMenuList.put(news);
+		//}
+		
 		if (isAbleTo(SpagoBIConstants.IMP_EXP_CATALOG, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
 			tenantManagementTechnical.put(ICON_CLS, "style"); // TODO: change

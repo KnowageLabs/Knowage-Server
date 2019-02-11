@@ -78,6 +78,12 @@
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
     
+    	<APPLICATION code="News" 
+	             title="#menu.news"  
+	             functionality="NewsVisualization" 
+	             link="" 
+	             iconUrl="">
+	</APPLICATION>
     
 	
 </FINAL_USER_FUNCTIONALITIES>

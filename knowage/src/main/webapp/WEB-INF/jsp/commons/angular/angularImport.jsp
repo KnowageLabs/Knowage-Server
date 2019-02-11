@@ -127,6 +127,17 @@ if(importAngularMaterialForExport == null) {
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
+
+
+
+<!-- include summernote css/js -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/node_modules/summernote/dist/summernote.css")%>">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/summernote/dist/summernote.min.js"></script>
+
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
+
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
+
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
@@ -153,10 +164,12 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script--> 
 
-<!-- AG GRID -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
+
+<!-- AG GRID -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js"></script>
 	
