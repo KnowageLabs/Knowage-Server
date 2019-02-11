@@ -176,14 +176,23 @@
 				}
 			};
 
+			executionService.showFilterIcon = false;
+
 			executionService.hasMandatoryDrivers = function(drivers){
-				var showSideBar = true;
-				if(drivers){
-					for(var i = 0; i < drivers.length;i++){
+				var showSideBar = false;
+				if(drivers.length > 0){
+					for(var i = 0; i < drivers.length; i++){
 						if(drivers[i].mandatory){
 							if(drivers[i].defaultValues && drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
 								showSideBar = false;
+								executionService.showFilterIcon = false;
+							} else {
+								showSideBar = true;
+								executionService.showFilterIcon = true;
 							}
+						} else {
+							showSideBar = false;
+							executionService.showFilterIcon = true;
 						}
 					}
 				}

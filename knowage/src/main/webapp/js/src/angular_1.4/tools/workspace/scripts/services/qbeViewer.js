@@ -159,7 +159,7 @@ angular
 													var dsId = response.data.id;
 													if (savedFromQbe)
 														$scope.model.selectedDataSet.id = dsId;
-													
+
 													if ($scope.model.selectedDataSet.isScheduled) {
 														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
 														datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
@@ -185,11 +185,11 @@ angular
 													sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
 												});
 							}
-							
+
 							var closeQbe = function() {
 								return closeDocumentFn();
 							}
-							
+
 							var clearModel = function() {
 								$scope.model.selectedDataSet = {};
 							}
@@ -226,7 +226,7 @@ angular
 				}
 
 				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
-				$scope.showFilterIcon = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 			}
 
 
