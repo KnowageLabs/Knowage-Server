@@ -18,7 +18,7 @@
 (function() {
 	var module = angular.module('tagsModule');
 
-		module.directive('filterByTags',['sbiModule_config','sbiModule_restServices','urlBuilderService','$timeout','$filter',function(sbiModule_config,$timeout,$filter) {
+		module.directive('filterByTags',['sbiModule_config','sbiModule_restServices','sbiModule_urlBuilderService','$timeout','$filter',function(sbiModule_config,$timeout,$filter) {
 		return {
 			restrict: 'E',
 			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/tags/filterByTags/filterByTags.html',
@@ -33,7 +33,7 @@
 		};
 	}]);
 
-		function filterTagsController($scope,tagsHandlerService,sbiModule_restServices,urlBuilderService,$timeout,$filter){
+		function filterTagsController($scope,tagsHandlerService,sbiModule_restServices,sbiModule_urlBuilderService,$timeout,$filter){
 			var tagLimit = 8;
 			$scope.tagsVisible = tagLimit;
 			$scope.colapsed = {};
