@@ -21,6 +21,35 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 		return array;
 	}
 
+	this.getDatasetIdsInSameSheet = function(widgetId){
+        var dsList = [];
+
+        var sheetIndex = -1;
+        for(var i=0; i<cockpitModule_template.sheets.length && sheetIndex == -1; i++){
+            var sheet = cockpitModule_template.sheets[i];
+            for(var j=0; j<sheet.widgets.length; j++){
+                var widget = sheet.widgets[j];
+                if(widget.id == widgetId){
+                    sheetIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if(sheetIndex > -1){
+            var widgets = cockpitModule_template.sheets[sheetIndex].widgets;
+            for(var i=0; i<widgets.length; i++){
+                if(widgets[i].dataset) {
+                    var id = widgets[i].dataset.dsId;
+                    if(dsList.indexOf(id) == -1){
+                        dsList.push(id);
+                    }
+                }
+            }
+        }
+
+        return dsList;
+    }
 
 	this.getNumberOfWidgets = function(){
 		var total = 0;
@@ -99,4 +128,30 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 		}
 		return false;
 	}
+
+	this.getAssociatedDatasetLabels=function(datasetLabels, associations){
+        if(associations == undefined){
+            associations = cockpitModule_template.configuration.associations;
+        }
+
+        associatedDsLabels = [];
+
+        for(var i in associations){
+            var association = associations[i];
+            for(var j in association.fields){
+                var field = association.fields[j];
+                if(field.type=="dataset" && datasetLabels.indexOf(field.store) > -1){
+                    for(var k in association.fields){
+                        var associatedField = association.fields[k];
+                        if(associatedField.type=="dataset" && associatedDsLabels.indexOf(associatedField.store) == -1){
+                            associatedDsLabels.push(associatedField.store);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return associatedDsLabels;
+    }
 });

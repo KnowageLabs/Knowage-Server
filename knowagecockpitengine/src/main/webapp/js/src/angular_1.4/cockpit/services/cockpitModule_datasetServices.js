@@ -150,6 +150,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 	}
 
+	this.getDatasetLabelsByIds=function(dsIds){
+	    dsLabels = [];
+	    for(var i in dsIds){
+	        dsLabels.push(ds.getDatasetLabelById(dsIds[i]));
+	    }
+        return dsLabels;
+    }
+
 	this.checkForDSChange=function(){
 		var changed=[];
 		var removedDatasetParams=[];
