@@ -21,13 +21,18 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 	private static Logger logger = Logger.getLogger(SbiNewsReadDAOImpl.class);
 
 	@Override
-	public Integer insert(Integer id, UserProfile profile) {
+	public Integer insertNewsRead(Integer id, UserProfile profile) {
 
 		Session session = null;
 		Transaction transaction = null;
 		SbiNews sbiNews;
 
 		try {
+
+			if (getNewsReadByIdAndUser(id, String.valueOf(profile.getUserId())) != null) {
+				throw new SpagoBIRuntimeException("The message is alredy read");
+			}
+
 			SbiNewsDAOImpl newsDAO = new SbiNewsDAOImpl();
 			sbiNews = newsDAO.getSbiNewsById(id, profile);
 
@@ -105,6 +110,44 @@ public class SbiNewsReadDAOImpl extends AbstractHibernateDAO implements ISbiNews
 
 		logger.debug("OUT");
 		return listOfReads;
+	}
+
+	@Override
+	public SbiNewsRead getNewsReadByIdAndUser(Integer id, String user) {
+
+		logger.debug("IN");
+		SbiNewsRead sbiNewsRead = null;
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "from SbiNewsRead s WHERE s.newsId = :newsReadID and s.user = :user";
+			Query query = session.createQuery(hql);
+			query.setInteger("newsReadID", id);
+			query.setString("user", user);
+
+			sbiNewsRead = (SbiNewsRead) query.uniqueResult();
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			logException(e);
+
+			if (transaction != null)
+				transaction.rollback();
+
+			throw new SpagoBIRuntimeException("Cannot get newsRead with id = " + id, e);
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
+		return sbiNewsRead;
+
 	}
 
 }
