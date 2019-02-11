@@ -30,11 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{{::translate.load('sbi.home.news.nonews')}}
 			</div>
 		</div>
-		 <!--  md-tabs ng-if="news.length > 0">
-	      <md-tab label="{{category.label}}" ng-repeat="category in news" -->
-	        <md-content ng-if="news.length > 0">
+		 <md-tabs ng-if="news.length > 0">
+	      <md-tab label="{{category.label}}" ng-repeat="category in news" ng-if="category.messages.length > 0">
+	        <md-content>
 	         <md-list flex class="noPadding">
-        			<md-list-item class="md-2-line" ng-class="{'newMessage': news.unread}" ng-repeat-start="n in news | orderBy: 'time'" ng-click="openDetail(n, $index)">
+        			<md-list-item class="md-2-line" ng-class="{'newMessage': !n.read}" ng-repeat-start="n in category.messages | orderBy: 'time'" ng-click="openDetail(category,n)">
           				<div class="md-avatar fa fa-2x fa-envelope" ></div>
 			          	<div class="md-list-item-text" layout="column">
 			            	<h3>{{ n.title }}</h3>
@@ -42,13 +42,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			          	</div>
 			          	<md-divider ></md-divider>
 			        </md-list-item>
-			        <div class="newsContainer" ng-repeat-end ng-if="n.opened" ng-bind-html="n.html | trustAsHtml">
-			        	
+			        <md-progress-linear md-mode="indeterminate" ng-if="n.opened && loadingInfo"></md-progress-linear>
+			        <div class="newsContainer" ng-repeat-end ng-if="n.opened && !loadingInfo" ng-bind-html="n.html | trustAsHtml">
+			        	<md-progress-linear md-mode="indeterminate"></md-progress-linear>
 			        </div>
         		</md-list>
 	        </md-content>
-      	<!--  /md-tab>
-      </md-tabs-->
+      	</md-tab>
+      </md-tabs>
       
 	</md-dialog-content>
 	<md-dialog-actions>

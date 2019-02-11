@@ -28,6 +28,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 		$scope.openAside = false;
 
 		$scope.toggleMenu = function(){
+			if(!$scope.openAside) $scope.setNewsBadge();
 			$scope.openAside = !$scope.openAside;
 		}
     }]);
@@ -62,17 +63,17 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         	    		curr_country: Sbi.config.curr_country,
         	    		curr_language: Sbi.config.curr_language
         	    	}
-        	}).success(function(data){
-        		$scope.links = data.userMenu;
-        		$scope.fixed = data.fixedMenu;
-        		$scope.userName = data.userName;
+        	}).then(function(response){
+        		$scope.links = response.data.userMenu;
+        		$scope.fixed = response.data.fixedMenu;
+        		$scope.userName = response.data.userName;
 
         		$scope.i18n.loadI18nMap().then(function() {
 
-        			if (data.customMenu != undefined && data.customMenu != null && data.customMenu.length > 0){
+        			if (response.data.customMenu != undefined && response.data.customMenu != null && response.data.customMenu.length > 0){
 
-        				if(data.customMenu[0].menu != undefined){
-        					$scope.customs = data.customMenu[0].menu;
+        				if(response.data.customMenu[0].menu != undefined){
+        					$scope.customs = response.data.customMenu[0].menu;
         				}
         				else{
         					$scope.customs = {};
@@ -87,11 +88,10 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         			}
 
         		}); // end of load I 18n
-
-
-
-        	}).
-        	error(function(error){
+        		
+        		
+        		
+        	},function(error){
         		$scope.showAlert('Attention, ' + $scope.userName,"Error Calling REST service for Menu. Please check if the server or connection is working.")
         	});
 
@@ -394,7 +394,15 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				}
 			}
 			
+			$scope.setNewsBadge = function(){
+				sbiModule_restServices.promiseGet("2.0", "newsRead/unread").then(function(response){
+					$scope.unreadNewsNumber = response.data;
+				})
+			}
+			
+			
 			$scope.news = function(){
+				
 				$scope.toggleMenu();
 				var parentEl = angular.element(document.body);
 				$mdDialog.show({
@@ -405,32 +413,44 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 
 				function newsDialogController(scope, $mdDialog, sbiModule_translate) {
 	        	    scope.translate = sbiModule_translate;   
-	        	    
-	        	    scope.openDetail = function(message, index){
+	        	    scope.loadingInfo = false;
+
+	        	    scope.openDetail = function(category,message, index){
 	        	    	if(!message.opened){
-	        	    		sbiModule_restServices.promisePost("2.0", "newsRead/"+message.id).then(function(response){
-		        	    		
-		        	    	})
+	        	    		scope.loadingInfo = true;
+	        	    		if(!message.read) sbiModule_restServices.promisePost("2.0", "newsRead/" + message.id).then(function(response){})
 		        	    	sbiModule_restServices.promiseGet("2.0", "news/" + message.id + "?isTechnical=false").then(function(response){
-		        	    		scope.news[index].html = response.data.html;
+		        	    		message.html = response.data.html;
+		        	    		message.read = true;
+		        	    		scope.loadingInfo = false;
 		        	    	})
-		        	    	message.opened = !message.opened;
 	        	    	}
+	        	    	message.opened = !message.opened;
 	        	    }
 	        	    
-	        	    sbiModule_restServices.promiseGet("2.0", "news")
-	    			.then(function(response) {
-	    				scope.news = [];
-	    				for(var n in response.data){
-	    					if(response.data[n].type){}
-	    				}
-	    				scope.news = response.data;
-	    				sbiModule_restServices.promiseGet("2.0", "newsRead").then(function(readNews){
-	    					
-	    				})
-	    			}, function(response) {
-	    				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
-	    			});
+	        	    sbiModule_restServices.promiseGet("2.0", "newsRead").then(function(readNews){
+	        	    	scope.updateNews(readNews.data);
+    				})
+    				
+    				scope.updateNews = function(readNews){
+	        	    	sbiModule_restServices.promiseGet("2.0", "news")
+		    			.then(function(response) {
+		    				scope.news = [{id:1, label:'News',messages:[]},{id:2,label:'Notifications',messages:[]},{id:3,label:'Warnings',messages:[]}];
+		    				for(var n in response.data){
+		    					for(var c in scope.news){
+		    						if(response.data[n].type == scope.news[c].id){
+		    							var tempNews = response.data[n];
+		    							if(readNews.indexOf(tempNews.id) != -1) tempNews.read = true; 
+		    							scope.news[c].messages.push(tempNews);
+		    						}
+		    					}
+		    					
+		    				}
+		    				
+		    			}, function(response) {
+		    				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
+		    			});
+	        	    }
 	        	    
 	        	    
         	        scope.closeDialog = function() {

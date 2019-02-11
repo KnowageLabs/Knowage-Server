@@ -14,12 +14,12 @@
       <div class="container-fluid" >
       <!-- User Menu -->
 	      <ul class="row iconBar" >
-	        <!--   <li class="dropdown">
-	            <ul id=settings-dropdown class=dropdown-menu >
-	            	<li data-ng-repeat="fix in fixed"><a href="#" title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
-	            </ul>
-	         </li>-->
-	         <li class="col-md-3 col-xs-6" data-ng-repeat="link in links"><a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i></a> </li>
+	         <li class="col-md-3 col-xs-6" data-ng-repeat="link in links">
+	         	<a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> 
+	         		<i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i>
+	         	</a>
+	         	<span ng-if="link.iconCls == 'inbox' && unreadNewsNumber" class="newsBadge">{{unreadNewsNumber}}</span>
+	          </li>
 	      </ul>
       <!-- End User Menu -->    
       <!-- Custom Menu -->

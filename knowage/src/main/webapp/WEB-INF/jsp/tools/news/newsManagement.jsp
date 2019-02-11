@@ -43,9 +43,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 	<!-- include libraries(jQuery, bootstrap) -->
-	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
-	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+	<link href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>"href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+	<script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script> 
+	<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script> 
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/news/newsManagement.js")%>"></script>
 	

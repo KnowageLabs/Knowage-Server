@@ -159,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				.show(confirm)
 				.then(function(){
 					sbiModule_restServices.promiseDelete("2.0", "news/" + item ).then(function(){
-						if(item == $scope.selectedNews.id) delete $scope.selectedNews;
+						if($scope.selectedNews && item == $scope.selectedNews.id) delete $scope.selectedNews;
 						$scope.getNews();
 					})
 				},
