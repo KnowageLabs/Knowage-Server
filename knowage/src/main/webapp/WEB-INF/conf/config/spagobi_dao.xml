@@ -32,7 +32,10 @@
 			implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl" />
 		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl" />
 		<DAO name="SbiDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.SbiDataSetDAOImpl"/>
- 				
+ 		
+ 		<DAO name="SbiNewsDAO" implementation="it.eng.spagobi.tools.news.dao.SbiNewsDAOImpl"></DAO>
+		<DAO name="SbiNewsReadDAO" implementation="it.eng.spagobi.tools.news.dao.SbiNewsReadDAOImpl"></DAO>
+ 		
 		<DAO name="BinContentDAO" implementation="it.eng.spagobi.commons.dao.BinContentDAOHibImpl" />
 		<DAO name="ObjTemplateDAO"
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjTemplateDAOHibImpl" />

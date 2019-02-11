@@ -41,8 +41,24 @@ public class SbiExtRoles extends SbiHibernateModel {
 	private Set sbiMetaModelCategories;
 	private Set sbiDataSetCategories;
 	private Set sbiAuthorizationsRoleses = new HashSet(0);
+	private Set sbiNewsRoles = new HashSet(0);
 
 	// Constructors
+
+	/**
+	 * @return the sbiNewsRoles
+	 */
+	public Set getSbiNewsRoles() {
+		return sbiNewsRoles;
+	}
+
+	/**
+	 * @param sbiNewsRoles
+	 *            the sbiNewsRoles to set
+	 */
+	public void setSbiNewsRoles(Set sbiNewsRoles) {
+		this.sbiNewsRoles = sbiNewsRoles;
+	}
 
 	/**
 	 * default constructor.

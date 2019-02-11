@@ -550,8 +550,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 				SbiAuthorizations authI = (SbiAuthorizations) allFunIt.next();
 
-				if (isAbleTo(aRole, authI))
-				{
+				if (isAbleTo(aRole, authI)) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -596,8 +595,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())
 				|| (authI.getName().equals("RUN_SNAPSHOTS") && aRole.isAbleToRunSnapshots())
 				|| (authI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())
-				|| (authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())
-				|| (authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())
+				|| (authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes()) || (authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())
 				|| (authI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())
 				|| (authI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())
 				|| (authI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())
@@ -771,6 +769,19 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 		return realResult;
+	}
+
+	public Role toBasicRole(SbiExtRoles hibExtRole) {
+
+		logger.debug("IN");
+
+		Role role = new Role();
+		role.setId(hibExtRole.getExtRoleId());
+		role.setName(hibExtRole.getName());
+		role.setDescription(hibExtRole.getDescr());
+
+		logger.debug("OUT");
+		return role;
 	}
 
 	/**
