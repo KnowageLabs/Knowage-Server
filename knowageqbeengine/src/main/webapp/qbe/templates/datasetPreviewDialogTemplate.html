@@ -9,14 +9,15 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<angular-table
+		<angular-table 
 				id="basicView"
 				flex layout-padding
 				ng-model="model.previewModel"
 				columns='model.completeResultsColumns'
 				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
 				total-item-count="model.totalNumberOfItems"
-				items-per-page=20
+				disable-auto-load-on-init="true"
+				items-per-page=15
  				fixed-item-per-page=true>
 		</angular-table>		
 	</md-card-content>
