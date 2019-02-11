@@ -141,7 +141,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	private void enableFilters(Session session) {
 		Map<String, Object> drivers = this.getDrivers();
-		if (drivers != null && drivers.isEmpty() == false) {
+		if (drivers != null) {
 			if (drivers.isEmpty() == false) {
 				Filter filter = null;
 				Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
