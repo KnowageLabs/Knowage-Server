@@ -221,8 +221,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				fullscreen :false,
 				controller: function($scope,mdPanelRef,sbiModule_translate){
 					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
+					$scope.first = true;
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-						$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+						if($scope.first){
+							$scope.first = false
+						}else{
+							$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+						}
+
 					}
 					$scope.closePanel = function () {
 						mdPanelRef.close();
