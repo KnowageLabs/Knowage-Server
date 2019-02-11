@@ -41,6 +41,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	private Set sbiMetaModelCategories;
 	private Set sbiDataSetCategories;
 	private Set sbiAuthorizationsRoleses = new HashSet(0);
+	private Set sbiNewsRoles = new HashSet(0);
 
 	// Constructors
 
@@ -53,8 +54,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param extRoleId
-	 *            the ext role id
+	 * @param extRoleId the ext role id
 	 */
 	public SbiExtRoles(Integer extRoleId) {
 		this.extRoleId = extRoleId;
@@ -74,8 +74,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the ext role id.
 	 *
-	 * @param extRoleId
-	 *            the new ext role id
+	 * @param extRoleId the new ext role id
 	 */
 	public void setExtRoleId(Integer extRoleId) {
 		this.extRoleId = extRoleId;
@@ -93,8 +92,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the role type.
 	 *
-	 * @param sbiDomains
-	 *            the new role type
+	 * @param sbiDomains the new role type
 	 */
 	public void setRoleType(SbiDomains sbiDomains) {
 		this.roleType = sbiDomains;
@@ -112,8 +110,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the role type code.
 	 *
-	 * @param roleTypeCd
-	 *            the new role type code
+	 * @param roleTypeCd the new role type code
 	 */
 	public void setRoleTypeCode(String roleTypeCd) {
 		this.roleTypeCode = roleTypeCd;
@@ -131,8 +128,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the code.
 	 *
-	 * @param code
-	 *            the new code
+	 * @param code the new code
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -150,8 +146,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -169,8 +164,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -188,8 +182,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the sbi func roles.
 	 *
-	 * @param sbiFuncRoles
-	 *            the new sbi func roles
+	 * @param sbiFuncRoles the new sbi func roles
 	 */
 	public void setSbiFuncRoles(Set sbiFuncRoles) {
 		this.sbiFuncRoles = sbiFuncRoles;
@@ -207,8 +200,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	/**
 	 * Sets the sbi paruse dets.
 	 *
-	 * @param sbiParuseDets
-	 *            the new sbi paruse dets
+	 * @param sbiParuseDets the new sbi paruse dets
 	 */
 	public void setSbiParuseDets(Set sbiParuseDets) {
 		this.sbiParuseDets = sbiParuseDets;
@@ -222,8 +214,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiMetaModelCategories
-	 *            the sbiMetaModelCategories to set
+	 * @param sbiMetaModelCategories the sbiMetaModelCategories to set
 	 */
 	public void setSbiMetaModelCategories(Set sbiMetaModelCategories) {
 		this.sbiMetaModelCategories = sbiMetaModelCategories;
@@ -237,8 +228,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiDataSetCategories
-	 *            the sbiDataSetCategories to set
+	 * @param sbiDataSetCategories the sbiDataSetCategories to set
 	 */
 	public void setSbiDataSetCategories(Set sbiDataSetCategories) {
 		this.sbiDataSetCategories = sbiDataSetCategories;
@@ -258,6 +248,14 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	public void setIsPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public Set getSbiNewsRoles() {
+		return sbiNewsRoles;
+	}
+
+	public void setSbiNewsRoles(Set sbiNewsRoles) {
+		this.sbiNewsRoles = sbiNewsRoles;
 	}
 
 	/*

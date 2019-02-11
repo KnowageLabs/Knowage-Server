@@ -77,6 +77,13 @@
 	             link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" 
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
+	
+	<APPLICATION code="News" 
+	             title="#menu.news"  
+	             functionality="NewsVisualization" 
+	             link="" 
+	             iconUrl="">
+	</APPLICATION>
     
     
 	

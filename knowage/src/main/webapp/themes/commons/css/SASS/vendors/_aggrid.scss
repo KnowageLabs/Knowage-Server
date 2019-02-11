@@ -1,3 +1,4 @@
+$aggrid-border-color: #d9dcde;
 .ag-theme-balham {
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.ag-header {
@@ -13,11 +14,26 @@
 			padding: 0;
 		}
 	}
+	&.ag-hide-selection {
+		.ag-row-selected {
+			border-bottom-color: $aggrid-border-color;
+			background-color: initial;
+		}
+	}
+	&.ag-hide-outline {
+		.ag-cell-focus{
+			border: 1px solid transparent;
+			outline: none;
+		}
+	}
 	&.ag-theme-knowage {
 		&.ag-theme-knowage-secondary {
 			.ag-header {
 			    background-color: $secondaryColor;
 			    color: $lightTextColor;
+			}
+			.ag-row-selected {
+				background-color: $tableSelectedElementColor;
 			}
 		}
 		.ag-header {

@@ -464,6 +464,22 @@ md-icon {
   }
 }
 
+.switchSubheader.md-subheader {
+  ._md-subheader-inner {
+    width: 100%;
+    padding: 8px 16px;
+    ._md-subheader-content {
+      width: 100%;
+      display: inline-flex;
+      justify-content: flex-start;
+      align-items: center;
+        md-switch {
+          margin: 0;
+        }
+    }
+  }
+}
+
 .noBorder{
 	border:0px;
 }

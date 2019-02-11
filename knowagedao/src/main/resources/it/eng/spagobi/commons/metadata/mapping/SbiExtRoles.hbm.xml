@@ -87,7 +87,16 @@
                 <column name="ROLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
+        </set>
+        <set name="sbiNewsRoles" table="sbi_news_roles" inverse="true" lazy="false" fetch="select">
+        	<key>
+        		<column name="EXT_ROLE_ID" not-null="true"></column>
+        	</key>
+        	<many-to-many entity-name="it.eng.spagobi.tools.news.metadata.SbiNews">
+        		<column name="NEWS_ID" not-null="true"></column>
+        	</many-to-many>
         </set>   
+        
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">
