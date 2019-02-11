@@ -589,6 +589,19 @@
     vertical-align: baseline;
     top: 5px;
   }
+   .newsBadge {
+    background-color: $fabPrimaryColor;
+    color: white;
+    position:absolute;
+    right: 5px;
+    top:5px;
+    padding: 4px;
+    font-size: $mediumFontSize;
+    height: auto;
+    width: auto;
+    min-width: 24px;
+    border-radius: 50px;
+  }
 }
 
 .centered {

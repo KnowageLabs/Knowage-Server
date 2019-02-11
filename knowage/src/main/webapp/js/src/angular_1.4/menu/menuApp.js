@@ -28,9 +28,12 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 		$scope.openAside = false;
 
 		$scope.toggleMenu = function(){
+			if(!$scope.openAside) $scope.setNewsBadge();
 			$scope.openAside = !$scope.openAside;
 		}
     }]);
+
+myApp.filter('trustAsHtml', function($sce) { return $sce.trustAsHtml; });
 
 myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
@@ -379,7 +382,10 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					$scope.externalUrl(url)
 				} else if (type == "info"){
 					$scope.info();
-				} else if (type == "callExternalApp"){
+				}else if(type == "news"){
+					$scope.news();
+				}
+				else if (type == "callExternalApp"){
 					$scope.callExternalApp(url)
 				} else if (type == "goHome"){
 					$scope.goHome(url);
@@ -389,6 +395,72 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					$scope.accessibilitySettings();
 				}
 			}
+			
+			$scope.setNewsBadge = function(){
+				sbiModule_restServices.promiseGet("2.0", "newsRead/unread").then(function(response){
+					$scope.unreadNewsNumber = response.data;
+				})
+			}
+			
+			
+			$scope.news = function(){
+				
+				$scope.toggleMenu();
+				var parentEl = angular.element(document.body);
+				$mdDialog.show({
+					parent: parentEl,
+					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/news.jsp',
+					controller: newsDialogController
+				});
+
+				function newsDialogController(scope, $mdDialog, sbiModule_translate) {
+	        	    scope.translate = sbiModule_translate;   
+	        	    scope.loadingInfo = false;
+
+	        	    scope.openDetail = function(category,message, index){
+	        	    	if(!message.opened){
+	        	    		scope.loadingInfo = true;
+	        	    		if(!message.read) sbiModule_restServices.promisePost("2.0", "newsRead/" + message.id).then(function(response){})
+		        	    	sbiModule_restServices.promiseGet("2.0", "news/" + message.id + "?isTechnical=false").then(function(response){
+		        	    		message.html = response.data.html;
+		        	    		message.read = true;
+		        	    		scope.loadingInfo = false;
+		        	    	})
+	        	    	}
+	        	    	message.opened = !message.opened;
+	        	    }
+	        	    
+	        	    sbiModule_restServices.promiseGet("2.0", "newsRead").then(function(readNews){
+	        	    	scope.updateNews(readNews.data);
+    				})
+    				
+    				scope.updateNews = function(readNews){
+	        	    	sbiModule_restServices.promiseGet("2.0", "news")
+		    			.then(function(response) {
+		    				scope.news = [{id:1, label:'News',messages:[]},{id:2,label:'Notifications',messages:[]},{id:3,label:'Warnings',messages:[]}];
+		    				for(var n in response.data){
+		    					for(var c in scope.news){
+		    						if(response.data[n].type == scope.news[c].id){
+		    							var tempNews = response.data[n];
+		    							if(readNews.indexOf(tempNews.id) != -1) tempNews.read = true; 
+		    							scope.news[c].messages.push(tempNews);
+		    						}
+		    					}
+		    					
+		    				}
+		    				
+		    			}, function(response) {
+		    				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
+		    			});
+	        	    }
+	        	    
+	        	    
+        	        scope.closeDialog = function() {
+        	          $mdDialog.hide();
+        	        }
+        	      }
+			}
+			
         }
     };
 }]);

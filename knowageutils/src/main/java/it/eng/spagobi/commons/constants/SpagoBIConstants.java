@@ -436,6 +436,7 @@ public class SpagoBIConstants {
 	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 	public static final String USER_SAVE_DOCUMENT_FUNCTIONALITY = "UserSaveDocumentFunctionality";
 	public static final String FINAL_USER_INTERNATIONALIZATION = "FinalUserInternationalization";
+	public static final String SEE_NEWS = "NewsVisualization";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
