@@ -15,7 +15,7 @@
 			</generator>
 		</id>
 		
-		<property name="user" type="string" column="USER" length="100"></property>
+		<property name="user" type="string" column="USER_ID" length="100"></property>
 		<property name="newsId" type="integer" column="NEWS_ID" length="11"></property>
 		
 		<many-to-one name="sbiNews" column="ID" not-null="true" update="false" insert="false" />
