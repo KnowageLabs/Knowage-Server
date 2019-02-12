@@ -2,7 +2,7 @@
 	<div layout="row" layout-align="start center" >
 		<md-input-container class="md-block" flex>
 			<label>{{translate.load('sbi.cockpit.dataset')}}</label>
-			<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
+			<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader" ng-disabled="isDisabled">
 				<md-select-header class="demo-select-header">
 					<input ng-model="searchTerm" type="search" ng-keydown="$event.stopPropagation()" placeholder="Search for a dataset.." class="demo-header-searchbox _md-text">
 				</md-select-header>
@@ -11,10 +11,10 @@
 				</md-optgroup>
 			</md-select>
 		</md-input-container>	
-		<md-button class="md-icon-button" ng-click="addNewDataset()">
+		<md-button class="md-icon-button" ng-click="addNewDataset()" ng-disabled="isDisabled">
 			<md-icon md-font-icon="fa fa-plus"></md-icon>
 		</md-button>
-		<md-button ng-if="extended && ngModel" class="md-icon-button" ng-click="cancelDataset()">
+		<md-button ng-if="extended && ngModel" class="md-icon-button" ng-click="cancelDataset()" ng-disabled="isDisabled">
 		<md-icon md-font-icon="fa fa-eraser"></md-icon>
 	</md-button>
 	</div>
