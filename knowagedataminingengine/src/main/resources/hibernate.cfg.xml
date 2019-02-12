@@ -170,6 +170,10 @@
 		<!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
+	     
+	<!-- News Management -->
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
         
         
         <!-- Kpi Organizational Units -->
