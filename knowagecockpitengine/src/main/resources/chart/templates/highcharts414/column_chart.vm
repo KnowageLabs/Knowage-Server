@@ -1437,7 +1437,7 @@
 									high: $row.get($serieColumnsMappedhigh),
 								#end 
 							#end	
-							if($relatedSerieType != 'arearange')
+							#if($relatedSerieType != 'arearange')
 								#if($serieValue!="")
 									y: $serieValue,
 								#else 
