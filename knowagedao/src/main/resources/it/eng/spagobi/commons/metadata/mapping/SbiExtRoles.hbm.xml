@@ -88,7 +88,7 @@
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
         </set>
-        <set name="sbiNewsRoles" table="sbi_news_roles" inverse="true" lazy="false" fetch="select">
+        <set name="sbiNewsRoles" table="SBI_NEWS_ROLES" inverse="true" lazy="false" fetch="select">
         	<key>
         		<column name="EXT_ROLE_ID" not-null="true"></column>
         	</key>
