@@ -146,6 +146,8 @@
 
                     //function bind to the parent element. Passing mouse event, row and column data.
                     scope.selectCell = function(event, row, column) {
+                    	event.stopImmediatePropagation();
+                    	event.preventDefault();
 						 if(!scope.settings.multiselectable || column.fieldType == "MEASURE"){
 							 scope.clickItem(event,row,column);
 							 return;
