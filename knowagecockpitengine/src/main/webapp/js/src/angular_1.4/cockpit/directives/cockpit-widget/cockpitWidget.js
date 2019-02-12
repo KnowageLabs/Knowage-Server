@@ -134,7 +134,7 @@ angular.module('cockpitModule')
 		return sbiModule_i18n.getI18n(label);
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService, $httpParamSerializer){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -247,10 +247,13 @@ function cockpitWidgetControllerFunction(
 		$filter,
 		$sce,
 		$mdDialog,cockpitModule_backwardCompatibility,
-		cockpitModule_exportWidgetService)
+		cockpitModule_exportWidgetService,
+		$httpParamSerializer)
 
 	{
 
+	var SERVICE = "/restful-services/2.0/datasets/preview";
+	
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
@@ -653,7 +656,45 @@ function cockpitWidgetControllerFunction(
 			console.log("widget is not cliccable")
 			return;
 		}
-
+		
+		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
+		
+		// HARDOCED values for Dataset preview
+		$scope.ngModel.preview = {
+			dataset: dataset,
+			parameters: {},
+			options: {}
+		};
+				
+		if ($scope.ngModel.preview) {
+									
+			var iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+			var config = {
+				datasetLabel: $scope.ngModel.preview.dataset.label
+			};
+			iframeSrcUrl += '?' + $httpParamSerializer(config);
+			// console.log(iframeSrcUrl);
+						
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+				controller: function($scope, $mdDialog, previewUrl, localScope) {
+					$scope.previewUrl = previewUrl;
+					
+					$scope.closePreview = function() {
+						$mdDialog.hide();
+					}
+				},
+				clickOutsideToClose: true,
+				locals: {previewUrl: iframeSrcUrl, localScope: $scope}
+			}).then(function(response){
+				
+			}, function(response){
+				// cancel dialog
+			});
+			
+		}
+		
 		// check if cross navigation was enable don this widget
 		var model = $scope.ngModel;
 		if(model.cross != undefined  && model.cross.cross != undefined
@@ -826,7 +867,7 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
-		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
+		// var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
 
 		if(dataset && columnName){
 
@@ -979,7 +1020,25 @@ function cockpitWidgetControllerFunction(
 
 		}
 	}
-
+	
+	var openDatasetPreview = function(iframeSrcUrl) {
+		$mdDialog.show({
+			parent: angular.element(document.body),
+			templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+			controller: datasetPreviewDialogController,
+			clickOutsideToClose: true,
+			locals: {previewUrl: iframeSrcUrl}
+		});
+	}
+	
+	function datasetPreviewDialogController($scope, $mdDialog, previewUrl) {
+		$scope.previewUrl = previewUrl;
+		
+		$scope.closePreview = function() {
+			$mdDialog.cancel();
+		}
+	}
+	
 	$scope.doEditWidget=function(initOnFinish){
 
 		var deferred;
