@@ -1,45 +1,36 @@
 <md-content class="md-padding noPadding" layout="column" layout-fill>
 	<md-card>
-		<md-card-title>
-			<md-card-title-text layout="row">
-				<span flex class="md-headline"></span>
-				<md-icon md-font-icon="fa fa-eraser" 
-						ng-show="isWidget" ng-click="resetCross()"></md-icon>
-			</md-card-title-text>
-		</md-card-title>
+		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.cross.enable" ng-change="toggleEnabled('cross')"></md-switch> Cross Navigation</md-subheader>
 		<md-card-content layout="row" layout-align="space-around center">
-			<md-checkbox ng-model="ngModel.cross.enable" flex ng-change=toggleBorderVisibility()>
-				{{translate.load("sbi.cockpit.cross.check")}}
-			</md-checkbox>
 			
-			<md-checkbox ng-show="crossTable" ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
+			<md-checkbox ng-show="crossTable" ng-model="ngModel.cross.allRow" flex ng-disabled="!ngModel.preview.enable">
 				{{translate.load("sbi.cockpit.cross.allRow")}}
 			</md-checkbox>
 
 			<md-input-container ng-show="crossTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
-				<md-select ng-model="ngModel.cross.column" >
+				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.preview.enable">
 					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 			</md-input-container>
 			
 			<md-input-container ng-show="crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
-				<md-select ng-model="ngModel.cross.column" >
+				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.preview.enable">
 					<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
 				</md-select>
 			</md-input-container>
 
 			<md-input-container ng-show="crossTable || crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
-				<md-select ng-model="ngModel.cross.outputParameter">
+				<md-select ng-model="ngModel.cross.outputParameter" ng-disabled="!ngModel.preview.enable">
 					<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
 				</md-select>
 			</md-input-container>
 			
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.crossName")}}</label>
-				<md-select ng-model="ngModel.cross.crossName">
+				<md-select ng-model="ngModel.cross.crossName" ng-disabled="!ngModel.preview.enable">
 					<md-option ng-repeat="cn in crossNavigations" ng-value="cn.crossName">{{cn.crossName}}</md-option>
 				</md-select>
 			</md-input-container>
@@ -47,21 +38,30 @@
 	</md-card>
 	
 	<md-card>
-        <md-card-title>
-            <md-card-title-text layout="row">
-                <span flex class="md-headline">{{translate.load("sbi.cockpit.cross.outputParameters")}}</span>
-            </md-card-title-text>
-        </md-card-title>      
+		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.preview.enable" ng-change="toggleEnabled('preview')"></md-switch> Preview Visualization</md-subheader>
+		<md-card-content layout="row" layout-align="space-around center">
+			
+			<md-checkbox ng-show="crossTable" ng-model="ngModel.preview.allRow" flex ng-disabled="!ngModel.preview.enable">
+				{{translate.load("sbi.cockpit.cross.allRow")}}
+			</md-checkbox>
+			
+			<dataset-selector flex ng-model="ngModel.preview.dataset" on-change="resetValue(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
 
-		<!-- Cycle on output parameters -->
-            
+			<md-input-container ng-show="crossTable || crossChart" class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
+				<md-select ng-model="ngModel.cross.outputParameter" ng-disabled="!ngModel.preview.enable">
+					<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
+				</md-select>
+			</md-input-container>
+			
+		</md-card-content> 
+	</md-card>
+	
+	<md-card ng-if="outputParametersList.lenght > 0">
+		<md-subheader>{{translate.load("sbi.cockpit.cross.outputParameters")}}</md-subheader>
           <md-card-content>
           
-          <div
-			layout="row"
-          	class="filterRow"
-          	ng-show="ngModel.cross.outputParameter != outputParameter.name"
-          	ng-repeat="outputParameter in outputParametersList">
+          <div layout="row" class="filterRow" ng-show="ngModel.cross.outputParameter != outputParameter.name" ng-repeat="outputParameter in outputParametersList">
            
 
            <!-- enable -->
@@ -85,25 +85,12 @@
 			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataType" ng-init="ngModel.cross.outputParametersList[outputParameter.name].dataType=outputParameter.dataType" type="hidden">
 			
 			<!-- value if static -->
-			<md-input-container class="md-block" flex=25 
-				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
-						&& (outputParameter.dataType == 'number' || outputParameter.dataType == 'text' || outputParameter.dataType == 'date')
-				">
+			<md-input-container class="md-block" flex=25 ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
+						&& (outputParameter.dataType == 'number' || outputParameter.dataType == 'text' || outputParameter.dataType == 'date')">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
 				<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="{{outputParameter.dataType}}">
 			</md-input-container>
 
-<!--
-			<md-input-container class="md-block" flex=25 
-				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
-										&& outputParameter.dataType == 'date'
-				">
-				<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
-				<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="date">
-				 <md-datepicker ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataValue" md-placeholder="Enter date"></md-datepicker>
-			</md-input-container>
-  -->
-	
 			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" ng-value="ciaoooo" type="hidden">
 	
 			<!-- column if dynamic , different if chart-->
@@ -129,9 +116,7 @@
 					<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
 				</md-select>
 			</md-input-container>
-			
-			
-						
+				
 			<!-- dataset and column if selection -->
 			<md-input-container class="md-block" flex=25
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">

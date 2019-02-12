@@ -151,7 +151,10 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	}
 
-
+	$scope.toggleEnabled = function(type){
+		if(type=='preview' && $scope.ngModel.cross.enable) $scope.ngModel.cross.enable = false;
+		if(type=='cross' && $scope.ngModel.preview.enable) $scope.ngModel.preview.enable = false;
+	}
 
 	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
 
