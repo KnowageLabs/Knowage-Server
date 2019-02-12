@@ -668,30 +668,24 @@ function cockpitWidgetControllerFunction(
 				
 		if ($scope.ngModel.preview) {
 									
-			var iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+			$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
 			var config = {
 				datasetLabel: $scope.ngModel.preview.dataset.label
 			};
-			iframeSrcUrl += '?' + $httpParamSerializer(config);
-			// console.log(iframeSrcUrl);
+			$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 						
-			$mdDialog.show({
-				parent: angular.element(document.body),
-				templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
-				controller: function($scope, $mdDialog, previewUrl, localScope) {
-					$scope.previewUrl = previewUrl;
-					
-					$scope.closePreview = function() {
-						$mdDialog.hide();
-					}
-				},
-				clickOutsideToClose: true,
-				locals: {previewUrl: iframeSrcUrl, localScope: $scope}
-			}).then(function(response){
-				
-			}, function(response){
-				// cancel dialog
-			});
+				$mdDialog.show({
+					parent: angular.element(document.body),
+					templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+					controller: function(scope) {
+						scope.previewUrl = $scope.iframeSrcUrl;
+						
+						scope.closePreview = function() {
+							$mdDialog.hide();
+						}
+					},
+					clickOutsideToClose: true
+				}).then(function(response){}, function(response){});
 			
 		}
 		

@@ -41,7 +41,7 @@
 	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="{'justify-content':column.style['justify-content'] || 'flex-start'}">
-		                <div flex ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
+		                <div ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow] | number:checkPrecision(column)}}</span>
 			                <span ng-if="::!hasPrecision(column) && column.type == 'java.util.Date'">{{::datify(row[column.aliasToShow],'DD/MM/YYYY') | date:column.dateFormat}}</span>
@@ -60,9 +60,9 @@
 		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].icon">
 		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
-		                <div flex="10" ng-click="selectCell($event,row,column)">
+		                <span ng-click="selectCell($event,row,column)">
 		                	<md-icon class="fa fa-mouse-pointer"></md-icon>
-		                </div>
+		                </span>
 	                </div>
 	            </td>
 	        </tr>
