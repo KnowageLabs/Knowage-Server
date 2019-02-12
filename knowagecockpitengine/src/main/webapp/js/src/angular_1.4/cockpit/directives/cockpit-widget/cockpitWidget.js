@@ -659,18 +659,18 @@ function cockpitWidgetControllerFunction(
 		
 		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
 		
-		// HARDOCED values for Dataset preview
-		$scope.ngModel.preview = {
-			dataset: dataset,
-			parameters: {},
-			options: {}
-		};
-				
-		if ($scope.ngModel.preview) {
+		var model = $scope.ngModel;
+		
+		var previewSettings;
+		
+		if($scope.ngModel.preview) previewSettings = angular.copy($scope.ngModel.preview);
+		if($scope.ngModel.cross.preview) previewSettings = angular.copy($scope.ngModel.cross.preview);
+		
+		if (previewSettings && previewSettings.enable) {
 									
 			$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
 			var config = {
-				datasetLabel: $scope.ngModel.preview.dataset.label
+				datasetLabel: cockpitModule_datasetServices.getDatasetLabelById(previewSettings.dataset)
 			};
 			$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 						
@@ -686,14 +686,9 @@ function cockpitWidgetControllerFunction(
 					},
 					clickOutsideToClose: true
 				}).then(function(response){}, function(response){});
+			return;
 			
-		}
-		
-		// check if cross navigation was enable don this widget
-		var model = $scope.ngModel;
-		if(model.cross != undefined  && model.cross.cross != undefined
-				&& model.cross.cross.enable === true
-				){
+		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
 			// enter cross navigation mode
 			var doCross = false;
@@ -809,47 +804,6 @@ function cockpitWidgetControllerFunction(
 					}
 				}
 
-
-
-
-
-				// parse static parameters if present
-				/*var staticParameters = [];
-				if(model.cross.cross.staticParameters && model.cross.cross.staticParameters != ""){
-					var err=false;
-					try{
-						var parsedStaticPars = model.cross.cross.staticParameters.split("&");
-						for(var i=0;i<parsedStaticPars.length;i++){
-							var splittedPar=parsedStaticPars[i].split("=");
-							if(splittedPar[0]==undefined || splittedPar[1]==undefined){err=true;}
-							else{
-								var toInsert = {};
-								toInsert[splittedPar[0]] = splittedPar[1];
-								staticParameters.push(toInsert);
-							}
-
-						}
-
-					}catch(e){
-						err=true
-						console.error(e);
-					}finally{
-						if(err){
-							 $mdDialog.show(
-								      $mdDialog.alert()
-								        .clickOutsideToClose(true)
-								        .title(sbiModule_translate.load("sbi.cockpit.cross.staticParameterErrorFormatTitle"))
-								        .content(sbiModule_translate.load("sbi.cockpit.cross.staticParameterErrorFormatMsg"))
-								        //.ariaLabel('Alert Dialog Demo')
-								        .ok(sbiModule_translate.load("sbi.general.continue"))
-								    );
-								return;
-						}
-
-						}
-
-				}*/
-
 				// if destination document is specified don't ask
 				if(model.cross.cross.crossName != undefined){
 					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName,null,otherOutputParameters);
@@ -860,8 +814,6 @@ function cockpitWidgetControllerFunction(
 				return;
 			}
 		}
-
-		// var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
 
 		if(dataset && columnName){
 
