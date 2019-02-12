@@ -31,8 +31,8 @@
 	   		</div>
 	   	</md-toolbar>
 	  
-	   <md-card-content ng-show="dataset.dsTypeCd.toLowerCase() != 'qbe'">
-	   		<div ag-grid="gridOptions" class="ag-theme-balham kn-preview-table-theme" style="width:100%;height:calc(100% - 64px)"></div>
+	   <md-dialog-content ng-show="dataset.dsTypeCd.toLowerCase() != 'qbe'" style="height:100%;">
+	   		<div ag-grid="gridOptions" class="ag-theme-balham kn-preview-table-theme" style="width:100%;height:calc(100% - 32px)"></div>
 			<div ref="south" class="ag-theme-balham ag-noBorders">
 				<div>
 					<div class="ag-paging-panel ag-font-style">
@@ -47,7 +47,7 @@
 	           	</div>
 	          </div>
 	   		
-	   </md-card-content>
+	   </md-dialog-content>
 
 		<md-content style="overflow-y:hidden;" ng-if="dataset.dsTypeCd.toLowerCase() == 'qbe' && dataset.executed">
 		

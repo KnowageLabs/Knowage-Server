@@ -129,6 +129,7 @@ $exportBarHeight : 36px;
 }
 .kn-preview-table-theme {
 	height: 100%;
+	box-sizing: border-box;
 	&.has-utility-bar {
 		height: calc(100% - #{$exportBarHeight});
 	}
