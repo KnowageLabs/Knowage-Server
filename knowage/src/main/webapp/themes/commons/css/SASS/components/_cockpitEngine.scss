@@ -1662,7 +1662,8 @@
 
 .iconSelectorSide {
 	box-shadow: -3px 0 3px $shadowsColor;
-	md-content {
+	md-content.md-knowage-theme {
+		background-color: $tabBackground;
 		height: 635px;
 		h3 {
 			font-size: $headerFontSize;
