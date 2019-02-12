@@ -1,4 +1,5 @@
-<md-content class="md-padding noPadding" layout="column" layout-fill>
+<md-content class="md-padding noPadding" layout="row" layout-fill>
+	<div layout="column" flex>
 	<md-card>
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.cross.enable" ng-change="toggleEnabled('cross')"></md-switch> Cross Navigation</md-subheader>
 		<md-card-content layout="row" layout-align="space-around center">
@@ -53,6 +54,11 @@
 					<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
 				</md-select>
 			</md-input-container>
+			
+			<button class="md-button md-raised md-button-empty" ng-if="crossTable" ng-click="chooseIcon()">
+				<span ng-if="!ngModel.preview.icon">Choose Icon</span>
+				<i ng-if="ngModel.preview.icon" ng-class="ngModel.preview.icon"></i>
+			</button>
 			
 		</md-card-content> 
 	</md-card>
@@ -143,5 +149,6 @@
 		</md-card-content>	
 		</div>
 	</md-card>
-	
+	</div>
+	<ng-include src="getTemplateUrl('tableWidgetAddIconDialog')" flex="20" ng-if="crossTable && iconOpened"></ng-include>
 </md-content>

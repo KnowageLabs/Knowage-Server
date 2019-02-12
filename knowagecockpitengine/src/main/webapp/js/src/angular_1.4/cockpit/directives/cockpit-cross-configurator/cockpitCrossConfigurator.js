@@ -87,7 +87,7 @@ angular.module('cockpitModule').directive('cockpitCrossCustomWidgetConfigurator'
 	   }
 });
 
-function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,
+function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,cockpitModule_generalServices,knModule_fontIconsService,
 		cockpitModule_generalOptions,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_documentServices, cockpitModule_crossServices){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
@@ -97,6 +97,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.localDataset = {};
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
 	$scope.chartProperties=[];
+	$scope.availableIcons = knModule_fontIconsService.icons;
 	$scope.outputParametersType=
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
@@ -111,7 +112,19 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		var meta = $scope.cockpitDatasets[i].metadata.fieldsMeta;
 		$scope.allCockpitDatasetsColumns[$scope.cockpitDatasets[i].label] = meta;
 	}
+	
+	$scope.getTemplateUrl = function(template){
+		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
+	}
 
+	$scope.chooseIcon = function(){
+		$scope.iconOpened = !$scope.iconOpened;
+	}
+	
+	$scope.setIcon = function(family,icon){
+		$scope.ngModel.preview.icon = family.className+' '+icon.className;
+		$scope.iconOpened = !$scope.iconOpened;
+	}
 
 	$scope.outputParametersList = [];
 
@@ -149,6 +162,8 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		}
 		
 	}
+	
+
 
 	if($scope.crossChart){
 		$scope.localModel.cross = $scope.localModel.cross || {};
