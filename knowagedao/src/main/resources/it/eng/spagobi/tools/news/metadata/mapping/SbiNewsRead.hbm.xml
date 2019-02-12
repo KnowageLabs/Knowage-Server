@@ -7,7 +7,7 @@
 	<class name="it.eng.spagobi.tools.news.metadata.SbiNewsRead" table="SBI_NEWS_READ">
 	
 		<id name="newsReadID" type="integer">
-			<column name="id"></column>
+			<column name="ID"></column>
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
 				<param name="segment_value">SBI_NEWS_READ</param>
