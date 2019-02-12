@@ -195,6 +195,10 @@
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlReferences.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
+	     
+	<!-- News Management -->
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
         
         <!-- end mapping -->
         
