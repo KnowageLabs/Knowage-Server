@@ -672,6 +672,7 @@ function cockpitWidgetControllerFunction(
 			var config = {
 				datasetLabel: cockpitModule_datasetServices.getDatasetLabelById(previewSettings.dataset)
 			};
+			if(previewSettings.parameters) config.parameters = previewSettings.parameters;
 			$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 						
 				$mdDialog.show({
