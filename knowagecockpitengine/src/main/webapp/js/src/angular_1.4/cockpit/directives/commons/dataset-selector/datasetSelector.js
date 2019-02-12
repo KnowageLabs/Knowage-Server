@@ -27,7 +27,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 			   extended:"=?",
 			   datasetSettings:"=?",
 			   onChange:"&",
-			   isDisabled:"&?",
+			   isDisabled:"=?",
 			   datasetTypeAvailable:"=?",
 			   datasetTypeExclusion:"=?"
 		   },

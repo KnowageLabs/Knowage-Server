@@ -103,22 +103,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
 		];
 
-//	var selectionsObj = cockpitModule_template.getSelections();
-//	$scope.datasetSelections = [];
-//	$scope.columnSelections = {};
-//	for(var i =0;i<selectionsObj.length;i++){
-//		var ds = selectionsObj[i].ds;
-//		var columnName = selectionsObj[i].columnName;
-//		if(!$scope.datasetSelections.includes(ds)){
-//			$scope.datasetSelections.push(ds);
-//		}
-//		if($scope.columnSelections[ds]==undefined){
-//			$scope.columnSelections[ds] = [];
-//		}
-//		$scope.columnSelections[ds].push(columnName);
-//
-//	}
-
 	//$scope.cockpitDatasets = cockpitModule_template.configuration.datasets;
 	$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList;
 	if($scope.cockpitDatasets == undefined) $scope.cockpitDatasets = [];
@@ -151,16 +135,24 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	}
 
+	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
+	
+	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
+	
 	$scope.toggleEnabled = function(type){
-		if(type=='preview' && $scope.ngModel.cross.enable) $scope.ngModel.cross.enable = false;
-		if(type=='cross' && $scope.ngModel.preview.enable) $scope.ngModel.preview.enable = false;
+		if($scope.crossTable){
+			if(type=='preview' && $scope.model.cross.enable) $scope.model.cross.enable = false;
+			if(type=='cross' && $scope.model.preview.enable) $scope.model.preview.enable = false;
+		}else{
+			if(type=='preview' && $scope.localModel.cross.enable) $scope.localModel.cross.enable = false;
+			if(type=='cross' && $scope.localModel.preview.enable) $scope.localModel.preview.enable = false;
+		}
+		
 	}
 
-	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
-
-	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
-
 	if($scope.crossChart){
+		$scope.localModel.cross = $scope.localModel.cross || {};
+		$scope.localModel.preview = $scope.localModel.preview || {};
 		var chart = $scope.localModel.chartTemplate.CHART;
 		if(!chart){
 			chart = $scope.localModel.chartTemplate;
@@ -168,6 +160,8 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.chartProperties=cockpitModule_crossServices.getChartParameters(chart.type, chart);
 	}else {
 		if($scope.model){
+			$scope.model.cross = $scope.model.cross || {};
+			$scope.model.preview = $scope.model.preview || {};
 		   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
 			   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 		   }else{
