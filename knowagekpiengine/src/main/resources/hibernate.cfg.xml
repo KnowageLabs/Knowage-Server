@@ -196,6 +196,10 @@
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
         
         <!-- end mapping -->
+	     
+	<!-- News Management -->
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
         <class-cache class="it.eng.spagobi.commons.metadata.SbiUserFunctionality" usage="read-only"/>
