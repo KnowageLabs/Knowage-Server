@@ -663,8 +663,8 @@ function cockpitWidgetControllerFunction(
 		
 		var previewSettings;
 		
-		if($scope.ngModel.cross.preview) previewSettings = angular.copy($scope.ngModel.cross.preview);
-		if($scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
+		if($scope.ngModel.cross && $scope.ngModel.cross.preview) previewSettings = angular.copy($scope.ngModel.cross.preview);
+		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
 		
 		if (previewSettings && previewSettings.enable) {
 									
