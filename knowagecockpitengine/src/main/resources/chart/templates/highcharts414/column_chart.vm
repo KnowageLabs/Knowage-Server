@@ -3,8 +3,7 @@
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
-    	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader , $dataField.name))
-
+    	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader.toLowerCase() , $dataField.name))
 	#end
 #end
 #set($rows = $data.rows) ## data in table rows
@@ -17,10 +16,10 @@
 #set($categorieColumns.name = $categorieColumns.column)
 #end
 #if($chart.isCockpitEngine=="true")
-#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name.toLowerCase())) ## "product" -> "column_3"
 #end
 #if($chart.isCockpitEngine!="true")
-#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column.toLowerCase())) ## "product" -> "column_3"
 #end
 #set($isDateTime = false)
 #if($chart.dateTime && $chart.dateTime=="true")
@@ -1317,7 +1316,7 @@
 	   	#if($chart.isCockpitEngine != 'true')
 	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    #end
-	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
+	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 	   	
 		#if( $relatedSerie.type == 'arearangelow' )		
     	#set($serieColumnsMappedLow =$serieColumnsMapped)
@@ -1328,8 +1327,8 @@
 	#end
     #foreach($element in $seriesMap)
 
-    #set($relatedSerieColName = "$element.name"+"_#if($element.groupingFunction)$element.groupingFunction.toLowerCase()#{else}sum#end")
-	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
+ 	   #set($relatedSerieColName = "$element.name"+"_#if($element.groupingFunction)$element.groupingFunction.toLowerCase()#{else}sum#end")
+	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 		#if($chart.isCockpitEngine != 'true')
 	    	#set($relatedSerieColName = "$element.column"+"_#if($element.groupingFunction)$element.groupingFunction.toLowerCase()#{else}sum#end")
 	   	#end	
@@ -1338,6 +1337,7 @@
     		 #set($seriesMap = $datasettransformer.seriesMapTransformedMethod($seriesMap))
            	 #break
     	#end
+
 
     #end
   	#set ($counter = 0)
@@ -1420,7 +1420,8 @@
 	    	  	#end
 
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
-	    	   	#foreach($row in $rows)
+
+	    		#foreach($row in $rows)
 	    	   	
 					#if( $row.get($serieColumnsMapped))
 						#set ($serieValue = $row.get($serieColumnsMapped))
