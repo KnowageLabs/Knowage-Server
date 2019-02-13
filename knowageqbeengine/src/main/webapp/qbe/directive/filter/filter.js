@@ -200,16 +200,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 
 	$scope.deleteFilter = function (filter){
-		console.log(filter);
-		for (var i = 0; i < $scope.filters.length; i++) {
-			if($scope.filters[i].filterId==filter.filterId) {
 
-				$scope.filters.splice(i, 1);
-				generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
-			}
-
-		}
-
+		filters_service.deleteFilter($scope.filters,filter,$scope.ngModel.expression,$scope.ngModel.advancedFilters);
 	}
 
 	$scope.entitiesField=[];
@@ -381,7 +373,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.ngModel.queryFilters.length = 0;
 			$scope.ngModel.advancedFilters.length = 0;
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-			generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
+			filters_service.generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
 			Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
 			//$scope.ngModel.field.expression = generateExpressions ($scope.filters);
 			$scope.ngModel.mdPanelRef.close();
@@ -404,66 +396,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		$scope.ngModel.mdPanelRef.close();
 	}
 
-	var generateExpressions = function (filters, expression, advancedFilters){
 
-		advancedFilters.length = 0;
-
-		for (var i = 0; i < filters.length; i++) {
-			var advancedFilter = {
-					type:"item",
-					id: filters[i].filterId.substring(6),
-					columns:[[]],
-					name: filters[i].filterId,
-					connector: filters[i].booleanConnector,
-					color: filters[i].color,
-					entity: filters[i].entity,
-					leftValue: filters[i].leftOperandAlias,
-					operator: filters[i].operator,
-					rightValue: filters[i].rightOperandDescription
-			};
-			advancedFilters.push(advancedFilter);
-		}
-
-	 // if filters are empty set expression to empty object
-		if(advancedFilters.length==0){
-			angular.copy({},expression);
-		} else {
-			var nodeConstArray = [];
-			for (var i = 0; i < advancedFilters.length; i++) {
-				var nodeConstObj = {};
-				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
-				nodeConstObj.type = "NODE_CONST";
-				nodeConstObj.childNodes = [];
-				nodeConstArray.push(nodeConstObj);
-			}
-			if (advancedFilters.length==1){
-				angular.copy(nodeConstArray[0],expression);
-			} else if (advancedFilters.length>1) {
-				var nop = {};
-				nop.value = "";
-				nop.type = "NODE_OP";
-				nop.childNodes = [];
-				var nopForInsert = {};
-				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
-					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
-						nop.value = advancedFilters[i].connector;
-						nop.childNodes.push(nodeConstArray[i]);
-						if(nopForInsert.value){
-							nop.childNodes.push(nopForInsert);
-						}
-						nopForInsert = angular.copy(nop);
-						nop.value = "";
-						nop.type = "NODE_OP";
-						nop.childNodes.length = 0;
-					} else {
-						nop.childNodes.push(nodeConstArray[i]);
-					}
-				}
-				angular.copy(nopForInsert,expression);
-			}
-		}
-
-	};
 	$scope.parametersPreviewColumns = [
 		{"headerName":$scope.translate.load("kn.qbe.params.name"),"field":"name"},
 		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"defaultValue",  editable: true},
@@ -477,7 +410,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		$scope.ngModel.pars.length = 0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-		generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
+		filters_service.generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
 		$scope.ngModel.mdPanelRef.close();
 	};
 

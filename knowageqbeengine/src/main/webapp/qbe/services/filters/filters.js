@@ -26,7 +26,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:"manual"},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherEntity"),value:"anotherEntity"},
-		 
+
 	];
 
 	this.getHavingTargetTypes = [
@@ -36,7 +36,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 	];
 
 	this.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
-	
+
 	this.getSpecialOperators = [
 		{name:sbiModule_translate.load("kn.qbe.filters.operators.equals.to"),value:"EQUALS TO"},
 		{name:sbiModule_translate.load("kn.qbe.filters.operators.greater.than"),value:"GREATER THAN"},
@@ -78,6 +78,85 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.inside"),value:"SPATIAL_INSIDE"}];
 
 	this.getBooleanConnectors= ["AND","OR"];
+
+	this.deleteFilter = function(filters,filter,expression,advancedFilters){
+
+		console.log(filter);
+		this.deleteFilterByProperty('filterId',filter.filterId,filters,expression,advancedFilters)
+	}
+
+	this.deleteFilterByProperty = function(propertyName,propertyValue,filters,expression,advancedFilters){
+		for (var i = 0; i < filters.length; i++) {
+			if(filters[i][propertyName]!=undefined && filters[i][propertyName]==propertyValue) {
+
+				filters.splice(i, 1);
+				this.generateExpressions (filters, expression, advancedFilters);
+				i--;
+			}
+
+		}
+	}
+
+	this.generateExpressions = function (filters, expression, advancedFilters){
+
+		advancedFilters.length = 0;
+
+		for (var i = 0; i < filters.length; i++) {
+			var advancedFilter = {
+					type:"item",
+					id: filters[i].filterId.substring(6),
+					columns:[[]],
+					name: filters[i].filterId,
+					connector: filters[i].booleanConnector,
+					color: filters[i].color,
+					entity: filters[i].entity,
+					leftValue: filters[i].leftOperandAlias,
+					operator: filters[i].operator,
+					rightValue: filters[i].rightOperandDescription
+			};
+			advancedFilters.push(advancedFilter);
+		}
+
+	 // if filters are empty set expression to empty object
+		if(advancedFilters.length==0){
+			angular.copy({},expression);
+		} else {
+			var nodeConstArray = [];
+			for (var i = 0; i < advancedFilters.length; i++) {
+				var nodeConstObj = {};
+				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
+				nodeConstObj.type = "NODE_CONST";
+				nodeConstObj.childNodes = [];
+				nodeConstArray.push(nodeConstObj);
+			}
+			if (advancedFilters.length==1){
+				angular.copy(nodeConstArray[0],expression);
+			} else if (advancedFilters.length>1) {
+				var nop = {};
+				nop.value = "";
+				nop.type = "NODE_OP";
+				nop.childNodes = [];
+				var nopForInsert = {};
+				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
+					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
+						nop.value = advancedFilters[i].connector;
+						nop.childNodes.push(nodeConstArray[i]);
+						if(nopForInsert.value){
+							nop.childNodes.push(nopForInsert);
+						}
+						nopForInsert = angular.copy(nop);
+						nop.value = "";
+						nop.type = "NODE_OP";
+						nop.childNodes.length = 0;
+					} else {
+						nop.childNodes.push(nodeConstArray[i]);
+					}
+				}
+				angular.copy(nopForInsert,expression);
+			}
+		}
+
+	}
 
 });
 

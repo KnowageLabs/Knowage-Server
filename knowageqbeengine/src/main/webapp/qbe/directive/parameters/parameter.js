@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_parameters', ['ngMaterial','angular_table' ])
+angular.module('qbe_parameters', ['ngMaterial','angular_table','filters' ])
 .directive('qbeParameters', function() {
 	return {
 
@@ -36,10 +36,10 @@ angular.module('qbe_parameters', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,$mdPanel,$mdDialog,params_service){
+function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,$mdPanel,$mdDialog,params_service,filters_service){
 	$scope.translate = sbiModule_translate;
 	$scope.parameterItems = angular.copy($scope.ngModel.pars);
-	
+
 	$scope.parameterTypes = params_service.getParamTypes();
 
 	$scope.parametersColumns = [
@@ -85,7 +85,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 		}
 
 		];
-	
+
 	$scope.parameterDelete = [
 		{
 			label : $scope.translate.load("sbi.generic.delete"),
@@ -100,7 +100,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 						.ariaLabel("Delete dataset parameter").ok(
 								$scope.translate.load("kn.qbe.general.yes"))
 						.cancel($scope.translate.load("kn.qbe.general.no"));
-				
+
 				$mdDialog.show(confirm).then(function() {
 					for (i = 0; i < $scope.parameterItems.length; i++) {
 
@@ -108,32 +108,38 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 							$scope.parameterItems.splice(i, 1);
 							break;
 						}
+
+
 					}
+
+
+					filters_service.deleteFilterByProperty('paramName',item.name,$scope.ngModel.filters,$scope.ngModel.expression,$scope.ngModel.advancedFilters)
+
 				});
 			}
 		}
 		];
-	
+
 	$scope.parametersCounter = 0;
 	$scope.parametersAddItem = function() {
 
 		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":false,"index":$scope.parametersCounter++});
 	};
-	
+
 	$scope.paramScopeFunctions = {
 			parameterTypes: $scope.parameterTypes
 	};
-	
+
 	$scope.saveParams = function(){
 		$scope.ngModel.pars.length=0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.parameterItems);
 		$scope.ngModel.mdPanelRef.close();
 	};
-	
+
 	$scope.closeParams=function(){
 		$scope.ngModel.mdPanelRef.close();
 	};
-	
+
 	$scope.deleteAllParameters =function(){
 
 		if ($scope.parameterItems.length > 0) {

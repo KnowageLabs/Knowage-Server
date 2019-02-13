@@ -80,7 +80,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			saveObj.meta = $scope.meta;
 			comunicator.sendMessage(saveObj);
 		}
-		
+
 		console.log(message)
 	}
 	comunicator.addMessageHandler(consoleHandler);
@@ -568,7 +568,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     })
 
 	$scope.$on('openDialogForParams',function(event){
-		$scope.openDialogForParams($scope.pars);
+		$scope.openDialogForParams($scope.pars,$scope.editQueryObj.filters, $scope.editQueryObj.expression,$scope.advancedFilters);
 	})
 
 	$scope.$on('openDialogJoinDefinitions',function(event){
@@ -610,7 +610,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     }
 
-	$scope.openDialogForParams = function(pars){
+	$scope.openDialogForParams = function(pars,filters,expression,advancedFilters){
     	var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
@@ -618,7 +618,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
-					$scope.model ={ "pars": pars,"mdPanelRef":mdPanelRef};
+					$scope.model ={
+							"pars": pars,
+							"filters":filters,
+							"mdPanelRef":mdPanelRef,
+							"expression":expression,
+							"advancedFilters":advancedFilters};
 				},
 				locals: {pars: pars},
 				hasBackdrop: true,
