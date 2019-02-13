@@ -619,13 +619,13 @@ angular.module('chartInitializer')
 		for (var i =0; i < chartConf.series.length; i++){
 			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
 			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
-			if(mapAxis.min[chartConf.series[i].yAxis]){
+			if(mapAxis.min[chartConf.series[i].yAxis]!=undefined){
 				if(mapAxis.min[chartConf.series[i].yAxis] > min)
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			} else {
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			}
-			if(mapAxis.max[chartConf.series[i].yAxis]){
+			if(mapAxis.max[chartConf.series[i].yAxis]!=undefined){
 				if(mapAxis.max[chartConf.series[i].yAxis] < max)
 				mapAxis.max[chartConf.series[i].yAxis] = max;
 			} else {
