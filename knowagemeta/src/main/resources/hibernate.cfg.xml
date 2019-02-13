@@ -198,6 +198,10 @@
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlReferences.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
+		
+        <!-- Tags mapping -->
+        <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiTag.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiDataSetTag.hbm.xml" />
         
         <!-- end mapping -->
 	     
