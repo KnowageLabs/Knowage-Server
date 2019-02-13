@@ -651,6 +651,11 @@ function cockpitWidgetControllerFunction(
 		}
 		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
+	
+	$scope.checkPreviewParameters = function(previewSettings, columnName, modalColumn, row){
+		
+	}
+	
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -667,28 +672,32 @@ function cockpitWidgetControllerFunction(
 		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
 		
 		if (previewSettings && previewSettings.enable) {
-									
-			$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
-			var config = {
-				datasetLabel: cockpitModule_datasetServices.getDatasetLabelById(previewSettings.dataset)
-			};
-			if(previewSettings.parameters) config.parameters = previewSettings.parameters;
-			$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
-						
-				$mdDialog.show({
-					parent: angular.element(document.body),
-					templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
-					controller: function(scope) {
-						scope.previewUrl = $scope.iframeSrcUrl;
-						
-						scope.closePreview = function() {
-							$mdDialog.hide();
-						}
-					},
-					clickOutsideToClose: true
-				}).then(function(response){}, function(response){});
-			return;
 			
+			
+			
+			
+				$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+				var config = {
+					datasetLabel: cockpitModule_datasetServices.getDatasetLabelById(previewSettings.dataset)
+				};
+				config.parameters = $scope.checkPreviewParameters(previewSettings, columnName, modalColumn, row);
+				$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
+							
+					$mdDialog.show({
+						parent: angular.element(document.body),
+						templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+						controller: function(scope) {
+							scope.previewUrl = $scope.iframeSrcUrl;
+							
+							scope.closePreview = function() {
+								$mdDialog.hide();
+							}
+						},
+						clickOutsideToClose: true
+					}).then(function(response){}, function(response){});
+				return;
+					
+
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
 			// enter cross navigation mode
@@ -965,24 +974,6 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 
-		}
-	}
-	
-	var openDatasetPreview = function(iframeSrcUrl) {
-		$mdDialog.show({
-			parent: angular.element(document.body),
-			templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
-			controller: datasetPreviewDialogController,
-			clickOutsideToClose: true,
-			locals: {previewUrl: iframeSrcUrl}
-		});
-	}
-	
-	function datasetPreviewDialogController($scope, $mdDialog, previewUrl) {
-		$scope.previewUrl = previewUrl;
-		
-		$scope.closePreview = function() {
-			$mdDialog.cancel();
 		}
 	}
 	
