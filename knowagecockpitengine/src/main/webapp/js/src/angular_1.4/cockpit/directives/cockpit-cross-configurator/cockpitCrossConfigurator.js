@@ -164,11 +164,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		}
 		$scope.chartProperties=cockpitModule_crossServices.getChartParameters(chart.type, chart);
 	}else{
-	   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
+	   if($scope.model && $scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
 		   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	   }else{
-		   $scope.model.dataset= {};
-		   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
+		   if($scope.model) $scope.model.dataset= {};
+		   else $scope.model = {dataset:{}};
 	   }
 	}
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
@@ -178,7 +178,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	$scope.resetCross=function(){
-		$scope.ngModel.cross=$scope.cockpitCross;
 		angular.copy($scope.cockpitCross,$scope.ngModel.cross);
 	}
 
@@ -193,14 +192,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			outPar.enabled=false;
 		}
 	}
-
-//	$scope.changeCurrentDatasetColumns=function(dataset){
-//		var meta = $scope.allCockpitDatasetsColumns[dataset.ds];
-//		$scope.currentDatasetsColumns = meta;
-//	}
-
-
-
 }
 
 })();

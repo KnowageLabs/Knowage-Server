@@ -10,7 +10,7 @@
     height: 100%;
     background-color: $tabBackground;
 
-    cockpit-html-widget {
+   cockpit-html-widget {
     	height: 100%;
     	overflow: auto;
     	.trustedHtml {
@@ -20,6 +20,9 @@
     			position: absolute;
     			height: 100%;
     			width: 100%;
+    		}
+    		[kn-cross], [kn-preview], [kn-selection-column]  {
+    			cursor: pointer;
     		}
     	}
     }
@@ -684,8 +687,20 @@
 			text-transform: none;
 		}
 		.availableFunctions {
+			background-color: white;
+    		box-shadow: -1px 1px 3px #ccc;
 			.description {
 				font-size: $mediumFontSize;
+			}
+			.expandableSubheader {
+				outline: none;
+				cursor: pointer;
+				._md-subheader-inner {
+					width: 100%;
+					i {
+						float: right;
+					}
+				}
 			}
 		}
 	}    

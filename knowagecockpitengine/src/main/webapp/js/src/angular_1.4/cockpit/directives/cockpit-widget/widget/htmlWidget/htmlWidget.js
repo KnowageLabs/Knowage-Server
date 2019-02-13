@@ -36,6 +36,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		})
+		
+		.directive('bindHtmlCompile', ['$compile', function ($compile) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                scope.$watch(function () {
+                    return scope.$eval(attrs.bindHtmlCompile);
+                }, function (value) {
+                    element.html(value && value.toString());
+                    var compileScope = scope;
+                    if (attrs.bindHtmlScope) {
+                        compileScope = scope.$eval(attrs.bindHtmlScope);
+                    }
+                    $compile(element.contents())(compileScope);
+                });
+            }
+        };
+    }])
+    
 	function cockpitHtmlWidgetControllerFunction(
 			$scope,
 			$mdDialog,
@@ -48,13 +67,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_translate,
 			sbiModule_restServices,
 			cockpitModule_datasetServices,
+			cockpitModule_generalServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
 			cockpitModule_properties){
 		
+		$scope.getTemplateUrl = function(template){
+	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
+	  	}		
+		
+		
 		//Regular Expressions used
+		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
@@ -63,12 +89,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
-		
+
+		if(!$scope.ngModel.cross) $scope.ngModel.cross = {};
 		//dataset initializing and backward compatibilities checks
-		if(!$scope.ngModel.dataset){$scope.ngModel.dataset = {}};
+		if(!$scope.ngModel.dataset) $scope.ngModel.dataset = {};
 		if($scope.ngModel.datasetId){
 			$scope.ngModel.dataset.dsId = $scope.ngModel.datasetId;
 			delete $scope.ngModel.datasetId;
+		}
+		
+		$scope.showPreview = function(datasetLabel){
+		    $mdDialog.show({
+		      controller: function(scope){
+		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
+		    	  scope.closePreview = function(){
+		    		  $mdDialog.hide();
+		    	  }
+		      },
+		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true
+		    })
+		}
+		
+		$scope.select = function(column,value){
+			$scope.doSelection(column, value || $scope.htmlDataset.rows[0][$scope.getColumnFromName(column,$scope.htmlDataset).name], null, null, null, null, $scope.ngModel.dataset.dsId, null);
 		}
 		
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
@@ -99,13 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.hideWidgetSpinner();
 					});
 			}else {
-				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
-				if($scope.ngModel.htmlToRender){
-					$scope.checkParamsPlaceholders($scope.ngModel.htmlToRender).then(function(placeholderResultHtml){
-						$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + placeholderResultHtml +" </div>"));
-					})
-				}
-				$scope.hideWidgetSpinner();
+				$scope.manageHtml();
 			}
 		}
 
@@ -119,13 +158,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					)
 			}
-			var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
-			
-			 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
-			wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
-			wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
-			
-			$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
+			if($scope.ngModel.htmlToRender){
+				var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
+				
+				 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
+				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
+				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
+				
+				$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
 					function(resultHtml){
 						$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
 							function(placeholderResultHtml){
@@ -136,6 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						)
 					}
 				)
+			}else $scope.hideWidgetSpinner();
 		}
 
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
@@ -181,6 +222,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								$scope.aggregationDataset = data;
 								allElements = $scope.parseRepeat(allElements);
 								allElements = $scope.parseIf(allElements);
+								allElements = $scope.parseAttrs(allElements);
 								resolve(parsedHtml);
 							},function(error){
 								$scope.hideWidgetSpinner();
@@ -189,6 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}else{
 					allElements = $scope.parseRepeat(allElements);
 					allElements = $scope.parseIf(allElements);
+					allElements = $scope.parseAttrs(allElements);
 					resolve(parsedHtml);
 				}
 			})
@@ -203,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var i=0;
 			do {
 				if(!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
-				if (allElements[i] && allElements[i].hasAttribute("kn-repeat")){
+				if(allElements[i] && allElements[i].hasAttribute("kn-repeat")){
 					if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
 						allElements[i].removeAttribute("kn-repeat");
 						var limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= $scope.htmlDataset.rows.length) ? allElements[i].getAttribute('limit') : $scope.htmlDataset.rows.length;
@@ -213,8 +256,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    		var tempRow = angular.copy(repeatedElement);
 				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
 				    			var precisionPlaceholder = '';
-				    			if(precision) precisionPlaceholder = "precision='"+precision+"'";
-								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\' " + precisionPlaceholder + "]";
+				    			if(precision) precisionPlaceholder = " precision='" + precision + "'";
+								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\'" + precisionPlaceholder + "]";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
 				    		if(r==0){
@@ -258,6 +301,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return allElements;
 		}
 		
+		$scope.parseAttrs = function(allElements) {
+			var j = 0;
+			var nodesNumber = allElements.length;
+			do {
+				  if (allElements[j] && allElements[j].hasAttribute("kn-cross")){
+				    	allElements[j].setAttribute("ng-click", "doSelection()");
+				    }
+				  if (allElements[j] && allElements[j].hasAttribute("kn-selection-column")){
+					  	var columnSelectionLabel = allElements[j].getAttribute("kn-selection-column");
+					  	var columnSelectionValue = allElements[j].getAttribute("kn-selection-value");
+					  	allElements[j].setAttribute("ng-click", columnSelectionValue ? "select('"+ columnSelectionLabel +"','"+columnSelectionValue +"')" : "select('"+ columnSelectionLabel +"')");
+				    }
+				  j++;
+				  
+			 } while (j<nodesNumber);
+			return allElements;
+		}
+		
 		/**
 		 * Function to replace kn-calc placeholders
 		 */
@@ -273,6 +334,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.checkPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
+				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
 			})
@@ -290,7 +352,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Replacers
 		$scope.calcReplacer = function(match,p1,precision,format){
-			if(format) return precision ? parseFloat(eval(p1)).toFixed(precision).toLocaleString() : parseFloat(eval(p1)).toLocaleString();
+			if(format) return precision ? parseFloat(eval(p1).toFixed(precision)).toLocaleString() : parseFloat(eval(p1)).toLocaleString();
 			return (precision && !isNaN(eval(p1)))? parseFloat(eval(p1)).toFixed(precision) : eval(p1);
 		}
 		
@@ -298,11 +360,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var columnInfo;
 			if(aggr){
 				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,aggr);
-				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : 'null';
+				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : 'null';
 			}
 			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]){
 				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
-				p1 = typeof($scope.htmlDataset.rows[p2||0][columnInfo.name]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
+				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
 			}else {
 				p1 = 'null';
 			}
@@ -322,9 +384,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
 				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : 'null';
 			}
-			if(columnInfo.type == 'int' || columnInfo.type == 'float'){
-				if(format) p1 = precision ? parseFloat(p1).toFixed(precision).toLocaleString() : parseFloat(p1).toLocaleString();
-				else p1 = precision ? parseFloat(p1).toFixed(precision) : parseFloat(p1);
+			if(p1 != 'null' && columnInfo.type == 'int' || columnInfo.type == 'float'){
+				if(format) p1 = precision ? parseFloat(p1.toFixed(precision)).toLocaleString() : parseFloat(p1).toLocaleString();
+				else p1 = precision ? parseFloat(p1.toFixed(precision)) : parseFloat(p1);
 			}
 			return p1;
 			
@@ -346,7 +408,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					attachTo:  angular.element(document.body),
 					controller: htmlWidgetEditControllerFunction,
 					disableParentScroll: true,
-					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetEditPropertyTemplate.html',
+					templateUrl: $scope.getTemplateUrl('htmlWidgetEditPropertyTemplate'),
 					position: $mdPanel.newPanelPosition().absolute().center(),
 					fullscreen :true,
 					hasBackdrop: true,
@@ -361,57 +423,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.reinit();
-
-	}
-
-	function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){
-		$scope.translate=sbiModule_translate;
-		$scope.newModel = angular.copy(model);
-
-		if($scope.newModel.cssOpened) $scope.newModel.cssOpened = false;
-
-		$scope.toggleCss = function() {
-			$scope.newModel.cssOpened = !$scope.newModel.cssOpened;
-		}
-
-        //codemirror initializer
-        $scope.codemirrorLoaded = function(_editor) {
-            $scope._doc = _editor.getDoc();
-            $scope._editor = _editor;
-            _editor.focus();
-            $scope._doc.markClean()
-            _editor.on("beforeChange", function() {});
-            _editor.on("change", function() {});
-        };
-
-        //codemirror options
-        $scope.editorOptionsCss = {
-            theme: 'eclipse',
-            lineWrapping: true,
-            lineNumbers: true,
-            mode: {name:'css'},
-            onLoad: $scope.codemirrorLoaded
-        };
-        $scope.editorOptionsHtml = {
-            theme: 'eclipse',
-            lineWrapping: true,
-            lineNumbers: true,
-            mode: {name: "xml", htmlMode: true},
-            onLoad: $scope.codemirrorLoaded
-        };
-
-		$scope.saveConfiguration=function(){
-			 mdPanelRef.close();
-			 angular.copy($scope.newModel,model);
-			 $scope.$destroy();
-			 finishEdit.resolve();
-   	  	}
-   	  	$scope.cancelConfiguration=function(){
-   	  		mdPanelRef.close();
-   	  		$scope.$destroy();
-   	  		finishEdit.reject();
-   	  	}
-
 	}
 
 	/**
