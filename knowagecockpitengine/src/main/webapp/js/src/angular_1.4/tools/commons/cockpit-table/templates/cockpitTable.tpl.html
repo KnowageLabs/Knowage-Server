@@ -61,7 +61,7 @@
 		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
 		                <span ng-click="selectCell($event,row,column)">
-		                	<md-icon class="fa fa-mouse-pointer"></md-icon>
+		                	<md-icon ng-class="dynamicIcon()"></md-icon>
 		                </span>
 	                </div>
 	            </td>

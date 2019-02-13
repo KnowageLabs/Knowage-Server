@@ -256,7 +256,16 @@
                         }
                         return icon;
                     };
-
+                    
+                    scope.dynamicIcon = function() {
+                    	if (!scope.$parent.ngModel && !scope.$parent.ngModel.cross) {
+                    		return;
+                    	} 
+                    	if (scope.$parent.ngModel.cross.preview && scope.$parent.ngModel.cross.preview.enable) {
+                    		return scope.$parent.ngModel.cross.preview.icon;
+                    	}                    	
+                    }
+                    
                     scope.hasPrecision = function(column){
                     	if(column.style && column.style.asString) return false;
                     	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigInteger' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){return true}
