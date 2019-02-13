@@ -226,8 +226,13 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		if (dependencies == null) {
 			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
 		}
-		DocumentRuntime doc = new DocumentRuntime(UserProfileManager.getProfile(), locale);
-		ILovDetail lovDetail = doc.getLovDetail(driver);
+		AbstractBIResourceRuntime dum = null;
+		if (driver instanceof BIObjectParameter) {
+			dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+		} else if (driver instanceof BIMetaModelParameter) {
+			dum = new BusinessModelRuntime(UserProfileManager.getProfile(), locale);
+		}
+		ILovDetail lovDetail = dum.getLovDetail(driver);
 		Set<String> lovParameters = null;
 		try {
 			if (lovDetail != null) {
