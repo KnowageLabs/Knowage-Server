@@ -209,10 +209,6 @@
         <!-- tools: Artifacts' catalogue -->
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifact.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifactContent.hbm.xml" />
-	     
-	<!-- News Management -->
-        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
 		
 	    <!-- COMMUNITY -->
         <mapping resource="it/eng/spagobi/community/mapping/SbiCommunity.hbm.xml" />

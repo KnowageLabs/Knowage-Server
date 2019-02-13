@@ -197,10 +197,7 @@
         <!-- Cross Navigation -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigation.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigationPar.hbm.xml" />
-	     
-	<!-- News Management -->
-        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
+
         
         <!-- Document Output Parameters -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
