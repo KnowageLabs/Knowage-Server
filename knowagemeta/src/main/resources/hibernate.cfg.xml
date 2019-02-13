@@ -204,8 +204,6 @@
         <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiDataSetTag.hbm.xml" />
         
         <!-- end mapping -->
-	     
-        <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
         <class-cache class="it.eng.spagobi.commons.metadata.SbiUserFunctionality" usage="read-only"/>
