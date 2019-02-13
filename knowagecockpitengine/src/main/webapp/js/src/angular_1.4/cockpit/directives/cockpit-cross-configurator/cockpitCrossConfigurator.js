@@ -117,13 +117,18 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
 
-	$scope.chooseIcon = function(){
-		$scope.iconOpened = !$scope.iconOpened;
+	$scope.chooseIcon = function(type){
+		if($scope.iconOpened == type) $scope.iconOpened = false;
+		else $scope.iconOpened = type;
 	}
 	
 	$scope.setIcon = function(family,icon){
-		$scope.ngModel.preview.icon = family.className+' '+icon.className;
-		$scope.iconOpened = !$scope.iconOpened;
+		$scope.ngModel[$scope.iconOpened].icon = family.className+' '+icon.className;
+		$scope.iconOpened = false;
+	}
+	
+	$scope.changePreviewDataset = function(dsId){
+		$scope.datasetParametersList = cockpitModule_datasetServices.getDatasetById(dsId).parameters;
 	}
 
 	$scope.outputParametersList = [];
@@ -154,11 +159,19 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	
 	$scope.toggleEnabled = function(type){
 		if($scope.crossTable){
-			if(type=='preview' && $scope.model.cross.enable) $scope.model.cross.enable = false;
-			if(type=='cross' && $scope.model.preview.enable) $scope.model.preview.enable = false;
+			if(type=='preview' && $scope.ngModel.cross.enable) {
+				$scope.model.cross.enable = $scope.ngModel.cross.enable = false;
+			}
+			if(type=='cross' && $scope.ngModel.preview.enable) {
+				$scope.model.preview.enable = $scope.ngModel.preview.enable = false;
+			}
 		}else{
-			if(type=='preview' && $scope.localModel.cross.enable) $scope.localModel.cross.enable = false;
-			if(type=='cross' && $scope.localModel.preview.enable) $scope.localModel.preview.enable = false;
+			if(type=='preview' && $scope.ngModel.cross.enable) {
+				$scope.localModel.cross.enable = $scope.ngModel.cross.enable = false;
+			}
+			if(type=='cross' && $scope.ngModel.preview.enable) {
+				$scope.localModel.preview.enable = $scope.ngModel.preview.enable = false;
+			}
 		}
 		
 	}
