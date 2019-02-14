@@ -94,7 +94,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 			{
 				'label':'Cross navigation',
 				'name': 'cross',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
+				'description': sbiModule_translate.load('kn.cockpit.html.tag6.desc'),
 				'hidden': self.isEmpty(cross) ? true : false,
 				'hiddenMessage': 'No cross defined',
 				'tag':'<div kn-cross></div>'
@@ -102,7 +102,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 			{
 				'label':'Selection',
 				'name': 'selection',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
+				'description': sbiModule_translate.load('kn.cockpit.html.tag7.desc'),
 				'hidden': !datasetId ? true : false,
 				'hiddenMessage': 'No dataset selected',
 				'tag':'<div kn-selection-column="%%selectioncolumn%%" %%selectionvalue%%></div>',
@@ -120,7 +120,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 			{
 				'label':'Dataset Preview',
 				'name': 'preview',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
+				'description': sbiModule_translate.load('kn.cockpit.html.tag8.desc'),
 				'hidden': !availableDatasets ? true : false,
 				'hiddenMessage': 'No dataset available',
 				'tag':'<div kn-preview%%dataset%%></div>',
