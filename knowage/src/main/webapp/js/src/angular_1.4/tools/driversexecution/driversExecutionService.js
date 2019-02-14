@@ -180,7 +180,7 @@
 
 			executionService.hasMandatoryDrivers = function(drivers){
 				var showSideBar = false;
-				if(drivers.length > 0){
+				if(drivers && drivers.length > 0){
 					for(var i = 0; i < drivers.length; i++){
 						if(drivers[i].mandatory){
 							if(drivers[i].defaultValues && drivers[i].defaultValues.length == 1 && drivers[i].defaultValues[0].isEnabled){
