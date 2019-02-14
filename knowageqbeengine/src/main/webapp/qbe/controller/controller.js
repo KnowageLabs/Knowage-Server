@@ -96,16 +96,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 		Array.prototype.push.apply($scope.formulas, $scope.customTransformedFormulas);
 	});
-
-
-	$scope.$watch('editQueryObj',function(newValue,oldValue){
+	var queryHandler = function(newCatalogue,oldCatalogue){
 		$scope.meta.length = 0;
-		$rootScope.$broadcast('editQueryObj',newValue);
-		for (var i = 0; i < newValue.fields.length; i++) {
+		$rootScope.$broadcast('editQueryObj',newCatalogue);
+		for (var i = 0; i < newCatalogue.fields.length; i++) {
 			var meta = {
-					"displayedName":newValue.fields[i].alias,
-					"name":newValue.fields[i].alias,
-					"fieldType":newValue.fields[i].fieldType.toUpperCase(),
+					"displayedName":newCatalogue.fields[i].alias,
+					"name":newCatalogue.fields[i].alias,
+					"fieldType":newCatalogue.fields[i].fieldType.toUpperCase(),
 					"type":""
 			}
 			$scope.meta.push(meta);
@@ -122,7 +120,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 			if(finalPromise) {
 				finalPromise.then(function(){},function(){
-					angular.copy(oldValue,$scope.editQueryObj);
+					angular.copy(oldCatalogue,$scope.editQueryObj);
 				});
 			}
 		} else {
@@ -130,6 +128,18 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 		$rootScope.$broadcast('bodySend', $scope.bodySend);
 		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+
+	}
+	$scope.$watch('bodySend',function(newValue,oldValue){
+		if(angular.equals(newValue.catalogue,oldValue.catalogue) && !angular.equals(newValue.pars,oldValue.pars)){
+			queryHandler(newValue.catalogue[0],oldValue.catalogue[0])
+		}
+
+
+	},true)
+
+	$scope.$watch('editQueryObj',function(newValue,oldValue){
+		queryHandler(newValue,oldValue);
 	},true)
 
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
@@ -554,6 +564,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
         	"meta": $scope.meta,
         	"schedulingCronLine":"0 * * * * ?",
     };
+
 
     $scope.$on('openHavings',function(event,field){
 		$scope.openHavings(field);
