@@ -203,7 +203,7 @@ public class PageResource {
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 
 		} catch (Exception e) {
-			logger.error("Error during Metamodel initialization: " + e);
+			logger.error("Error during Metamodel initialization: ", e);
 		} finally {
 			DbTypeThreadLocal.unset();
 			logger.debug("OUT");
