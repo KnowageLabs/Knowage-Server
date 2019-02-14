@@ -399,8 +399,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	$scope.parametersPreviewColumns = [
 		{"headerName":$scope.translate.load("kn.qbe.params.name"),"field":"name"},
-		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"defaultValue",  editable: true},
-		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"value",  hide: true},
+		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"value",  editable: true},
+		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"defaultValue",hide:true},
 
 
 	];
@@ -469,9 +469,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	        onGridReady: resizeColumnsParams,
 	        editType: 'fullRow',
 	        onRowValueChanged: function(event,a) {
-	        	if(!event.data) {
-	        		event.data["value"] = event.data.defaultValue;
-	        	} else {
+	        	if(!event.data.value) {
 	        		event.data["value"] = event.data.defaultValue;
 	        	}
 
