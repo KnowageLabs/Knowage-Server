@@ -213,14 +213,13 @@ if(executionRoleNames.size() > 0) {
     
     %>
             <md-toolbar class="documentExecutionToolbar" flex="nogrow">
-                <div class="md-toolbar-tools" layout="row" layout-align="center center">
+                <div class="md-toolbar-tools noPadding" layout="row" layout-align="center center">
                     <md-button ng-if="navigatorEnabled" class="md-icon-button" ng-click="goBackHome()"
                             aria-label="homepage"
                             title="go to homepage">
                          <md-icon md-font-icon="fa fa-home"></md-icon>
                     </md-button>
-                    <span>&nbsp;&nbsp;</span>
-                    <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
+                    <h2 class="md-flex" style="padding-left: 8px" ng-hide="::crossNavigationScope.isNavigationInProgress()">
                         {{i18n.getI18n(executionInstance.OBJECT_NAME)}}
                     </h2>
                     <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
