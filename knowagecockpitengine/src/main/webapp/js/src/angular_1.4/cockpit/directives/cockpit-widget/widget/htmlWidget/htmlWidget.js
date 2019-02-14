@@ -385,8 +385,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : 'null';
 			}
 			if(p1 != 'null' && columnInfo.type == 'int' || columnInfo.type == 'float'){
-				if(format) p1 = precision ? parseFloat(p1.toFixed(precision)).toLocaleString() : parseFloat(p1).toLocaleString();
-				else p1 = precision ? parseFloat(p1.toFixed(precision)) : parseFloat(p1);
+				p1 = parseFloat(p1);
+				if(format) p1 = precision ? p1.toFixed(precision).toLocaleString() : p1.toLocaleString();
+				else p1 = precision ? p1.toFixed(precision) : p1;
 			}
 			return p1;
 			
