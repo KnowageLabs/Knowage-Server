@@ -29,11 +29,10 @@
 			 */
 			createRequest(type, widget, true)
 				.then(function(requestConfig){
-					var requestParams = '?' + $httpParamSerializer(requestConfig);
 					var config = {"responseType": "arraybuffer"};
 					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
-
-					sbiModule_restServices.promiseGet('1.0/cockpit/export', 'excel' + requestParams, undefined, config)
+															
+					sbiModule_restServices.promisePost('1.0/cockpit/export', 'excel', requestConfig, config)
 						.then(function(response){
 							var mimeType = response.headers("Content-type");
 							var fileName = 'exported_widget';

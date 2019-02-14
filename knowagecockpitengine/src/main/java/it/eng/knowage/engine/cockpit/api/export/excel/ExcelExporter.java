@@ -73,11 +73,14 @@ public class ExcelExporter {
 
 	private final boolean exportWidget;
 
+	private final JSONObject body;
+
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.parameterMap = parameterMap;
-		this.exportWidget = setExportWidget(parameterMap);
+		this.exportWidget = false;
+		this.body = new JSONObject();
 
 		Locale locale = getLocale(parameterMap);
 		try {
@@ -90,6 +93,30 @@ public class ExcelExporter {
 		this.actualSelectionMap = new HashMap<>();
 	}
 
+	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
+		this.outputType = outputType;
+		this.userUniqueIdentifier = userUniqueIdentifier;
+		this.exportWidget = setExportWidget(body);
+		this.body = body;
+
+		Locale locale = getLocale(body);
+		try {
+			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
+			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
+		}
+
+		this.actualSelectionMap = new HashMap<>();
+		this.parameterMap = new HashMap<>();
+	}
+
+	private boolean setExportWidget(JSONObject body) {
+		boolean exportWidgetOnly = body.optBoolean("exportWidget");
+		return Boolean.valueOf(exportWidgetOnly);
+
+	}
+
 	private boolean setExportWidget(Map<String, String[]> parameterMap) {
 		boolean exportWidgetOnly = false;
 		if (parameterMap.containsKey("exportWidget")) {
@@ -97,6 +124,19 @@ public class ExcelExporter {
 			exportWidgetOnly = Boolean.valueOf(parameter);
 		}
 		return exportWidgetOnly;
+	}
+
+	private Locale getLocale(JSONObject body) {
+		try {
+			String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
+			String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
+			Locale toReturn = new Locale(language, country);
+			return toReturn;
+		} catch (Exception e) {
+			logger.warn("Cannot get locale information from input parameters body", e);
+			return Locale.ENGLISH;
+		}
+
 	}
 
 	private Locale getLocale(Map<String, String[]> parameterMap) {
@@ -161,8 +201,12 @@ public class ExcelExporter {
 		}
 
 		if (exportWidget) {
-			String widgetId = parameterMap.get("widget")[0];
-			exportWidget(templateString, widgetId, wb);
+			try {
+				String widgetId = String.valueOf(body.get("widget"));
+				exportWidget(templateString, widgetId, wb);
+			} catch (JSONException e) {
+				logger.error("Cannot find widget in body request");
+			}
 		} else {
 			ExcelSheet[] excelSheets = getExcelSheets(templateString);
 			if (excelSheets != null) {
@@ -240,9 +284,8 @@ public class ExcelExporter {
 				map.put("nearRealtime", true);
 			}
 
-			String[] cockpitSelections = parameterMap.get("COCKPIT_SELECTIONS");
-			JSONObject body = new JSONObject(cockpitSelections[0]);
-			datastore = getDatastore(datasetLabel, map, body.toString());
+			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 		} catch (Exception e) {
 			logger.error("Cannot get Datastore for widget", e);
 		}
@@ -300,13 +343,13 @@ public class ExcelExporter {
 							cell.setCellValue(s);
 							break;
 						case "int":
-							if(!s.trim().isEmpty()) {
+							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
 							cell.setCellStyle(intCellStyle);
 							break;
 						case "float":
-							if(!s.trim().isEmpty()) {
+							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
 							cell.setCellStyle(floatCellStyle);
