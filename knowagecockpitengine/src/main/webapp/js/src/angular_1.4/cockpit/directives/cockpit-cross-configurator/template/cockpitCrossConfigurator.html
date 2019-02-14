@@ -10,7 +10,7 @@
 			
 			<md-input-container ng-show="crossTable" class="md-block" flex>
 				<label>Interaction type</label>
-				<md-select ng-model="crossType" ng-disabled="!ngModel.cross.enable">
+				<md-select ng-model="ngModel.cross.crossType" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
 					<md-option value="allRow">Enable click on whole row</md-option>
 					<md-option value="singleColumn">Enable click on a single column</md-option>
@@ -18,22 +18,22 @@
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!crossType" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.cross.crossType" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					Choose an interaction type to enable a cross navigation
 				</div>
 			</div>
 			
-			<md-input-container ng-if="crossType" ng-show="crossTable" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType" ng-show="crossTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
 					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
-				<div class="hint" ng-if="crossType != 'singleColumn'">Optional column to use as modal</div>
+				<div class="hint" ng-if="ngModel.cross.crossType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
 			
-			<md-input-container ng-if="crossType" ng-show="crossChart" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType" ng-show="crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
@@ -41,7 +41,7 @@
 				</md-select>
 			</md-input-container>
 
-			<md-input-container ng-if="crossType" ng-show="crossTable || crossChart" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType" ng-show="crossTable || crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
 				<md-select ng-model="ngModel.cross.outputParameter" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
@@ -49,7 +49,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<md-input-container ng-if="crossType" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.crossName")}}</label>
 				<md-select ng-model="ngModel.cross.crossName" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
@@ -57,7 +57,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<button class="md-button md-raised md-button-empty" ng-if="crossType && crossTable && crossType == 'icon'" ng-click="chooseIcon('cross')">
+			<button class="md-button md-raised md-button-empty" ng-if="ngModel.cross.crossType && crossTable && ngModel.cross.crossType == 'icon'" ng-click="chooseIcon('cross')">
 				<span ng-if="!ngModel.cross.icon">Choose Icon</span>
 				<i ng-if="ngModel.cross.icon" ng-class="ngModel.cross.icon"></i>
 			</button>
@@ -157,7 +157,7 @@
 			
 			<md-input-container ng-show="crossTable" class="md-block" flex>
 				<label>Interaction type</label>
-				<md-select ng-model="previewType" ng-disabled="!ngModel.preview.enable">
+				<md-select ng-model="ngModel.preview.previewType" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
 					<md-option value="allRow">Enable click on whole row</md-option>
 					<md-option value="singleColumn">Enable click on a single column</md-option>
@@ -165,7 +165,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!previewType" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.preview.previewType" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					Choose an interaction type to enable a preview navigation
 				</div>
@@ -175,18 +175,18 @@
 				Enable click on whole row
 			</md-checkbox-->
 			
-			<dataset-selector ng-show="previewType" flex ng-model="ngModel.preview.dataset" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
+			<dataset-selector ng-show="ngModel.preview.previewType" flex ng-model="ngModel.preview.dataset" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
 			
-			<md-input-container ng-if="previewType && previewType !='allRow'" ng-show="crossTable" class="md-block" flex>
+			<md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow'" ng-show="crossTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
 					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
-				<div class="hint" ng-if="previewType != 'singleColumn'">Optional column to use as modal</div>
+				<div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
 			
-			<button class="md-button md-raised md-button-empty" ng-if="crossTable && previewType == 'icon'" ng-click="chooseIcon('preview')">
+			<button class="md-button md-raised md-button-empty" ng-if="crossTable && ngModel.preview.previewType == 'icon'" ng-click="chooseIcon('preview')">
 				<span ng-if="!ngModel.preview.icon">Choose Icon</span>
 				<i ng-if="ngModel.preview.icon" ng-class="ngModel.preview.icon"></i>
 			</button>

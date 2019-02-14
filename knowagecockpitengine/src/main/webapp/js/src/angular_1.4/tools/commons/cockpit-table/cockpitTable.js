@@ -260,8 +260,10 @@
                     scope.dynamicIcon = function() {
                     	if (!scope.$parent.ngModel && !scope.$parent.ngModel.cross) {
                     		return;
-                    	} 
-                    	if (scope.$parent.ngModel.cross.preview && scope.$parent.ngModel.cross.preview.enable) {
+                    	}
+                    	if (scope.$parent.ngModel.cross.cross && scope.$parent.ngModel.cross.cross.enable && scope.$parent.ngModel.cross.cross.crossType == 'icon') {
+                    		return scope.$parent.ngModel.cross.cross.icon;
+                    	} else if (scope.$parent.ngModel.cross.preview && scope.$parent.ngModel.cross.preview.enable && scope.$parent.ngModel.cross.preview.previewType == 'icon') {
                     		return scope.$parent.ngModel.cross.preview.icon;
                     	}                    	
                     }
