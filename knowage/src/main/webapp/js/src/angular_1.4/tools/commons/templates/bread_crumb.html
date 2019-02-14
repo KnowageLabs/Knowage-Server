@@ -1,15 +1,24 @@
-<nav>
- 
-<md-tabs md-dynamic-height ng-if="ngModel!=undefined && ngModel.length!=0">
-      <md-tab ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  tabindex="3" ng-click="moveToItem(item,$index,true)" >
-      	<md-tab-label>
-      		{{item[itemName]}}
-      		<md-tooltip md-delay="1000">
-      			{{item[itemName]}}
-      		</md-tooltip>
-      	</md-tab-label>
-      	
-      </md-tab>
-</md-tabs>
-
+<nav class="kn-breadcrumbs">
+	<md-tabs md-dynamic-height ng-if="ngModel!=undefined && ngModel.length!=0" md-no-ink-bar>
+		<md-tab ng-click="goToHome()">
+			<md-tab-label>
+      			<div class="breadcrumb">
+      				<i class="fa fa-2x fa-home"></i>
+      			</div>
+      			<md-tooltip md-delay="1000">
+		 			{{item[itemName]}}
+		 		</md-tooltip>
+      		</md-tab-label>
+		</md-tab>
+		<md-tab ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  tabindex="3" ng-click="moveToItem(item,$index,true)" >
+		 	<md-tab-label>
+		 		<div class="breadcrumb" ng-class="{'last' : $last}">
+		 			<div class="truncated">{{item[itemName] || '...'}}</div>
+		 		</div>
+		 		<md-tooltip md-delay="1000">
+		 			{{item[itemName]}}
+		 		</md-tooltip>
+		 	</md-tab-label>
+		 </md-tab>
+	</md-tabs>
 </nav>

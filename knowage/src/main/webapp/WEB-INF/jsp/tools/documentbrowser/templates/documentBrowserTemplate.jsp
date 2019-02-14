@@ -118,9 +118,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-content>
 			</md-sidenav> 
 			<md-content flex layout="column" class="mainContent"> 
-				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" class="kn-documentBrowser-comp"
-					control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)>
-				</bread-crumb>
+				<md-toolbar class="ternaryToolbar" flex="nogrow">
+                	<div class="md-toolbar-tools noPadding" layout="row" layout-align="center center">
+					<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" class="kn-documentBrowser-comp" flex
+						control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)>
+					</bread-crumb>
+					</div>
+				</md-toolbar>
 				<md-card ng-show="!searchingDocuments && searchDocuments.length==0">
 					<md-card-content class="noPadding" style="height:100%;">
 						<div ng-show="folderDocuments.length==0" class="emptyContainer">
