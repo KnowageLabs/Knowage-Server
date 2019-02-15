@@ -45,11 +45,9 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/**
 	 * Insert audit.
 	 *
-	 * @param aSbiAudit
-	 *            the a sbi audit
+	 * @param aSbiAudit the a sbi audit
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#insertAudit(it.eng.spagobi.bo.SbiAudit)
 	 */
@@ -113,8 +111,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditByID(java.lang.Integer)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditByID(java.lang.Integer)
 	 */
 	@Override
 	public SbiAudit loadAuditByID(Integer id) throws EMFUserError {
@@ -177,8 +174,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#modifyAudit(it.eng.spagobi.
-	 * monitoring .metadata.SbiAudit)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#modifyAudit(it.eng.spagobi. monitoring .metadata.SbiAudit)
 	 */
 	@Override
 	public void modifyAudit(SbiAudit aSbiAudit) throws EMFUserError {
@@ -211,9 +207,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByDocumentLabel(java
-	 * .lang.String)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByDocumentLabel(java .lang.String)
 	 */
 	@Override
 	public List loadAuditsByDocumentLabel(String documentLabel) throws EMFUserError {
@@ -226,9 +220,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByEngineLabel(java.
-	 * lang.String)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByEngineLabel(java. lang.String)
 	 */
 	@Override
 	public List loadAuditsByEngineLabel(String engineLabel) throws EMFUserError {
@@ -241,9 +233,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByUserName(java.lang
-	 * .String)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByUserName(java.lang .String)
 	 */
 	@Override
 	public List loadAuditsByUserName(String userName) throws EMFUserError {
@@ -256,8 +246,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.monitoring.dao.IAuditDAO#eraseAudit(java.lang.Integer)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#eraseAudit(java.lang.Integer)
 	 */
 	@Override
 	public void eraseAudit(Integer id) throws EMFUserError {
@@ -293,8 +282,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMostPopular(java.util.
-	 * Collection , int)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMostPopular(java.util. Collection , int)
 	 */
 	@Override
 	public List getMostPopular(Collection roles, int limit) throws EMFUserError {
@@ -372,8 +360,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMyRecentlyUsed(java.lang.
-	 * String , int)
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMyRecentlyUsed(java.lang. String , int)
 	 */
 	@Override
 	public List getMyRecentlyUsed(String userId, int limit) throws EMFUserError {
@@ -416,7 +403,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			hql.append("			a.sbiObject.objectTypeCode, ");
 			hql.append("			a.subObjId, ");
 			hql.append("			a.subObjName, ");
-			hql.append("			str(a.documentParameters), ");
+			hql.append("			coalesce(str(a.documentParameters), 'No parameters'), ");
 			hql.append("			a.sbiEngine.name, ");
 			hql.append("		a.sbiObject.previewFile ");
 			hql.append("order by max(a.requestTime) desc ");
@@ -464,8 +451,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getLastExecution(java.lang.
-	 * Integer )
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getLastExecution(java.lang. Integer )
 	 */
 	@Override
 	public SbiAudit getLastExecution(Integer objId) throws EMFUserError {
@@ -536,8 +522,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMediumExecTime(java.lang.
-	 * Integer )
+	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMediumExecTime(java.lang. Integer )
 	 */
 	@Override
 	public Double getMediumExecTime(Integer objId) throws EMFUserError {
