@@ -128,6 +128,8 @@ public class CrossTabHTMLSerializer {
 		JSONObject config = crossTab.getCrosstabDefinition().getConfig();
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
+		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
+		String labelSubTotal = (!config.optString("rowsubtotalLabel").equals("")) ? config.optString("rowsubtotalLabel") : CrossTab.SUBTOTAL;
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
@@ -149,7 +151,8 @@ public class CrossTabHTMLSerializer {
 		if (columnsTotals && noSelectedColumn) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
 			SourceBean aColumn = new SourceBean(COLUMN_TAG);
-			aColumn.setCharacters(CrossTab.TOTAL);
+//			aColumn.setCharacters(CrossTab.TOTAL);
+			aColumn.setCharacters(labelTotal);
 			aColumn.setAttribute(CLASS_ATTRIBUTE, "totals");
 			aRow.setAttribute(aColumn);
 			table.setAttribute(aRow);
@@ -172,7 +175,8 @@ public class CrossTabHTMLSerializer {
 					text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 				} else {
 					text = aNode.getDescription();
-					if (text.equalsIgnoreCase(CrossTab.TOTAL)) {
+//					if (text.equalsIgnoreCase(CrossTab.TOTAL)) {
+					if (text.equalsIgnoreCase(labelTotal)) {
 						if (addedLabelTotal) {
 							// if label total was already added or just total is the node (no column) : doesn't show label
 							text = "";
@@ -190,7 +194,8 @@ public class CrossTabHTMLSerializer {
 					JSONObject rowConfig = row.getConfig();
 					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
 					if (!style.equals(DEFAULT_STYLE)) {
-						if (!text.equalsIgnoreCase(CrossTab.TOTAL) && !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+//						if (!text.equalsIgnoreCase(CrossTab.TOTAL) && !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 							appliedStyle = true;
 						} else {
@@ -205,7 +210,8 @@ public class CrossTabHTMLSerializer {
 				else
 					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS + "NoStandardStyle");
 
-				if (!text.equals(CrossTab.TOTAL) && crossTab.getCrosstabDefinition().getRows().size() > 0)
+//				if (!text.equals(CrossTab.TOTAL) && crossTab.getCrosstabDefinition().getRows().size() > 0)
+				if (!text.equals(labelTotal) && crossTab.getCrosstabDefinition().getRows().size() > 0)
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
 							+ StringEscapeUtils.escapeJavaScript(text) + "')");
 				aColumn.setCharacters(text);
@@ -227,6 +233,10 @@ public class CrossTabHTMLSerializer {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String parentStyle = null;
 		List<String> categoriesValues = null;
+		JSONObject crossConfig = crossTab.getCrosstabDefinition().getConfig();
+		String labelTotal = (!crossConfig.optString("columntotalLabel").equals("")) ? crossConfig.optString("columntotalLabel") : CrossTab.TOTAL;
+		String labelSubTotal = (!crossConfig.optString("columnsubtotalLabel").equals("")) ? crossConfig.optString("columnsubtotalLabel") : CrossTab.SUBTOTAL;
+
 
 		int levels = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		if (levels == 0) {
@@ -299,7 +309,8 @@ public class CrossTabHTMLSerializer {
 
 						if (parentStyle != null)
 							style = parentStyle;
-						if (!text.equalsIgnoreCase(CrossTab.TOTAL) &&  !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+//						if (!text.equalsIgnoreCase(CrossTab.TOTAL) &&  !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+						if (!text.equalsIgnoreCase(labelTotal) &&  !text.equalsIgnoreCase(labelSubTotal)) {
 							aColumn.setAttribute(addSortArrow(aRow, text, style, null, direction, false));
 						}
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
@@ -308,7 +319,8 @@ public class CrossTabHTMLSerializer {
 					} else {
 						boolean parentIsLevel = !((i) % 2 == 0 || (i) == levels);
 						if (parentIsLevel) {
-							if (!text.equalsIgnoreCase(CrossTab.TOTAL) && !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+//							if (!text.equalsIgnoreCase(CrossTab.TOTAL) && !text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+							if (!text.equalsIgnoreCase(labelTotal) &&  !text.equalsIgnoreCase(labelSubTotal)) {
 								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
 										+ StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
@@ -368,13 +380,15 @@ public class CrossTabHTMLSerializer {
 								categoriesValues = getCompleteCategoriesValues(measureNumber, lastLevelValues);
 							if (categoriesValues.size() > 0) {
 								measureParentValue = categoriesValues.get(j);
-								if (measureParentValue.indexOf(CrossTab.TOTAL) < 0 && measureParentValue.indexOf(CrossTab.SUBTOTAL) < 0) {
+//								if (measureParentValue.indexOf(CrossTab.TOTAL) < 0 && measureParentValue.indexOf(CrossTab.SUBTOTAL) < 0) {
+								if (measureParentValue.indexOf(labelTotal) < 0 && measureParentValue.indexOf(labelSubTotal) < 0) {
 									if (measuresSortKeysMap != null && measuresSortKeysMap.get(j) != null) {
 										direction = measuresSortKeysMap.get(j).getDirection();
 									}
 								}
 							}
-							if (levels == 1 || (!text.equalsIgnoreCase(CrossTab.TOTAL) &&  !text.equalsIgnoreCase(CrossTab.SUBTOTAL))) {
+//							if (levels == 1 || (!text.equalsIgnoreCase(CrossTab.TOTAL) &&  !text.equalsIgnoreCase(CrossTab.SUBTOTAL))) {
+							if (levels == 1 || (!text.equalsIgnoreCase(labelTotal) &&  !text.equalsIgnoreCase(labelSubTotal))) {
 								aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, measureStyle, direction, true));
 								aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 									"orderPivotTable('" + j + "','1'," + myGlobalId + ", '" + text + "' , '" + measureParentValue + "')");
@@ -383,11 +397,13 @@ public class CrossTabHTMLSerializer {
 					}
 
 					int colSpan = aNode.getLeafsNumber();
-					if (text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+//					if (text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+					if (text.equalsIgnoreCase(labelSubTotal)) {
 						colSpanSubTot = colSpan;
 						if (i < levels-2) aColumn.setCharacters("");
 					}
-					if (text.equalsIgnoreCase(CrossTab.TOTAL)) {
+//					if (text.equalsIgnoreCase(CrossTab.TOTAL)) {
+					if (text.equalsIgnoreCase(labelTotal)) {
 						if (colSpanSubTot > 0)
 							colSpan = colSpanSubTot;
 						if (i < levels-2)

@@ -1932,15 +1932,21 @@ public class CrossTab {
 	 *            = tree depth-1
 	 * @return
 	 */
-	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth) {
-		Node node = new Node(TOTAL);
+	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth, boolean onRows) {
+		String labelTotal =  CrossTab.TOTAL;
+		if (onRows && !this.config.optString("rowtotalLabel").equals(""))
+			labelTotal = this.config.optString("rowtotalLabel");
+		else if (!onRows &&  !this.config.optString("columntotalLabel").equals(""))
+			labelTotal= this.config.optString("columntotalLabel");
+
+		Node node = new Node(TOTAL, labelTotal);
 		if (withMeasures && deepth == 2) {
 			for (int i = 0; i < measures.size(); i++) {
 				node.addChild(new Node(measures.get(i).getName()));
 			}
 		} else {
 			if (deepth > 1) {
-				node.addChild(getHeaderTotalSubTree(withMeasures, deepth - 1));
+				node.addChild(getHeaderTotalSubTree(withMeasures, deepth - 1, onRows));
 			}
 		}
 		return node;
@@ -1952,7 +1958,7 @@ public class CrossTab {
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 
 		if (rowsTotals) {
-			rowsRoot.addChild(getHeaderTotalSubTree(measuresOnRow, rowsRoot.getSubTreeDepth() - 1));
+			rowsRoot.addChild(getHeaderTotalSubTree(measuresOnRow, rowsRoot.getSubTreeDepth() - 1, false));
 			addCrosstabDataRow(dataMatrix.length, columnsSum, CellType.TOTAL);
 		}
 
@@ -1974,7 +1980,7 @@ public class CrossTab {
 					rowsSum.set(j, freshRowsSum);
 				}
 			}
-			columnsRoot.addChild(getHeaderTotalSubTree(!measuresOnRow, columnsRoot.getSubTreeDepth() - 1));
+			columnsRoot.addChild(getHeaderTotalSubTree(!measuresOnRow, columnsRoot.getSubTreeDepth() - 1, true));
 			addCrosstabDataColumns(dataMatrix[0].length, rowsSum, CellType.TOTAL);
 		}
 	}
@@ -2059,7 +2065,7 @@ public class CrossTab {
 				freshStartingPosition = addSubtotalsToTheTreeNoMeasure(children.get(i), horizontal, freshStartingPosition);
 			}
 
-			Node totalNode = buildSubtotalNode(node.getSubTreeDepth() - 1, false);
+			Node totalNode = buildSubtotalNode(node.getSubTreeDepth() - 1, false, horizontal);
 			node.addChild(totalNode);
 			return startingPosition + node.getLeafsNumber();
 		}
@@ -2095,7 +2101,7 @@ public class CrossTab {
 			}
 		}
 
-		Node subtotalNode = buildSubtotalNode(node.getSubTreeDepth() - 2, true);
+		Node subtotalNode = buildSubtotalNode(node.getSubTreeDepth() - 2, true, horizontal);
 		node.addChild(subtotalNode);
 
 		for (int y = 0; y < valuesTosum.size(); y++) {
@@ -2123,7 +2129,7 @@ public class CrossTab {
 				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, positionToAddNode);
 			}
 		} else {
-			Node subtotalNode = buildSubtotalNode(1, true);
+			Node subtotalNode = buildSubtotalNode(1, true, horizontal);
 			for (int y = 0; y < measures.size(); y++) {
 				List<Integer> linesToSum = new ArrayList<Integer>();
 				if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) ||
@@ -2151,8 +2157,15 @@ public class CrossTab {
 
 	}
 
-	public Node buildSubtotalNode(int totalHeadersNumber, boolean withMeasures) {
-		Node node = new Node(SUBTOTAL);
+	public Node buildSubtotalNode(int totalHeadersNumber, boolean withMeasures, boolean horizontal) {
+		String labelSubTotal =  CrossTab.SUBTOTAL;
+
+		if (horizontal && !this.config.optString("rowsubtotalLabel").equals(""))
+			labelSubTotal = this.config.optString("rowsubtotalLabel");
+		else if (!horizontal &&  !this.config.optString("columnsubtotalLabel").equals(""))
+			labelSubTotal= this.config.optString("columnsubtotalLabel");
+
+		Node node = new Node(SUBTOTAL, labelSubTotal);
 		Node toReturn;
 		int i = 1;
 		if (withMeasures) {
@@ -2162,7 +2175,7 @@ public class CrossTab {
 		}
 		toReturn = node;
 		for (; i < totalHeadersNumber; i++) {
-			toReturn = new Node(SUBTOTAL);
+			toReturn = new Node(SUBTOTAL, labelSubTotal);
 			toReturn.addChild(node);
 			node = toReturn;
 		}
