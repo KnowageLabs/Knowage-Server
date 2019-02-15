@@ -23,6 +23,8 @@
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
 	sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
+	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+	firstUrlTocallvar = firstUrl;
 </script>
 <iframe src="<%= firstUrlToCall %>" id="iframeDoc" width="100%" height="100%" frameborder="0"></iframe>
 
@@ -44,6 +46,7 @@ var PleaseRotateOptions = {
 	    onlyMobile: false,
 	    zIndex: 9999
 	};
+	
 </script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/pleaserotate.js/pleaserotate.min.js")%>"></script>
@@ -56,11 +59,12 @@ var PleaseRotateOptions = {
 <div data-ng-controller="menuCtrl" ng-app="menuAppAdmin" id="menuAppAdmin">
 	<menu-aside></menu-aside>
 	<div id="divContainer" class="overlayButtonBar ">
-		<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-		<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
+		<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons">menu</i></a>
+		<a href="#" class="logoKnowage" ng-click="goHome()"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
 	</div>
 </div>
 
 <script>
 	sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
+
 </script>
