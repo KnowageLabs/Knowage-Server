@@ -255,12 +255,11 @@
 					</md-toolbar>
 					<md-card-content >
 						<div layout=row >
-							<div flex >
-								<md-input-container flex class="md-block">
-									<label>{{::translate.load('sbi.cockpit.pivot.rows.height')}}</label>
-									<input class="input_class" ng-model="localModel.content.style.generic['height']" />
-								</md-input-container>
-							</div>
+							<md-input-container flex class="md-block">
+								<label>{{::translate.load('sbi.cockpit.pivot.rows.height')}}</label>
+								<input class="input_class" ng-model="localModel.content.style.generic['height']" />
+								<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+							</md-input-container>
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
 								<input ng-model="localModel.content.style.generic['font-size']" type="text"/>
