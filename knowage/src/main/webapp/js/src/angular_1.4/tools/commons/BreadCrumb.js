@@ -15,6 +15,7 @@ angular.module('bread_crumb', ['ngMaterial'])
 			ngModel:'=',
 			itemName:"@",
 			id:"@",
+			homepage: '=?',
 			selectedIndex:'=?',
 			selectedItem:'=?',
 			moveToCallback:'&?', //function callback to call when change item

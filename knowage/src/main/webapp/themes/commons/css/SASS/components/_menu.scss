@@ -15,9 +15,12 @@
     	display: flex;
     	flex-direction: column;
     	align-items: center;
+      i {
+        font-size: 32px;
+      }
 		.logoKnowage {
       float:left;
-			cursor: default;
+			cursor: pointer;
 			margin: 0;
 		  top: 10px;
     	position: relative;
@@ -27,6 +30,9 @@
 			opacity: 1;
 			background-image: url('../img/defaultTheme/logotipoVert.png');
 			background-repeat: none;
+      &:hover {
+        opacity:.7;
+      }
 			img {
 				display: none;
 			}
