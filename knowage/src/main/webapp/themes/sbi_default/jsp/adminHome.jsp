@@ -16,31 +16,51 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page language="java" 
-	contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
-%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>    
 
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
-sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
-
+	sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 </script>
 <iframe src="<%= firstUrlToCall %>" id="iframeDoc" width="100%" height="100%" frameborder="0"></iframe>
 
-<!-- Include AngularJS application -->
+<style>
+	#pleaserotate-graphic{
+        fill: #fff;
+    }
 
-<script type="text/javascript"	src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
+    #pleaserotate-backdrop {
+        color: #fff;
+        background-color: #000;
+    }
+</style>
+<script>
+var PleaseRotateOptions = {
+	    message: "Please Rotate Your Device",
+	    subMessage: "For a better mobile experience",
+	    allowClickBypass: false,
+	    onlyMobile: false,
+	    zIndex: 9999
+	};
+</script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/pleaserotate.js/pleaserotate.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/menu/menuAppAdmin.js")%>"></script> 
 
-
-
-
+<!--  div id="goToLandscape">
+	<i class="fa fa-4x fa-refresh"></i>
+</div-->
 <div data-ng-controller="menuCtrl" ng-app="menuAppAdmin" id="menuAppAdmin">
-<menu-aside></menu-aside>
-<div id="divContainer" class="overlayButtonBar ">
-	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-	<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
+	<menu-aside></menu-aside>
+	<div id="divContainer" class="overlayButtonBar ">
+		<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
+		<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
+	</div>
 </div>
-</div>
+
+<script>
+	sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
+</script>
