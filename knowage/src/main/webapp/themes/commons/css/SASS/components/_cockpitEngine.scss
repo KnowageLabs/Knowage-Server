@@ -1558,6 +1558,9 @@
 			background-color: lighten($baseColor,15%);
 		}
 	 &>table{
+		 	&.crosstab-fill-width{
+			 	width:100%;
+			}
 			border-collapse: collapse;
 			width:auto;
 			border-bottom: 1px solid $tableLineSeparator;

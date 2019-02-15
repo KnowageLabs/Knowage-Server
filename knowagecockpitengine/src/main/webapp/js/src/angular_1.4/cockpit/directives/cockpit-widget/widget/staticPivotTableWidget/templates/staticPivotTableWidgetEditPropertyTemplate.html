@@ -205,9 +205,17 @@
 						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatetotalsonrows" aria-label="Checkbox 1">
 				        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows")}}
 				        </md-checkbox>
+				        <md-input-container class="md-block">
+					          <label>{{translate.load("sbi.crosstab.crosstabdetailswizard.totalLabel")}}</label>
+					          <input  size="40" ng-model="localModel.content.crosstabDefinition.config.rowtotalLabel" ng-disabled="!localModel.content.crosstabDefinition.config.calculatetotalsonrows">
+					    </md-input-container>
 						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatesubtotalsonrows" aria-label="Checkbox 1">
 				        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatesubtotalsonrows")}}
 				        </md-checkbox>
+				        <md-input-container class="md-block">
+					          <label>{{translate.load("sbi.crosstab.crosstabdetailswizard.subtotalLabel")}}</label>
+					          <input  size="40" ng-model="localModel.content.crosstabDefinition.config.rowsubtotalLabel" ng-disabled="!localModel.content.crosstabDefinition.config.calculatesubtotalsonrows">
+					    </md-input-container>
 					</md-card-content>
 				</md-card>
 				
@@ -221,9 +229,17 @@
 						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatetotalsoncolumns" aria-label="Checkbox 1">
 					        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns")}}
 					        </md-checkbox>
+					        <md-input-container class="md-block">
+					          <label>{{translate.load("sbi.crosstab.crosstabdetailswizard.totalLabel")}}</label>
+					          <input size="40" ng-model="localModel.content.crosstabDefinition.config.columntotalLabel" ng-disabled="!localModel.content.crosstabDefinition.config.calculatetotalsoncolumns">
+					        </md-input-container>
 							<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatesubtotalsoncolumns" aria-label="Checkbox 1">
 					        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns")}}
 					        </md-checkbox>
+					        <md-input-container class="md-block">
+					          <label>{{translate.load("sbi.crosstab.crosstabdetailswizard.subtotalLabel")}}</label>
+					          <input  size="40" ng-model="localModel.content.crosstabDefinition.config.columnsubtotalLabel" ng-disabled="!localModel.content.crosstabDefinition.config.calculatesubtotalsoncolumns">
+					        </md-input-container>
 					</md-card-content>
 				</md-card>
 		  	
@@ -240,6 +256,10 @@
 					</md-toolbar>
 					<md-card-content >
 						<div layout=row >
+							<md-input-container flex class="md-block">
+								<label>{{::translate.load('sbi.cockpit.pivot.rows.height')}}</label>
+								<input class="input_class" ng-model="localModel.content.style.generic['height']" />
+							</md-input-container>
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
 								<input ng-model="localModel.content.style.generic['font-size']" type="text"/>

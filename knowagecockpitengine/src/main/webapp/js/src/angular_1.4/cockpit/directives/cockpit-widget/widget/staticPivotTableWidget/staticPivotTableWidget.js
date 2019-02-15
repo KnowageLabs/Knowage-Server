@@ -151,10 +151,14 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
+					var fatherElement = angular.element($scope.subCockpitWidget);
 					$scope.subCockpitWidget.html(response.data.htmlTable);
 					$scope.addPivotTableStyle();
 					$scope.hideWidgetSpinner();
-					$compile(angular.element($scope.subCockpitWidget).contents())($scope);
+					$compile(fatherElement.contents())($scope);
+					if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
+						fatherElement[0].children[0].classList.add('crosstab-fill-width');
+					}
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
@@ -672,6 +676,20 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 			    	  if($scope.localModel.dataset!=undefined && $scope.localModel.dataset.dsId!=undefined){
 			    		  $scope.changeDatasetFunction($scope.localModel.dataset.dsId,true)
+			    	  }
+
+			    	  //default labels
+			    	  if (!$scope.localModel.content.crosstabDefinition.config.rowsubtotalLabel || $scope.localModel.content.crosstabDefinition.config.rowsubtotalLabel == ''){
+			    		  $scope.localModel.content.crosstabDefinition.config.rowsubtotalLabel = sbiModule_translate.load('sbi.crosstab.crosstabdetailswizard.defaultSubtotalLabel') ;
+			    	  }
+			    	  if (!$scope.localModel.content.crosstabDefinition.config.rowtotalLabel || $scope.localModel.content.crosstabDefinition.config.rowtotalLabel == ''){
+			    		  $scope.localModel.content.crosstabDefinition.config.rowtotalLabel = sbiModule_translate.load('sbi.crosstab.crosstabdetailswizard.defaultTotalLabel') ;
+			    	  }
+			    	  if (!$scope.localModel.content.crosstabDefinition.config.columnsubtotalLabel || $scope.localModel.content.crosstabDefinition.config.columnsubtotalLabel == ''){
+			    		  $scope.localModel.content.crosstabDefinition.config.columnsubtotalLabel = sbiModule_translate.load('sbi.crosstab.crosstabdetailswizard.defaultSubtotalLabel') ;
+			    	  }
+			    	  if (!$scope.localModel.content.crosstabDefinition.config.columntotalLabel || $scope.localModel.content.crosstabDefinition.config.columntotalLabel == ''){
+			    		  $scope.localModel.content.crosstabDefinition.config.columntotalLabel = sbiModule_translate.load('sbi.crosstab.crosstabdetailswizard.defaultTotalLabel') ;
 			    	  }
 
 			    	  //remove used measure and attribute
