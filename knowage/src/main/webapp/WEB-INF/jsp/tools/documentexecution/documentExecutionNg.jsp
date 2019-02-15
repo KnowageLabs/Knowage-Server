@@ -222,7 +222,7 @@ if(executionRoleNames.size() > 0) {
                             title="go to homepage">
                          <md-icon md-font-icon="fa fa-home"></md-icon>
                     </md-button>
-                    <h2 class="md-flex" style="padding-left: 8px" ng-hide="::crossNavigationScope.isNavigationInProgress()">
+                    <h2 class="md-flex text-transform-none" style="padding-left: 8px" ng-hide="::crossNavigationScope.isNavigationInProgress()">
                         {{i18n.getI18n(executionInstance.OBJECT_NAME)}}
                     </h2>
                     <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
