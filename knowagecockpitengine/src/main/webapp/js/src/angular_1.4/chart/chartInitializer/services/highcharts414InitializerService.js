@@ -96,7 +96,7 @@ angular.module('chartInitializer')
 			var plotLines = null;
 			var plotBands = null;
 			var infoFroDrill = []
-			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
+			if (!chartConf.plotOptions.column.stacking && (chartType == 'column' || chartType == 'bar' || chartType == 'line')) {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
 
@@ -495,7 +495,7 @@ angular.module('chartInitializer')
 					}
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
-						if(chart.userOptions.chart.type!="pie"){
+							if(chart.userOptions.chart.type!="pie" && !chart.userOptions.plotOptions.column.stacking){
 							var yaxis = chart.yAxis;
 							var chartSeries = chart.series;
 							drilledSerie = series.serieName;
@@ -585,7 +585,7 @@ angular.module('chartInitializer')
 		var yAxisTitle={
 				text: ' '
 		};
-		if(chart.userOptions.chart.type!="pie"){
+		if(chart.userOptions.chart.type!="pie"  && !chart.userOptions.plotOptions.column.stacking){
 			setTimeout(function () {
 	            chart.yAxis[indexOfAxis].update({
 	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
