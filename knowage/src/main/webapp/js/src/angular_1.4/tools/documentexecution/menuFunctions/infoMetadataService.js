@@ -152,7 +152,7 @@
 		    		metadataDlgCtrl.getDocumentMetadataFunction();
 
 		    		metadataDlgCtrl.close = function(){
-		    			$mdDialog.hide();
+		    			$mdDialog.cancel();
 		    		}
 		    		metadataDlgCtrl.save = function(){
 		    			if(metadataDlgCtrl.shortText==null || metadataDlgCtrl.shortText==undefined || metadataDlgCtrl.shortText=='')
@@ -200,8 +200,9 @@
 		    			sbiModule_restServices.promisePost('1.0/documentexecutionee', 'saveDocumentMetadata', filteredSaveObj)
 		    			.then(function(response){
 		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
-		    				documentExecuteServices.showToast("Salvataggio OK", 3);
-		    				metadataDlgCtrl.getDocumentMetadataFunction();
+		    				documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3);
+		    				//metadataDlgCtrl.getDocumentMetadataFunction();
+		    				$mdDialog.hide();
 
 		    			},function(response){
 		    				documentExecuteServices.showToast(response.data.errors[0].message, 5);

@@ -129,16 +129,6 @@ if(importAngularMaterialForExport == null) {
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
 	
-	
-
-
-<!-- include summernote css/js -->
-<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
-<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
-
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
-	
-	 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		

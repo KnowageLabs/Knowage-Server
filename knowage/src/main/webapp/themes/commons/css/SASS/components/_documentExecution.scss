@@ -296,6 +296,17 @@
 	}
 }
 
+.customMetadata {
+	wysiwyg-edit {
+		.sizer {
+			max-height:200px;
+			.resizer {
+				display: none;
+			}
+		}
+	}
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
