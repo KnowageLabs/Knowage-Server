@@ -25,7 +25,7 @@
 	  	
 	  	<md-content>
 	  		<md-card ng-if="metadataDlgCtrl.generalMetadata.length>0" style="background-color: #fafafa">
-	 			<md-subheader >Document Details</md-subheader>
+	 			<md-subheader >{{::metadataDlgCtrl.translate.load('sbi.execution.metadata.documentdetails')}}</md-subheader>
 	 			<div layout="row" style="padding:8px" layout-wrap ng-if="metadataDlgCtrl.generalMetadata.length>0">
 	 				  <md-input-container ng-class="{'flex':$index != 3, 'flex-100': $index == 3}" ng-repeat="item in metadataDlgCtrl.generalMetadata track by $index" ng-if="item.value && !$last">
 				        <label style="color: #ccc">{{ ::item.name }}</label>
@@ -35,7 +35,7 @@
 	 			</div>
 	 		</md-card>
 	 		<md-card  ng-if="metadataDlgCtrl.shortText.length>0 || metadataDlgCtrl.longText.length>0" class="customMetadata">
-	 			<md-subheader>Custom Metadata</md-subheader>
+	 			<md-subheader>{{::metadataDlgCtrl.translate.load('sbi.execution.metadata.custom')}}</md-subheader>
 	 			<div layout="row" style="padding:8px" layout-wrap ng-if="metadataDlgCtrl.shortText.length>0">
 	 				<md-input-container flex="33" ng-repeat="item in metadataDlgCtrl.shortText track by $index" >
 				        <label>{{ ::item.name }}</label>
@@ -72,7 +72,7 @@
 	  	<div class="md-actions" layout="row">
 		  	<span flex></span>
 		  	<md-button class="md-raised" ng-click="metadataDlgCtrl.close()">
-				CLOSE
+				{{::metadataDlgCtrl.translate.load('sbi.general.close')}}
 			</md-button>
 	    	<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
 			     <md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-primary md-raised" 

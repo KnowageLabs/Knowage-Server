@@ -51,7 +51,10 @@
 		    	clickOutsideToClose:false,
 		    	controllerAs: "metadataDlgCtrl",
 		    	controller : function($mdDialog, sbiModule_translate, sbiModule_config, executionInstance) {
+		    		
+		    		
 		    		var metadataDlgCtrl = this;
+		    		metadataDlgCtrl.translate = sbiModule_translate;
 		    		metadataDlgCtrl.selectedTab={'tab':0};
 		    		metadataDlgCtrl.lblTitle = lblTitle;
 		    		metadataDlgCtrl.lblCancel = lblCancel;
