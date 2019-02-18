@@ -2255,24 +2255,19 @@
 	            
 		},
 		#end
-        ## (danristo)        
-   		#if ($chart.seriesStacking=="true")
-   		
-	        column: {
-	        
+        ## (danristo)
+	    column: {
+	        #if ($chart.seriesStacking=="true")
 	        	stacking: "normal",
-	    	 	dataLabels: {
-	                enabled: true
-	            }
+	    	 #end 
 	        },
 	     	## (danristo)
-	        bar: {
+	    bar: {
+	        #if ($chart.seriesStacking=="true")
 				stacking: "normal",
-	    	 	dataLabels: {
-	                enabled: true
-	            }
+			#end
+	    	 	 
 	        },
-      	#end
         series: {
         
         	events: {
