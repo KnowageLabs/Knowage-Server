@@ -80,7 +80,7 @@ angular.module('chartInitializer')
 			var plotBands = null;
 			var infoFroDrill = []
 			if (chartType == 'scatter') delete this.updateData;
-			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
+			if (!chartConf.plotOptions.column.stacking && (chartType == 'column' || chartType == 'bar' || chartType == 'line')) {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
 
@@ -484,7 +484,7 @@ angular.module('chartInitializer')
 					.then(function(series){
 						var calculateMinMax = function (series){
 							var deferred = $q.defer();
-							if(chart.userOptions.chart.type!="pie"){
+							if(chart.userOptions.chart.type!="pie" && !chart.userOptions.plotOptions.column.stacking){
 								var yaxis = chart.yAxis;
 								var chartSeries = chart.series;
 								drilledSerie = series.serieName;
@@ -522,7 +522,7 @@ angular.module('chartInitializer')
 							return deferred.promise;
 						}
 						calculateMinMax(series).then(function(result){
-							if(result){
+							if(result  && !chart.userOptions.plotOptions.column.stacking){
 								chart.yAxis[indexOfAxis].update({
 									max:result.max ,
 									min: result.min,
@@ -587,7 +587,7 @@ angular.module('chartInitializer')
 		var yAxisTitle={
 				text: ' '
 		};
-		if(chart.userOptions.chart.type!="pie"){
+		if(chart.userOptions.chart.type!="pie"  && !chart.userOptions.plotOptions.column.stacking){
 			setTimeout(function () {
 	            chart.yAxis[indexOfAxis].update({
 	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
