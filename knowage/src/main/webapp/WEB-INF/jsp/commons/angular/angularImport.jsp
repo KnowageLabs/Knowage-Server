@@ -98,7 +98,6 @@ if(importAngularMaterialForExport == null) {
 <!--pagination-->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/pagination/dirPagination.js")%>"></script> 
 
-
 <!-- expanderBox -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/expander-box/expanderBox.js")%>"></script> 
 
@@ -118,26 +117,16 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUploadBase64.js")%>"></script> 
 
-
 <!-- 	angular time picker -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script> 
 
-<!-- 	angular list dewtail template -->
+<!-- 	angular list detail template -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script> 
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
 
-
-
-<!-- include summernote css/js -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/node_modules/summernote/dist/summernote.css")%>">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/summernote/dist/summernote.min.js"></script>
-
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
-
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
-
+	
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		

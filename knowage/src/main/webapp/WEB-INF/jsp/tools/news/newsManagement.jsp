@@ -43,10 +43,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 	<!-- include libraries(jQuery, bootstrap) -->
-	<link href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>"href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+	<link href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>" rel="stylesheet">
 	<script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script> 
 	<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script> 
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+	<link href="<%=urlBuilder.getResourceLink(request, "node_modules/summernote/dist/summernote.css")%>" rel="stylesheet">
+	<script src="<%=urlBuilder.getResourceLink(request, "node_modules/summernote/dist/summernote.min.js")%>"></script>
+	
+	<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/news/newsManagement.js")%>"></script>
 	
 	</head>
