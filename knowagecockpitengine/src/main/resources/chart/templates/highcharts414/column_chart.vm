@@ -1081,9 +1081,7 @@
 			
 			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
 				#set ($max = $yAxis.max)
-				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
-					max:$yAxis.max,
-				#end
+				max:$yAxis.max,
 	        #end
 	        
 			#if( $chartType == "radar")
