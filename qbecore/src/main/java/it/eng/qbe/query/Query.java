@@ -800,7 +800,8 @@ public class Query implements IQuery {
 		Iterator<IModelField> mfi = mf.iterator();
 		while (mfi.hasNext()) {
 			IModelField iModelField = mfi.next();
-			me.add(iModelField.getParent());
+			if (iModelField.getParent().getParent() == null)
+				me.add(iModelField.getParent());
 
 		}
 		return me;
