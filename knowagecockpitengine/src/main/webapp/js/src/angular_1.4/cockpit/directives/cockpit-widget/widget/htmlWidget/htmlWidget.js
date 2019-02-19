@@ -125,6 +125,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.hideWidgetSpinner();
 		}
 		
+		$scope.init=function(element,width,height){
+			$scope.refreshWidget(null, 'init');
+		}
+		
 		/**
 		 * Function to initialize the rendered html at the loading and after editing.
 		 * If there is a selected dataset the function calls the data rest service.
@@ -423,7 +427,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return finishEdit.promise;
 		}
 
-		$scope.reinit();
 	}
 
 	/**
