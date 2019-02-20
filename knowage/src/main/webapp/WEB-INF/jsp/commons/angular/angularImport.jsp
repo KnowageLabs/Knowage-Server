@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
-
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/jquery/dist/jquery.min.js")%>"></script> 
 
 <!-- angular reference-->
 <!-- START-DEBUG -->
@@ -128,7 +128,7 @@ if(importAngularMaterialForExport == null) {
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
-	
+
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
@@ -156,11 +156,13 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetScheduler_service.js")%>"></script>
 
 <!-- xml2js -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/jquery-2.1.3.min.js")%>"></script> 
+
+
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
 
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
+
 
 <!-- angular JSON FORMATTER -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/jsonformatter/dist/json-formatter.min.js")%>"></script> 
