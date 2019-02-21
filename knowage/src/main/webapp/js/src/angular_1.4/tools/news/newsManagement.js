@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	agGrid.initialiseAgGridWithAngular1(angular);
 	angular
-		.module('newsManagement', ['ngMaterial','sbiModule','angular-list-detail','agGrid','summernote'])
+		.module('newsManagement', ['ngMaterial','sbiModule','angular-list-detail','agGrid','ngWYSIWYG'])
 		.config(function($mdThemingProvider) {
 		    $mdThemingProvider.theme('knowage');
 		    $mdThemingProvider.setDefaultTheme('knowage');
@@ -101,19 +101,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 
-		$scope.wysiwygOptions = {
-		    height: 250,
-		    toolbar: [
-		        ['style', ['bold', 'italic', 'underline', 'clear']],
-		        ['font', ['strikethrough', 'superscript', 'subscript']],
-		        ['fontname', ['fontname']],
-		        ['fontsize', ['fontsize']],
-		        ['color', ['color']],
-		        ['para', ['ul', 'ol', 'paragraph']]
-		      ],
-		    fontNames: ['Roboto','Comic Sans MS','Sacramento'],
-		    fontNamesIgnoreCheck : ['Roboto','Comic Sans MS','Sacramento']
-		};
+		$scope.editorConfig = {
+	            sanitize: false,
+	            toolbar: [
+	            { name: 'basicStyling', items: ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '-', 'leftAlign', 'centerAlign', 'rightAlign', 'blockJustify', '-'] },
+	            { name: 'paragraph', items: ['orderedList', 'unorderedList', 'outdent', 'indent', '-'] },
+	            { name: 'colors', items: ['fontColor', 'backgroundColor', '-'] },
+	            { name: 'styling', items: ['font', 'size', 'format'] }
+	            ]
+	  };
+		
 		
 		$scope.newNews = function(){
 			$scope.selectedNews = {};

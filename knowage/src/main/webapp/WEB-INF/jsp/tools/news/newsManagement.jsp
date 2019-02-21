@@ -42,16 +42,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html >
 
 <head>
-	<link href="<%=urlBuilder.getResourceLink(request, "/node_modules/bootstrap/dist/css/bootstrap.min.css")%>" rel="stylesheet">
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script> 
-	<link href="<%=urlBuilder.getResourceLink(request, "/node_modules/summernote/dist/summernote.css")%>" rel="stylesheet">
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/summernote/dist/summernote.min.js")%>"></script>
-	
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/angular-summernote/dist/angular-summernote.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/news/newsManagement.js")%>"></script>
-	
-	</head>
+</head>
 
 <body class="kn-news-management" ng-app="newsManagement" id="ng-app">
 	<angular-list-detail ng-controller="newsManagementController" full-screen="false" ng-cloak>
@@ -95,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<label>{{::translate.load('sbi.news.description')}}</label>
 								<textarea ng-model="selectedNews.description" md-maxlength="140" rows="2" placeholder="{{::translate.load('sbi.news.description.placeholder')}}" required></textarea>
 							</md-input-container>
-							<summernote ng-show="selectedNews" ng-model="selectedNews.html" config="wysiwygOptions"></summernote>
+							<wysiwyg-edit ng-show="selectedNews" content="selectedNews.html" config="editorConfig" class="kn-custom-wysiwyg-editor"></wysiwyg-edit>
 						</md-card-content>
 					</md-card>
 					<md-card ng-show="selectedNews">
