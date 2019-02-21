@@ -10,20 +10,28 @@
 		<div ng-if="ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 			<label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" title="{{record}}" ng-style="::gridWidth()">
 				<span>{{record}}</span>
-			  <input type="radio" ng-checked="::isSelected(record)" ng-disabled="::isDisabled(record)" ng-value="::record">
+			  <input type="radio" ng-checked="::isSelected(record)" ng-value="::record">
 			  <span class="checkmark"></span>
 			</label>
 		</div>
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller"
-		ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
-		<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
-			<span>{{::record.column_1}}</span>
-		  <input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
-		  <span class="checkmark"></span>
-		</label>
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" >
+		<div ng-if="!ngModel.settings.hideDisabled || !ngModel.activeValues.length" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
+			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
+				<span>{{::record.column_1}}</span>
+			  <input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
+			  <span class="checkmark"></span>
+			</label>
+		</div>
+		<div ng-if="ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
+			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" ng-disabled="::isDisabled(record)" title="{{record}}" ng-style="::gridWidth()">
+				<span>{{::record}}</span>
+			  <input type="checkbox" ng-checked="::isSelected(record)" ng-value="::record">
+			  <span class="checkmark"></span>
+			</label>
+		</div>
 	</div>
 	
 	<!-- lov combobox single and multiple input -->

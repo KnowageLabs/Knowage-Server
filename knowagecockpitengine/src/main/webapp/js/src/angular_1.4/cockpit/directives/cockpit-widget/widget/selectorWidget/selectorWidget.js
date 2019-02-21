@@ -253,8 +253,9 @@ angular.module('cockpitModule')
 		    },function(error){});
 		}
 		
-		function MultiSelectDialogController(scope, $mdDialog, targetModel, selectables, activeSelections, itemsList, settings) {
+		function MultiSelectDialogController(scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings) {
 			scope.settings = settings;
+			scope.translate = sbiModule_translate;
 			scope.selectables = [];
 			scope.allSelected = false;
 			if(settings.hideDisabled) {
