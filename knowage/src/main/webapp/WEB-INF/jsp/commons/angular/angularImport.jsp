@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/jquery/dist/jquery.min.js")%>"></script> 
+
 <!-- angular reference-->
 <!-- START-DEBUG -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.js")%>"></script> 
@@ -140,6 +140,10 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
+
+<!--  wysiwyg -->
+<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/ngWYSIWYG/wysiwyg.min.js"></script>	
+<link rel="stylesheet" type="text/css" href="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/ngWYSIWYG/editor.min.css">
 
 <!-- qbe viewer -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
