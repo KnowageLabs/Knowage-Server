@@ -36,7 +36,7 @@
     	</md-input-container>
     	<md-input-container  class="md-block radioContainer">
        		<md-radio-group layout="row" ng-model="model.settings.modalityPresent" layout="row" layout-align="start center"> 
-       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value" ng-hide="model.settings.modalityValue == 'multiValue' && button.value == 'COMBOBOX'">
+       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value">
            			{{button.name}}
        			</md-radio-button>
    			</md-radio-group>
@@ -68,8 +68,10 @@
 			<md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
             	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
          	</md-checkbox>
+         	<md-checkbox ng-if="model.settings.modalityPresent!='LIST'" ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
+            	Hide disabled values
+         	</md-checkbox>
 		</div>
-		
 		
     </md-card-content>
 </md-card>

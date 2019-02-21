@@ -2079,6 +2079,16 @@
                 margin: 8px 0;
                 width: 100%;
             }
+            .fakeDialog {
+            	outline: none;
+            	cursor: pointer;
+            	&:hover {
+            		background-color: rgba($tableSelectedElementColor,.3);
+            	}
+            	span {
+            		margin-right: 4px;
+            	}
+            }
         }
 		.grid {
 			display: flex;
@@ -2220,6 +2230,33 @@
 			@include coolScrollBars($baseColor,6px);
 		}
 	}
+	.multiselectionDialog {
+		.selectableList {
+			&[md-virtual-repeat] {
+				&::before, ._md-list-item-inner, ._md-list-item-inner::before{
+					min-height: 32px;
+				}
+				min-height: 32px;
+			}
+			&:hover {
+				background-color: $tableSelectedElementColor;
+			}
+			p {
+				font-size:.8rem; 
+				max-width:320px;
+			}
+			&.disabled {
+				cursor: default;
+				&:hover {
+					background-color: transparent;
+				}
+				p {
+					color: #ccc;
+				}
+			}
+		}
+	}
+	
 
 	.cockpitSelectorWidgetSettings {
 		.alternatedInput{

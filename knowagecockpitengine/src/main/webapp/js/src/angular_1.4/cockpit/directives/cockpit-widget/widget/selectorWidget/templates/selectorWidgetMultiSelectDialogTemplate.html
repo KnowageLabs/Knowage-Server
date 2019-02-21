@@ -1,0 +1,41 @@
+<md-dialog class="multiselectionDialog">
+    <md-toolbar class="secondaryToolbar">
+      <div class="md-toolbar-tools">
+        <h2 class="text-transform-none">{{targetColumn.name}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="selectAll()">
+        	<md-icon md-font-icon="fa fa-check-square-o" ng-if="!allSelected"></md-icon>
+        	<md-icon md-font-icon="fa fa-eraser" ng-if="allSelected"></md-icon>
+        	<md-tooltip md-delay="500">Select/Deselect All</md-tooltip>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="min-width:400px;">
+    	<div layout="row" layout-align="start center">
+      		<md-input-container class="md-icon-float md-block" flex>
+      			<label>Search</label>
+      			 <md-icon md-font-icon="fa fa-search"></md-icon>
+      			<input type="text" ng-model="searchText"/>
+      		</md-input-container>
+      	</div>
+	    <md-list>
+			<md-virtual-repeat-container id="vertical-container" style="height:50%;">
+		      <md-list-item md-virtual-repeat="item in selectables | filter:{name:searchText}" class="selectableList" ng-class="{'disabled': !settings.hideDisabled && isDisabled(item.name)}">
+		         	<p style="font-size:.8rem; max-width:320px;" class="truncated"> {{ item.name }} </p>
+    				<md-checkbox class="md-secondary" ng-model="item.selected" ng-disabled="!settings.hideDisabled && isDisabled(item.name)"></md-checkbox>
+		      </md-list-item>
+		    </md-virtual-repeat-container>
+	    </md-list>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+       Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="close()">
+        Select
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
