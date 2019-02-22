@@ -63,8 +63,8 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 
 function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices,businessViews){
 	$scope.translate = sbiModule_translate;
-	$scope.cardinality = [{name:'1 to N',value:'one-to-many'},
-        				  {name:'1* to N',value:'optional-one-to-many'}];
+	$scope.cardinality = [{name:'1..N to 1',value:'many-to-one'},
+        				  {name:'0..N to 1',value:'optional-many-to-one'}];
 	$scope.businessName;
 	$scope.businessModel = angular.copy(businessModel);
 	$scope.businessViews = angular.copy(businessViews);
