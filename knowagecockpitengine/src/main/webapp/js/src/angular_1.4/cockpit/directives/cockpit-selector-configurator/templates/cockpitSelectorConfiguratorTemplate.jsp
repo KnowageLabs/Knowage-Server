@@ -26,6 +26,7 @@
 	        	<div layout="row" class="selTypes" style="padding:8px;" ng-if="!isSelectedColumnTemporal()">
 					<div class="outerIcon" ng-repeat="visType in modalityValue" ng-click="setSelectorType(visType.value)" ng-class="{'selected':model.settings.modalityValue==visType.value}">
 						<div class="selTypesIcon" ng-class="visType.value+'Icon'">
+							<span class="svgFallBackText">{{visType.name}}</span>
 							<md-tooltip>{{visType.name}}</md-tooltip>
 						</div>
 					</div>
@@ -38,8 +39,8 @@
 					</div>
 				</div>
 		    
-		    <md-subheader ng-if="model.settings.modalityValue!='dropdown'">{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.alignment')}}</md-subheader>
-		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityValue!='dropdown'" layout-padding>
+		    <md-subheader ng-if="model.settings.modalityValue!='dropdown' && model.settings.modalityValue!='multiDropdown'">{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.alignment')}}</md-subheader>
+		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityValue!='dropdown' && model.settings.modalityValue!='multiDropdown'" layout-padding>
 	      		<md-radio-group  layout="row" ng-model="model.settings.modalityView" layout="row" layout-align="start center"> 
 	       			<md-radio-button ng-repeat="button in modalityView" ng-value="button.value">
 	            		<md-icon md-font-icon="{{button.icon}}" style="text-align:center"></md-icon> {{button.name}}
@@ -57,7 +58,7 @@
 					</md-select>
 			    </md-input-container>
 			    <md-input-container class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
-					<label>Grid columns width</label>
+					<label>{{::translate.load('kn.cockpit.selector.designer.columnsWidth')}}</label>
 					<input ng-model="model.settings.gridColumnsWidth" />
 						
 			    </md-input-container>
@@ -68,9 +69,11 @@
 			    <md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
 	            	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
 	         	</md-checkbox>
+	         	<md-checkbox ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
+	            	{{::translate.load('kn.cockpit.selector.designer.hideDisabled')}}
+	         	</md-checkbox>
 		    </div>
 			
-		    
 	    </md-card-content>
     </md-card>
 </md-content>

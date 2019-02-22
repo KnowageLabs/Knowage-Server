@@ -63,7 +63,8 @@
 		$scope.modalityValue = [
 			{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value'),temporalAvailable:true},
 			{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue'),temporalAvailable:true},
-			{value :"dropdown",name: $scope.translate.load('sbi.cockpit.widgets.selector.selectinput'),temporalAvailable:false}];
+			{value :"dropdown",name: $scope.translate.load('sbi.cockpit.widgets.selector.selectinput'),temporalAvailable:false},
+			{value :"multiDropdown",name: "Multiselection Dropdown",temporalAvailable:false}];
 		$scope.modalityView = [
 			{value: "vertical",name: $scope.translate.load('sbi.cockpit.widgets.selector.vertical'),icon:"fa fa-ellipsis-v"},
 			{value :"horizontal",name: $scope.translate.load('sbi.cockpit.widgets.selector.horizontal'),icon:"fa fa-ellipsis-h"},
