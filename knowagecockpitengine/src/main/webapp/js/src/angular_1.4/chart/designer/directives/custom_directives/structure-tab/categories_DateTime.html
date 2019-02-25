@@ -44,6 +44,7 @@
 	</md-select> </md-input-container>
 		
 	</div>	
+	
 	<div layout="row"
 		   flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='scatter' && selectedChartType.toLowerCase()!='heatmap' && selectedChartType.toLowerCase()!='radar'">
 		
@@ -52,7 +53,7 @@
 				ng-model="chartTemplate.groupCategories" style="margin:0 8px" aria-label="groupCategories" name="generic_groupCategories" ></md-checkbox>
 			</md-input-container>
 	</div>
-	
+
 	<md-subheader class="md-primary" ng-if="selectedChartType.toLowerCase()!='scatter' && selectedChartType.toLowerCase()!='heatmap'" >
 	{{translate.load("sbi.chartengine.designer.tab.configuration.grouping.createsplitting")}}
 	</md-subheader>
@@ -73,6 +74,23 @@
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories  || chartTemplate.groupSeries"
 				ng-model="chartTemplate.groupSeriesCateg" style="margin:0 8px" aria-label="groupSeriesCateg" name="generic_groupSeriesCateg" ></md-checkbox>
 			</md-input-container>
-		</div>	 
-	</div>
+		</div>	
+		
+		</div>
+		
+			<div layout="row" ng-if="chartTemplate.groupSeriesCateg">
+			<div layout="column" flex=100 layout-margin>
+			
+			<md-input-container class="md-block">
+				 <md-select ng-model="chartTemplate.groupedSerie" >
+				 	<md-option
+					ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.name}}">{{seriesItem.name}}
+					</md-option>
+				 </md-select> 
+			</md-input-container>
+			
+			</div>
+		</div>
+		
+	
 </md-card>

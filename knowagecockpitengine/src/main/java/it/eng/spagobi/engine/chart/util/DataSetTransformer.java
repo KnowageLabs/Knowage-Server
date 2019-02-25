@@ -733,12 +733,33 @@ public class DataSetTransformer {
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine, String groupSeries,
-			String groupSeriesCateg) throws JSONException {
+			String groupSeriesCateg, Map<String, String> dataColumnsMapper, String groupedSerie) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
 		ArrayList<Object> categories = new ArrayList<>();
-
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+
+		/*
+		 * System.out.println(dataColumnsMapper.get(groupedSerie)); System.out.println(groupedSerie);
+		 *
+		 * for (Map.Entry<String, String> entry : dataColumnsMapper.entrySet()) {
+		 *
+		 * System.out.println(entry.getKey() + "<=key value=>" + entry.getValue());
+		 *
+		 * } System.out.println(velocityChart.get("groupedSerie")); ((Map) velocityChart.get("VALUES")).get("SERIE")
+		 *
+		 * System.out.println(dataColumnsMapper.keySet().toArray().length); System.out.println(dataColumnsMapper.keySet());
+		 * System.out.println(velocityChart.get("VALUES").get("SERIE").get(0).get("column"));
+		 *
+		 * Iterator<Entry<String, String>> it = velocityChart.entrySet().iterator();
+		 *
+		 * while (it.hasNext()) { Map.Entry<String, String> pair = it.next();
+		 *
+		 * }
+		 */
+
+		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie);
+
 		String primCat;
 		String secCat;
 		String seria;
@@ -748,9 +769,9 @@ public class DataSetTransformer {
 				secCat = "column_2";
 				seria = "column_3";
 			} else {
-				primCat = "column_2";
-				secCat = "column_1";
-				seria = "column_3";
+				primCat = "column_" + (dataColumnsMapper.size() - 1);
+				secCat = columnForGroupingSerie;
+				seria = "column_" + dataColumnsMapper.size();
 			}
 		} else {
 			if (groupSeriesBool) {
@@ -760,10 +781,11 @@ public class DataSetTransformer {
 
 			} else {
 				primCat = "column_1";
-				secCat = "column_3";
+				secCat = columnForGroupingSerie;
 				seria = "column_2";
 
 			}
+
 		}
 
 		for (Object singleObject : dataRows) {
@@ -779,21 +801,45 @@ public class DataSetTransformer {
 		}
 
 		for (Object singleObject : dataRows) {
-			ArrayList<JSONObject> newListOfOrderColumnItems = map.get(((Map) singleObject).get(seria).toString());
-			if (newListOfOrderColumnItems == null) {
-				newListOfOrderColumnItems = new ArrayList<JSONObject>();
-				for (int i = 0; i < categoriesList.length; i++) {
-					Object category = categoriesList[i];
-					JSONObject jo = new JSONObject();
-					jo.put("name", category);
-					jo.put("y", "");
-					newListOfOrderColumnItems.add(jo);
+
+			String newCol = "";
+
+			String serieValue = "";
+			for (String key : dataColumnsMapper.keySet()) {
+
+				if (!dataColumnsMapper.get(key).equals(primCat) && !dataColumnsMapper.get(key).equals(secCat)) {
+
+					if (!dataColumnsMapper.get(key).equals(seria)) {
+						newCol = key;
+						serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
+					} else {
+
+						newCol = ((Map) singleObject).get(seria).toString();
+						serieValue = ((Map) singleObject).get(secCat).toString();
+
+					}
+
+				} else {
+					continue;
 				}
-				map.put(((Map) singleObject).get(seria).toString(), newListOfOrderColumnItems);
+				ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
+				if (newListOfOrderColumnItems == null) {
+					newListOfOrderColumnItems = new ArrayList<JSONObject>();
+					for (int i = 0; i < categoriesList.length; i++) {
+						Object category = categoriesList[i];
+						JSONObject jo = new JSONObject();
+						jo.put("name", category);
+						jo.put("y", "");
+						newListOfOrderColumnItems.add(jo);
+					}
+					map.put(newCol, newListOfOrderColumnItems);
+				}
+
+				JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
+				jo.put("y", serieValue);
+
 			}
 
-			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
-			jo.put("y", ((Map) singleObject).get(secCat));
 		}
 
 		return map;
