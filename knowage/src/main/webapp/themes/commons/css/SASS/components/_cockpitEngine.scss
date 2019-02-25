@@ -1895,7 +1895,7 @@
 				&>md-tabs-wrapper{}
 				}
 			md-tabs-wrapper {
-				background-color: $detailBackground;
+				background-color: lighten($bordersColor, 5%);
 				border-top: 1px solid $bordersColor;
 				margin-left: 0;
 				width: 100%;
@@ -1907,20 +1907,21 @@
 					height: 30px;
 					md-pagination-wrapper {
 						height: 30px;
-						background-color: darken($detailBackground,5%);
+						//background-color: darken($detailBackground,5%);
 						.md-tab {
 							cursor: pointer;
 							transition: background-color .3s ease-in;
-							border-right: 1px solid #ccc;
-							line-height: 24px;
-							height: 24px;
+							//border-right: 1px solid #ccc;
+							line-height: 26px;
+							height: 26px;
 							padding: 0 8px;
 							font-size: $headerFontSize;
 							text-transform: none;
-							margin: 2px 4px;
-							border-radius: 2px;
+							margin: 0px 4px;
+							top: -1px;
+							//border-radius: 2px;
 							color: $darkTextColor;
-							background-color: #ccc;
+							background-color: $detailBackground;
 							&:first-child {
 								margin-left: 10px;
 							}
@@ -1931,11 +1932,11 @@
 								top: -1px;
 							}
 							&:hover {
-								background-color: lighten(#ccc,5%);
+								background-color: lighten($detailBackground,10%);
 							}
 							&.md-active {
 								top: -1px;
-								height: 26px;
+								height: 28px;
 								padding-top:0;
 								margin-top: 0;
 								background-color: $lightTextColor;
