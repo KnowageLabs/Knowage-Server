@@ -74,18 +74,40 @@
 #set($yaxisName= "")
 #end
 #set($seriesMap = {}) ## conversion series metadata to map object
-
+#if($chart.groupSeriesCateg && $chart.groupSeriesCateg == 'true')
+#if($chart.groupedSerie)
+#set($groupedSerie = $chart.groupedSerie)
+#else
+#set($groupedSerie = $series.get(0).name)
+#end
+#end
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 #else
 	#set($serieKeyFeed = 0)
 	#foreach($serie in $series)
+	
 		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
 		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
 		
 		#set($serieKeyFeed = $serieKeyFeed + 1)
+		
+		#if($serie.name == $groupedSerie)
+		
+		#set($groupedSerie = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
+		
+		#end
+		
 	#end
 #end
+#set($seriesMapGrouping = {}) 
+#foreach($serie in $series)
+	
+		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
+		#set($workAroundNoPrint = $seriesMapGrouping.put($withgroup, $serie))
+		
+		
+	#end
 #if($chart.isCockpitEngine && $chart.isCockpitEngine!="")
 	#set($isCockpit = $chart.isCockpitEngine)
 #else
@@ -1018,10 +1040,10 @@
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 			#end
-		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
+		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg, $dataColumnsMapper,$groupedSerie))
      
 		#end
-		
+
 	},
 	#end
     #end
@@ -1325,6 +1347,7 @@
     	#set($serieColumnsMappedhigh =$serieColumnsMapped)   
     	#end		
 	#end
+	
     #foreach($element in $seriesMap)
 
  	   #set($relatedSerieColName = "$element.name"+"_#if($element.groupingFunction)$element.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1669,8 +1692,11 @@
 		#if($valueKey!="null")
 		{
 			selected: $selectedValue,
-
 			name: "$escapeTool.javascript($valueKey)",
+			#if($seriesMapGrouping.get($valueKey) && $seriesMapGrouping.get($valueKey).type != "")
+
+			type:"$seriesMapGrouping.get($valueKey).type",
+			#end
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 
@@ -2172,7 +2198,7 @@
     lang: {
         noData: '$chart.EMPTYMESSAGE.text',
     },
-    
+
     noData: {
     	style:{
     	 	fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',		
