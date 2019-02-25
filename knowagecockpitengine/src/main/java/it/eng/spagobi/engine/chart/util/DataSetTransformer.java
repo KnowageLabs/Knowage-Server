@@ -736,25 +736,6 @@ public class DataSetTransformer {
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 
-		/*
-		 * System.out.println(dataColumnsMapper.get(groupedSerie)); System.out.println(groupedSerie);
-		 *
-		 * for (Map.Entry<String, String> entry : dataColumnsMapper.entrySet()) {
-		 *
-		 * System.out.println(entry.getKey() + "<=key value=>" + entry.getValue());
-		 *
-		 * } System.out.println(velocityChart.get("groupedSerie")); ((Map) velocityChart.get("VALUES")).get("SERIE")
-		 *
-		 * System.out.println(dataColumnsMapper.keySet().toArray().length); System.out.println(dataColumnsMapper.keySet());
-		 * System.out.println(velocityChart.get("VALUES").get("SERIE").get(0).get("column"));
-		 *
-		 * Iterator<Entry<String, String>> it = velocityChart.entrySet().iterator();
-		 *
-		 * while (it.hasNext()) { Map.Entry<String, String> pair = it.next();
-		 *
-		 * }
-		 */
-
 		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie);
 
 		String primCat;
