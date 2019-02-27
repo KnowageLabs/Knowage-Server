@@ -278,7 +278,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(backEndPagination.sorting) fetchParams.body.sorting = backEndPagination.sorting;
 				}
 				if(!isEmpty(parameters)){
-					fetchParams.body.pars = parameters;
+					if (Array.isArray(parameters))
+						fetchParams.body.pars = parameters;
+					else {
+						fetchParams.body.pars = [];
+						fetchParams.body.pars.push(parameters);
+					}
 				}
 				fetchParams.body = JSON.stringify(fetchParams.body);
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)
