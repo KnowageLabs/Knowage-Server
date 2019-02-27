@@ -977,7 +977,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	}
 
-	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd,typeAvailable,typeExclusion){
+	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd,typeAvailable,typeExclusion,skipParameters){
 		var deferred = $q.defer();
 		var eleToAtt=document.body;
 		if(attachToElementWithId!=undefined){
@@ -1084,7 +1084,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.$destroy();
 
 						}else{
-							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0){
+							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0 && !skipParameters){
 								//fill the parameter
 
 								 $mdDialog.show({
