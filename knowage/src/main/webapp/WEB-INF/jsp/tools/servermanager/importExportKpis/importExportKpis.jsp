@@ -120,7 +120,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body>
 				<md-card ng-controller="kpiImportController">
-				<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
+				<md-toolbar class="ternaryToolbar" flex="nogrow">
+                	<div class="md-toolbar-tools noPadding" layout="row">
+						<bread-crumb ng-model='stepItem' item-name='name' selected-index='selectedStep' control='stepControl'>
+						</bread-crumb>
+					</div>
+				</md-toolbar>
 				<md-card-content  layout-wrap  ng-cloak ng-switch="selectedStep">
 					<div class="importSteps" flex ng-controller="importKpiControllerStep0" ng-switch-when="0">
 						<%@include file="./importKpisSteps/importKpisStep0.jsp"%>
