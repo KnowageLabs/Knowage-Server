@@ -239,8 +239,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.selectRow=function(row,column,evt){
 			cockpitModule_widgetSelection.setWidgetOfType("table");
+			
 			var newValue = undefined;
-
+			
+			if ($scope.ngModel.cross && $scope.ngModel.cross.preview) {
+				if ($scope.ngModel.cross.preview.column) {
+					newValue = row[$scope.ngModel.cross.preview.column];
+					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
+					return;
+				} else {
+					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
+					return;
+				}				
+			}
+			
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
 				if($scope.ngModel.settings.modalSelectionColumn!=undefined)	{
 					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.settings.modalSelectionColumn)	{

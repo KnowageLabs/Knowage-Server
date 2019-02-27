@@ -652,8 +652,17 @@ function cockpitWidgetControllerFunction(
 		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
 	
-	$scope.checkPreviewParameters = function(previewSettings, columnName, modalColumn, row){
-		
+	$scope.checkPreviewParameters = function(previewDataset, columnName, modalColumn, row){
+		var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
+		var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+		var param = angular.fromJson(parametersString);
+		for (var i = 0; i < previewDataset.parameters.length; i++) {
+			if (!previewDataset.parameters[i].value || previewDataset.parameters[i].value == "") {
+				previewDataset.parameters[i].value = row[modalColumn];
+				previewDataset.parameters[i].defaultValue = param[previewDataset.parameters[i].name];
+			}
+		}
+		return previewDataset.parameters;
 	}
 	
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
@@ -672,15 +681,18 @@ function cockpitWidgetControllerFunction(
 		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
 		
 		if (previewSettings && previewSettings.enable) {
-			
-			
-			
-			
+				
 				$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+				
+				var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
+												
 				var config = {
-					datasetLabel: cockpitModule_datasetServices.getDatasetLabelById(previewSettings.dataset)
+					datasetLabel: previewDataset.label
 				};
-				config.parameters = $scope.checkPreviewParameters(previewSettings, columnName, modalColumn, row);
+				
+				if (previewDataset.parameters && previewDataset.parameters.length > 0)
+					config.parameters = $scope.checkPreviewParameters(previewDataset, columnName, modalColumn, row);
+				
 				$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 							
 					$mdDialog.show({
