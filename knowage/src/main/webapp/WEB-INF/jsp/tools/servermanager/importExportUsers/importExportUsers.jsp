@@ -151,11 +151,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 					<md-tab-body> 
 					<md-card ng-controller="userImportController" ng-switch="selectedStep">
-					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'>
-						</bread-crumb>
+					
+						<md-toolbar class="ternaryToolbar" flex="nogrow">
+			                <div class="md-toolbar-tools noPadding" layout="row">
+								<bread-crumb flex ng-model='stepItem' item-name='name' selected-index='selectedStep' control='stepControl'>
+								</bread-crumb>
+							</div>
+						</md-toolbar>
+					
 					<md-card-content   layout-wrap ng-cloak >
 						
-
 						<div class="importSteps" flex ng-controller="importUserControllerStep0" ng-switch-when="0"><%@include	file="./importUsersSteps/importUsersStep0.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importUserControllerStep1" ng-switch-when="1"><%@include	file="./importUsersSteps/importUsersStep1.jsp"%></div>
 <%-- 						<div class="importSteps" flex ng-controller="importUserControllerStep2" ng-switch-when="2"><%@include	file="./importUsersSteps/importUsersStep2.jsp"%></div> --%>
@@ -163,7 +168,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div class="importSteps" flex ng-controller="importControllerStep2" ng-switch-when="3"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep2.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importControllerStep3" ng-switch-when="4"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep3.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importControllerStep4" ng-switch-when="5" ng-init="importType='user'"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep4.jsp"%></div>
-
 
 					</md-card-content>
 					</md-card>

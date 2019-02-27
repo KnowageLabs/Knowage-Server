@@ -149,12 +149,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  <md-tab id="importTab">
 		  	<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
-				  <md-card>
-					<md-content ng-controller="importController" ng-cloak ng-switch="selectedStep">
-						<bread-crumb
-							ng-model=stepItem item-name='name' selected-index='selectedStep'
-							control='stepControl'>
-						</bread-crumb>
+					
+				  <md-card  ng-controller="importController">
+				  	<md-toolbar class="ternaryToolbar" flex="nogrow">
+	                	<div class="md-toolbar-tools noPadding" layout="row">
+							<bread-crumb flex ng-model='stepItem' item-name='name' selected-index='selectedStep' control='stepControl'>
+							</bread-crumb>
+						</div>
+					</md-toolbar>
+					<md-content  ng-cloak ng-switch="selectedStep">
 
 						<div class="importSteps" flex ng-controller="importControllerStep0" ng-switch-when="0"><%@include	file="./importDocumentsSteps/importDocumentsStep0.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importControllerStep1" ng-switch-when="1"><%@include	file="./importDocumentsSteps/importDocumentsStep1.jsp"%></div>

@@ -126,14 +126,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<%@include file="./importKpisSteps/importKpisStep0.jsp"%>
 					</div>
 					
-					<div class="importSteps" flex ng-controller="importKpiControllerStep1" ng-switch-when="1">
-						<%@include file="./importKpisSteps/importKpisStep1.jsp"%>
-					</div>
-					<div class="importSteps" flex ng-controller="importKpiControllerStep2" ng-switch-when="2">
-						<%@include file="./importKpisSteps/importKpisStep12.jsp"%>
-					</div>
-				</md-card-content>
-				</md-card>
+						<md-toolbar class="ternaryToolbar" flex="nogrow">
+		                	<div class="md-toolbar-tools noPadding" layout="row">
+								<bread-crumb flex ng-model='stepItem' item-name='name' selected-index='selectedStep' control='stepControl'>
+								</bread-crumb>
+							</div>
+						</md-toolbar>
+						
+						<md-card-content  layout-wrap  ng-cloak ng-switch="selectedStep">
+							<div class="importSteps" flex ng-controller="importKpiControllerStep0" ng-switch-when="0">
+								<%@include file="./importKpisSteps/importKpisStep0.jsp"%>
+							</div>
+							
+							<div class="importSteps" flex ng-controller="importKpiControllerStep1" ng-switch-when="1">
+								<%@include file="./importKpisSteps/importKpisStep1.jsp"%>
+							</div>
+							<div class="importSteps" flex ng-controller="importKpiControllerStep2" ng-switch-when="2">
+								<%@include file="./importKpisSteps/importKpisStep12.jsp"%>
+							</div>
+						</md-card-content>
+					</md-card>
 				</md-tab-body>
 			</md-tab>
 		</md-tabs>
