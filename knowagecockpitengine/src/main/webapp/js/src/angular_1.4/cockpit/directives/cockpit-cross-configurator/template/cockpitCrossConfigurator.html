@@ -192,31 +192,31 @@
 			</button>
 			
 		</md-card-content> 
-		<md-subheader ng-if="ngModel.preview.enable && datasetParametersList.length > 0">Dataset Parameters</md-subheader>
-          <md-card-content ng-if="ngModel.preview.enable && datasetParametersList.length > 0">
-          	<div ng-repeat="datasetParameter in datasetParametersList" layout="row" layout-align="start center">
-          		<i layout-padding class="fa" ng-class="{'fa-font': datasetParameter.type == 'String', 'fa-hashtag' : datasetParameter.type == 'Number', 'fa-code' : datasetParameter.type == 'Raw', 'fa-cube' : datasetParameter.type == 'Generic'}">
-          			<md-tooltip md-delay="500">{{datasetParameter.type}}</md-tooltip>
+		<md-subheader ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">Dataset Parameters</md-subheader>
+          <md-card-content ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">
+          	<div ng-repeat="parameter in ngModel.preview.parameters" layout="row" layout-align="start center">
+          		<i layout-padding class="fa" ng-class="{'fa-font': parameter.type == 'String', 'fa-hashtag' :parameter.type == 'Number', 'fa-code' : parameter.type == 'Raw', 'fa-cube' : parameter.type == 'Generic'}">
+          			<md-tooltip md-delay="500">{{parameter.type}}</md-tooltip>
           		</i>
-          		<span flex=25>{{datasetParameter.name}}</span>
+          		<span flex=25>{{parameter.name}}</span>
           		
           		<md-input-container class="md-block" flex=25>
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
-					<md-select ng-model="ngModel.preview.parameter[datasetParameter.name].type" >
+					<md-select ng-model="parameter.bindType" >
 						<md-option ng-repeat="opt in previewParametersType" ng-value="opt.value">
 							{{opt.label}}
 						</md-option>
 					</md-select>
 				</md-input-container>
 				
-				<md-input-container class="md-block" flex=25 ng-if="ngModel.preview.parameter[datasetParameter.name].type == 'static'">
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'static'">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
-					<input ng-model="ngModel.preview.parameter[datasetParameter.name].value" type="{{outputParameter.dataType}}">
+					<input ng-model="parameter.value" type="{{parameter.type}}"/>
 				</md-input-container>
 				
-				<md-input-container class="md-block" flex=25 ng-if="ngModel.preview.parameter[datasetParameter.name].type == 'selection'">
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection'">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
-					<md-select ng-model="ngModel.preview.parameter[datasetParameter.name].column" >
+					<md-select ng-model="parameter.column" >
 						<md-option ng-repeat="c in localDataset" ng-value="c.name">{{c.name}}</md-option>
 					</md-select>
 				</md-input-container>

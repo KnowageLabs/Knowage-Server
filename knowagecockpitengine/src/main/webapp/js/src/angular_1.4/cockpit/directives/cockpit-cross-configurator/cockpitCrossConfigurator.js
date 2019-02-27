@@ -135,7 +135,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 	
 	$scope.changePreviewDataset = function(dsId){
-		$scope.datasetParametersList = cockpitModule_datasetServices.getDatasetById(dsId).parameters;
+		$scope.ngModel.preview.parameters = cockpitModule_datasetServices.getDatasetById(dsId).parameters;
 	}
 	$scope.outputParametersList = [];
 
@@ -166,7 +166,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.toggleEnabled = function(type){
 		
 		if($scope.crossTable){
-			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById($scope.model.dataset.dsId)];
 			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
 				$scope.model.cross.enable = $scope.ngModel.cross.enable = false;
 			}
@@ -174,7 +173,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 				$scope.model.preview.enable = $scope.ngModel.preview.enable = false;
 			}
 		}else{
-			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById($scope.localModel.dataset.dsId)];
 			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
 				$scope.localModel.cross.enable = $scope.ngModel.cross.enable = false;
 			}
@@ -185,7 +183,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		
 	}
 	
-
+	$scope.$watchCollection('model',function(newValue,oldValue){
+		if(newValue && newValue.dataset){
+			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById(newValue.dataset.dsId)];
+		}
+	})
 
 	if($scope.crossChart){
 		$scope.localModel.cross = $scope.localModel.cross || {};
@@ -200,6 +202,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			$scope.model.cross = $scope.model.cross || {};
 			$scope.model.preview = $scope.model.preview || {};
 		   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
+			   
 			   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 		   }else{
 			   $scope.model.dataset= {};
