@@ -96,7 +96,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
 					<md-tab-body layout-fill >
 					<md-card >
-					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
+						<md-toolbar class="ternaryToolbar" flex="nogrow">
+			                <div class="md-toolbar-tools noPadding" layout="row">
+								<bread-crumb flex ng-model='stepItem' item-name='name' selected-index='selectedStep' control='stepControl'>
+								</bread-crumb>
+							</div>
+						</md-toolbar>
 					<md-card-content ng-cloak layout-wrap  ng-cloak ng-switch="selectedStep">
 						
 						<!-- Upload file -->
