@@ -103,7 +103,14 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
 		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
 		];
-
+	
+	$scope.previewParametersType=
+		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
+		{"value": "driver", "label":'Analytical Driver'},
+		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")},
+		{"value": "dataset", "label":'Dataset Value'},
+		];
+	
 	//$scope.cockpitDatasets = cockpitModule_template.configuration.datasets;
 	$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList;
 	if($scope.cockpitDatasets == undefined) $scope.cockpitDatasets = [];
@@ -130,7 +137,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.changePreviewDataset = function(dsId){
 		$scope.datasetParametersList = cockpitModule_datasetServices.getDatasetById(dsId).parameters;
 	}
-
 	$scope.outputParametersList = [];
 
 	var docOutParList = cockpitModule_properties.OUTPUT_PARAMETERS;
@@ -158,18 +164,21 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
 	
 	$scope.toggleEnabled = function(type){
+		
 		if($scope.crossTable){
-			if(type=='preview' && $scope.ngModel.cross.enable) {
+			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById($scope.model.dataset.dsId)];
+			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
 				$scope.model.cross.enable = $scope.ngModel.cross.enable = false;
 			}
-			if(type=='cross' && $scope.ngModel.preview.enable) {
+			if(type=='cross' && $scope.ngModel.preview && $scope.ngModel.preview.enable) {
 				$scope.model.preview.enable = $scope.ngModel.preview.enable = false;
 			}
 		}else{
-			if(type=='preview' && $scope.ngModel.cross.enable) {
+			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById($scope.localModel.dataset.dsId)];
+			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
 				$scope.localModel.cross.enable = $scope.ngModel.cross.enable = false;
 			}
-			if(type=='cross' && $scope.ngModel.preview.enable) {
+			if(type=='cross' && $scope.ngModel.preview && $scope.ngModel.preview.enable) {
 				$scope.localModel.preview.enable = $scope.ngModel.preview.enable = false;
 			}
 		}
