@@ -778,13 +778,11 @@ public class DataSetTransformer {
 			categoriesListIndexMap.put(categoriesList[i], i);
 		}
 
-		for (Object singleObject : dataRows) {
-
+		for (String key : dataColumnsMapper.keySet()) {
 			String newCol = "";
 
 			String serieValue = "";
-			for (String key : dataColumnsMapper.keySet()) {
-
+			for (Object singleObject : dataRows) {
 				if (!dataColumnsMapper.get(key).equals(primCat) && !dataColumnsMapper.get(key).equals(secCat)) {
 
 					if (!dataColumnsMapper.get(key).equals(seria)) {
