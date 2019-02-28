@@ -137,6 +137,43 @@ angular
 
 			initNewDataSet();
 
+			var openConfirmationPanel = function(okFunction,cancelFunction){
+				var config = {
+						attachTo:  angular.element(document.body),
+						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/closingConfirmationPanel.html',
+						position: $mdPanel.newPanelPosition().absolute().center(),
+						fullscreen :false,
+						controller: function($scope,mdPanelRef,sbiModule_translate){
+							$scope.translate = sbiModule_translate;
+							var isFunction=function(func){
+								return func && typeof func === "function";
+							}
+							$scope.ok = function(){
+								if(isFunction(okFunction)){
+									okFunction();
+								}
+								okFunction();
+								mdPanelRef.close();
+							}
+
+							$scope.cancel = function(){
+								if(isFunction(cancelFunction)){
+									cancelFunction();
+								}
+								mdPanelRef.close();
+							}
+						},
+
+						hasBackdrop: true,
+						clickOutsideToClose: true,
+						escapeToClose: true,
+						focusOnOpen: true,
+						preserveScope: true,
+				};
+
+				$mdPanel.open(config);
+			}
+
 			var openPanelForSavingQbeDataset = function() {
 				savingPanelConfig = {
 						attachTo:  angular.element(document.body),
@@ -144,7 +181,7 @@ angular
 						position: $mdPanel.newPanelPosition().absolute().center(),
 						fullscreen: true,
 						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
-							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
+
 
 							$scope.closePanel = function(){
 								mdPanelRef.close();
@@ -250,25 +287,34 @@ angular
 
 			$scope.closeDocument = function() {
 
-				$mdDialog.hide();
+
 
 				if($scope.isFromDataSetCatalogue) {
 					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+					$mdDialog.hide();
 					comunicator.sendMessage("close");
 				} else {
-					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
-					$scope.selectedDataSet = {};
 
-					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
+					openConfirmationPanel(function(){
+						console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+						$scope.selectedDataSet = {};
 
-					if($scope.currentOptionMainMenu=="models"){
+						$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
 
-						if ($scope.currentModelsTab=="federations") {
-							// If the suboption of the Data option is Federations.
-							$scope.getFederatedDatasets();
+						if($scope.currentOptionMainMenu=="models"){
+
+							if ($scope.currentModelsTab=="federations") {
+								// If the suboption of the Data option is Federations.
+								$scope.getFederatedDatasets();
+							}
+
 						}
 
-					}
+						$mdDialog.hide();
+					});
+
+
+
 				}
 			}
 
@@ -300,6 +346,7 @@ angular
 
 			$scope.createNewViewpoint = function() {
 				$mdDialog.show({
+					autoWrap: false,
 					skipHide: true,
 					preserveScope : true,
 					templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
