@@ -57,6 +57,14 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		if(!newValue && $scope.chartTemplate) $scope.chartTemplate.categoryDate = "";
 	},true)
 
+	$scope.$watch('categories[0].orderColumn',function(newValue, oldValue){
+
+		if(oldValue && newValue != oldValue && $scope.categories[0].orderColumn != $scope.categories[0].name){
+			sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.widget.warning.message"), 'Warning');
+
+		}
+
+	})
 
 	$scope.isInvalid = function (series) {
 
