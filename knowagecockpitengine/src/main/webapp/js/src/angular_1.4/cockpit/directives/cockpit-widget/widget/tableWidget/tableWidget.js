@@ -244,21 +244,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			// Dataset preview
 			if ($scope.ngModel.cross && $scope.ngModel.cross.preview) {
-				if ($scope.ngModel.cross.preview.parameters && 
-					    (angular.isArray($scope.ngModel.cross.preview.parameters) && $scope.ngModel.cross.preview.parameters.length > 0)) {
-					newValue = $scope.ngModel.cross.preview.parameters;
-					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], newValue, undefined, row);
-					return;
-				} else if ($scope.ngModel.cross.preview.column && $scope.ngModel.cross.preview.column != "") {
-					// if modal column is selected
-					newValue = row[$scope.ngModel.cross.preview.column];
-					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
-					return;
-				} else {
-					// previewing common Dataset, without parameters
-					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], undefined, undefined, row);
-					return;
-				}				
+				switch ($scope.ngModel.cross.preview.previewType) {
+				case 'allRow':
+					previewDataset(row, column);
+					break;
+				case 'singleColumn':
+					if (column.aliasToShow == $scope.ngModel.cross.preview.column)
+						previewDataset(row, column);
+					break;
+				case 'icon':
+					previewDataset(row, column);
+					break;
+				}
+				return;				
 			}
 			
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
@@ -294,6 +292,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else{
 				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.settings.modalSelectionColumn, newValue, row);
 			}
+		}
+		
+		var previewDataset = function(row, column) {
+			if ($scope.ngModel.cross.preview.parameters && 
+				    (angular.isArray($scope.ngModel.cross.preview.parameters) && $scope.ngModel.cross.preview.parameters.length > 0)) {
+				newValue = $scope.ngModel.cross.preview.parameters;
+				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], newValue, undefined, row);
+			} else if ($scope.ngModel.cross.preview.column && $scope.ngModel.cross.preview.column != "") {
+				// if modal column is selected
+				newValue = row[$scope.ngModel.cross.preview.column];
+				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
+			} else {
+				// previewing common Dataset, without parameters
+				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], undefined, undefined, row);
+			}	
 		}
 
 		$scope.calculatedRow = function(row,column,alias){
