@@ -181,7 +181,7 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in localDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
