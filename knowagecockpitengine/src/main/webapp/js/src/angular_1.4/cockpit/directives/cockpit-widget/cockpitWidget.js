@@ -653,13 +653,19 @@ function cockpitWidgetControllerFunction(
 	}
 	
 	$scope.checkPreviewParameters = function(previewDataset, columnName, modalColumn, row){
-		var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
-		var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
-		var param = angular.fromJson(parametersString);
+		if (modalColumn == undefined || modalColumn == "") {
+			var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
+			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+			modalColumn = angular.fromJson(parametersString);
+		}
 		for (var i = 0; i < previewDataset.parameters.length; i++) {
-			if (!previewDataset.parameters[i].value || previewDataset.parameters[i].value == "") {
+			if (angular.isArray(modalColumn)) {
+				var value = row[modalColumn[i].column];
+				previewDataset.parameters[i].value = value;
+			} else if (angular.isObject(modalColumn)) {
+				previewDataset.parameters[i].value = modalColumn[previewDataset.parameters[i].name];
+			} else {
 				previewDataset.parameters[i].value = row[modalColumn];
-				previewDataset.parameters[i].defaultValue = param[previewDataset.parameters[i].name];
 			}
 		}
 		return previewDataset.parameters;
