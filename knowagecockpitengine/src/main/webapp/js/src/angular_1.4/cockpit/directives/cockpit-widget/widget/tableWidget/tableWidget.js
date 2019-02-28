@@ -242,13 +242,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			var newValue = undefined;
 			
+			// Dataset preview
 			if ($scope.ngModel.cross && $scope.ngModel.cross.preview) {
-				if ($scope.ngModel.cross.preview.column) {
+				if ($scope.ngModel.cross.preview.parameters && 
+					    (angular.isArray($scope.ngModel.cross.preview.parameters) && $scope.ngModel.cross.preview.parameters.length > 0)) {
+					newValue = $scope.ngModel.cross.preview.parameters;
+					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], newValue, undefined, row);
+					return;
+				} else if ($scope.ngModel.cross.preview.column && $scope.ngModel.cross.preview.column != "") {
+					// if modal column is selected
 					newValue = row[$scope.ngModel.cross.preview.column];
 					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
 					return;
 				} else {
-					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.cross.preview.column, newValue, row);
+					// previewing common Dataset, without parameters
+					$scope.doSelection(column.aliasToShow, row[column.aliasToShow], undefined, undefined, row);
 					return;
 				}				
 			}
