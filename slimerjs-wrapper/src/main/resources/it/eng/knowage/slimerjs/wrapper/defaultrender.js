@@ -412,37 +412,28 @@ viewportWidth = viewportWidth * zoomFactor;
 viewportHeight = viewportHeight * zoomFactor;
 zoomFactor = zoomFactor * 0.99;
 
-var exit = function(code) {
-	log("Exit from SlimerJS with code: " + code)
-	slimer.exit(code);
-}
-
 // this function renders the page
-var renderPage = function (page) {
-	log("[RENDERPAGE] IN");
-  page.zoomFactor = zoomFactor;
-
-  // render the page
+var renderPage = function (page, resolve) {
   try {
-    log('Rendering PNG to target folder: ' + targetPath);
     var targetFile = targetPath + "_" + page.sheet + ".png";
-    log("Rendering PNG as target file: " + targetFile);
+    log("Sheet " + page.sheet + ": rendering in " + jsExitingWait + "ms to file " + targetFile);
     window.setTimeout(function () {
+        log("Sheet " + page.sheet + ": rendering in progress...");
     	page.render(targetFile);
-    }, (jsExitingWait / 2) );
+    	log("Sheet " + page.sheet + ": rendering completed");
+    	resolve(page.sheet);
+    }, jsExitingWait);
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
   }
-
-  setTimeout(exit, jsExitingWait * sheets, 0);
 };
 
 var applySettingOnPage = function(page, sheet, url) {
-	log("[APPLYSETTINGONPAGE] IN");
 	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };
-	
+	page.zoomFactor = zoomFactor;
+
 	var d = new Date();
 	var uniqueToken = d.getTime();
 	log("Unique token " + uniqueToken);
@@ -459,12 +450,11 @@ var applySettingOnPage = function(page, sheet, url) {
 var urls = new Map();
 
 for(var i=0; i<sheets; i++) {
-	log("Looping over sheets, if any");
 	var currentUrl = decodeURIComponent(baseUrl);
 	if(i > 0) {
 		currentUrl = currentUrl + "&sheet=" + i;
 	}
-	log("URL to be processed = " + currentUrl);
+	log("Sheet " + i + ": URL to be processed = " + currentUrl);
 	urls.set(i, currentUrl);
 }
 
@@ -473,15 +463,20 @@ urls.forEach(function(url, sheet) {
     var p = new Promise(function(resolve, reject) {
         var page = require('webpage').create();
         applySettingOnPage(page, sheet, url);
-        log("Processing URL " + url + " during rendering with id " + renderId);
-        page.open(url, function() {
-        	setTimeout(renderPage, jsRenderingWait, page);
+        log("Sheet " + sheet + ": processing URL " + url + " with rendering id " + renderId);
+        page.open(url).then(function(status) {
+            if (status == "success") {
+                log("Sheet " + sheet + ": calling renderPage in " + jsRenderingWait + "ms");
+                setTimeout(renderPage, jsRenderingWait, page, resolve);
+            }else{
+                reject(sheet);
+            }
         });
     });
     queue.push(p);
 }, urls);
 
 Promise.all(queue).then(function(values) {
-    log(values);
+    log("Sheets " + values + " completed");
     slimer.exit();
 });
