@@ -52,7 +52,8 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 		Set<Relationship> minimumRelatiosnhips = new HashSet<Relationship>();
 
 		Set<IModelEntity> connectedEntities = new HashSet<IModelEntity>();
-		connectedEntities.add(it.next());
+		if (it.hasNext())
+			connectedEntities.add(it.next());
 
 		// build the subgraph that contains all the nodes in entities
 		logger.debug("Building the subgraph that contains only the entities involved in the query");
@@ -61,35 +62,36 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 			for (IModelEntity otherEntity : entities) {
 
 				GraphPath<IModelEntity, Relationship> minimumPath = null;
+				if (otherEntity.getParent() == null) {
+					// check the path from entity to connectedEntity
+					DijkstraShortestPath<IModelEntity, Relationship> dsp = new DijkstraShortestPath(rootEntitiesGraph, entity, otherEntity);
+					double pathLength = dsp.getPathLength();
+					minimumPath = dsp.getPath();
 
-				// check the path from entity to connectedEntity
-				DijkstraShortestPath<IModelEntity, Relationship> dsp = new DijkstraShortestPath(rootEntitiesGraph, entity, otherEntity);
-				double pathLength = dsp.getPathLength();
-				minimumPath = dsp.getPath();
-
-				if (rootEntitiesGraph instanceof DirectedGraph) {
-					// check the path from connectedEntity to entity
-					DijkstraShortestPath dsp2 = new DijkstraShortestPath(rootEntitiesGraph, otherEntity, entity);
-					double pathLength2 = dsp2.getPathLength();
-					if (pathLength > pathLength2) {
-						minimumPath = dsp2.getPath();
+					if (rootEntitiesGraph instanceof DirectedGraph) {
+						// check the path from connectedEntity to entity
+						DijkstraShortestPath dsp2 = new DijkstraShortestPath(rootEntitiesGraph, otherEntity, entity);
+						double pathLength2 = dsp2.getPathLength();
+						if (pathLength > pathLength2) {
+							minimumPath = dsp2.getPath();
+						}
 					}
-				}
 
-				if (minimumPath != null) {
-					List<Relationship> pathRelations = minimumPath.getEdgeList();
+					if (minimumPath != null) {
+						List<Relationship> pathRelations = minimumPath.getEdgeList();
 
-					if (pathRelations != null) {
-						for (int i = 0; i < pathRelations.size(); i++) {
+						if (pathRelations != null) {
+							for (int i = 0; i < pathRelations.size(); i++) {
 
-							Relationship connectingRel = pathRelations.get(i);
+								Relationship connectingRel = pathRelations.get(i);
 
-							if (connectingRel != null && connectingRel.isConsidered() != false) {
-								connectingRelatiosnhips.add(connectingRel);
-								connectedEntities.add(connectingRel.getSourceEntity());
-								connectedEntities.add(connectingRel.getTargetEntity());
+								if (connectingRel != null) {
+									connectingRelatiosnhips.add(connectingRel);
+									connectedEntities.add(connectingRel.getSourceEntity());
+									connectedEntities.add(connectingRel.getTargetEntity());
+								}
+
 							}
-
 						}
 					}
 				}

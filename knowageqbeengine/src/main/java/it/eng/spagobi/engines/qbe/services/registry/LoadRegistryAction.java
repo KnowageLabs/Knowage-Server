@@ -39,7 +39,6 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
@@ -47,6 +46,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.qbe.api.QbeQueryResource;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
@@ -130,11 +130,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	}
 
 	@Override
-	public IDataStore executeQuery(Integer start, Integer limit) {
+	public IDataStore executeQuery(Integer start, Integer limit, Query filteredQuery) {
 		IDataStore dataStore = null;
-		IDataSet dataSet = this.getEngineInstance().getActiveQueryAsDataSet();
-		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
-		IStatement statement = qbeDataSet.getStatement();
+
+		IStatement statement = getEngineInstance().getDataSource().createStatement(filteredQuery);
+		QbeQueryResource queryResource = new QbeQueryResource();
+		IDataSet dataSet = queryResource.getActiveQueryAsDataSet(filteredQuery);
 		// QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = true; // GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 								// statement.getQuery().getQueryEntities(getDataSource()));
@@ -609,6 +610,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			QueryCatalogue queryCatalogue = qbeEngineInstance.getQueryCatalogue();
 			queryCatalogue.addQuery(query);
 			query.setDistinctClauseEnabled(false);
+			Map<String, Object> properties = getDataSource().getConfiguration().loadDataSourceProperties();
+			properties.put("maxRecursionLevel", "5");
 			qbeEngineInstance.setActiveQuery(REGISTRY_QUERY_ID);
 			IModelEntity entity = getSelectedEntity();
 
@@ -800,10 +803,6 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		try {
 			IDataSource ds = getDataSource();
 
-			// change max recursion level to data source
-
-			Map<String, Object> properties = ds.getConfiguration().loadDataSourceProperties();
-			properties.put("maxRecursionLevel", "5");
 			// ds.setDataMartModelAccessModality(modelAccessModality);
 
 			IModelStructure structure = ds.getModelStructure();

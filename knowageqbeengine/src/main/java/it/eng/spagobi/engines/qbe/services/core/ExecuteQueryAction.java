@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
@@ -116,9 +117,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				limit = getAttributeAsInteger(LIMIT);
 			}
 
-
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
 			// retrieving query specified by id on request
 			query = getQuery();
@@ -134,21 +134,22 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
 
 			boolean thereAreInlineTemporalFilters = inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0;
-			if(thereAreInlineTemporalFilters) {
+			if (thereAreInlineTemporalFilters) {
 				limit = 0;
 			}
-			
+			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
+			Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
-			dataStore = executeQuery(start, limit);
-			if(thereAreInlineTemporalFilters) {
+			dataStore = executeQuery(start, limit, filteredQuery);
+			if (thereAreInlineTemporalFilters) {
 				dataStore = new TimeAggregationHandler(getDataSource()).handleTimeAggregations(query, dataStore);
 			}
-			
+
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);
 
-			
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
@@ -175,7 +176,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}
 
 	}
-
 
 	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips, IModelStructure modelStructure, Query query)
 			throws SerializationException {
@@ -274,7 +274,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		return promptValues;
 	}
 
-	public IDataStore executeQuery(Integer start, Integer limit) {
+	public IDataStore executeQuery(Integer start, Integer limit, Query filteredQuery) {
 		IDataStore dataStore = null;
 		IDataSet dataSet = this.getEngineInstance().getActiveQueryAsDataSet();
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
@@ -291,7 +291,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			String jpaQueryStr = statement.getQueryString();
-			
+
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
 			logQueryInAudit(qbeDataSet);
