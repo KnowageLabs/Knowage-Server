@@ -121,6 +121,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			if(finalPromise) {
 				finalPromise.then(function(){},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
+					for(var i =0;i<$scope.previousVersionRelations.length;i++){
+						var relationship = $scope.previousVersionRelations[i]
+						$scope.filteredRelations[i].isConsidered = relationship.isConsidered;
+
+					}
 				});
 			}
 		} else {
@@ -598,7 +603,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                 	$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
                 	$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
                     $scope.ok= function(){
-                		$scope.editQueryObj.graph = angular.copy($filter('filter')($scope.filteredRelations,{isConsidered:true}));
+                		$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
 
                         $mdDialog.hide();
                     }

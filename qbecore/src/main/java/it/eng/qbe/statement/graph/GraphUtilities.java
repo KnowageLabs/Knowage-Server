@@ -62,6 +62,7 @@ import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 public class GraphUtilities {
 
 	public static final String RELATIONSHIP_ID = "id";
+	public static final String IS_CONSIDERED = "isConsidered";
 	public static final String JOIN_TYPE = "joinType";
 	public static final int maxPathLength = 5;
 	static private Logger logger = Logger.getLogger(GraphUtilities.class);
@@ -146,22 +147,34 @@ public class GraphUtilities {
 	}
 
 	public static QueryGraph deserializeGraph(JSONArray relationshipsJSON, Query query, IDataSource dataSource) throws JSONException {
-		if (relationshipsJSON == null || relationshipsJSON.length() == 0) {
-			return null;
-		}
+
 		String modelName = dataSource.getConfiguration().getModelName();
 		IModelStructure modelStructure = dataSource.getModelStructure();
-		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, true);
-
 		Set<String> relationshipsNames = new HashSet<String>();
+		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, true);
+		if (relationshipsJSON == null || relationshipsJSON.length() == 0) {
+			Set<Relationship> allRelationships = rootEntitiesGraph.getRelationships();
+			Iterator<Relationship> it = allRelationships.iterator();
+			while (it.hasNext()) {
+				it.next().setIsConsidered(true);
+				;
+
+			}
+			return null;
+		}
+
 		Map<String, JoinType> joinTypeMapping = new HashMap<>();
+		Map<String, Boolean> isConsideredMapping = new HashMap<>();
 		Set<PathChoice> choices = new HashSet<PathChoice>();
 		for (int i = 0; i < relationshipsJSON.length(); i++) {
 			JSONObject relationshipJSON = relationshipsJSON.getJSONObject(i);
 			String relationshipsName = relationshipJSON.getString(RELATIONSHIP_ID);
+
 			relationshipsNames.add(relationshipsName);
 			JoinType joinType = JoinType.valueOf(relationshipJSON.getString(JOIN_TYPE));
 			joinTypeMapping.put(relationshipsName, joinType);
+			isConsideredMapping.put(relationshipsName, relationshipJSON.getBoolean(IS_CONSIDERED));
+
 		}
 
 		List<Relationship> queryRelationships = new ArrayList<Relationship>();
@@ -171,6 +184,7 @@ public class GraphUtilities {
 			String id = it.next();
 			Relationship relationship = getRelationshipById(allRelationships, id);
 			relationship.setJoinType(joinTypeMapping.get(id));
+			relationship.setIsConsidered(isConsideredMapping.get(id));
 			queryRelationships.add(relationship);
 		}
 

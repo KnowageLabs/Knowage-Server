@@ -36,9 +36,18 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 	private JoinType joinType = JoinType.INNER;
 	List<IModelField> sourceFields;
 	List<IModelField> targetFields;
+	private Boolean isConsidered = true;
 
 	private String sourceJoinPath;
 	private String targetJoinPath;
+
+	public Boolean isConsidered() {
+		return isConsidered;
+	}
+
+	public void setIsConsidered(Boolean isConsidered) {
+		this.isConsidered = isConsidered;
+	}
 
 	public String getType() {
 		return type;
