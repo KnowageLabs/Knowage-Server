@@ -104,6 +104,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.ngModel[indexOfNext].order = newOrder;
 		}
 
+		$rootScope.$broadcast('move', {index:index,direction:+1});
+
 	};
 
 	$scope.moveLeft = function(currentOrder, column) {
@@ -120,6 +122,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.ngModel[indexOfBefore] = column;
 			$scope.ngModel[indexOfBefore].order = newOrder;
 		}
+
+		$rootScope.$broadcast('move', {index:index,direction:-1});
 
 	};
 

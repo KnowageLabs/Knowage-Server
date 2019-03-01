@@ -340,6 +340,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 	});
 
+	$scope.$on('move',function(event,data){
+		console.log(data)
+		console.log($scope.editQueryObj.fields[data.index])
+		var temp = $scope.editQueryObj.fields[data.index];
+		$scope.editQueryObj.fields[data.index] = $scope.editQueryObj.fields[data.index+data.direction]
+		$scope.editQueryObj.fields[data.index+data.direction] = temp;
+	})
+
 	$scope.$on('showCalculatedField', function (event, data) {
 		$scope.showCalculatedField(data);
 	});
