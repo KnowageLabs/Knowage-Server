@@ -123,6 +123,31 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	};
 
+	$scope.changeAlias = function(field){
+		$mdDialog.show({
+            controller: function ($scope, $mdDialog) {
+
+            	$scope.alias = field.alias;
+
+                $scope.ok= function(){
+                	field.alias = $scope.alias;
+                    $mdDialog.hide();
+                }
+
+                $scope.cancel = function(){
+                	$mdDialog.hide();
+                }
+            },
+            scope: $scope,
+            locals :{field:field},
+            preserveScope:true,
+            templateUrl:  sbiModule_config.contextName +'/qbe/templates/alias.html',
+
+            clickOutsideToClose:true
+        })
+
+	}
+
 	$scope.applyFuntion = function(funct, id, entity) {
 		$rootScope.$emit('applyFunction', {
 			"funct" : funct,

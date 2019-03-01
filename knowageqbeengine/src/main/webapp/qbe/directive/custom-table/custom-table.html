@@ -73,8 +73,12 @@
 	      		<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-sort"></md-icon>
 	      	</md-button>
-	   		<input type="text" ng-model="field.alias" ng-value="field.alias" >
-	   		<span flex></span>
+
+			<p>
+			{{field.alias}}
+			<md-tooltip md-direction="top">{{field.alias}}</md-tooltip>
+			</p>
+
 	   		<md-menu>
 	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
 	      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.custom.table.column.settings")}}</md-tooltip>
@@ -214,6 +218,13 @@
 	         			<md-button ng-click="moveRight(field.order, field)">
 							<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
 	            		<span>{{translate.load("kn.qbe.custom.table.move.right")}}</span>
+	          		</md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	         			<md-button ng-click="changeAlias(field)">
+							<md-icon class="fa fa-tag" style="display:inline"></md-icon>
+	            		<span>{{translate.load("kn.qbe.general.alias")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	        			        
