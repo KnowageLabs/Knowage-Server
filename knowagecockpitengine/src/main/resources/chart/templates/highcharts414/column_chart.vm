@@ -1363,6 +1363,7 @@
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
+	
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 		#foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
@@ -1424,7 +1425,8 @@
 	    	dataLabels: {
 	    		allowOverlap: true,
 	    	},
-	    	#set ($countXvalues = 0)
+	    	#set ($counterX = 0)
+	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#if($chart.isCockpitEngine != 'true')
@@ -1686,7 +1688,14 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
-
+				#set ($counter = $counter+1)
+				
+				#foreach($customColor in $customColors)
+           		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
+                color:'$customColor.customValue',
+	            #end
+	            #end
+	            
 			data: [
 				#foreach($el in  $map.get($valueKey))
 							
