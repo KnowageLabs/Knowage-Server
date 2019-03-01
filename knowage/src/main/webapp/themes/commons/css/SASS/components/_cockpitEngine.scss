@@ -2094,6 +2094,11 @@
             .fakeDialog {
             	outline: none;
             	cursor: pointer;
+            	height: 32px;
+             	font-size: $mediumFontSize;
+            	line-height: 32px;
+             	vertical-align: middle;
+             	padding-right: 24px;
             	&:hover {
             		background-color: rgba($tableSelectedElementColor,.3);
             	}
@@ -2246,8 +2251,14 @@
 		}
 	}
 	.multiselectionDialog {
+		md-dialog-content {
+			height: 600px;
+		}
+		md-list {
+			height:calc(100% - 70px);
+		}
 		#vertical-container {
-			height:50%;
+			height: 100%;
 		}
 		.selectableList {
 			&[md-virtual-repeat] {
@@ -2362,6 +2373,13 @@
 			min-height: 600px;
 			.measureAttributeTab {
 				min-height: 600px;
+			}
+		}
+		.multiselectionDialog {
+			.selectableList {
+				p {
+					max-width: none;
+				}
 			}
 		}
 		cockpit-sheet {

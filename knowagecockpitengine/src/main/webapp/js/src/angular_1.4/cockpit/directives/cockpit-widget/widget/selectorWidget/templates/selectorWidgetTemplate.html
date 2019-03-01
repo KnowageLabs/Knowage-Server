@@ -51,7 +51,7 @@
 		
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select">
-				<div ng-click="openSelectDialog($event)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in selectedValues">{{value}}<b ng-if="!$last">,</b></span></div>
+				<div ng-click="openSelectDialog($event)" class="truncated fakeDialog"><span ng-repeat="value in selectedValues">{{value}}<b ng-if="!$last">,</b></span></div>
 			</div>
 		</md-input-container>
 		
