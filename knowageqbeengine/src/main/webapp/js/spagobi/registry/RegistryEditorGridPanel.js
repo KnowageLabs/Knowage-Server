@@ -1,56 +1,56 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-  
- 
+
+
+
+
+
+
+
 /**
-  * Object name 
-  * 
+  * Object name
+  *
   * [description]3
-  * 
-  * 
+  *
+  *
   * Public Properties
-  * 
+  *
   * [list]
-  * 
-  * 
+  *
+  *
   * Public Methods
-  * 
+  *
   *  [list]
-  * 
-  * 
+  *
+  *
   * Public Events
-  * 
+  *
   * [list]
-  * 
+  *
   * Authors
-  * 
+  *
   * - Davide Zerbetto (davide.zerbetto@eng.it)
   */
 
 Ext.ns("Sbi.registry");
 
 Sbi.registry.RegistryEditorGridPanel = function(config) {
-	
+
 	var defaultSettings = {
 	};
-			
+
 	if(Sbi.settings && Sbi.settings.registry && Sbi.settings.registry.registryEditorGridPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.registry.registryEditorGridPanel);
 	}
-			
+
 	var c = Ext.apply(defaultSettings, config || {});
-	
+
 	Ext.apply(this, c);
-	
-	this.services = this.services || new Array();	
+
+	this.services = this.services || new Array();
 	this.services['load'] = this.services['load'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'LOAD_REGISTRY_ACTION'
 		, baseParams: new Object()
@@ -67,10 +67,10 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 		serviceName: 'DELETE_RECORDS_ACTION'
 		, baseParams: new Object()
 	});
-	
-	
+
+
 	this.init();
-	
+
 
 	if(this.registryConfiguration != undefined && this.registryConfiguration.pagination != 'false')
 	{
@@ -91,25 +91,25 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 	    });
 		this.pagingTBar.on('render', function() {
 		}, this);
-		
+
 		this.pagingTBar.on('beforechange', function(cont, params) {
 			var filtersValuesObject = this.getFiltersValues();
-			
+
 			this.start = params.start;
 			this.limit = params.limit;
-		
+
 			Ext.apply(params, filtersValuesObject);
 		}, this);
 	}
-	else 
+	else
 	{
 		this.pageSize = null;
 	}
-	
-	
+
+
 	var initialColumnModel = new Ext.grid.ColumnModel({
 		columns:[
-		new Ext.grid.RowNumberer(), 
+		new Ext.grid.RowNumberer(),
 		{
 			header: "Data",
 			dataIndex: 'data',
@@ -118,7 +118,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 		]
 
 	});
-	
+
 	c = Ext.apply(c, {
 		//height : 500
 		autoScroll : true
@@ -139,7 +139,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
             forceFit : false
             , autoFill : true
             , enableRowBody : true
-//            ,getRowClass: function(record, rowIndex, rp, ds){ // rp = rowParams            	
+//            ,getRowClass: function(record, rowIndex, rp, ds){ // rp = rowParams
 //            	return 'x-grid3-row-mine';
 //            	//return 'background-color: #FF0000;border: 0px none; margin: 0px;';
 //            }
@@ -147,29 +147,29 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 		, bbar: this.pagingTBar
 		, meta: null
 		,listeners: {
-			
+
 			headerdblclick : function( grid, columnIndex, e ){
 				this.showExpandPointer(grid, columnIndex);
 			},
 
 			// on cell click case is popup
-			cellclick : function(grid, rowIndex, columnIndex, e) {    
+			cellclick : function(grid, rowIndex, columnIndex, e) {
 				var  field = this.meta.fields[columnIndex];
-				if(field.editor.type == 'POPUP'){   
+				if(field.editor.type == 'POPUP'){
 					this.openPopupEditor(grid, rowIndex, columnIndex);
-				   
+
 				}
-			}		
-			
+			}
+
 		}
 		, cls: 'grid-row-span'
 	});
-	
-	
+
+
 	// constructor
 	Sbi.formviewer.DataStorePanel.superclass.constructor.call(this, c);
 
-	
+
 
 
 
@@ -177,7 +177,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 };
 
 Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
-    
+
     services: null
 	, store: null
 	, registryConfiguration : null
@@ -186,7 +186,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	, filters : null
 	, columnName2columnHeader : null
 	, columnHeader2columnName : null
-	, columnHeader2color : null	
+	, columnHeader2color : null
 	, keyUpTimeoutId : null
 	, mandatory: null
 	, visibleColumns: []
@@ -206,7 +206,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	// ---------------------------------------------------------------------------------------------------
     // public methods
 	// ---------------------------------------------------------------------------------------------------
-	
+
 
 
 ,	escapeXml:function (s) {
@@ -224,36 +224,36 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 
 	,renderTooltip:function(val, cell, record) {
-		 
+
 		// get data
 		var data = record.data;
-		
+
 		var escapedVal= this.escapeXml(val);
 		var shortval = Ext.util.Format.ellipsis(escapedVal, 70);
-		
+
 		// return markup
 		return '<div ext:qtip="' + shortval +'" ext:qtitle="Valore:" ext:qwidth="300" ext:qdismissDelay="0" ext:closable="true">' + shortval + '</div>';
-		
+
 	},
 	showExpandPointer: function(grid, columnIndex){
-		grid.getColumnModel().setColumnWidth( columnIndex, this.columnsMaxSize, false ) 
+		grid.getColumnModel().setColumnWidth( columnIndex, this.columnsMaxSize, false )
 	}
 	,
 	openPopupEditor: function(grid, rowIndex, columnIndex){
-		var record = grid.getStore().getAt(rowIndex);  // Get the Record    
-		var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name    
+		var record = grid.getStore().getAt(rowIndex);  // Get the Record
+		var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
 		var data = record.get(fieldName);
-	   
+
 	   var form = new Ext.form.TextArea({
 		   id: 'description',
 		   name: 'description',
-		   allowBlank: true, 
+		   allowBlank: true,
 		   autoCreate: {tag: 'textarea ', autocomplete: 'off'},
 		   anchor: '95%',
 		   value : data,
-		   //fieldLabel: LN('sbi.generic.descr') 
+		   //fieldLabel: LN('sbi.generic.descr')
 	   });
-	   
+
        this.textAreaEditWindow = new Ext.Window({
         title: 'Set '+fieldName,
         width: 500,
@@ -292,36 +292,36 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	,
 	loadFrom:  function(requestParameters) {
 		if(requestParameters.start && requestParameters.start!= null && requestParameters.start==0){
-			this.firstPage= true;			
+			this.firstPage= true;
 		}
 		if(!requestParameters.start || requestParameters.start == null) requestParameters.start = 0;
 		if(!requestParameters.limit || requestParameters.limit == null) requestParameters.limit = this.pageSize;
-		
+
 		this.store.removeAll(true);
 		this.store.load({params: requestParameters});
 	}
-  	
+
 	// ---------------------------------------------------------------------------------------------------
 	// private methods
 	// ---------------------------------------------------------------------------------------------------
-	
+
 	,
 	init : function () {
 		this.initStore();
-		
+
 //		this.on('sortchange', function(context, sortInfo){
 //			var c = 0;
 //		});
-		
+
 		// THISS IS SORTING SYNTAX
 		//		sortInfo:{
 		 //   field:'fieldName',
 		 //   direction:'ASC'// or 'DESC' (case sensitive for local sorting)
 		//}
-		
-		
-		
-		
+
+
+
+
 		this.initToolbar();
 		Ext.QuickTips.init() ;
 		Ext.apply(Ext.QuickTips.getQuickTip(), {
@@ -338,26 +338,26 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 	,
 	initStore: function() {
-		
+
 		var proxy = new Ext.data.HttpProxy({
 	           url: this.services['load']
 	           , timeout : 300000
-	   			,success : 
+	   			,success :
 				function(response, opts) {
 	   			}
 	   		   , failure: this.onDataStoreLoadException
 	    });
-		
+
 		this.store = new Ext.data.Store({
 	        proxy: proxy,
 	        reader: new Ext.data.JsonReader(
 	        ),
 	        remoteSort: false
 	    });
-			
+
 		this.store.on('load', function(store, records, options ){
 			var numRec = this.store.getCount();
-			
+
 			//redefines the columns labels if they are dynamics
 			var tmpMeta = this.getColumnModel();
 			var fields = tmpMeta.config;
@@ -365,18 +365,18 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			var fieldsMap = {};
 			tmpMeta.fields = new Array(fields.length);
 
-			for(var i = 0, len = fields.length; i < len; i++) {				
-				
+			for(var i = 0, len = fields.length; i < len; i++) {
+
 				for(k=0; k<numRec; k++){
 					var tmpRec = this.store.getAt(k);
 					if (tmpRec !== undefined) {
-						
+
 						var valorig =  tmpRec.json[fields[i].header];
 
-						
-						if(fields[i].type === 'int'){	
-						
-					    	if (valorig !== undefined){	
+
+						if(fields[i].type === 'int'){
+
+					    	if (valorig !== undefined){
 					    		if(valorig === ''){
 					    			tmpRec.data[fields[i].header] = valorig;
 					    			tmpRec.commit();
@@ -385,46 +385,46 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					    			tmpRec.data[fields[i].header] = '0';
 					    			tmpRec.commit();
 					    		}
-					    		
+
 					    	}
 						}
 					}
 			    }
 			}
-		
+
 				this.updateRowSpan();
 				this.colorTotalRows();
-				
-		
-				
+
+
+
 		}, this);
-	
-		
+
+
 		this.store.on('metachange', function( store, meta ) {
 			//alert('metachange');
 			this.visibleColumns = [];
-			
+
 			this.meta = meta;
-			
-			
+
+
 			// ORDER
-			//The following code is used for keep the order of the columns after the execution of the query 
+			//The following code is used for keep the order of the columns after the execution of the query
 			meta.fields[0] = new Ext.grid.RowNumberer();
 			this.alias2FieldMetaMap = {};
 			var fields = meta.fields;
 			var newColumns = new Array();
 			newColumns.length = fields.length;
-			
-			
-			//1) first of all we check if the list of fields is changed 
+
+
+			//1) first of all we check if the list of fields is changed
 			if(this.firstPage){
 				for(var i = 0; i <meta.fields.length ;i++) {
 					if(meta.fields[i].header){
 					newColumns[i]= meta.fields[i].header;
 					}
-				}	
+				}
 			}
-			
+
 			var val=true;
 			if(this.oldColumns != null){
 				if(this.oldColumns.length != newColumns.length){
@@ -432,24 +432,24 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				}else{
 					for(var i = 1; i <this.oldColumns.length ;i++) {
 						val = val && (this.oldColumns[i]==newColumns[i]);
-					}	
+					}
 				}
 			}
-			
+
 			//2) if the list of fields is changed we should reload the columnsPosition and columnsWidth arrays
 			if(this.oldColumns != null && this.firstPage && !val){
 
-				
-				
+
+
 //				Suppose the columns in the select clause before the re executions are
 //				A B C D E . After some operation the visualization in the data store panel is C B E D A
 //				So we have the following arrays
-//				oldColumns = A B C D E  
+//				oldColumns = A B C D E
 //				columnsPosition= 4 1 0 3 2
-//				Now suppose the new fields are: A X D K. 
+//				Now suppose the new fields are: A X D K.
 //				The new visualization should keeps the order and so should look like D A X K
 
-				
+
 //				The first step is calculate the array fieldsOrder that maps the new fields in the oldColumns array:
 //				fieldsOrder: 0, , 3,    : A live in the position 0 in oldColumns, D in position 3, and the new fields have no position.
 
@@ -463,17 +463,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							filedsOrder[i] = j;
 							this.oldColumns[j]="";
 							break;
-						}			   
+						}
 					}
 				}
 
-				
-//				Now we change the indexes in fieldsOrder with previous position of the linked element. 
-//				In code fieldsOrder[i] = columnsPosition[fieldsOrder[i]] and fieldsOrder: 4, , 3,    
-//				Clean the array fieldsOrder filtering the empty spaces. 
+
+//				Now we change the indexes in fieldsOrder with previous position of the linked element.
+//				In code fieldsOrder[i] = columnsPosition[fieldsOrder[i]] and fieldsOrder: 4, , 3,
+//				Clean the array fieldsOrder filtering the empty spaces.
 //				The result is saved in the array cleanFreshPos = 4,3.
 
-				
+
 				var cleanFreshPos = new Array();
 				var sortedCleanFreshPos = new Array();
 				for(var i = 0; i <filedsOrder.length ;i++) {
@@ -483,16 +483,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						filedsOrder[i]=this.columnsPosition[filedsOrder[i]];
 					}
 				}
-				
+
 				var width = new Array();
 				width.length = filedsOrder.length;
 
 				sortedCleanFreshPos.sort();
 
-//				Normalize the array cleanFreshPos: force the indexes to be an enumeration between 1 to cleanFreshPos.length. 
+//				Normalize the array cleanFreshPos: force the indexes to be an enumeration between 1 to cleanFreshPos.length.
 //				So normalizedCleanFreshPos = 2,1
-//				We have to normalize the array because these values are the new position of the linked elements. 
-				
+//				We have to normalize the array because these values are the new position of the linked elements.
+
 				var normalizedCleanFreshPos = new Array();
 				normalizedCleanFreshPos.length = sortedCleanFreshPos.length;
 
@@ -504,18 +504,18 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						}
 					}
 				}
-				
-				
-//				At the end we create the new array columnsPosition.
-//				We take the fields we have also in the previous query and we save them at the beginning (with the normalizedCleanFreshPos array) 
-//				of the array columnsPosition. 
-//				Than we push the new fields in the tail of the array. 
 
-				
+
+//				At the end we create the new array columnsPosition.
+//				We take the fields we have also in the previous query and we save them at the beginning (with the normalizedCleanFreshPos array)
+//				of the array columnsPosition.
+//				Than we push the new fields in the tail of the array.
+
+
 				this.columnsPosition = new Array();
 				this.columnsPosition.length = filedsOrder.length;
 				this.columnsPosition[0]=0;//the position 0 is for the column with the row indexes
-				
+
 				var k=1;
 				var m=0;
 				for(var i = 1; i <filedsOrder.length ;i++) {
@@ -536,10 +536,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				this.oldColumns=null;
 				this.columnsWidth = width;
 			}
-			
-			
-	
-			   
+
+
+
+
 			// insert actual fields into oldCOlumns for next iteration
 			   if(this.oldColumns == null){
 					this.oldColumns = new Array();
@@ -547,19 +547,19 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						this.oldColumns[i]= meta.fields[i].header;
 					}
 				}
-			   
-			   
+
+
 			   // reassign meta.fields as stored in column Position
 			   if(this.columnsPosition!=null){
 					  var fields2 = new Array();
 					  fields2.length = this.columnsPosition.length;
-			
+
 					  for(var i = 0; i<fields.length; i++) {
 						  fields2[this.columnsPosition[i]] = fields[i];
 					  }
-					  
+
 					  meta.fields = fields2;
-				
+
 				  	}else{
 					  this.columnsPosition = new Array();
 					  this.columnsWidth = new Array();
@@ -570,37 +570,37 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					  for(var i = 1; i <fields.length ;i++) {
 						  this.columnsWidth[i]= 200;
 					  }
-					  
+
 				  	}
-			
+
 			// END ORDER
-			
-			
+
+
 			   // Array of column Index to merge
 			 this.indexColumnToMerge = new Array();
-			 
+
 			var arrayIndex = 0;
-			 
+
 			this.columnName2columnHeader = {};
 			this.columnHeader2columnName = {};
 			this.columnHeader2color = {};
 			this.numberColumnIndex = [];
-		
+
 			// Set max size
 			if(meta.maxSize != null && meta.maxSize !== undefined){
 				this.columnsMaxSize = parseInt(meta.maxSize);
 			}
-			
-			
+
+
 			// ITERATE ON EACH FIELD                 0 is numberer
 			for(var i = 0; i < meta.fields.length; i++) {
-				
+
 				// For i-field
-				
+
 				// map name to header and header to name
 				this.columnName2columnHeader[meta.fields[i].name] = meta.fields[i].header;
 				this.columnHeader2columnName[meta.fields[i].header] = meta.fields[i].name;
-				
+
 				// recalculate coumns size
 				var col = meta.fields[i].name;
 				for(var j = 0; j < meta.columnsInfos.length; j++) {
@@ -612,21 +612,21 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						meta.fields[i].unsigned = meta.columnsInfos[j].unsigned;
 					}
 				}
-				
+
 				// set renderer based on field type
-				
+
 				var rendererFunctions = {};
 				var rendererFunction;
-				
+
 				if(meta.fields[i].type) {
 				   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
 				   var formatToParse;
 				   var t = meta.fields[i].type;
 				   var s = meta.fields[i].subtype;
 				   if (t ==='float') { // format is applied only to numbers
-					   
+
 					   //check if format is defined in template force it, else get it from model field
-//					   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer					   
+//					   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
 //					   var formatToParse;
 					   if(columnFromTemplate.format){
 						   formatToParse = columnFromTemplate.format;
@@ -634,19 +634,19 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   else{
 						   formatToParse = meta.fields[i].format;
 					   }
-					   		   
+
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(formatToParse);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
 
 					   rendererFunction = meta.fields[i].renderer;
-					   
+
 					   this.numberColumnIndex.push(i);
-					   
+
 				   }else if(t ==='int'){
-					   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
+					   meta.fields[i].renderer = Sbi.locale.formatters['string'];
 					   rendererFunction = meta.fields[i].renderer;
-					   
+
 					   this.numberColumnIndex.push(i);
 				   }else if(t ==='date'){
 					   if(columnFromTemplate.format){
@@ -654,9 +654,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   }
 					   else{
 						   formatToParse = meta.fields[i].dateFormat;
-					   }		
+					   }
 					   meta.fields[i].renderer = Ext.util.Format.dateRenderer(formatToParse);
 
+					   rendererFunction = meta.fields[i].renderer;
+				   } else if (t ==='boolean'){
+					   meta.fields[i].renderer = Sbi.locale.formatters['boolean'];
 					   rendererFunction = meta.fields[i].renderer;
 				   }else{
 					   //meta.fields[i].renderer = Sbi.locale.formatters[t];
@@ -665,18 +668,18 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   }
 				   rendererFunctions[meta.fields[i].name]=rendererFunction;
 			   }
-			   
+
 			   // set if cells have to be merged
-			
+
 			//	var columnDef = this.registryConfiguration.columns[i-1];  // 0 is row numberer
 				//	if(columnDef != undefined && columnDef.type == "merge"){
 				//  this.indexColumnToMerge[arrayIndex] = i;
 				//					arrayIndex++;
 				//				}
 				//				else{
-				//				} 
+				//				}
 
-				
+
 				var columnDef = this.registryConfiguration.columns[i];
 				if(columnDef != undefined && columnDef.type == "merge"){
 					// index is plus one because there is numberer row at position zero of columns
@@ -684,17 +687,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 									arrayIndex++;
 				}
 				else{
-				} 
-				
+				}
+
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
 			   }
 //			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
 //				   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
 //			   }
-			   
 
-			   // set sortable flag			   
+
+			   // set sortable flag
 			   if(this.sortable === false) {
 				   meta.fields[i].sortable = false;
 			   } else {
@@ -707,10 +710,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   if (editor != null) {
 				   meta.fields[i].editor = editor;
 			   }
-			   
+
 				//define color
 				color = undefined;
-				if(i>0){		// i = 0 in fields is row numberer 
+				if(i>0){		// i = 0 in fields is row numberer
 					var columnConf = this.registryConfiguration.columns[i-1];
 					if(columnConf && columnConf.color){
 						color = columnConf.color;
@@ -734,7 +737,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				    //retValue = "<font style=' color:red;'>" + value + "</font>"; //this is for inc
 				   	return retValue ;
 				};
-			   
+
 			   // visible columns will contain all visible fields
 			   var config = this.getColumnEditorConfig(meta.fields[i].header);
 			   if(config.visible == false){
@@ -745,52 +748,52 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				  this.visibleColumns.push(meta.fields[i]);
 				   meta.fields[i].hidden = true;
 					continue;
-					
+
 			   }else{		    // IF VISIBLE
 				   if(color){
 					   meta.fields[i].color = color;
 					   meta.fields[i].renderer = MyColorRenderer;
 				   }
-				   
+
 				   this.visibleColumns.push(meta.fields[i]);
 				   meta.fields[i].hidden = false;
 
 			   }
-			   
+
 			   meta.fields[i].allowBlank = true;
 
-		   } 
+		   }
 			// end cycling on meta.fields
-			
 
-			
+
+
 			   // which columns are visible
 //					 this.getColumnModel().setConfig(this.visibleColumns);
 		   var columnmodel = this.getColumnModel();
 		   columnmodel.setConfig(meta.fields);
-		   
-		   
+
+
 		   //ORDER
-					   	
+
 		   for(var y=1; y<this.columnsWidth.length; y++){
 					this.getColumnModel().setColumnWidth(y,this.columnsWidth[y]);
 				}
 
-		   this.firstPage = false;	  
+		   this.firstPage = false;
 		   //END ORDER
-		   
+
 		   this.mandatory = meta.mandatory;
 
 			// set align column on the right (numberscolumn)
 			for(var i = 0, len = this.numberColumnIndex.length; i < len; i++) {
 				var index = this.numberColumnIndex[i];
 				var column = this.getColumnModel().config[index];
-				column.align = 'right';				
+				column.align = 'right';
 			}
-		   
-		   
-		 this.on('beforeedit', function(e){			   
-			   
+
+
+		 this.on('beforeedit', function(e){
+
 			   /*
 			    grid - This grid
 			    record - The record being edited
@@ -800,42 +803,42 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    column - The grid column index
 			    cancel - Set this to true to cancel the edit or return false from your handler.
 				*/
-			    
+
 			 // if editor is popup disable table editor
 			 var  fieldNow = this.meta.fields[e.column];
-			 if(fieldNow.editor.type == 'POPUP'){   
+			 if(fieldNow.editor.type == 'POPUP'){
 				 return false;
 			 }
 
 			 var val = e.value;
-			    
+
 			    this.previousValueEdit = val;
-			    
+
 			    // check if is a total value than cannot be edited
 			    for(var j = 0; j < this.meta.summaryCellsCoordinates.length; j++) {
 			    	if(this.meta.summaryCellsCoordinates[j].row === e.row){
 			    		return 	false
 			    	}
 			    }
-			    
-			    var valorig; 
+
+			    var valorig;
 			    if(e.record.json != undefined){
 			    	valorig = e.record.json[e.field];
 			    }
 			    else{
 			    	valorig = e.record.data[e.field];
 			    }
-			    
-			    
+
+
 			    var t = this.visibleColumns[e.column].type;
 			    var st = this.visibleColumns[e.column].subtype;
-			    if(Ext.isDate(val) ){	    	
+			    if(Ext.isDate(val) ){
 //			    	if(st != null && st !== undefined && st === 'timestamp'){
 //			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['timestamp']);
 //			    	}else{
 //			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
 //			    	}
-			       var formatDate = this.getFormatDate(e.column-1, st);				   
+			       var formatDate = this.getFormatDate(e.column-1, st);
 				   val = Sbi.qbe.commons.Format.date(val, formatDate);
 				   e.record.data[e.field] = val;
 			    }
@@ -849,7 +852,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    }
 			    return true;
 		   }, this);
-		   
+
 		   this.on('afteredit', function(e) {
 			      /*grid - This grid
 				    record - The record being edited
@@ -857,8 +860,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				    value - The value being set
 				    originalValue - The original value for the field, before the edit.
 				    row - The grid row index
-				    column - The grid column index*/							   
-			   
+				    column - The grid column index*/
+
 			   var t = this.visibleColumns[e.column].type;
 			   var st = this.visibleColumns[e.column].subtype;
 			   if (t === 'date' ) {
@@ -869,26 +872,26 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   e.record.data[e.field] = val;
 				   }else{
 					   var formatDate = this.getFormatDate(e.column-1, st);
-					   if(Ext.isDate(val) ){	   
-						   val = val.dateFormat(formatDate); // format the date with correct format			  
-					   }			
+					   if(Ext.isDate(val) ){
+						   val = val.dateFormat(formatDate); // format the date with correct format
+					   }
 					   if (val == e.originalValue) return; //do nothing if the value doesn't changes
-					   
+
 					   var dt = new Date(Date.parseDate(val, formatDate));
-					   e.record.data[e.field] = dt;		 
+					   e.record.data[e.field] = dt;
 				   }
 				   var view = this.getView();
 				   var cell = view.getCell(e.row, e.column);
-				   
+
 		            var browser = this.detectBrowser();
 		            if(browser != null && browser == 'IE'){
-		            	 cell.innerText = val; 
-		            }	
-		            else{
-		            	 cell.textContent = val; 
+		            	 cell.innerText = val;
 		            }
-				   
-			  	  
+		            else{
+		            	 cell.textContent = val;
+		            }
+
+
 			   }
 			   if (t === 'float') {
 				   var dottedVal = '.00';
@@ -897,31 +900,31 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   if(e.value)
 					   pointval = e.value.replace(',', '.');
 				   // check it is a number otherwise goes to zero
-				   if (!isNaN(pointval))					   
+				   if (!isNaN(pointval))
 					   dottedVal = pointval;
-				   
+
 				   var f = parseFloat(dottedVal);
 				   e.record.data[e.field] = f;
 			   }
-			   
+
 			   // update total rows
 			   if(this.previousValueEdit != e.value){
 				   this.updateTotalRow(e.row, e.column, e.value, this.previousValueEdit);
 				   this.colorTotalRows();
 				   this.previousValueEdit = e.value;
 			   }
-			   
-			   
+
+
 			   // refresh row span
 			   this.updateRowSpan();
-			   
-			   
+
+
 			 }, this);
-		   
+
 		   this.on('validateedit', function(e) {
 	    	   var t = this.visibleColumns[e.column].type;
 			   var st = this.visibleColumns[e.column].subtype;
-			   
+
 			   var unsigned = this.visibleColumns[e.column].unsigned;
 
 			   if(t === 'float'){
@@ -946,7 +949,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							   buttons : Ext.MessageBox.OK,
 							   width : 300,
 							   icon : Ext.MessageBox.INFO
-						   }); 
+						   });
 						}
 						else{
 						   dottedVal+='.00';
@@ -956,11 +959,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 			   if(t === 'int'){
 				   var isInt = isInteger(e.value);
-				   
+
 				   if(unsigned){
 					   //only positive numbers
 					   isInt = isUnsignedInteger(e.value);
-					   
+
 					   if(!isInt){
 						   if(e.value == ''){
 							   //removed
@@ -978,7 +981,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							});
 						   return;
 					   }
-					   
+
 				   }
 
 				   if(!isInt){
@@ -995,17 +998,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							buttons : Ext.MessageBox.OK,
 							width : 300,
 							icon : Ext.MessageBox.INFO
-						}); 
+						});
 				   }
 			   }
 
 		 }, this);
 
-		   
-		   
-		   
+
+
+
 		}, this);
-		
+
 
 	}
 
@@ -1013,7 +1016,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	onDataStoreLoadException: function(response, options) {
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
-	
+
 	,
 	getEditor : function (field, type) {
 		var toReturn = null;
@@ -1021,15 +1024,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 		if (editorConfig.editable == true) {
 			if (editorConfig.editor == "COMBO") {
-				
+
 				if(type === 'boolean'){
 					toReturn = this.createFieldBoolean(field);
 				}else{
 					toReturn = this.createFieldCombo(field);
 				}
-			} else if (editorConfig.editor == "PICKER") { 
+			} else if (editorConfig.editor == "PICKER") {
 				toReturn = this.createFieldDate(editorConfig);
-			} else if (editorConfig.editor == "POPUP") { 
+			} else if (editorConfig.editor == "POPUP") {
 				toReturn = this.createFieldPopup(editorConfig);
 			} else {
 				toReturn = new Ext.form.TextField();
@@ -1047,7 +1050,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				editable : true
 				, visible : true
 		};
-		
+
 		for (var i = 0; i < columnsConf.length; i++) {
 			if (columnsConf[i].field == field) {
 					toReturn = Ext.apply(toReturn, columnsConf[i]);
@@ -1057,31 +1060,31 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		return toReturn;
 	}
-	
+
 	,
 	initToolbar : function () {
 		var items = this.initFiltersToolbarItems();
 		this.gridToolbar = new Ext.Toolbar(items);
 	}
-	
+
 	,
 	initFiltersToolbarItems : function () {
 		var items = [];
-		
+
 		var enableButtons = this.getConfiguration('enableButtons');
-		if(enableButtons && enableButtons == "true"){		
+		if(enableButtons && enableButtons == "true"){
 		items.push({
 			iconCls: 'icon-add',
 			handler : this.addNewRecord,
 			scope : this
 		});
-		
+
 		items.push({
 			iconCls: 'icon-delete',
 			handler : function(){
 				Ext.MessageBox.confirm(
 						LN('sbi.qbe.designer.msg.deletetab.title'),
-						LN('sbi.qbe.designer.msg.deletetab.msg'),            
+						LN('sbi.qbe.designer.msg.deletetab.msg'),
 			            function(btn, text) {
 			                if (btn=='yes') {
 			    				this.deleteRecord();
@@ -1092,9 +1095,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			},
 			scope : this
 		});
-		
+
 		}
-		
+
 		items.push({
 			iconCls : 'icon-save',
 			handler : this.save,
@@ -1125,7 +1128,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				}
 			}
 	}
-		
+
 		items.push({xtype: 'tbspacer', width: 30});
 		items.push({
 			iconCls : 'icon-execute',
@@ -1139,7 +1142,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 		return items;
 	}
-	
+
 	,
 	getFiltersConfiguration : function () {
 		var toReturn = [];
@@ -1148,7 +1151,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		return toReturn;
 	}
-	
+
 	,
 	getColumnsConfiguration : function () {
 		var toReturn = [];
@@ -1168,7 +1171,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		return null;
 	}
-	
+
 	,
 	getConfiguration : function (name) {
 		if (this.registryConfiguration != undefined && this.registryConfiguration != null) {
@@ -1178,7 +1181,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					return confs[i].value;
 				}
 			}
-		
+
 		}
 		return;
 	}
@@ -1191,8 +1194,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			filterField.type = "COMBO";
 			filterField.section = "FILTER";
 			//filterField.on('change', this.filterMainStore, this);
-		} 
-		else		
+		}
+		else
 		{
 			filterField = new Ext.form.TextField({
 				name: aFilter.field
@@ -1213,15 +1216,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			name: field
             , editable : false
             , store: new Ext.data.SimpleStore({
-            	fields: ['column_1'],
-                data: [['true'], ['false']]
+            	fields: ['valueField', 'displayField'],
+                data: [['true', Sbi.locale.formats.boolean.trueSymbol], ['false', Sbi.locale.formats.boolean.falseSymbol]]
             })
-	        , displayField: 'column_1'
-	        , valueField: 'column_1'
+			, valueField: 'valueField'
+	        , displayField: 'displayField'
 	        , mode:'local'
 	        , triggerAction: 'all'
         });
-		
+
 		return combo;
 	}
 	,
@@ -1241,26 +1244,26 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		} else {
 			entityId = temp + ':' + field;
 		}
-		
+
 		var orderBy = entityId;
 		if(column.orderBy != null && column.orderBy != undefined){
 			if (column.subEntity) {
-				orderBy = temp + "::" + column.subEntity + "(" + column.foreignKey + ")" + ":" + column.orderBy;				
+				orderBy = temp + "::" + column.subEntity + "(" + column.foreignKey + ")" + ":" + column.orderBy;
 					}
 			else{
 				entityId = temp + ':' + column.orderBy;
 			}
 		}
 		//if there are some dependences get columns informations about linked entity
-		lstDependsFromRef = [];		
-		if (column.dependsFrom){			
+		lstDependsFromRef = [];
+		if (column.dependsFrom){
 			var lstDependsFrom = column.dependsFrom.split(",");
 			var lstDependsFromEntity = (column.dependsFromEntity)?column.dependsFromEntity.split(","):[];
-			for (var i=0; i<lstDependsFrom.length; i++){					
-				var name = (lstDependsFromEntity && lstDependsFromEntity[i] != null && lstDependsFromEntity[i] !== '')?lstDependsFromEntity[i]:temp;										
-				var columnDepends = this.getColumnConfiguration(lstDependsFrom[i].trim());				 
+			for (var i=0; i<lstDependsFrom.length; i++){
+				var name = (lstDependsFromEntity && lstDependsFromEntity[i] != null && lstDependsFromEntity[i] !== '')?lstDependsFromEntity[i]:temp;
+				var columnDepends = this.getColumnConfiguration(lstDependsFrom[i].trim());
 				if (columnDepends && columnDepends.subEntity) {
-					name +=  "::" + columnDepends.subEntity + "(" + columnDepends.foreignKey + ")" + ":" + lstDependsFrom[i].trim();				
+					name +=  "::" + columnDepends.subEntity + "(" + columnDepends.foreignKey + ")" + ":" + lstDependsFrom[i].trim();
 				}
 				else{
 					 name += ':' + lstDependsFrom[i].trim();
@@ -1270,24 +1273,24 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				tmpFieldRef.entity = name;
 				tmpFieldRef.title = column.title;
 				lstDependsFromRef.push(tmpFieldRef);
-				this.lstMasterDependences[column.field] = tmpFieldRef; //list of all dependences by master side				
+				this.lstMasterDependences[column.field] = tmpFieldRef; //list of all dependences by master side
 			}
 		}
-		
+
 
 		var baseParams = {
-			'QUERY_TYPE': 'standard', 
-			'ENTITY_ID': entityId, 
-			'ORDER_ENTITY': orderBy, 
-			'ORDER_TYPE': 'asc', 
+			'QUERY_TYPE': 'standard',
+			'ENTITY_ID': entityId,
+			'ORDER_ENTITY': orderBy,
+			'ORDER_TYPE': 'asc',
 			'QUERY_ROOT_ENTITY': true
 		};
 		store.baseParams = baseParams;
 		store.on('loadexception', function(store, options, response, e) {
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		});
-		
-		
+
+
 		var combo = new Ext.form.ComboBox({
 			name: field
             , editable : false
@@ -1297,33 +1300,33 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	        , triggerAction: 'all'
 	        , lstDependsFromRef: lstDependsFromRef
         });
-		
+
 		var thisPanel = this;
 		combo.on('change', function(el, newValue, oldValue){
 			if (!el.section) {
 				var isMasterField = false;
 				var lstDependences = '';
 				if (thisPanel.lstMasterDependences){
-					for (el in thisPanel.lstMasterDependences){						
+					for (el in thisPanel.lstMasterDependences){
 						var tmpRef = thisPanel.lstMasterDependences[el];
 						if (tmpRef.field == column.field.trim()){
 							isMasterField = true;
 							lstDependences += tmpRef.title + '  ';
 						}
 					}
-				}	
-				if (isMasterField && oldValue != '' && oldValue != newValue){				
+				}
+				if (isMasterField && oldValue != '' && oldValue != newValue){
 				   alert(LN('sbi.registry.registryeditorgridpanel.warningDependences.1') +'\'' + lstDependences + '\' ' +
 						 LN('sbi.registry.registryeditorgridpanel.warningDependences.2') );
 				}
 			}
 		});
-		
+
 		if (column.dependsFrom){
-			combo.on('focus', function(el){				
+			combo.on('focus', function(el){
 				var lstDependsFrom = column.dependsFrom.split(",");
 				dependences = '';
-				for (var i=0; i<el.lstDependsFromRef.length; i++){		
+				for (var i=0; i<el.lstDependsFromRef.length; i++){
 					var name = '';
 					var comma = (i < lstDependsFrom.length-1)?',':'';
 					var filterValue;
@@ -1333,18 +1336,18 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							name = tmpRef.entity;
 							for(var k=0; k < thisPanel.filters.length; k++){
 								if (thisPanel.filters[k].name == tmpRef.field){
-									filterValue = thisPanel.filters[k].value;			
+									filterValue = thisPanel.filters[k].value;
 									break;
 								}
 							}
 							break;
 						}
 					}
-					if (el.section  && el.section === "FILTER") {								
+					if (el.section  && el.section === "FILTER") {
 						dependences += (filterValue != undefined && filterValue !== "") ? name + '=' + filterValue + comma : "";
-					}else{			
+					}else{
 						dependences += (this.gridEditor.record.data[lstDependsFrom[i].trim()] != "")? name + '=' + this.gridEditor.record.data[lstDependsFrom[i].trim()] + comma : "";
-					}						
+					}
 				}
 //				alert('dependences: '  + dependences);
 				delete combo.store.baseParams.DEPENDENCES;
@@ -1355,27 +1358,27 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			});
 		}
 		return combo;
-	}	
-	
-	
+	}
+
+
 	, createFieldPopup: function( fieldConfig ) {
 		var winF = {};
 		winF.type = 'POPUP';
 		return winF;
 
-	}	
+	}
 	, createFieldDate: function( fieldConfig ) {
 
 		var dtPicker = new Ext.form.DateField({name: fieldConfig.field
 											 , format: fieldConfig.format });
-		
-		if(fieldConfig.value !== undefined && fieldConfig.value !== null) {	
+
+		if(fieldConfig.value !== undefined && fieldConfig.value !== null) {
 			var dt = Sbi.commons.Format.date(fieldConfig.value, fieldConfig.format);
-			dtPicker.setValue(fieldConfig.value);				
+			dtPicker.setValue(fieldConfig.value);
 		}
-		
+
 		return dtPicker;
-		
+
 	}
 	,
 	setKeyUpTimeout : function () {
@@ -1385,14 +1388,14 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	          this.filterMainStore();
 	    }).defer(500, this);
 	}
-	
+
 	,
 	filterMainStore : function () {
 		var filtersValuesObject = this.getFiltersValuesAndType();
 		var filterFunction = this.createFilterFunction(filtersValuesObject);
 		this.store.filterBy(filterFunction);
 	}
-	
+
 	,
 	getFiltersValues : function () {
 		var filtersValuesObject = {};
@@ -1416,7 +1419,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			};
 		}
 		return filtersValuesObject;
-	}	
+	}
 	,
 	createFilterFunction : function (filtersValuesObject) {
 		var columnHeader2columnName = this.columnHeader2columnName;
@@ -1446,7 +1449,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		};
 		return filterFunction;
 	}
-	
+
 	,
 	clearFilterForm: function () {
 		for (var i = 0 ; i < this.filters.length ; i++) {
@@ -1469,7 +1472,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				var valueRef = this.mandatory[i].mandatoryValue;
 				var value = aRecordData[columnRef];
 				if(value !== undefined && value !== null && value === valueRef){
-					return columnToCheck;					
+					return columnToCheck;
 				}
 			}
 		}
@@ -1501,7 +1504,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				url: this.services['update'],
 				method: 'post',
 				params: {"records" : Sbi.commons.JSON.encode(recordsData)},
-				success : 
+				success :
 					function(response, opts) {
 					try {
 						var firstQuery = Ext.util.JSON.decode( response.responseText );
@@ -1537,7 +1540,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			this.updateSuccessHandler();
 		}
 	}
-	
+
 	,
 	save: function () {
 		this.showMask();
@@ -1553,42 +1556,42 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	applyFilter: function () {
 		// read filters
 		var filtersValuesObject = this.getFiltersValues();
-		
+
 		this.load(filtersValuesObject);
 	}
 	,
 	addNewRecord: function () {
 
 		var emptyRecord = new Object();
-		
+
 		for(var i = 1; i < this.visibleColumns.length; i++) {
-			emptyRecord[this.visibleColumns[i].name] = ''; 
+			emptyRecord[this.visibleColumns[i].name] = '';
 		}
 		//meta.fields[0] = new Ext.grid.RowNumberer();
 		var array = []
 		for(var i = 1; i < this.visibleColumns.length; i++) {
 			var obj = new Object()
 			var col = this.visibleColumns[i];
-			obj['name'] = col.name; 
-			obj['type'] = col.type; 
-			obj['allowBlank'] = this.visibleColumns[i].allowBlank; 
-			obj['dataIndex'] = this.visibleColumns[i].dataIndex; 
-			obj['header'] = this.visibleColumns[i].header; 
-			obj['hidden'] = this.visibleColumns[i].hidden; 
-			obj['id'] = this.visibleColumns[i].id; 
-			obj['renderer'] = this.visibleColumns[i].renderer; 
-			obj['sortable'] = this.visibleColumns[i].sortable; 
-			obj['width'] = this.visibleColumns[i].width; 
+			obj['name'] = col.name;
+			obj['type'] = col.type;
+			obj['allowBlank'] = this.visibleColumns[i].allowBlank;
+			obj['dataIndex'] = this.visibleColumns[i].dataIndex;
+			obj['header'] = this.visibleColumns[i].header;
+			obj['hidden'] = this.visibleColumns[i].hidden;
+			obj['id'] = this.visibleColumns[i].id;
+			obj['renderer'] = this.visibleColumns[i].renderer;
+			obj['sortable'] = this.visibleColumns[i].sortable;
+			obj['width'] = this.visibleColumns[i].width;
 
-			array.push(obj);		
+			array.push(obj);
 		}
-	
+
 		var recordConstructor = Ext.data.Record.create(obj);
-	
-		var row = new recordConstructor(emptyRecord); 
+
+		var row = new recordConstructor(emptyRecord);
 		this.store.add([row]);
 		//this.store.insert(0,[row]);
-		
+
 
 	}
 	,
@@ -1596,31 +1599,31 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 		var selectionModel = this.getSelectionModel();
 
-		var cellsSelected = selectionModel.getSelectedCell(); 		
+		var cellsSelected = selectionModel.getSelectedCell();
 
 		var rowIndex = cellsSelected[0];
-		
-		rowIndex = rowIndex +1; 
+
+		rowIndex = rowIndex +1;
 		this.deletedRows = [rowIndex];
-		
+
 		var record = this.store.getById(rowIndex);
 
 		var recordsArray =[];
 		if(record){
 				recordsArray = [record.json];
 		}
-		
-		
+
+
 		Ext.Ajax.request({
 			url: this.services['delete'],
 			method: 'post',
 			params: {"records" : Sbi.commons.JSON.encode(recordsArray)},
-			success : 
+			success :
 				function(response, opts) {
 				try {
 					for ( var indic = 0; indic < this.deletedRows.length; indic++) {
 						var index = this.deletedRows[indic];
-						this.store.removeAt(index);	
+						this.store.removeAt(index);
 					}
 					var params = {}
 					if(this.start != null){
@@ -1629,7 +1632,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					if(this.limit && this.limit!= null){
 						params.limit = this.limit;
 					}
-					
+
 					var filtersValuesObject = this.getFiltersValues();
 					Ext.apply(params, filtersValuesObject);
 
@@ -1671,10 +1674,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
     	//alert('span');
 
     	this.updateRowSpan();
-    	
+
     	this.colorTotalRows();
-    	
-    	
+
+
     },
     isNumeric: function(input) {
         var number = /^\-{0,1}(?:[0-9]+){0,1}(?:\.[0-9]+){0,1}$/i;
@@ -1689,7 +1692,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
     colorTotalRows: function() {
     	if(this.meta){
     		var view = this.getView();
-    	
+
             if(this.checkIfReady(this.getColumnModel().config)==false){
             	return;
             }
@@ -1700,15 +1703,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         		var Ccell = Ext.get(cell);
         		var  cdcd= Ccell.down('*');
         		var innerCell = Ext.get(cdcd);
-        		
+
         		//get summaryColor
         		var regConf = this.registryConfiguration;
-        		
+
         		var colSum = '#FFFFFF';
         		if(regConf.summaryColor){
         			colSum = regConf.summaryColor;
         		}
-        		
+
         		if(innerCell != null){
         			innerCell.setStyle('background-color', colSum);
         			innerCell.setStyle('fontWeight', 'bold');
@@ -1716,13 +1719,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         		Ccell.setStyle('background-color', colSum);
         		Ccell.setStyle('fontWeight', 'bold');
         		Ccell.setStyle('align', 'right');
-        	
+
 	            var browser = this.detectBrowser();
 	            var IE = false;
 	            if(browser != null && browser == 'IE'){
 	            	IE = true;
-	            }		
-        		
+	            }
+
         		if(IE == false){
         		if(cell.textContent && this.isNumeric(cell.textContent)){
         				cell.textContent = cell.textContent;
@@ -1741,17 +1744,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
                 		}
         		}
         		}
-        		
+
         		// remove content and add simple value in order to remove the editor
-        		
-    		
+
+
     		}
     	}
     },
     updateTotalRow : function(row, column, newValue, previousValue) {
     	var view = this.getView();
-  		
-  		
+
+
   		// find first total cell that has same column as parameter column and that has row > parameter row
     	var foundTotal = false;
     	for(var j = 0; j < this.meta.summaryCellsCoordinates.length && foundTotal == false; j++) {
@@ -1759,25 +1762,25 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			if((coord.column +1) == column && coord.row > row){
 				// found cell to update
 				var cell = view.getCell(coord.row, coord.column+1);
-				
-				
+
+
 	            var browser = this.detectBrowser();
 	            var IE = false;
 	            if(browser != null && browser == 'IE'){
 	            	IE = true;
-	            }				
-				
-	            
-	            
-		  		var previousTotal; 
-		  			
+	            }
+
+
+
+		  		var previousTotal;
+
 		  		if(IE == true){
 		  			previousTotal = parseFloat(cell.innerText);
 			  		// add to previous total the difference between new and old value
 			  		var newTotal = previousTotal - previousValue + parseFloat(newValue);
 			  		newTotal = newTotal.toFixed(2);
 			  		cell.innerText = newTotal;
-		  		}	
+		  		}
 		  		else{
 		  			previousTotal = parseFloat(cell.textContent);
 			  		// add to previous total the difference between new and old value
@@ -1785,29 +1788,29 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			  		newTotal = newTotal.toFixed(2);
 			  		cell.textContent = newTotal;
 		  		}
-		  		
-		  		
+
+
 		  		foundTotal = true;
-		  		
+
 			}
 		}
-  		
+
     }
     , checkIfReady: function(columns) {
     	   // check if data is not still loaded
-        if(this.indexColumnToMerge == null || this.indexColumnToMerge == undefined) 
- 		{ 
+        if(this.indexColumnToMerge == null || this.indexColumnToMerge == undefined)
+ 		{
  				return false;
  		}
          if(columns != undefined ) {
-         	if(columns[1] != undefined) 
+         	if(columns[1] != undefined)
          		{
          		if(columns[1].dataIndex=="data")
          			{
  					return false;
-         			} 
+         			}
          		}
-         } 
+         }
      return true;
     }
     ,
@@ -1821,13 +1824,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         if(this.checkIfReady(this.getColumnModel().config)==false){
         	return;
         }
-     
+
         // this array tells for each row if it was broken
         var rowIsBreakArray = new Array(rowCount);
         for (var r = 0; r < rowIsBreakArray.length; ++r) {
         	rowIsBreakArray[r] = false;
         }
-        
+
         // col is the index of column to span among column indexes array
         for (var col = 0; col < this.indexColumnToMerge.length; ++col) {
         	// index of column to span
@@ -1835,56 +1838,56 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         	var column = columns[colindex];
         	// index name of the column to span
         	var dataIndex = column.dataIndex;
-            
+
         	// store the previuous cell
         	var spanCell = null;
         	var spanCount = null;
         	var spanValue = null;
         	//var spanValueArray = new Array(this.indexColumnToMerge.length);
-        
+
         	// for each row of the store
         	for (var row = 0; row < rowCount; ++row) {
         			var record = store.getAt(row);
 
-        			// cell to be analyzed and current value 
+        			// cell to be analyzed and current value
         			var cell = view.getCell(row, colindex);
         			var value = record.get(dataIndex);
-            
-        			// set span if current value is different than previous or if that row was already broken 
+
+        			// set span if current value is different than previous or if that row was already broken
         			if (spanValue != value || rowIsBreakArray[row] == true) {
         					if (spanCell !== null) {
         						this.setSpan(Ext.get(spanCell), spanCount, column);
         						// if spanned is set means that at row-1 there is a break point, set it
         						rowIsBreakArray[row] = true;
         					}
-                
+
         					spanCell = cell;
         					spanCount = 1;
         					spanValue = value;
         					//if(cell){
         					//cell.on('afteredit', alert('prima'), this);
         					//}
-        					} 
+        					}
         			else {
         					spanCount++;
         			}
         	}
-        
+
 	        if (spanCell !== null) {
 	            this.setSpan(Ext.get(spanCell), spanCount, column);
 	        }
         }
     },
-    
+
     detectBrowser: function() {
     	var brow = null;
-    	
+
     	var val = navigator.userAgent.toLowerCase();
-           
+
     	if(val.indexOf("firefox") > -1)
     	{
     		brow = 'firefox';
-    	} 
+    	}
     	else if(val.indexOf("opera") > -1)
     	{
     		brow = 'opera';
@@ -1893,12 +1896,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
     	{
     		brow = 'IE';
 
-    	} 
+    	}
     	else if(val.indexOf("safari") > -1)
     	{
     		brow = 'safari';
 
-    	} 
+    	}
     	return brow;
     }
      ,setSpan: function(cell, count, column) {
@@ -1907,7 +1910,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         var innerCell = Ext.get(cd);
         var height = cell.getHeight();
         var width = cell.getWidth();
-        
+
         cell.setStyle('position', 'relative');
         if (count == 1) {
             innerCell.setStyle('position', '');
@@ -1917,9 +1920,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         } else {
             innerCell.setStyle('position', 'absolute');
             var lineHeight = height * (count);
-            innerCell.setStyle('line-height', lineHeight+'px');     
-            
-            
+            innerCell.setStyle('line-height', lineHeight+'px');
+
+
             var marginHeight = 1.5;
             var browser = this.detectBrowser();
 
@@ -1929,12 +1932,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             else if(browser != null && browser == 'firefox'){
             	marginHeight = 3;
             }
-            
+
             var hei = (marginHeight*count);
         	innerCell.setStyle('height', (height * count)+hei- cell.getPadding('tb') - innerCell.getPadding('tb') + 'px');
-            
+
 /*            if(count >= 8){
-            	
+
                 var hei = (marginHeight*count);
             	innerCell.setStyle('height', (height * count)+hei + 'px');
             }
@@ -1950,43 +1953,43 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             	  }
             	 }
 
-            
+
 //          if(count >= 8){
 //          	innerCell.setStyle('height', ((height+1) * count) + 'px');
 //          }
-            
+
             //            if(count >= 5 && count < 8){
 //            	innerCell.setStyle('height', (height * count - cell.getPadding('tb')) + 'px');
 //            }
-          
+
             if(count < 5){
             	innerCell.setStyle('height', (height * count - cell.getPadding('tb') - innerCell.getPadding('tb')) + 'px');
             } */
-            
+
             innerCell.setStyle('width', (width - cell.getPadding('lr') - innerCell.getPadding('lr')) + 'px');
 
             innerCell.setStyle('background-color', this.columnHeader2color[column.name]);
-  
+
         }
-    }        
-     
+    }
+
      , getFormatDate: function(idxcol, st){
     	   var columnFromTemplate = this.registryConfiguration.columns[idxcol];
 		   var formatDate;
 		   if(columnFromTemplate.format){
 			  return columnFromTemplate.format;
 		   }
-		   //defaults getted from locale files:		   
+		   //defaults getted from locale files:
 		   if(st != null && st !== undefined && st === 'timestamp')
 			   formatDate =  Sbi.locale.formats['timestamp'].dateFormat;
 		   else
 			   formatDate = Sbi.locale.formats['date'].dateFormat;
 		   return formatDate;
      }
-     
-    
+
+
      /**
-      * Opens the loading mask 
+      * Opens the loading mask
       */
      , showMask : function(){
      	if (this.saveMask == null) {
@@ -1998,12 +2001,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
      /**
       * Closes the loading mask
       */
-     , hideMask: function() {	
+     , hideMask: function() {
      	if (this.saveMask != null) {
      		this.saveMask.hide();
      	}
      }
-	
+
 });
 function isInteger(s) {
 	if (s.search) return (s.search(/^-?[0-9]+$/) == 0);
