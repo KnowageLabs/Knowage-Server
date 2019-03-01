@@ -85,7 +85,7 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 
 								Relationship connectingRel = pathRelations.get(i);
 
-								if (connectingRel != null) {
+								if (connectingRel != null && connectingRel.isConsidered() != false) {
 									connectingRelatiosnhips.add(connectingRel);
 									connectedEntities.add(connectingRel.getSourceEntity());
 									connectedEntities.add(connectingRel.getTargetEntity());
