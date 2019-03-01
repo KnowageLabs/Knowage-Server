@@ -41,12 +41,12 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.api.QbeQueryResource;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
@@ -54,6 +54,7 @@ import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -65,6 +66,7 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -129,13 +131,42 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		return found;
 	}
 
+	private IDataSet getActiveQueryAsDataSet(Query q) {
+		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
+
+	}
+
 	@Override
 	public IDataStore executeQuery(Integer start, Integer limit, Query filteredQuery) {
 		IDataStore dataStore = null;
 
 		IStatement statement = getEngineInstance().getDataSource().createStatement(filteredQuery);
-		QbeQueryResource queryResource = new QbeQueryResource();
-		IDataSet dataSet = queryResource.getActiveQueryAsDataSet(filteredQuery);
+
+		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
 		// QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = true; // GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 								// statement.getQuery().getQueryEntities(getDataSource()));

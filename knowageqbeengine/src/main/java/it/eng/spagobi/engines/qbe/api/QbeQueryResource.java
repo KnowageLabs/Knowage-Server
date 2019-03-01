@@ -567,7 +567,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return dataStore;
 	}
 
-	public IDataSet getActiveQueryAsDataSet(Query q) {
+	private IDataSet getActiveQueryAsDataSet(Query q) {
 		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
 		IDataSet dataSet;
 		try {
