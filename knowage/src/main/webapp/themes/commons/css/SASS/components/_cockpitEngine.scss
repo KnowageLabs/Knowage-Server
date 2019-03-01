@@ -49,6 +49,10 @@
     		}
     	}
     }
+
+    cockpit-advanced-table-widget {
+    	height: 100%;
+    }
     
     
     cockpit-discovery-widget {
@@ -2147,10 +2151,10 @@
             	outline: none;
             	cursor: pointer;
             	height: 32px;
-             	font-size: $mediumFontSize;
-            	line-height: 32px;
-             	vertical-align: middle;
-             	padding-right: 24px;
+			    font-size: $mediumFontSize;
+			    line-height: 32px;
+			    vertical-align: middle;
+			    padding-right: 24px;
             	&:hover {
             		background-color: rgba($tableSelectedElementColor,.3);
             	}

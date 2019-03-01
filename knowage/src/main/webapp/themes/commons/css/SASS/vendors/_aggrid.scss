@@ -127,6 +127,32 @@ $aggrid-border-color: #d9dcde;
 			border-top: none;
 		}
 	}
+	&.ag-theme-knowage-advanced {
+		height: 100%;
+		&.backendPagination {
+			height: calc(100% - 32px);
+			div[ref=south] {
+				display: none;
+			}
+		}
+		&.noPagination {
+			div[ref=south] {
+				display: none;
+			}
+		}
+		.ag-header-cell {
+			padding: 0;
+			.ag-cell-label-container {
+				padding-left: 12px;
+				padding-right: 12px;
+			}
+		}
+		.ag-cell {
+			line-height: 100%;
+			display: inline-flex;
+			align-items: center;
+		}
+	}
 }
 
 $exportBarHeight : 36px;
@@ -216,3 +242,4 @@ $exportBarHeight : 36px;
 		margin-top: 16px;
 	}
 }
+

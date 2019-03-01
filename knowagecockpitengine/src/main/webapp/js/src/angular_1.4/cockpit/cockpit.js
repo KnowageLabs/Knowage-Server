@@ -23,7 +23,7 @@ baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 var isIE = window.document.documentMode;
 
 (function() {
-
+	agGrid.initialiseAgGridWithAngular1(angular);
 var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
 	'ngSanitize',
@@ -41,17 +41,18 @@ var cockpitApp= angular.module("cockpitModule",[
 	'cockpitTable',
 	'jsonFormatter',
 	'ui.codemirror',
-	'knModule'
+	'knModule',
+	'agGrid'
 	]);
 cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$mdInkRippleProvider,$mdAriaProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
     if (isIE) {
 	    //$mdGestureProvider.disableAll();
-    	$mdThemingProvider.disableTheming();
+    	//$mdThemingProvider.disableTheming();
 	    $mdInkRippleProvider.disableInkRipple();
-	    $mdAriaProvider.disableWarnings();
 	  }
+    $mdAriaProvider.disableWarnings();
 });
 
 cockpitApp.controller("cockpitMasterControllerWrapper",

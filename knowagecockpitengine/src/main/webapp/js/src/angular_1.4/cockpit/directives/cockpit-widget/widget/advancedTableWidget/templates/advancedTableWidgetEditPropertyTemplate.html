@@ -1,0 +1,158 @@
+<md-card   class="flexCard customTableWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.table'))}}</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+	    <md-content flex layout="column">
+			<md-tabs flex md-border-bottom>
+				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.columns')}}">
+				
+					<md-card>
+				     	<md-card-content layout="row" layout-align="space-around center">
+				     		<dataset-selector flex ng-model=newModel.dataset.dsId on-change="changeDS(dsId);"></dataset-selector>  	
+						   	<md-input-container flex class="md-block"> 
+								<md-switch ng-model="newModel.settings.pagination.enabled" aria-label="Fixed rows per page" layout-align="center center">
+									 Pagination
+								</md-switch>
+						     </md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber')}}</label>
+									<input class="input_class" ng-model="newModel.settings.pagination.itemsNumber" type="number" min="1" ng-disabled="!newModel.settings.pagination.enabled">
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<md-switch ng-model="newModel.settings.pagination.frontEnd" aria-label="Frontend pagination" layout-align="center center"
+										ng-disabled="!newModel.settings.pagination.enabled">
+									 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.frontendpagination')}}
+								</md-switch>
+						     </md-input-container>
+						</md-card-content>
+					</md-card>
+					
+					<md-card>
+						<md-card-content class="noPadding" layout="column" layout-align="center none">
+						
+							<md-subheader class="noPadding" style="margin-bottom:8px;">
+								<div layout="row" layout-align="start center" style="height:48px; padding-left:8px">
+									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
+									<span flex></span>
+									<md-button ng-click="openListColumn()">{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.addcolumn')}} </md-button>
+					                <md-button ng-click="addNewCalculatedField()">{{translate.load('sbi.cockpit.widgets.table.calculatedFields.add')}}</md-button>
+				                </div>
+							</md-subheader>
+							<div layout="row" layout-margin>
+						        <md-input-container flex="40" class="md-block" ng-show="newModel.content.columnSelectedOfDataset.length>0">
+					      			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
+					         		<md-select md-option-empty ng-model="newModel.settings.modalSelectionColumn">
+					         			<md-option md-option-empty ng-value=""></md-option>
+					          			<md-option ng-repeat="modalcolumn in newModel.content.columnSelectedOfDataset" ng-value="modalcolumn.alias">
+					               			{{modalcolumn.alias}}
+					          			</md-option>
+					      			</md-select>
+							    </md-input-container>
+							    <md-input-container flex="40" class="md-block">
+					       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
+					          		<md-select ng-model="newModel.settings.sortingColumn" multiple="false">
+					          			<md-option></md-option>
+					           			<md-option ng-repeat="sortingColumn in newModel.content.columnSelectedOfDataset" ng-value="sortingColumn.alias">
+					                			{{sortingColumn.alias}}
+					           			</md-option>
+					       			</md-select>
+							    </md-input-container>
+							    <md-input-container flex="20" class="md-block">
+					       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
+					          		<md-select ng-model="newModel.settings.sortingOrder" ng-disabled="!newModel.settings.sortingColumn || newModel.settings.sortingColumn==''">
+					           			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
+					          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
+					       			</md-select>
+							    </md-input-container>
+							</div>
+				   			 <div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" layout-padding></div>
+				     	</md-card-content>
+				    </md-card>
+				</md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
+		        	<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = initTh()">Header</md-switch>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content>
+						<div flex layout=column >
+							<div flex layout="row" >
+								
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-family']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}"><span ng-style="{'font-family':fam.value}">{{fam.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container flex class="md-block" >
+									<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+									<input ng-model="newModel.style.th['font-size']" ng-disabled="!newModel.style.th.enabled" type="text"/>
+									<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-weight']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-style']" ng-disabled="!newModel.style.th.enabled">
+										<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								
+							</div>
+							<div flex layout=column >
+								<div flex layout="row" >
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
+										<md-select aria-label="aria-label" ng-model="newModel.style.th['justify-content']" ng-disabled="!newModel.style.th.enabled">
+											<md-option ng-repeat="fjc in cockpitModule_generalOptions.flexJustifyContent" ng-value="fjc.value">{{fjc.label}}</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+										<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th.color"/>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+										<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th['background-color']"/>
+									</md-input-container>
+									
+								</div>
+							</div>
+						</div>
+					</md-card-content>
+
+					</md-card>
+		        </md-tab>
+		        
+		        <md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">
+					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
+				</md-tab>
+		     	
+		     	 <md-tab label="{{translate.load('sbi.cockpit.widget.table.filters')}}">
+		        	<cockpit-filters-configuration ng-model-shared="newModel"></cockpit-filters-configuration>
+		        </md-tab>
+		        
+	      	</md-tabs>
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>
