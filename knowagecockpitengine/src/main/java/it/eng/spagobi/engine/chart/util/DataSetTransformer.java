@@ -736,10 +736,10 @@ public class DataSetTransformer {
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 
-		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie);
+		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
 				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
-			dataColumnsMapper.remove(categorieColumns.get("orderColumn"));
+			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
 		}
 		String primCat;
 		String secCat;
@@ -750,9 +750,9 @@ public class DataSetTransformer {
 				secCat = "column_2";
 				seria = "column_3";
 			} else {
-				primCat = dataColumnsMapper.get(categorieColumns.get("column"));
+				primCat = dataColumnsMapper.get(categorieColumns.get("column").toLowerCase());
 				secCat = columnForGroupingSerie;
-				seria = dataColumnsMapper.get(categorieColumns.get("groupby"));
+				seria = dataColumnsMapper.get(categorieColumns.get("groupby").toLowerCase());
 			}
 		} else {
 			if (groupSeriesBool) {
