@@ -3,7 +3,9 @@
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
+		#if(!$dataColumnsMapper.get($dataFieldHeader.toLowerCase()))
     	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader.toLowerCase() , $dataField.name))
+    	#end
 	#end
 #end
 #set($rows = $data.rows) ## data in table rows
@@ -1040,7 +1042,8 @@
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 			#end
-		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg, $dataColumnsMapper,$groupedSerie))
+
+		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg, $dataColumnsMapper, $categorieColumns, $groupedSerie))
      
 		#end
 
