@@ -458,6 +458,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.paramsPreviewGrid = {
 			rowData: $scope.pars,
 			angularCompileRows: true,
+			stopEditingWhenGridLosesFocus:true,
 	        enableColResize: false,
 	        enableFilter: true,
 	        enableSorting: true,
