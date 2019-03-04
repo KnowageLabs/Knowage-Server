@@ -679,6 +679,39 @@ sbiM.service('multipartForm',['$http', 'sbiModule_config',function($http, sbiMod
 }]);
 
 
+sbiM.service('sbiModule_urlDeserializator', function(){
+
+ 	var urlSer = {};
+
+ 	urlSer.deserializeParameters = function(urlMenuParameters) {
+		urlSer.menuParams = {};
+		var menuParameters = urlMenuParameters;
+		var splittedMenuParams = menuParameters=='null' || menuParameters==''? [] : menuParameters.split("&");
+
+ 		for(var i=0;i<splittedMenuParams.length;i++){
+			var splittedItem=splittedMenuParams[i].split("=");
+			if(splittedItem[1]==undefined){throw true;}
+			if(urlSer.menuParams.hasOwnProperty(splittedItem[0])) {
+				var arrayOfValues = [];
+				if(Array.isArray(urlSer.menuParams[splittedItem[0]])) {
+					arrayOfValues = urlSer.menuParams[splittedItem[0]];					
+				} else {
+					arrayOfValues.push(urlSer.menuParams[splittedItem[0]]);
+				}				
+				arrayOfValues.push(splittedItem[1]);
+				urlSer.menuParams[splittedItem[0]]=arrayOfValues;
+			} else {
+				urlSer.menuParams[splittedItem[0]]=splittedItem[1];
+			}
+		}
+		return urlSer.menuParams;
+	}
+
+ 	return urlSer;
+
+ });
+
+
 sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices, $q) {
 	
 	var self = this;

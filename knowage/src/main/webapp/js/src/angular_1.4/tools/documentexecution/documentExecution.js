@@ -16,7 +16,7 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
+			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu','sbiModule_i18n','sbiModule_device',
 			 'driversExecutionService','driversDependencyService',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
@@ -24,7 +24,7 @@
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
 			$timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices,
-			cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device,driversExecutionService,driversDependencyService) {
+			cockpitEditing, $window, $httpParamSerializer, $mdMenu,sbiModule_i18n, sbiModule_device,driversExecutionService,driversDependencyService) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -348,7 +348,7 @@
 
 			var parametersO = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 			//var parameters = encodeURIComponent(JSON.stringify(parametersO)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-			var parameters = $scope.urlEncode(parametersO);
+			var parameters = $httpParamSerializer(parametersO);
 
 			var passToService = {};
 			passToService.label = label;
@@ -382,7 +382,7 @@
 				+ "&ORGANIZATION="+tenant;
 
 				if(parameters != undefined && parameters != ''){
-					url += "&PARAMETERS="+parameters;
+					url += "&PARAMETERS=" + encodeURIComponent(parameters);
 				}
 
 				var urlToSend;

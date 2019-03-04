@@ -286,7 +286,7 @@
 			var parseParameterListOrComboxSelectionType = function(parameter){
 				if(parameter.multivalue) {
 					parameter.parameterValue = parameter.parameterValue || [];
-					jsonDatumValue = parameter.parameterValue;
+					executionService.jsonDatumValue = parameter.parameterValue;
 					// set descritpion
 					if(parameter.parameterDescription){
 						// if already in the form ; ;
@@ -314,7 +314,7 @@
 							executionService.jsonDatumDesc = desc;
 						}
 					}else{
-						executionService.jsonDatumDesc = jsonDatumValue.join(";");
+						executionService.jsonDatumDesc = executionService.jsonDatumValue.join(";");
 					}
 
 				} else {
