@@ -15,15 +15,17 @@
 		   	</div>
 		</md-toolbar>
 		<md-content flex layout="column" >
-			<div layout="row" layout-align="center center" ng-if="(filters | filter : field.id).length==0">
+		
+			<div layout="row" layout-align="center center" ng-if="(filters | filter : field.name).length==0">
 				<div class="kn-noItems" flex="60" flex-xs="100">
 					<p class="ng-binding">{{translate.load("kn.qbe.filters.nofilters")}}</p>
 				</div>
 			</div>
-			<md-card ng-if="(filters | filter : field.id).length > 0">
+			<md-card ng-if="(filters | filter : field.name).length > 0">
+			
 				<md-card-content layout="column" layout-padding>
 
-					<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filter in filters | filter: field.id" >     			
+					<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filter in filters | filter: field.name" >     			
 						<md-input-container flex=30  >
 							<label class="filterLabel">{{translate.load("kn.qbe.general.field")}}</label>
 				      		<input name="leftOperand" ng-model="filter.leftOperandDescription" readonly>
@@ -35,8 +37,8 @@
 					          	<md-tooltip md-direction="bottom">
 					          	{{translate.load("kn.qbe.filters.tootip")}}
 								</md-tooltip>
-				                 <md-option ng-repeat="operator in getConditionOptionsbyField(field.id)" value="{{operator.value}}" >{{operator.name}}
-				                 </md-option>
+				                 <md-option ng-repeat="operator in getConditionOptionsbyField(field.name)" value="{{operator.value}}" >{{operator.name}}
+				                 </md-option> 
 				                 
 				             </md-select>   
 				        </md-input-container>
