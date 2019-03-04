@@ -20,7 +20,7 @@
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
-		
+
 		$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 
 		if(!$scope.model.settings.modalSelectionColumn){
@@ -84,7 +84,7 @@
 			}
 		}
 		$scope.colorPickerProperty={format:'rgb'}
-		
+
 		$scope.columnsGrid = {
 			angularCompileRows: true,
 	        enableColResize: false,
@@ -93,6 +93,7 @@
 	        onRowDragMove: onRowDragMove,
 	        onGridReady : resizeColumns,
 	        onCellEditingStopped: refreshRow,
+	        stopEditingWhenGridLosesFocus:true,
 	        columnDefs: [
 	        	//{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.name'), field:'name',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
@@ -106,7 +107,7 @@
 	        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
 			rowData: $scope.model.content.columnSelectedOfDataset
 		}
-		
+
 		function onRowDragMove(event) {
 		    if (event.node !== event.overNode) {
 		    	var fromIndex = $scope.model.content.columnSelectedOfDataset.indexOf(event.node.data);
@@ -115,7 +116,7 @@
 		    	var newStore = $scope.model.content.columnSelectedOfDataset.slice();
 		        moveInArray(newStore, fromIndex, toIndex);
 		        $scope.model.content.columnSelectedOfDataset = newStore;
-		        
+
 		        $scope.columnsGrid.api.setRowData(newStore);
 		        $scope.columnsGrid.api.clearFocusedCell();
 		    }
@@ -126,11 +127,11 @@
 		        arr.splice(toIndex, 0, element);
 		    }
 		}
-		
+
 		function resizeColumns(){
 			$scope.columnsGrid.api.sizeColumnsToFit();
 		}
-		
+
 		function orderRenderer(params){
 			if(!params.data.order) {
 				params.data.order = params.rowIndex;
@@ -144,22 +145,22 @@
 						downButton+
 				 	'</div>';
 		}
-		
+
 		function editableCell(params){
 			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
 		}
 		function isInputEditable(params) {
-			return typeof(params.data.name) !== 'undefined'; 
+			return typeof(params.data.name) !== 'undefined';
 		}
 		function isAggregationEditable(params) {
 			return params.data.fieldType == "MEASURE" ? true : false;
 		}
-		
+
 		function aggregationRenderer(params) {
 			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 			return params.data.fieldType == "MEASURE" ? aggregation : '';
 		}
-		
+
 		function buttonRenderer(params){
 			var calculator = '';
 			if(params.data.isCalculated){
@@ -173,11 +174,11 @@
 					'</md-button>'+
 					'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 		}
-		
+
 		function refreshRow(cell){
 			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
-		
+
 		$scope.moveUp = function(evt,index){
 			evt.stopImmediatePropagation();
 			for(var k in $scope.model.content.columnSelectedOfDataset){
@@ -194,12 +195,12 @@
 			}
 			$scope.columnsGrid.api.setRowData($scope.model.content.columnSelectedOfDataset);
 		};
-		
+
 		$scope.draw = function(rowName) {
 			for(var k in $scope.model.content.columnSelectedOfDataset){
 				if($scope.model.content.columnSelectedOfDataset[k].name == rowName) $scope.selectedColumn = $scope.model.content.columnSelectedOfDataset[k];
 			}
-			
+
 			$mdDialog.show({
 				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
 				parent : angular.element(document.body),
@@ -216,7 +217,7 @@
 				console.log("Selected column:", $scope.selectedColumn);
 			});
 		},
-		
+
 		$scope.deleteColumn = function(rowName,event) {
 			for(var k in $scope.model.content.columnSelectedOfDataset){
 				if($scope.model.content.columnSelectedOfDataset[k].name == rowName) var item = $scope.model.content.columnSelectedOfDataset[k];
@@ -234,7 +235,7 @@
 				$scope.columnsGrid.api.sizeColumnsToFit();
 			}
 		})
-		
+
 
 		$scope.actionsOfCockpitColumns = [{
 	    	  icon:'fa fa-calculator' ,
@@ -577,18 +578,18 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
 	$scope.availableIcons = knModule_fontIconsService.icons;
-	
+
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
-	
+
 	$scope.hasPrecision = function(column){
 		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){
 			return true;
 		}
 		return false;
 	}
-	
+
 	$scope.chooseIcon = function(range) {
 		$scope.tempVar = !$scope.tempVar;
 		$scope.currentRange=range;
@@ -598,8 +599,8 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		$scope.currentRange.icon = family.className+' '+icon.className;
 		$scope.tempVar = !$scope.tempVar;
 	}
-	
-	
+
+
 	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
 	{
 		$scope.selectedColumn.colorThresholdOptions={};
