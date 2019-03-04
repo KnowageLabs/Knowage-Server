@@ -249,7 +249,7 @@ function cockpitChartWidgetControllerFunction(
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
-
+			$scope.ngModel.dataset.label = $scope.ngModel.dataset.dsLabel;
 			var filtersParams = cockpitModule_datasetServices.getWidgetSelectionsAndFilters($scope.ngModel,$scope.ngModel.dataset, false);
 
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
