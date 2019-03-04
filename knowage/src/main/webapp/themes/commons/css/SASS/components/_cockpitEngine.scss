@@ -476,6 +476,9 @@
 			                			white-space: nowrap;
 			                			overflow: hidden;
 			                			text-overflow: ellipsis;
+			                			span {
+			                				font-size: inherit;
+			                			}
 			                		}
 			                		.barChart {
 							            .progressTrack {
