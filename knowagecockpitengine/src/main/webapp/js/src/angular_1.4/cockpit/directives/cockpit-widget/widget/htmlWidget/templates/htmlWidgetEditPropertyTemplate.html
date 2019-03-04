@@ -53,7 +53,7 @@
 						        <div class="kn-noItems" ng-if="tag.hidden">{{tag.hiddenMessage}}</div>
 				  				<div layout="row" ng-if="!tag.hidden" style="padding:8px" layout-wrap>
 					  				<md-input-container ng-repeat="input in tag.inputs" class="md-block" ng-class="input.flex">
-										<label>{{input.name}}</label>
+										<label ng-if="input.type != 'check'">{{input.label || input.name}}</label>
 										<md-select ng-if="input.type == 'select'" ng-model="helper[tag.name][input.name]" >
 											<md-option ng-repeat="opt in input.options" ng-value="opt.name">{{opt.name}}</md-option>
 										</md-select>
@@ -85,7 +85,7 @@
 		   			</md-card>	
 		     	</md-tab>
 		     	
-		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" ng-disabled="!newModel.dataset.dsId">
+		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
 		     	

@@ -154,33 +154,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		//Core wrapper function to prepare css and styles to be parsed
 		$scope.manageHtml = function(){
-			if($scope.ngModel.cssToRender){
-				$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
-						function(placeholderResultCss){
-							placeholderResultCss = $scope.parseCalc(placeholderResultCss);
-							$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
-						}
-					)
-			}
-			if($scope.ngModel.htmlToRender){
-				var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
-				
-				 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
-				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
-				wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
-				
-				$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
-					function(resultHtml){
-						$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
-							function(placeholderResultHtml){
-								placeholderResultHtml = $scope.parseCalc(placeholderResultHtml);
-								$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
-								$scope.hideWidgetSpinner();
+			$scope.parseAggregations($scope.ngModel.cssToRender + $scope.ngModel.htmlToRender).then(function(resultHtml){
+				if($scope.ngModel.cssToRender){
+					$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
+							function(placeholderResultCss){
+								placeholderResultCss = $scope.parseCalc(placeholderResultCss);
+								$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
 							}
 						)
-					}
-				)
-			}else $scope.hideWidgetSpinner();
+				}
+				if($scope.ngModel.htmlToRender){
+					var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
+					
+					 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
+					wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
+					wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
+					
+					$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
+						function(resultHtml){
+							$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
+								function(placeholderResultHtml){
+									placeholderResultHtml = $scope.parseCalc(placeholderResultHtml);
+									$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
+									$scope.hideWidgetSpinner();
+								}
+							)
+						}
+					)
+				}else $scope.hideWidgetSpinner();
+			})
 		}
 
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
@@ -200,6 +202,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var parser = new DOMParser()
 				var parsedHtml = parser.parseFromString(rawHtml, "text/html"); 
 				var allElements = parsedHtml.getElementsByTagName('*');
+				allElements = $scope.parseRepeat(allElements);
+				allElements = $scope.parseIf(allElements);
+				allElements = $scope.parseAttrs(allElements);
+				resolve(parsedHtml);
+			})
+		}
+		
+		$scope.parseAggregations = function(rawHtml){
+			return $q(function(resolve, reject) {
 				var aggregationsReg = rawHtml.match($scope.aggregationsRegex);
 				if(aggregationsReg) {
 					var tempModel = angular.copy($scope.ngModel);
@@ -211,6 +222,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						for(var m in tempDataset.metadata.fieldsMeta){
 							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
 								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
+								tempDataset.metadata.fieldsMeta[m].fieldType = 'MEASURE';
 								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
 								var exists = false;
 								for(var c in tempModel.content.columnSelectedOfDataset){
@@ -222,21 +234,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					
 					cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, tempModel, undefined).then(
-							function(data){
-								$scope.aggregationDataset = data;
-								allElements = $scope.parseRepeat(allElements);
-								allElements = $scope.parseIf(allElements);
-								allElements = $scope.parseAttrs(allElements);
-								resolve(parsedHtml);
-							},function(error){
-								$scope.hideWidgetSpinner();
-								reject(error);
-							});
+						function(data){
+							$scope.aggregationDataset = data;
+							resolve();
+						},function(error){
+							$scope.hideWidgetSpinner();
+							reject();
+						});
 				}else{
-					allElements = $scope.parseRepeat(allElements);
-					allElements = $scope.parseIf(allElements);
-					allElements = $scope.parseAttrs(allElements);
-					resolve(parsedHtml);
+					resolve();
 				}
 			})
 		}
