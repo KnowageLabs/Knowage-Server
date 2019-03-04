@@ -413,15 +413,18 @@ viewportHeight = viewportHeight * zoomFactor;
 zoomFactor = zoomFactor * 0.99;
 
 // this function renders the page
-var renderPage = function (page, resolve) {
+var renderPage = function (page) {
+	log("[RENDERPAGE] IN");
+  page.zoomFactor = zoomFactor;
+
+  // render the page
   try {
+    log('Rendering PNG to target folder: ' + targetPath);
     var targetFile = targetPath + "_" + page.sheet + ".png";
-    log("Sheet " + page.sheet + ": rendering in " + jsExitingWait + "ms to file " + targetFile);
+    log("Rendering PNG as target file: " + targetFile);
     window.setTimeout(function () {
-        log("Sheet " + page.sheet + ": rendering in progress...");
     	page.render(targetFile);
-    	log("Sheet " + page.sheet + ": rendering completed");
-    	resolve(page.sheet);
+    	page.resolve();
     }, jsExitingWait);
   } catch (error) {
     err('Failed to render PNG: ' + error);
@@ -430,9 +433,9 @@ var renderPage = function (page, resolve) {
 };
 
 var applySettingOnPage = function(page, sheet, url) {
+	log("[APPLYSETTINGONPAGE] IN");
 	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };
-	page.zoomFactor = zoomFactor;
 
 	var d = new Date();
 	var uniqueToken = d.getTime();
@@ -450,11 +453,12 @@ var applySettingOnPage = function(page, sheet, url) {
 var urls = new Map();
 
 for(var i=0; i<sheets; i++) {
+	log("Looping over sheets, if any");
 	var currentUrl = decodeURIComponent(baseUrl);
 	if(i > 0) {
 		currentUrl = currentUrl + "&sheet=" + i;
 	}
-	log("Sheet " + i + ": URL to be processed = " + currentUrl);
+	log("URL to be processed = " + currentUrl);
 	urls.set(i, currentUrl);
 }
 
@@ -462,21 +466,17 @@ var queue = [];
 urls.forEach(function(url, sheet) {
     var p = new Promise(function(resolve, reject) {
         var page = require('webpage').create();
+        page.resolve = resolve;
         applySettingOnPage(page, sheet, url);
-        log("Sheet " + sheet + ": processing URL " + url + " with rendering id " + renderId);
-        page.open(url).then(function(status) {
-            if (status == "success") {
-                log("Sheet " + sheet + ": calling renderPage in " + jsRenderingWait + "ms");
-                setTimeout(renderPage, jsRenderingWait, page, resolve);
-            }else{
-                reject(sheet);
-            }
+        log("Processing URL " + url + " during rendering with id " + renderId);
+        page.open(url, function() {
+        	setTimeout(renderPage, jsRenderingWait, page);
         });
     });
     queue.push(p);
 }, urls);
 
 Promise.all(queue).then(function(values) {
-    log("Sheets " + values + " completed");
+    log(values);
     slimer.exit();
 });
