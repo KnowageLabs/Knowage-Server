@@ -412,11 +412,6 @@ viewportWidth = viewportWidth * zoomFactor;
 viewportHeight = viewportHeight * zoomFactor;
 zoomFactor = zoomFactor * 0.99;
 
-var exit = function(code) {
-	log("Exit from SlimerJS with code: " + code)
-	slimer.exit(code);
-}
-
 // this function renders the page
 var renderPage = function (page) {
 	log("[RENDERPAGE] IN");
@@ -429,20 +424,19 @@ var renderPage = function (page) {
     log("Rendering PNG as target file: " + targetFile);
     window.setTimeout(function () {
     	page.render(targetFile);
-    }, (jsExitingWait / 2) );
+    	page.resolve(page.sheet);
+    }, jsExitingWait * sheets);
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
   }
-
-  setTimeout(exit, jsExitingWait * sheets, 0);
 };
 
 var applySettingOnPage = function(page, sheet, url) {
 	log("[APPLYSETTINGONPAGE] IN");
 	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };
-	
+
 	var d = new Date();
 	var uniqueToken = d.getTime();
 	log("Unique token " + uniqueToken);
@@ -472,6 +466,7 @@ var queue = [];
 urls.forEach(function(url, sheet) {
     var p = new Promise(function(resolve, reject) {
         var page = require('webpage').create();
+        page.resolve = resolve;
         applySettingOnPage(page, sheet, url);
         log("Processing URL " + url + " during rendering with id " + renderId);
         page.open(url, function() {
