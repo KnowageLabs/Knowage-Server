@@ -302,25 +302,9 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 
 		try {
 			List listOfRoles = (List) profile.getRoles();
-//			IRoleDAO roleDao = DAOFactory.getRoleDAO();
-//			ISbiNewsDAO newsDao = DAOFactory.getSbiNewsDAO();
-//
-//			Set<SbiExtRoles> setOfRoles = new HashSet<>();
-//
-//			for (int i = 0; i < listOfRoles.size(); i++) {
-//				Role role = roleDao.loadByName((String) listOfRoles.get(i));
-//				SbiExtRoles extRoles = roleDao.loadSbiExtRoleById(role.getId());
-//
-//				setOfRoles.add(extRoles);
-//
-//			}
 			session = getSession();
 			String hql = " from SbiNews s where s.active=true and s.expirationDate >= current_date";
 			Query query = session.createQuery(hql);
-
-			// String hql = "from SbiNews s where s.sbiNewsRoles = :kolekciju_roles_idijeva";
-
-			// query.setParameterList("kolekciju_roles_idijeva", KOLEKCIJA)
 
 			List hibList = query.list();
 			Iterator iterator = hibList.iterator();
@@ -331,16 +315,6 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 					BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
 					setOfNews.add(basicNews);
 				}
-//				if (hibNews != null) {
-//					Set<SbiExtRoles> setOfExtRoles = hibNews.getSbiNewsRoles();
-//					Iterator<SbiExtRoles> roleIterator = setOfExtRoles.iterator();
-//					while (roleIterator.hasNext()) {
-//						if (listOfRoles.contains(roleIterator.next().getName())) {
-//							BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
-//							setOfNews.add(basicNews);
-//						}
-//					}
-//				}
 			}
 
 		} catch (HibernateException e) {
