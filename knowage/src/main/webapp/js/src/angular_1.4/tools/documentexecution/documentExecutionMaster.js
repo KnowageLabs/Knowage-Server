@@ -29,7 +29,7 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 	}
 
 })
-.controller('docExMasterController',function($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog, sbiModule_user){
+.controller('docExMasterController',function($scope,sbiModule_translate, $timeout, sourceDocumentExecProperties, sbiModule_urlDeserializator, sbiModule_config, $crossNavigationHelper,$documentNavigationScope,$mdDialog, sbiModule_user){
 	$scope.crossNavigationHelper=$crossNavigationHelper;
 	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
@@ -38,14 +38,7 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 		var err=false;
 		try{
 			var menuParameters = sourceDocumentExecProperties.MENU_PARAMETERS.replace(/&$/g, ''); //removes last '&' char
-
-			var splittedMenuParams = menuParameters=='null' || menuParameters==''? [] : menuParameters.split("&");
-
-			for(var i=0;i<splittedMenuParams.length;i++){
-				var splittedItem=splittedMenuParams[i].split("=");
-				if(splittedItem[1]==undefined){err=true;}
-				menuParams[splittedItem[0]]=splittedItem[1];
-			}
+			menuParams = sbiModule_urlDeserializator.deserializeParameters(menuParameters);
 		}catch(e){
 			err=true
 			console.error(e);

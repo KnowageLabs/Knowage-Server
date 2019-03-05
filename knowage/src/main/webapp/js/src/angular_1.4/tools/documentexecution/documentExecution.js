@@ -16,14 +16,14 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
+			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu', 'sbiModule_i18n','sbiModule_device',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device) {
+			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing, $window, $httpParamSerializer, $mdMenu, sbiModule_i18n,sbiModule_device) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -341,7 +341,7 @@
 
 			var parametersO = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 			//var parameters = encodeURIComponent(JSON.stringify(parametersO)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-			var parameters = $scope.urlEncode(parametersO);
+			var parameters = $httpParamSerializer(parametersO);
 
 			var passToService = {};
 			passToService.label = label;
@@ -357,13 +357,13 @@
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
 					return;
 				}
-				
+
 				if(host.endsWith("/")){
 					host = host.substring(0, host.length - 1);
 				}
 
 				var url;
-				
+
 				if(canExec == true) {
 					// If document is public, authentication is not needed
 					url = host
@@ -378,18 +378,18 @@
 					+ "&NEW_SESSION=true";
 				} else {
 					// Document is not public, so user need to be redirected to login page firstly, then execute the document
-					url = host 
+					url = host
 					+ context
 					+ adapter
 					+ "?"
 					+ "PAGE=LoginPage"
 					+  "&OBJECT_LABEL="+label
-					+ "&TOOLBAR_VISIBLE=true"					
+					+ "&TOOLBAR_VISIBLE=true"
 					+ "&NEW_SESSION=true";
 				}
-				
+
 				if(parameters != undefined && parameters != ''){
-					url += "&PARAMETERS="+parameters;
+					url += "&PARAMETERS=" + encodeURIComponent(parameters);
 				}
 
 				var urlToSend;
