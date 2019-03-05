@@ -77,8 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
+						tempCol.cellRenderer = cellRenderer;
 						columns.push(tempCol);
 						break;
 					}
@@ -102,9 +104,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function getCellStyle(params){
-			var tempStyle = angular.copy(params.colDef.style);
+			var tempStyle = params.colDef.style || {};
+			if(params.colDef.ranges && params.colDef.ranges.length > 0){
+				for(var k in params.colDef.ranges){
+					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
+						tempStyle['background-color'] = params.colDef.ranges[k]['background-color'] || '';
+						tempStyle['color'] = params.colDef.ranges[k]['color'] || '';
+                        if (params.colDef.ranges[k].operator == '==') break;
+                    }
+				}
+			}
 			return tempStyle;
 		}
+		
+		function cellRenderer(params){
+			var tempValue = params.value;
+			if(params.colDef.ranges && params.colDef.ranges.length > 0){
+				for(var k in params.colDef.ranges){
+					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
+						tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>'
+                        if (params.colDef.ranges[k].operator == '==') break;
+                    }
+				}
+			}
+			return tempValue;
+		}
+		
 		
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
@@ -126,7 +151,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
-					$scope.ngModel.settings.pagination.itemsNumber = $scope.advancedTableGrid.api.getLastDisplayedRow()+1;
+					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;
 				}
 				if(!$scope.ngModel.settings.pagination.enabled) $scope.advancedTableGrid.api.paginationSetPageSize($scope.totalRows);
@@ -151,7 +176,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				pagination : true,
 				onCellClicked: onCellClicked
 		}
-		
 		
 		function resizeColumns(){
 			$scope.advancedTableGrid.api.sizeColumnsToFit();
@@ -204,8 +228,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					else $scope.advancedTableGrid.paginationAutoPageSize = false;
 				}else if(newValue && !newValue.enabled){
 					$scope.advancedTableGrid.paginationAutoPageSize = false;
-					$scope.advancedTableGrid.paginationPageSize = $scope.totalRows;
-				}else $scope.advancedTableGrid.paginationAutoPageSize = false;
+					$scope.advancedTableGrid.paginationPageSize = angular.copy($scope.totalRows);
+				}else {
+					if(!newValue.itemsNumber) $scope.advancedTableGrid.paginationAutoPageSize = false;
+					if(!newValue.itemsNumber) $scope.advancedTableGrid.paginationPageSize = 15;
+				}
 				$scope.showGrid = true;
 				if(newValue && newValue.enabled != oldValue.enabled) $scope.refreshWidget();
 			}

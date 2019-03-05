@@ -49,6 +49,8 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 	        onRowDragMove: onRowDragMove,
 	        onGridReady : resizeColumns,
 	        onCellEditingStopped: refreshRow,
+	        singleClickEdit: true,
+	        stopEditingWhenGridLosesFocus: true,
 	        columnDefs: $scope.columnsDefition,
 			rowData: $scope.newModel.content.columnSelectedOfDataset
 		}
