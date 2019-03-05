@@ -137,25 +137,28 @@
 	
 	<formula >
 		<name>Locate</name>
-		<syntax>Locate(substring,string,start)</syntax>
-			<body>Locate(string)</body>
+		<syntax>Locate(substring, string, start)</syntax>
+			<body>Locate(substring, string, start)</body>
 			<argument>
 				<name>Substring</name>
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>Substring to search in a string</argument_description>
+				<placeholder>substring</placeholder>
 			</argument>
 			<argument>
 				<name>String</name>
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>String that will be searched</argument_description>
+				<placeholder>string</placeholder>
 			</argument>
 			<argument>
 				<name>Start</name>
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>The starting position for the search.Position 1 is default</argument_description>
+				<placeholder>start</placeholder>
 			</argument>
 			
 		<output>Integer</output>
@@ -192,18 +195,21 @@
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>String to extract from</argument_description>
+				<placeholder>string</placeholder>
 			</argument>
 			<argument>
 				<name>Start positions</name>
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>The position to start extraction from. The first position in string is 1</argument_description>
+				<placeholder>start_pos</placeholder>
 			</argument>
 			<argument>
 				<name>Number of chars</name>
 				<expected_value></expected_value>
 				<default_value></default_value>
 				<argument_description>The number of characters to extract</argument_description>
+				<placeholder>number_of_chars</placeholder>
 			</argument>
 			
 		<output>String</output>
