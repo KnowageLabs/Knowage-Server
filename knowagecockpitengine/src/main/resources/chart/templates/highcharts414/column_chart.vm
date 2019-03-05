@@ -1428,7 +1428,7 @@
 	    	dataLabels: {
 	    		allowOverlap: true,
 	    	},
-	    	#set ($counterX = 0)
+	    	#set ($countXvalues = 0)
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
