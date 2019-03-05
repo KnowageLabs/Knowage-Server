@@ -424,8 +424,8 @@ var renderPage = function (page) {
     log("Rendering PNG as target file: " + targetFile);
     window.setTimeout(function () {
     	page.render(targetFile);
-    	page.resolve();
-    }, jsExitingWait);
+    	page.resolve(page.sheet);
+    }, jsExitingWait * sheets);
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
