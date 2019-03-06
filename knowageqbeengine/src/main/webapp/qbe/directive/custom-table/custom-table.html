@@ -237,8 +237,9 @@
 	      	</md-button>
 	   		</div>   		
 	    	</md-toolbar>
-	   	
-   		<div ng-repeat="row in field.data" class="qbeCustomRow">{{row.value}}&nbsp;</div>
+	    
+   		<div dir-paginate="row in field.data | itemsPerPage: itemsPerPage"  total-items="results" current-page="start" class="qbeCustomRow">{{row.value}}&nbsp;</div>
+	    
 	   	<md-toolbar class="secondaryToolbar">
 	   		<div class="md-toolbar-tools">
 		   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="showFilters(field)">
@@ -256,6 +257,14 @@
       	</md-toolbar>
      </div>  
    </div>
-  <md-content>
+  
+  </md-content>
+  	<div layout="row">
+  		<span flex></span>
+  		 <dir-pagination-controls  max-size="5"   on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+  	</div>
+  
+   
+      
 </div>
 

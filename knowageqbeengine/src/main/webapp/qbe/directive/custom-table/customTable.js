@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_custom_table', ['ngDraggable','exportModule'])
+angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.directives.dirPagination'])
 .directive('qbeCustomTable', function() {
     return {
         restrict: 'E',
@@ -62,6 +62,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.previewModel = [];
 
+	$scope.pageChanged = function(newPageNumber){
+		$rootScope.$broadcast('start',{"itemsPerPage":$scope.itemsPerPage, "currentPageNumber":newPageNumber});
+		}
 	$scope.start = 0;
 
 	$scope.itemsPerPage = 25;
@@ -226,7 +229,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$scope.completeResult = true;
 		angular.copy(data.columns, $scope.completeResultsColumns);
 		angular.copy(data.data, $scope.previewModel);
-		if($scope.firstExecution){
+		$scope.results = data.results;
+		if($scope.firstExecution&& !$scope.smartPreview){
 			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
 			$scope.firstExecution = false;
 		}

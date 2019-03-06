@@ -150,7 +150,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 
 		if(query.fields.length>0){
-			return query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
+			return query_service.executeQuery( query, bodySend, queryModel, true, start, itemsPerPage);
 		}else{
 			queryModel.length = 0;
 		}
