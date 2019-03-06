@@ -46,7 +46,7 @@
 	#end
 #end
 #foreach($a in $xAxisMap)
-#if($a.name==$drilldownCategoryName.replaceAll(" ",""))
+#if($a.name==$drilldownCategoryName)
 #set($indexAxis = $a.id)
 #end
 #end
@@ -65,7 +65,7 @@
 
 	xAxis: $indexAxis,
 	#if($drilldownCategoryName != '')
-	#set ($category=$drilldownCategoryName.replaceAll(" ",""))
+	#set ($category=$drilldownCategoryName)
 	#else
 	#set ($category=$drilldownCategory)
 	#end
