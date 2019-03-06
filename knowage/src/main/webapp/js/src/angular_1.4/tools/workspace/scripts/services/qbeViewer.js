@@ -181,7 +181,7 @@ angular
 						position: $mdPanel.newPanelPosition().absolute().center(),
 						fullscreen: true,
 						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
-
+							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
 
 							$scope.closePanel = function(){
 								mdPanelRef.close();
