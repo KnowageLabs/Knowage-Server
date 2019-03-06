@@ -285,7 +285,25 @@ angular
 				$scope.showDrivers = !$scope.showDrivers;
 			}
 
-			$scope.closeDocument = function() {
+			var onClosing = function(){
+				console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+				$scope.selectedDataSet = {};
+
+				$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
+
+				if($scope.currentOptionMainMenu=="models"){
+
+					if ($scope.currentModelsTab=="federations") {
+						// If the suboption of the Data option is Federations.
+						$scope.getFederatedDatasets();
+					}
+
+				}
+
+				$mdDialog.hide();
+			}
+
+			$scope.closeDocument = function(confirm) {
 
 
 
@@ -293,27 +311,13 @@ angular
 					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 					$mdDialog.hide();
 					comunicator.sendMessage("close");
-				} else {
-
+				}else if(confirm){
 					openConfirmationPanel(function(){
-						console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
-						$scope.selectedDataSet = {};
-
-						$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
-
-						if($scope.currentOptionMainMenu=="models"){
-
-							if ($scope.currentModelsTab=="federations") {
-								// If the suboption of the Data option is Federations.
-								$scope.getFederatedDatasets();
-							}
-
-						}
-
-						$mdDialog.hide();
+						onClosing();
 					});
 
-
+				} else {
+						onClosing();
 
 				}
 			}
