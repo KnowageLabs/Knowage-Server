@@ -877,7 +877,7 @@ public class DataSetTransformer {
 				xAxis.put("type", "category");
 				id++;
 			}
-			xAxis.put("name", category.get("name").replaceAll("\\s", ""));
+			xAxis.put("name", category.get("name"));
 			xAxisMap.add(xAxis);
 			for (int i = 0; i < gbys.length; i++) {
 				if (!gbys[i].equals("")) {
@@ -890,7 +890,7 @@ public class DataSetTransformer {
 						xAxis1.put("type", "category");
 						id++;
 					}
-					xAxis1.put("name", gbys[i].replaceAll("\\s", ""));
+					xAxis1.put("name", gbys[i]);
 					xAxisMap.add(xAxis1);
 				}
 
