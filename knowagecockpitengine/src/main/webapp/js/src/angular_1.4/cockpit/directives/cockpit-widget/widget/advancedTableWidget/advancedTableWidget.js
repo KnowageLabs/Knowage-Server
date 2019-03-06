@@ -77,6 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.width) {
+							tempCol.width = parseInt($scope.ngModel.content.columnSelectedOfDataset[c].style.width);
+							tempCol.suppressSizeToFit = true;
+						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
@@ -87,6 +91,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			return columns
+		}
+		
+		function getColumnName(colNum){
+			for(var k in $scope.metadata.fields){
+				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
+			}
 		}
 		
 		function headerTemplate() { 
@@ -147,8 +157,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.showWidgetSpinner();
 			
 			if(datasetRecords){
+				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
-				$scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
+				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
@@ -172,15 +183,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.advancedTableGrid = {
 				angularCompileRows: true,
 				onGridSizeChanged: resizeColumns,
+				onGridReady: resizeColumns,
+				onSortChanged: changeSorting,
 				enableSorting: true,
 				pagination : true,
 				onCellClicked: onCellClicked
 		}
 		
+		function changeSorting(){
+			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
+				$scope.showWidgetSpinner()
+				var sorting = $scope.advancedTableGrid.api.getSortModel();
+				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
+				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
+				$scope.refreshWidget(null, 'sorting');
+			}
+		}
+		
 		function resizeColumns(){
 			$scope.advancedTableGrid.api.sizeColumnsToFit();
 		}
-	  	
+		
 	  	$scope.maxPageNumber = function(){
 			if($scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber < $scope.totalRows) return $scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber;
 			else return $scope.totalRows;
