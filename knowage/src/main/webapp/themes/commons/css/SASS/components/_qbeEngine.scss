@@ -314,7 +314,7 @@
         overflow: auto;
         .qbeCustomColumn {
             border-right: 1px solid $ternaryColor;
-            max-width: 200px;
+            max-width: 300px;
             &:first-child {
                 border-left: 1px solid $ternaryColor;  
             }
@@ -332,6 +332,13 @@
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
+                }
+                p {
+                    font-size: 10px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    margin: 0;
                 }
                 button.md-icon-button {
                     margin: 0;
