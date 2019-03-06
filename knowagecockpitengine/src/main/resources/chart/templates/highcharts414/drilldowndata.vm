@@ -61,7 +61,7 @@
 #set($serieColumnsMapped=$dataColumnsMapper.get($serieWithAgg))
 
 {
-	name:	"$selectedCategory = $escapeTool.javascript($selectedCategory)",
+	name:	"$escapeTool.javascript($selectedCategory)",
 
 	xAxis: $indexAxis,
 	#if($drilldownCategoryName != '')
