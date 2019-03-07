@@ -17,14 +17,14 @@
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
 			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu','sbiModule_i18n','sbiModule_device',
-			 'driversExecutionService','driversDependencyService',documentExecutionControllerFn]);
+			 'driversExecutionService','driversDependencyService', 'datasetPreview_service' ,documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
 			$timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices,
-			cockpitEditing, $window, $httpParamSerializer, $mdMenu,sbiModule_i18n, sbiModule_device,driversExecutionService,driversDependencyService) {
+			cockpitEditing, $window, $httpParamSerializer, $mdMenu,sbiModule_i18n, sbiModule_device,driversExecutionService,driversDependencyService, datasetPreview_service) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -655,7 +655,11 @@
             }
             return false;
 		};
-
+		
+		$scope.previewDataset = function(param, dataset) {
+			datasetPreview_service.previewDataset(param, dataset);
+		}
+		
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, otherOutputParameters){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 //			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
@@ -734,6 +738,17 @@ var execExternalCrossNavigation=function(outputParameters,inputParameters,target
 	}
 	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 };
+
+var execPreviewDataset = function(parameters, dataset) {
+	var parent = angular.element(frameElement).scope().$parent;
+	while(parent != undefined){
+		if(parent.previewDataset != undefined){
+			break;
+		}
+		parent = parent.$parent;
+	}
+	parent.previewDataset(parameters, dataset);
+}
 
 var execShowHelpOnLine=function(data){
 	var parent = angular.element(frameElement).scope().$parent;

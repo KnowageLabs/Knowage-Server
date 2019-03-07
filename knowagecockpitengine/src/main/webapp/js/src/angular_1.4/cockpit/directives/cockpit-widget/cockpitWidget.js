@@ -699,6 +699,11 @@ function cockpitWidgetControllerFunction(
 				if (previewDataset.parameters && previewDataset.parameters.length > 0)
 					config.parameters = $scope.checkPreviewParameters(previewDataset, columnName, modalColumn, row);
 				
+				//showing exporters
+				config.options = {
+						exports: ['CSV', 'XLSX']
+				};
+				
 				$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 							
 					$mdDialog.show({
