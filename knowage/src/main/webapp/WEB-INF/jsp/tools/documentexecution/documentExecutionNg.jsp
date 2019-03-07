@@ -161,6 +161,11 @@ if(executionRoleNames.size() > 0) {
         <!-- cross navigation -->
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cross-navigation/crossNavigationDirective.js")%>"></script>
         <!--  -->
+        
+        <!-- dataset preview - Birt report -->
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/birtReportDatasetPreview/datasetPreviewModule.js")%>"></script>
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/birtReportDatasetPreview/datasetPreview_service.js")%>"></script>
+
         <style type="text/css">
             .requiredField {color: red!important; font-weight: bold;}
             .norequiredField {}
@@ -479,7 +484,7 @@ if(executionRoleNames.size() > 0) {
         (function() {
             
             angular.module('documentExecutionModule', 
-                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload','driversExecutionModule']);
+                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload','driversExecutionModule', 'datasetPreviewModule']);
             
             
             
