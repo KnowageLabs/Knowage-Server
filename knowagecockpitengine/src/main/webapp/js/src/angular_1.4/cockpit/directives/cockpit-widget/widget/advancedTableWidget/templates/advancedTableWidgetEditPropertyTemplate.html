@@ -39,7 +39,7 @@
 									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
 									<span flex></span>
 									<md-button ng-click="openListColumn()">{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.addcolumn')}} </md-button>
-					                <md-button ng-click="addNewCalculatedField()">{{translate.load('sbi.cockpit.widgets.table.calculatedFields.add')}}</md-button>
+					                <calculated-field ng-model="newModel"></calculated-field>
 				                </div>
 							</md-subheader>
 							<div layout="row" layout-margin>
@@ -69,7 +69,7 @@
 					       			</md-select>
 							    </md-input-container>
 							</div>
-				   			 <div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" layout-padding></div>
+				   			 <div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;"></div>
 				     	</md-card-content>
 				    </md-card>
 				</md-tab>

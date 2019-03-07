@@ -19,7 +19,7 @@ angular
 	.module('cockpitModule')
 	.controller('advancedTableWidgetEditControllerFunction',advancedTableWidgetEditControllerFunction)
 
-function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers){
+function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
@@ -31,8 +31,8 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 	}
 	
 	$scope.columnsDefition = [
-    	{headerName: 'Name', field:'name',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
-    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'alias',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+    	{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
+    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
     		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
@@ -43,6 +43,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 	
 	$scope.columnsGrid = {
 			angularCompileRows: true,
+			domLayout: 'autoHeight',
 	        enableColResize: false,
 	        enableFilter: false,
 	        enableSorting: false,
@@ -97,15 +98,14 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 	function buttonRenderer(params){
 		var calculator = '';
 		if(params.data.isCalculated){
-			calculator = '<md-button class="md-icon-button" ng-click="addNewCalculatedField(\''+params.rowIndex+'\')">'+
-						 '<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button>';
+			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'"></calculated-field>';
 		}
 		return 	calculator +
-				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.alias+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
 				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
 				'	<md-icon ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
 				'</md-button>'+
-				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 	}
 	
 	function refreshRow(cell){
@@ -128,7 +128,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 	
 	$scope.draw = function(rowName) {
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
-			if($scope.newModel.content.columnSelectedOfDataset[k].name == rowName) $scope.selectedColumn = $scope.newModel.content.columnSelectedOfDataset[k];
+			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) $scope.selectedColumn = $scope.newModel.content.columnSelectedOfDataset[k];
 		}
 		
 		$mdDialog.show({
@@ -148,9 +148,67 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,model,sbiMo
 		});
 	},
 	
+	$scope.openListColumn = function(){
+		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined){
+			$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));
+		}else{
+			$mdDialog.show({
+				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsOfDataset.html',
+				parent : angular.element(document.body),
+				clickOutsideToClose:true,
+				escapeToClose :true,
+				preserveScope: true,
+				autoWrap:false,
+				locals: {model:$scope.newModel},
+				fullscreen: true,
+				controller: controllerCockpitColumnsConfigurator
+			}).then(function(answer) {
+			}, function() {
+			});
+		}
+	}
+	
+	function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,cockpitModule_datasetServices,cockpitModule_generalOptions){
+		$scope.translate=sbiModule_translate;
+
+		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+		$scope.model = model;
+		$scope.columnSelected = [];
+		$scope.localDataset = {};
+		if($scope.model.dataset && $scope.model.dataset.dsId){
+			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+		} else{
+			$scope.model.dataset= {};
+			angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
+		}
+		$scope.saveColumnConfiguration=function(){
+			model = $scope.model;
+
+			if(model.content.columnSelectedOfDataset == undefined){
+				model.content.columnSelectedOfDataset = [];
+			}
+
+			for(var i=0;i<$scope.columnSelected.length;i++){
+				var obj = $scope.columnSelected[i];
+				obj.aggregationSelected = 'SUM';
+				obj["funcSummary"] = "SUM";
+				obj.typeSelected = $scope.columnSelected[i].type;
+				obj.label = $scope.columnSelected[i].alias;
+				obj.aliasToShow = $scope.columnSelected[i].alias;
+				model.content.columnSelectedOfDataset.push(obj);
+			}
+
+			$mdDialog.hide();
+		}
+
+		$scope.cancelConfiguration=function(){
+			$mdDialog.cancel();
+		}
+	}
+	
 	$scope.deleteColumn = function(rowName,event) {
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
-			if($scope.newModel.content.columnSelectedOfDataset[k].name == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
+			if($scope.newModel.content.columnSelectedOfDataset[k].alia == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
 		}
   		  var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
 		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
