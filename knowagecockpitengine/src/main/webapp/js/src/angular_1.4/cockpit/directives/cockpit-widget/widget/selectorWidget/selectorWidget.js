@@ -360,7 +360,7 @@ angular.module('cockpitModule')
 		};
 
 		$scope.toggleParameter = function(parVal) {
-			if($scope.ngModel.settings.modalityPresent=="COMBOBOX"){
+			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
 				if(angular.equals(parVal, $scope.oldSelectedValues)){
 					return;
 				}
