@@ -88,7 +88,7 @@ angular.module('cockpitModule').directive('cockpitCrossCustomWidgetConfigurator'
 });
 
 function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,cockpitModule_generalServices,knModule_fontIconsService,
-		cockpitModule_generalOptions,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_documentServices, cockpitModule_crossServices){
+		cockpitModule_generalOptions,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_documentServices, cockpitModule_crossServices, $filter){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_properties=cockpitModule_properties;
@@ -97,6 +97,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.localDataset = {};
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
 	$scope.chartProperties=[];
+	$scope.widgetAvailableColumns = [];
 	$scope.availableIcons = knModule_fontIconsService.icons;
 	$scope.outputParametersType=
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
@@ -143,7 +144,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	if($scope.cockpitCross.outputParametersList == undefined){
 		$scope.cockpitCross.outputParametersList = [];
 	}
-
+	
 	for(var propt in docOutParList){
 		var dataType = docOutParList[propt];
 		var typeToPut="text";
@@ -159,6 +160,13 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	}
 
+	var setWidgetAvailableColumns = function(){
+		if ($scope.model && $scope.model.content)
+			$scope.widgetAvailableColumns = $scope.model.content.columnSelectedOfDataset;
+	}
+	
+	setWidgetAvailableColumns();
+	
 	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
 	
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
@@ -183,11 +191,17 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		
 	}
 	
-	$scope.$watchCollection('model',function(newValue,oldValue){
-		if(newValue && newValue.dataset){
-			$scope.localDataset = $scope.allCockpitDatasetsColumns[cockpitModule_datasetServices.getDatasetLabelById(newValue.dataset.dsId)];
+	$scope.$watchCollection('ngModel.preview.dataset',function(newValue,oldValue){
+		if(newValue !== oldValue){
+			var newPreviewingDSLabel = cockpitModule_datasetServices.getDatasetLabelById(newValue);
+			if ($scope.allCockpitDatasetsColumns[newPreviewingDSLabel] == undefined) {
+				var foundDs = $filter('filter')($scope.cockpitDatasets, {label: newPreviewingDSLabel}, true);
+				if (foundDs.length > 0)					
+				$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
+			} 
+			$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
 		}
-	})
+	});
 
 	if($scope.crossChart){
 		$scope.localModel.cross = $scope.localModel.cross || {};
