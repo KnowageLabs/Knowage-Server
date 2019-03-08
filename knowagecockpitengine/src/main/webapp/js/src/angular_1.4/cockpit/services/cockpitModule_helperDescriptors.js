@@ -27,7 +27,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 	self.htmlHelperJSON = function(datasetId,meta,parameters,cross,availableDatasets){
 		return [
 			{
-				'label':'Columns Data',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag1'),
 				'name': 'column',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag1.desc'),
 				'hidden': !datasetId ? true : false,
@@ -48,7 +48,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				],
 				'tag':"[kn-column='%%column%%'%%row%%%%precision%%]"},
 			{
-				'label':'Parameters',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag2'),
 				'name': 'parameter',
 				'description':sbiModule_translate.load('kn.cockpit.html.tag2.desc'),
 				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
@@ -61,7 +61,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				],
 				'tag':"[kn-parameter='%%parameter%%']"},
 			{
-				'label':'Repeater',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag3'),
 				'name': 'repeater',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag3.desc'),
 				'hidden': !datasetId ? true : false,
@@ -74,7 +74,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				],
 				'tag':'<div kn-repeat="true" %%limit%%></div>'},
 			{
-				'label':'Repeat index',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag4'),
 				'name': 'repeatIndex',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
 				'hidden': !datasetId ? true : false,
@@ -82,7 +82,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'tag':'[kn-repeat-index]'
 				},
 			{
-				'label':'Conditional container',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag5'),
 				'name': 'if',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag5.desc'),
 				'tag':'<div kn-if="%%condition%%"></div>',
@@ -91,8 +91,38 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'area',
 						'flex':'flex-100'}
 				]},
+				{
+					'label':sbiModule_translate.load('kn.cockpit.html.tag8'),
+					'name': 'calc',
+					'description': sbiModule_translate.load('kn.cockpit.html.tag8.desc'),
+					'inputs': [
+						{   'name':'calc',
+							'type': 'area',
+							'flex':'flex-100'},
+					 	{   'name':'min',
+							'type': 'text',
+							'flex':'flex',
+							'replacer':" min='***'"},
+					 	{   'name':'max',
+							'type': 'text',
+							'flex':'flex',
+							'replacer':" max='***'"},
+					 	{   'name':'precision',
+							'type': 'number',
+							'flex':'flex',
+							'replacer':" precision='***'"},
+						{   'name':'format',
+							'label': 'Format to locale',
+							'type': 'check',
+							'flex':'flex-100',
+					 		'replacer':" format"                               
+						}
+					],
+				 	'tag':"[kn-calc=(%%calc%%)%%min%%%%max%%%%precision%%%%format%%]"
+				 },
+
 			{
-				'label':'Cross navigation',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag6'),
 				'name': 'cross',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag6.desc'),
 				'hidden': self.isEmpty(cross) ? true : false,
@@ -100,7 +130,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'tag':'<div kn-cross></div>'
 				},
 			{
-				'label':'Selection',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag7'),
 				'name': 'selection',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag7.desc'),
 				'hidden': !datasetId ? true : false,
@@ -118,9 +148,9 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				]
 				},
 			{
-				'label':'Dataset Preview',
+				'label':sbiModule_translate.load('kn.cockpit.html.tag9'),
 				'name': 'preview',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag8.desc'),
+				'description': sbiModule_translate.load('kn.cockpit.html.tag9.desc'),
 				'hidden': !availableDatasets ? true : false,
 				'hiddenMessage': 'No dataset available',
 				'tag':'<div kn-preview%%dataset%%></div>',
