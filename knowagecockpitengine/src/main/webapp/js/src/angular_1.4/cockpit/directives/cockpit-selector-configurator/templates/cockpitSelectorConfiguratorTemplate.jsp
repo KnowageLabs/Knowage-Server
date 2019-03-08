@@ -36,7 +36,7 @@
     	</md-input-container>
     	<md-input-container  class="md-block radioContainer">
        		<md-radio-group layout="row" ng-model="model.settings.modalityPresent" layout="row" layout-align="start center"> 
-       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value" ng-hide="model.settings.modalityValue == 'multiValue' && button.value == 'COMBOBOX'">
+       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value">
            			{{button.name}}
        			</md-radio-button>
    			</md-radio-group>
@@ -58,7 +58,7 @@
 				</md-select>
 		  	</md-input-container>
 		  	<md-input-container  class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
-				<label>Grid columns width</label>
+				<label>{{::translate.load('kn.cockpit.selector.designer.columnsWidth')}}</label>
 				<input ng-model="model.settings.gridColumnsWidth" />
 			</md-input-container>
 	    	<md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'" flex>
@@ -67,6 +67,9 @@
 			</md-input-container>
 			<md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
             	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
+         	</md-checkbox>
+         	<md-checkbox ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
+            	{{::translate.load('kn.cockpit.selector.designer.hideDisabled')}}
          	</md-checkbox>
 		</div>
 		
