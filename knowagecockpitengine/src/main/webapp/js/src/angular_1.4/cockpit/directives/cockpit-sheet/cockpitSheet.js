@@ -121,7 +121,17 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 			cockpitModule_template.sheets[cur].index ++;
 			cockpitModule_template.sheets[next].index --;
 		}
+		if($scope.initializedSheets.indexOf(cur) != -1) $scope.initializedSheets.splice($scope.initializedSheets.indexOf(cur),1);
+		
 	};
+	
+	$scope.reinitSheet = function(index){
+		for(var i=0; i < cockpitModule_template.sheets[index].widgets.length; i++){
+			var widgetId = cockpitModule_template.sheets[index].widgets[i].id;
+	    	var tempElement = angular.element(document.querySelector('#w' + widgetId));
+	    	$rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
+		}
+	}
 
 	$scope.renameSheet=function(sheet,ev){
 		var confirm = $mdDialog.prompt()
