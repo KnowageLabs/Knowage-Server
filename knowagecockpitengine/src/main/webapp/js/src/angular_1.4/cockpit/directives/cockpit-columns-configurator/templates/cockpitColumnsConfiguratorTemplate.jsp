@@ -60,7 +60,7 @@
      		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
       			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
    			 </div>
-   			 <div ng-show="model.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" layout-padding></div>
+   			 <div ng-show="model.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px"></div>
      	</md-card-content>
     </md-card>
 	
