@@ -87,6 +87,7 @@
 
 		$scope.columnsGrid = {
 			angularCompileRows: true,
+			domLayout :'autoHeight',
 	        enableColResize: false,
 	        enableFilter: false,
 	        enableSorting: false,
