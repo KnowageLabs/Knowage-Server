@@ -21,19 +21,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices', 
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
 				
-				this.previewDataset = function(parameters, dataset) {
+				this.previewDataset = function(datasetLabel, parameters) {
 					var iframeSrcUrl = sbiModule_config.contextName + "/restful-services/2.0/datasets/preview";
 					
 					var config = {
-						datasetLabel: dataset
+						datasetLabel: datasetLabel
 					};
 					
 					if (parameters == null || parameters == undefined) {
 						showExporters(config);
 						iframeSrcUrl += '?' + $httpParamSerializer(config);
-						openPreviewDialog(iframeSrcUrl, dataset);
+						openPreviewDialog(iframeSrcUrl, datasetLabel);
 					} else {
-						sbiModule_restServices.promiseGet('2.0/datasets', dataset)
+						sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
 								.then(function(response){
 									var previewDataset = response.data[0];
 									
@@ -46,16 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										showExporters(config);
 										iframeSrcUrl += '?' + $httpParamSerializer(config);
 									}
-									openPreviewDialog(iframeSrcUrl, dataset);
+									openPreviewDialog(iframeSrcUrl, datasetLabel);
 								});
 					}					
 					
 				}
 				
-				var openPreviewDialog = function(iframeSrcUrl, dataset) {
+				var openPreviewDialog = function(iframeSrcUrl, datasetLabel) {
 					$mdDialog.show({
 						parent: angular.element(document.body),
-						locals: {iframeSrcUrl: iframeSrcUrl, dsLabel: dataset},
+						locals: {iframeSrcUrl: iframeSrcUrl, dsLabel: datasetLabel},
 						template: '<md-dialog style="height:80%;width:80%">'+
 						'   <md-toolbar><div class="md-toolbar-tools"><h2>Dataset Preview: &nbsp; {{datasetLabel}}</h2></div></md-toolbar>'+
 						'   <md-dialog-content flex>'+
