@@ -41,7 +41,8 @@
 	   		</div>
 	   	</md-toolbar>
    	</div>
-   	<md-content flex>
+   	<md-whiteframe flex>
+   	<md-content >
    	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'" ng-model="filters"></qbe-advanced-visualization>
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
    	
@@ -259,10 +260,14 @@
    </div>
   
   </md-content>
-  	<div layout="row">
-  		<span flex></span>
-  		 <dir-pagination-controls  max-size="5"   on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
-  	</div>
+  </md-whiteframe>
+  	
+  		<md-whiteframe class="md-whiteframe-3dp" layout="row">
+  			<span flex></span>
+  		 	<dir-pagination-controls  max-size="5"   on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+  		</md-whiteframe>
+  		
+  	
   
    
       
