@@ -24,45 +24,58 @@ import it.eng.knowage.meta.model.business.BusinessColumnSet;
  *
  */
 public class CalculatedFieldDescriptor {
-	
+
 	private String name;
 	private String expression;
 	private String dataType;
+	private String columnType;
+
 	private BusinessColumnSet businessColumnSet;
-	
-	public CalculatedFieldDescriptor(String name, String expression, String dataType, BusinessColumnSet businessColumnSet){
+
+	public CalculatedFieldDescriptor(String name, String expression, String dataType, BusinessColumnSet businessColumnSet) {
 		this.name = name;
 		this.expression = expression;
 		this.businessColumnSet = businessColumnSet;
 		this.dataType = dataType;
 	}
-	
-	
+
+	/**
+	 *
+	 */
+	public CalculatedFieldDescriptor() {
+
+	}
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
+
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	/**
 	 * @return the expression
 	 */
 	public String getExpression() {
 		return expression;
 	}
+
 	/**
-	 * @param expression the expression to set
+	 * @param expression
+	 *            the expression to set
 	 */
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
-	
+
 	/**
 	 * @return the dataType
 	 */
@@ -70,14 +83,28 @@ public class CalculatedFieldDescriptor {
 		return dataType;
 	}
 
-
 	/**
-	 * @param dataType the dataType to set
+	 * @param dataType
+	 *            the dataType to set
 	 */
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
 
+	/**
+	 * @return the nature
+	 */
+	public String getColumnType() {
+		return columnType;
+	}
+
+	/**
+	 * @param nature
+	 *            the nature to set
+	 */
+	public void setColumnType(String nature) {
+		this.columnType = nature;
+	}
 
 	/**
 	 * @return the businessColumnSet
@@ -85,12 +112,13 @@ public class CalculatedFieldDescriptor {
 	public BusinessColumnSet getBusinessColumnSet() {
 		return businessColumnSet;
 	}
+
 	/**
-	 * @param businessColumnSet the businessColumnSet to set
+	 * @param businessColumnSet
+	 *            the businessColumnSet to set
 	 */
 	public void setBusinessColumnSet(BusinessColumnSet businessColumnSet) {
 		this.businessColumnSet = businessColumnSet;
 	}
-	
 
 }

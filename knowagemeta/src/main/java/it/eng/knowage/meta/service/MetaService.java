@@ -778,6 +778,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			String dataType = jsonData.getString("dataType");
 			String sourceTableName = jsonData.getString("sourceTableName");
 			Boolean editMode = jsonData.getBoolean("editMode");
+			String columnType = jsonData.optString("columnType");
 
 			BusinessModel bm = model.getBusinessModels().get(0);
 			BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
@@ -786,7 +787,13 @@ public class MetaService extends AbstractSpagoBIResource {
 				sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
 			}
 			try {
-				CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+				// CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+				CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor();
+				cfd.setName(name);
+				cfd.setExpression(expression);
+				cfd.setDataType(dataType);
+				cfd.setBusinessColumnSet(sourceBcs);
+				cfd.setColumnType(columnType);
 				BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 				if (editMode) {
 					String uniquename = jsonData.getString("uniquename");

@@ -14,8 +14,9 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 	$scope.translate=sbiModule_translate;
 	$scope.selectedBusinessModel=selectedBusinessModel;
 	$scope.type=[{label:sbiModule_translate.load("sbi.lookup.asString"),name:"STRING"},{label:sbiModule_translate.load("sbi.lookup.asNumber"),name:"NUMBER"}]
+	$scope.columnTypes=[{label:sbiModule_translate.load("sbi.lookup.attribute"),name:"attribute"},{label:sbiModule_translate.load("sbi.lookup.measure"),name:"measure"}]
 
-	$scope.calcField={expression:"",dataType:$scope.type[0].name};
+	$scope.calcField={expression:"",dataType:$scope.type[0].name,columnType:$scope.columnTypes[0].name};
 	if(editMode){
 		$scope.calcField.name=currentCF.name
 
@@ -26,6 +27,10 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 			}
 			if(angular.equals(key,"structural.expression")){
 				$scope.calcField.expression=currentCF.properties[i][key].value
+			}
+
+			if(angular.equals(key,"structural.columntype")){
+				$scope.calcField.columnType=currentCF.properties[i][key].value
 			}
 		}
 	}

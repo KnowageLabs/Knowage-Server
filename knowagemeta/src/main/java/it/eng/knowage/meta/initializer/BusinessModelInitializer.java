@@ -316,7 +316,7 @@ public class BusinessModelInitializer {
 			calculatedBusinessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.CALCULATED_COLUMN_DATATYPE,
 					calculatedColumnDescriptor.getDataType());
 			// set column type
-			calculatedBusinessColumn.setProperty("structural.columntype", "attribute");
+			calculatedBusinessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.CALCULATED_COLUMN_TYPE, calculatedColumnDescriptor.getColumnType());
 			try {
 				// calculatedBusinessColumn.getReferencedColumns();
 			} catch (KnowageMetaException t) {
@@ -343,6 +343,8 @@ public class BusinessModelInitializer {
 			// set calculated column dataType
 			calculatedBusinessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.CALCULATED_COLUMN_DATATYPE,
 					calculatedColumnDescriptor.getDataType());
+
+			calculatedBusinessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.CALCULATED_COLUMN_TYPE, calculatedColumnDescriptor.getColumnType());
 
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to modify calculted business column ", t);

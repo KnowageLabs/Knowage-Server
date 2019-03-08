@@ -40,6 +40,14 @@
 			              </md-option>
 			            </md-select>
 			          </md-input-container>
+			          <md-input-container flex class="md-block" >
+			            <label>{{translate.load('sbi.generic.columnType')}}</label>
+			            <md-select ng-model="calcField.columnType">
+			              <md-option ng-repeat="colunmType in columnTypes" ng-value="colunmType.name">
+			                {{colunmType.label}}
+			              </md-option>
+			            </md-select>
+			          </md-input-container>
 	   			</div>
 	   			
 	   			<md-whiteframe class="md-whiteframe-1dp" layout="column" flex>

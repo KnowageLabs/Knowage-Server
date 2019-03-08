@@ -166,17 +166,7 @@ div#autoTags span.combodiv_span {
       
      <%} %>	
 
-		
-			<!-- 
-				The progress circular animation will be shown until all the data for the Workspace is collected. 
-				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-			-->		
-			<div loading ng-if="showEl || processing" class="loadingMask">
-			 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" class="progressCircularWorkspace"></md-progress-circular>		 
-			</div>
-			
-			
-			
+			<rest-loading></rest-loading>
 			<div layout="column" flex layout-fill>
 				
 				<main-toolbar-workspace></main-toolbar-workspace>

@@ -66,6 +66,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 	public static final String RELATIONSHIP_CARDINALITY = "structural.cardinality";
 	public static final String CALCULATED_COLUMN_EXPRESSION = "structural.expression";
 	public static final String CALCULATED_COLUMN_DATATYPE = "structural.datatype";
+	public static final String CALCULATED_COLUMN_TYPE = "structural.columntype";
 	public static final String COLUMN_DATATYPE = "structural.datatype";
 	public static final String FORCE_SUBENTITY_VISIBILITY = "structural.forceVisibilityAsSubentity";
 	public static final String COLUMN_ROLES_NOT_ENABLED = "behavioural.notEnabledRoles";

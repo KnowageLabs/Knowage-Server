@@ -184,7 +184,9 @@ angular
 							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
 
 							$scope.closePanel = function(){
-								mdPanelRef.close();
+								mdPanelRef.close().then(function() {
+								    panelRef.destroy();
+								  });;
 							}
 
 							$scope.saveDataSet = function() {
