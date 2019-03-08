@@ -28,7 +28,7 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in widgetAvailableColumns" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.cross.crossType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
@@ -57,7 +57,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<button class="md-button md-raised md-button-empty" ng-if="ngModel.cross.crossType && crossTable && ngModel.cross.crossType == 'icon'" ng-click="chooseIcon('cross')">
+			<button class="md-button md-raised md-button-empty" ng-if="ngModel.cross.crossType && crossTable && ngModel.cross.crossType == 'icon'" ng-click="chooseIcon('cross')" ng-disabled="!ngModel.cross.enable">
 				<span ng-if="!ngModel.cross.icon">Choose Icon</span>
 				<i ng-if="ngModel.cross.icon" ng-class="ngModel.cross.icon"></i>
 			</button>
@@ -181,12 +181,12 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in localDataset" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in widgetAvailableColumns" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
 			
-			<button class="md-button md-raised md-button-empty" ng-if="crossTable && ngModel.preview.previewType == 'icon'" ng-click="chooseIcon('preview')">
+			<button class="md-button md-raised md-button-empty" ng-if="crossTable && ngModel.preview.previewType == 'icon'" ng-click="chooseIcon('preview')" ng-disabled="!ngModel.preview.enable">
 				<span ng-if="!ngModel.preview.icon">Choose Icon</span>
 				<i ng-if="ngModel.preview.icon" ng-class="ngModel.preview.icon"></i>
 			</button>
@@ -217,7 +217,7 @@
 				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection'">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 					<md-select ng-model="parameter.column" >
-						<md-option ng-repeat="c in localDataset" ng-value="c.name">{{c.name}}</md-option>
+						<md-option ng-repeat="c in previewDatasetColumns" ng-value="c.name">{{c.name}}</md-option>
 					</md-select>
 				</md-input-container>
 

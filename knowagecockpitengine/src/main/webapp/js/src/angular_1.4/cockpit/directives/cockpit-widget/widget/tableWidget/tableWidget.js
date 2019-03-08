@@ -243,7 +243,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var newValue = undefined;
 			
 			// Dataset preview
-			if ($scope.ngModel.cross && $scope.ngModel.cross.preview) {
+			if ($scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable) {
 				switch ($scope.ngModel.cross.preview.previewType) {
 				case 'allRow':
 					previewDataset(row, column);
