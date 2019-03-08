@@ -65,7 +65,7 @@ public class JPQLStatement extends AbstractStatement {
 		// each map is indexed by the query id
 		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<String, Map<String, String>>();
 
-		queryStr = compose(getQuery(), entityAliasesMaps);
+		queryStr = compose(getQuery(), entityAliasesMaps, false);
 
 		if (getParameters() != null) {
 			try {
@@ -92,7 +92,7 @@ public class JPQLStatement extends AbstractStatement {
 	 * internally used to generate the parametric statement string. Shared by the prepare method and the buildWhereClause method in order to recursively
 	 * generate subquery statement string to be embedded in the parent query.
 	 */
-	private String compose(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
+	private String compose(Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean isSubquery) {
 		String queryStr = null;
 		String selectClause = null;
 		String whereClause = null;
@@ -114,7 +114,7 @@ public class JPQLStatement extends AbstractStatement {
 		selectClause = JPQLStatementSelectClause.build(this, query, entityAliasesMaps);
 		whereClause = JPQLStatementWhereClause.build(this, query, entityAliasesMaps);
 		groupByClause = JPQLStatementGroupByClause.build(this, query, entityAliasesMaps);
-		orderByClause = JPQLStatementOrderByClause.build(this, query, entityAliasesMaps);
+		orderByClause = JPQLStatementOrderByClause.build(this, query, entityAliasesMaps, isSubquery);
 		havingClause = JPQLStatementHavingClause.build(this, query, entityAliasesMaps);
 		// viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps,
 		// query, whereClause);
@@ -141,7 +141,7 @@ public class JPQLStatement extends AbstractStatement {
 			String id = (String) it.next();
 			Query subquery = query.getSubquery(id);
 
-			String subqueryStr = compose(subquery, entityAliasesMaps);
+			String subqueryStr = compose(subquery, entityAliasesMaps, true);
 			queryStr = queryStr.replaceAll("Q\\{" + subquery.getId() + "\\}", subqueryStr);
 		}
 
@@ -172,7 +172,7 @@ public class JPQLStatement extends AbstractStatement {
 		JPQLStatementSelectClause.build(this, getQuery(), entityAliasesMaps);
 		JPQLStatementWhereClause.build(this, getQuery(), entityAliasesMaps);
 		JPQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
-		JPQLStatementOrderByClause.build(this, getQuery(), entityAliasesMaps);
+		JPQLStatementOrderByClause.build(this, getQuery(), entityAliasesMaps, false);
 		JPQLStatementFromClause.build(this, getQuery(), entityAliasesMaps);
 
 		Map entityAliases = entityAliasesMaps.get(getQuery().getId());

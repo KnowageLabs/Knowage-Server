@@ -33,7 +33,7 @@ public class JPQLStatementOrderByClause extends AbstractStatementOrderByClause {
 
 	public static transient Logger logger = Logger.getLogger(JPQLStatementOrderByClause.class);
 
-	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps) {
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean isSubquery) {
 		JPQLStatementOrderByClause clause = new JPQLStatementOrderByClause(parentStatement);
 
 		String orderBy = clause.buildClause(query, entityAliasesMaps);
@@ -41,7 +41,7 @@ public class JPQLStatementOrderByClause extends AbstractStatementOrderByClause {
 		if (orderBy.isEmpty()) {
 			JPADataSource ds = ((JPADataSource) parentStatement.getDataSource());
 			String dialect = ds.getToolsDataSource().getHibDialectClass();
-			if (dialect.toLowerCase().contains("oracle")) {
+			if (dialect.toLowerCase().contains("oracle") && !isSubquery) {
 				StringBuffer buffer;
 				buffer = new StringBuffer();
 				buffer.append(JPQLStatementConstants.STMT_KEYWORD_ORDER_BY);
