@@ -233,8 +233,18 @@ angular.module('chartRendererModule')
 
 			scope.$on('fullExpand',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
+				if(scope.chartConf.series.length > 0){
+					for( var i=0 ; i < scope.chartConf.series.length ; i++ ){
+
+						if(scope.chartConf.series[i].data[0].dataLabels){
+							scope.chartConf.series[i].selected = scope.chartConf.series[i].data[0].dataLabels.enabled;
+						}
+
+					}
+				}
 
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
+
 
 			})
 
