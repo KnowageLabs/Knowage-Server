@@ -133,11 +133,16 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		params.showDerivedDataset = false;
 
 		$scope.dataset.type = "File";
-		$scope.dataset.persist = false;
+
 		$scope.dataset.exportToHdfs = false;
 		$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX+sbiModule_user.userId+"_";
-		$scope.dataset.tableName = "";
-
+		
+		if (!$scope.dataset.hasOwnProperty('persist'))
+			$scope.dataset.persist = false;
+		
+		if (!$scope.dataset.hasOwnProperty('tableName'))
+			$scope.dataset.tableName = "";
+		
 		/**
 		 * This if-statement is almost the same as the one before, except we use this one for later usage, not when the
 		 * dataset wizard is opened for the first time. According to the previous state of mentioned CSV configuration
