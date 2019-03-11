@@ -159,13 +159,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.outputParametersList.push(par);
 
 	}
-
-	var setWidgetAvailableColumns = function(){
-		if ($scope.model && $scope.model.content)
-			$scope.widgetAvailableColumns = $scope.model.content.columnSelectedOfDataset;
-	}
-	
-	setWidgetAvailableColumns();
 	
 	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
 	

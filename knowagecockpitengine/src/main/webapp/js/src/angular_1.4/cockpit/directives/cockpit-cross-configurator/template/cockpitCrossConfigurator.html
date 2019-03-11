@@ -28,7 +28,7 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in widgetAvailableColumns" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in model.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.cross.crossType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
@@ -107,7 +107,7 @@
 					">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
-					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in model.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 			</md-input-container>
 			
@@ -181,7 +181,7 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in widgetAvailableColumns" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in model.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
