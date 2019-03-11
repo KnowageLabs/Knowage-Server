@@ -739,7 +739,7 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 
-			if(model.cross.cross.allRow == true){
+			if(model.cross.cross.crossType == "allRow" || model.cross.cross.crossType == "icon"){
 				// case all columns are enabled for cross, get value for cross
 				// column (or alias if present)
 				var crossColumnOrAlias = model.cross.cross.column;
