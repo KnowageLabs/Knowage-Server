@@ -236,7 +236,10 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 		$scope.dataset.name = dataset!=undefined ? dataset.name : "";
 		$scope.dataset.description = dataset!=undefined ? dataset.description : "";
 		$scope.dataset.meta = dataset!=undefined ? dataset.meta : [];
-
+		
+		$scope.dataset.persist =  (dataset != undefined && dataset.hasOwnProperty('isPersisted')) ? dataset.isPersisted : false;
+		$scope.dataset.tableName = (dataset != undefined && dataset.persistTableName) ? dataset.persistTableName : "";
+		
 		$scope.dataset.fileUploaded = false;
 
 	}
