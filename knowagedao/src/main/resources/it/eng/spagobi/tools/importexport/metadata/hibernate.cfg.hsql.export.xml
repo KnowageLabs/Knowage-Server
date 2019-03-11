@@ -31,10 +31,13 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuse.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseCk.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetamodelParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParview.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjParview.hbm.xml" />          
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiLov.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiChecks.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjPar.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParameter.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjDataSet.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjects.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjFunc.hbm.xml" />        

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 5, 2018 12:12:30 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+   <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParview" table="SBI_METAMODEL_PARVIEW">
+        <id name="parviewId" type="java.lang.Integer">
+            <column name="PARVIEW_ID" />
+           <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+		        <param name="segment_value">SBI_METAMODEL_PARVIEW</param>	
+		        <param name="initial_value">1</param>
+   			</generator>
+        </id>
+        <many-to-one name="sbiMetaModelPar" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter" >
+            <column name="METAMODEL_PAR_ID" />
+        </many-to-one>
+        <property name="compareValue" type="java.lang.String">
+            <column name="COMPARE_VALUE" />
+        </property>
+        <property name="viewLabel" type="java.lang.String">
+            <column name="VIEW_LABEL" />
+        </property>
+        <many-to-one name="sbiMetaModelFather" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter" >
+            <column name="METAMODEL_PAR_FATHER_ID" />
+        </many-to-one>
+        <property name="operation" type="java.lang.String">
+            <column name="OPERATION" />
+        </property>
+        <property name="prog" type="java.lang.Integer">
+            <column name="PROG" />
+        </property>    
+    </class>
+</hibernate-mapping>

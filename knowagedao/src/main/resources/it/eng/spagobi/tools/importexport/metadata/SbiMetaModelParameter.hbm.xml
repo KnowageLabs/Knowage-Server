@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter" table="SBI_METAMODEL_PAR" >
+     
+        <id name="metaModelParId" type="integer">
+            <column name="METAMODEL_PAR_ID" />
+        </id>   
+        
+        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" >
+            <column name="METAMODEL_ID" not-null="true" />
+        </many-to-one> 
+        <many-to-one name="sbiParameter" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" >
+            <column name="PAR_ID" not-null="true" />
+        </many-to-one>
+     
+        <property name="reqFl" type="java.lang.Short">
+            <column name="REQ_FL" />
+        </property>
+        <property name="parurlNm" type="java.lang.String">
+            <column name="PARURL_NM" />
+        </property>
+        <property name="multFl" type="java.lang.Short">
+            <column name="MULT_FL" />
+        </property>
+        <property name="ThickPerc" type="java.lang.Integer">
+            <column name="THICK_PERC" />
+        </property>
+        <property name="colSpan" type="java.lang.Integer">
+            <column name="COL_SPAN" />
+        </property>
+        <property name="viewFl" type="java.lang.Short">
+            <column name="VIEW_FL" />
+        </property>
+        <property name="modFl" type="java.lang.Short">
+            <column name="MOD_FL" />
+        </property>
+        <property name="label" type="java.lang.String">
+            <column name="LABEL" />
+        </property>
+        <property name="priority" type="java.lang.Integer">
+            <column name="PRIORITY" />
+        </property>
+        <property name="prog" type="java.lang.Integer">
+            <column name="PROG" />
+        </property>
+      </class>
+</hibernate-mapping>
