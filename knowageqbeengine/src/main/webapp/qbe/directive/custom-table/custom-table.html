@@ -89,19 +89,19 @@
 		      
 	       		<md-menu-item>
 	          		<md-checkbox ng-model="field.visible" ng-click="setVisible(field.id,field.entity, field.visible)" class="menuCheckbox" aria-label="show column">
-	            {{translate.load("kn.qbe.custom.table.show.field")}}
+	            	<span>{{translate.load("kn.qbe.custom.table.show.field")}}</span>
 	          </md-checkbox>
 	       		</md-menu-item>
 	       		<md-menu-item ng-show="field.iconCls=='measure'" ng-if="isTemporal">
 	       			<md-button ng-click="addTemporalParameter(field)">
-							<md-icon class="fa fa-terminal" style="display:inline"></md-icon>
+							<md-icon class="fa fa-terminal" ></md-icon>
 		            		<span>{{translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</span>
 		          		</md-button>
 	       		</md-menu-item>
 	       		<md-menu-item ng-show="field.iconCls=='measure'" ng-if="isTemporal">
          			<md-menu>		
 	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
-							<md-icon class="fa fa-puzzle-piece" style="display:inline"></md-icon>
+							<md-icon class="fa fa-puzzle-piece" ></md-icon>
 		            		<span>{{translate.load("kn.qbe.custom.table.function.temporal")}}</span>
 		          		</md-button>
 
@@ -143,21 +143,14 @@
 	       		
 	       		<md-menu-item ng-show="field.iconCls=='attribute' || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='attribute')">
 	          		<md-checkbox ng-model="field.group" ng-click="group(field.id, field.entity, field.group)" class="menuCheckbox" aria-label="hide column">
-	            {{translate.load("kn.qbe.custom.table.group")}}
+	          <span>  {{translate.load("kn.qbe.custom.table.group")}}</span>
 	          </md-checkbox>
-	       		</md-menu-item>
-	       		<md-menu-item ng-show=false>
-	         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
-							<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
-	            		<span>{{translate.load("kn.qbe.custom.table.ranges")}}</span>
-	          		</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item ng-show="field.iconCls=='measure'  || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='measure')">
          			<md-menu>		
 	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
-<!-- 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon> -->
-							<i aria-hidden="true" class="material-icons md-14">functions</i>
+							 <md-icon md-font-icon="kni kni-sum"></md-icon>
 		            		<span>{{translate.load("kn.qbe.custom.table.aggregation")}}</span>
 		          		</md-button>
 		          			      
@@ -211,20 +204,20 @@
 	       		<md-menu-item>
 	       		  
 	         			<md-button ng-click="moveLeft(field.order, field)">
-							<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
+							<md-icon class="fa fa-angle-left" ></md-icon>
 	            		<span>{{translate.load("kn.qbe.custom.table.move.left")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	       		<md-menu-item>
 	         			<md-button ng-click="moveRight(field.order, field)">
-							<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
+							<md-icon class="fa fa-angle-right" ></md-icon>
 	            		<span>{{translate.load("kn.qbe.custom.table.move.right")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	         			<md-button ng-click="changeAlias(field)">
-							<md-icon class="fa fa-tag" style="display:inline"></md-icon>
+							<md-icon class="fa fa-tag" ></md-icon>
 	            		<span>{{translate.load("kn.qbe.general.alias")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
