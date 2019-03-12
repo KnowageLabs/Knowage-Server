@@ -306,8 +306,15 @@
                 
             }
         }
+		md-menu-item {
+			button {
+				span {
+					text-transform: none;
+				}
+			}
+		}
 		.md-label {
-			position:releative; 
+			position:relative; 
 			right:-12px;
 		}
     }
