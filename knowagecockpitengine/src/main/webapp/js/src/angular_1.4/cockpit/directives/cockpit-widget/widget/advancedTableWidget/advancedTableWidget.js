@@ -77,6 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
+						if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
+							tempCol.pinnedRowCellRenderer = SummaryRowRenderer,
+							tempCol.pinnedRowCellRendererParams = {"style": $scope.ngModel.settings.summary.style};
+						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.width) {
 							tempCol.width = parseInt($scope.ngModel.content.columnSelectedOfDataset[c].style.width);
 							tempCol.suppressSizeToFit = true;
@@ -140,6 +144,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return tempValue;
 		}
 		
+		function SummaryRowRenderer () {}
+
+		SummaryRowRenderer.prototype.init = function(params) {
+		    this.eGui = document.createElement('div');
+		    this.eGui.style.color = params.style.color;
+		    this.eGui.style.backgroundColor = params.style['background-color'];
+		    this.eGui.style.fontSize = params.style['font-size'];
+		    this.eGui.style.fontWeight = params.style['font-weight'];
+		    this.eGui.style.fontStyle = params.style['font-style'];
+		    this.eGui.innerHTML = params.value;
+		};
+
+		SummaryRowRenderer.prototype.getGui = function() {
+		    return this.eGui;
+		};
+		
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
@@ -160,6 +180,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.totalRows = datasetRecords.results;
 				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
+				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) $scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[0]])
+				else $scope.advancedTableGrid.api.setPinnedBottomRowData([]);
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;
@@ -239,6 +261,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 		function onCellClicked(node){
+			if(node.rowPinned) return;
 			$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, node.data);
 		}
 		

@@ -74,7 +74,7 @@
 				    </md-card>
 				</md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
+		        
 		        	<md-card>
 						<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
@@ -134,6 +134,60 @@
 					</md-card-content>
 
 					</md-card>
+		        	<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<md-switch ng-model="newModel.settings.summary.enabled" ng-click="toggleSummary()">{{::translate.load('sbi.cockpit.widget.table.summary')}}</md-switch>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					
+					<md-card-content >
+						<div flex layout=column >
+							<div flex layout="row" >
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
+									<input class="input_class" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.title" />
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+									<md-select ng-disabled ="!newModel.settings.summary.enabled" aria-label="aria-label" ng-model="newModel.settings.summary.style['font-family']">
+										<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}"><span ng-style="{'font-family':fam.value}">{{fam.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container class="md-block" flex>
+								<label>{{::translate.load("sbi.cockpit.style.font.style")}}</label>
+								<md-select ng-model="newModel.settings.summary.style['font-style']" ng-disabled="!newModel.settings.summary.enabled">
+									<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+								</md-select>
+							</md-input-container>
+							</div>
+							<div flex layout="row" >
+								<md-input-container flex class="md-block" >
+									<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+									<input ng-model="newModel.settings.summary.style['font-size']" ng-disabled="!newModel.settings.summary.enabled" type="text"/>
+									<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+									<md-select ng-disabled ="!newModel.settings.summary.enabled" aria-label="aria-label" ng-model="newModel.settings.summary.style['font-weight']">
+										<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+									<color-picker options="summaryColorPickerProperty" ng-model="newModel.settings.summary.style['color']"/>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+									<color-picker options="summaryColorPickerProperty" ng-model="newModel.settings.summary.style['background-color']"/>
+								</md-input-container>
+							</div>		
+						</div>
+					</md-card-content>
+				</md-card>
+		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
+		        	
 		        </md-tab>
 		        
 		        <md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">

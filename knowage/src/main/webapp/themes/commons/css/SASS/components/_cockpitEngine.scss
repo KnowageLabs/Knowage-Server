@@ -52,6 +52,19 @@
 
     cockpit-advanced-table-widget {
     	height: 100%;
+    	.ag-floating-bottom {
+    		.ag-cell {
+    			padding:0;
+    			margin:0;
+    			border:0;
+    			&>div {
+    				height:100%;
+    				line-height: 100%;
+    				width: 100%;
+    			}
+    			
+    		}
+    	}
     }
     
     
