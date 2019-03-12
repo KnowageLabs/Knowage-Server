@@ -185,15 +185,13 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 	
 	$scope.$watchCollection('ngModel.preview.dataset',function(newValue,oldValue){
-		if(newValue !== oldValue){
-			var newPreviewingDSLabel = cockpitModule_datasetServices.getDatasetLabelById(newValue);
-			if ($scope.allCockpitDatasetsColumns[newPreviewingDSLabel] == undefined) {
-				var foundDs = $filter('filter')($scope.cockpitDatasets, {label: newPreviewingDSLabel}, true);
-				if (foundDs.length > 0)					
-				$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
-			} 
-			$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
-		}
+		var newPreviewingDSLabel = cockpitModule_datasetServices.getDatasetLabelById(newValue);
+		if ($scope.allCockpitDatasetsColumns[newPreviewingDSLabel] == undefined) {
+			var foundDs = $filter('filter')($scope.cockpitDatasets, {label: newPreviewingDSLabel}, true);
+			if (foundDs.length > 0)					
+			$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
+		} 
+		$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
 	});
 
 	if($scope.crossChart){
