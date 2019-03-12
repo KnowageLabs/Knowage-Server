@@ -369,7 +369,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var result = eval(p1);
 			if(min && result < min) result = min;
 			if(max && result > max) result = max;
-			if(format) return precision ? parseFloat(result.toFixed(precision)).toLocaleString() : parseFloat(result).toLocaleString();
+			if(format) return precision ? $filter('number')(result, precision) : $filter('number')(result);
 			return (precision && !isNaN(result))? parseFloat(result).toFixed(precision) : result;
 		}
 		
@@ -402,7 +402,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : 'null';
 			}
 			if(p1 != 'null' && columnInfo.type == 'int' || columnInfo.type == 'float'){
-				if(format) p1 = precision ? parseFloat(p1).toFixed(precision).toLocaleString() : parseFloat(p1).toLocaleString();
+				if(format) p1 = precision ? $filter('number')(p1, precision) : $filter('number')(p1);
 				else p1 = precision ? parseFloat(p1).toFixed(precision) : parseFloat(p1);
 			}
 			return p1;
