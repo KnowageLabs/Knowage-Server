@@ -135,16 +135,26 @@ angular
 
               };
 
-              self.getDatasets = function(){
+             self.getDatasets = function(){
               	 crudService.get("2.0/datasets","").then(function(response){
               		self.datasets = response.data;
+              		self.dataSetsComboBox = getDataSetNames(self.datasets);
                  	});
-              }
-              self.getDatasets();
+             }
+             self.getDatasets();
+
+             var getDataSetNames = function(allDatasets){
+            	 var dataSetNames=[];
+		         	for(var i = 0; i < allDatasets.length;i++){
+		         		dataSetNames.push(allDatasets[i].label);
+		            }
+		         return dataSetNames;
+             }
+
              self.getImage = function(){
              	 crudService.get(self.documentService.requiredPath,basePath + '/image').then(function(response){
              		self.documentService.documentImage = response.data;
-                	});
+                 });
              }
 
              self.getProfileAttributes = function(){
