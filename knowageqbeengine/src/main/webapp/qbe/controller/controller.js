@@ -932,7 +932,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                 	$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.funct = "";
-                	$scope.calculatedFieldOutput.group = false;
+                	$scope.calculatedFieldOutput.group = $scope.calculatedFieldOutput.nature=="ATTRIBUTE" ? true : false;
                 	$scope.calculatedFieldOutput.order = "";
                 	$scope.calculatedFieldOutput.include = true;
                 	$scope.calculatedFieldOutput.visible = true;
