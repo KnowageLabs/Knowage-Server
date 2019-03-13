@@ -285,7 +285,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.checkParamsPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var resultHtml = rawHtml.replace($scope.paramsRegex, function(match, p1) {
-					p1=cockpitModule_analyticalDrivers[p1];
+					p1 = (cockpitModule_analyticalDrivers[p1] || 'null');
 					return p1;
 				});
 				resolve(resultHtml);
@@ -334,7 +334,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		}
 		$scope.paramsReplacer = function(match, p1){
-			p1=cockpitModule_analyticalDrivers[p1];
+			p1 = (cockpitModule_analyticalDrivers[p1] || 'null');
 			return p1;
 		}
 		
