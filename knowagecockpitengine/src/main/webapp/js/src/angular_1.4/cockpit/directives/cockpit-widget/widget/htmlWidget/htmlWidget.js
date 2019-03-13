@@ -98,19 +98,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			delete $scope.ngModel.datasetId;
 		}
 		
-		$scope.showPreview = function(datasetLabel){
-		    $mdDialog.show({
-		      controller: function(scope){
-		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
-		    	  scope.closePreview = function(){
-		    		  $mdDialog.hide();
-		    	  }
-		      },
-		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
-		      parent: angular.element(document.body),
-		      clickOutsideToClose:true
-		    })
-		}
+//		$scope.showPreview = function(datasetLabel){
+//		    $mdDialog.show({
+//		      controller: function(scope){
+//		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
+//		    	  scope.closePreview = function(){
+//		    		  $mdDialog.hide();
+//		    	  }
+//		      },
+//		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
+//		      parent: angular.element(document.body),
+//		      clickOutsideToClose:true
+//		    })
+//		}
 		
 		$scope.select = function(column,value){
 			$scope.doSelection(column, value || $scope.htmlDataset.rows[0][$scope.getColumnFromName(column,$scope.htmlDataset).name], null, null, null, null, $scope.ngModel.dataset.dsId, null);
