@@ -473,7 +473,11 @@
 			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
 			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
 			var cockpitSelections = {};
-			cockpitSelections.aggregations = aggregations;
+			cockpitSelections.aggregations = angular.copy(aggregations);
+			for(var i in cockpitSelections.aggregations){
+                delete cockpitSelections.aggregations[i].associations;
+                delete cockpitSelections.aggregations[i].datasets;
+            }
 			cockpitSelections.filters = filters;
             requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
 
