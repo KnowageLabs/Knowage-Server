@@ -1045,7 +1045,7 @@
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 			#end
-$datasettransformer.print($groupedSerie)
+ 
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg, $dataColumnsMapper, $categorieColumns, $groupedSerie))
      
 		#end
