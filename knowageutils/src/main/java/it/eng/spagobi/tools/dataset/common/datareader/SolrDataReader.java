@@ -20,10 +20,12 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 import com.jayway.jsonpath.JsonPath;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SolrDataReader extends JSONPathDataReader {
@@ -65,6 +67,18 @@ public class SolrDataReader extends JSONPathDataReader {
 
 	public void setResultNumber(int resultNumber) {
 		this.resultNumber = resultNumber;
+	}
+
+	public List<JSONPathAttribute> getJsonPathAttributes(String type){
+		Assert.assertNotEmpty(type, "Type can't be empty");
+		List<JSONPathAttribute> attributes = new ArrayList<>();
+		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
+		for(JSONPathDataReader.JSONPathAttribute attribute : jsonPathAttributes){
+			if(type.equals(attribute.getJsonPathType())){
+				attributes.add(attribute);
+			}
+		}
+		return attributes;
 	}
 
 }

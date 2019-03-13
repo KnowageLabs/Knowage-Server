@@ -47,8 +47,12 @@ public class ExtendedSolrQuery extends SolrQuery {
     }
 
     public ExtendedSolrQuery filter(Filter filter) {
+        return filter(filter, null);
+    }
+
+    public ExtendedSolrQuery filter(Filter filter, List<String> highlightFields) {
         if(filter != null) {
-            SolrFilterVisitor visitor = new SolrFilterVisitor();
+            SolrFilterVisitor visitor = new SolrFilterVisitor(highlightFields);
             visitor.apply(this, filter);
         }
         return this;

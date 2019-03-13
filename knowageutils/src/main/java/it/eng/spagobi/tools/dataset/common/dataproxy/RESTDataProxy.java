@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
@@ -32,6 +29,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * This data proxy makes REST calls. Providing all attributes (address, type of method, etc..) it make a http call and read the data store from the response
@@ -120,9 +119,33 @@ public class RESTDataProxy extends AbstractDataProxy {
 				throw new RESTDataProxyException(
 						String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
 			}
-
 			Assert.assertNotNull(responseBody, "responseBody is null");
 			dataReader.setCalculateResultNumberEnabled(calculateResultNumberOnLoad);
+
+			JSONObject jsonObject = new JSONObject(responseBody);
+			if(jsonObject.has("highlighting")){
+				JSONObject highlighting = jsonObject.getJSONObject("highlighting");
+				JSONObject jsonResponse = jsonObject.getJSONObject("response");
+				JSONArray jsonDocs = jsonResponse.getJSONArray("docs");
+				if(jsonDocs.length()>0){
+					for (int i = 0; i < jsonDocs.length(); i++) {
+						JSONObject jsonDoc = jsonDocs.getJSONObject(i);
+						String id = jsonDoc.getString("id");
+						JSONObject highlightingDetail = highlighting.getJSONObject(id);
+						Iterator<String> keys = highlightingDetail.keys();
+						while(keys.hasNext()){
+							String field = keys.next();
+							JSONArray jsonReplacement = highlightingDetail.getJSONArray(field);
+							if(jsonReplacement.length()>0){
+								String text = jsonReplacement.getString(0);
+								jsonDoc.put(field, text);
+							}
+						}
+					}
+				}
+				responseBody = jsonObject.toString();
+			}
+
 			IDataStore res = dataReader.read(responseBody);
 			Assert.assertNotNull(res, "datastore is null");
 			return res;

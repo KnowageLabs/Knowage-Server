@@ -251,4 +251,13 @@ public class SolrDataSet extends RESTDataSet {
     public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
         return DatasetEvaluationStrategyType.SOLR;
     }
+
+    public List<String> getTextFields(){
+        List<JSONPathDataReader.JSONPathAttribute> attributes = ((SolrDataReader) dataReader).getJsonPathAttributes("text");
+        List<String> textFields = new ArrayList<>(attributes.size());
+        for (int i = 0; i < attributes.size(); i++) {
+            textFields.add(attributes.get(i).getName());
+        }
+        return textFields;
+    }
 }

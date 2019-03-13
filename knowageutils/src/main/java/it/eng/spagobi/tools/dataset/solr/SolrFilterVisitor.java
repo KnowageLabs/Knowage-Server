@@ -28,13 +28,21 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SolrFilterVisitor extends AbstractFilterVisitor {
 
     private static final Logger logger = Logger.getLogger(SolrFilterVisitor.class);
 
     private static final String SOLR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    private List<String> highlightFields;
+
+    public SolrFilterVisitor(List<String> highlightFields) {
+        this.highlightFields = highlightFields != null ? highlightFields : new ArrayList<String>();
+    }
 
     @Override
     public void visit(BetweenFilter item) {
@@ -136,6 +144,46 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
     public void apply(SolrQuery solrQuery, Filter filter) {
         visit(filter);
         solrQuery.addFilterQuery(queryBuilder.toString());
+
+        List<LikeFilter> likeFilters = extractLikeFilters(filter);
+        if (!likeFilters.isEmpty()) {
+            solrQuery.addField("id");
+            solrQuery.setHighlight(true);
+            solrQuery.setHighlightFragsize(0);
+            solrQuery.add("hl.q", "*" + likeFilters.get(0).getValue() + "*");
+            for (LikeFilter likeFilter : likeFilters) {
+                String fieldName = likeFilter.getProjection().getName();
+                if(highlightFields.contains(fieldName)) {
+                    solrQuery.addHighlightField(fieldName);
+                }
+            }
+        }
+    }
+
+    private List<LikeFilter> extractLikeFilters(Filter filter) {
+        if (filter instanceof CompoundFilter) {
+            return extractLikeFilters((CompoundFilter) filter);
+        } else if (filter instanceof SimpleFilter) {
+            return extractLikeFilters((SimpleFilter) filter);
+        } else {
+            throw new IllegalArgumentException("No extractLikeFilters(" + filter.getClass().getCanonicalName() + ") method available");
+        }
+    }
+
+    private List<LikeFilter> extractLikeFilters(SimpleFilter item) {
+        List<LikeFilter> result = new ArrayList<>();
+        if (item instanceof LikeFilter) {
+            result.add((LikeFilter) item);
+        }
+        return result;
+    }
+
+    private List<LikeFilter> extractLikeFilters(CompoundFilter item) {
+        List<LikeFilter> result = new ArrayList<>();
+        for (Filter filter : item.getFilters()) {
+            result.addAll(extractLikeFilters(filter));
+        }
+        return result;
     }
 
     private void append(Projection projection) {

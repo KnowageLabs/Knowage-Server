@@ -56,7 +56,8 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
         SolrQuery solrQuery;
         try {
-            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
+            solrQuery =
+                    new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter, solrDataSet.getTextFields()).jsonFacets(groups);
         } catch (JsonProcessingException e) {
             throw new SpagoBIRuntimeException(e);
         }
