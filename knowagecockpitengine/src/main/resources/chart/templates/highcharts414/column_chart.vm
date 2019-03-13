@@ -80,21 +80,23 @@
 #if($chart.groupedSerie)
 #set($groupedSerie = $chart.groupedSerie)
 #else
-#set($groupedSerie = $series.get(0).name)
+#set($groupedSerie = $series.get(0).column)
+
 #end
 #end
+
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 #else
 	#set($serieKeyFeed = 0)
 	#foreach($serie in $series)
-	
+
 		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
 		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
 		
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 		
-		#if($serie.name == $groupedSerie)
+		#if($serie.column == $groupedSerie)
 		
 		#set($groupedSerie = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 		
@@ -1034,6 +1036,7 @@
 		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
+		
 			#if($chart.VALUES.SERIE.get(0))
 			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
 				#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
@@ -1042,7 +1045,7 @@
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 			#end
-
+$datasettransformer.print($groupedSerie)
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg, $dataColumnsMapper, $categorieColumns, $groupedSerie))
      
 		#end
@@ -1648,6 +1651,7 @@
 				of the background color specified by the user.				
 				@author: danristo (danilo.ristovski@mht.net)
 			*#
+			
 			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
                 ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
             #else
@@ -1754,7 +1758,6 @@
 		                    #if ($relatedSerie.prefixChar != '')
 			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
 							#end
-		                    
 		                    #set ($precisionValueAsString = '')
 		                    
 		                    #if ($relatedSerie.precision != '')
