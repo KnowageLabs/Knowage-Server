@@ -95,7 +95,7 @@
 		
 		#if($serie.column == $groupedSerie)
 		
-		#set($groupedSerie = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
+		#set($groupedSerie = "$serie.name.toLowerCase()"+"_"+"$serie.groupingFunction.toLowerCase()")
 		
 		#end
 		
