@@ -441,8 +441,14 @@ public class JSONDataWriter implements IDataWriter {
 					}
 
 				} else if (String.class.isAssignableFrom(clazz)) {
-					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "STRING" + "]");
-					fieldMetaDataJSON.put("type", "string");
+					String jsonPathType = (String) fieldMetaData.getProperty("jsonPathType");
+					if("text".equals(jsonPathType)){
+						logger.debug("Column [" + (i + 1) + "] type is equal to [TEXT]");
+						fieldMetaDataJSON.put("type", "text");
+					}else {
+						logger.debug("Column [" + (i + 1) + "] type is equal to [" + "STRING" + "]");
+						fieldMetaDataJSON.put("type", "string");
+					}
 				} else if (Timestamp.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "TIMESTAMP" + "]");
 					fieldMetaDataJSON.put("type", "date");

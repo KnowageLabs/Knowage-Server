@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.CompositeSolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
@@ -30,12 +32,16 @@ import it.eng.spagobi.tools.dataset.solr.SolrConfiguration;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.objects.Couple;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,14 +114,53 @@ public class SolrDataSet extends RESTDataSet {
 
     protected void initDataReader(JSONObject jsonConf, boolean resolveParams) {
         logger.debug("Reading Solr dataset documents");
-
-        String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
-        List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
-        for(int i = 0; i < fields.length; i++) {
-            jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(fields[i], "$." + fields[i], "string"));
-        }
-        setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes));
+        setDataReader(new SolrDataReader("$.response.docs.[*]", getJsonPathAttributes()));
     }
+
+    private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes() {
+        JSONArray solrFields = getSolrFields();
+
+        Map<String, String> solrFieldTypes = new HashMap<>(solrFields.length());
+        for (int i = 0; i < solrFields.length(); i++) {
+            JSONObject solrField = solrFields.optJSONObject(i);
+            String name = solrField.optString("name");
+            String type = solrField.optString("type");
+            solrFieldTypes.put(name, type);
+        }
+
+        return getJsonPathAttributes(solrFieldTypes);
+    }
+
+	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(Map<String, String> solrFieldTypes) {
+		String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
+		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
+		for (String field : fields) {
+			String solrFieldType = solrFieldTypes.containsKey(field) ? solrFieldTypes.get(field) : "string";
+			String jsonPathType = JSONPathDataReader.JSONPathAttribute.getJsonPathTypeFromSolrFieldType(solrFieldType);
+			jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(field, "$." + field, jsonPathType));
+		}
+		return jsonPathAttributes;
+	}
+
+	private JSONArray getSolrFields() {
+		JSONArray solrFields = new JSONArray();
+		RESTDataProxy dataProxy = getDataProxy();
+		try {
+			RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
+					solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json",
+					dataProxy.getRequestHeaders(), null,
+					null);
+			Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
+
+			String responseBody = response.getResponseBody();
+			Assert.assertNotNull(responseBody, "Response body is null");
+
+			solrFields = new JSONObject(responseBody).getJSONArray("fields");
+		} catch (IOException | HMACSecurityException | JSONException e) {
+			logger.warn("Unable to read fields", e);
+		}
+		return solrFields;
+	}
 
     private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
         Map<String, String> requestHeaders = getRequestHeaders(jsonConf, resolveParams);

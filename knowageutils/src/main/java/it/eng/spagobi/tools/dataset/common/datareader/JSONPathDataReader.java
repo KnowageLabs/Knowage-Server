@@ -97,6 +97,28 @@ public class JSONPathDataReader extends AbstractDataReader {
 		private final String jsonPathValue;
 		private final String jsonPathType;
 
+		public static String getJsonPathTypeFromSolrFieldType(String solrFieldType) {
+			String jsonPathType;
+			if (solrFieldType.startsWith("boolean")) {
+				jsonPathType = "boolean";
+			} else if (solrFieldType.matches("^[pt]?date.*")) {
+				jsonPathType = "iso8601";
+			} else if (solrFieldType.matches("^[pt]?double.*")) {
+				jsonPathType = "double";
+			} else if (solrFieldType.matches("^[pt]?float.*")) {
+				jsonPathType = "float";
+			} else if (solrFieldType.matches("^[pt]?int.*")) {
+				jsonPathType = "int";
+			} else if (solrFieldType.matches("^[pt]?long.*")) {
+				jsonPathType = "long";
+			} else if (solrFieldType.equalsIgnoreCase("string")) {
+				jsonPathType = "string";
+			} else {
+				jsonPathType = "text";
+			}
+			return jsonPathType;
+		}
+
 		public JSONPathAttribute(String name, String jsonPathValue, String jsonPathType) {
 			this.name = name;
 			this.jsonPathValue = jsonPathValue;
@@ -114,7 +136,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 		public String getJsonPathType() {
 			return jsonPathType;
 		}
-
 	}
 
 	private final String jsonPathItems;
@@ -465,9 +486,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 				dataStoreMeta.setIdField(index);
 			}
 			fm.setProperty(JSON_PATH_VALUE_METADATA_PROPERTY, jpa.jsonPathValue);
+			fm.setProperty(JSON_PATH_TYPE_METADATA_PROPERTY, jpa.jsonPathType);
 			if (isRealJsonPath(jpa.jsonPathType)) {
 				// dinamically defined
-				fm.setProperty(JSON_PATH_TYPE_METADATA_PROPERTY, jpa.jsonPathType);
 				// type == null, defined later
 			} else {
 				Class<?> type = getType(jpa.jsonPathType);
@@ -477,7 +498,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 				if (type.equals(Date.class) || type.equals(Timestamp.class)) {
 					setDateTypeFormat(fm, jpa.jsonPathType);
 				}
-
 			}
 			dataStoreMeta.addFiedMeta(fm);
 		}
@@ -577,11 +597,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else if (fieldType.equals(Integer.class)) {
 			return Integer.valueOf(value);
 		} else if (fieldType.equals(BigInteger.class)) {
-			return new BigInteger(value.toString());
+			return new BigInteger(value);
+		} else if (fieldType.equals(Float.class)) {
+			return Float.parseFloat(value);
 		} else if (fieldType.equals(Double.class)) {
 			return Double.parseDouble(value);
 		} else if (fieldType.equals(BigDecimal.class)) {
-			return new BigDecimal(value.toString());
+			return new BigDecimal(value);
 		} else if (fieldType.equals(Date.class)) {
 			String dateFormat = (String) fmd.getProperty(DATE_FORMAT_FIELD_METADATA_PROPERTY);
 			Assert.assertNotNull(dateFormat != null, "dateFormat != null");
@@ -662,6 +684,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		if (jsonPathType.equalsIgnoreCase("string")) {
 			return String.class;
+		} else if (jsonPathType.equalsIgnoreCase("text")) {
+			return String.class;
 		} else if (jsonPathType.equalsIgnoreCase("byte")) {
 			return Byte.class;
 		} else if (jsonPathType.equalsIgnoreCase("short")) {
@@ -674,7 +698,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return BigInteger.class;
 		} else if (jsonPathType.toLowerCase().startsWith("bigdec")) {
 			return BigDecimal.class;
-		} else if (jsonPathType.equalsIgnoreCase("float") || jsonPathType.equalsIgnoreCase("double")) {
+		} else if (jsonPathType.equalsIgnoreCase("float")) {
+			return Float.class;
+		} else if (jsonPathType.equalsIgnoreCase("double")) {
 			return Double.class;
 		} else if (jsonPathType.toLowerCase().startsWith("datetime")) {
 			return Timestamp.class;
