@@ -123,6 +123,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function handleClick(node){
+			if(node.colDef.paramType == 'text'){
+				$mdDialog.show(
+			      $mdDialog.alert()
+			        .parent(angular.element(document.body))
+			        .clickOutsideToClose(true)
+			        .textContent(node.value)
+			        .ok('Close')
+			    );
+				return;
+			};
 	  		$scope.doSelection(node.colDef.headerName,node.value,null,null,node.data, null);
 	  	}
 		
@@ -166,6 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name, "tooltipField":fields[f].name};
+						tempCol.paramType = fields[f].type;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
