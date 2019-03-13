@@ -43,12 +43,11 @@
 										<label>Precision</label>
 										<input class="input_class" type="number" ng-model="localModel.numbers.precision" />
 									</md-input-container>
-									<md-input-container flex=25 class="md-block" >  
-										<label>{{translate.load('sbi.cockpit.style.format')}}</label>
-										<md-select aria-label="aria-label" ng-model="localModel.numbers.format">
-											<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
-										</md-select>
-									</md-input-container> 
+									<div flex layout="row" layout-align="start center" class="layout-align-start-center layout-row flex">
+										<md-checkbox class="md-block" ng-model="localModel.numbers.format">
+							            	Format to Locale
+							          	</md-checkbox>
+									</div> 	
 					           </div>
 							</md-card-content>
 						</md-card>
