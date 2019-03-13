@@ -179,12 +179,13 @@ angular
 						attachTo:  angular.element(document.body),
 						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
 						position: $mdPanel.newPanelPosition().absolute().center(),
+						panelClass:"layout-column",
 						fullscreen: true,
 						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
 							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
 
 							$scope.closePanel = function(){
-								mdPanelRef.close().then(function() {
+								mdPanelRef.close().then(function(panelRef) {
 								    panelRef.destroy();
 								  });;
 							}
