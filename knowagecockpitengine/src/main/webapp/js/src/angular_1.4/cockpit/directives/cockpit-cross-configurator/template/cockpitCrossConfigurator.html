@@ -165,7 +165,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!ngModel.preview.previewType" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.preview.previewType && crossTable" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					Choose an interaction type to enable a preview navigation
 				</div>
@@ -175,7 +175,7 @@
 				Enable click on whole row
 			</md-checkbox-->
 			
-			<dataset-selector ng-show="ngModel.preview.previewType" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
+			<dataset-selector ng-show="ngModel.preview.previewType || crossChart" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
 			
 			<md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow'" ng-show="crossTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
