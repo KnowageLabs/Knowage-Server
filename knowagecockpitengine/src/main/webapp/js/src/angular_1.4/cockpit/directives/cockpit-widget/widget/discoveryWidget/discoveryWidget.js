@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$rootScope,
 			$timeout,
 			$mdPanel,
+			$mdDialog,
 			$q,
 			$filter,
 			sbiModule_translate,
