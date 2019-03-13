@@ -81,10 +81,11 @@
 			<div layout="row" ng-if="chartTemplate.groupSeriesCateg">
 			<div layout="column" flex=100 layout-margin>
 			
+			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesToUse")}}</label>
 			<md-input-container class="md-block">
 				 <md-select ng-model="chartTemplate.groupedSerie" >
 				 	<md-option
-					ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.name}}">{{seriesItem.name}}
+					ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.column}}">{{seriesItem.column}}
 					</md-option>
 				 </md-select> 
 			</md-input-container>
