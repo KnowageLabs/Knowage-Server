@@ -1365,7 +1365,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	 					if(colValue == undefined) colValue ='';
 
 	 					if(allDatasetRecords.metaData.fields[1].type == 'float' && model.numbers){
-	 						colValue = ds.formatValue(colValue,model.numbers);
+	 						if(model.numbers.format) colValue = $filter('number')(colValue,model.numbers.precision);
+	 						else colValue = model.numbers.precision ? parseFloat(colValue).toFixed(model.numbers.precision) : colValue;
+	 						colValue = (model.numbers.prefix || '') + colValue + (model.numbers.suffix || '');
 	 					}
 
 
@@ -1407,49 +1409,49 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	//conditional value formatting
-    ds.formatValue = function (value, numbersModel){
-		var output = value;
-		if(!numbersModel || !numbersModel.precision || numbersModel.precision < 0) numbersModel.precision = 2;
-
-		//setting the number precision when format is not present
-		if (numbersModel && numbersModel.precision && !numbersModel.format) {
-			output = parseFloat(value).toFixed(numbersModel.precision);
-		}
-
-		if (numbersModel && numbersModel.format){
-	    	switch (numbersModel.format) {
-	    	case "#.###":
-	    		output = ds.numberFormat(value, 0, ',', '.');
-	    	break;
-	    	case "#,###":
-	    		output = ds.numberFormat(value, 0, '.', ',');
-	    	break;
-	    	case "#.###,##":
-	    		output = ds.numberFormat(value, numbersModel.precision, ',', '.');
-	    	break;
-	    	case "#,###.##":
-	    		output = ds.numberFormat(value, numbersModel.precision, '.', ',');
-	    		break;
-	    	default:
-	    		break;
-	    	}
-		}
-    	return (numbersModel.prefix||'') + output + (numbersModel.suffix||'');
-	}
-
-    //formatting function with the given parameters
-	ds.numberFormat = function (value, dec, dsep, tsep) {
-
-		  if (isNaN(value) || value == null) return value;
-
-		  value = parseFloat(value).toFixed(~~dec);
-		  tsep = typeof tsep == 'string' ? tsep : ',';
-
-		  var parts = value.split('.'), fnums = parts[0],
-		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
-
-		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
-	}
+//    ds.formatValue = function (value, numbersModel){
+//		var output = value;
+//		if(!numbersModel || !numbersModel.precision || numbersModel.precision < 0) numbersModel.precision = 2;
+//
+//		//setting the number precision when format is not present
+//		if (numbersModel && numbersModel.precision && !numbersModel.format) {
+//			output = parseFloat(value).toFixed(numbersModel.precision);
+//		}
+//
+//		if (numbersModel && numbersModel.format){
+//	    	switch (numbersModel.format) {
+//	    	case "#.###":
+//	    		output = ds.numberFormat(value, 0, ',', '.');
+//	    	break;
+//	    	case "#,###":
+//	    		output = ds.numberFormat(value, 0, '.', ',');
+//	    	break;
+//	    	case "#.###,##":
+//	    		output = ds.numberFormat(value, numbersModel.precision, ',', '.');
+//	    	break;
+//	    	case "#,###.##":
+//	    		output = ds.numberFormat(value, numbersModel.precision, '.', ',');
+//	    		break;
+//	    	default:
+//	    		break;
+//	    	}
+//		}
+//    	return (numbersModel.prefix||'') + output + (numbersModel.suffix||'');
+//	}
+//
+//    //formatting function with the given parameters
+//	ds.numberFormat = function (value, dec, dsep, tsep) {
+//
+//		  if (isNaN(value) || value == null) return value;
+//
+//		  value = parseFloat(value).toFixed(~~dec);
+//		  tsep = typeof tsep == 'string' ? tsep : ',';
+//
+//		  var parts = value.split('.'), fnums = parts[0],
+//		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
+//
+//		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
+//	}
 
 })
 .run(function() {
