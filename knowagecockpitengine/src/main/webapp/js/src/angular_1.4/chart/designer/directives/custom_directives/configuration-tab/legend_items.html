@@ -7,7 +7,13 @@
 		ng-model="chartTemplate.LEGEND.show" aria-label="Show legend" ng-disabled="disableLegendCheckbox" name="legenditems_cbshow"></md-checkbox>
 	</md-input-container>
 </div>
+<div  layout="row" layout-margin ng-if="chartTemplate.LEGEND.show">
 
+	<label>{{translate.load("sbi.worksheet.designer.barchartdesignerpanel.form.showlegendCheckboxItems")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.LEGEND.showCheckboxes" aria-label="Show legend checkboxes" ng-disabled="disableLegendCheckbox" name="legenditems_cbshow_checkbox"></md-checkbox>
+	</md-input-container>
+</div>
 <div  layout="column" ng-show="chartTemplate.LEGEND.show && !disableLegendCheckbox &&  selectedChartType != 'heatmap'">
 
 	<md-input-container ng-if="disableHtmlElementForChartJs()" class="md-block">
