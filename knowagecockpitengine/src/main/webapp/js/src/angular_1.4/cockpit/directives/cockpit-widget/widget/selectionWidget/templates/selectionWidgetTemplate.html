@@ -8,7 +8,7 @@
 		</md-button>
 	</md-toolbar>
 	
-	 <md-list class="md-dense" flex ng-if="selection.length > 0">
+	 <md-list class="md-dense" flex ng-if="!ngModel.style.chips.enabled && selection.length > 0">
         <md-list-item ng-repeat="row in selection" layout="row" layout-align="start center" ng-style="getRowStyle($even)">
 			<p class="selectionSpan" ng-repeat="column in columnTableSelection" ng-if="column.visible" flex>
 				{{row[column.name]}}
@@ -20,6 +20,19 @@
           </md-button>
         </md-list-item>
      </md-list>
+     
+     <div layout-wrap layout="row" layout-fill ng-if="ngModel.style.chips.enabled && selection.length > 0" layout-align="start center" style="padding:4px">
+     	<span class="kn-chip noSelect" ng-repeat="row in selection" ng-style="ngModel.style.chips">
+			<span ng-repeat="column in columnTableSelection" ng-if="column.visible" flex ng-style="ngModel.style.chips">
+				{{row[column.name]}}
+				<md-tooltip md-delay="500">{{row[column.name]}}</md-tooltip>
+			</span>
+			<md-button class="md-secondary md-icon-button" ng-click="deleteSelection(row, true)" aria-label="clear selection">
+            	<md-icon md-font-icon="fa fa-trash" ng-style="ngModel.style.chips"></md-icon>
+	            <md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.selections.clearselection')}}</md-tooltip>
+          	</md-button>
+		</span>
+     </div>
      
 	<div layout="column" flex layout-align="center center" ng-if="selection.length == 0" layout-padding>
 		<span class="kn-info">{{::translate.load('sbi.cockpit.selections.noselections')}}</span>

@@ -47,6 +47,29 @@
 						</div>
 					</md-card-content>
 				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<md-switch ng-model="localModel.style.chips.enabled" ng-change="toggleChips()">{{translate.load('sbi.cockpit.widget.selection.chips')}}</md-switch>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div flex layout="column" ng-cloak>
+							<div layout="row">
+								<md-input-container flex class="md-block">
+									<label>{{translate.load('sbi.cockpit.widget.selection.chips.color')}}</label>
+									<color-picker options="colorPickerPropertyChips" ng-model="localModel.style.chips.color"/>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{translate.load('sbi.cockpit.widget.selection.chips.background')}}</label>
+									<color-picker options="colorPickerPropertyChips" ng-model="localModel.style.chips['background-color']"/>
+								</md-input-container>
+							</div>
+						</div>
+					</md-card-content>
+				</md-card>
 	  		
 	  		
 		     	<cockpit-style-configurator widget ng-model="localModel.style">
