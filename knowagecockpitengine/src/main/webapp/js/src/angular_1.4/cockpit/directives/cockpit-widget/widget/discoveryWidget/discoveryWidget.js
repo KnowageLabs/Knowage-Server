@@ -139,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$mdDialog.show({
 					template: 	'<md-dialog class="textContainerDialog">'+
 									'<md-dialog-content>'+
-										'<p class="ng-binding">{{dialogContent}}</p>'+
+										'<p ng-bind-html="dialogContent"></p>'+
 									'</md-dialog-content>'+
 									'<md-dialog-actions>'+
 										'<md-button class="md-primary md-button" ng-click="hide()">Close</button>'+
@@ -203,7 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name, "tooltipField":fields[f].name};
 						tempCol.paramType = fields[f].type;
-						if(fields[f].type == 'text') tempCol.cellRenderer = cellRenderer;
+						if(fields[f].type == 'text') tempCol.cellRenderer = textCellRenderer;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
@@ -216,9 +216,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return columns
 		}
 		
-		function cellRenderer(params){
-			return '<div ng-bind-html="'+ params.value+ '"></div>'
-		}
+		function textCellRenderer () {}
+		textCellRenderer.prototype.init = function(params) {
+		    this.eGui = document.createElement('div');
+		    this.eGui.innerHTML = params.value;
+		};
+		textCellRenderer.prototype.getGui = function() {
+		    return this.eGui;
+		};
 		
 		function headerTemplate() { 
 			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+$scope.ngModel.style.th["background-color"]+'">'+
