@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="apple-mobile-web-app-title" content="Knowage">
 <link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>">
 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/font-awesome/css/font-awesome.min.css")%>">
 
 
 <!-- angular reference-->
