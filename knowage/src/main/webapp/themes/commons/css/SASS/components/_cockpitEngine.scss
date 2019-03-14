@@ -495,6 +495,18 @@
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}
+    		.textCell {
+    			cursor: pointer;
+    			align-items: flex-start;
+    			div {
+    				white-space: normal;
+    				line-height: 16px;
+    				em {
+    					font-weight: bold;
+    				}
+    			}
+    			
+    		}
     		
     		.discoveryListView {
 				.discoveryItem {

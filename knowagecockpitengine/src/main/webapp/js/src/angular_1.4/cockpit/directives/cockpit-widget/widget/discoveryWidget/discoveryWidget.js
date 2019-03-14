@@ -203,7 +203,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name, "tooltipField":fields[f].name};
 						tempCol.paramType = fields[f].type;
-						if(fields[f].type == 'text') tempCol.cellRenderer = textCellRenderer;
+						if(fields[f].type == 'text') {
+							tempCol.cellRenderer = textCellRenderer;
+							tempCol.cellClass = 'textCell';
+						}
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
