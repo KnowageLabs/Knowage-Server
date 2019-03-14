@@ -2309,21 +2309,21 @@
 	    	 	 
 	        },
         series: {
-        
+        #if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
         	events: {
-        	checkboxClick: function(event) {
-        	this.points.forEach(function(point) {
-        	point.update({
-        	dataLabels: {
-        	enabled: event.checked
-        	}
-        	});
-        	});
-        	}
+	        	checkboxClick: function(event) {
+		        	this.points.forEach(function(point) {
+			        	point.update({
+				        	dataLabels: {
+				        		enabled: event.checked
+				        	}
+			        	});
+		        	});
+	        	}
         	},
-        	  
+        	
 			showCheckbox: true,
-        
+        	#end
             cursor: 'pointer', 
             #if(!$exportWebApp)
             point: {
