@@ -75,9 +75,6 @@ md-toolbar.md-knowage-theme {
       background-color: $baseColor;
     }
 }
-md-dialog {
-  background-color: white;
-}
 
 md-list-item ._md-list-item-inner ._md-secondary-container, md-list-item ._md-secondary-container {
   height: 0;
@@ -270,10 +267,8 @@ md-card.md-knowage-theme {
     }
 }
 
-md-tab-content {
-  md-content.md-knowage-theme {
+md-tab-content md-content.md-knowage-theme {
     background-color: transparent;
-  }
 }
 
 // Dialog Buttons
@@ -465,10 +460,17 @@ md-icon {
 	padding:0px;
 }
 
+.noPadding > ._md-subheader-inner, .noPadding > .md-subheader-inner {
+   ._md-subheader-content {
+    &>div {
+      height: 48px;
+    }
+  }
+}
+
 .text-transform-none {
   text-transform: none;
 }
-
 .switchSubheader.md-subheader {
   ._md-subheader-inner {
     width: 100%;
@@ -521,9 +523,6 @@ md-toast.md-knowage-theme.kn-toast-error {
     background-color: red;
 }
 
-.md-toast-content {
-  background-color: black;
-}
 
 
 	
@@ -863,6 +862,13 @@ md-tab-item {
   border-color: red;
 }
 
+.kn-error-popup {
+  min-width: 300px; 
+  max-height: 400px; 
+  max-width: 600px; 
+  padding: 1px;
+}
+
 .kn-inputError {
   color: $negativeColor !important;
   border-bottom-color: $negativeColor !important;
@@ -876,6 +882,10 @@ md-tab-item {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.notAllowedCursor {
+  cursor: not-allowed !important;
 }
 
 .knowageStandardTable {
@@ -986,6 +996,12 @@ color-picker {
   overflow: hidden;
 }
 
+.warning {
+  &>md-icon {
+    color: $negativeColor;
+  }
+}
+
 .kn-select {
   border-bottom: 1px solid $bordersColor; 
   width: 100%; 
@@ -1026,6 +1042,33 @@ color-picker {
   }
 }
 
+md-dialog {
+  background: $tabBackground;
+}
+filter-by-tags {
+  .inverse-flex {
+    flex-direction: row-reverse;
+  }
+  .kn-chip {
+    padding: 4px 8px;
+    background-color: $ternaryColor;
+    cursor: pointer;
+    margin-right: 4px;
+    line-height: 30px;
+    border-radius: 50px;
+    font-size: $mediumFontSize;
+    outline: none;
+    &:hover {
+      background-color: lighten($ternaryColor, 10%);
+    }
+    &.tagSelected {
+      background-color: $baseColor;
+      color: $lightTextColor;
+      
+    }
+  }
+}
+
 
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
@@ -1054,10 +1097,6 @@ color-picker {
   
   md-select-menu[multiple] md-option[selected]._md-checkbox-enabled ._md-icon::after{
     padding-top: 11px;
-  }
-  md-tooltip {
-    background-color: lighten(black,15%);
-    color: white;
   }
   
 }

@@ -92,13 +92,17 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		}
 		return false;
 	}
-
+	
+	if($scope.ngModel && $scope.ngModel.style && !$scope.ngModel.style.chips) $scope.ngModel.style.chips = {};
+	
 	$scope.getSelections=function(){
 		$scope.selection = [];
 		$scope.tmpSelection = [];
 		angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
 		$scope.tmpFilters = {};
 		angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
+		
+		
 
 		if($scope.tmpSelection.length >0){
 			for(var i=0;i<$scope.tmpSelection.length;i++){
@@ -292,10 +296,15 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 				$scope.localModel = {};
 				angular.copy(model,$scope.localModel);
 				$scope.colorPickerPropertyEvenOddRows={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style || !$scope.localModel.style.alternateRows || !$scope.localModel.style.alternateRows.enabled};
-				
 				$scope.changeAlternatedRows = function(){
 					$scope.colorPickerPropertyEvenOddRows.disabled = !$scope.localModel.style.alternateRows.enabled;
 				}
+				
+				$scope.colorPickerPropertyChips = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style.chips.enabled};
+				$scope.toggleChips = function(){
+					$scope.colorPickerPropertyChips.disabled = $scope.localModel.style.chips.enabled ? false : true;
+				}
+				
 				
 				$scope.saveConfiguration=function(){
 					angular.copy($scope.localModel,model);
