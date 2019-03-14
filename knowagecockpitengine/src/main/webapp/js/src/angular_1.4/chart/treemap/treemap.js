@@ -492,6 +492,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			max: colors.length * 10,
 			stops: modifiedStops,
 			tickPositions: tickPositions,
+		    startOnTick: false,
+		    endOnTick: false,
 		},
 		legend:{
 			enabled: false
