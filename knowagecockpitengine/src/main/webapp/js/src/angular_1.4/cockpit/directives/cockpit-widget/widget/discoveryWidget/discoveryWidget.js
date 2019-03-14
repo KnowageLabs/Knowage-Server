@@ -98,14 +98,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.facets = [];
 		
 		$scope.gridOptions = {
+			angularCompileRows: true,
             enableColResize: true,
             enableSorting: true,
             onGridReady: resizeColumns,
             onGridSizeChanged: resizeColumns,
             onSortChanged: changeSorting,
             getRowHeight: rowHeight,
-            onCellClicked: handleClick
+            onCellClicked: handleClick,
+            getRowHeight: getRowHeight,
+            stopEditingWhenGridLosesFocus:true
 		};
+		
+		function getRowHeight(params){
+			var maxLength = 0;
+			for(var r in params.data){
+				if(params.data[r].length > maxLength) maxLength = params.data[r].length;
+			}
+	        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
+		}
 		
 		function changeSorting(){
 			$scope.showWidgetSpinner()
@@ -125,13 +136,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function handleClick(node){
 			if(node.colDef.paramType == 'text'){
-				$mdDialog.show(
-			      $mdDialog.alert()
-			        .parent(angular.element(document.body))
-			        .clickOutsideToClose(true)
-			        .textContent(node.value)
-			        .ok('Close')
-			    );
+				$mdDialog.show({
+					template: 	'<md-dialog class="textContainerDialog">'+
+									'<md-dialog-content>'+
+										'<p class="ng-binding">{{dialogContent}}</p>'+
+									'</md-dialog-content>'+
+									'<md-dialog-actions>'+
+										'<md-button class="md-primary md-button" ng-click="hide()">Close</button>'+
+									'</md-dialog-actions>'+
+								'</md-dialog>' ,
+					parent : angular.element(document.body),
+					clickOutsideToClose:true,
+					escapeToClose: true,
+					preserveScope: false,
+					locals:{value:node.value},
+					controller: function(scope,$mdDialog,value){
+						scope.dialogContent = value;
+						scope.hide = function(){
+							$mdDialog.hide();
+						}
+					}
+				});
 				return;
 			};
 	  		$scope.doSelection(node.colDef.headerName,node.value,null,null,node.data, null);
@@ -178,6 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name, "tooltipField":fields[f].name};
 						tempCol.paramType = fields[f].type;
+						if(fields[f].type == 'text') tempCol.cellRenderer = cellRenderer;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
@@ -188,6 +214,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			return columns
+		}
+		
+		function cellRenderer(params){
+			return '<div ng-bind-html="'+ params.value+ '"></div>'
 		}
 		
 		function headerTemplate() { 

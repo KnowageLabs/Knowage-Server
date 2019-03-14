@@ -532,6 +532,20 @@
     	
     }
 
+    .textContainerDialog {
+    	max-width: 40%;
+    	md-dialog-content {
+		    padding: 8px;
+		    border: 1px solid #ccc;
+		    margin: 4px;
+		    background-color: #efefef;
+		    p {
+		    	font-size: .9rem;
+				margin: 8px 0;
+		    }
+		}
+    }
+
     .discoveryWidgetConfiguration {
     	position: absolute;
    		width: 90%;

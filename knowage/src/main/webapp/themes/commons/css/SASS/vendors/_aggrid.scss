@@ -127,6 +127,13 @@ $aggrid-border-color: #d9dcde;
 			border-top: none;
 		}
 	}
+	&.ag-multiline {
+		.ag-cell.ag-cell-value {
+		    line-height: 16px;
+		    align-items: start;
+		    white-space: normal;
+		}
+	}
 }
 
 $exportBarHeight : 36px;
