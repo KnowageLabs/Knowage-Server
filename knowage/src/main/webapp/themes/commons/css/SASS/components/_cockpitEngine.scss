@@ -295,12 +295,13 @@
 		    background-color: $ternaryColor;
 		    margin-right: 4px;
 		    margin-bottom: 4px;
-		    line-height: 30px;
 		    height: 30px;
 		    border-radius: 50px;
 		    font-size: $mediumFontSize;
 		    outline: none;
 		    font-weight: bold;
+		    display: inline-flex;
+		    align-items: center;
 		    span:first-child{
 		    	margin:0 4px;
 		    	font-weight: normal;
