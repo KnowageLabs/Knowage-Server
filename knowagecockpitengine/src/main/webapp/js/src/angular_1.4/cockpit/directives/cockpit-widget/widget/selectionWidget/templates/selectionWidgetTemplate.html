@@ -18,8 +18,8 @@
      </md-list>
      
      <div layout-wrap layout="row" layout-fill ng-if="ngModel.style.chips.enabled && selection.length > 0" layout-align="start center" style="padding:4px">
-     	<span class="kn-chip noSelect" ng-repeat="row in selection" ng-style="ngModel.style.chips">
-			<span ng-repeat="column in columnTableSelection" ng-if="column.visible" flex ng-style="ngModel.style.chips">
+     	<span class="kn-chip noSelect" ng-repeat="row in selection" ng-style="ngModel.style.chips" layout="row">
+			<span ng-repeat="column in columnTableSelection" class="truncated" ng-if="column.visible" ng-style="ngModel.style.chips">
 				{{row[column.name]}}
 				<md-tooltip md-delay="500">{{row[column.name]}}</md-tooltip>
 			</span>
