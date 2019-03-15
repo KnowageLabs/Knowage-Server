@@ -9,11 +9,7 @@
     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse" table="SBI_OBJ_PARUSE">
       <id name="id" type="java.lang.Integer">
             <column name="PARUSE_ID" />
-           <generator class="org.hibernate.id.enhanced.TableGenerator">
-				<param name="optimizer">none</param>
-		        <param name="segment_value">SBI_OBJ_PARUSE</param>	
-		        <param name="initial_value">1</param>
-   			</generator>
+
         </id>
             <many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
                 <column name="use_id" not-null="true"/>

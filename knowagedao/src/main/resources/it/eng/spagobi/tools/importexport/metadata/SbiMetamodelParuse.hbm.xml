@@ -6,11 +6,6 @@
     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetamodelParuse" table="SBI_METAMODEL_PARUSE">
         <id name="id" type="java.lang.Integer">
             <column name="PARUSE_ID" />
-           <generator class="org.hibernate.id.enhanced.TableGenerator">
-				<param name="optimizer">none</param>
-		        <param name="segment_value">SBI_METAMODEL_PARUSE</param>	
-		        <param name="initial_value">1</param>
-   			</generator>
         </id>
         <many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse" fetch="join">
             <column name="USE_ID" />

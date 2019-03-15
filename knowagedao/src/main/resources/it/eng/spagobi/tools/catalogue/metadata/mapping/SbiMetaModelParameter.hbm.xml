@@ -55,7 +55,7 @@
             <column name="PARURL_NM" />
         </property>
         <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" >
-            <column name="METAMODEL_ID" />
+            <column name="METAMODEL_ID" not-null="true" />
         </many-to-one>
         <property name="multFl" type="java.lang.Short">
             <column name="MULT_FL" />
@@ -64,7 +64,7 @@
             <column name="THICK_PERC" />
         </property>
         <many-to-one name="sbiParameter" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" >
-            <column name="PAR_ID" />
+            <column name="PAR_ID" not-null="true" />
         </many-to-one>
         <property name="colSpan" type="java.lang.Integer">
             <column name="COL_SPAN" />
