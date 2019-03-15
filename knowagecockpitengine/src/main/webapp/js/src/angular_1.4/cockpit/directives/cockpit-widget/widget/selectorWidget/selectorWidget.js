@@ -247,14 +247,22 @@ angular.module('cockpitModule')
 		      parent: angular.element(document.body),
 		      targetEvent: ev,
 		      clickOutsideToClose:true,
-		      locals: {selectables:$scope.ngModel.activeValues, itemsList:$scope.datasetRecords.rows, activeSelections: $scope.selectedValues, targetModel: $scope.ngModel.content, settings:$scope.ngModel.settings}
+		      locals: {
+		    	  selectables:$scope.ngModel.activeValues, 
+		    	  itemsList:$scope.datasetRecords.rows, 
+		    	  activeSelections: $scope.selectedValues, 
+		    	  targetModel: $scope.ngModel.content, 
+		    	  settings:$scope.ngModel.settings, 
+		    	  title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
+		      }
 		    }).then(function(selectedFields) {
 		    	$scope.toggleParameter(selectedFields);
 		    },function(error){});
 		}
 		
-		function MultiSelectDialogController(scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings) {
+		function MultiSelectDialogController(scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings,title) {
 			scope.settings = settings;
+			scope.title = title;
 			scope.translate = sbiModule_translate;
 			scope.selectables = [];
 			scope.allSelected = false;
