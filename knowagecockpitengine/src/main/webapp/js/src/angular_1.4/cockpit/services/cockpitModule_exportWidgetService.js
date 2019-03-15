@@ -68,7 +68,7 @@
 			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 
 			var aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset);
-			cleanAggregation(widget, aggregation);
+			// cleanAggregation(widget, aggregation);
 
 			var loadDomainValues = widget.type == "selector" ? true : false;
 			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
