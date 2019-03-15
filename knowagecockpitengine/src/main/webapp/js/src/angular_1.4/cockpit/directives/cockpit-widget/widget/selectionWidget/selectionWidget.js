@@ -300,7 +300,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 					$scope.colorPickerPropertyEvenOddRows.disabled = !$scope.localModel.style.alternateRows.enabled;
 				}
 				
-				$scope.colorPickerPropertyChips = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style.chips.enabled};
+				$scope.colorPickerPropertyChips = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled: ($scope.localModel.style.chips && $scope.localModel.style.chips.enabled) ? false : true};
 				$scope.toggleChips = function(){
 					$scope.colorPickerPropertyChips.disabled = $scope.localModel.style.chips.enabled ? false : true;
 				}
