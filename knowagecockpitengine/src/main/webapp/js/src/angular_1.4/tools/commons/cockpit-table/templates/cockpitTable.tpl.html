@@ -60,6 +60,7 @@
 		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].icon">
 		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
+		                <span ng-if="$last" flex></span>
 		                <span ng-if="$last" ng-click="selectCell($event,row,column)">
 		                	<md-icon ng-class="dynamicIcon()"></md-icon>
 		                </span>
