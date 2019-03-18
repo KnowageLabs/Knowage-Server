@@ -7,7 +7,7 @@
 		ng-model="chartTemplate.LEGEND.show" aria-label="Show legend" ng-disabled="disableLegendCheckbox" name="legenditems_cbshow"></md-checkbox>
 	</md-input-container>
 </div>
-<div  layout="row" layout-margin ng-if="chartTemplate.LEGEND.show">
+<div  layout="row" layout-margin ng-if="(selectedChartType == "bar" || selectedChartType== "line" || selectedChartType == "scatter" || selectedChartType == "radar") && chartTemplate.LEGEND.show">
 
 	<label>{{translate.load("sbi.worksheet.designer.barchartdesignerpanel.form.showlegendCheckboxItems")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
