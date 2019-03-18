@@ -96,6 +96,10 @@ public class SolrDataSet extends RESTDataSet {
             if(fieldList != null && !fieldList.trim().isEmpty()) {
                 solrQuery.setFields(fieldList.split(","));
             }
+            String solrFields = getProp(SolrDataSetConstants.SOLR_FIELDS, jsonConf, true, resolveParams);
+            if(solrFields != null && !solrFields.trim().isEmpty()) {
+                solrConfiguration.setSolrFields(solrFields);
+            }
 
             List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConf, true);
             if (filterQueries != null && !filterQueries.isEmpty()) {
@@ -119,7 +123,11 @@ public class SolrDataSet extends RESTDataSet {
 
     private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes() {
         JSONArray solrFields = getSolrFields();
+        Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
+        return getJsonPathAttributes(solrFieldTypes);
+    }
 
+    private Map<String, String> getSolrFieldTypes(JSONArray solrFields) {
         Map<String, String> solrFieldTypes = new HashMap<>(solrFields.length());
         for (int i = 0; i < solrFields.length(); i++) {
             JSONObject solrField = solrFields.optJSONObject(i);
@@ -127,11 +135,10 @@ public class SolrDataSet extends RESTDataSet {
             String type = solrField.optString("type");
             solrFieldTypes.put(name, type);
         }
-
-        return getJsonPathAttributes(solrFieldTypes);
+        return solrFieldTypes;
     }
 
-	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(Map<String, String> solrFieldTypes) {
+    private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(Map<String, String> solrFieldTypes) {
 		String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
 		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
 		for (String field : fields) {
@@ -142,23 +149,30 @@ public class SolrDataSet extends RESTDataSet {
 		return jsonPathAttributes;
 	}
 
-	private JSONArray getSolrFields() {
-		JSONArray solrFields = new JSONArray();
-		RESTDataProxy dataProxy = getDataProxy();
-		try {
-			RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
-					solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json",
-					dataProxy.getRequestHeaders(), null,
-					null);
-			Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
+	public JSONArray getSolrFields() {
+        RESTDataProxy dataProxy = getDataProxy();
+        JSONArray solrFields;
+        String configurationSolrFields = solrConfiguration.getSolrFields();
+        try {
+            if(configurationSolrFields != null){
+                solrFields = new JSONArray(configurationSolrFields);
+            }else {
+                RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
+                        solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json",
+                        dataProxy.getRequestHeaders(), null,
+                        null);
+                Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
 
-			String responseBody = response.getResponseBody();
-			Assert.assertNotNull(responseBody, "Response body is null");
+                String responseBody = response.getResponseBody();
+                Assert.assertNotNull(responseBody, "Response body is null");
 
-			solrFields = new JSONObject(responseBody).getJSONArray("fields");
-		} catch (IOException | HMACSecurityException | JSONException e) {
-			logger.warn("Unable to read fields", e);
+                solrFields = new JSONObject(responseBody).getJSONArray("fields");
+            }
+		} catch (Exception e) {
+			logger.error("Unable to read Solr fields", e);
+            solrFields = new JSONArray();
 		}
+
 		return solrFields;
 	}
 

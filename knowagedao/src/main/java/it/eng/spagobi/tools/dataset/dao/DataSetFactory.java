@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1136,6 +1137,13 @@ public class DataSetFactory {
 		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(jsonConf, parametersMap)
 				: new FacetSolrDataSet(jsonConf, parametersMap);
 		res.setDsType(DataSetConstants.DS_SOLR_NAME);
+
+		if (!jsonConf.has(SolrDataSetConstants.SOLR_FIELDS)) {
+			JSONArray solrFields = res.getSolrFields();
+			jsonConf.put(SolrDataSetConstants.SOLR_FIELDS, solrFields);
+			res.setConfiguration(jsonConf.toString());
+		}
+
 		return res;
 	}
 }

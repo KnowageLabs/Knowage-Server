@@ -25,6 +25,7 @@ public class SolrConfiguration {
     private String url;
     private String collection;
     private SolrQuery solrQuery;
+    private String solrFields;
     private static final String WRITER_TYPE = "json"; //wt
     private static final String DEFAULT_REQUEST_HANDLER = "select";
 
@@ -50,6 +51,14 @@ public class SolrConfiguration {
 
     public void setSolrQuery(SolrQuery solrQuery) {
         this.solrQuery = solrQuery;
+    }
+
+    public String getSolrFields() {
+        return solrFields;
+    }
+
+    public void setSolrFields(String solrFields) {
+        this.solrFields = solrFields;
     }
 
     @Override

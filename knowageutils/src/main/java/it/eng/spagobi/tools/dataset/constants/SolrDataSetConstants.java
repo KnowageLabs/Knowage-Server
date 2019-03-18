@@ -25,13 +25,14 @@ public class SolrDataSetConstants {
     public static final String SOLR_COLLECTION = "solrCollection";
     public static final String SOLR_QUERY = RESTDataSetConstants.REST_REQUEST_BODY;
     public static final String SOLR_FIELD_LIST = "solrFieldList";
+    public static final String SOLR_FIELDS = "solrFields";
     public static final String SOLR_FACET_QUERY = "solrFacetQuery";
     public static final String SOLR_FACET_FIELD = "solrFacetField";
     public static final String SOLR_FACET_PREFIX = "solrFacetPrefix";
-    public static final String[] SOLR_STRING_ATTRIBUTES = { SOLR_BASE_ADDRESS, SOLR_TYPE, SOLR_COLLECTION, SOLR_QUERY, SOLR_FIELD_LIST, SOLR_FACET_QUERY, SOLR_FACET_FIELD,
-            SOLR_FACET_PREFIX };
+    public static final String[] SOLR_STRING_ATTRIBUTES = {SOLR_BASE_ADDRESS, SOLR_TYPE, SOLR_COLLECTION, SOLR_QUERY, SOLR_FIELD_LIST, SOLR_FIELDS,
+            SOLR_FACET_QUERY, SOLR_FACET_FIELD, SOLR_FACET_PREFIX};
     public static final String SOLR_FILTER_QUERY = "restRequestAdditionalParameters";
-    public static final String[] SOLR_JSON_ARRAY_ATTRIBUTES = { SOLR_FILTER_QUERY };
+    public static final String[] SOLR_JSON_ARRAY_ATTRIBUTES = {SOLR_FILTER_QUERY};
     public static final String[] SOLR_ALL_ATTRIBUTES = new String[SOLR_STRING_ATTRIBUTES.length
             + SOLR_JSON_ARRAY_ATTRIBUTES.length];
 
