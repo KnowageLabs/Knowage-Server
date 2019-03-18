@@ -230,7 +230,9 @@ angular.module('chartRendererModule')
 
 			scope.$on('fullExpand',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
-				if(scope.chartConf.series.length > 0){
+				if((scope.chartConf.chart.type == "bar" || scope.chartConf.chart.type == "column" || 
+				   scope.chartConf.chart.type == "line" || scope.chartConf.chart.type == "radar" ||
+				   scope.chartConf.chart.type == "scatter")  && scope.chartConf.series.length > 0){
 					for( var i=0 ; i < scope.chartConf.series.length ; i++ ){
 
 						if(scope.chartConf.series[i].data[0].dataLabels){
