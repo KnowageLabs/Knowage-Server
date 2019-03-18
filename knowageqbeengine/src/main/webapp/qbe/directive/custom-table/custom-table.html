@@ -255,7 +255,7 @@
   </md-content>
   </md-whiteframe>
   	
-  		<md-whiteframe class="md-whiteframe-3dp" layout="row">
+  		<md-whiteframe ng-if="smartPreview" class="md-whiteframe-3dp" layout="row">
   			<span flex></span>
   		 	<dir-pagination-controls  max-size="5"   on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
   		</md-whiteframe>
