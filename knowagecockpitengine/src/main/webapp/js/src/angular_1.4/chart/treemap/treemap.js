@@ -452,8 +452,6 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			max: colors.length * 10,
 			stops: modifiedStops,
 			tickPositions: tickPositions,
-		    startOnTick: false,
-		    endOnTick: false,
 		},
 		legend:{
 			enabled: false
@@ -1118,7 +1116,8 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 			stops:colorStops ,
             min: minValue,
             max: maxValue,
-            
+		    startOnTick: false,
+		    endOnTick: false,
             labels: 
             {
                format: '{value}'
