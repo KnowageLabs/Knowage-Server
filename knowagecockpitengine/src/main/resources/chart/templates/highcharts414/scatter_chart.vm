@@ -1362,7 +1362,7 @@
             	@author: danristo (danilo.ristovski@mht.net)
             *#
         series:{
-
+#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
         	events: {
             checkboxClick: function(event) {
 
@@ -1377,7 +1377,7 @@
             }
           },  
 			showCheckbox: true,
-        
+        #end
         	turboThreshold: 15000
 		},
     	scatter: {
