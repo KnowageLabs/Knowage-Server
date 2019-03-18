@@ -58,7 +58,7 @@
                 </md-input-container>
                 <md-input-container class="md-block">
                
-                    <label>{{dd.selectedDriver.parameter.name}}</label>
+                    <label>{{dd.translate.load("sbi.documentdetails.drivers.analyticaldriver")}}</label>
 					<md-select ng-required="dd.required" name="analyticalDriver" ng-model="dd.selectedDriver.parameter.name"  ng-change="dd.addToChangedDrivers(dd.selectedDriver);" >
 							  <md-select-header>
 					            <input flex ng-model="dd.searchTerm"
