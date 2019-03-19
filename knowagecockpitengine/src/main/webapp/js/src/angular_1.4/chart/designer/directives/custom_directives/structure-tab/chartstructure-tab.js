@@ -662,6 +662,17 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 							 }
 						}
 					}
+
+					if(!$scope.chartTemplate.VALUES.CATEGORY.drillOrder){
+						$scope.chartTemplate.VALUES.CATEGORY.drillOrder={}
+
+						for (var j = 0; j <  $scope.categories.length; j++) {
+
+							$scope.chartTemplate.VALUES.CATEGORY.drillOrder[$scope.categories[j].column] = {orderColumn:$scope.categories[j].orderColumn, orderType:$scope.categories[j].orderType};
+
+						}
+
+					}
 				}
 			}
 		}
@@ -761,6 +772,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.categoryRemove = function(indexOfItem) {
+		delete $scope.chartTemplate.VALUES.CATEGORY.drillOrder[$scope.categories[indexOfItem].column];
 		$scope.categories.splice(indexOfItem,1);
 	}
 
