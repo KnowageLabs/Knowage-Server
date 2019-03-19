@@ -70,6 +70,7 @@ target/
 
 # npm/yarn node Modules
 node_modules/
+package-lock.json
 
 # zanata folder
 .zanata-cache/
