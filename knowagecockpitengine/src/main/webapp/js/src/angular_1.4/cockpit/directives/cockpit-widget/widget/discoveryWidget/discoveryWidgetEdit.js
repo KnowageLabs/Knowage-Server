@@ -72,9 +72,12 @@ function discoveryWidgetEditControllerFunction(
 				  	'	<md-tooltip md-delay="500">Select aggregation</md-tooltip>'+
 				  	'	<md-icon md-font-icon="fa fa-pencil"></md-icon>'+
 				  	'</md-button>';
-		if(params.node.data.fieldType == 'ATTRIBUTE'){
+		if(params.node.data.fieldType == 'ATTRIBUTE' && !cockpitModule_generalServices.isNumericColumn(params.node.data)){
 			return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;">'+input+button+'</div>';
-		}else return '<span></span>';
+		}else{
+		    params.node.data.facet = false;
+		    return '<span></span>';
+		}
 	}
 	
 	function styleRenderer(params){

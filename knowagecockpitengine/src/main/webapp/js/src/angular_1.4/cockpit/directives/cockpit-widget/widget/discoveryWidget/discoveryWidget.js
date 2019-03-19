@@ -393,7 +393,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.isFacetSelected = function(group,item){
 			if($scope.template.configuration.filters && $scope.template.configuration.filters[$scope.ngModel.dataset.label] && $scope.template.configuration.filters[$scope.ngModel.dataset.label][group] == item.column_1) return true;
 			if($scope.ngModel.search.facets && $scope.ngModel.search.facets[group] && $scope.ngModel.search.facets[group].filterVals.indexOf(item.column_1)!=-1) return true;
-			if($scope.template.configuration.aggregations && $scope.template.configuration.aggregations[0].selection && $scope.template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1) return true;
+			if($scope.template.configuration.aggregations){
+			    for(var i in $scope.template.configuration.aggregations){
+			        if($scope.template.configuration.aggregations[i].selection && $scope.template.configuration.aggregations[i].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1)
+			            return true;
+			    }
+            }
 			return false;
 		}
 

@@ -64,7 +64,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 					if(category){
 						if(Array.isArray(category)){
-
 							for (var j = 0; j < category.length; j++) {
 								if(category[j].column == col.name){
 									obj["orderType"] = col.orderType;
@@ -72,8 +71,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 									newCategArray.push(obj)
 								}
 								}
-							}
-						else {
+                        }else{
 							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
 								obj["orderColumn"] = col.name;
 								obj["orderType"] = "asc";
@@ -88,35 +86,28 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				// SUM is default but for attribute is meaningless
 				if(ngModel.type != "discovery" && (col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
-				}
-				else{
-
+				}else{
 					// add aggregation for measures and attributes
-					if (col.aggregationSelected){
+					if (col.aggregationSelected && col.facet != false){
 						if(col.aggregationSelected instanceof Array){
 							for(var z = 0; z<col.aggregationSelected.length;z++){
 								col.aggregationSelected[z] = col.aggregationSelected[z].toUpperCase();
 							}
 							obj["funct"] = col.aggregationSelected;
-						}
-						else{
+						}else{
 							obj["funct"] = col.aggregationSelected.toUpperCase();
 						}
-					}
-
-					else {
+					}else{
 						obj["funct"] = 'NONE';
 					}
 				}
-
 
 				if(col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE"){
 					if(newCategArray.length >0 ){
 						for (var m = 0; m < newCategArray.length; m++) {
 							categories.push(newCategArray[m])
 						}
-					}
-					else {
+					}else{
 						if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 						categories.push(obj)
 					}
@@ -540,9 +531,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				ws.execRefreshAllAssociations(true);
 				AWI();
 			});
-
 		}
-
 	}
 
 	this.clearAllSelections = function(){

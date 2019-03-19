@@ -572,6 +572,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 
 function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService){
 	$scope.translate=sbiModule_translate;
+	$scope.generalServices=cockpitModule_generalServices;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
@@ -581,14 +582,11 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.availableIcons = knModule_fontIconsService.icons;
 
 	$scope.getTemplateUrl = function(template){
-		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
+		return $scope.generalServices.getTemplateUrl('tableWidget',template)
 	}
 
 	$scope.hasPrecision = function(column){
-		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigInteger' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){
-			return true;
-		}
-		return false;
+		return $scope.generalServices.isNumericColumn(column);
 	}
 
 	$scope.chooseIcon = function(range) {

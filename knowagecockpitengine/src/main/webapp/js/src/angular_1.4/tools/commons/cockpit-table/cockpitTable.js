@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
     angular.module('cockpitTable', [])
-        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate',function($mdDialog, sbiModule_translate) {
+        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate',function($mdDialog, sbiModule_translate, cockpitModule_generalServices) {
 
             return {
                 restrict: "E",
@@ -36,6 +36,7 @@
                 templateUrl: currentScriptPath+'/templates/cockpitTable.tpl.html',
                 link: function(scope, elem, attr) {
                 	scope.translate = sbiModule_translate;
+                	scope.generalServices = cockpitModule_generalServices;
                     scope.loading = true; 			//initializing directive with the loading active
                     scope.settings.page = 1; 		//initial page number
                     scope.settings.rowsCount = 0;	//initial rows count
@@ -270,8 +271,7 @@
                     
                     scope.hasPrecision = function(column){
                     	if(column.style && column.style.asString) return false;
-                    	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigInteger' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){return true}
-                    	return false;
+                    	return scope.generalServices.isNumericColumn(column);
                     }
                     
                     scope.isNumber = function(value){
