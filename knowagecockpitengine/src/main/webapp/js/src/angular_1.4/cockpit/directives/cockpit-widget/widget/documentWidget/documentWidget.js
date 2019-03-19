@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 angular.module('cockpitModule')
@@ -38,9 +38,9 @@ angular.module('cockpitModule')
                     	element.ready(function () {
                     		scope.initWidget();
                         });
-                    	
-                    	
-                    	
+
+
+
                     }
                 };
 		   	}
@@ -48,15 +48,15 @@ angular.module('cockpitModule')
 });
 
 function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_config,cockpitModule_properties,cockpitModule_utilstServices,cockpitModule_widgetSelection){
-	var currentDocId; 
-	 
+	var currentDocId;
+
 	$scope.finishLoadingIframe=function(){
 		$scope.hideWidgetSpinner();
 	}
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget();
 	};
-	
+
 	$scope.refresh=function(element,width,height,data,nature){
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			return;
@@ -71,11 +71,11 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			pathUrl+="&OBJECT_LABEL="+doc.DOCUMENT_LABEL;
 			pathUrl+="&OBJECT_NAME="+doc.DOCUMENT_NAME;
 			pathUrl+="&SELECTED_ROLE="+cockpitModule_properties.SELECTED_ROLE
-			
+
 			//load document parameter
 			var docPa={};
 			angular.forEach(doc.objParameter,function(param){
-				this[param.urlName]=cockpitModule_utilstServices.getParameterValue(param.value);
+				this[param.urlName]=cockpitModule_utilstServices.getDriverArray(param.value);
 			},docPa)
 			var assSel=cockpitModule_widgetSelection.getCurrentSelections(doc.DOCUMENT_LABEL)
 			if(assSel!=undefined && assSel.hasOwnProperty(doc.DOCUMENT_LABEL)){
@@ -88,13 +88,13 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 						},finalP)
 						docPa[parName.substring(3,parName.length-1)]=finalP.join(",");
 					}
-						
+
 				}
 			}
-			
+
 			pathUrl+="&COCKPIT_PARAMETER="+encodeURIComponent(JSON.stringify(docPa));
 			pathUrl+="&IS_FROM_DOCUMENT_WIDGET=true";
-			
+
 			var tmpUrl = sbiModule_config.externalBasePath+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl;
 			if(!angular.equals($scope.documentViewerUrl,tmpUrl)){
 				$scope.documentViewerUrl=tmpUrl;
@@ -103,7 +103,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			}
 		}
 	};
-	
+
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
@@ -116,7 +116,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 						  if($scope.localModel.document == undefined){
 							$scope.showAction($scope.translate.load('sbi.cockpit.widgets.document.missingdoc'));
 							return;
-							  
+
 						  }
 						  angular.copy($scope.localModel,model);
 						  mdPanelRef.close();
@@ -166,7 +166,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 		$mdPanel.open(config);
 		return finishEdit.promise;
 	};
-	
+
 	$scope.getDocumentViewerUrl=function(){
 		return $scope.documentViewerUrl;
 	};
