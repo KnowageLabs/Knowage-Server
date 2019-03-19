@@ -538,32 +538,10 @@
 			#end
 			name: "$escapeTool.javascript($serieName)",
 			#if($category == $categoryDate)
-				#if($serieName.length()>10)
-				#set($date = $serieName.replace(" " , "-").replace(":" , "-").replace(":" , "-").replace("." , "-").split("-"))
-				#set($hour= $date.get(3))
-				#set($min= $date.get(4))
-				#set($sec= $date.get(5))
-				#set($milisec= $date.get(6))
-				#else
-				#set($date = $serieName.split("-"))
-				#end
-			
-				#if($date.get(0).length()>2)
-				#set($day = $date.get(2))
-				#set($year= $date.get(0))
-				#else
-				#set($day = $date.get(0))
-				#set($year= $date.get(2))
-				#end
-				#set($month = $Integer.parseInt($date.get(1)))
-				#set($month = $month - 1)
-		
-			#if($serieName.length()>10)
-			x:	Date.UTC($year, $month, $day, $hour, $min, $sec, $milisec),	
-			#else 
-			x:	Date.UTC($year, $month, $day),	
-			
-			#end
+				
+				
+				
+				x: Date.parse("$serieName"),
 			#end
 		
 		},
