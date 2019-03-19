@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
     angular.module('cockpitTable', [])
-        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate',function($mdDialog, sbiModule_translate, cockpitModule_generalServices) {
+        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate', 'cockpitModule_generalServices', function($mdDialog, sbiModule_translate, cockpitModule_generalServices) {
 
             return {
                 restrict: "E",
