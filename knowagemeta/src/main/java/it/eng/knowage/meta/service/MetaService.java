@@ -715,7 +715,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				try {
 					jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
 				} catch (GenerationException e) {
-					logger.error(e);
+					logger.error("Error while generating JPA jar file", e);
 					errors.addErrorKey("metaWeb.generation.generic.error");
 				}
 				logger.debug("Setting generic info on content");
