@@ -285,6 +285,10 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 
 		//attach categories to template for chart types that have an object for categories
 		} else if (chartType.toUpperCase() != "GAUGE"){
+			if($scope.chartTemplate.VALUES.CATEGORY.drillOrder){
+				var tempDrillOrder = $scope.chartTemplate.VALUES.CATEGORY.drillOrder;
+			}
+
 			$scope.chartTemplate.VALUES.CATEGORY = {
 							column:"",
 							groupby:"",
@@ -300,11 +304,13 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 					$scope.chartTemplate.VALUES.CATEGORY.column = $scope.categories[i].column;
 					$scope.chartTemplate.VALUES.CATEGORY.name = $scope.categories[i].name;
 					if($scope.chartTemplate.VALUES.CATEGORY.orderColumn==""){
-						$scope.chartTemplate.VALUES.CATEGORY.orderColumn = $scope.categories[i].orderColumn;
+						if(tempDrillOrder)
+						$scope.chartTemplate.VALUES.CATEGORY.orderColumn = tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderColumn : $scope.categories[i].orderColumn;
 					}
 
 					if($scope.chartTemplate.VALUES.CATEGORY.orderType==""){
-						$scope.chartTemplate.VALUES.CATEGORY.orderType = $scope.categories[i].orderType;
+						if(tempDrillOrder)
+						$scope.chartTemplate.VALUES.CATEGORY.orderType =  tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderType : $scope.categories[i].orderType;
 					}
 					if($scope.chartTemplate.VALUES.CATEGORY.stacked==""){
 						$scope.chartTemplate.VALUES.CATEGORY.stacked = $scope.categories[i].stacked;
@@ -329,6 +335,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 					}
 				}
 			}
+			if(tempDrillOrder)
+			$scope.chartTemplate.VALUES.CATEGORY.drillOrder = tempDrillOrder;
 		}
 	}
 
