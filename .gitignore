@@ -64,3 +64,4 @@ target/
 *.war
 *.ear
 *.logs
+/knowage/src/main/webapp/package-lock.json
