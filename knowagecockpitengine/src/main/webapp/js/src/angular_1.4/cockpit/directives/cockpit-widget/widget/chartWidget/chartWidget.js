@@ -752,7 +752,7 @@ function cockpitChartWidgetControllerFunction(
 
 			    	  }
 
-			    	  $scope.attachCategoriesToTemplateInIframe = function() {//test
+			    	  $scope.attachCategoriesToTemplateInIframe = function() {
 			    		  var attach = document.getElementById('chartConfigurationIframe').contentWindow.attachCategories;
 			    		  if (typeof attach === "function") {
 			    			  document.getElementById('chartConfigurationIframe').contentWindow.attachCategories();
