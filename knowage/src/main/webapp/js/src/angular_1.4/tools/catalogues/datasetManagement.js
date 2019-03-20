@@ -3157,6 +3157,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.dataset = {}
 				$scope.dataset.executed = true;
 				$scope.drivers = [];
+				$scope.showDrivers = false;
 			}
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
