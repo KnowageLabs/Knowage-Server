@@ -275,6 +275,9 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		logger.trace("IN");
 
 		Velocity.setProperty("file.resource.loader.path", getTemplateDir().getAbsolutePath());
+		Velocity.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+		Velocity.setProperty("runtime.log.logsystem.log4j.category", "velocity");
+		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
 
 		JpaModel jpaModel = new JpaModel(model);
 		generateBusinessTableMappings(jpaModel.getTables(), isUpdatableMapping);
