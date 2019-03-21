@@ -1,5 +1,9 @@
 .kn-documentExecution{
 
+	#documentFrameContainer {
+		overflow-x: hidden !important;
+	}
+
 	.animate-switch-container {
 		position: relative;
 	}
