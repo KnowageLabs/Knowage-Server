@@ -101,11 +101,11 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel){
+function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout){
 
 	$scope.property={style:{}};
 	$scope.init=function(element,width,height){
-	//	$scope.refreshWidget();
+		$scope.refreshWidget(null,'init');
 	};
 
 	$scope.refresh=function(element,width,height,data, nature){
