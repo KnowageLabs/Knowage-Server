@@ -11,7 +11,7 @@ import org.hibernate.HibernateException;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
@@ -70,12 +70,12 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 		}
 		Iterator it = visualDependencies.iterator();
 		while (it.hasNext()) {
-			ObjParview dependency = (ObjParview) it.next();
-			Integer objParFatherId = dependency.getParFatherId();
+			MetaModelParview dependency = (MetaModelParview) it.next();
+			Integer metaModelParFatherId = dependency.getParFatherId();
 			try {
-				BIMetaModelParameter objParFather = DRIVER_BM_DAO.loadBIMetaModelParameterById(objParFatherId);
+				BIMetaModelParameter metaModelParFather = DRIVER_BM_DAO.loadBIMetaModelParameterById(metaModelParFatherId);
 				VisualDependencyRuntime visualDependency = new VisualDependencyRuntime();
-				visualDependency.urlName = objParFather.getParameterUrlName();
+				visualDependency.urlName = metaModelParFather.getParameterUrlName();
 				visualDependency.condition = dependency;
 				if (!dependencies.containsKey(visualDependency.urlName)) {
 					dependencies.put(visualDependency.urlName, new ArrayList<DriverDependencyRuntime>());
@@ -83,7 +83,7 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 				List<DriverDependencyRuntime> depList = dependencies.get(visualDependency.urlName);
 				depList.add(visualDependency);
 			} catch (Exception e) {
-				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
+				throw new SpagoBIServiceException("An error occurred while loading parameter [" + metaModelParFatherId + "]", e);
 			}
 		}
 	}
