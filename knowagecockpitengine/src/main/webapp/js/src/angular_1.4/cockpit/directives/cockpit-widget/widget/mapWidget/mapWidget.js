@@ -282,6 +282,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			tmpLayer.isHeatmap = false;
     		}
     		$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
+    		if(nature == 'init'){
+    			$timeout(function(){
+    				$scope.widgetIsInit=true;
+    				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+    			},500);
+    		}
 	    }
 
 	    $scope.getOptions =function(){

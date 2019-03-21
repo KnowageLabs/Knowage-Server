@@ -48,9 +48,9 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdPanel,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_templateServices){
+function cockpitSelectionWidgetControllerFunction($scope,$timeout,cockpitModule_widgetConfigurator,$mdPanel,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_templateServices){
 	$scope.translate = sbiModule_translate;
-
+	$scope.widgetIsInit=false;
 	$scope.property={
 		style:{}
 	};
@@ -67,8 +67,13 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		$scope.refreshWidget(null, 'init');
 	};
 
-	$scope.refresh=function(element,width,height){
-
+	$scope.refresh=function(element,width,height,datasetRecords, nature){
+		if(nature == 'init'){
+			$timeout(function(){
+				$scope.widgetIsInit=true;
+				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+			},500);
+		}
 	};
 
 	$scope.filterForInitialSelection=function(obj){

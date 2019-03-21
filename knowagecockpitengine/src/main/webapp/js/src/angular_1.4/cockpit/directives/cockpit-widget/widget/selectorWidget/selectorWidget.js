@@ -184,9 +184,6 @@ angular.module('cockpitModule')
 
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
-			$timeout(function(){
-				$scope.widgetIsInit=true;
-			},500);
 
 		}
 
@@ -243,6 +240,12 @@ angular.module('cockpitModule')
 				}, 0);
 			}
 			
+			if(nature == 'init'){
+				$timeout(function(){
+					$scope.widgetIsInit=true;
+					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+				},500);
+			}
 		}
 		
         $scope.mobilecheck = function() {

@@ -189,6 +189,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.hideWidgetSpinner();
 			}
 			$scope.hideWidgetSpinner();
+			if(nature == 'init'){
+				$timeout(function(){
+					$scope.widgetIsInit=true;
+					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+				},500);
+			}
 		}
 		
 		$scope.getColumns = function(fields) {

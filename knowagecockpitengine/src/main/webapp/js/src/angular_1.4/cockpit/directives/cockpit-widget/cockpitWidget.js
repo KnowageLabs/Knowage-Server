@@ -254,6 +254,8 @@ function cockpitWidgetControllerFunction(
 
 	var SERVICE = "/restful-services/2.0/datasets/preview";
 	
+	$scope.cockpitModule_properties = cockpitModule_properties;
+	
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
@@ -798,12 +800,6 @@ function cockpitWidgetControllerFunction(
 					var content = passedOutputParametersList[par];
 
 					if(content.enabled == true){
-
-						/*if(content.dataType == 'date' && content.value != undefined && content.value != ''){
-
-							content.value = content.value.toLocaleDateString('en-US');
-							content.value+= "#MM/dd/yyyy";
-						}*/
 
 						if(content.type == 'static'){
 							var objToAdd = {};

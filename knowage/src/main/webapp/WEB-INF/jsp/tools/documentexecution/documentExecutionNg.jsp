@@ -282,7 +282,7 @@ if(executionRoleNames.size() > 0) {
                                 <md-icon md-font-icon="fa  fa-ellipsis-v"></md-icon>
                             </md-button>
                             <md-menu-content>
-                                <span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
+                                <span class="divider" ng-if="canPrintDocuments">{{translate.load("sbi.ds.wizard.file")}}</span>
                                 <md-menu-item class="md-indent" ng-if="canPrintDocuments">
                                     <md-icon class="fa fa-print "></md-icon>
                                     <md-button ng-click="printDocument()">

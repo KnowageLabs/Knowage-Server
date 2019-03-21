@@ -46,11 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openSelections()" title = "Selections" ng-if="!cockpitModule_template.configuration.showSelectionButton">
 					<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
 				</md-button>
-				<md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event)" ng-if="!cockpitModule_properties.EDIT_MODE">
+				<!-- md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event)" ng-if="!cockpitModule_properties.EDIT_MODE">
 					<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
 					<md-icon md-font-icon="fa fa-spin fa-spinner" ng-if="loadingScreenshot"></md-icon>
 					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!loadingScreenshot"></md-icon>
-				</md-button>
+				</md-button-->
 				<md-button aria-label="clean cache" class="md-fab md-raised md-mini" ng-click="cleanCache()" title = "Clear cache">
 					<md-tooltip md-direction="bottom">Clear Cache</md-tooltip>
 					<md-icon md-font-icon="fa fa-recycle"></md-icon>

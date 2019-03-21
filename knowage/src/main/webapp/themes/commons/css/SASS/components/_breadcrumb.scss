@@ -50,6 +50,7 @@ cross-navigation {
                 margin: 0 20px 0 0; 
                 font-size: 12px;
                 text-decoration: none;
+                text-transform: none;
                 color: #fff;
                 &:hover {
                     background: lighten($baseColor, 10%);

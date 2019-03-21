@@ -108,7 +108,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 	//	$scope.refreshWidget();
 	};
 
-	$scope.refresh=function(element,width,height){
+	$scope.refresh=function(element,width,height,data, nature){
 
 		var fontSize = 0;
 		var textLength = 0;
@@ -126,6 +126,13 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		$scope.property.style["line-height"]= fontSize+"px";
 
 		$scope.checkPlaceholders(0, true);
+		
+		if(nature == 'init'){
+			$timeout(function(){
+				$scope.widgetIsInit=true;
+				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+			},500);
+		}
 
 	};
 

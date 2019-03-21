@@ -2,7 +2,7 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel,$mdToast) {
+			execProperties,sbiModule_user,sbiModule_restServices,windowCommunicationService,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel,$mdToast) {
 
 		var dee = this;
 
@@ -274,36 +274,41 @@
 
 
 		dee.exportCockpitTo = function(exportType, mimeType){
-			dee.exporting = true;
-
-			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
-				dee.buildBackendRequestConf(exportType, mimeType, parameters)
-				.then(function(requestConf){
-					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
-					$http(requestConf)
-					.then(function successCallback(response) {
-						var mimeType = response.headers("Content-type");
-						var fileAndExtension = response.headers("Content-Disposition")
-						$mdToast.hide(exportingToast);
+			if(exportType.toLowerCase() == 'pdf'){
+				windowCommunicationService.sendMessage('pdfExport');
+			}else{
+				documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope();
+				dee.exporting = true;
+	
+				dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
+					dee.buildBackendRequestConf(exportType, mimeType, parameters)
+					.then(function(requestConf){
+						var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
+						$http(requestConf)
+						.then(function successCallback(response) {
+							var mimeType = response.headers("Content-type");
+							var fileAndExtension = response.headers("Content-Disposition")
+							$mdToast.hide(exportingToast);
+							dee.exporting = false;
+							sbiModule_download.getBlob(
+									response.data,
+									execProperties.executionInstance.OBJECT_LABEL,
+									mimeType,
+									exportType, mimeType,fileAndExtension);
+						}, function errorCallback(response) {
+							$mdToast.cancel(exportingToast);
+							dee.exporting = false;
+							sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+						});
+					},function(e){
 						dee.exporting = false;
-						sbiModule_download.getBlob(
-								response.data,
-								execProperties.executionInstance.OBJECT_LABEL,
-								mimeType,
-								exportType, mimeType,fileAndExtension);
-					}, function errorCallback(response) {
-						$mdToast.cancel(exportingToast);
-						dee.exporting = false;
-						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+						sbiModule_messaging.showErrorMessage(e, 'Error');
 					});
 				},function(e){
 					dee.exporting = false;
 					sbiModule_messaging.showErrorMessage(e, 'Error');
 				});
-			},function(e){
-				dee.exporting = false;
-				sbiModule_messaging.showErrorMessage(e, 'Error');
-			});
+			}
 		};
 
 		dee.getBackendRequestParams = function(exportType, mimeType){

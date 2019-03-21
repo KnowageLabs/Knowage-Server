@@ -159,6 +159,9 @@ END-PRODUCTION -->
 <!-- html2canvas -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
 
+<!--  JSPDF -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jspdf/dist/jspdf.min.js"></script>
+
 <!-- FILESAVER -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
 

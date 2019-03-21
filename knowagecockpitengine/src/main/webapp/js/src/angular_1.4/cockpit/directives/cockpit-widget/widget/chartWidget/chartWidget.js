@@ -295,6 +295,12 @@ function cockpitChartWidgetControllerFunction(
 				},400)
 
 			}
+			if(nature == 'init'){
+				$timeout(function(){
+					$scope.widgetIsInit=true;
+					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+				},500);
+			}
 		}
 
 	};
