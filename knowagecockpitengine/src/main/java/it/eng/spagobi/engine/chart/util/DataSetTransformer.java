@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,12 +41,19 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
 
+	public static transient Logger logger = Logger.getLogger(DataSetTransformer.class);
+
 	public void print(Object object) {
 
-		// System.out.println("-----------------------");
-		// System.out.println(object);
-		// System.out.println(object.getClass().toString());
-		// System.out.println("-----------------------");
+		/*
+		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
+		 * System.out.println("-----------------------");
+		 */
+
+		logger.debug("-----------------------");
+		logger.debug(object);
+		logger.debug(object.getClass().toString());
+		logger.debug("-----------------------");
 
 	}
 
@@ -735,6 +743,7 @@ public class DataSetTransformer {
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+		logger.debug("GroupedSerie: " + groupedSerie);
 
 		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))

@@ -8,6 +8,10 @@
     	#end
 	#end
 #end
+
+
+$datasettransformer.print("dataColumnsMapper:")
+$datasettransformer.print($dataColumnsMapper)
 #set($rows = $data.rows) ## data in table rows
 #if(($chart.groupCategories =='true' || $chart.groupSeriesCateg =='true') && $chart.isCockpitEngine == 'false')
 #set($categorieColumns = $chart.VALUES.CATEGORY.get(0))
