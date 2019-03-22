@@ -259,9 +259,32 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 
 	windowCommunicationService.addMessageHandler(handler);
 	
+	$scope.captureScreenShot = function(ev){
+		
+		function getSheetFromCurrent(current){
+			for(var i in cockpitModule_template.sheets){
+				if(cockpitModule_template.sheets[i].index == current) return i;
+			}
+		}
+		
+		$scope.loadingScreenshot = true;
+		var element = document.querySelector('#gridsterSheet-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		html2canvas(element,{
+			width: element.clientWidth,
+		    height: element.clientHeight
+		    }
+		).then(function(canvas) {
+			canvas.toBlob(function(blob) {
+		        saveAs(blob, cockpitModule_template.sheets[getSheetFromCurrent(cockpitModule_properties.CURRENT_SHEET)].label+'.png');
+		        $scope.loadingScreenshot = false;
+		    },function(error){$scope.loadingScreenshot = false;});
+		});
+	};
+	
 	$scope.exportPdf = function(){
 		cockpitModule_properties.LOADING_SCREENSHOT = true;
 		var parentElement =  document.querySelector('#gridsterSheet-0');
+		var body = document.querySelector('.kn-cockpit');
 		
 		$mdDialog.show({
 	      controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
@@ -284,6 +307,10 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 				    height: element.clientHeight
 				    }
 				).then(function(canvas) {
+					if(body.style.backgroundColor) {
+						doc.setFillColor(255,0,0);
+						doc.rect(0, 0, element.clientWidth/3, element.clientHeight/3, 'F');
+					}
 					doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/3, element.clientHeight/3);
 					doc.setFontSize(14);
 					doc.text(2, element.clientHeight < parentElement.clientHeight ? (parentElement.clientHeight/3)+15 : (element.clientHeight/3)+17, (sheet.index+1) + '. ' + sheet.label);

@@ -452,7 +452,7 @@ if(executionRoleNames.size() > 0) {
                     <iframe class="noBorder" id="documentFrame" name="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
                         iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded || browser.name == 'internet explorer'">
                     </iframe>
-                    <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  
+                    <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
 			                ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav-e" 
 			                layout="column"
 			                ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
