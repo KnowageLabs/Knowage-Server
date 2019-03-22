@@ -463,8 +463,10 @@
 		 	
 		 	legend: 
 		 	{
-		 		itemDistance: 0,
+			#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
+			itemDistance: 0,
     			symbolPadding: 25,
+			#end
 		        enabled: true,
 		        align: 'center', 
 		        verticalAlign: 'bottom',
@@ -476,8 +478,10 @@
 	  
 		    legend: 
 		    {
-		 		itemDistance: 0,
+			#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
+			itemDistance: 0,
     			symbolPadding: 25,
+			#end
 	            enabled: true,
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
@@ -575,8 +579,10 @@
 				 	
 	 		legend: 
 		    {
-		 		itemDistance: 0,
+			#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
+			itemDistance: 0,
     			symbolPadding: 25,
+			#end
 	          	enabled: true,
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
@@ -589,8 +595,10 @@
 		 	
 		 	legend: 
 		 	{
-		 		itemDistance: 0,
+			#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
+			itemDistance: 0,
     			symbolPadding: 25,
+			#end
 		 		enabled: true,
 		        align: '$chart.LEGEND.position', 
 		        verticalAlign: 'middle',
@@ -673,8 +681,7 @@
 		*#
 		legend:
 		{
-		 	itemDistance: 0,
-    		symbolPadding: 25,
+		
 			enabled: false,
 		},
 	    
