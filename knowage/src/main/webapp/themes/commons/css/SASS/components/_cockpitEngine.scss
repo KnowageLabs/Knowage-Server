@@ -10,6 +10,19 @@
     height: 100%;
     background-color: $tabBackground;
 
+    md-tabs.screenShottingSheet md-tab-content{
+        animation: none;
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+        -webkit-animation: none;
+        animation: none;
+        .screenShottingWidget {
+            transition: none;
+            visibility: visible;
+		}
+	}
+
    cockpit-html-widget {
     	height: 100%;
     	overflow: auto;

@@ -54,7 +54,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 		$scope.hideWidgetSpinner();
 	}
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 
 	$scope.refresh=function(element,width,height,data,nature){
@@ -101,6 +101,12 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			}else{
 				$scope.hideWidgetSpinner();
 			}
+		}
+		if(nature == 'init'){
+			$timeout(function(){
+			$scope.widgetIsInit=true;
+			cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+		 },500);
 		}
 	};
 

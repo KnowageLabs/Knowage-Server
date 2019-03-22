@@ -101,14 +101,14 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel){
+function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout){
 
 	$scope.property={style:{}};
 	$scope.init=function(element,width,height){
-	//	$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 
-	$scope.refresh=function(element,width,height){
+	$scope.refresh=function(element,width,height,data,nature){
 
 		var fontSize = 0;
 		var textLength = 0;
@@ -126,6 +126,12 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		$scope.property.style["line-height"]= fontSize+"px";
 
 		$scope.checkPlaceholders(0, true);
+		if(nature == 'init'){
+			$timeout(function(){
+			$scope.widgetIsInit=true;
+			cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+		 },500);
+		}
 
 	};
 

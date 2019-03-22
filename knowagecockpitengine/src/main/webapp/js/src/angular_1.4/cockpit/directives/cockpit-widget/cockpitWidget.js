@@ -250,6 +250,8 @@ function cockpitWidgetControllerFunction(
 		cockpitModule_exportWidgetService)
 
 	{
+	
+	$scope.cockpitModule_properties = cockpitModule_properties;
 
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);

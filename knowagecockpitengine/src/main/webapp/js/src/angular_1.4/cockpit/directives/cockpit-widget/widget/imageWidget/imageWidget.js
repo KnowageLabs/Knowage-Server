@@ -65,7 +65,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		},500);
 	};
 
-	$scope.refresh=function(element,width,height){
+	$scope.refresh=function(element,width,height,data,nature){
 
 		if($scope.ngModel.style == undefined){
 		return;
@@ -80,6 +80,12 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		$scope.ngModel.style['background-image'] = "url(\'"+$scope.getUrl()+"\')";
 
 		$scope.safeApply();
+		if(nature == 'init'){
+			$timeout(function(){
+			$scope.widgetIsInit=true;
+			cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+		 },500);
+		}
 
 	};
 

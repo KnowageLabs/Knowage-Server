@@ -1,4 +1,4 @@
-<md-tabs id="sheetTabs" ng-class="{'cockpitEditMode':cockpitModule_properties.EDIT_MODE,'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length<maxSheetsNumber, 'highlander':cockpitModule_template.sheets.length==1}" 
+<md-tabs id="sheetTabs" ng-class="{'cockpitEditMode':cockpitModule_properties.EDIT_MODE,'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length<maxSheetsNumber, 'highlander':cockpitModule_template.sheets.length==1,'screenShottingSheet':cockpitModule_properties.LOADING_SCREENSHOT}" 
 class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitModule_properties.CURRENT_SHEET" md-autoselect >
 	<md-tab ng-repeat="sheet in cockpitModule_template.sheets | orderObjectBy : 'index' | limitTo: maxSheetsNumber">
 		<md-tab-label >

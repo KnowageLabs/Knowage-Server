@@ -42,7 +42,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -238,7 +238,89 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_datasetServices,c
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
 	
+	var handler = {};
+	handler.handleMessage = function(message){
+		if(message == 'pdfExport') $scope.exportPdf();
+	}
+	 
+	windowCommunicationService.addMessageHandler(handler);
+
+	$scope.exportPdf = function(){
+		cockpitModule_properties.LOADING_SCREENSHOT = true;
+		var parentElement =  document.querySelector('#gridsterSheet-0');
+		$mdDialog.show({
+			controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
+				$scope.translate = sbiModule_translate;
+				$scope.cockpitModule_properties = cockpitModule_properties;
+				$scope.cockpitModule_template = cockpitModule_template;
+			 },
+			 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
+			 parent: angular.element(document.body),
+			 clickOutsideToClose:false
+			 })
+			          
+			 function getScreenshot(sheet){
+			 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
+			 	function getPage(sheet){
+			 		var element = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
+			 		html2canvas(element,{
+			 			width: element.clientWidth,
+			 			height: element.clientHeight
+			 		}).then(function(canvas) {
+			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/3, element.clientHeight/3);
+			 			doc.setFontSize(14);
+			 			doc.text(2, element.clientHeight < parentElement.clientHeight ? (parentElement.clientHeight/3)+15 : (element.clientHeight/3)+17, (sheet.index+1) + '. ' + sheet.label);
 	
+			 			if(sheet.index + 1 == cockpitModule_template.sheets.length) {
+			 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
+			 				$mdDialog.hide();
+			 				cockpitModule_properties.LOADING_SCREENSHOT = false;
+			 			}
+			 			else {
+			 				var nextElement = document.querySelector('#gridsterSheet-'+(sheet.index+1)+' #gridsterContainer');
+			 				doc.addPage(nextElement.clientWidth,nextElement.clientHeight < parentElement.clientHeight ? parentElement.clientHeight : nextElement.clientHeight);
+			 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
+			 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
+			 			}
+			 		});
+			 	}
+			 	
+				 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
+				 		$timeout(function(){
+				 			getPage(sheet);
+				 		},1000)    
+				 	}else{
+				 		$scope.sheetWatcher = $scope.$watchCollection('sheetsWidgets',function(newValue,oldValue){
+				 			var tempIds = [];
+				 			for(var w in sheet.widgets){
+				 				if(newValue.indexOf(sheet.widgets[w].id) != -1) tempIds.push(sheet.widgets[w].id);
+				 			}
+				 			if(tempIds.length == sheet.widgets.length){
+				 				$timeout(function(){
+				 					getPage(sheet);
+				 					$scope.sheetWatcher();    
+				 				},3000)        
+				 			}
+				 		})    
+				 	}
+		 		}
+		
+				for(var s in cockpitModule_template.sheets){
+					if(cockpitModule_template.sheets[s].index == 0) {
+						if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
+						var tempElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
+						var doc = new jsPDF({
+							orientation: 'l',
+							unit: 'mm',
+							format: [tempElement.clientWidth, tempElement.clientHeight < parentElement.clientHeight ? parentElement.clientHeight : tempElement.clientHeight]
+						});
+						getScreenshot(cockpitModule_template.sheets[s]);
+						break;
+					}
+				}
+	}
+
+
 	
 	$scope.captureScreenShot = function(ev){
 		
