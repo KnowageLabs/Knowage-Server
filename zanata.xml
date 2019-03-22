@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+  <!-- <url>https://www.knowage-suite.com/zanata/</url> -->
+  <url>http://161.27.213.102:10080/zanata/</url>
+  <project>Knowage</project>
+  <project-version>6.4</project-version>
+  <project-type>utf8properties</project-type>
+  <src-dir>.</src-dir>
+  <trans-dir>.</trans-dir>
+  <includes>**/*messages*.properties</includes>
+  <!-- <locales>
+    <locale>it-IT</locale>
+    <locale>fr-FR</locale>
+    <locale>de-DE</locale>
+    <locale>es-ES</locale>
+    <locale>pt-BR</locale>
+    <locale>ja-JP</locale>
+    <locale>zh-Hans-CN</locale>
+    <locale>ko-KR</locale>
+    <locale>ru-RU</locale>
+    <locale>ar-EG</locale>
+    <locale>tr-TR</locale>
+  </locales> -->
+</config>
