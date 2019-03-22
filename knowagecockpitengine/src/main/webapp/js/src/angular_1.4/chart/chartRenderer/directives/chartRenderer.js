@@ -85,8 +85,10 @@ angular.module('chartRendererModule')
 									}
 								}
 								scope.chartConf.colors = angular.copy(scope.chartConf.colorsCopy);
-								if(scope.colorMap.hasOwnProperty(scope.chartConf.series[0].name)) {
-									scope.chartConf.colors[0]=scope.colorMap[chartConf.series[0].name];
+								for (var i = 0; i < scope.chartConf.series.length; i++) {
+									if(scope.colorMap.hasOwnProperty(scope.chartConf.series[i].name)) {
+										scope.chartConf.colors[i]=scope.colorMap[chartConf.series[i].name];
+									} 
 								}
 							} else {
 								scope.colorMap = {};
