@@ -2854,3 +2854,13 @@
 	}
 
 }
+
+@supports (-ms-ime-align: auto) {
+	.kn-cockpit {
+ 		md-tab-content {
+ 			&>div {
+ 				height: 100%;
+			}
+ 		}
+ 	}
+ }
