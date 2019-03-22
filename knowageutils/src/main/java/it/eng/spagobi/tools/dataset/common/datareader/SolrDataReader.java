@@ -21,11 +21,15 @@ import com.jayway.jsonpath.JsonPath;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class SolrDataReader extends JSONPathDataReader {
@@ -55,10 +59,42 @@ public class SolrDataReader extends JSONPathDataReader {
 
 	@Override
 	public IDataStore read(Object data) {
-			IDataStore ds = super.read(data);
-			Object parsed = JsonPath.read((String) data, "$.response.numFound");
-			ds.getMetaData().setProperty("resultNumber", parsed);
-			return ds;
+		IDataStore ds = super.read(getHighlightedData((String) data).toString());
+		Object parsed = JsonPath.read((String) data, "$.response.numFound");
+		ds.getMetaData().setProperty("resultNumber", parsed);
+		return ds;
+	}
+
+	protected JSONObject getHighlightedData(String responseBody) {
+		JSONObject jsonObject = null;
+		try{
+			jsonObject = new JSONObject(responseBody);
+			if(jsonObject.has("highlighting")){
+				JSONObject highlighting = jsonObject.getJSONObject("highlighting");
+				JSONObject jsonResponse = jsonObject.getJSONObject("response");
+				JSONArray jsonDocs = jsonResponse.getJSONArray("docs");
+				if(jsonDocs.length()>0){
+					for (int i = 0; i < jsonDocs.length(); i++) {
+						JSONObject jsonDoc = jsonDocs.getJSONObject(i);
+						String id = jsonDoc.getString("id");
+						JSONObject highlightingDetail = highlighting.getJSONObject(id);
+						Iterator<String> keys = highlightingDetail.keys();
+						while(keys.hasNext()){
+							String field = keys.next();
+							JSONArray jsonReplacement = highlightingDetail.getJSONArray(field);
+							if(jsonReplacement.length()>0){
+								String text = jsonReplacement.getString(0);
+								jsonDoc.put(field, text);
+							}
+						}
+					}
+				}
+				jsonObject.remove("highlighting");
+			}
+		}catch (JSONException e){
+			throw new SpagoBIRuntimeException("Unable to manage highlighting", e);
+		}
+		return jsonObject;
 	}
 
 	public int getResultNumber() {

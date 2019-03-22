@@ -476,7 +476,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			JSONPathAttribute jpa = jsonPathAttributes.get(index);
 			FieldMetadata fm = new FieldMetadata();
 			String header = jpa.name;
-			fm.setAlias(header);
+			fm.setAlias(getAlias(header));
 			fm.setName(header);
 			if (ID_NAME.equalsIgnoreCase(header)) {
 				if (idSet) {
@@ -501,6 +501,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 			}
 			dataStoreMeta.addFiedMeta(fm);
 		}
+	}
+
+	protected String getAlias(String name) {
+		return name;
 	}
 
 	private void manageNGSI(List<Object> parsedData) {

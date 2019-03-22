@@ -23,19 +23,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExtendedSolrQuery extends SolrQuery {
+
+    public static final String FACET_PIVOT_MEASURE_ALIAS_PREFIX = "_";
+    public static final String FACET_PIVOT_CATEGORY_ALIAS_POSTFIX = "_facet";
 
     private static final Logger logger = Logger.getLogger(ExtendedSolrQuery.class);
 
@@ -82,10 +85,82 @@ public class ExtendedSolrQuery extends SolrQuery {
             }
             add("json.facet", new ObjectMapper().writeValueAsString(jsonFacetMap));
         }
-
-
-
         return this;
+    }
+
+    public SolrQuery jsonFacets(List<Projection> projections, List<Projection> groups, List<Sorting> sortings) throws JSONException {
+        List<Projection> measures = getMeasures(projections, groups);
+        JSONObject jsonFacet = getMeasureFacet(measures);
+
+        List<Projection> unsortedGroups = getUnsortedGroups(groups, sortings);
+        for (Projection unsortedGroup : unsortedGroups) {
+            jsonFacet = getJsonFacet(unsortedGroup, jsonFacet);
+        }
+
+        for (int i = sortings.size() - 1; i >= 0; i--) {
+            Sorting sorting = sortings.get(i);
+            jsonFacet = getJsonFacet(sorting, jsonFacet);
+        }
+
+        add("json.facet", jsonFacet.toString());
+        return this;
+    }
+
+    private List<Projection> getMeasures(List<Projection> projections, List<Projection> groups) {
+        Map<String, Projection> measureMap = new HashMap<>();
+        for(Projection projection : projections) {
+            measureMap.put(projection.getName(), projection);
+        }
+        for(Projection group : groups){
+            measureMap.remove(group.getName());
+        }
+        return Arrays.asList(measureMap.values().toArray(new Projection[0]));
+    }
+
+    private JSONObject getMeasureFacet(List<Projection> measures) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        for (Projection measure : measures) {
+            IAggregationFunction aggregationFunction = measure.getAggregationFunction();
+            jsonObject.put(FACET_PIVOT_MEASURE_ALIAS_PREFIX + measure.getAlias(), String.format("%s(%s)", aggregationFunction.getName().toLowerCase(), measure.getName()));
+        }
+        return jsonObject;
+    }
+
+    private List<Projection> getUnsortedGroups(List<Projection> groups, List<Sorting> sortings) {
+        Set<String> sorted = new HashSet<>();
+        for (Sorting sorting : sortings) {
+            sorted.add(sorting.getProjection().getName());
+        }
+        List<Projection> unsortedGroups = new ArrayList<>(groups.size() - sortings.size());
+        for (Projection group : groups) {
+            if(!sorted.contains(group.getName())){
+                unsortedGroups.add(group);
+            }
+        }
+        return unsortedGroups;
+    }
+
+    private JSONObject getJsonFacet(Projection projection, JSONObject jsonFacet) throws JSONException {
+        String alias = projection.getAlias();
+
+        JSONObject innerFacet = new JSONObject();
+        innerFacet.put("type", "terms");
+        innerFacet.put("field", alias);
+        innerFacet.put("limit", -1);
+        innerFacet.put("missing", true);
+        innerFacet.put("facet", jsonFacet);
+
+        JSONObject outerFacet = new JSONObject();
+        outerFacet.put(alias + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX, innerFacet);
+        return outerFacet;
+    }
+
+    private JSONObject getJsonFacet(Sorting sorting, JSONObject jsonFacet) throws JSONException {
+        Projection projection = sorting.getProjection();
+        JSONObject outerFacet = getJsonFacet(projection, jsonFacet);
+        JSONObject innerFacet = outerFacet.getJSONObject(projection.getAlias() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
+        innerFacet.put("sort", "index " + (sorting.isAscending() ? "asc" : "desc"));
+        return outerFacet;
     }
 
     public ExtendedSolrQuery facets(List<Projection> groups) {
@@ -129,5 +204,4 @@ public class ExtendedSolrQuery extends SolrQuery {
         }
         return this;
     }
-
 }

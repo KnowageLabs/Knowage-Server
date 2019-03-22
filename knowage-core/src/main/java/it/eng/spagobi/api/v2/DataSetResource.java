@@ -546,6 +546,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			String likeSelections = null;
 			String aggregations = null;
 			String summaryRow = null;
+			String options = null;
 
 			if (StringUtilities.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
@@ -564,10 +565,14 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject jsonSummaryRow = jsonBody.optJSONObject("summaryRow");
 				summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
+
+				JSONObject jsonOptions = jsonBody.optJSONObject("options");
+				options = jsonOptions != null ? jsonOptions.toString() : null;
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
+			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
+					options);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}

@@ -746,6 +746,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		});
    
 		savedFilters = filtersToSendWithoutParams;
+
+		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
+            bodyString = bodyString + ",options:{solrFacetPivot:true}";
+        }
+
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);

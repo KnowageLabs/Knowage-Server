@@ -71,6 +71,8 @@ public class DatasetEvaluationStrategyFactory {
                 return new RealtimeEvaluationStrategy(userProfile, dataSet, cacheRT);
             case SOLR:
                 return new SolrEvaluationStrategy(dataSet);
+            case SOLR_FACET_PIVOT:
+                return new SolrFacetPivotEvaluationStrategy(dataSet);
             default:
                 throw new IllegalArgumentException("The strategy " + strategyType + " is not valid");
         }

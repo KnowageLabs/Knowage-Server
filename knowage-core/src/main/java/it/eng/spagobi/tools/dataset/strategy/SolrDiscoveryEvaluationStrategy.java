@@ -43,11 +43,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class SolrDiscoveryEvaluationStrategy extends AbstractEvaluationStrategy {
+class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(SolrDiscoveryEvaluationStrategy.class);
+    private static final Logger logger = Logger.getLogger(SolrEvaluationStrategy.class);
 
-    public SolrDiscoveryEvaluationStrategy(IDataSet dataSet) {
+    public SolrEvaluationStrategy(IDataSet dataSet) {
         super(dataSet);
     }
 
@@ -56,7 +56,7 @@ class SolrDiscoveryEvaluationStrategy extends AbstractEvaluationStrategy {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
         SolrQuery solrQuery;
         try {
-            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
+            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter, solrDataSet.getTextFields()).jsonFacets(groups);
         } catch (JsonProcessingException e) {
             throw new SpagoBIRuntimeException(e);
         }

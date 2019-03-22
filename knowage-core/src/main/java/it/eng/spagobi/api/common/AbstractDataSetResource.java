@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.common;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 import it.eng.qbe.dataset.QbeDataSet;
@@ -33,7 +35,9 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
@@ -94,6 +98,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
     public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
                                String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
+        return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime, null);
+    }
+
+    public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
+                               String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options) {
         logger.debug("IN");
         Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
         try {
@@ -147,6 +156,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                     JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
                     summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
                 }
+
+                if (options != null && !options.isEmpty()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Map<String, Object> optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options, new TypeReference<Map<String, Object>>() {}));
+                    applyOptions(dataSet, isNearRealtime, optionMap);
+                }
             }
 
             List<Filter> filters = new ArrayList<>(0);
@@ -190,6 +205,17 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         } finally {
             totalTiming.stop();
             logger.debug("OUT");
+        }
+    }
+
+    private void applyOptions(IDataSet dataSet, boolean isNearRealtime, Map<String, Object> options) {
+        if (DatasetEvaluationStrategyType.SOLR.equals(dataSet.getEvaluationStrategy(isNearRealtime)) && Boolean.TRUE.equals(options.get("solrFacetPivot"))) {
+            if (dataSet instanceof VersionedDataSet) {
+                VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+                dataSet = versionedDataSet.getWrappedDataset();
+            }
+            SolrDataSet solrDataSet = (SolrDataSet) dataSet;
+            solrDataSet.setEvaluationStrategy(DatasetEvaluationStrategyType.SOLR_FACET_PIVOT);
         }
     }
 

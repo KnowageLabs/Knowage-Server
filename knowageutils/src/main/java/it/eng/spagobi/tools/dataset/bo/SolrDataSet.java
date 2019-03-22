@@ -41,7 +41,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,23 +52,24 @@ public class SolrDataSet extends RESTDataSet {
     private static final Logger logger = Logger.getLogger(SolrDataSet.class);
 
     protected SolrConfiguration solrConfiguration;
+    private DatasetEvaluationStrategyType evaluationStrategy;
 
     public SolrDataSet(SpagoBiDataSet dataSetConfig) {
         super(dataSetConfig);
-
+        evaluationStrategy = DatasetEvaluationStrategyType.SOLR;
     }
 
     public SolrDataSet(JSONObject jsonConf) {
         setConfiguration(jsonConf.toString());
         initConf(jsonConf, false);
-
+        evaluationStrategy = DatasetEvaluationStrategyType.SOLR;
     }
 
     public SolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap) {
         this.setParamsMap(parametersMap);
         setConfiguration(jsonConf.toString());
         initConf(jsonConf, true);
-
+        evaluationStrategy = DatasetEvaluationStrategyType.SOLR;
     }
 
     @Override
@@ -233,13 +233,12 @@ public class SolrDataSet extends RESTDataSet {
     }
 
     public void setSolrQuery(SolrQuery solrQuery, Map<String, String> facets) {
-        Assert.assertNotNull(facets, "Facets cannot be null, at least empty");
         solrConfiguration.setSolrQuery(solrQuery);
         try {
             JSONObject jsonConfiguration = new JSONObject(configuration);
             initDataProxy(jsonConfiguration, true);
             initDataReader(jsonConfiguration, true);
-            if(!facets.isEmpty()) {
+            if(facets != null && !facets.isEmpty()) {
                 CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);
 
                 for(String facet : facets.keySet()) {
@@ -263,14 +262,18 @@ public class SolrDataSet extends RESTDataSet {
 
     @Override
     public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
-        return DatasetEvaluationStrategyType.SOLR;
+        return evaluationStrategy;
+    }
+
+    public void setEvaluationStrategy(DatasetEvaluationStrategyType evaluationStrategy) {
+        this.evaluationStrategy = evaluationStrategy;
     }
 
     public List<String> getTextFields(){
         List<JSONPathDataReader.JSONPathAttribute> attributes = ((SolrDataReader) dataReader).getJsonPathAttributes("text");
         List<String> textFields = new ArrayList<>(attributes.size());
-        for (int i = 0; i < attributes.size(); i++) {
-            textFields.add(attributes.get(i).getName());
+        for (JSONPathDataReader.JSONPathAttribute attribute : attributes) {
+            textFields.add(attribute.getName());
         }
         return textFields;
     }
