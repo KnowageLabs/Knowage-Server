@@ -1228,7 +1228,9 @@
 		};
 
 		this.toggleParametersPanel = function(open) {
-			$mdSidenav('parametersPanelSideNav-e').toggle();
+			if(document.getElementById("parametersPanelSideNav-e")){
+				$mdSidenav('parametersPanelSideNav-e').toggle();
+			}
 			$timeout(function(){
 				if(open==undefined){
 					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
