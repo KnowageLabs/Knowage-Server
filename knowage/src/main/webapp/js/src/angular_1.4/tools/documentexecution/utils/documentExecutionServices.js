@@ -1230,18 +1230,21 @@
 		this.toggleParametersPanel = function(open) {
 			if(document.getElementById("parametersPanelSideNav-e")){
 				$mdSidenav('parametersPanelSideNav-e').toggle();
+			}else{
+				$timeout(function(){
+					if(document.getElementById("parametersPanelSideNav-e")){
+						$mdSidenav('parametersPanelSideNav-e').toggle();
+					}else{
+						if(open==undefined){
+							execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
+						}else if(open){
+							execProperties.showParametersPanel.status=true;
+						}else if(!open){
+							execProperties.showParametersPanel.status=false;
+						}
+					}
+				},500);
 			}
-			$timeout(function(){
-				if(open==undefined){
-					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
-				}else if(open){
-					execProperties.showParametersPanel.status=true;
-//					$mdSidenav('parametersPanelSideNav').open();
-				}else if(!open){
-					execProperties.showParametersPanel.status=false;
-//					$mdSidenav('parametersPanelSideNav').close();
-				}
-			},0);
 		};
 	});
 
