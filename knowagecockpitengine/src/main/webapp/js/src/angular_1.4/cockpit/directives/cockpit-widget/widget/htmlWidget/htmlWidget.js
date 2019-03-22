@@ -370,13 +370,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
-			var columnInfo;
+			var columnInfo = $scope.getColumnFromName(p1,aggr ? $scope.aggregationDataset : $scope.htmlDataset ,aggr);
 			if(aggr){
-				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,aggr);
 				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
 			}
-			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset).name]){
-				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
+			else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] != ""){
 				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
 			}else {
 				p1 = null;
@@ -388,14 +386,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return typeof(cockpitModule_analyticalDrivers[p1]) == 'string' ? '\''+cockpitModule_analyticalDrivers[p1]+'\'' : (cockpitModule_analyticalDrivers[p1] || null);
 		}
 		
-		$scope.replacer = function(match, p1, p2, p3, precision,format) {
-			var columnInfo;
-			if(p3){
-				columnInfo = $scope.getColumnFromName(p1,$scope.aggregationDataset,p3);
-				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
-			}else{
-				columnInfo = $scope.getColumnFromName(p1,$scope.htmlDataset);
-				p1=$scope.htmlDataset && $scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][columnInfo.name])!='undefined' ? $scope.htmlDataset.rows[p2||0][columnInfo.name] : null;
+		$scope.replacer = function(match, p1, row, aggr, precision,format) {
+			var columnInfo = $scope.getColumnFromName(p1,aggr ? $scope.aggregationDataset : $scope.htmlDataset ,aggr);
+			if(aggr){
+				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
+			}else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] != ""){
+				p1 = $scope.htmlDataset.rows[row||0][columnInfo.name];
+			}else {
+				p1 = null;
 			}
 			if(p1 != null && columnInfo.type == 'int' || columnInfo.type == 'float'){
 				if(format) p1 = precision ? $filter('number')(p1, precision) : $filter('number')(p1);
