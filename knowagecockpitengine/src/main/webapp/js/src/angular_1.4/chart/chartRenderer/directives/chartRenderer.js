@@ -175,8 +175,12 @@ angular.module('chartRendererModule')
 				}
 			})
 
-			scope.$on('changeChartType',function(){
-				scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
+			scope.$on('changeChartType',function(parameter){
+
+				if(!parameter.targetScope.isOriginal){
+					scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
+				}
+
 				scope.$emit('changedChartType',scope.chartTemplate);
 			})
 
@@ -230,7 +234,7 @@ angular.module('chartRendererModule')
 
 			scope.$on('fullExpand',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
-				if((scope.chartConf.chart.type == "bar" || scope.chartConf.chart.type == "column" || 
+				if((scope.chartConf.chart.type == "bar" || scope.chartConf.chart.type == "column" ||
 				   scope.chartConf.chart.type == "line" || scope.chartConf.chart.type == "radar" ||
 				   scope.chartConf.chart.type == "scatter")  && scope.chartConf.series.length > 0){
 					for( var i=0 ; i < scope.chartConf.series.length ; i++ ){

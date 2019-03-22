@@ -272,6 +272,8 @@ function cockpitWidgetControllerFunction(
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {};
 
+	$scope.isOriginal = false;//for previewing different types of chart
+
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
 
@@ -1352,20 +1354,40 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
+		if(!tempOriginalChartType){
+			var tempOriginalChartType = $scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase();
+		}
+
 		$mdDialog.show({
 			controller: function ($scope,$mdDialog,ngModel) {
 				$scope.widgetName = widgetName;
 
-				$scope.changeChartType = function(type){
+				$scope.changeChartType = function(type, isOriginal){
+					debugger;
+
 					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
-					var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
-					delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-					var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
-					$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
-					if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
-					$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
-					$scope.$broadcast("changeChart",{ "type": type});
+
+
+
+					if(tempOriginalChartType == type){
+
+						$scope.isOriginal = true;
+						$scope.ngModel.content.chartTemplate.CHART = angular.copy($scope.ngModel.content.chartTemplateOriginal.CHART);
+
+					}else {
+
+						$scope.isOriginal = false;
+						var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
+						delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+						var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
+						$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
+						if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
+						$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
+
+					}
+					$scope.$broadcast("changeChart",{ "type": type, "isOriginal":$scope.isOriginal});
 					$mdDialog.hide();
+
 				}
 				$scope.cancel = function(){
 					$mdDialog.cancel();
