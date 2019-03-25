@@ -375,13 +375,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return (precision && !isNaN(result))? parseFloat(result).toFixed(precision) : result;
 		}
 		
-		$scope.ifConditionReplacer = function(match, p1, p2, aggr, precision){
+		$scope.ifConditionReplacer = function(match, p1, row, aggr, precision){
 			var columnInfo = $scope.getColumnFromName(p1,aggr ? $scope.aggregationDataset : $scope.htmlDataset ,aggr);
 			if(aggr){
 				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
 			}
 			else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] != ""){
-				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[p2||0][columnInfo.name];
+				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[row||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[row||0][columnInfo.name];
 			}else {
 				p1 = null;
 			}
