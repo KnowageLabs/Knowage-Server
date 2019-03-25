@@ -1228,24 +1228,28 @@
 		};
 
 		this.toggleParametersPanel = function(open) {
-			if(document.getElementById("parametersPanelSideNav-e")){
-				$mdSidenav('parametersPanelSideNav-e').toggle();
-			}else{
-				$timeout(function(){
-					if(document.getElementById("parametersPanelSideNav-e")){
-						$mdSidenav('parametersPanelSideNav-e').toggle();
-					}else{
-						if(open==undefined){
-							execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
-						}else if(open){
-							execProperties.showParametersPanel.status=true;
-						}else if(!open){
-							execProperties.showParametersPanel.status=false;
-						}
-					}
-				},500);
+			
+			function toggleNewPanel(opened){
+				if(document.getElementById("parametersPanelSideNav-e")){
+					if(opened==undefined) $mdSidenav('parametersPanelSideNav-e').toggle();
+					if(opened) $mdSidenav('parametersPanelSideNav-e').open();
+					if(opened == false) $mdSidenav('parametersPanelSideNav-e').close();
+				}
 			}
-		};
+			
+			$timeout(function(){
+				if(open==undefined){
+					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
+					toggleNewPanel();
+				}else if(open){
+					execProperties.showParametersPanel.status=true;
+					toggleNewPanel(true);
+				}else if(!open){
+					execProperties.showParametersPanel.status=false;
+					toggleNewPanel(false);
+				}
+			},document.getElementById("parametersPanelSideNav-e") ? 0 : 500);
+		}
 	});
 
 	//DEPENDENCIES
