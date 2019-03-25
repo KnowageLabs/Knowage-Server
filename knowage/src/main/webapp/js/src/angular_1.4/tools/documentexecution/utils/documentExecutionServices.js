@@ -847,21 +847,26 @@
 
 		this.toggleParametersPanel = function(open) {
 			
-			if(document.getElementById("parametersPanelSideNav-e")){
-				$mdSidenav('parametersPanelSideNav-e').toggle();
-			}
+			function toggleNewPanel(opened){
+				 if(document.getElementById("parametersPanelSideNav-e")){
+					 if(opened==undefined) $mdSidenav('parametersPanelSideNav-e').toggle();
+					 if(opened) $mdSidenav('parametersPanelSideNav-e').open();
+					 if(opened == false) $mdSidenav('parametersPanelSideNav-e').close();
+				 }
+			 }
 
 			$timeout(function(){
 				if(open==undefined){
 					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
+					toggleNewPanel();
 				}else if(open){
 					execProperties.showParametersPanel.status=true;
-//					$mdSidenav('parametersPanelSideNav').open();
+					toggleNewPanel(true);
 				}else if(!open){
 					execProperties.showParametersPanel.status=false;
-//					$mdSidenav('parametersPanelSideNav').close();
+					toggleNewPanel(false);
 				}
-			},0);
+			}, document.getElementById("parametersPanelSideNav-e") ? 0 : 500);
 		};
 	});
 
