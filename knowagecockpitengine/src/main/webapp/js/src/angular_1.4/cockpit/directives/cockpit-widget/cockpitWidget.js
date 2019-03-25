@@ -253,9 +253,9 @@ function cockpitWidgetControllerFunction(
 	{
 
 	var SERVICE = "/restful-services/2.0/datasets/preview";
-	
+
 	$scope.cockpitModule_properties = cockpitModule_properties;
-	
+
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
@@ -655,7 +655,7 @@ function cockpitWidgetControllerFunction(
 		}
 		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
-	
+
 	$scope.checkPreviewParameters = function(previewDataset, columnName, modalColumn, row){
 		if (modalColumn == undefined || modalColumn == "") {
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
@@ -674,48 +674,48 @@ function cockpitWidgetControllerFunction(
 		}
 		return previewDataset.parameters;
 	}
-	
+
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
 		}
-		
+
 		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
-		
+
 		var model = $scope.ngModel;
-		
+
 		var previewSettings;
-		
+
 		if($scope.ngModel.cross && $scope.ngModel.cross.preview) previewSettings = angular.copy($scope.ngModel.cross.preview);
 		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
-		
+
 		if (previewSettings && previewSettings.enable) {
-				
+
 				$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
-				
+
 				var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
-												
+
 				var config = {
 					datasetLabel: previewDataset.label
 				};
-				
+
 				if (previewDataset.parameters && previewDataset.parameters.length > 0)
 					config.parameters = $scope.checkPreviewParameters(previewDataset, columnName, modalColumn, row);
-				
+
 				//showing exporters
 				config.options = {
 						exports: ['CSV', 'XLSX']
 				};
-				
+
 				$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
-							
+
 					$mdDialog.show({
 						parent: angular.element(document.body),
 						templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
 						controller: function(scope) {
 							scope.previewUrl = $scope.iframeSrcUrl;
-							
+
 							scope.closePreview = function() {
 								$mdDialog.hide();
 							}
@@ -723,7 +723,7 @@ function cockpitWidgetControllerFunction(
 						clickOutsideToClose: true
 					}).then(function(response){}, function(response){});
 				return;
-					
+
 
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
@@ -997,7 +997,7 @@ function cockpitWidgetControllerFunction(
 
 		}
 	}
-	
+
 	$scope.doEditWidget=function(initOnFinish){
 
 		var deferred;
@@ -1363,11 +1363,8 @@ function cockpitWidgetControllerFunction(
 				$scope.widgetName = widgetName;
 
 				$scope.changeChartType = function(type, isOriginal){
-					debugger;
 
 					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
-
-
 
 					if(tempOriginalChartType == type){
 
