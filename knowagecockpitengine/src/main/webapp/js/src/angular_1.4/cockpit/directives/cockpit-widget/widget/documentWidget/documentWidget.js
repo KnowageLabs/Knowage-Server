@@ -47,7 +47,7 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_config,cockpitModule_properties,cockpitModule_utilstServices,cockpitModule_widgetSelection){
+function cockpitDocumentWidgetControllerFunction($scope,$timeout, cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_config,cockpitModule_properties,cockpitModule_utilstServices,cockpitModule_widgetSelection){
 	var currentDocId;
 
 	$scope.finishLoadingIframe=function(){
