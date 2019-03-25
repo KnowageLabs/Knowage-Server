@@ -177,9 +177,9 @@ angular.module('chartRendererModule')
 				}
 			})
 
-			scope.$on('changeChartType',function(parameter){
+			scope.$on('changeChartType',function(event,data){
 
-				if(!parameter.targetScope.isOriginal){
+				if(!data.isOriginal){
 					scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
 				}
 

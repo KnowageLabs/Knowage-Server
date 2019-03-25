@@ -238,7 +238,7 @@ function cockpitChartWidgetControllerFunction(
 
 	$scope.$on('changeChart', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content)
-		$scope.$broadcast("changeChartType");
+		$scope.$broadcast("changeChartType",data);
 	});
 
 	$scope.$on('changedChartType', function (event, data){
