@@ -250,7 +250,7 @@ function cockpitWidgetControllerFunction(
 		cockpitModule_exportWidgetService)
 
 	{
-	
+
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
 	$scope.openMenu = function($mdMenu, ev) {
@@ -1349,11 +1349,8 @@ function cockpitWidgetControllerFunction(
 				$scope.widgetName = widgetName;
 
 				$scope.changeChartType = function(type, isOriginal){
-					debugger;
 
 					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
-
-
 
 					if(tempOriginalChartType == type){
 
