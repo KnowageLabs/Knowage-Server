@@ -88,7 +88,7 @@ angular.module('chartRendererModule')
 								for (var i = 0; i < scope.chartConf.series.length; i++) {
 									if(scope.colorMap.hasOwnProperty(scope.chartConf.series[i].name)) {
 										scope.chartConf.colors[i]=scope.colorMap[chartConf.series[i].name];
-									} 
+									}
 								}
 							} else {
 								scope.colorMap = {};
@@ -177,9 +177,9 @@ angular.module('chartRendererModule')
 				}
 			})
 
-			scope.$on('changeChartType',function(parameter){
+			scope.$on('changeChartType',function(event,data){
 
-				if(!parameter.targetScope.isOriginal){
+				if(!data.isOriginal){
 					scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
 				}
 
