@@ -247,7 +247,6 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 
 	$scope.exportPdf = function(){
 		cockpitModule_properties.LOADING_SCREENSHOT = true;
-		var parentElement =  document.querySelector('#gridsterSheet-0');
 		$mdDialog.show({
 			controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
 				$scope.translate = sbiModule_translate;
@@ -263,13 +262,15 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 			 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
 			 	function getPage(sheet){
 			 		var element = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
+			 		var parentElement = document.querySelector('#gridsterSheet-'+sheet.index);
+			 		if(element.clientHeight < parentElement.clientHeight) element = parentElement;
 			 		html2canvas(element,{
 			 			width: element.clientWidth,
 			 			height: element.clientHeight
 			 		}).then(function(canvas) {
 			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/3, element.clientHeight/3);
 			 			doc.setFontSize(14);
-			 			doc.text(2, element.clientHeight < parentElement.clientHeight ? (parentElement.clientHeight/3)+15 : (element.clientHeight/3)+17, (sheet.index+1) + '. ' + sheet.label);
+			 			doc.text(2, (element.clientHeight), (sheet.index+1) + '. ' + sheet.label);
 	
 			 			if(sheet.index + 1 == cockpitModule_template.sheets.length) {
 			 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
@@ -277,8 +278,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 			 				cockpitModule_properties.LOADING_SCREENSHOT = false;
 			 			}
 			 			else {
+			 				var nextParentElement = document.querySelector('#gridsterSheet-'+(sheet.index+1));
 			 				var nextElement = document.querySelector('#gridsterSheet-'+(sheet.index+1)+' #gridsterContainer');
-			 				doc.addPage(nextElement.clientWidth,nextElement.clientHeight < parentElement.clientHeight ? parentElement.clientHeight : nextElement.clientHeight);
+			 				doc.addPage(nextElement.clientWidth,nextElement.clientHeight < nextParentElement.clientHeight ? nextParentElement.clientHeight : nextElement.clientHeight);
 			 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
 			 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
 			 			}
@@ -308,12 +310,14 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 				for(var s in cockpitModule_template.sheets){
 					if(cockpitModule_template.sheets[s].index == 0) {
 						if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
+						var tempParentElement = document.querySelector('#gridsterSheet-0');
 						var tempElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
 						var doc = new jsPDF({
 							orientation: 'l',
 							unit: 'mm',
-							format: [tempElement.clientWidth, tempElement.clientHeight < parentElement.clientHeight ? parentElement.clientHeight : tempElement.clientHeight]
+							format: [tempElement.clientWidth, tempElement.clientHeight < tempParentElement.clientHeight ? tempParentElement.clientHeight : tempElement.clientHeight]
 						});
+						
 						getScreenshot(cockpitModule_template.sheets[s]);
 						break;
 					}
