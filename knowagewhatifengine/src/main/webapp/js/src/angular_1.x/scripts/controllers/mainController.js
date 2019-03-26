@@ -17,7 +17,7 @@
  */
 
 var olapMod = angular.module('olap.controllers', [ 'olap.configuration',
-		'olap.directives', 'olap.settings' ])
+		'olap.directives', 'olap.settings', 'olap.services'])
 		
 olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
