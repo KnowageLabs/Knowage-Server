@@ -31,13 +31,14 @@
 				.then(function(requestConfig){
 					var config = {"responseType": "arraybuffer"};
 					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
-															
+					var documentLabel = requestConfig.DOCUMENT_LABEL;
+					
 					sbiModule_restServices.promisePost('1.0/cockpit/export', 'excel', requestConfig, config)
 						.then(function(response){
 							var mimeType = response.headers("Content-type");
 							var fileName = 'exported_widget';
-							if (widget.content) {
-								fileName = widget.content.name;
+							if (documentLabel != undefined) {
+								fileName = documentLabel;
 							}
 							$mdToast.hide(exportingToast);
 							sbiModule_download.getBlob(response.data, fileName, mimeType, type);
