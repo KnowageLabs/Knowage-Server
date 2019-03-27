@@ -1,7 +1,7 @@
 
 <div class="filter-panel" layout="row" flex>
 	<div class="new-filter-card" 
-			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" 
+			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters:index" 
 			ng-drag="true" ng-drag-data="filter" 
 			ng-drag-success="dragSuccess('filter',$index)"
 			id="filter-{{filter.name}}"
