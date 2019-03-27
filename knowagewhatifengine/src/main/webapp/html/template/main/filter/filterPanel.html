@@ -6,7 +6,7 @@
 	
 	<md-button class="md-icon-button filter-shift-arrow" flex=10 
 			   aria-label="Favorite" ng-click="filterShift('right')" 
-			   ng-if="filterCardList.length >  numVisibleFilters"><!-- ng-show="shiftNeeded" -->
+			   ng-if="filterCardList.length >  numVisibleFilters && indexChangingSer.hasPrevious(index)"><!-- ng-show="shiftNeeded" -->
 		<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
 	</md-button>
 	
@@ -14,7 +14,7 @@
 	
 	<md-button class="md-icon-button filter-shift-arrow" flex=10 
 	           aria-label="Favorite" ng-click="filterShift('left')" 
-	           ng-if="filterCardList.length >  numVisibleFilters">
+	           ng-if="filterCardList.length >  numVisibleFilters && indexChangingSer.hasNext(index, filterCardList.length, numVisibleFilters)">
 		<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x"></md-icon>
 	</md-button>
 
