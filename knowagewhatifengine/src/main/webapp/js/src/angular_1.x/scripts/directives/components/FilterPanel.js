@@ -773,7 +773,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var length = data.length;
 		var first = data[0];
 		var last = data[length-1];
-		if(direction == "left"){
+		if(direction == "right"){
 			for (var i = 0; i < length; i++) {
 				data[i] = data[i + 1];
 			}
