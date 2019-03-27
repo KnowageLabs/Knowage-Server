@@ -18,6 +18,6 @@
 
 (function() {
 	
-	var app = angular.module('olap.services', []);
+	angular.module('olap.services', []);
 	
 }());
