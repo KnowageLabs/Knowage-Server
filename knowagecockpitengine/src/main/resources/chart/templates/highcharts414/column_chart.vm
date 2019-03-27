@@ -8,6 +8,7 @@
     	#end
 	#end
 #end
+
 #set($rows = $data.rows) ## data in table rows
 #if(($chart.groupCategories =='true' || $chart.groupSeriesCateg =='true') && $chart.isCockpitEngine == 'false')
 #set($categorieColumns = $chart.VALUES.CATEGORY.get(0))
@@ -383,11 +384,14 @@
 				
 			#end
 		#end
+			
+		"#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"
+		
     ],
+    $datasettransformer.print($chart.COLORPALETTE.COLOR)
     #else
     	colors: ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"],
 	#end
-    
     title: {
        
         text: "$chart.TITLE.text",
