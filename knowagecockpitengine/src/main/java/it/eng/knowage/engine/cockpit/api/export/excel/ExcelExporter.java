@@ -318,7 +318,6 @@ public class ExcelExporter {
 				header = sheet.createRow((short) 1);
 			}
 
-
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String columnName = column.getString("header");
@@ -389,6 +388,111 @@ public class ExcelExporter {
 			logger.error("Can not filter Columns Array");
 		}
 		return columns;
+	}
+
+	private List<JSONObject> getExcelSheetsList(String templateString) {
+		List<JSONObject> sheets = new ArrayList<>(0);
+		try {
+			JSONObject template = new JSONObject(templateString);
+			sheets.addAll(getDatastoresByWidget(template));
+		} catch (Exception e) {
+			logger.error("Unable to load template", e);
+		}
+		return sheets;
+	}
+
+	private List<JSONObject> getDatastoresByWidget(JSONObject template) throws JSONException, EMFUserError {
+		logger.debug("IN");
+		JSONObject configuration = template.getJSONObject("configuration");
+		JSONArray sheets = template.getJSONArray("sheets");
+
+		loadCockpitSelections(configuration);
+
+		List<JSONObject> excelSheets = new ArrayList<>();
+
+		for (int i = 0; i < sheets.length(); i++) {
+			JSONObject sheet = sheets.getJSONObject(i);
+			int sheetIndex = sheet.getInt("index");
+
+			JSONArray widgets = sheet.getJSONArray("widgets");
+			int widgetCounter = 0;
+			for (int j = 0; j < widgets.length(); j++) {
+				JSONObject widget = widgets.getJSONObject(j);
+				String widgetType = widget.getString("type");
+
+				if ("table".equals(widgetType) || "chart".equals(widgetType)) {
+					JSONObject datasetObj = widget.getJSONObject("dataset");
+					int datasetId = datasetObj.getInt("dsId");
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					String datasetLabel = dataset.getLabel();
+
+					JSONObject body = new JSONObject();
+
+					JSONObject aggregations = getAggregationsFromWidget(widget, configuration);
+					logger.debug("aggregations = " + aggregations);
+					body.put("aggregations", aggregations);
+
+					JSONObject parameters = getParametersFromWidget(widget, configuration);
+					logger.debug("parameters = " + parameters);
+					body.put("parameters", parameters);
+
+					JSONObject summaryRow = getSummaryRowFromWidget(widget);
+					if (summaryRow != null) {
+						logger.debug("summaryRow = " + summaryRow);
+						body.put("summaryRow", summaryRow);
+					}
+
+					JSONObject likeSelections = getLikeSelectionsFromWidget(widget, configuration);
+					if (likeSelections != null) {
+						logger.debug("likeSelections = " + likeSelections);
+						body.put("likeSelections", likeSelections);
+					}
+
+					JSONObject selections = getSelectionsFromWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+					body.put("selections", selections);
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+					if (getRealtimeFromTableWidget(datasetId, configuration)) {
+						logger.debug("nearRealtime = true");
+						map.put("nearRealtime", true);
+					}
+
+					int limit = getLimitFromTableWidget(widget);
+					if (limit > 0) {
+						logger.debug("limit = " + limit);
+						map.put("limit", limit);
+					}
+
+					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
+					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
+					datastoreObj.put("sheetName", sheetName);
+					JSONObject content = widget.optJSONObject("content");
+					String widgetName = null;
+					if (content != null) {
+						widgetName = content.getString("name");
+					}
+					datastoreObj.put("widgetName", widgetName);
+					excelSheets.add(datastoreObj);
+				}
+			}
+		}
+
+		logger.debug("OUT");
+		return excelSheets;
+	}
+
+	private void exportWidgetsToExcel(List<JSONObject> excelSheets, Workbook wb) {
+		Iterator<JSONObject> it = excelSheets.iterator();
+		while (it.hasNext()) {
+			JSONObject widgetDatastore = it.next();
+			String widgetName = widgetDatastore.optString("widgetName");
+			if (widgetName == null || widgetName.isEmpty()) {
+				widgetName = "Widget";
+			}
+			createExcelFile(widgetDatastore, wb, widgetName);
+		}
 	}
 
 	private void loadCockpitSelections(JSONObject configuration) throws JSONException {
