@@ -2676,10 +2676,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		default:
 			break;
 		}
-		originalTemplate.CHART = angular.merge({},baseTemplate,originalTemplate.CHART)
-		baseTemplate.VALUES.CATEGORY=originalTemplate.CHART.VALUES.CATEGORY
-		baseTemplate.VALUES.SERIE=originalTemplate.CHART.VALUES.SERIE
-
+			originalTemplate.CHART = angular.merge(baseTemplate,originalTemplate.CHART)
+			baseTemplate.VALUES.CATEGORY=originalTemplate.CHART.VALUES.CATEGORY
+			baseTemplate.VALUES.SERIE=originalTemplate.CHART.VALUES.SERIE
 
 		return {"CHART":baseTemplate};
 	}

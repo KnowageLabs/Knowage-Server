@@ -164,6 +164,7 @@
     	
     	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     *#
+
    	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
    		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
     colors: [
@@ -174,8 +175,7 @@
 			into the if-statement. If there are no picked color or there is just one, go
 			into the else-statement.
 			@author: danristo (danilo.ristovski@mht.net)
-		*#
- 		
+		*#		
  		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
 			
 			#foreach($color in $chart.COLORPALETTE.COLOR)
@@ -183,7 +183,11 @@
 			#end
 			
 		#end
+		
+		"#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"
+		
     ],
+    $datasettransformer.print($chart.COLORPALETTE.COLOR)
     #else
     	colors: ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"],
 	#end

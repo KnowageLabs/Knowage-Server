@@ -44,12 +44,12 @@ public class DataSetTransformer {
 	public static transient Logger logger = Logger.getLogger(DataSetTransformer.class);
 
 	public void print(Object object) {
-
-		/*
-		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
-		 * System.out.println("-----------------------");
-		 */
-
+/*
+		System.out.println("-----------------------");
+		System.out.println(object);
+		System.out.println(object.getClass().toString());
+		System.out.println("-----------------------");
+*/
 		logger.debug("-----------------------");
 		logger.debug(object);
 		logger.debug(object.getClass().toString());
@@ -777,7 +777,9 @@ public class DataSetTransformer {
 			}
 
 		}
-
+		logger.debug("primCat: " + primCat);
+		logger.debug("secCat: " + secCat);
+		logger.debug("seria: " + seria);
 		for (Object singleObject : dataRows) {
 			categories.add(((Map) singleObject).get(primCat));
 		}
@@ -830,6 +832,7 @@ public class DataSetTransformer {
 
 		}
 
+		logger.debug("map: " + map);
 		return map;
 
 	}
