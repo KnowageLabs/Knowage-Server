@@ -229,11 +229,11 @@ public class ExcelExporter {
 					JSONObject title = style.optJSONObject("title");
 					if (title != null) {
 						widgetName = title.optString("label");
-					}
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
+					} else {
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							widgetName = content.getString("name");
+						}
 					}
 				}
 
