@@ -107,6 +107,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.dataPointers = [];
 	$scope.index = 0;
 	$scope.numVisibleFilters = 5;
+	$scope.indexChangingSer = indexChangingService;
 	$scope.shiftNeeded;
 
 	$scope.modelConfig;
