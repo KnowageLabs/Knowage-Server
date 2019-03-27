@@ -76,11 +76,21 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	@Override
 	public void visit(UnaryFilter item) {
-		append(item.getProjection(), false);
-		queryBuilder.append(" ");
-		queryBuilder.append(item.getOperator());
-		queryBuilder.append(" ");
-		append(item.getOperand());
+		if (item.getOperand() == null) {
+			if (SimpleFilterOperator.EQUALS_TO.equals(item.getOperator())) {
+				visit(new NullaryFilter(item.getProjection(), SimpleFilterOperator.IS_NULL));
+			} else if (SimpleFilterOperator.DIFFERENT_FROM.equals(item.getOperator())) {
+				visit(new NullaryFilter(item.getProjection(), SimpleFilterOperator.IS_NOT_NULL));
+			} else {
+				throw new IllegalArgumentException("Invalid use of operator " + item.getOperator() + " with NULL");
+			}
+		} else {
+			append(item.getProjection(), false);
+			queryBuilder.append(" ");
+			queryBuilder.append(item.getOperator());
+			queryBuilder.append(" ");
+			append(item.getOperand());
+		}
 	}
 
 	protected void append(Object operand) {
@@ -136,7 +146,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	@Override
 	public void visit(InFilter item) {
-		if (!database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+		if (hasNullOperand(item)
+				|| !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
 				|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
 			queryBuilder.append("(");
 			visit(transformToAndOrFilters(item));
@@ -144,6 +155,19 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		} else {
 			append(item);
 		}
+	}
+
+	private boolean hasNullOperand(InFilter item) {
+		boolean hasNullOperand = false;
+		if(item != null){
+			for (Object operand : item.getOperands()) {
+				if(operand == null){
+					hasNullOperand = true;
+					break;
+				}
+			}
+		}
+		return hasNullOperand;
 	}
 
 	protected void append(InFilter item) {
@@ -282,7 +306,6 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void validate(SelectQuery query) {
-		List<Projection> projections = query.getProjections();
 		boolean selectAll = query.hasSelectAll();
 		boolean selectCount = query.hasSelectCount();
 		Assert.assertTrue(!(selectAll && selectCount), "Invalid projections definition");
