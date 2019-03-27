@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
@@ -32,9 +31,9 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.services.rest.AbstractKnowageInterceptor;
 
 /**
  *
@@ -44,7 +43,7 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
  *
  */
 @Provider
-public class AuditRestPostInterceptor implements ContainerResponseFilter {
+public class AuditRestPostInterceptor extends AbstractKnowageInterceptor {
 
 	static private Logger logger = Logger.getLogger(AuditRestPostInterceptor.class);
 
@@ -67,7 +66,7 @@ public class AuditRestPostInterceptor implements ContainerResponseFilter {
 			String serviceUrl = uriInfo.getPath();
 			MultivaluedMap<String, String> parameters = uriInfo.getPathParameters();
 
-			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			UserProfile profile = this.getUserProfile();
 
 			String action = "[Service:" + serviceUrl + " ; Class:" + resourceInfo.getResourceClass() + " ; Method:" + resourceInfo.getResourceMethod() + "]";
 
@@ -81,6 +80,10 @@ public class AuditRestPostInterceptor implements ContainerResponseFilter {
 		} finally {
 			logger.debug("AuditRestInterceptor:postProcess OUT");
 		}
+	}
+
+	@Override
+	public void filter(ContainerRequestContext requestContext) throws IOException {
 	}
 
 }

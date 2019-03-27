@@ -20,6 +20,7 @@ package it.eng.spagobi.rest.interceptors;
 import java.util.StringTokenizer;
 
 import javax.annotation.Priority;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -156,11 +157,6 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
 		}
-	}
-
-	@Override
-	protected IEngUserProfile getUserProfileFromSession() {
-		return (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
 
 	@Override

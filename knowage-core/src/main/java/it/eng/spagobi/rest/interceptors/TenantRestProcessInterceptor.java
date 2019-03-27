@@ -17,26 +17,11 @@
  */
 package it.eng.spagobi.rest.interceptors;
 
-import java.io.IOException;
-
 import javax.annotation.Priority;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.log4j.Logger;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.services.rest.AbstractTenantRestProcessInterceptor;
 
 /**
  *
@@ -45,42 +30,6 @@ import it.eng.spagobi.user.UserProfileManager;
  */
 @Provider
 @Priority(Priorities.ENTITY_CODER)
-public class TenantRestProcessInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
-
-	private static Logger logger = Logger.getLogger(TenantRestProcessInterceptor.class);
-
-	@Context
-	private HttpServletRequest servletRequest;
-
-	/**
-	 * Pre-processes all the REST requests. Get the UserProfile from the session and sets the tenant information into the Thread
-	 */
-	@Override
-	public void filter(ContainerRequestContext requestContext) throws IOException {
-		logger.debug("IN");
-		UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		if (profile == null)
-			profile = UserProfileManager.getProfile();
-		if (profile != null) {
-			logger.debug("User profile retrieved [" + profile + "]");
-			// retrieving tenant id
-			String tenantId = profile.getOrganization();
-			logger.debug("Tenant identifier is [" + tenantId + "]");
-			// putting tenant id on thread local
-			Tenant tenant = new Tenant(tenantId);
-			TenantManager.setTenant(tenant);
-		}
-		logger.debug("OUT");
-	}
-
-	/**
-	 * Post-processes all the REST requests. Remove tenant's information from thread
-	 */
-	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-		logger.debug("IN");
-		TenantManager.unset();
-		logger.debug("OUT");
-	}
+public class TenantRestProcessInterceptor extends AbstractTenantRestProcessInterceptor {
 
 }

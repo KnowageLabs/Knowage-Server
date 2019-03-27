@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
 
@@ -64,8 +65,7 @@ public abstract class AbstractRestService {
 	/**
 	 * Check if the number is null
 	 *
-	 * @param value
-	 *            the value to check
+	 * @param value the value to check
 	 * @return true if the value is null
 	 */
 	public boolean isNull(Number value) {
@@ -75,8 +75,7 @@ public abstract class AbstractRestService {
 	/**
 	 * Check if the string is null
 	 *
-	 * @param value
-	 *            the value to check
+	 * @param value the value to check
 	 * @return true if the value is null
 	 */
 	public boolean isNull(String value) {
@@ -86,8 +85,7 @@ public abstract class AbstractRestService {
 	/**
 	 * Check if the string is null or ""
 	 *
-	 * @param value
-	 *            the value to check
+	 * @param value the value to check
 	 * @return true if the value is null or ""
 	 */
 	public boolean isNullOrEmpty(String value) {
@@ -131,13 +129,14 @@ public abstract class AbstractRestService {
 
 	public HttpSession getHttpSession() {
 		if (getServletRequest() != null) {
-			return getServletRequest().getSession();
+			return getServletRequest().getSession(false);
 		} else {
 			return null;
 		}
 	}
 
 	public Object getAttributeFromHttpSession(String attrName) {
+		Assert.assertNotNull(getHttpSession(), "Trying to get an attribute from session but session was not even initialized!");
 		return getHttpSession().getAttribute(attrName);
 	}
 
