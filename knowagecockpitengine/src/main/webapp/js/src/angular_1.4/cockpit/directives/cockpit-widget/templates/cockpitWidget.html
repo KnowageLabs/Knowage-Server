@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable, 'expandedWidget':widExp, 'fixedLeft':ngModel.type === 'selection','screenShottingWidget':cockpitModule_properties.LOADING_SCREENSHOT}"  ng-mouseleave="closeWidgetActionButtons()"
 	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
 	
-	<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">
+	<md-fab-speed-dial  md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">
         <md-fab-trigger ng-if="cockpitModule_properties.EDIT_MODE">
-          	<div  class="md-button md-icon-button menuOnTopButton" aria-label="show menu" ng-class="{'dragCursor':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE,'draggableToolbar':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE}">
+          	<div   class="md-button md-icon-button menuOnTopButton" aria-label="show menu" ng-class="{'dragCursor':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE,'draggableToolbar':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE}">
 				<md-icon md-font-icon="fa fa-ellipsis-v" ng-if="!ngModel.menuOpened || !cockpitModule_properties.EDIT_MODE"></md-icon>
 				<md-icon md-font-icon="fa fa-arrows" ng-if="ngModel.menuOpened && cockpitModule_properties.EDIT_MODE"></md-icon>
 			</div>

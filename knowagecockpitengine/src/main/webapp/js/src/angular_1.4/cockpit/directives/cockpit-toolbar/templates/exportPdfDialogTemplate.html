@@ -1,13 +1,21 @@
-<md-dialog>
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        <h2>{{::translate.load('kn.cockpit.export.pdf')}}</h2>
-      </div>
-    </md-toolbar>
-
-    <md-dialog-content layout-align="center center" layout-padding>
-      <md-progress-linear md-mode="determinate" value="{{((cockpitModule_properties.CURRENT_SHEET+1)/cockpitModule_template.sheets.length)*100}}"></md-progress-linear>
-        <div style="text-align:center">{{::translate.load('kn.cockpit.export.capturingpage')}} {{cockpitModule_properties.CURRENT_SHEET+1}} {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} {{cockpitModule_template.sheets.length}}</div>
-    </md-dialog-content>
-
-</md-dialog>
+<div data-html2canvas-ignore style="background: rgba(0, 0, 0, .5);
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;">
+	<md-dialog >
+	    <md-toolbar>
+	      <div class="md-toolbar-tools">
+	        <h2>{{::translate.load('kn.cockpit.export.pdf')}}</h2>
+	      </div>
+	    </md-toolbar>
+	
+	    <md-dialog-content layout-align="center center" layout-padding>
+	      <md-progress-linear md-mode="determinate" value="{{((cockpitModule_properties.CURRENT_SHEET+1)/cockpitModule_template.sheets.length)*100}}"></md-progress-linear>
+	        <div style="text-align:center">{{::translate.load('kn.cockpit.export.capturingpage')}} {{cockpitModule_properties.CURRENT_SHEET+1}} {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} {{cockpitModule_template.sheets.length}}</div>
+	    </md-dialog-content>
+	
+	</md-dialog>
+</div>

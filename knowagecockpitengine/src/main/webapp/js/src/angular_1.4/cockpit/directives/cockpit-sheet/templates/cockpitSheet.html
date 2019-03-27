@@ -44,7 +44,7 @@ class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitMod
 					<p>{{translate.load("sbi.cockpit.nowidget2")}}</p>
 				</md-card-content>
 			</md-card>
-			<cockpit-grid layout-fill ng-style="cockpitModule_properties.LOADING_SCREENSHOT && background" id="gridsterSheet-{{sheet.index}}">
+			<cockpit-grid layout-fill  id="gridsterSheet-{{sheet.index}}">
 				<cockpit-widget ng-model="prop" ng-repeat="prop in sheet.widgets"  >
 				</cockpit-widget>
 			</cockpit-grid>

@@ -63,7 +63,6 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
-	$scope.background = cockpitModule_template.configuration.style ? {'background-image':'url('+cockpitModule_template.configuration.style.imageBackgroundUrl+')','background-size':cockpitModule_template.configuration.style.imageBackgroundSize}: {};
 	$scope.maxSheetsNumber = 7;
 
 	for(var sh in cockpitModule_template.sheets){
