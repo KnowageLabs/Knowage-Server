@@ -765,7 +765,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	//Function for scrolling trough filters/rows/columns if necessary  
 	$scope.filterShift = function(direction, index, array, numVisibleFilters) {
 
-		$scope.filterCardList = indexChangingService.changeIndexValue(direction, index, array, numVisibleFilters);
+		$scope.index = indexChangingService.changeIndexValue(direction, index, array, numVisibleFilters);
 		$scope.filterSelected = shift(direction,$scope.filterSelected);
 	};
 	
