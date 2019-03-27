@@ -94,7 +94,7 @@ angular.module('filter_panel',['sbiModule'])
 })
 
 
-function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr ) {
+function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService) {
 	
 	var visibleSelected = [];
 	var visibleSelectedTracker = [];
@@ -763,9 +763,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 * Filter shift if necessary  
 	 **/
 	//Function for scrolling trough filters/rows/columns if necessary  
-	$scope.filterShift = function(direction) {
+	$scope.filterShift = function(direction, index, array, numVisibleFilters) {
 
-		$scope.filterCardList = shift(direction,$scope.filterCardList);
+		$scope.filterCardList = indexChangingService.changeIndexValue(direction, index, array, numVisibleFilters);
 		$scope.filterSelected = shift(direction,$scope.filterSelected);
 	};
 	
