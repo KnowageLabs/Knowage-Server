@@ -107,11 +107,6 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 		return authenticated;
 	}
 
-	@Override
-	protected IEngUserProfile getUserProfileFromSession() {
-		return (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	}
-
 	// @Override
 	// protected void setUserProfileInSession(IEngUserProfile engProfile) {
 	// super.setUserProfileInSession(engProfile);

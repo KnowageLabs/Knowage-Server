@@ -22,9 +22,7 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -47,7 +45,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
-public abstract class AbstractSecurityServerInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
+public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageInterceptor {
 
 	static private Logger logger = Logger.getLogger(AbstractSecurityServerInterceptor.class);
 
@@ -87,7 +85,7 @@ public abstract class AbstractSecurityServerInterceptor implements ContainerRequ
 				profile = authenticateUser();
 			} else {
 				// get the user profile from session
-				profile = (UserProfile) getUserProfileFromSession();
+				profile = getUserProfileFromSession();
 			}
 
 			if (profile == null) {
@@ -97,7 +95,9 @@ public abstract class AbstractSecurityServerInterceptor implements ContainerRequ
 			// Profile is not null
 			UserProfileManager.setProfile(profile);
 
-			if (getUserProfileFromSession() == null) {
+			// we put user profile in session only in case incoming request is NOT for a back-end service (because back-end services should be treated in a
+			// stateless fashion, otherwise number of HTTP sessions will increase with no control) and it is not already stored in session
+			if (!isBackEndService() && getUserProfileFromSession() == null) {
 				setUserProfileInSession(profile);
 			}
 
@@ -180,13 +180,11 @@ public abstract class AbstractSecurityServerInterceptor implements ContainerRequ
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
-	 * @param httpRequest
-	 *            The http request
+	 * @param httpRequest The http request
 	 *
 	 * @return the current user unique identified
 	 *
-	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
+	 * @throws Exception in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	protected String getUserIdentifier() throws Exception {
 		logger.debug("IN");
@@ -199,8 +197,6 @@ public abstract class AbstractSecurityServerInterceptor implements ContainerRequ
 		}
 		return userId;
 	}
-
-	protected abstract IEngUserProfile getUserProfileFromSession();
 
 	protected void setUserProfileInSession(IEngUserProfile engProfile) {
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
