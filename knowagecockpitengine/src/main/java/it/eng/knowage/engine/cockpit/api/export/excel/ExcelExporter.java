@@ -167,16 +167,6 @@ public class ExcelExporter {
 	}
 
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) {
-		Workbook wb;
-
-		if ("xlsx".equalsIgnoreCase(outputType)) {
-			wb = new XSSFWorkbook();
-		} else if ("xls".equalsIgnoreCase(outputType)) {
-			wb = new HSSFWorkbook();
-		} else {
-			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
-		}
-
 		if (templateString == null) {
 			ObjTemplate template;
 			try {
@@ -188,6 +178,16 @@ public class ExcelExporter {
 			} catch (EMFAbstractError e) {
 				throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 			}
+		}
+
+		Workbook wb;
+
+		if ("xlsx".equalsIgnoreCase(outputType)) {
+			wb = new XSSFWorkbook();
+		} else if ("xls".equalsIgnoreCase(outputType)) {
+			wb = new HSSFWorkbook();
+		} else {
+			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
 		}
 
 		if (exportWidget) {
@@ -228,11 +228,11 @@ public class ExcelExporter {
 					JSONObject title = style.optJSONObject("title");
 					if (title != null) {
 						widgetName = title.optString("label");
-					}
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
+					} else {
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							widgetName = content.getString("name");
+						}
 					}
 				}
 

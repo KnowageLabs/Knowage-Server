@@ -717,7 +717,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
             params += "&limit=" + limitRows.rows;
         }
 		
-		var filtersToSend = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
+		var filtersToSendWithoutParams = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
 		if(ngModel.search
 				&& ngModel.search.text && ngModel.search.text!=""
@@ -729,21 +729,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			likeSelections[dataset.label] = searchData;
 			bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
 		}
-
-		var filtersToSendWithoutParams = {};
-															
-		angular.copy(filtersToSend,filtersToSendWithoutParams);
-		angular.forEach(filtersToSendWithoutParams, function(item){
-			var paramsToDelete = [];
-			for (var property in item) {
-				if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
-					paramsToDelete.push(property);
-				}
-			}
-			angular.forEach(paramsToDelete, function(prop){
-				delete item[prop];
-			});
-		});
    
 		savedFilters = filtersToSendWithoutParams;
 
@@ -907,7 +892,23 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 		}
-		return filtersToSend;
+		
+		var filtersToSendWithoutParams = {};
+		
+		angular.copy(filtersToSend, filtersToSendWithoutParams);
+		angular.forEach(filtersToSendWithoutParams, function(item){
+			var paramsToDelete = [];
+			for (var property in item) {
+				if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
+					paramsToDelete.push(property);
+				}
+			}
+			angular.forEach(paramsToDelete, function(prop){
+				delete item[prop];
+			});
+		});
+		
+		return filtersToSendWithoutParams;
 	}
 
 	this.getParametersAsString = function(parameters){
