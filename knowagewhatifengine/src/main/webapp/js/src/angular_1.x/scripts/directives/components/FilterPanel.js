@@ -83,6 +83,9 @@ angular.module('filter_panel',['sbiModule'])
 			if(scope.filterCardList){
 				scope.shiftNeeded = scope.filterCardList.length >  scope.numVisibleFilters ? true
 						: false;
+				
+				if(!scope.shiftNeeded)
+					scope.index = 0;
 			}
 			
 		})
@@ -766,27 +769,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.filterShift = function(direction, index, array, numVisibleFilters) {
 
 		$scope.index = indexChangingService.changeIndexValue(direction, index, array, numVisibleFilters);
-		$scope.filterSelected = shift(direction,$scope.filterSelected);
-	};
-	
-	shift = function(direction, data){
-		var length = data.length;
-		var first = data[0];
-		var last = data[length-1];
-		if(direction == "right"){
-			for (var i = 0; i < length; i++) {
-				data[i] = data[i + 1];
-			}
-			data[length - 1] = first;
-		}
-		else{
-			for (var i = length - 2; i >= 0; i--) {
-				data[i + 1] = data[i];
-			}
-			data[0] = last;
-		}
 		
-		return data;
 	};
 	
 	//setting visibility of shift buttons if needed
