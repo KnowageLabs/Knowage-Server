@@ -1391,6 +1391,16 @@
 			#end
 		#end
 		{	
+		
+			#foreach($r in $rows)
+				#if( $r.get($serieColumnsMapped))
+				#set ($yValue = $r.get($serieColumnsMapped))
+					#if($yValue == "null")
+						connectNulls:true,
+					#end
+				#end
+			#end
+		
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
