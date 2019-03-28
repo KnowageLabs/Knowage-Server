@@ -1383,6 +1383,7 @@
 	#set ($count = $count+1)
 	#set ($customColors = $chart.CUSTOMCOLORS.COLOR)
 	series: [
+	
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	
@@ -1399,7 +1400,17 @@
 				#end
 			#end
 		#end
-		{	
+		{		
+	
+			#foreach($r in $rows)
+				#if( $r.get($serieColumnsMapped))
+				#set ($yValue = $r.get($serieColumnsMapped))
+					#if($yValue == "null")
+						connectNulls:true,
+					#end
+				#end
+			#end
+		
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
