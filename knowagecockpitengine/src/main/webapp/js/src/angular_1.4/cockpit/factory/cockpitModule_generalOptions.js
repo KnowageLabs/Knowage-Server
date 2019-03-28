@@ -100,6 +100,23 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ],
+		 typesMap: {
+			"java.lang.String": {label:"string",icon:"fa fa-quote-right"}, 
+			"java.lang.Boolean": {label:"boolean",icon:"fa fa-star-half-o"}, 
+			"java.lang.Long" : {label:"long",icon:"fa fa-hashtag"},
+			"java.lang.Integer": {label:"integer",icon:"fa fa-hashtag"},
+			"java.math.BigInteger" :{label:"integer",icon:"fa fa-hashtag"},
+			"java.lang.Double": {label:"float",icon:"fa fa-hashtag"},
+			"java.lang.Float": {label:"float",icon:"fa fa-hashtag"},
+			"java.math.BigDecimal": {label:"float",icon:"fa fa-hashtag"}, 
+			"oracle.sql.TIMESTAMP": {label:'timestamp',icon:'fa fa-calendar'},
+			"java.sql.Timestamp": {label:'timestamp',icon:'fa fa-calendar'},
+			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
+			"java.sql.Date": {label:'date',icon:'fa fa-calendar'},
+			"java.sql.Time": {label:'time',icon:'fa fa-clock-o'},
+			"oracle.sql.BLOB": {label:'blob',icon:'fa fa-archive'},
+			"oracle.sql.CLOB": {label:'clob',icon:'fa fa-archive'}
+		},
 		 dateFormat: [
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.long"),value:'dd EEEE yyyy HH:mm:ss',hint:'September 03 2010 12:05:08 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.medium"),value:'medium',hint:'Sep 3, 2010 12:05:08 PM'},

@@ -45,9 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$q,
 			$sce,
 			$filter,
+			sbiModule_config,
 			sbiModule_translate,
 			sbiModule_restServices,
 			cockpitModule_datasetServices,
+			cockpitModule_generalOptions,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
@@ -86,6 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
+						tempCol.fieldType = $scope.ngModel.content.columnSelectedOfDataset[c].type;
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
 						tempCol.cellRenderer = cellRenderer;
@@ -133,6 +136,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function cellRenderer(params){
 			var tempValue = params.value;
+			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'date') {
+				tempValue = moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format('LL');
+			}
+			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'timestamp') {
+				tempValue = moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format('LLL');
+			}
+			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'float') tempValue = (params.colDef.style && params.colDef.style.asString) ? tempValue : $filter('number')(params.value, (params.colDef.style && params.colDef.style.precision) || 2);
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
 				for(var k in params.colDef.ranges){
 					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
@@ -148,11 +158,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		SummaryRowRenderer.prototype.init = function(params) {
 		    this.eGui = document.createElement('div');
-		    this.eGui.style.color = params.style.color;
-		    this.eGui.style.backgroundColor = params.style['background-color'];
-		    this.eGui.style.fontSize = params.style['font-size'];
-		    this.eGui.style.fontWeight = params.style['font-weight'];
-		    this.eGui.style.fontStyle = params.style['font-style'];
+		    this.eGui.style.color = (params.style && params.style.color) || "";
+		    this.eGui.style.backgroundColor = (params.style && params.style['background-color']) || "";
+		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
+		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
+		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
 		    this.eGui.innerHTML = params.value;
 		};
 
@@ -179,9 +189,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
 				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
-				$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
-				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) $scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[0]])
-				else $scope.advancedTableGrid.api.setPinnedBottomRowData([]);
+				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
+					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length-1));
+					$scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[datasetRecords.rows.length-1]]);
+				}
+				else {
+					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
+					$scope.advancedTableGrid.api.setPinnedBottomRowData([]);
+				}
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;

@@ -24,9 +24,13 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
+	$scope.typesMap = cockpitModule_generalOptions.typesMap;
 	
 	$scope.changeDS = function(id){
 		$scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
+		for(var c in $scope.newModel.content.columnSelectedOfDataset){
+			if(!$scope.newModel.content.columnSelectedOfDataset[c].aliasToShow) $scope.newModel.content.columnSelectedOfDataset[c].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[c].alias;
+		}
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
 	
@@ -34,7 +38,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
     	{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
-    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},
+    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
     		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.summaryfunction'), field: 'funcSummary', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
@@ -82,6 +86,9 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	
 	function editableCell(params){
 		return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
+	}
+	function typeCell(params){
+		return "<i class='"+$scope.typesMap[params.value].icon+"'></i> "+$scope.typesMap[params.value].label;
 	}
 	function isInputEditable(params) {
 		return typeof(params.data.name) !== 'undefined'; 

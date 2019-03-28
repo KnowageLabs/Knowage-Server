@@ -58,6 +58,8 @@
     			margin:0;
     			border:0;
     			&>div {
+    				display: inline-flex;
+    				align-items: center;
     				height:100%;
     				line-height: 100%;
     				width: 100%;

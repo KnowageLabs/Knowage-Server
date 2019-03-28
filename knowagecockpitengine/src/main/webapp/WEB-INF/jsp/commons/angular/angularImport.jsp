@@ -138,7 +138,7 @@ END-PRODUCTION -->
 <link rel="stylesheet" 	href="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 <!-- MOMENT.JS -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
 
 <!-- html2canvas -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
