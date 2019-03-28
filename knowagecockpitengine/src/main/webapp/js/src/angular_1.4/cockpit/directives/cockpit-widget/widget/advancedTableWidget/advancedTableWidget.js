@@ -137,10 +137,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function cellRenderer(params){
 			var tempValue = params.value;
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'date') {
-				tempValue = moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format('LL');
+				tempValue = isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format('LL');
 			}
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'timestamp') {
-				tempValue = moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format('LLL');
+				tempValue = isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format('LLL');
 			}
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'float') tempValue = (params.colDef.style && params.colDef.style.asString) ? tempValue : $filter('number')(params.value, (params.colDef.style && params.colDef.style.precision) || 2);
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
-		    this.eGui.innerHTML = params.value;
+		    this.eGui.innerHTML = cellRenderer(params);
 		};
 
 		SummaryRowRenderer.prototype.getGui = function() {
