@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
 						if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 							tempCol.pinnedRowCellRenderer = SummaryRowRenderer,
-							tempCol.pinnedRowCellRendererParams = {"style": $scope.ngModel.settings.summary.style};
+							tempCol.pinnedRowCellRendererParams = {"title":$scope.ngModel.settings.summary.title, "style": $scope.ngModel.settings.summary.style};
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.width) {
 							tempCol.width = parseInt($scope.ngModel.content.columnSelectedOfDataset[c].style.width);
@@ -163,7 +163,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
-		    this.eGui.innerHTML = cellRenderer(params);
+		    if(cellRenderer(params)){
+		    	this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
+		    }
 		};
 
 		SummaryRowRenderer.prototype.getGui = function() {
