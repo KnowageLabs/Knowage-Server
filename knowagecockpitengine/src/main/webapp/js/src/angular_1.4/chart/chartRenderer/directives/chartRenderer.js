@@ -225,7 +225,7 @@ angular.module('chartRendererModule')
 
 			scope.$on('selections',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
-
+				if(scope.chartInitializer)
 				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
 
 			})
