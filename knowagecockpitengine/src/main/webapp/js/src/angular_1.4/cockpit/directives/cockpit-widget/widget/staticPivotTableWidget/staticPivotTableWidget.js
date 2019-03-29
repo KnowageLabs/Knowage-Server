@@ -79,7 +79,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$mdDialog,
 		sbiModule_device,
 		sbiModule_i18n,
-		$timeout){
+		$timeout,
+		cockpitModule_properties){
 
 
 
