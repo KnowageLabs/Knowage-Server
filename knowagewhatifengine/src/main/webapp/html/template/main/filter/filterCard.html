@@ -17,9 +17,9 @@
 		</div>
 	
 	 	<div layout="row" class="bottom">
-			<div class="name-area"  title="{{(filterCardList|limitTo:numVisibleFilters:index)[$index].visible ? (filterCardList|limitTo:numVisibleFilters:index)[$index].caption : 'Filter not selected'}}">
+			<div class="name-area"  title="{{(filterSelected |limitTo:numVisibleFilters:index)[$index].visible ? (filterSelected |limitTo:numVisibleFilters:index)[$index].caption : 'Filter not selected'}}">
 				<span class="no-wrap">
-					{{(filterCardList|limitTo:numVisibleFilters:index)[$index].visible ? cutName((filterCardList|limitTo:numVisibleFilters:index)[$index].caption, -1, false) : '...'}}
+					{{(filterSelected |limitTo:numVisibleFilters:index)[$index].visible ? cutName((filterSelected |limitTo:numVisibleFilters:index)[$index].caption, -1, false) : '...'}}
 				</span>
 			</div>
 			<div class="button-area">
