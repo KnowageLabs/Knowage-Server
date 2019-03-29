@@ -1401,16 +1401,7 @@
 			#end
 		#end
 		{		
-	
-			#foreach($r in $rows)
-				#if( $r.get($serieColumnsMapped))
-				#set ($yValue = $r.get($serieColumnsMapped))
-					#if($yValue == "null")
-						connectNulls:true,
-					#end
-				#end
-			#end
-		
+
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
@@ -1460,7 +1451,7 @@
 	    		allowOverlap: true,
 	    	},
 	    	#set ($counterX = 0)
-	    	
+	    	connectNulls:true,
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#if($chart.isCockpitEngine != 'true')
@@ -1736,7 +1727,7 @@
                 color:'$customColor.customValue',
 	            #end
 	            #end
-	            
+	        connectNulls:true,
 			data: [
 				#foreach($el in  $map.get($valueKey))
 						
