@@ -70,3 +70,11 @@ function  getParameterValuesAsInOperandClause(parName, isString){
 	 }
 	  return toReturn;
 }
+
+function getInClauseForNullableValues(colName, parName){
+    if(parameters.get(parName).indexOf("'NULL'") > 0){
+        return "("+colName+" IN ($P{"+parName+"}) OR "+colName+" IS NULL) "
+    }else{
+        return colName+" IN ($P{"+parName+"}) ";
+    }
+}
