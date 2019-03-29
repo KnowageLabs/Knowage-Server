@@ -711,17 +711,30 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if(widget.dataset && widget.dataset.dsId){
 					var datasetLabel = datasetMap[""+widget.dataset.dsId];
 					if(datasetLabel != undefined){
-						var columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
+					    var columns;
+					    var columnNameProp;
+					    var columnAliasProp;
+					    if(widget.type=="static-pivot-table"){
+					        columns = widget.content.crosstabDefinition.columns;
+					        columns.concat(widget.content.crosstabDefinition.rows);
+					        columns.concat(widget.content.crosstabDefinition.measures);
+					        columnNameProp = "id";
+					        columnAliasProp = "alias";
+					    }else{
+					        columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
+					        columns = columnNameProp = "name";
+                            columns = columnAliasProp = "aliasToShow";
+					    }
 						for(var widgetColumnIndex in columns){
 						    var widgetColumn =columns[widgetColumnIndex];
-							if(widgetColumn && widgetColumn.name){
-								var columnName = widgetColumn.name;
+							if(widgetColumn && widgetColumn[columnNameProp]){
+								var columnName = widgetColumn[columnNameProp];
 								var colonIndex = columnName.indexOf(":");
 								if(colonIndex == -1){
-									if(columnName == widgetColumn.aliasToShow){
+									if(columnName == widgetColumn[columnAliasProp]){
 										columnSet.add(datasetLabel + "." + columnName);
 									}else{
-										aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
+										aliasMap[datasetLabel + "." + widgetColumn[columnAliasProp]] = datasetLabel + "." + columnName;
 									}
 								}
 							}
