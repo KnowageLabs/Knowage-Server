@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -199,23 +198,34 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			logger.debug("Dataset paramMap contains [" + getTargetDataSet().getParamsMap().size() + "] parameters");
 
 			// if a parameter has value '' put null!
-			Map parameterValues = getTargetDataSet().getParamsMap();
-			Vector<String> parsToChange = new Vector<String>();
-
-			for (Iterator iterator = parameterValues.keySet().iterator(); iterator.hasNext();) {
-				String parName = (String) iterator.next();
-				Object val = parameterValues.get(parName);
-				if (val != null && val.equals("")) {
-					val = null;
-					parsToChange.add(parName);
-				}
-				// parameterValues.remove(parName);
-				// parameterValues.put(parName, val);
+			Map origParameterValues = getTargetDataSet().getParamsMap();
+			Map parameterValues = new HashMap();
+			for (Object o : origParameterValues.keySet()) {
+				parameterValues.put(o, origParameterValues.get(o));
 			}
-			for (Iterator iterator = parsToChange.iterator(); iterator.hasNext();) {
-				String parName = (String) iterator.next();
+
+			List<String> parsToChange = new ArrayList<>();
+			List<String> parsWithNull = new ArrayList<>();
+
+			for (Object o : parameterValues.keySet()) {
+				String parName = (String) o;
+				Object val = parameterValues.get(parName);
+				if (val != null) {
+					if ("".equals(val)) {
+						parsToChange.add(parName);
+					} else if (val instanceof String && ((String) val).contains("'NULL'")) {
+						parsWithNull.add(parName);
+					}
+				}
+			}
+			for (String parName : parsToChange) {
 				parameterValues.remove(parName);
 				parameterValues.put(parName, null);
+			}
+			for (String parName : parsWithNull) {
+				String val = (String) parameterValues.get(parName);
+				val = val.replace(",'NULL',", ",").replace("'NULL',", "").replace(",'NULL'", "");
+				parameterValues.put(parName, val);
 			}
 
 			try {

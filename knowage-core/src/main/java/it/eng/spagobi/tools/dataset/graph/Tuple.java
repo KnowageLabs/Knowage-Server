@@ -82,7 +82,7 @@ public final class Tuple {
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
 			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
 			tuple.append(delimiter);
-			tuple.append(value);
+			tuple.append(value != null ? value : "NULL");
 			tuple.append(delimiter);
 		}
 		tuple.append(suffix);
