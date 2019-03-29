@@ -269,7 +269,7 @@ public class CrossTab {
 			columnsHeaderList.add(crosstabDefinition.getColumns().get(i).getAlias());
 			columnsHeaderIdList.add(crosstabDefinition.getColumns().get(i).getEntityId());
 			if (crosstabDefinition.getColumns().get(i).getSortingId() != null && !crosstabDefinition.getColumns().get(i).getSortingId().equals("")) {
-				orderingHeaderList.add(crosstabDefinition.getColumns().get(i).getSortingId()  + "|" + crosstabDefinition.getColumns().get(i).getEntityId());
+				orderingHeaderList.add(crosstabDefinition.getColumns().get(i).getSortingId()  + "|" + crosstabDefinition.getColumns().get(i).getAlias());
 			}
 		}
 
