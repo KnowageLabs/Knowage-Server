@@ -10,6 +10,24 @@
     height: 100%;
     background-color: $tabBackground;
 
+    .md-dialog-container {
+    	z-index: 1001;
+    }
+
+    .exportingPdfDialog {
+    	background: rgba(0, 0, 0, .5);
+	    height: 100%;
+	    position: absolute;
+	    width: 100%;
+	    z-index: 1002;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    md-dialog {
+	    	z-index: 1003;
+	    }
+    }
+
     md-tabs.screenShottingSheet md-tab-content{
         animation: none;
         opacity: 1;
