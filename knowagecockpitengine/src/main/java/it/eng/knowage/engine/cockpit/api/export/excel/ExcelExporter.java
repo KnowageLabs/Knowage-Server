@@ -670,9 +670,48 @@ public class ExcelExporter {
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");
-
+		String datasetName = dataset.getString("name");
 		Integer datasetId = dataset.getInt("dsId");
-		return getReplacedParameters(parameters, datasetId);
+
+		if (actualSelectionMap.containsKey(datasetName)) {
+			JSONObject actualSelections = actualSelectionMap.get(datasetName);
+			Iterator<String> actualSelectionKeys = actualSelections.keys();
+			JSONObject newParameters = new JSONObject();
+			while (actualSelectionKeys.hasNext()) {
+				String key = actualSelectionKeys.next();
+				if (key.contains("$")) {
+					Object values = actualSelections.get(key);
+					newParameters.put(key, values);
+				}
+			}
+			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
+			return getReplacedParameters(params, datasetId);
+		} else
+			return getReplacedParameters(parameters, datasetId);
+	}
+
+	private JSONObject getReplacedAssociativeParameters(JSONObject oldParameters, JSONObject newParameters) throws JSONException {
+		JSONObject parameters = new JSONObject();
+		Iterator<String> newParameterKeys = newParameters.keys();
+		while (newParameterKeys.hasNext()) {
+			String parameter = newParameterKeys.next();
+			String regex = "\\$P\\{(.*)\\}";
+			Matcher parameterMatcher = Pattern.compile(regex).matcher(parameter);
+			if (parameterMatcher.matches()) {
+				String parameterName = parameterMatcher.group(1);
+				Object exists = oldParameters.get(parameterName);
+				if (exists != null) {
+					JSONArray value = (JSONArray) newParameters.get(parameter);
+					String regex2 = "\\(\\'(.*)\\'\\)";
+					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
+					if (parameterMatcher2.matches()) {
+						String realValue = parameterMatcher2.group(1);
+						parameters.put(parameterName, realValue);
+					}
+				}
+			}
+		}
+		return parameters;
 	}
 
 	private JSONObject getReplacedParameters(JSONObject parameters, Integer datasetId) throws JSONException {
@@ -896,8 +935,10 @@ public class ExcelExporter {
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
 			while (actualSelectionKeys.hasNext()) {
 				String key = actualSelectionKeys.next();
-				Object values = actualSelections.get(key);
-				datasetFilters.put(key, values);
+				if (!key.contains("$")) {
+					Object values = actualSelections.get(key);
+					datasetFilters.put(key, values);
+				}
 			}
 		}
 
