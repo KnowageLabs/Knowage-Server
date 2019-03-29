@@ -480,10 +480,6 @@
 			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
 			var cockpitSelections = {};
 			cockpitSelections.aggregations = angular.copy(aggregations);
-			for(var i in cockpitSelections.aggregations){
-                delete cockpitSelections.aggregations[i].associations;
-                delete cockpitSelections.aggregations[i].datasets;
-            }
 			cockpitSelections.filters = filters;
             requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
 
@@ -518,7 +514,7 @@
 			}
 			return deferred.promise;
 		};
-
+		
 //		dee.exportationHandlers = {
 //			'CHART': [
 //				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
