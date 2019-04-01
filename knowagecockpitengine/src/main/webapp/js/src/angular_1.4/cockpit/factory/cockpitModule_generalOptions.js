@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(sbiModule_translate){
+angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(sbiModule_config,sbiModule_translate){
 	return{
 		//Deprecated dimensioning to let the user choose between px,rem and %
 		fontSizeDimension: [
@@ -130,6 +130,19 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumTime"),value:'mediumTime',hint:'12:05:08 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'shortTime',hint:'12:05 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'yyyy',hint:'2010'}
+		 ],
+		 momentDateFormat : [
+			 {value:'LLLL',hint:moment().locale(sbiModule_config.curr_language).format('LLLL')},
+			 {value:'llll',hint:moment().locale(sbiModule_config.curr_language).format('llll')},
+			 {value:'LLL',hint:moment().locale(sbiModule_config.curr_language).format('LLL')},
+			 {value:'lll',hint:moment().locale(sbiModule_config.curr_language).format('lll')},
+			 {value:'LL',hint:moment().locale(sbiModule_config.curr_language).format('LL')},
+			 {value:'ll',hint:moment().locale(sbiModule_config.curr_language).format('ll')},
+			 {value:'L',hint:moment().locale(sbiModule_config.curr_language).format('L')},
+			 {value:'l',hint:moment().locale(sbiModule_config.curr_language).format('l')},
+			 {value:'LT',hint:moment().locale(sbiModule_config.curr_language).format('LT')},
+			 {value:'LTS',hint:moment().locale(sbiModule_config.curr_language).format('LTS')},
+			 
 		 ]
 	}
 });

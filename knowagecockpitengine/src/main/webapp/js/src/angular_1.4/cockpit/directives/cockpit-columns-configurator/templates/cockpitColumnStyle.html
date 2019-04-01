@@ -148,8 +148,8 @@
 					          	</md-checkbox>
 								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
 									<label>{{translate.load('sbi.cockpit.style.dateformat')}}</label>
-									 <md-select ng-model="selectedColumn.dateFormat">
-							            <md-option ng-repeat="df in cockpitModule_generalOptions.dateFormat" ng-value="df.value" >
+									 <md-select ng-model="selectedColumn.momentDateFormat">
+							            <md-option ng-repeat="df in cockpitModule_generalOptions.momentDateFormat" ng-value="df.value" >
 							              <span>{{df.hint}}</small>
 							            </md-option>
 						            </md-select>

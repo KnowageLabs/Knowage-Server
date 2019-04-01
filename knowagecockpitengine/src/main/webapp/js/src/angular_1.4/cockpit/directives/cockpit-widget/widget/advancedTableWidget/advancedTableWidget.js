@@ -89,6 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
 						tempCol.fieldType = $scope.ngModel.content.columnSelectedOfDataset[c].type;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
 						tempCol.cellRenderer = cellRenderer;
@@ -137,10 +138,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function cellRenderer(params){
 			var tempValue = params.value;
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'date') {
-				tempValue = isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format('LL');
+				tempValue = isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
 			}
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'timestamp') {
-				tempValue = isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format('LLL');
+				tempValue = isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 			}
 			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'float') tempValue = (params.colDef.style && params.colDef.style.asString) ? tempValue : $filter('number')(params.value, (params.colDef.style && params.colDef.style.precision) || 2);
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
