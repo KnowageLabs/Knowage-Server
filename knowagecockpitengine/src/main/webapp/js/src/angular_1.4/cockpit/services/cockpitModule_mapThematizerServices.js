@@ -295,7 +295,8 @@
 				var idx = 0;
 				for (t in thr){
 //					if (typeof(value) == 'number' && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
-					if (value != '' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
+//					if (value != '' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
+					if (typeof(value) == 'number' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
 						if (evalText != "") evalText += " && ";
 						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
 						if (thr['operator'+idx] == '==' && eval(evalText)) {
@@ -340,7 +341,7 @@
 		    return weight;
 		}
 
-		mts.getLegend = function (referenceId){
+		mts.getLegend = function (referenceId, alias){
 			var toReturn = [];
 			for (l in mts.activeLegend){
 				var colors = "";
@@ -355,7 +356,7 @@
 							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
 						}
 					}
-					toReturn.push({"layer": tmpLayerName[1], "colors": colors, "limits": limits});
+					toReturn.push({"layer": tmpLayerName[1], "alias": alias, "colors": colors, "limits": limits});
 				}
 			}
 			return toReturn;

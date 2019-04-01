@@ -320,8 +320,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(referenceId){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId);
+	    $scope.getLegend = function(referenceId, alias){
+	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, alias);
 	    }
 
 
@@ -407,7 +407,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
 			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data);
-			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
+			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id, layerDef.alias);
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -437,13 +437,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.isHeatmap = isHeatmap;
 			layer.isCluster = isCluster;
 
-			if ($scope.map)
+			if ($scope.map){
 				$scope.map.addLayer(layer); 			//add layer to ol.Map
+			}
 			else{
-				sbiModule_messaging.showInfoMessage("The map object isn't available for adding layer, please reload the document.", 'Title', 3000);
+//				sbiModule_messaging.showInfoMessage("The map object isn't available for adding layer, please reload the document.", 'Title', 3000);
+//				$timeout(function() {
+//					$scope.hideWidgetSpinner();
+//				}, 3000)
 				$timeout(function() {
-					$scope.hideWidgetSpinner();
+					 console.log("Waiting 3000 ms for creation object map!");
+					 if ($scope.map){
+						$scope.map.addLayer(layer); 			//add layer to ol.Map
+						$scope.hideWidgetSpinner();
+					}
 				}, 3000)
+
+
 			}
 
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
@@ -649,6 +659,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		var tmpLayer = $scope.layers[0].layer;
 		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 	    		}
+//	            alert("creata mappa con id ["+ 'map-' + $scope.ngModel.id +"]");
 	    		$scope.map = new ol.Map({
 	    		  target: 'map-' + $scope.ngModel.id,
 	    		  layers: [ $scope.baseLayer ],
@@ -755,7 +766,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
-		    	$scope.getLegend($scope.ngModel.id);
+
+		    	$scope.getLegend($scope.ngModel.id, config.alias );
 	    	}
 
 	    	config.layerID = layerID;

@@ -9,7 +9,7 @@
 	<div ng-repeat="legendElem in legend">
 		<p/>
 		<div layout="column" ng-if="getLayerVisibility(legendElem.layer)">
-			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.layer}}</span>
+			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
 			<!-- <br/> -->
 			<div layout="row" layout-align="start center">
 				  <span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
