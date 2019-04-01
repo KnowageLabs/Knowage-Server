@@ -682,10 +682,15 @@ public class CrossTabHTMLSerializer {
 					if (cellTypeValue.equalsIgnoreCase("data")) {
 						String rowCord = "";
 						String rowHeaders = "";
+						String rowNames = ""; //for association logic
 						if (crossTab.getRowsSpecification().size() > 0) {
 							List rowsDef = crossTab.getRowsHeaderList();
 							for (int r = 0; r < rowsDef.size(); r++) {
 								rowHeaders += crossTab.PATH_SEPARATOR + rowsDef.get(r);
+							}
+							List rowsNamesDef = crossTab.getRowsHeaderIdList();
+							for (int r = 0; r < rowsNamesDef.size(); r++) {
+								rowNames += crossTab.PATH_SEPARATOR + rowsNamesDef.get(r);
 							}
 							if (!crossTab.isMeasureOnRow()) {
 								int posRow = i - nPartialSumRow;
@@ -706,11 +711,15 @@ public class CrossTabHTMLSerializer {
 						}
 						String columnCord = "";
 						String columnsHeaders = "";
-
+						String columnsNames = ""; //for association logic
 						if (columnsSpecification.size() > 0) {
 							List<String> columnsDef = crossTab.getColumnsHeaderList();
 							for (int c = 0; c < columnsDef.size(); c++) {
 								columnsHeaders += crossTab.PATH_SEPARATOR + columnsDef.get(c);
+							}
+							List columnsNamesDef = crossTab.getColumnsHeaderIdList();
+							for (int r = 0; r < columnsNamesDef.size(); r++) {
+								columnsNames += crossTab.PATH_SEPARATOR + columnsNamesDef.get(r);
 							}
 							if (!crossTab.isMeasureOnRow()) {
 								int posColumn = (measuresInfo.size() == 1) ? j : j / measuresInfo.size();
@@ -725,8 +734,10 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 
+//						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
+//								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "')");
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
-								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "')");
+								"selectMeasure('" + rowNames + "','" + rowCord + "','" + columnsNames + "','" + columnCord + "')");
 					}
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
