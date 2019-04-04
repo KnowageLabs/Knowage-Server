@@ -1,6 +1,11 @@
 $aggrid-border-color: #d9dcde;
 .ag-theme-balham {
 	font: 400 $mediumFontSize $defaultFontFamily;
+	.ag-floating-bottom {
+		.ag-row {
+			border-top: 1px solid $aggrid-border-color;
+		}
+	}
 	.ag-header {
 		font-family: $defaultFontFamily;
 		font: 600 $mediumFontSize $defaultFontFamily;

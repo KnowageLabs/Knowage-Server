@@ -85,7 +85,11 @@
 						<md-card-content>
 						<div flex layout=column >
 							<div flex layout="row" >
-								
+								<md-input-container flex class="md-block">
+									<label>Header height</label>
+									<input ng-model="newModel.style.th.height" ng-disabled="!newModel.style.th.enabled" type="number"/>
+									<div class="hint">Header height in px (default is 25px)</div>
+								</md-input-container>
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
 									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-family']" ng-disabled="!newModel.style.th.enabled">
@@ -103,16 +107,17 @@
 										<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
 									</md-select>
 								</md-input-container>
-								<md-input-container flex class="md-block">
-									<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
-									<md-select aria-label="aria-label" ng-model="newModel.style.th['font-style']" ng-disabled="!newModel.style.th.enabled">
-										<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
-									</md-select>
-								</md-input-container>
+								
 								
 							</div>
 							<div flex layout=column >
 								<div flex layout="row" >
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+										<md-select aria-label="aria-label" ng-model="newModel.style.th['font-style']" ng-disabled="!newModel.style.th.enabled">
+											<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+										</md-select>
+									</md-input-container>
 									<md-input-container flex class="md-block">
 										<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
 										<md-select aria-label="aria-label" ng-model="newModel.style.th['justify-content']" ng-disabled="!newModel.style.th.enabled">

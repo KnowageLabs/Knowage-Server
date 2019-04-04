@@ -11,7 +11,6 @@
 			      </div>
 		  </md-toolbar>
     <md-dialog-content flex layout="row" >
-    	  
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
 				<div flex>
@@ -121,7 +120,7 @@
 					       
 			   <!-- ----------------- -->
 		       
-		       		<md-card ng-if="selectedColumn.fieldType == 'MEASURE' || hasPrecision(selectedColumn) || selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+		       		<md-card ng-if="selectedColumn.fieldType == 'MEASURE' || hasPrecision(selectedColumn) || isDateColumn(selectedColumn.type)">
 						<md-toolbar class="ternaryToolbar">
 				      		<div class="md-toolbar-tools">
 					        	<h2>
@@ -133,11 +132,11 @@
 					       <div flex layout="row" >
 								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
 									<label> {{translate.load('sbi.cockpit.style.prefix')}}</label>
-									<input class="input_class"  ng-model="selectedColumn.style.prefix" ng-disabled="selectedColumn.style.asString"> 
+									<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.prefix" ng-disabled="selectedColumn.style.asString"> 
 								</md-input-container>
 								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
 									<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
-									<input class="input_class"  ng-model="selectedColumn.style.suffix" ng-disabled="selectedColumn.style.asString"> 
+									<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.suffix" ng-disabled="selectedColumn.style.asString"> 
 								</md-input-container>
 								<md-input-container flex class="md-block" class="small counter" ng-if="hasPrecision(selectedColumn)">
 									<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
@@ -146,9 +145,14 @@
 								<md-checkbox class="noMargin" ng-model="selectedColumn.style.asString" aria-label="use as string" ng-if="hasPrecision(selectedColumn)" layout="row" layout-align="start center">
 					            	{{translate.load('sbi.cockpit.style.treatasstring')}}
 					          	</md-checkbox>
-								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.sql.Timestamp' || selectedColumn.type == 'java.util.Date'">
+								<md-input-container flex class="md-block" class="small counter" ng-if="::isDateColumn(selectedColumn.type)">
 									<label>{{translate.load('sbi.cockpit.style.dateformat')}}</label>
-									 <md-select ng-model="selectedColumn.momentDateFormat">
+									 <md-select ng-model="selectedColumn.dateFormat" ng-if="model.type == 'table'">
+							            <md-option ng-repeat="df in cockpitModule_generalOptions.dateFormat" ng-value="df.value" >
+							              <span>{{df.hint}}</small>
+							            </md-option>
+						            </md-select>
+						            <md-select ng-model="selectedColumn.momentDateFormat" ng-if="model.type == 'advanced-table'">
 							            <md-option ng-repeat="df in cockpitModule_generalOptions.momentDateFormat" ng-value="df.value" >
 							              <span>{{df.hint}}</small>
 							            </md-option>

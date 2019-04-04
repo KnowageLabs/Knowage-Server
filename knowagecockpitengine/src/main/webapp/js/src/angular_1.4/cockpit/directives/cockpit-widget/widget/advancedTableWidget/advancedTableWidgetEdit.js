@@ -109,7 +109,13 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		if(params.data.isCalculated){
 			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'"></calculated-field>';
 		}
+		
 		return 	calculator +
+				'<md-button class="md-icon-button" ng-click="toggleColumnVisibility(\''+params.rowIndex+'\')">'+
+				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
+				'	<md-icon ng-if="newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.hiddenColumn" md-font-icon="fa fa-ban fa-stack-2x text-danger"></md-icon>'+
+				'	<md-icon md-font-icon="fa fa-eye"></md-icon>'+
+				'</md-button>'+
 				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.alias+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
 				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
 				'	<md-icon ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
@@ -135,6 +141,11 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
   	
   	$scope.initTh = function(){
   		return typeof($scope.newModel.style.th.enabled) != 'undefined' ? $scope.newModel.style.th.enabled : true;
+  	}
+  	
+  	$scope.toggleColumnVisibility = function(rowIndex){
+  		if($scope.newModel.content.columnSelectedOfDataset[rowIndex].style) $scope.newModel.content.columnSelectedOfDataset[rowIndex].style.hiddenColumn = !$scope.newModel.content.columnSelectedOfDataset[rowIndex].style.hiddenColumn;
+  		else $scope.newModel.content.columnSelectedOfDataset[rowIndex].style = {'hiddenColumn': true};
   	}
 	
 	$scope.draw = function(rowName) {

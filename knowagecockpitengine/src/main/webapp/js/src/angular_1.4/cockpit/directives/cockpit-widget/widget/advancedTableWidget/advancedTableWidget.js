@@ -137,13 +137,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function cellRenderer(params){
 			var tempValue = params.value;
-			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'date') {
+			var tempValueType = cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label;
+			if(tempValueType == 'date') {
 				tempValue = isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
 			}
-			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'timestamp') {
+			if(tempValueType == 'timestamp') {
 				tempValue = isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 			}
-			if(cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label == 'float') tempValue = (params.colDef.style && params.colDef.style.asString) ? tempValue : $filter('number')(params.value, (params.colDef.style && params.colDef.style.precision) || 2);
+			if(tempValueType == 'float' || tempValueType == 'integer') {
+				if(params.colDef.style && !params.colDef.style.asString) {
+					var defaultPrecision = (tempValueType == 'float') ? 2 : 0;
+					tempValue = $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+				}
+			}
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
 				for(var k in params.colDef.ranges){
 					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
@@ -152,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     }
 				}
 			}
-			return tempValue;
+			return ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
 		
 		function SummaryRowRenderer () {}
@@ -191,6 +197,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(datasetRecords){
 				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
+				if($scope.ngModel.style && $scope.ngModel.style.th){
+					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
+					else $scope.advancedTableGrid.api.setHeaderHeight(0);
+				}
 				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length-1));
@@ -244,7 +254,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 	  	$scope.maxPageNumber = function(){
-			if($scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber < $scope.totalRows) return $scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber;
+			if($scope.ngModel.settings.page * $scope.ngModel.settings.pagination.itemsNumber < $scope.totalRows) return $scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber;
 			else return $scope.totalRows;
 	  	}
 	  	

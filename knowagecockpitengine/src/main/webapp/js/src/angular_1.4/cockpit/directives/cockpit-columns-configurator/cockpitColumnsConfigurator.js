@@ -381,7 +381,6 @@
 
 function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
-
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.model = model;
 	$scope.columnSelected = [];
@@ -421,6 +420,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
@@ -432,6 +432,13 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
+	}
+	
+	$scope.isDateColumn = function(type){
+		if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){
+			return true;
+		}
+		return false;
 	}
 	
 	$scope.hasPrecision = function(column){
