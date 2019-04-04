@@ -711,8 +711,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					        columnAliasProp = "alias";
 					    }else{
 					        columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
-					        columns = columnNameProp = "name";
-                            columns = columnAliasProp = "aliasToShow";
+					        columnNameProp = "name";
+                            columnAliasProp = "aliasToShow";
 					    }
 						for(var widgetColumnIndex in columns){
 						    var widgetColumn =columns[widgetColumnIndex];
