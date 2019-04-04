@@ -256,7 +256,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
                         dsRecords.then(function(data){
                             if(config.type == "selector"){
-                                if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                                if(cockpitModule_widgetSelection.getLastTimestampedSelection() != undefined
+                                        && !cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
                                     data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
                                 }else{
                                     config.activeValues = null;
