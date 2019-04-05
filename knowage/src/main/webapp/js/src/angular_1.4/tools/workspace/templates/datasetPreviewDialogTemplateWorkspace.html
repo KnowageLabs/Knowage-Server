@@ -32,7 +32,7 @@
 		   		</div>
 		   	</md-toolbar>
 	   	</div>
-	   <md-card-content ng-if="datasetInPreview.dsTypeCd.toLowerCase() != 'qbe'">
+	   <md-card-content ng-if="datasetInPreview.dsTypeCd.toLowerCase() != 'qbe'" style="height:100%">
 	   		<iframe ng-src={{previewUrl}} style="height: calc(100% - 34px); width:100%; border:none;"></iframe>
 	   </md-card-content>
 
