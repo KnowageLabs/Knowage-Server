@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button-->
 			
 			<!-- SEARCH BUTTON for table widget only -->
-			<md-button class="md-icon-button " aria-label="search button" ng-if="cockpitModule_properties.EDIT_MODE && ngModel.type == 'table'" ng-click="openSearchBar($event);$event.stopPropagation();" >
+			<md-button class="md-icon-button " aria-label="search button" ng-if="cockpitModule_properties.EDIT_MODE && ( ngModel.type == 'table' || ngModel.type == 'advanced-table')" ng-click="openSearchBar($event);$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<span class="fa-stack">
 				  <md-icon md-font-icon="fa fa-search fa-stack-1x"></md-icon>

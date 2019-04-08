@@ -112,7 +112,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		
 		return 	calculator +
 				'<md-button class="md-icon-button" ng-click="toggleColumnVisibility(\''+params.rowIndex+'\')">'+
-				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
+				'   <md-tooltip md-delay="500">Hide/show Column</md-tooltip>'+
 				'	<md-icon ng-if="newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.hiddenColumn" md-font-icon="fa fa-ban fa-stack-2x text-danger"></md-icon>'+
 				'	<md-icon md-font-icon="fa fa-eye"></md-icon>'+
 				'</md-button>'+
