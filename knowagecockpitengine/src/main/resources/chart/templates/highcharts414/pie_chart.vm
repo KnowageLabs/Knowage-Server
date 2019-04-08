@@ -612,7 +612,6 @@
 			#else
 			#set($precision = $relatedSerie.precision)
 			#end
-				$datasettransformer.print($styleOfDataLabels)		
 			#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false && $relatedSerieCategoryValue == false)
 			
 				dataLabels: 
