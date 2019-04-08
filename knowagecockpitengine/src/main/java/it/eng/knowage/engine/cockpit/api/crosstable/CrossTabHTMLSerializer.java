@@ -62,8 +62,9 @@ public class CrossTabHTMLSerializer {
 
 	private static String DEFAULT_BG_TOTALS = "background:rgba(59, 103, 140, 0.8);";
 	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.45);";
-	private static String DEFAULT_COLOR_TOTALS = "white;";
+	private static String DEFAULT_COLOR_TOTALS = "color:white;";
 	private static String DEFAULT_STYLE = " font-style:normal!important;";
+	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600; text-align: center;";
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -207,7 +208,7 @@ public class CrossTabHTMLSerializer {
 				else
 					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS + "NoStandardStyle");
 
-				if (!text.equals(labelTotal) && crossTab.getCrosstabDefinition().getRows().size() > 0)
+				if (!text.equals(labelTotal) && !text.equals(labelSubTotal) && crossTab.getCrosstabDefinition().getRows().size() > 0)
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
 							+ StringEscapeUtils.escapeJavaScript(text) + "')");
 				aColumn.setCharacters(text);
@@ -314,8 +315,10 @@ public class CrossTabHTMLSerializer {
 						boolean parentIsLevel = !((i) % 2 == 0 || (i) == levels);
 						if (parentIsLevel) {
 							if (!text.equalsIgnoreCase(labelTotal) &&  !text.equalsIgnoreCase(labelSubTotal)) {
-								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
-										+ StringEscapeUtils.escapeJavaScript(text) + "')");
+								Column columnObj = ((Column)getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(), "columns"));
+								String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
+//								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
+//										+ StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
 								String completeText = CrossTab.PATH_SEPARATOR;
@@ -357,6 +360,7 @@ public class CrossTabHTMLSerializer {
 								aColumn.setCharacters(text);
 
 							if (parentStyle != null) {
+								//add default color for header
 								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 								aColumn.setAttribute(CLASS_ATTRIBUTE, "memberNoStandardStyle");
 							} else
@@ -421,7 +425,7 @@ public class CrossTabHTMLSerializer {
 				if (!width.equals("")) {
 					if (width.indexOf("%") >= 0)
 						width = ""; // set width only with pixel values (for div)
-					String display = " overflow:hidden; text-overflow:ellipses;";
+					String display = " overflow:hidden; text-overflow:ellipsis;";
 					measureStyle = width + display;
 					break;
 				}
@@ -602,7 +606,8 @@ public class CrossTabHTMLSerializer {
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 						}
 					} else {
-						String align = getConfiguratedElementStyle(null, null, measureConfig, crossTab, "text-align");
+						String align = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
+						align +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "padding");
 						aColumn.setAttribute(STYLE_ATTRIBUTE, align);
 						aColumn.setAttribute(CLASS_ATTRIBUTE, classType);
 					}
@@ -884,9 +889,12 @@ public class CrossTabHTMLSerializer {
 				// default font-style
 				if (dataStyle.indexOf("font-style") < 0)
 					dataStyle += DEFAULT_STYLE;
+				// default font color for headers
+				if (cellTypeValue.equals("") && dataStyle.indexOf("color") < 0)
+					dataStyle += DEFAULT_HEADER_STYLE;
 				// add contextual properties if width is defined
 				if (keyStyle.equals("width")) {
-					dataStyle += " overflow:hidden; text-overflow:ellipses;";
+					dataStyle += " overflow:hidden; text-overflow:ellipsis;";
 					dataStyle += " max-width:" + String.valueOf(valueStyle) + ";";
 				}
 			}
@@ -1166,6 +1174,14 @@ public class CrossTabHTMLSerializer {
 				aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 
 			aRow.setAttribute(aColumn);
+
+			if (crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsoncolumns")) {
+				// add fake TD just for total column values (if required)
+				addRow = true;
+				aColumn = new SourceBean(COLUMN_TAG);
+				aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
+				aRow.setAttribute(aColumn);
+			}
 		}
 
 		if (crossTab.getCrosstabDefinition().getRows().size() == 0 && crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsonrows")) {
@@ -1175,6 +1191,8 @@ public class CrossTabHTMLSerializer {
 			aColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
 			aRow.setAttribute(aColumn);
 		}
+
+
 
 		if (addRow)
 			table.setAttribute(aRow);
@@ -1235,5 +1253,26 @@ public class CrossTabHTMLSerializer {
 			table.setAttribute(emptyRow);
 		}
 		return table;
+	}
+
+	private Object getCategoryConfByLabel(CrossTab crossTab, String text, String type) throws JSONException {
+		if (type.equalsIgnoreCase("rows")) {
+			for (int e = 0; e < crossTab.getCrosstabDefinition().getRows().size(); e++) {
+				Row ris =  crossTab.getCrosstabDefinition().getRows().get(e);
+
+				if (text == null || ris.getAlias().equals(text)) {
+					return ris;
+				}
+			}
+		}else if (type.equalsIgnoreCase("columns")) {
+			for (int e = 0; e < crossTab.getCrosstabDefinition().getColumns().size(); e++) {
+				Column cis =  crossTab.getCrosstabDefinition().getColumns().get(e);
+
+				if (text == null || cis.getAlias().equals(text)) {
+					return cis;
+				}
+			}
+		}
+		return null;
 	}
 }
