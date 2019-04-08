@@ -64,7 +64,7 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.45);";
 	private static String DEFAULT_COLOR_TOTALS = "color:white;";
 	private static String DEFAULT_STYLE = " font-style:normal!important;";
-	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600; text-align: center;";
+	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600;";
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -1177,7 +1177,6 @@ public class CrossTabHTMLSerializer {
 
 			if (crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsoncolumns")) {
 				// add fake TD just for total column values (if required)
-				addRow = true;
 				aColumn = new SourceBean(COLUMN_TAG);
 				aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
 				aRow.setAttribute(aColumn);
