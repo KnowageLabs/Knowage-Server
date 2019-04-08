@@ -131,7 +131,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
 				$scope.addDynamicWidthClass(fatherElement[0].children[0]);	
 			}else{
-				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);	
+//				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);	
 			}
 			return;
 		}
