@@ -62,7 +62,7 @@ public class CrossTabHTMLSerializer {
 
 	private static String DEFAULT_BG_TOTALS = "background:rgba(59, 103, 140, 0.8);";
 	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.45);";
-	private static String DEFAULT_COLOR_TOTALS = "white;";
+	private static String DEFAULT_COLOR_TOTALS = "color:white;";
 	private static String DEFAULT_STYLE = " font-style:normal!important;";
 	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600; text-align: center;";
 
