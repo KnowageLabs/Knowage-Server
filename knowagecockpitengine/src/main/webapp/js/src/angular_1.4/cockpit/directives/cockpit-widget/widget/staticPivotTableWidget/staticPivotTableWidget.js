@@ -110,12 +110,29 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		return toReturn;
 	}
 
+	$scope.addDynamicWidthClass = function(elem){
+		elem.classList.add('crosstab-fill-width');
+		elem.style['table-layout'] = 'auto';
+	}
+	
+	$scope.removeDynamicWidthClass = function(elem){
+		elem.classList.remove("crosstab-fill-width");
+	}
+	
+	
 	$scope.refresh=function(element,width,height, datasetRecords,nature){
+
 		if(datasetRecords==undefined){
 			return;
 		}
 
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
+			var fatherElement = angular.element($scope.subCockpitWidget);
+			if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
+				$scope.addDynamicWidthClass(fatherElement[0].children[0]);	
+			}else{
+				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);	
+			}
 			return;
 		}
 		$scope.showWidgetSpinner();
@@ -160,7 +177,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					$scope.hideWidgetSpinner();
 					$compile(fatherElement.contents())($scope);
 					if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
-						fatherElement[0].children[0].classList.add('crosstab-fill-width');
+						$scope.addDynamicWidthClass(fatherElement[0].children[0]);	
 					}
 				},
 				function(response){
@@ -367,7 +384,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				lstValues.push(columnValue);
 			}
 		}
-		$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
+		$scope.doSelection(lstHeaders,lstValues); //call selection method passing all names and values (unique time)
 
 	};
 

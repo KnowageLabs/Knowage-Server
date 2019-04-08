@@ -393,7 +393,7 @@ function cockpitWidgetControllerFunction(
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
@@ -868,7 +868,8 @@ function cockpitWidgetControllerFunction(
 					//check on pivot table structure: rows and columns definition
 					if (originalColumnName == undefined || originalColumnName == ""){
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()){
+							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()) ||
+									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === columnName.toUpperCase()){
 									originalColumnName = $scope.ngModel.content.crosstabDefinition.columns[i].id;
 								break;
 							}
@@ -876,7 +877,8 @@ function cockpitWidgetControllerFunction(
 					}
 					if (originalColumnName == undefined || originalColumnName == ""){
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-							if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()){
+							if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()) ||
+								$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === columnName.toUpperCase()){
 								originalColumnName = $scope.ngModel.content.crosstabDefinition.rows[i].id;
 								break;
 							}
@@ -899,7 +901,8 @@ function cockpitWidgetControllerFunction(
 						var foundInColumns = false;
 						var foundInRows = false;
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
+							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
+									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === singleColumnName.toUpperCase()){
 								originalColumnName.push($scope.ngModel.content.crosstabDefinition.columns[i].id);
 								foundInColumns = true;
 								break;
@@ -907,7 +910,8 @@ function cockpitWidgetControllerFunction(
 						}
 						if (!foundInColumns){
 							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-								if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
+								if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
+										$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === singleColumnName.toUpperCase()){
 									originalColumnName.push($scope.ngModel.content.crosstabDefinition.rows[i].id);
 									foundInRows = true;
 									break;
