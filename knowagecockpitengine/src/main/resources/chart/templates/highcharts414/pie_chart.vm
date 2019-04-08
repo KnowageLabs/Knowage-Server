@@ -599,6 +599,7 @@
 		   	
 		    #set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
 			#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
+			#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 			#if(!$relatedSerie.showCategoryValue)
 				#set($relatedSerieCategoryValue = true)
 			#else
@@ -611,11 +612,18 @@
 			#else
 			#set($precision = $relatedSerie.precision)
 			#end
-						
+				$datasettransformer.print($styleOfDataLabels)		
 			#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false && $relatedSerieCategoryValue == false)
-				
+			
 				dataLabels: 
-					{							
+					{		
+					style:{
+		    			color:"$styleOfDataLabels.color",
+	                	fontFamily:"$styleOfDataLabels.fontFamily",
+	                	fontWeight:"$styleOfDataLabels.fontWeight",
+	                	fontSize:"$styleOfDataLabels.fontSize",
+	                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    			},					
 			         enabled: true,
 			                    
 			                    /* 
@@ -695,7 +703,14 @@
 		          #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == false)
 			              	
 			                dataLabels: 
-							{							
+							{	
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},						
 			                    enabled: true,			                    
 			                    format: '{point.percentage:.' + $precision + 'f}%'
 			                }
@@ -705,6 +720,13 @@
 		               	
 							dataLabels: 
 							{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
@@ -790,6 +812,13 @@
 		               	
 							dataLabels: 
 							{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                    enabled: true,
 			                    
 			                    format: '<b>{point.name}</b>'
@@ -799,6 +828,13 @@
 		               	
 							dataLabels: 
 							{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
@@ -883,6 +919,13 @@
 		               	
 							dataLabels: 
 							{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
@@ -965,6 +1008,13 @@
 		               	
 							dataLabels: 
 							{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                    enabled: true,
 			                    
 			                  
@@ -974,6 +1024,13 @@
 		                
 			                dataLabels: 
 			                {
+			                style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+		    				},
 			                	enabled: false
 			                }
 			                

@@ -1516,16 +1516,14 @@
 						dataLabels: 
 						{
 							style:{
-	    			
 				    			color:"$styleOfDataLabels.color",
 			                	fontFamily:"$styleOfDataLabels.fontFamily",
 			                	fontWeight:"$styleOfDataLabels.fontWeight",
 			                	fontSize:"$styleOfDataLabels.fontSize",
 			                	fontStyle:"$styleOfDataLabels.fontStyle",
 	    					},
-							
-							enabled: $relatedSerieShowValue,
-
+		                    enabled: $relatedSerieShowValue,
+		                   
 		                    #set ($postfixValueAsString = '')
 		                     
 		                    #if ($relatedSerie.postfixChar != '')
