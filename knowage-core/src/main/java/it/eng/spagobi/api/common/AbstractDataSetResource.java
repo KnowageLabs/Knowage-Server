@@ -126,10 +126,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			if (maxResults <= 0) {
 				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
 			}
-			if (offset < 0 || fetchSize < 0) {
-				logger.debug("Offset or fetch size are not valid. Setting them to [0] and [" + maxResults + "] by default.");
+			if (offset < 0) {
+				logger.debug("Offset size is not valid. Setting it to [0] by default.");
 				offset = 0;
-				fetchSize = maxResults;
+			}
+			if (fetchSize < -1) {
+				logger.debug("Fetch size is not valid. Setting it to [-1] by default.");
+				fetchSize = -1;
 			}
 			if (fetchSize > maxResults) {
 				throw new IllegalArgumentException("The page requested is too big. Max page size is equals to [" + maxResults + "]");

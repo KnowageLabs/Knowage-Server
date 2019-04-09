@@ -33,7 +33,11 @@ public abstract class AbstractDataReader implements IDataReader {
 	}
 	
 	public boolean isPaginationSupported() {
-		return isOffsetSupported() && isMaxResultsSupported();
+		return isOffsetSupported() && isFetchSizeSupported() && isMaxResultsSupported();
+	}
+
+	public boolean isPaginationRequested(){
+		return getOffset() != 0 || getFetchSize() != -1;
 	}
 	
 	public boolean isOffsetSupported() {

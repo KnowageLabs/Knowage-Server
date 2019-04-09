@@ -30,6 +30,7 @@ public interface IDataReader {
     
     // pagination ...
 	boolean isPaginationSupported();
+	boolean isPaginationRequested();
 	boolean isOffsetSupported();
 	int getOffset();
 	void setOffset(int offset);
