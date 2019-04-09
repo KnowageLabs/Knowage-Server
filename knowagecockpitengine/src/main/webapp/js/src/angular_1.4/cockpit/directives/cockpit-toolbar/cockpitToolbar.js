@@ -279,6 +279,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 			 		html2canvas(element,{
 			 			width: element.clientWidth,
 			 			height: element.clientHeight,
+			 			scale : 1.5
 			 		}).then(function(canvas) {
 			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.clientHeight/2.835);
 	
