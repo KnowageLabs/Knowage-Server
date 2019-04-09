@@ -1,39 +1,26 @@
 .federatedDataset {
 
-	.md-container {
-      position: static;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      box-sizing: border-box;
-      -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-      flex-direction: column;
-      z-index: 60;
-	  height:100%;
-      bottom: 0;
-      overflow: auto;
+    .mainContainer {
+    	.federationDsContainer {
+    		max-height: 600px;
+    		overflow: auto;
+    		md-list-item {
+    			min-height: 35px;
+    			height: 35px;
+    			.md-button {
+    				line-height: 35px;
+    				min-height: 35px;
+    				._md-list-item-inner {
+    					min-height: 35px;
+    					font-size: $baseFontSize;
+    				}
+    			}
+    		}
+    	}
     }
+    
 	.contentdemoBasicUsage {
 		background: $federatedDatasetBackground;
-	}
-	.miniheadfederation {
-		height: 40px; 
-		h2 {
-			padding-left: 14px;
-		}
-	}
-	.miniheadfedsmall {
-		background-color: $secondaryColor !important;
-		h2 {
-			padding-left: 14px
-		}
-	}
-	md-content {
-		padding: 20px;
-	}
-	md-list-item {
-		min-height:35px;
 	}
 	
 	.buttonR{
@@ -46,17 +33,6 @@
 	    position:fixed;
 	    right:170px;
 	    bottom:10px;
-	}
-
-	.datasetBox{
-		padding: 10px;
-	}
-
-	.mainContainer{
-		background: transparent;
-		min-height: 400px;
-		height: 100%;
-		overflow: hidden;
 	}
 
 	.angularListTemplate .searchBarList input {
@@ -90,7 +66,25 @@
     }
 
     .listBox {
-    	height:85%;
+    	height:90%;
+    	.layout-align-start-end {
+    		display: none;
+    	}
+    	.md-button {
+    		padding: 0 !important;
+    		._md-list-item-inner {
+    			p {
+    				padding: 0 16px;
+    			}
+	    	}
+	    	._md-secondary-container {
+	    		display: none;
+	    	}
+	    	.md-ripple-container {
+	    		height: 27px !important;
+	    		min-height: 27px !important;
+	    	}
+    	}
     }
 
     .createRelationButton {
@@ -144,22 +138,6 @@
     	background-color: #3b678c;
     	color: #FFFFFF
 	}
-	._md-list-item-inner .wrapText {
-		margin-top: -6px;
-	}
-
-	._md-secondary-container .md-secondary {
-	    margin-top: -6px;
-	}
-	
-	.saveFederationDefinitionTemplate {
-		width: 60%; 
-		overflow-y: visible;
-	}
-	
-	.saveFederationDefinitionTemplateInputContainerBottomPadding{
-		padding-bottom:15px
-	}
 	
 	.noMarginRightLeft {
 		margin-right : 0px;
@@ -183,16 +161,5 @@
 		margin-top : 10px;
 		font-size: 20;
 	}
-	
-	.datasetBoxContent {
-		height:85%;
-	}
-	
-	@-moz-document url-prefix() { 
-	.mozillaDatasetListHeight{
-		height: 100%;
-		max-height: 100%;
-	}
-}
 
 }

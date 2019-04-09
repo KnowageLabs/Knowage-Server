@@ -9,13 +9,12 @@
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)				
 			 -->
 			<md-toolbar class="secondaryToolbar" ng-cloak ng-if="cancelDialog!=undefined">
-			
-				<div layout="row">
+				<div class="md-toolbar-tools " layout="row">
 					
 					<span flex></span>
 		       	 	
-		       	 	<md-button ng-click="cancelDialog()" class="md-icon-button">
-		          		<md-icon md-font-icon="fa fa-times-circle-o"></md-icon>
+		       	 	<md-button ng-click="cancelDialog()">
+		          		CLOSE
 		       	 	</md-button>
 		       	 	
 	        	</div>
