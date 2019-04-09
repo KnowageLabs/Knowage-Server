@@ -187,10 +187,17 @@ function onSelectionChanged(node){
 		}
 	}
 	
+	$scope.sortById = function(objects) {
+		objects.sort(function(a, b) {
+		    return (a.id - b.id);
+		})
+	}
+
 	$scope.loadFolders=function(){
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
 			if(response.data && response.data.length>0){
+				$scope.sortById(response.data);
 				//check cookies configuration tree
 				var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
 				if($cookies.getObject(cookiesObj) && $cookies.getObject(cookiesObj).length>0){
@@ -209,6 +216,7 @@ function onSelectionChanged(node){
 							break;
 						}
 					}
+
 					//load folder
 					$timeout(function(){
 						$scope.loadFolderDocuments(folderToOpen.id);
@@ -341,7 +349,8 @@ function onSelectionChanged(node){
 						$scope.searchDocuments = response.data;
 						$scope.translateDocuments($scope.searchDocuments);
 						$scope.searchResultGrid.api.setRowData($scope.searchDocuments);
-						$scope.searchResultGrid.api.sizeColumnsToFit();						$scope.searchingDocuments=false;
+						$scope.searchResultGrid.api.sizeColumnsToFit();
+						$scope.searchingDocuments=false;
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
 						.finally(function(){
