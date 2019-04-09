@@ -113,7 +113,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 			if (dataProxy.isFetchSizeSupported()) {
 				dataProxy.setFetchSize(fetchSize);
-			} else if (dataReader.isOffsetSupported()) {
+			} else if (dataReader.isFetchSizeSupported()) {
 				dataReader.setFetchSize(fetchSize);
 			} else {
 

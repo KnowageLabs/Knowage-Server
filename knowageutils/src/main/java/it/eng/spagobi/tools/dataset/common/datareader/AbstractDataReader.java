@@ -35,7 +35,11 @@ public abstract class AbstractDataReader implements IDataReader {
 
 	@Override
 	public boolean isPaginationSupported() {
-		return isOffsetSupported() && isMaxResultsSupported();
+		return isOffsetSupported() && isFetchSizeSupported() && isMaxResultsSupported();
+	}
+
+	public boolean isPaginationRequested(){
+		return getOffset() != 0 || getFetchSize() != -1;
 	}
 
 	@Override

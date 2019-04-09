@@ -136,7 +136,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					if (SqlUtils.isHiveLikeDialect(dialect)) {
 						logger.debug("It's a BigData datasource so count data iterating result set till max");
 						dataReader.setCalculateResultNumberEnabled(true);
-					} else if (getOffset() == 0 && getFetchSize() == -1) {
+					} else if (dataReader.isPaginationSupported() && !dataReader.isPaginationRequested()) {
 						// we need to load entire resultset, therefore there is no need to use the inline view tecnique
 						logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
 						dataReader.setCalculateResultNumberEnabled(true);
