@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
 --%>
-		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+		
 		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<script> var listaNewEditMode = [];
@@ -87,81 +87,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<body class="federatedDataset" ng-app="federationDefinitionModule" id="ng-app">
 		
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
-		<div ng-controller="federationDefinitionCTRL as ctrl" layout-fill class="contentdemoBasicUsage" id="federationDefinition">		
-		  <div class ="md-container" >
-			
-			<md-toolbar class="miniheadfederation" >
-				<div class="md-toolbar-tools">
-					<md-icon md-font-icon="fa fa-connectdevelop  fa-2x" class="noMarginRightLeft"></md-icon>
-					<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.title");}}</h2>
-					<md-button class="md-fab md-mini md-ink-ripple leftMarginAuto" ng-if="ctrl.state" ng-click="ctrl.toggle()">
-						<md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.button.nextStep");}}</md-tooltip>
-						<md-icon md-font-icon="fa fa-chevron-right"></md-icon>
-					</md-button>
-					<md-button class="md-fab md-mini md-ink-ripple leftMarginAuto" ng-if="!ctrl.state" ng-click="ctrl.toggleBack(); ctrl.ispisiSleektovane(); ctrl.clearSelections()">
-						<md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.button.back");}}</md-tooltip>
-						<md-icon md-font-icon="fa fa-chevron-left"></md-icon>
-					</md-button>
-					<md-button class="md-fab md-mini md-ink-ripple openSaveFederationDialog" ng-if="!ctrl.state" ng-click="ctrl.showAdvanced($event)">
-						<md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.button.saveFederation");}}</md-tooltip>
-						<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
-					</md-button>			
+		<div ng-controller="federationDefinitionCTRL as ctrl" layout-fill class="contentdemoBasicUsage" id="federationDefinition" layout="column">					
+			<md-toolbar class="primaryToolbar" >
+				<div class="md-toolbar-tools" layout="row">
+					<h2 class="md-flex" >{{::translate.load("sbi.federationdefinition.title");}}</h2>	
 				</div>
 			</md-toolbar>
 	
-			<md-content layout-padding class="mainContainer">
+			<md-content class="mainContainer" flex>
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
-				<div ng-show="ctrl.state" layout="row" class="mozillaDatasetListHeight">
+				<div ng-show="ctrl.state" layout="row" flex layout-align="center start">
 					
-					<!-- Avaliable datasets -->
-					<div flex class="datasetBox" >
-					  <md-card>	
-						<md-toolbar class="miniheadfedsmall"  >
+					<!-- Available datasets -->
+					  <md-card flex>	
+						<md-toolbar class="secondaryToolbar">
 							<div class="md-toolbar-tools">
-								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>
-								<span flex=""></span>					
+								<h2>{{::translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>				
 							</div>
 						</md-toolbar>
 					
-						<md-content class="datasetBoxContent">
-							<angular-list
-							layout-fill 
-							id="availableDatasets" 
-							layout-margin
-							ng-model="ctrl.list" 
-							item-name="name"
-							show-search-bar=true
-							speed-menu-option=ctrl.showDatasetInfo
-							click-function="ctrl.moveToListNew(item)"
-							style="overflow:hidden"
-							>					
-							</angular-list>
-						</md-content>
+					
+						<div layout="row" layout-align="center center">
+							<md-input-container md-no-float flex="80">
+						      <md-icon md-font-icon="fa fa-search"></md-icon>
+						      <input ng-model="dsSearch" type="text" placeholder="Search" style="margin-left: 32px;"/>
+						    </md-input-container>
+						</div>
+							
+						<md-card-content class="noPadding federationDsContainer">
+							<md-subheader>Click to add to federation</md-subheader>
+							
+							<md-list>
+							  <md-list-item class="secondary-button-padding" ng-repeat="item in ctrl.list | filter:{'name':dsSearch}" ng-click="ctrl.moveToListNew(item)">
+							    <p> {{ item.name }} </p>
+							    <md-button class="md-secondary md-icon-button" ng-click="ctrl.showDSDetails(item)">
+							    	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
+							    </md-button>
+							  </md-list-item>
+						  </md-list>
+						</md-card-content>
 					 </md-card>	
-					</div>
 				
 					<!-- Selected datasets -->
-					<div  flex class="datasetBox">
-					 <md-card>
-						<md-toolbar class="miniheadfedsmall"  >
+					 <md-card flex>
+						<md-toolbar class="secondaryToolbar">
 							<div class="md-toolbar-tools">
-								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.selected");}}</h2>
-								<span flex=""></span>					
+								<h2>{{::translate.load("sbi.federationdefinition.datasets.selected");}}</h2>				
 							</div>
 						</md-toolbar>
 					
-						<md-content class="datasetBoxContent">
-							<angular-list layout-fill 
-							id="selectedDatasets" 
-							ng-model="ctrl.listaNew" 
-							item-name="name" 
-							speed-menu-option=ctrl.removeDatasetFromListaNew
-							>					
-							</angular-list>
-						</md-content>
+						<md-card-content class="noPadding federationDsContainer">
+							<md-subheader class="md-no-sticky">Click to remove from federation</md-subheader>
+							<md-list>
+							  <md-list-item ng-repeat="item in ctrl.listaNew" ng-click="ctrl.kickOutFromListNew(item)">
+							    <p> {{ item.name }} </p>
+							  </md-list-item>
+						  </md-list>
+						</md-card-content>
 					</md-card>
-				</div>
 				
 				</div>
 			
@@ -170,10 +154,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<!-- Associations editor -->
 				 <md-card>	
-					<md-toolbar >
+					<md-toolbar class="secondaryToolbar">
 						<div class="md-toolbar-tools">
-							<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
-							<span flex=""></span>
+							<h2>{{::translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
 						</div>
 					</md-toolbar>
 					
@@ -183,15 +166,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<div class="datasetInAssociationBox">
 								<md-card class="fedAssociationsBoxCard">
 									<!-- Datset name-->
-									<md-toolbar class="miniheadfedsmall">
-									<div class="md-toolbar-tools">
-										<md-tooltip  md-direction="top">{{dataset.name | uppercase}}</md-tooltip>
-										<h2 class="md-flex fedAssociationsBoxEllipsis">{{dataset.name | uppercase}}</h2>
-										
-									</div>
+									<md-toolbar class="ternaryToolbar">
+										<div class="md-toolbar-tools">
+											<h2 class="truncated">{{dataset.name | uppercase}}</h2>
+										</div>
 									</md-toolbar>
 									
-									<md-content ng-show="true" class="listBox" layout="column">
+									<md-content class="listBox">
 										<angular-list
 											layout-fill
 											id='{{dataset.label}}'
@@ -203,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											class="noScrol"
 											no-pagination="true"									
 										>
-										</angular-list>
+										</angular-list-->
 									</md-content>
 								</md-card>
 							</div>
@@ -221,8 +202,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-button ng-if="ctrl.showSmartDetection" ng-click="ctrl.autodetect()">{{translate.load("sbi.federationdefinition.autodetect")}}</md-button>
 						<md-button class="md-fab associationListBtn" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
 						</md-icon></md-button> 
-						<!-- <md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
-						</md-icon></md-button>  -->
 					</div>
 		
 		
@@ -230,9 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-content class="associationsBox">
 		
 						<div>
-							
 							<md-content >
-							
 								<md-list >
 									<div ng-repeat="k in multiRelationships">
 										
@@ -241,14 +218,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<span>
 												<span>
 												{{k}}
-											</span>
+												</span>
 											
 											</div>
 											<span flex=""></span>
-											 
-											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background deleteIcon" ng-click="ctrl.deleteRelationship(k)">
-														 <i class="fa fa-times" ></i>
-													</md-button>
+									 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background deleteIcon" ng-click="ctrl.deleteRelationship(k)">
+												 <i class="fa fa-times" ></i>
+											</md-button>
 										
 									</md-list-item>
 									
@@ -265,8 +241,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 
 			</md-content>
-		 <!-- end div container -->
-		 </div>	
+		 
+		 	<md-actions layout="row">
+		      <span flex></span>
+		      <md-button ng-if="!ctrl.state" ng-click="ctrl.toggleBack(); ctrl.ispisiSleektovane(); ctrl.clearSelections()" class="md-raised">
+		       	{{::translate.load("sbi.federationdefinition.button.back");}}
+		      </md-button>
+		      <md-button ng-if="ctrl.state" ng-click="ctrl.toggle()" class="md-raised md-primary">
+		        {{::translate.load("sbi.federationdefinition.button.nextStep");}}
+		      </md-button>
+		      <md-button  ng-if="!ctrl.state" ng-click="ctrl.showAdvanced($event)" class="md-raised md-primary">
+		        {{::translate.load("sbi.federationdefinition.button.saveFederation");}}
+		      </md-button>
+		    </md-actions>
+
 		</div>
 	
 	</body>
