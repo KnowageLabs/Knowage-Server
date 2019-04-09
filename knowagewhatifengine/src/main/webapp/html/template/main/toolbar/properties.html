@@ -8,16 +8,18 @@
 	 <p>There is no properties for this member </p>
 	 </div> 
 	 <div style='margin-top:20px;'>
-	<md-content style="height:60%; ng-hide="propertiesArray.length == 0">
+	 <div layout="row">
+	<md-content style="height:60%;" ng-hide="propertiesArray.length == 0">
 			
-					<angular-table 
-						flex
+					<angular-table flex
 						id="propertiesData_id"
 						ng-model="propertiesArray"
 						>
 													 					
 					</angular-table>  
+					
 	</md-content>
+	</div>
 	</div>	
 		<md-dialog-actions layout="row">
 			<md-button class="md-raised" ng-click="closeDialogToolbarRight()">
