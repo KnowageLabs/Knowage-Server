@@ -277,6 +277,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 		 			
 		 			if(sheet.index != 0) doc.addPage(element.clientWidth,element.clientHeight);
 			 		html2canvas(element,{
+			 			allowTaint: true,
 			 			width: element.clientWidth,
 			 			height: element.clientHeight,
 			 			scale : 1.5
