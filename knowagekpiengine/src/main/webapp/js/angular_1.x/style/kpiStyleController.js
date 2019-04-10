@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				pos: 'top left',
 				format: 'rgb'
 		};
-		$scope.measure = knModule_selections['font-size'];
+		$scope.measure = knModule_selections['font-size-old'];
 		$scope.fontFamily = knModule_selections['font-family'];
 		$scope.fontWeight = knModule_selections['font-weight'];
 	};
