@@ -573,11 +573,11 @@ function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document
 
 function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
 
-	var folderId= selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
+	var folderId = selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
 	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
 
 	 if(typeDocument=="cockpit"){
-			$scope.iframeUrl= sbiModule_config.engineUrls.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
+			$scope.iframeUrl= sbiModule_config.engineUrls.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT"+folderId;
 	 }
 
 	$scope.closeDialogFromExt=function(reloadFolder){

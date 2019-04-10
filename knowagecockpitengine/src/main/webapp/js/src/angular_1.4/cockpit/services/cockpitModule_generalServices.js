@@ -55,6 +55,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		dataToSend.document.description=cockpitModule_properties.DOCUMENT_DESCRIPTION;
 		dataToSend.document.type="DOCUMENT_COMPOSITE";
 		dataToSend.folders=[];
+			if(cockpitModule_properties.FOLDER_ID != "") {
+				dataToSend.folders.push(cockpitModule_properties.FOLDER_ID);
+			}
 		dataToSend.customData={};
 		dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
 
@@ -117,14 +120,14 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	this.saveCockpit=function(event){
 		//check cockpit label
 		if(angular.equals(cockpitModule_properties.DOCUMENT_NAME.trim(),"")){
-			    $mdDialog.show(		    	
+		    $mdDialog.show(
 					{
 						controller: saveCockpitController,
 						templateUrl: baseScriptPath + '/directives/cockpit-toolbar/templates/saveCockpit.tmpl.html',
 						parent: angular.element(document.body),
 						targetEvent: event,
 						clickOutsideToClose: false
-					}		    
+	    		}
 		    ).then(function(result){
 	    		cockpitModule_properties.DOCUMENT_LABEL = result.label;
 	    		cockpitModule_properties.DOCUMENT_NAME = result.name;

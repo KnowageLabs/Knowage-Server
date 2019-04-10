@@ -45,6 +45,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		STARTING_SELECTIONS:[],
 		STARTING_FILTERS:[],
 		CURRENT_SHEET: <%=initialSheet%>,
+		FOLDER_ID: "<%=folderId%>",
 		EXPORT_MODE: <%=exportMode%>,
 		INITIALIZED_WIDGETS : [],
 		CURRENT_KNOWAGE_VERSION: "<%=it.eng.knowage.wapp.VersionInfo.COMPLETE_VERSION%>"

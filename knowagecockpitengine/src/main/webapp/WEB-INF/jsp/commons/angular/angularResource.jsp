@@ -60,6 +60,7 @@
 	String initialSelections = (request.getParameter("COCKPIT_SELECTIONS")==null) ? "{}" : request.getParameter("COCKPIT_SELECTIONS");
 	Boolean exportMode = (request.getParameter("export")==null)?false: Boolean.parseBoolean(request.getParameter("export"));
 	String 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
+	String folderId = (request.getParameter(SpagoBIConstants.FUNCTIONALITY_ID)==null)?"":request.getParameter(SpagoBIConstants.FUNCTIONALITY_ID);
 
 	String userUniqueIdentifier="";
 	String userId="";
