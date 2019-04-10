@@ -7,19 +7,16 @@
 	 <div ng-show="propertiesArray.length == 0" >
 	 <p>There is no properties for this member </p>
 	 </div> 
-	 <div style='margin-top:20px;'>
-	 <div layout="row">
-	<md-content style="height:60%;" ng-hide="propertiesArray.length == 0">
+	 <div layout="column" style='margin-top:20px;'>
+		<md-content layout="row" flex style="height:60%;" ng-hide="propertiesArray.length == 0">
 			
-					<angular-table flex
-						id="propertiesData_id"
-						ng-model="propertiesArray"
-						>
-													 					
-					</angular-table>  
-					
-	</md-content>
-	</div>
+			<angular-table flex
+				id="propertiesData_id"
+				ng-model="propertiesArray"
+				>
+																
+			</angular-table>  			
+		</md-content>
 	</div>	
 		<md-dialog-actions layout="row">
 			<md-button class="md-raised" ng-click="closeDialogToolbarRight()">
