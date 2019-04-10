@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-content layout="row" flex>
 			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-xs')" ng-show="searchDocuments==0">
 				<md-content> 
-					<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder" click-function="setSelectedFolder(item)" translate="false"></document-tree>
+					<document-tree ng-model="folders" personal-folders="{{::translate.load('sbi.generic.personalFolders')}}" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder" click-function="setSelectedFolder(item)" translate="false"></document-tree>
 				</md-content>
 			</md-sidenav> 
 			<md-content flex layout="column" class="mainContent"> 
