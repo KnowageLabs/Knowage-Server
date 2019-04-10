@@ -65,6 +65,7 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_COLOR_TOTALS = "color:white;";
 	private static String DEFAULT_STYLE = " font-style:normal!important;";
 	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600;";
+	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -192,7 +193,7 @@ public class CrossTabHTMLSerializer {
 
 					JSONObject rowConfig = row.getConfig();
 					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
-					if (!style.equals(DEFAULT_STYLE)) {
+					if (!style.equals(DEFAULT_STYLE) && !style.equals(DEFAULT_HEADER_STYLE)) {
 						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 							appliedStyle = true;
@@ -399,6 +400,9 @@ public class CrossTabHTMLSerializer {
 					if (text.equalsIgnoreCase(labelTotal)) {
 						if (colSpanSubTot > 0)
 							colSpan = colSpanSubTot;
+						else  if (!crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+							colSpan =  crossTab.getCrosstabDefinition().getMeasures().size();
+						}
 						if (i < levels-2)
 							aColumn.setCharacters("");
 					}
@@ -606,9 +610,10 @@ public class CrossTabHTMLSerializer {
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 						}
 					} else {
-						String align = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
-						align +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "padding");
-						aColumn.setAttribute(STYLE_ATTRIBUTE, align);
+						String totalStyle = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
+						totalStyle +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "padding");
+						totalStyle +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "width");
+						aColumn.setAttribute(STYLE_ATTRIBUTE, totalStyle);
 						aColumn.setAttribute(CLASS_ATTRIBUTE, classType);
 					}
 
@@ -892,6 +897,9 @@ public class CrossTabHTMLSerializer {
 				// default font color for headers
 				if (cellTypeValue.equals("") && dataStyle.indexOf("color") < 0)
 					dataStyle += DEFAULT_HEADER_STYLE;
+				// default text-align
+				if (cellTypeValue.equals("") && dataStyle.indexOf("text-align") < 0)
+					dataStyle += DEFAULT_CENTER_ALIGN;
 				// add contextual properties if width is defined
 				if (keyStyle.equals("width")) {
 					dataStyle += " overflow:hidden; text-overflow:ellipsis;";
