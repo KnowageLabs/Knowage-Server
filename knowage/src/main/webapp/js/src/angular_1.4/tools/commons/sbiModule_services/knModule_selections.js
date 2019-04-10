@@ -19,6 +19,14 @@ angular.module('sbiModule')
 .factory('knModule_selections',
 	function(sbiModule_translate) {
 		return {
+			"font-size-old":[
+				{"label":sbiModule_translate.load("kn.options.fontsize.xsmall"),"value":"8px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.small"),"value":"10px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.medium"),"value":"14px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.extended"),"value":"16px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.large"),"value":"18px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.xlarge"),"value":"24px"},
+				{"label":sbiModule_translate.load("kn.options.fontsize.xxlarge"),"value":"40px"}],
 			"font-size":[
 				{"label":sbiModule_translate.load("kn.options.fontsize.xsmall"),"value":".6rem"},
 				{"label":sbiModule_translate.load("kn.options.fontsize.small"),"value":".8rem"},
