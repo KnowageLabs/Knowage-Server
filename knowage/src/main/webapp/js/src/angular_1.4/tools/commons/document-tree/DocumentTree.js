@@ -15,6 +15,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 		scope: {
 			ngModel : '='
 			, id : "@"
+			, personalFolders: "@?"
 			, createTree:"=?" //if true, the ngModel data will be parsed, if not the JSON is already in correct form
 			, clickFunction : "&" //function to call when click into element list
 			, selectedItem : "=?" //optional to get the selected  item value
@@ -66,10 +67,21 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 								}
 
 								var treeFolders = [];
+								var personalFolders = {
+									codType: "LOW_FUNCT",
+									code: "Personal Folders",
+									createRoles: [],
+									description: "Personal Folders",
+									name: scope.personalFolders,
+									parentId: null,
+									subfolders: [],
+									path: "/Personal-Folders"};
+								if(scope.personalFolders) treeFolders.push(personalFolders);
 								for (var i = 0 ; i < folders.length; i ++ ){
 									//if folder has not father, is a root folder
 									if (folders[i][parentId] == null || folders[i][parentId] == "null"){
-										treeFolders.push(folders[i]);
+										if(scope.personalFolders && folders[i].code == 'Functionalities') treeFolders.push(folders[i]);
+										else scope.personalFolders ? treeFolders[0].subfolders.push(folders[i]) : treeFolders.push(folders[i]);
 									}
 									else{
 										//search parent folder with hashmap and attach the son
