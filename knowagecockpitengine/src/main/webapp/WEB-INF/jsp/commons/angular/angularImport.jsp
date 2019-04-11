@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/node_modules/angular/angular.min.js"></script>
 	  -- END-PRODUCTION -->
 
-<script type="text/javascript" src=<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-aria/angular-aria.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
