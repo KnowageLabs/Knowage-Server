@@ -42,18 +42,12 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-cookies/angular-cookies.min.js"></script>
-<!--  script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
-<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular_1.4/angular-cookies.js"></script-->
 
 <!-- POLYFILLS -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/canvas-toBlob/canvas-toBlob.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/map-polyfill/map-polyfill.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/append-polyfill/append-polyfill.js"></script>
-
 
 <!-- angular-material-->
 <script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
@@ -132,11 +126,13 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/css/css.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 
+<!-- aggrid -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.js"></script>
 
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
+
 <!-- MOMENT.JS -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
 
