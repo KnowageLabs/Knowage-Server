@@ -237,7 +237,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if(reloadSelection || (!reloadSelection && someDel)){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection = [];
 					ws.refreshAllAssociations();
-
 				}
 			}
 			if(deferred!=undefined){
@@ -513,13 +512,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		angular.forEach(cockpitModule_widgetSelectionUtils.associations, function(item,index){
 			var defer = $q.defer();
 			ws.loadAssociativeSelection(defer, item)
-			defer.promise.then(function(){
-				assRefCount++;
-				if(angular.equals(assRefCount,cockpitModule_widgetSelectionUtils.associations.length)){
-					ws.refreshAllAssociatedWidget(isInit);
-				}
-			})
-			})
+        })
 	}
 
 	this.refreshAllAssociations = function(){
@@ -756,12 +749,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
         var reloadFilt = [];
 
         if(!angular.equals(tmpSelection, cockpitModule_template.configuration.aggregations)){
-            var oldSelections = Object.keys(cockpitModule_template.configuration.aggregations[0].selection);
-            var newSelections = Object.keys(tmpSelection[0].selection);
-            var removedSelections = oldSelections.filter(function(x) {return newSelections.indexOf(x) < 0;});
-            for(i in removedSelections){
-                var s = removedSelections[i].split(".");
-                removeTimestampedSelection(s[0], s[1]);
+            for(var i in cockpitModule_template.configuration.aggregations){
+                var oldSelections = Object.keys(cockpitModule_template.configuration.aggregations[i].selection);
+                var newSelections = Object.keys(tmpSelection[i].selection);
+                var removedSelections = oldSelections.filter(function(x) {return newSelections.indexOf(x) < 0;});
+                for(i in removedSelections){
+                    var s = removedSelections[i].split(".");
+                    ws.removeTimestampedSelection(s[0], s[1]);
+                    if(reloadFilt.indexOf(s[0]) == -1){
+                        reloadFilt.push(s[0]);
+                    }
+                }
             }
 
             angular.copy(tmpSelection, cockpitModule_template.configuration.aggregations);
@@ -776,7 +774,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
                 var removedDsLabel = removedDsLabels[i];
                 var removedColNames = Object.keys(cockpitModule_template.configuration.filters[removedDsLabel]);
                 for(j in removedColNames){
-                    removeTimestampedSelection(removedDsLabel, removedColNames[j]);
+                    ws.removeTimestampedSelection(removedDsLabel, removedColNames[j]);
                 }
             }
             var dsLabels = oldDsLabels.filter(function(x) {return newDsLabels.indexOf(x) >= 0;});
@@ -787,13 +785,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
                             return Object.keys(tmpFilters[dsLabel]).indexOf(x) < 0;
                         });
                 for(j in removedColNames){
-                    removeTimestampedSelection(dsLabel, removedColNames[j]);
+                    ws.removeTimestampedSelection(dsLabel, removedColNames[j]);
                 }
             }
 
             angular.forEach(cockpitModule_template.configuration.filters, function(val,dsLabel){
                 if(tmpFilters[dsLabel] == undefined || !angular.equals(tmpFilters[dsLabel],val)){
-                    reloadFilt.push(dsLabel)
+                    if(reloadFilt.indexOf(dsLabel) == -1){
+                        reloadFilt.push(dsLabel)
+                    }
                 }
             });
             angular.copy(tmpFilters, cockpitModule_template.configuration.filters);
@@ -801,10 +801,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
         if(reloadAss){
             ws.getAssociations(true);
-        }
-
-        if(!reloadAss && reloadFilt.length!=0){
-            ws.refreshAllWidgetWhithSameDataset(reloadFilt);
         }
 
         var hs=false;
@@ -818,6 +814,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
         if(hs == false && Object.keys(tmpFilters).length == 0){
             cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS = false;
         }
+
+        setTimeout(function() {
+            for(var i in reloadFilt){
+                var obj = ws.getDatasetAssociation(reloadFilt[i]);
+                if(obj && obj.datasets){
+                    for(var d in obj.datasets){
+                        var ds = obj.datasets[d];
+                        ws.refreshAllWidgetWhithSameDataset(ds);
+                    }
+                }else{
+                    ws.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
+                }
+            }
+        }, 0);
 	}
 
 	this.getSelectionValues = function(datasetLabel, columnName){
@@ -871,12 +881,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
             ws.timestampedSelections.push(selection);
         }
         ws.timestampedSelections.sort(function(x,y){return x.creationTime - y.creationTime});
+
+        ws.setDirtyFlagOnWidgetsByDataset(dsLabel);
     }
 
-    var removeTimestampedSelection = function(dsLabel, colName){
+    this.removeTimestampedSelection = function(dsLabel, colName){
         var i = getTimestampedSelectionIndex(dsLabel, colName);
         if(i > -1){
             ws.timestampedSelections.splice(i, 1);
+            ws.setDirtyFlagOnWidgetsByDataset(dsLabel);
         }
     }
 
@@ -897,6 +910,36 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
     this.isLastTimestampedSelection = function(dsLabel, colName){
         var last = ws.getLastTimestampedSelection();
         return last && last.dsLabel == dsLabel && last.colName == colName;
+    }
+
+    this.setDirtyFlagOnWidgetsByDataset = function(dsLabel){
+        var obj = ws.getDatasetAssociation(dsLabel);
+        if(obj && obj.datasets){
+            for(var d in obj.datasets){
+                var ds = obj.datasets[d];
+                ws.setDirtyFlagOnWidgets(ds);
+            }
+        }else{
+            ws.setDirtyFlagOnWidgets(dsLabel);
+        }
+    }
+
+    this.setDirtyFlagOnWidgets = function(dsLabel){
+        for(var i in cockpitModule_template.sheets){
+            var sheet = cockpitModule_template.sheets[i];
+            for(var j in sheet.widgets){
+                var widget = sheet.widgets[j];
+                if(widget.dataset){
+                    for(var k in cockpitModule_template.configuration.datasets){
+                        var ds = cockpitModule_template.configuration.datasets[k];
+                        if(ds.dsLabel == dsLabel && ds.dsId == widget.dataset.dsId){
+                            cockpitModule_properties.DIRTY_WIDGETS.push(widget.id);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 })

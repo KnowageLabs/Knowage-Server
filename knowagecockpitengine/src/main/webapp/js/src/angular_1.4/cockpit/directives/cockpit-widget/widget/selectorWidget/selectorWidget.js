@@ -467,6 +467,9 @@ angular.module('cockpitModule')
 						if(selection){
 							delete selection[key];
 							reloadAss=true;
+							if(reloadFilt.indexOf(item.ds) == -1){
+                                reloadFilt.push(item.ds);
+                            }
 						}
 					}
 				}
@@ -478,8 +481,9 @@ angular.module('cockpitModule')
 						if(Object.keys(cockpitModule_template.configuration.filters[item.ds]).length==0){
 							delete cockpitModule_template.configuration.filters[item.ds];
 						}
-
-						reloadFilt.push(item.ds);
+                        if(reloadFilt.indexOf(item.ds) == -1){
+						    reloadFilt.push(item.ds);
+                        }
 					}
 				}
 			}
@@ -488,9 +492,7 @@ angular.module('cockpitModule')
 				$scope.cockpitModule_widgetSelection.getAssociations(true);
 			}
 
-			if(!reloadAss && reloadFilt.length!=0){
-				$scope.cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
-			}
+			cockpitModule_widgetSelection.removeTimestampedSelection(item.ds, item.columnName);
 
 			var hs=false;
 			for(var i=0; i<cockpitModule_template.configuration.aggregations.length; i++){
@@ -503,6 +505,20 @@ angular.module('cockpitModule')
 			if(hs==false && Object.keys(cockpitModule_template.configuration.filters).length==0){
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 			}
+
+			setTimeout(function() {
+                for(var i in reloadFilt){
+                    var obj = cockpitModule_widgetSelection.getDatasetAssociation(reloadFilt[i]);
+                    if(obj && obj.datasets){
+                        for(var d in obj.datasets){
+                            var ds = obj.datasets[d];
+                            cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(ds);
+                        }
+                    }else{
+                        cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
+                    }
+                }
+            }, 0);
 	    }
 
 	    $scope.editWidget=function(index){

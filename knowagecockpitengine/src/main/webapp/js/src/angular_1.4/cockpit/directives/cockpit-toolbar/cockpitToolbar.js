@@ -511,7 +511,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 
 	$scope.saveConfiguration = function(){
 	    cockpitModule_widgetSelection.updateSelections($scope.tmpSelection, $scope.tmpFilters);
-		$mdDialog.cancel();
+	    $mdDialog.cancel();
 	}
 
 }

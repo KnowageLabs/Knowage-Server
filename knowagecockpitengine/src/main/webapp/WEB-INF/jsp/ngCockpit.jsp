@@ -48,6 +48,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		FOLDER_ID: "<%=folderId%>",
 		EXPORT_MODE: <%=exportMode%>,
 		INITIALIZED_WIDGETS : [],
+		DIRTY_WIDGETS : [],
 		CURRENT_KNOWAGE_VERSION: "<%=it.eng.knowage.wapp.VersionInfo.COMPLETE_VERSION%>"
 	}
 });
@@ -189,6 +190,15 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 			}
 		}
 	}
+
+	for(var i in template.sheets){
+        var sheet = template.sheets[i];
+        for(var j in sheet.widgets){
+            var widget = sheet.widgets[j];
+            cockpitModule_properties.DIRTY_WIDGETS.push(widget.id);
+        }
+    }
+
 	return template;
 });
 

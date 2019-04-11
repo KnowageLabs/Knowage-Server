@@ -126,27 +126,29 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.initializedSheets = [0]; // first sheet is always loaded
 
 	var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
+        var currentSheet; // get sheet checking proper index
+        for(var i=0; i < cockpitModule_template.sheets.length; i++){
+            if(cockpitModule_template.sheets[i].index == newValue){
+                currentSheet = cockpitModule_template.sheets[i];
+                break;
+            }
+        }
+
         if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
-
-        	var currentSheet; // get sheet checking proper index
-        	for(var i=0; i < cockpitModule_template.sheets.length; i++){
-        		if(cockpitModule_template.sheets[i].index == newValue){
-        			currentSheet = cockpitModule_template.sheets[i];
-        			break;
-        		}
-        	}
-
         	for(var i=0; i < currentSheet.widgets.length; i++){
         		var widgetId = currentSheet.widgets[i].id;
             	var tempElement = angular.element(document.querySelector('#w' + widgetId));
             	$rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
         	}
-
         	$scope.initializedSheets.push(newValue);
-        }
-
-        if($scope.initializedSheets.length == cockpitModule_template.sheets.length){
-        	initSheet();
+        }else{
+            for(var i=0; i < currentSheet.widgets.length; i++){
+                var widgetId = currentSheet.widgets[i].id;
+                if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(widgetId) > -1){
+                    var tempElement = angular.element(document.querySelector('#w' + widgetId));
+                    $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "UPDATE_FROM_SHEET_CHANGE", {element:tempElement});
+                }
+            }
         }
     })
 

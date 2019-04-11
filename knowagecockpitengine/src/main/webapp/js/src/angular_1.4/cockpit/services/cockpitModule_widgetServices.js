@@ -109,6 +109,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		angular.forEach(cockpitModule_template.sheets,function(value,key){
 			if(value.index==sheetIndex){
 				value.widgets.push(item);
+				if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(item.id) == -1){
+				    cockpitModule_properties.DIRTY_WIDGETS.push(item.id);
+				}
 				return;
 			}
 		})
@@ -141,6 +144,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		angular.forEach(cockpitModule_template.sheets,function(value,key){
 			if(value.index==sheetIndex){
 				value.widgets.push(item);
+				if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(item.id) == -1){
+                    cockpitModule_properties.DIRTY_WIDGETS.push(item.id);
+                }
 				return;
 			}
 		})
@@ -209,6 +215,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 
 	this.deleteWidget=function(sheetIndex,widget,nomessage){
+	    var dirtyIndex = cockpitModule_properties.DIRTY_WIDGETS.indexOf(widget.id);
+        if(dirtyIndex > -1){
+            cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
+        }
 		var indexProperty = wi.getCokpitIndexFromProperty(sheetIndex);
 		if(nomessage == true){
 			cockpitModule_template.sheets[indexProperty].widgets.splice(cockpitModule_template.sheets[indexProperty].widgets.indexOf(widget),1);
@@ -260,14 +270,31 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 	this.refreshWidget = function(element, config, nature, options, data, changedChartType){
+        var currentSheet = -1;
+        if(nature != 'init'){
+            for(i in cockpitModule_template.sheets){
+                for(j in cockpitModule_template.sheets[i].widgets){
+                    if(cockpitModule_template.sheets[i].widgets[j].id == config.id){
+                        currentSheet = i;
+                        break;
+                    }
+                }
+            }
+        }
 
-		var width = angular.element(element)[0].parentElement.offsetWidth;
-		var height = angular.element(element)[0].parentElement.offsetHeight;
-		if(data == undefined) {
-			if(nature == "fullExpand"){
+        var dirtyIndex = cockpitModule_properties.DIRTY_WIDGETS.indexOf(config.id);
+        if(nature == 'init' || currentSheet == cockpitModule_properties.CURRENT_SHEET){
+            if(dirtyIndex > -1){
+                cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
+            }
+
+            var width = angular.element(element)[0].parentElement.offsetWidth;
+            var height = angular.element(element)[0].parentElement.offsetHeight;
+            if(data == undefined) {
+                if(nature == "fullExpand"){
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature,options:options});
-			}else{
-				if (config && config.dataset && config.dataset.dsId){
+                }else{
+                    if (config && config.dataset && config.dataset.dsId){
 
 //					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 					var dataset;
@@ -283,9 +310,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						}
 					}
 
-					//for realtime dataset the associative selections are managed client side
+                        //for realtime dataset the associative selections are managed client side
 					if (dataset && dataset.isRealtime && dataset.useCache && (nature=='selections' || nature=='filters')){
-						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+                            var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 						var filters = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 
 						for (var filterProp in filters) {
@@ -302,11 +329,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							}
 						}
 
-						if (Object.keys(selections).length === 0 && selections.constructor === Object){
-							//cleaned selections
-							this.realtimeSelections.length = 0;
-						} else {
-							//save dataset and selections inside this array (that can be watched outside)
+                            if (Object.keys(selections).length === 0 && selections.constructor === Object){
+                                //cleaned selections
+                                this.realtimeSelections.length = 0;
+                            } else {
+                                //save dataset and selections inside this array (that can be watched outside)
 							var realtimeSelection = {'datasetId':config.dataset.dsId, 'selections':selections};
 							var found = false;
 							for(var i=0; i<this.realtimeSelections.length; i++){
@@ -318,54 +345,59 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							if(!found){
 								this.realtimeSelections.push(realtimeSelection);
 							}
-						}
-						return;
-					}
-				}
-
-                if(config.type != "selector" || nature == 'init'){
-                    var dsRecords = this.loadDatasetRecords(config, options, config.type == "selector",nature);
-                    if(dsRecords == null){
-					    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
-                    }else{
-                        /*
-                            author: rselakov, Radmila Selakovic,
-                            radmila.selakovic@mht.net
-                            checking type of widget because of removing load spinner
-                            in case of updating charts
-                        */
-                        if (options.type && (options.type!="chart" || options.chartInit)){
-                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
+                            }
+                            return;
                         }
+                    }
 
-                        dsRecords.then(function(data){
-                            if(config.type == "selector"){
-                                if(cockpitModule_widgetSelection.getLastTimestampedSelection() != undefined
-                                        && !cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
-                                    data.activeValues = wi.loadDatasetRecords(config, options, false);
-                                }else{
-                                    config.activeValues = null;
-                                }
+                    if(config.type != "selector" || nature == 'init'){
+                    var dsRecords = this.loadDatasetRecords(config, options, config.type == "selector",nature);
+                        if(dsRecords == null){
+					    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
+                        }else{
+                            /*
+                                author: rselakov, Radmila Selakovic,
+                                radmila.selakovic@mht.net
+                                checking type of widget because of removing load spinner
+                                in case of updating charts
+                            */
+                            if (options.type && (options.type!="chart" || options.chartInit)){
+                                $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
                             }
 
-                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+                            dsRecords.then(function(data){
+                                if(config.type == "selector"){
+                                    if(cockpitModule_widgetSelection.getLastTimestampedSelection() != undefined
+                                            && !cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                                    data.activeValues = wi.loadDatasetRecords(config, options, false);
+                                    }else{
+                                        config.activeValues = null;
+                                    }
+                                }
+
+                                $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
                             $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data, options:options});
-                        }, function(){
-                            $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-                            console.error("Unable to load data");
-                        });
-                    }
-                }else{
-                    var data = {};
-                    if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                            }, function(){
+                                $rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+                                console.error("Unable to load data");
+                            });
+                        }
+                    }else{
+                        var data = {};
+                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
                         data.activeValues = wi.loadDatasetRecords(config, options, false);
+                        }
+                        $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                     }
-                    $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                 }
-			}
-		}else {
+            }else {
 			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,options:options});
-		}
+            }
+        }else{
+            if(dirtyIndex == -1){
+                cockpitModule_properties.DIRTY_WIDGETS.push(config.id);
+            }
+        }
 	};
 
 	this.updateGlobalWidgetStyle=function(){
