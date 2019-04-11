@@ -177,7 +177,7 @@
 		}
 		label {
 			font-size: $baseFontSize;
-    		color: $secondaryColor;
+    		color: $baseColor;
 		}
 		.datePicker {
 			max-height: 70px;
@@ -193,7 +193,7 @@
 			.labelContainer {
 				margin:2px;
 				md-icon {
-					color: $secondaryColor;
+					color: $baseColor;
 					cursor: pointer;
 					text-align: center;
 					margin: 0 2px;
