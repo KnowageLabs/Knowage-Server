@@ -278,7 +278,6 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 		 			if(sheet.index != 0) doc.addPage(element.clientWidth,element.clientHeight);
 			 		html2canvas(element,{
 			 			allowTaint: true,
-			 			foreignObjectRendering: true,
 			 			useCORS: true,
 			 			width: element.clientWidth,
 			 			height: element.clientHeight,
@@ -347,10 +346,11 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 		}
 		
 		$scope.loadingScreenshot = true;
-		var element = document.querySelector('#gridsterSheet-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		//var element = document.querySelector('#gridsterSheet-'+cockpitModule_properties.CURRENT_SHEET+' #gridsterContainer');
+		var element = document.getElementById('kn-cockpit');
 		html2canvas(element,{
 			allowTaint: true,
- 			foreignObjectRendering: true,
+			//foreignObjectRendering: true,
  			useCORS: true,
 			width: element.clientWidth,
 		    height: element.clientHeight
