@@ -18,14 +18,14 @@
 			</md-icon>
 		</span>
 		<span ng-click="" ng-show="activeaxis >= 0 && !item.leaf">
-			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+			<md-checkbox ng-model="item.visible">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
 			</span>
 			</md-checkbox>
 		</span>
 		<span ng-click="" ng-show="activeaxis >= 0 && item.leaf" style="padding-left:35px;">
-			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+			<md-checkbox ng-model="item.visible" >
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
 				{{item.name}}
 			</span>
