@@ -350,7 +350,6 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 		var element = document.getElementById('kn-cockpit');
 		html2canvas(element,{
 			allowTaint: true,
-			//foreignObjectRendering: true,
  			useCORS: true,
 			width: element.clientWidth,
 		    height: element.clientHeight

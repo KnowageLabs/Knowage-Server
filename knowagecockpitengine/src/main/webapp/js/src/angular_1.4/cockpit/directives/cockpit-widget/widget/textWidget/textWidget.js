@@ -125,7 +125,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		$scope.property.style["font-size"]= fontSize+"px";
 		$scope.property.style["line-height"]= fontSize+"px";
 
-		$scope.checkPlaceholders(0, true);
+		//$scope.checkPlaceholders(0, true);
 		if(nature == 'init'){
 			$timeout(function(){
 			$scope.widgetIsInit=true;
