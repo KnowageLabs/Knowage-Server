@@ -265,34 +265,49 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 			 hasBackdrop: false,
 			 clickOutsideToClose:false
 			 })
+			 
+			 function closeOrContinue(sheet){
+				if(sheet.index + 1 == cockpitModule_template.sheets.length) {
+	 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
+	 				$mdDialog.hide();
+	 				cockpitModule_properties.LOADING_SCREENSHOT = false;
+	 			}
+	 			else {
+	 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
+	 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
+	 			}
+			}
 			          
 			 function getScreenshot(sheet){
 			 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
 			 	function getPage(sheet){
-			 		var heightToUse;
+//			 		var heightToUse;
+			 		var exportSheetBar = false;
 			 		var element = document.getElementById('kn-cockpit');
 			 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
-			 		if(element.scrollHeight < gridsterElement.clientHeight) heightToUse = gridsterElement.clientHeight + 32 +'px';
-			 		else heightToUse = element.clientHeight + 'px';
+//			 		if(element.scrollHeight < gridsterElement.clientHeight) heightToUse = gridsterElement.clientHeight + 32 +'px';
+			 		if(element.scrollHeight < gridsterElement.scrollHeight){
+			 			element = gridsterElement;
+			 			exportSheetBar = true;
+			 		}
+//			 		else heightToUse = element.clientHeight + 'px';
 		 			
-		 			if(sheet.index != 0) doc.addPage(element.clientWidth,element.clientHeight);
+		 			if(sheet.index != 0) doc.addPage(element.clientWidth,element.scrollHeight);
 			 		html2canvas(element,{
 			 			allowTaint: true,
 			 			useCORS: true,
 			 			width: element.clientWidth,
-			 			height: element.clientHeight,
+			 			height: element.scrollHeight,
 			 			scale : 1.5
 			 		}).then(function(canvas) {
-			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.clientHeight/2.835);
-	
-			 			if(sheet.index + 1 == cockpitModule_template.sheets.length) {
-			 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
-			 				$mdDialog.hide();
-			 				cockpitModule_properties.LOADING_SCREENSHOT = false;
-			 			}
-			 			else {
-			 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
-			 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
+			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
+			 			if(exportSheetBar){
+			 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
+			 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
+			 					closeOrContinue(sheet);
+			 				})
+			 			}else{
+			 				closeOrContinue(sheet);
 			 			}
 			 		});
 			 		
@@ -321,12 +336,13 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 				for(var s in cockpitModule_template.sheets){
 					if(cockpitModule_template.sheets[s].index == 0) {
 						if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
-						//var tempParentElement = document.querySelector('#gridsterSheet-0');
-						var tempElement = document.querySelector('.kn-cockpit');
+						var tempElement = document.getElementById('kn-cockpit');
+				 		var gridsterElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
+				 		if(tempElement.scrollHeight < gridsterElement.scrollHeight) var heightToUse = gridsterElement.scrollHeight+32;
 						var doc = new jsPDF({
 							orientation: 'l',
 							unit: 'mm',
-							format: [tempElement.clientWidth, tempElement.clientHeight]
+							format: [tempElement.clientWidth, heightToUse || tempElement.scrollHeight]
 						});
 						
 						getScreenshot(cockpitModule_template.sheets[s]);

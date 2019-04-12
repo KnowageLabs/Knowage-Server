@@ -64,9 +64,26 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
 	   }
 });
 
-function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties){
+function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties, cockpitModule_template){
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
+	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
+	
+	if($scope.cockpitModule_template.configuration && $scope.cockpitModule_template.configuration.style){
+		var tempBgStyle = $scope.cockpitModule_template.configuration.style;
+		$scope.backgroundStyle={
+				"background-size": tempBgStyle.imageBackgroundSize || '100%',
+				"background-position": "center",
+				"background-repeat": "no-repeat",
+			    "min-height": "100%"
+				
+		};
+		if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
+		if(tempBgStyle.imageBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.imageBackgroundColor;
+		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
+	}
+	
+	
 };
 
 })();

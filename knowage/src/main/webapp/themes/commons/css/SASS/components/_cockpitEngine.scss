@@ -33,6 +33,11 @@
 		}
 	}
 
+	#sheetTabs:not(.screenShottingSheet) #gridsterContainer {
+		background: none !important;
+		min-height: 0 !important;
+	}
+
    cockpit-html-widget {
     	height: 100%;
     	overflow: auto;
