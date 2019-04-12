@@ -44,6 +44,7 @@ import org.olap4j.metadata.Property.StandardMemberProperty;
 import org.pivot4j.PivotModel;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.PlaceMembersOnAxes;
+import org.pivot4j.transform.SwapAxes;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -120,6 +121,9 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		List<Member> list = new ArrayList<Member>();
 		List<Member> visibleMembers = null;
@@ -135,12 +139,13 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			hierarchyUniqueName = paramsObj.getString("hierarchy");
 			node = paramsObj.getString("node");
 			axis = paramsObj.getInt("axis");
+
+			if (transform.isSwapAxes()) {
+				axis = axis == 0 ? 1 : 0;
+			}
 		} catch (Exception e) {
 			logger.error("Error reading body", e);
 		}
-
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
 
 		// if not a filter axis
 		if (axis >= 0) {
@@ -457,12 +462,12 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	}
 
 	private class NodeFilter {
-		private String id;
-		private String name;
-		private String uniqueName;
+		private final String id;
+		private final String name;
+		private final String uniqueName;
 		private boolean collapsed;
 		private boolean visible;
-		private List<NodeFilter> children;
+		private final List<NodeFilter> children;
 
 		public NodeFilter(Member m) throws OlapException {
 			super();
