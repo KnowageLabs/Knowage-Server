@@ -99,7 +99,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 
 function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService,hierarchyTreeService) {
 
-	var visibleSelected = [];
+
 	var visibleSelectedTracker = [];
 	var filterFather;
 	var h;
@@ -164,20 +164,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 
-	getVisibleService = function(un,axis){
-		var toSend = {
-			'hierarchy':un,
-			'axis':axis
-		}
-		var encoded = encodeURI('1.0/hierarchy/getvisible?SBI_EXECUTION_ID='+ JSsbiExecutionID);
-		sbiModule_restServices.promisePost
-		(encoded,"",toSend)
-		.then(function(response) {
 
-		}, function(response) {
-			//sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
-		});
-	};
 
 	/**
 	 * Dialogs
@@ -186,7 +173,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.openFiltersDialogAsync = function(ev, filter, node, index) {
 
 		$scope.clearLoadedData(filter.uniqueName);
-		visibleSelected = [];//check it
+
 		visibleSelectedTracker = [];//check it
 		$scope.searchText = "";
 		$scope.loadingFilter = true;
@@ -196,7 +183,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 
 		if(filter.axis > -1){
-			getVisibleService(filter.selectedHierarchyUniqueName,filter.axis);
 			$scope.isSlicer=false;
 		}
 		$scope.filterDialogToolbarName = filter.caption;
@@ -370,19 +356,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		});
 	}
 
-
-
-	//in order to send correct object to service children property witch is used for tree representation must be removed
-	removeChildren = function(){
-		for(var i=0; i<visibleSelected.length;i++){
-			if(visibleSelected[i].children != undefined){
-				delete visibleSelected[i].children;
-			}
-			if(visibleSelected[i].collapsed != undefined){
-				delete visibleSelected[i].collapsed;
-			}
-		}
-	};
 
 	//selecting filter (old selected filter is saved in order to leave interface consistent if user decide to cancel selection)
 	$scope.selectFilter = function(item){
@@ -572,14 +545,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	//save action called from rows/columns axis=0/axis=1
 	filterPlaceMemberOnAxis = function(){
-		removeChildren();
+
 		clearSelectedList();
-		console.log("from pmona"+visibleSelected);
 		var encoded = encodeURI('1.0/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost
 		(encoded,"",hierarchyTreeService.getVisibleMembers($scope.data))
 		.then(function(response) {
-			 visibleSelected = [];
+
 			 $scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.memberAxis.error'), 'Error');
