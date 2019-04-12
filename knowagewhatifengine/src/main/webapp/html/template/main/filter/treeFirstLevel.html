@@ -15,7 +15,7 @@
 				</md-icon>
 			</span>
 			<span ng-click="" ng-show="activeaxis >= 0">
-				<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+				<md-checkbox ng-model="item.visible">
 				<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 					{{item.name}}
 				</span>	
