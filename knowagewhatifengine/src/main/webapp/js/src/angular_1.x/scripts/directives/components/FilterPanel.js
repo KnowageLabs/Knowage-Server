@@ -141,6 +141,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.isSlicer=true;
 	$scope.parametersLoaded= false;
 
+	$scope.unSelectAll = function(tree){
+
+		hierarchyTreeService.setVisibilityForAll(tree,false);
+		filterPlaceMemberOnAxis()
+	}
+
 	$scope.parameterBindings=[];
 
 	$scope.clearLoadedData = function(name){

@@ -32,10 +32,19 @@
 				}
 		}
 
-		function visibilityManagerVisitor(visible){
+		function visibilityManagerVisitor(root,visible){
 			this.visible = visible;
+			var rootElement = root;
+			var isRoot = function(element){
+				return rootElement === element;
+			}
 			this.visit = function(element){
+				if(isRoot(element)){
+					element.visible = true;
+					return;
+				}
 				element.visible = this.visible;
+
 			}
 		}
 
@@ -53,13 +62,20 @@
 		var setVisibilityForAll = function(tree,visible){
 
 			treeIteratorService
-			.accept(new visibilityManagerVisitor(visible))
+			.accept(new visibilityManagerVisitor(tree[0],visible))
 			.iterate(tree,'children')
+		}
+
+		var isRootElement = function(tree,element){
+			if(tree[0]){
+				return tree[0];
+			}
 		}
 
 		return {
 			getVisibleMembers:getVisibleMembers,
-			setVisibilityForAll:setVisibilityForAll
+			setVisibilityForAll:setVisibilityForAll,
+
 		}
 
 	})
