@@ -806,6 +806,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
 			angular.merge(filtersToSend, filters);
+			if(widgetObject.type=="selector"){
+                if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
+                        && widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
+                        && filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
+                    delete filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name];
+                }
+            }
 		}
 
 		var limitRows;
