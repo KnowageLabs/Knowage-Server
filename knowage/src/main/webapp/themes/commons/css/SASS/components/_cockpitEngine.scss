@@ -33,7 +33,7 @@
 		}
 	}
 
-	#sheetTabs:not(.screenShottingSheet) #gridsterContainer {
+	#sheetTabs:not(.screenShottingSheet) #gridsterContainer:not(.cockpitEditMode) {
 		background: none !important;
 		min-height: 0 !important;
 	}
