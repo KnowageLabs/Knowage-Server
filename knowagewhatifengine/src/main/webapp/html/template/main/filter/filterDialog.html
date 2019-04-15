@@ -31,7 +31,7 @@
 					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
 				</md-checkbox>	
 				
-				<md-button ng-show="true" ng-click="unSelectAll(data)" class="md-raised">
+				<md-button ng-if="!isSlicer" ng-click="unSelectAll(data)" class="md-raised">
 					<md-tooltip md-direction="top">
           				Unselect all
         			</md-tooltip>
