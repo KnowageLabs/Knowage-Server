@@ -287,11 +287,11 @@ public class CrossTab {
 			}
 			String name = dataStoreMetadataFields.getJSONObject(i).getString("name");
 			String header = dataStoreMetadataFields.getJSONObject(i).getString("header");
-			if (columnsHeaderList.contains(header)) {
+			if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
 				columnsNameList.add(addNumberToColumnName(name, -1));
-			} else if (rowsHeaderList.contains(header)) {
+			} else if (rowsHeaderList.contains(header) || rowsHeaderIdList.contains(header)) {
 				rowsNameList.add(addNumberToColumnName(name, -1));
-			} else if (measuresHeaderList.contains(header)) {
+			} else if (measuresHeaderList.contains(header) || measuresHeaderIdList.contains(header)) {
 				measuresNameList.add(addNumberToColumnName(name, -1));
 			}
 		}
