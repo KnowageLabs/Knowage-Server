@@ -287,11 +287,11 @@ public class CrossTab {
 			}
 			String name = dataStoreMetadataFields.getJSONObject(i).getString("name");
 			String header = dataStoreMetadataFields.getJSONObject(i).getString("header");
-			if (columnsHeaderList.contains(header)) {
+			if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
 				columnsNameList.add(addNumberToColumnName(name, -1));
-			} else if (rowsHeaderList.contains(header)) {
+			} else if (rowsHeaderList.contains(header) || rowsHeaderIdList.contains(header)) {
 				rowsNameList.add(addNumberToColumnName(name, -1));
-			} else if (measuresHeaderList.contains(header)) {
+			} else if (measuresHeaderList.contains(header) || measuresHeaderIdList.contains(header)) {
 				measuresNameList.add(addNumberToColumnName(name, -1));
 			}
 		}
@@ -342,29 +342,41 @@ public class CrossTab {
 			valueRecord = dataStoredata.getJSONObject(index);
 
 			columnPath = "";
-			for (int i = 0; i < columnsCount; i++) {
-				String column = columnsNameList.get(i);
-				Object value = valueRecord.get(column);
-				String valueStr = null;
-				if (value == null) {
-					valueStr = "null";
-				} else {
-					valueStr = value.toString();
+			try {
+				for (int i = 0; i < columnsCount; i++) {
+					String column = columnsNameList.get(i);
+					Object value = valueRecord.get(column);
+					String valueStr = null;
+					if (value == null) {
+						valueStr = "null";
+					} else {
+						valueStr = value.toString();
+					}
+					columnPath = columnPath + PATH_SEPARATOR + valueStr;
 				}
-				columnPath = columnPath + PATH_SEPARATOR + valueStr;
+			}
+			catch(Exception e){
+				logger.error("Error building the CrossTab Object " + e);
+				throw new SpagoBIEngineRuntimeException("Error building the CrossTabObject");
 			}
 
 			rowPath = "";
-			for (int i = 0; i < rowsCount; i++) {
-				String row = rowsNameList.get(i);
-				Object value = valueRecord.get(row);
-				String valueStr = null;
-				if (value == null) {
-					valueStr = "null";
-				} else {
-					valueStr = value.toString();
+			try {
+				for (int i = 0; i < rowsCount; i++) {
+					String row = rowsNameList.get(i);
+					Object value = valueRecord.get(row);
+					String valueStr = null;
+					if (value == null) {
+						valueStr = "null";
+					} else {
+						valueStr = value.toString();
+					}
+					rowPath = rowPath + PATH_SEPARATOR + valueStr.toString();
 				}
-				rowPath = rowPath + PATH_SEPARATOR + valueStr.toString();
+			}
+			catch(Exception e){
+				logger.error("Error building the CrossTab Object " + e);
+				throw new SpagoBIEngineRuntimeException("Error building the CrossTabObject");
 			}
 			// defines array of data in according to coordinate:
 			for (int i = 0; i < measuresNameList.size(); i++) {
