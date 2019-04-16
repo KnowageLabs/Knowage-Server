@@ -1,5 +1,12 @@
 angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location){
 	var gs=this;
+	var savingDataCinf = false;
+	this.savingDataConfiguration = function (isSaving){
+		savingDataCinf = isSaving
+	}
+	this.isSavingDataConfiguration = function (){
+		return savingDataCinf
+	}
 	this.openGeneralConfiguration=function(){
 		 var position = $mdPanel.newPanelPosition().absolute().center();
 
@@ -131,9 +138,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		    ).then(function(result){
 	    		cockpitModule_properties.DOCUMENT_LABEL = result.label;
 	    		cockpitModule_properties.DOCUMENT_NAME = result.name;
-	    		doSaveCockpit();		    	
+	    		doSaveCockpit();
 		    }, function() {
-		    	
+
 		    });
 
 		}else{
@@ -180,30 +187,30 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	this.isFromNewCockpit=function(){
 		return (window.parent.angular.element(window.frameElement).scope()!=undefined && window.parent.angular.element(window.frameElement).scope().closeConfirm!=undefined);
 	}
-	
+
 	//get templates location
 	gs.getTemplateUrl = function(widget,template){
 		var basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
 		var templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
   		return basePath + templatesUrl + template +'.html';
   	}
-	
-	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){		
+
+	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){
 		$scope.translate = sbiModule_translate;
 		$scope.regex = kn_regex;
 		$scope.cockpit = {
 			label: '',
 			name: ''
 		};
-				
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
-		
+
 		$scope.save = function(result){
 			$mdDialog.hide(result);
 		}
-		
+
 	}
-	
+
 });

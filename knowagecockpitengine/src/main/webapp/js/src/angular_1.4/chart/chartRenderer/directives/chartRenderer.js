@@ -160,10 +160,10 @@ angular.module('chartRendererModule')
 
 				}
 
-			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
+			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams, shouldUpdate){
 				if(scope.updateble){
 					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
-					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
+					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData && !shouldUpdate){
 						scope.updateChart(scope.widgetData,dataForSending);
 					}else{
 						var transformedData = dataForSending;

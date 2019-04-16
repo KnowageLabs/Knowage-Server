@@ -347,7 +347,7 @@ function associationGroupController($scope,sbiModule_translate,cockpitModule_nea
 	})
 }
 
-function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_properties,sbiModule_user){
+function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_properties,sbiModule_user,cockpitModule_generalServices){
 
 	// see if smart detection is enabled
 	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
@@ -501,7 +501,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 	    				  // manually update of widget
 	    				  $rootScope.$broadcast('WIDGET_EVENT','PARAMETER_CHANGE',{dsList:datasetParameterChanged,docList:documentParameterChanged});
 	    			  }
-
+	    			  cockpitModule_generalServices.savingDataConfiguration(true)
 		    		  $rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_CLEAN_CACHE",null);
 		    		  mdPanelRef.close();
 		    		  selectionWatch();
