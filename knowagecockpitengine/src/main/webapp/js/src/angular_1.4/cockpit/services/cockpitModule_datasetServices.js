@@ -732,7 +732,23 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
 			angular.merge(filtersToSend, filters);
-			if(widgetObject.type=="selector"){
+
+            var isColumnInAssociation = false;
+			for(var i=0; !isColumnInAssociation && i<cockpitModule_template.configuration.aggregations.length; i++){
+			    var aggregation = cockpitModule_template.configuration.aggregations[i];
+			    for(var j=0; !isColumnInAssociation && j<aggregation.associations.length; j++){
+			        var association = aggregation.associations[j];
+                    for(var k=0; !isColumnInAssociation && k<association.fields.length; k++){
+                        var field = association.fields[k];
+                        if(field.type=="dataset" && field.store==datasetLabel && field.column==widgetObject.content.selectedColumn.name){
+                            isColumnInAssociation = true;
+                            break;
+                        }
+                    }
+                }
+			}
+
+			if(widgetObject.type=="selector" && !isColumnInAssociation){
                 if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
                         && widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
                         && filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
