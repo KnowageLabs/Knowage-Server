@@ -1,134 +1,40 @@
-/* -- import Roboto Font ---------------------------- */
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Regular-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Regular-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
-
-}
-
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Italic-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Italic-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Italic-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Italic-webfont.svg#RobotoItalic') format('svg');
-    font-weight: normal;
-    font-style: italic;
-}
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */ 
  
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Bold-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Bold-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Bold-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Bold-webfont.svg#RobotoBold') format('svg');
-    font-weight: bold;
-    font-style: normal;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-BoldItalic-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-BoldItalic-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-BoldItalic-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-BoldItalic-webfont.svg#RobotoBoldItalic') format('svg');
-    font-weight: bold;
-    font-style: italic;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Thin-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Thin-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Thin-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Thin-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Thin-webfont.svg#RobotoThin') format('svg');
-    font-weight: 200;
-    font-style: normal;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-ThinItalic-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-ThinItalic-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-ThinItalic-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');  
-    font-weight: 200;
-    font-style: italic;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Light-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Light-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Light-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Light-webfont.svg#RobotoLight') format('svg');
-    font-weight: 100;
-    font-style: normal;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-LightItalic-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-LightItalic-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-LightItalic-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-LightItalic-webfont.svg#RobotoLightItalic') format('svg');
-    font-weight: 100;
-    font-style: italic;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-Medium-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-Medium-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-Medium-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-Medium-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-Medium-webfont.svg#RobotoMedium') format('svg');
-    font-weight: 300;
-    font-style: normal;
-}
- 
-@font-face {
-    font-family: 'Roboto';
-    src: url('../../fonts/roboto/Roboto-MediumItalic-webfont.eot');
-    src: url('../../fonts/roboto/Roboto-MediumItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/roboto/Roboto-MediumItalic-webfont.woff') format('woff'),
-         url('../../fonts/roboto/Roboto-MediumItalic-webfont.ttf') format('truetype'),
-         url('../../fonts/roboto/Roboto-MediumItalic-webfont.svg#RobotoMediumItalic') format('svg');
-    font-weight: 300;
-    font-style: italic;
-}
-
-/* -- import Material Icons Font -------------------- */
-@font-face {
+ @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(../../fonts/materialIcons/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: url('../../../commons/fonts/material-design-icons/MaterialIcons-Regular.eot'); /* For IE6-8 */
   src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(../../fonts/materialIcons/MaterialIcons-Regular.woff2) format('woff2'),
-       url(../../fonts/materialIcons/MaterialIcons-Regular.woff) format('woff'),
-       url(../../fonts/materialIcons/MaterialIcons-Regular.ttf) format('truetype');
+    local('MaterialIcons-Regular'),
+    url('../../../commons/fonts/material-design-icons/MaterialIcons-Regular.woff2') format('woff2'),
+    url('../../../commons/fonts/material-design-icons/MaterialIcons-Regular.woff') format('woff'),
+    url('../../../commons/fonts/material-design-icons/MaterialIcons-Regular.ttf') format('truetype');
 }
 
+/* -- Material Icons Font customization-------------------- */
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;  /* Preferred icon size */
   display: inline-block;
-  width: 1em;
-  height: 1em;
   line-height: 1;
   text-transform: none;
   letter-spacing: normal;
@@ -147,6 +53,7 @@
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
+
 
 .material-icons-row {
   font-family: 'Material Icons';
@@ -207,7 +114,7 @@
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
-
+ 
 
 /* -- You can use this sidebar in Bootstrap (v3) projects. HTML-markup like Navbar bootstrap component will make your work easier. -- */
 /* -- Box model ------------------------------- */
