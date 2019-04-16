@@ -281,18 +281,19 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 			 function getScreenshot(sheet){
 			 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
 			 	function getPage(sheet){
-//			 		var heightToUse;
+			 		var heightToUse;
 			 		var exportSheetBar = false;
 			 		var element = document.getElementById('kn-cockpit');
 			 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
 //			 		if(element.scrollHeight < gridsterElement.clientHeight) heightToUse = gridsterElement.clientHeight + 32 +'px';
 			 		if(element.scrollHeight < gridsterElement.scrollHeight){
 			 			element = gridsterElement;
+			 			heightToUse = gridsterElement.scrollHeight + 32;
 			 			exportSheetBar = true;
 			 		}
-//			 		else heightToUse = element.clientHeight + 'px';
+			 		else heightToUse = element.scrollHeight;
 		 			
-		 			if(sheet.index != 0) doc.addPage(element.clientWidth,element.scrollHeight);
+		 			if(sheet.index != 0) doc.addPage(element.clientWidth,heightToUse);
 			 		html2canvas(element,{
 			 			allowTaint: true,
 			 			useCORS: true,

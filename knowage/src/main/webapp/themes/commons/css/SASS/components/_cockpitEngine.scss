@@ -930,7 +930,7 @@
 			min-height: 100% !important;
 			background-position: 0 0 !important;
 			background-repeat: repeat !important;
-			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%);
+			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%) !important;
 			.showActionButtonHandler {
 				opacity: .4 !important;
 				&:hover {
