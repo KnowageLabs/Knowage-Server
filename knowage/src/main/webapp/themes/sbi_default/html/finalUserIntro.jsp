@@ -127,7 +127,7 @@ footer {
         <div class="carousel-inner">
             <div class="item active">
                 <!-- Set the first background image using inline CSS below. -->
-                <div class="fill" style="background-image:url('../img/backgroundLogo.jpg');"></div>
+                <div class="fill" style="background-image:url('../../commons/img/defaultTheme/backgroundLogo.jpg');"></div>
                 <div class="carousel-caption">
                     <h1>Your data at a glance</h1>
                     Define queries on your data instantly, with a few clicks and simple drag&drop actions.

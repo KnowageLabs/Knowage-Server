@@ -34,7 +34,7 @@
 			left:0;
 			top:0;
 			z-index:1 !important;
-			background-image: url('../img/backgroundLogo.jpg');
+			background-image: url('../../commons/img/defaultTheme/backgroundLogo.jpg');
 			background-size: cover;
 }
 
@@ -64,7 +64,7 @@ img {
   
 
 	<div class="layer">
-		<img src="../img/adminLogo.png" class="logo"/>
+		<img src="../../commons/img/defaultTheme/adminLogo.png" class="logo"/>
 		<div class="text">Open menu here to begin</div>
 
 	</div>

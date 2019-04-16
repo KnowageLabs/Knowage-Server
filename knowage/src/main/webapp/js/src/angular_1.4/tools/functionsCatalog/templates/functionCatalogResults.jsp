@@ -1,7 +1,5 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/FunctionsCatalog/functionsCatalog.css")%>">
-
 <md-dialog aria-label='{{"sbi.functionscatalog.executionresult.executionresult"}}' ng-cloack>
 
 	<form>
