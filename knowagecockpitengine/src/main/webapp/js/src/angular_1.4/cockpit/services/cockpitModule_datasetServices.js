@@ -935,7 +935,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				attachTo: eleToAtt,
 				locals :{currentAvaiableDataset:container,multiple:multiple,deferred:deferred},
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
-
+					
+					$scope.translate = sbiModule_translate;
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
@@ -948,9 +949,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					//$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
 
 					$scope.cockpitDatasetColumn = [
-						{"headerName":"Label","field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
-						{"headerName":"Name","field":"name"},
-						{"headerName":"Parameters","field":"parameters","cellStyle":
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 					
 					$scope.cockpitDatasetGrid = {
