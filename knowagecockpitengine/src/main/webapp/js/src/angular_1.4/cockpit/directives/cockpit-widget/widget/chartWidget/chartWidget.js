@@ -184,6 +184,7 @@ angular.module('cockpitModule')
 function cockpitChartWidgetControllerFunction(
 		$scope,cockpitModule_widgetSelection,
 		cockpitModule_datasetServices,
+		cockpitModule_generalServices,
 		cockpitModule_widgetConfigurator,
 		$q,
 		$mdPanel,
@@ -286,12 +287,14 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,(dataset.isRealtime && dataset.useCache),changedChartType,dataAndChartConf,objForDrill);
+				$scope.$broadcast(nature,dataToPass,(dataset.isRealtime && dataset.useCache),changedChartType,dataAndChartConf,objForDrill,cockpitModule_generalServices.isSavingDataConfiguration());
+				cockpitModule_generalServices.savingDataConfiguration(false)
 
 			} else {
 				//Refresh for Not realtime datasets
 				$timeout(function (){
-					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
+					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill, cockpitModule_generalServices.isSavingDataConfiguration());
+					cockpitModule_generalServices.savingDataConfiguration(false)
 				},400)
 
 			}

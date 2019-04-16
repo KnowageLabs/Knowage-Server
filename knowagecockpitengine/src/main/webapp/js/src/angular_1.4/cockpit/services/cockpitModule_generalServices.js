@@ -1,5 +1,12 @@
 angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location, kn_regex){
 			var gs=this;
+	var savingDataCinf = false;
+	this.savingDataConfiguration = function (isSaving){
+		savingDataCinf = isSaving
+	}
+	this.isSavingDataConfiguration = function (){
+		return savingDataCinf
+	}
 			this.openGeneralConfiguration=function(){
 			 var position = $mdPanel.newPanelPosition().absolute().center();
 
