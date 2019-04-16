@@ -48,6 +48,7 @@
     "jquery": "3.2.1",
     "jsonformatter": "0.6.0",
     "jspdf": "1.5.3",
+    "material-design-icons": "3.0.1",
     "moment": "2.22.2",
     "ngdraggable": "0.1.10",
     "pleaserotate.js": "^0.1.2",
