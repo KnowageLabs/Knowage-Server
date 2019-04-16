@@ -189,6 +189,8 @@ function getCrossParamsForTreemap(point,chartConf){
 
 function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp) {
 
+	//console.log(chartConf)
+
 	var colors = [];
 
 	if (chartConf.colors.length == Object.keys(chartConf.data[0]).length) {
@@ -264,12 +266,15 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 				name: dataset,
 				parentName:dataset,
 		}
-		counter++;
+		;
 		points.push(level);
-		func(chartConf.data[0][dataset],dataset, level, dataset);
+		func(chartConf.data[0][dataset],dataset, level, dataset,counter);
+		counter++
 	}
 
-	function func(resultData, nameds, dataValue, dataset){
+
+
+	function func(resultData, nameds, dataValue, dataset,parentNum){
 		var counter=0;
 		for (var resultRecord in resultData){
 			level = {
@@ -277,6 +282,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 					name: resultRecord,
 					parent: dataValue.id,
 					parentName:dataset,
+					scale:parentNum*10
 			}
 
 			if (resultData[resultRecord].value){
@@ -293,7 +299,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			}
 			else{
 				points.push(level);
-				func(resultData[resultRecord], resultRecord, level, dataset);
+				func(resultData[resultRecord], resultRecord, level, dataset,parentNum);
 			}
 			counter++;
 		}
@@ -304,7 +310,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	var tickPositions = [];
 	tickPositions.push(0);
 	var scaleObject = {};
-/*odavde dragovane points scale object*/
+
 	for (var i = 0; i < points.length; i++) {
 		if(scaleObject.hasOwnProperty(points[i].parentName)){
 			scaleObject[(points[i].parentName)].push(points[i]);
@@ -314,67 +320,14 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		}
 	}
 
-	var sumaForMax = 0
-	var ukupnaVrednost = 0;
-
-	for(prop in scaleObject){
-
-		for(var i = 0 ; i < scaleObject[prop].length ; i++){
-
-			if(scaleObject[prop][i].hasOwnProperty("value")){
-				ukupnaVrednost +=  scaleObject[prop][i].value;
-
-			}
-
-		}
-
-	}
-
-	for (property in scaleObject) {
-		var suma = 0
-
-		for (var i = 0; i < scaleObject[property].length; i++) {
-			if(scaleObject[property][i].hasOwnProperty("value")){
-				suma = suma + scaleObject[property][i].value;
-
-			}
-		}
-		if(sumaForMax <= suma){
-			sumaForMax = suma;
-
-		}
-		for (var i = 0; i < scaleObject[property].length; i++) {
-			if(scaleObject[property][i].hasOwnProperty("value")){
-				scaleObject[property][i].suma = suma;
-			}
-		}
-	}
-
-	var divider = sumaForMax / colors.length;
-	tickPositions1.push(0);
-	var next = 0
-	for (var i = 0; i < colors.length; i++) {
-
-		next = next + divider;
-		tickPositions1.push(next);
-	}
-
-	for (property in scaleObject) {
-		for (var i = 0; i < scaleObject[property].length; i++) {
-			if(scaleObject[property][i].hasOwnProperty("value")){
-				scaleObject[property][i].scale = scale
-			}
-		}
-		scale = scale+divider;
-		tickPositions.push(scale)
-	}
 	for (property in scaleObject) {
 		var colorvalue = [];
 
 		for (var i = 0; i < scaleObject[property].length; i++) {
 			if(scaleObject[property][i].hasOwnProperty("value")){
 				colorvalue.push(scaleObject[property][i]);
-				scaleObject[property][i].colorValue = scaleObject[property][i].value + scaleObject[property][i].scale
+				var randomNum = Math.floor(Math.random() * 9 );
+			scaleObject[property][i].colorValue = randomNum!=9? randomNum+Math.random(): randomNum;
 			}
 		}
 	}
@@ -490,13 +443,21 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	return 	{
 		chart: chartObject,
 		colorAxis: {
+
+			labels: { enabled: false },
+			tickLength: 0,
+			gridLineWidth:0,
+
 			min: 0 ,
 			max: colors.length * 10,
 			stops: modifiedStops,
-			tickPositions: tickPositions,
 		},
 		legend:{
-			enabled: false
+			enabled: true,
+			itemStyle: {
+	            color: '#FFF',
+
+	        }
 		},
 		tooltip: tooltipObject,
 		series:
@@ -604,14 +565,13 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			}],
 			data: points.map(function (point) {
                 if (point.colorValue ) {
-                    if(point.colorValue >= point.scale+ divider){
-                    	point.colorValue = point.scale+ divider  - 6
-                    }
+                	point.colorValue += point.scale
                 }
 
                 return point;
             }),
 			events:{
+
 				click: function(event){
 					if(!exportWebApp){
 						if(chartConf.chart.isCockpit){
@@ -669,6 +629,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
             }
 		},
 
+
 		/**
 		 * Credits option disabled/enabled for the TREEMAP chart. This option (boolean value)
 		 * is defined inside of the VM for the TREEMAP chart. If enabled credits link appears
@@ -689,6 +650,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 				}
 		}
 	};
+
 }
 
 function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo,exportWebApp) {
@@ -770,6 +732,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	    	colorStops.push([1,colors[0]]);
 		 }
 	}
+
 
     var chartObject = null;
 
@@ -1008,6 +971,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     var toReturn = {
 
     	chart: chartObject,
+
         title: {
 			text: chartConf.title.text,
             align: chartConf.title.style.textAlign,
@@ -1147,7 +1111,6 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
             data:points,
             events: {
             click: function(event){
-//            	console.log(event.point);
             	if(!exportWebApp){
                 	if(chartConf.chart.isCockpit==true){
                 		if(chartConf.chart.outcomingEventsEnabled){
