@@ -135,7 +135,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-toolbar>
 				<md-card ng-show="!searchingDocuments && searchDocuments.length==0">
 					<md-card-content class="noPadding" style="height:100%;">
-						<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0">{{translate.load("sbi.browser.document.noDocument")}}</h3>
+						<div ng-show="folderDocuments.length==0" class="emptyContainer">
+							<div class="outerIcon">
+								<div class="emptyIconSvg"></div>
+							</div>
+							<div class="emptyIconText">
+								{{translate.load("sbi.browser.document.noDocument")}}
+							</div>
+						</div>
 						<div ng-show="folderDocuments.length>0" ag-grid="documentBrowserGrid" class="ag-theme-balham noMargin documentBrowserGrid ag-theme-knowage"></div>
 					</md-card-content>
 				</md-card>

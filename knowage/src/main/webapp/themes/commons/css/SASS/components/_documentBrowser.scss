@@ -357,11 +357,37 @@
 	}
 
 	.mainContent {
+		.emptyContainer {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			.outerIcon {
+				.emptyIconSvg {
+					width: 170px;
+	    			height: 80px;
+	    			background-repeat: no-repeat;
+	    			background-size: 50%;
+	    			background-position: center;
+	    			background-color: $baseColor;
+	    			@include custom-mask-image('../img/documentBrowser/empty.svg', 50%, center);
+				}
+			}
+			.emptyIconText {
+				font-size: 14px;
+				text-transform: uppercase;
+			}
+		}
 		md-card {
 			height: calc(100% - 80px);
 			.documentBrowserGrid {
 				height: 100%;
 				width: 100%;
+				.ag-body-viewport {
+					overflow-x: hidden;
+				}
 			}
 		}
 	}
