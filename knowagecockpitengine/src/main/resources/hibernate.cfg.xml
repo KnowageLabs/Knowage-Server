@@ -40,7 +40,6 @@
 		<mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
-
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiProductType.hbm.xml" />
 
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiAuthorizations.hbm.xml" />
@@ -62,6 +61,7 @@
 		<mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjState.hbm.xml" />
 		<mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSubreports.hbm.xml" />
 		<mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiViewpoints.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelViewpoints.hbm.xml" />
 		<mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFunctions.hbm.xml" />
 		<mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFuncRole.hbm.xml" />
 		<mapping resource="it/eng/spagobi/monitoring/metadata/mapping/SbiAudit.hbm.xml" />
@@ -136,6 +136,9 @@
 		<!-- massive export -->
 		<!-- -->
 		<mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml" />
+		        
+        <!-- dossier activity -->
+        <mapping resource="it/eng/spagobi/dossier/metadata/mapping/SbiDossierActivity.hbm.xml" />
 
 
 		<!-- tools: Meta-models catalogue -->
@@ -144,7 +147,7 @@
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelParameter.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetamodelParuse.hbm.xml" />
  		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelParview.hbm.xml" />
-			
+		
 		<!-- Federation definition -->
 		<mapping resource="it/eng/spagobi/federateddataset/metadata/mapping/SbiFederationDefinition.hbm.xml"/>
         <mapping resource="it/eng/spagobi/federateddataset/metadata/mapping/SbiDataSetFederation.hbm.xml"/>
@@ -181,8 +184,8 @@
         <!-- Cross Navigation -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigation.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigationPar.hbm.xml" />
-	
-	<!-- News Management -->
+        
+        <!-- News Management -->
         <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
         
