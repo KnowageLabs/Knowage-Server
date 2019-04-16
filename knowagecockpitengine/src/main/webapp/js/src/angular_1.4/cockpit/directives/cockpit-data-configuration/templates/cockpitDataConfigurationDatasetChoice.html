@@ -1,3 +1,20 @@
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
 
 	<md-card-content flex layout="column" class="noPadding" style="overflow-y:auto;">
@@ -9,9 +26,10 @@
 		</md-toolbar>
 		
 		<md-content flex layout="column" layout-align="center center">
-			<md-progress-circular ng-hide="isDatasetListLoaded" md-mode='indeterminate'></md-progress-circular>
-
-			<angular-table flex ng-show="isDatasetListLoaded"
+		
+			<div ag-grid="cockpitDatasetGrid" class="ag-theme-balham noMargin ag-theme-knowage-default" style="width:100%;height:calc(100% - 85px);padding: 8px;"></div>
+			
+			<!--  angular-table flex ng-show="isDatasetListLoaded"
 				id="cockpitDatasetChoice"
 				ng-model='datasetList'
 				columns="cockpitDatasetColumn"
@@ -23,14 +41,14 @@
 				no-pagination="true"
 				selected-item="tmpCurrentAvaiableDataset"
 				comparison-column="'id'">
-			</angular-table>
+			</angular-table-->
 		</md-content>
 		
 	</md-card-content>
 	
 	<md-card-actions layout="row" layout-align="end center">
-		<md-button ng-click="closeDialog()">Cancel</md-button>
-		<md-button ng-click="saveDataset()">Save</md-button>
+		<md-button ng-click="closeDialog()" class="md-raised">Cancel</md-button>
+		<md-button ng-click="saveDataset()" class="md-raised md-primary">Save</md-button>
 	</md-card-actions>
 	
 </md-card>

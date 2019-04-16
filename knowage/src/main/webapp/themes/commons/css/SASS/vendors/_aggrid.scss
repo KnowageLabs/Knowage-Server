@@ -76,6 +76,9 @@ $aggrid-border-color: #d9dcde;
 		    	font-weight: $headerFontSize;
 		    }
 		}
+		.ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
+			width: calc(100% - 32px);
+		}
 		.ag-row-odd, .ag-row-even {
 			background-color: transparent;
 		}
@@ -99,6 +102,11 @@ $aggrid-border-color: #d9dcde;
 			    border-bottom-color: $aggrid-border-color;
 			    background-color: initial;
 			}
+		}
+		.ag-checkbox-checked, .ag-checkbox-unchecked, .ag-checkbox-indeterminate {
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 		.ag-icon-checkbox-checked, .ag-icon-checkbox-unchecked, .ag-icon-checkbox-indeterminate {
 			background-size: 20px 20px;

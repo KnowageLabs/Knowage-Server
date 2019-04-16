@@ -945,8 +945,33 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.multiple=multiple;
 
-					$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
+					//$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
 
+					$scope.cockpitDatasetColumn = [
+						{"headerName":"Label","field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
+						{"headerName":"Name","field":"name"},
+						{"headerName":"Parameters","field":"parameters","cellStyle":
+							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
+					
+					$scope.cockpitDatasetGrid = {
+					        enableColResize: false,
+					        enableFilter: true,
+					        enableSorting: true,
+					        pagination: true,
+					        paginationAutoPageSize: true,
+					        rowSelection: multiple ? 'multiple' : 'single',
+					        onGridSizeChanged: resizeColumns,
+					        columnDefs : $scope.cockpitDatasetColumn
+					};
+					
+					function resizeColumns(){
+						$scope.cockpitDatasetGrid.api.sizeColumnsToFit();
+					}
+					
+					function hasParametersRenderer(params){
+						return (params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
+					}
+					
 					$scope.isDatasetListLoaded = false;
 
 					cockpitModule_datasetServices.loadDatasetList().then(function(response){
@@ -962,6 +987,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}
 						$scope.datasetList = datasetList;
 						$scope.isDatasetListLoaded = true;
+						$scope.cockpitDatasetGrid.api.setRowData($scope.datasetList);
 					},function(response){
 						sbiModule_restServices.errorHandler(response,"");
 						def.reject();
@@ -975,6 +1001,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.saveDataset=function(){
 						if(multiple){
+							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
 								$scope.tmpCurrentAvaiableDataset[i].expanded = true;
 								if(autoAdd){
@@ -989,6 +1016,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.$destroy();
 
 						}else{
+							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows()[0];
 							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0){
 								//fill the parameter
 
