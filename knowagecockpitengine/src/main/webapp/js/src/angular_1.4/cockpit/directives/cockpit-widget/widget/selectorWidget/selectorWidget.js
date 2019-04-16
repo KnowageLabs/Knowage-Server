@@ -453,9 +453,6 @@ angular.module('cockpitModule')
 						if(selection){
 							delete selection[key];
 							reloadAss=true;
-							if(reloadFilt.indexOf(item.ds) == -1){
-                                reloadFilt.push(item.ds);
-                            }
 						}
 					}
 				}
@@ -494,15 +491,7 @@ angular.module('cockpitModule')
 
 			setTimeout(function() {
                 for(var i in reloadFilt){
-                    var obj = cockpitModule_widgetSelection.getDatasetAssociation(reloadFilt[i]);
-                    if(obj && obj.datasets){
-                        for(var d in obj.datasets){
-                            var ds = obj.datasets[d];
-                            cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(ds);
-                        }
-                    }else{
-                        cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
-                    }
+                    cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
                 }
             }, 0);
 	    }

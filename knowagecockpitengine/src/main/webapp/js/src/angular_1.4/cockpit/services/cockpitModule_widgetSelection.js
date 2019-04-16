@@ -520,7 +520,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		var  assRefCount=0;
 		angular.forEach(cockpitModule_widgetSelectionUtils.associations, function(item,index){
 			var defer = $q.defer();
-			ws.loadAssociativeSelection(defer, item)
+			ws.loadAssociativeSelection(defer, item);
+			defer.promise.then(function(){
+                assRefCount++;
+                if(angular.equals(assRefCount,cockpitModule_widgetSelectionUtils.associations.length)){
+                    ws.refreshAllAssociatedWidget(isInit);
+                }
+            });
         })
 	}
 
@@ -767,9 +773,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
                 for(i in removedSelections){
                     var s = removedSelections[i].split(".");
                     ws.removeTimestampedSelection(s[0], s[1]);
-                    if(reloadFilt.indexOf(s[0]) == -1){
-                        reloadFilt.push(s[0]);
-                    }
                 }
             }
 
@@ -828,15 +831,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
         setTimeout(function() {
             for(var i in reloadFilt){
-                var obj = ws.getDatasetAssociation(reloadFilt[i]);
-                if(obj && obj.datasets){
-                    for(var d in obj.datasets){
-                        var ds = obj.datasets[d];
-                        ws.refreshAllWidgetWhithSameDataset(ds);
-                    }
-                }else{
-                    ws.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
-                }
+                ws.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
             }
         }, 0);
 	}
