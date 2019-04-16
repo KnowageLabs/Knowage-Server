@@ -718,6 +718,7 @@ function structureTabControllerFunction($scope, sbiModule_translate, sbiModule_r
 	}
 
 	$scope.categoryRemove = function(indexOfItem) {
+		if($scope.chartTemplate.VALUES.CATEGORY.drillOrder)
 		delete $scope.chartTemplate.VALUES.CATEGORY.drillOrder[$scope.categories[indexOfItem].column];
 		$scope.categories.splice(indexOfItem,1);
 	}
