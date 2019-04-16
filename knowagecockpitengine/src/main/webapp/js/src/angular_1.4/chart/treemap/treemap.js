@@ -244,7 +244,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		 }
 	}
 
-    if(colorStops.length >= 2 && colorStops[1][0] && colorStops[0][0]){
+    if(colorStops.length >= 2 && colorStops[1][0] != undefined && colorStops[0][0] != undefined){
+
         distance = colorStops[1][0] - colorStops[0][0];
     }
 
