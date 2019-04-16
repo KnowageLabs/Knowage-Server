@@ -456,6 +456,7 @@ angular.module('cockpitModule')
 
 	    $scope.deleteSelections = function(item){
 	    	var reloadAss=false;
+	    	var associatedDatasets = [];
 	    	var reloadFilt=[];
 
 	    	if(item.aggregated){
@@ -467,6 +468,7 @@ angular.module('cockpitModule')
 						if(selection){
 							delete selection[key];
 							reloadAss=true;
+							associatedDatasets.push(item.ds);
 						}
 					}
 				}
@@ -486,7 +488,7 @@ angular.module('cockpitModule')
 			}
 
 			if(reloadAss){
-				$scope.cockpitModule_widgetSelection.getAssociations(true);
+				$scope.cockpitModule_widgetSelection.getAssociations(true,undefined,undefined,associatedDatasets);
 			}
 
 			cockpitModule_widgetSelection.removeTimestampedSelection(item.ds, item.columnName);

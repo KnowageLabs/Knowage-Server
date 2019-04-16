@@ -221,7 +221,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return obj;
 	}
 
-	this.getAssociations=function(reloadSelection,tmpObj,deferred){
+	this.getAssociations=function(reloadSelection,tmpObj,deferred,associatedDatasets){
 		var payload = {};
 		payload["items"] = tmpObj==undefined ? cockpitModule_template.configuration.associations: tmpObj.associations;
 
@@ -236,7 +236,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				angular.copy(response.data,cockpitModule_template.configuration.aggregations);
 				if(reloadSelection || (!reloadSelection && someDel)){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection = [];
-					ws.refreshAllAssociations();
+					ws.refreshAllAssociations(associatedDatasets);
 				}
 			}
 			if(deferred!=undefined){
@@ -506,7 +506,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		$rootScope.$broadcast('WIDGET_EVENT','UPDATE_FROM_SELECTION',{isInit:isInit,data:data});
 	}
 
-	this.execRefreshAllAssociations = function(isInit){
+	this.execRefreshAllAssociations = function(isInit,associatedDatasets){
 		console.log("in: execRefreshAllAssociations",(new Date()).getTime());
 		var  assRefCount=0;
 		angular.forEach(cockpitModule_widgetSelectionUtils.associations, function(item,index){
@@ -515,19 +515,37 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			defer.promise.then(function(){
                 assRefCount++;
                 if(angular.equals(assRefCount,cockpitModule_widgetSelectionUtils.associations.length)){
-                    ws.refreshAllAssociatedWidget(isInit);
+                    if(associatedDatasets){
+                        var allAssociatedDatasets = []
+                        for(var i in associatedDatasets){
+                            var obj = ws.getDatasetAssociation(associatedDatasets[i]);
+                            if(obj && obj.datasets){
+                                for(var d in obj.datasets){
+                                    var ds = obj.datasets[d];
+                                    if(allAssociatedDatasets.indexOf(ds) == -1){
+                                        allAssociatedDatasets.push(ds);
+                                    }
+                                }
+                            }
+                        }
+                        for(var i in allAssociatedDatasets){
+                            ws.refreshAllWidgetWhithSameDataset(allAssociatedDatasets[i]);
+                        }
+                    }else{
+                        ws.refreshAllAssociatedWidget(isInit);
+                    }
                 }
             });
         })
 	}
 
-	this.refreshAllAssociations = function(){
+	this.refreshAllAssociations = function(associatedDatasets){
 		console.log("in: refreshAllAssociation",(new Date()).getTime());
 		if(cockpitModule_properties.all_widget_initialized==true){
-			ws.execRefreshAllAssociations(false);
+			ws.execRefreshAllAssociations(false,associatedDatasets);
 		}else{
 			var AWI=$rootScope.$on('ALL_WIDGET_INITIALIZED',function(){
-				ws.execRefreshAllAssociations(true);
+				ws.execRefreshAllAssociations(true,associatedDatasets);
 				AWI();
 			});
 		}
@@ -752,6 +770,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	this.updateSelections = function (tmpSelection, tmpFilters){
         var reloadAss = false;
+        var associatedDatasets = [];
         var reloadFilt = [];
 
         if(!angular.equals(tmpSelection, cockpitModule_template.configuration.aggregations)){
@@ -762,6 +781,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
                 for(i in removedSelections){
                     var s = removedSelections[i].split(".");
                     ws.removeTimestampedSelection(s[0], s[1]);
+                    associatedDatasets.push(s[0]);
                 }
             }
 
@@ -803,7 +823,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
         }
 
         if(reloadAss){
-            ws.getAssociations(true);
+            ws.getAssociations(true,undefined,undefined,associatedDatasets);
         }
 
         var hs=false;
