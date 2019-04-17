@@ -286,6 +286,11 @@
     
 
 	cockpit-widget{
+		.widgetSpinner {
+	    	top:calc(50% + 6px);
+	    	left:calc(50% + 12px);
+	    	margin-left:-25px;
+	    }
 		&>li{
 			&.fullScreenWidget{
 				width:100%!important;
