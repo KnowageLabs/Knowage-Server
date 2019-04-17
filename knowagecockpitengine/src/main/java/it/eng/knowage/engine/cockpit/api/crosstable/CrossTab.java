@@ -386,7 +386,7 @@ public class CrossTab {
 						Integer idx = getColumnIndex(entry.getValue().getMeasureLabel(), measuresHeaderList);
 						if (idx >= 0) {
 							String colName = measuresNameList.get(idx);
-							Double value = Double.valueOf(String.valueOf(valueRecord.get(colName)));
+							Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
 							String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
 							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
 							// add value to order only if parents are correct (useful for deep levels)
