@@ -294,7 +294,7 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 				 		}
 				 		else heightToUse = element.scrollHeight;
 			 			
-			 			if(sheet.index != 0) doc.addPage(element.clientWidth,heightToUse);
+			 			if(sheet.index != 0) doc.addPage([element.clientWidth,heightToUse],heightToUse>element.clientWidth? 'p':'l');
 				 		html2canvas(element,{
 				 			allowTaint: true,
 				 			useCORS: true,
@@ -340,9 +340,10 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 							if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
 							var tempElement = document.getElementById('kn-cockpit');
 					 		var gridsterElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
-					 		if(tempElement.scrollHeight < gridsterElement.scrollHeight) var heightToUse = gridsterElement.scrollHeight+32;
+					 		var sheetBarHeight = cockpitModule_template.sheets.length == 1 ? 0 : 32;
+					 		if(tempElement.scrollHeight < gridsterElement.scrollHeight) var heightToUse = gridsterElement.scrollHeight + sheetBarHeight;
 							var doc = new jsPDF({
-								orientation: 'l',
+								orientation: (heightToUse || tempElement.scrollHeight) > tempElement.clientWidth ? 'p' : 'l',
 								unit: 'mm',
 								format: [tempElement.clientWidth, heightToUse || tempElement.scrollHeight]
 							});
