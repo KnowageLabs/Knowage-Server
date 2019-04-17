@@ -1034,7 +1034,7 @@ function cockpitChartWidgetControllerFunction(
 
 			//if(d3Types.indexOf(chartType)<0){
 			if( Array.isArray(category)){
-				columnName = category[0].name;
+				columnName = category[(event.point.id.match(new RegExp("_", "g")) ).length-1].name;
 			}else{
 				columnName = category.name;
 			}
@@ -1113,7 +1113,7 @@ function cockpitChartWidgetControllerFunction(
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.value,
     				"CATEGORY_VALUE":event.point.name,
-    				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].name
+    				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[(event.point.id.match(new RegExp("_", "g")) ).length-1].name
     		};
 
     		return parameters;
