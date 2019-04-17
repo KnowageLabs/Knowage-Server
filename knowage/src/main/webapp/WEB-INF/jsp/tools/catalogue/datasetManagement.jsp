@@ -821,7 +821,7 @@ div.lower i  {
 								       	<label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
 								       
 								       	<md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
-								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="selectedDataSet.dsTypeCd=='Qbe'" ng-change="setFormDirty()">   
+								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="selectedDataSet.dsTypeCd=='Qbe'" ng-change="setFormDirty();getDatasetParametersFromBusinessModel(selectedDataSet)">   
 									        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
 								       	</md-select>  
 								       
