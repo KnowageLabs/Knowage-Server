@@ -42,7 +42,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -253,103 +253,105 @@ function cockpitToolbarControllerFunction($scope,$timeout,windowCommunicationSer
 	windowCommunicationService.addMessageHandler(handler);
 
 	$scope.exportPdf = function(){
-		cockpitModule_properties.LOADING_SCREENSHOT = true;
-		$mdDialog.show({
-			controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
-				$scope.translate = sbiModule_translate;
-				$scope.cockpitModule_properties = cockpitModule_properties;
-				$scope.cockpitModule_template = cockpitModule_template;
-			 },
-			 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
-			 parent: angular.element(document.body),
-			 hasBackdrop: false,
-			 clickOutsideToClose:false
-			 })
-			 
-			 function closeOrContinue(sheet){
-				if(sheet.index + 1 == cockpitModule_template.sheets.length) {
-	 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
-	 				$mdDialog.hide();
-	 				cockpitModule_properties.LOADING_SCREENSHOT = false;
-	 			}
-	 			else {
-	 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
-	 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
-	 			}
-			}
-			          
-			 function getScreenshot(sheet){
-			 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
-			 	function getPage(sheet){
-			 		var heightToUse;
-			 		var exportSheetBar = false;
-			 		var element = document.getElementById('kn-cockpit');
-			 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
-//			 		if(element.scrollHeight < gridsterElement.clientHeight) heightToUse = gridsterElement.clientHeight + 32 +'px';
-			 		if(element.scrollHeight < gridsterElement.scrollHeight){
-			 			element = gridsterElement;
-			 			heightToUse = gridsterElement.scrollHeight + 32;
-			 			exportSheetBar = true;
-			 		}
-			 		else heightToUse = element.scrollHeight;
-		 			
-		 			if(sheet.index != 0) doc.addPage(element.clientWidth,heightToUse);
-			 		html2canvas(element,{
-			 			allowTaint: true,
-			 			useCORS: true,
-			 			width: element.clientWidth,
-			 			height: element.scrollHeight,
-			 			scale : 1.5
-			 		}).then(function(canvas) {
-			 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
-			 			if(exportSheetBar){
-			 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
-			 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
-			 					closeOrContinue(sheet);
-			 				})
-			 			}else{
-			 				closeOrContinue(sheet);
-			 			}
-			 		});
-			 		
-			 	}
-			 	
-				 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
-				 		$timeout(function(){
-				 			getPage(sheet);
-				 		},1000)    
-				 	}else{
-				 		$scope.sheetWatcher = $scope.$watchCollection('sheetsWidgets',function(newValue,oldValue){
-				 			var tempIds = [];
-				 			for(var w in sheet.widgets){
-				 				if(newValue.indexOf(sheet.widgets[w].id) != -1) tempIds.push(sheet.widgets[w].id);
-				 			}
-				 			if(tempIds.length == sheet.widgets.length){
-				 				$timeout(function(){
-				 					getPage(sheet);
-				 					$scope.sheetWatcher();    
-				 				},3000)        
-				 			}
-				 		})    
-				 	}
-		 		}
-		
-				for(var s in cockpitModule_template.sheets){
-					if(cockpitModule_template.sheets[s].index == 0) {
-						if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
-						var tempElement = document.getElementById('kn-cockpit');
-				 		var gridsterElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
-				 		if(tempElement.scrollHeight < gridsterElement.scrollHeight) var heightToUse = gridsterElement.scrollHeight+32;
-						var doc = new jsPDF({
-							orientation: 'l',
-							unit: 'mm',
-							format: [tempElement.clientWidth, heightToUse || tempElement.scrollHeight]
-						});
-						
-						getScreenshot(cockpitModule_template.sheets[s]);
-						break;
-					}
+		return $q(function(resolve, reject) {
+			cockpitModule_properties.LOADING_SCREENSHOT = true;
+			$mdDialog.show({
+				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
+					$scope.translate = sbiModule_translate;
+					$scope.cockpitModule_properties = cockpitModule_properties;
+					$scope.cockpitModule_template = cockpitModule_template;
+				 },
+				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
+				 parent: angular.element(document.body),
+				 hasBackdrop: false,
+				 clickOutsideToClose:false
+				 })
+				 
+				 function closeOrContinue(sheet){
+					if(sheet.index + 1 == cockpitModule_template.sheets.length) {
+		 				doc.save(cockpitModule_properties.DOCUMENT_LABEL+'.pdf');
+		 				$mdDialog.hide();
+		 				cockpitModule_properties.LOADING_SCREENSHOT = false;
+		 				resolve();
+		 			}
+		 			else {
+		 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
+		 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
+		 			}
 				}
+				          
+				 function getScreenshot(sheet){
+				 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
+				 	function getPage(sheet){
+				 		var heightToUse;
+				 		var exportSheetBar = false;
+				 		var element = document.getElementById('kn-cockpit');
+				 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
+				 		if(element.scrollHeight < gridsterElement.scrollHeight){
+				 			element = gridsterElement;
+				 			heightToUse = gridsterElement.scrollHeight + 32;
+				 			exportSheetBar = true;
+				 		}
+				 		else heightToUse = element.scrollHeight;
+			 			
+			 			if(sheet.index != 0) doc.addPage(element.clientWidth,heightToUse);
+				 		html2canvas(element,{
+				 			allowTaint: true,
+				 			useCORS: true,
+				 			width: element.clientWidth,
+				 			height: element.scrollHeight,
+				 			scale : 1.5
+				 		}).then(function(canvas) {
+				 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
+				 			if(exportSheetBar){
+				 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
+				 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
+				 					closeOrContinue(sheet);
+				 				})
+				 			}else{
+				 				closeOrContinue(sheet);
+				 			}
+				 		});
+				 		
+				 	}
+				 	
+					 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
+					 		$timeout(function(){
+					 			getPage(sheet);
+					 		},1000)    
+					 	}else{
+					 		$scope.sheetWatcher = $scope.$watchCollection('sheetsWidgets',function(newValue,oldValue){
+					 			var tempIds = [];
+					 			for(var w in sheet.widgets){
+					 				if(newValue.indexOf(sheet.widgets[w].id) != -1) tempIds.push(sheet.widgets[w].id);
+					 			}
+					 			if(tempIds.length == sheet.widgets.length){
+					 				$timeout(function(){
+					 					getPage(sheet);
+					 					$scope.sheetWatcher();    
+					 				},3000)        
+					 			}
+					 		})    
+					 	}
+			 		}
+			
+					for(var s in cockpitModule_template.sheets){
+						if(cockpitModule_template.sheets[s].index == 0) {
+							if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
+							var tempElement = document.getElementById('kn-cockpit');
+					 		var gridsterElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
+					 		if(tempElement.scrollHeight < gridsterElement.scrollHeight) var heightToUse = gridsterElement.scrollHeight+32;
+							var doc = new jsPDF({
+								orientation: 'l',
+								unit: 'mm',
+								format: [tempElement.clientWidth, heightToUse || tempElement.scrollHeight]
+							});
+							
+							getScreenshot(cockpitModule_template.sheets[s]);
+							break;
+						}
+					}
+		})
 	}
 
 
