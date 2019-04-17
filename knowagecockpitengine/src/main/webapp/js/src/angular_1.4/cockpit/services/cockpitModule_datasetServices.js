@@ -951,6 +951,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
 					
 					$scope.translate = sbiModule_translate;
+					$scope.datasetSearchText = '';
+					$scope.filterDataset = function(){
+						var tempDatasetList = $filter('filter')($scope.datasetList,$scope.datasetSearchText);
+						$scope.cockpitDatasetGrid.api.setRowData(tempDatasetList);
+					}
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
