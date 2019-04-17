@@ -6,6 +6,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.datasetMapByLabel={};
 
 	this.infoColumns = [];
+	this.datasetTypes = {
+			"SbiQueryDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.query'),
+			"SbiCkanDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.ckan'),
+			"SbiCustomDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.custom'),
+			"SbiFileDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.file'),
+			"SbiFlatDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.flat'),
+			"SbiJClassDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.jclass'),
+			"SbiScriptDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.script'),
+			"SbiFederatedDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.federated'),
+			"SbiQbeDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.qbe'),
+			"SbiSolrDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.solr'),
+			"SbiSPARQLDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.sparql'),
+			"SbiRESTDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.rest')
+	}
 
 	this.isDatasetFromTemplateLoaded = false;
 
@@ -946,11 +960,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.multiple=multiple;
 
-					//$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
-
 					$scope.cockpitDatasetColumn = [
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 					
@@ -961,6 +974,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					        pagination: true,
 					        paginationAutoPageSize: true,
 					        rowSelection: multiple ? 'multiple' : 'single',
+					        rowMultiSelectWithClick: multiple,
 					        onGridSizeChanged: resizeColumns,
 					        columnDefs : $scope.cockpitDatasetColumn
 					};
@@ -971,6 +985,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					
 					function hasParametersRenderer(params){
 						return (params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
+					}
+					
+					function typeRenderer(params){
+						return cockpitModule_datasetServices.datasetTypes[params.value] || sbiModule_translate.load('kn.cockpit.dataset.type.generic');
 					}
 					
 					$scope.isDatasetListLoaded = false;

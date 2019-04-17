@@ -10,6 +10,18 @@
     height: 100%;
     background-color: $tabBackground;
 
+    .cockpitDatasetGrid {
+    	width: 100%;
+    	height: 100%;
+    	padding: 8px;
+    	.ag-cell[col-id='label'] {
+    		.ag-cell-value {
+	    		position: relative;
+	    		bottom: 4px;
+	    	}
+    	}
+    }
+
     .exportingPdfDialog {
     	background: rgba(0, 0, 0, .5);
 	    height: 100%;

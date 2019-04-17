@@ -17,31 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
 
-
-
-		<md-toolbar >
-			<div class="md-toolbar-tools">
-				{{::translate.load('kn.cockpit.dataset.selection')}}
-			</div>
-		</md-toolbar>
-		
-			<div ag-grid="cockpitDatasetGrid" flex class="ag-theme-balham noMargin ag-theme-knowage-default cockpitDatasetGrid" style="width:100%;height: 100%;padding: 8px;"></div>
+	<md-toolbar >
+		<div class="md-toolbar-tools">
+			{{::translate.load('kn.cockpit.dataset.selection')}}
+		</div>
+	</md-toolbar>
 			
-			<!--  angular-table flex ng-show="isDatasetListLoaded"
-				id="cockpitDatasetChoice"
-				ng-model='datasetList'
-				columns="cockpitDatasetColumn"
-				sortable-column="['label','name']"
-				columns-search="['label','name','description']"
-				show-search-bar="true"
-				multi-select=multiple
-				highlights-selected-item=(!multiple)
-				no-pagination="true"
-				selected-item="tmpCurrentAvaiableDataset"
-				comparison-column="'id'">
-			</angular-table-->
-
-	
+	<div id="cockpitDatasetChoice" ag-grid="cockpitDatasetGrid" flex class="ag-theme-balham noMargin ag-theme-knowage-default cockpitDatasetGrid"></div>
+			
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()" class="md-raised">{{::translate.load('sbi.generic.cancel')}}</md-button>
 		<md-button ng-click="saveDataset()" class="md-raised md-primary">{{::translate.load('sbi.generic.save')}}</md-button>
