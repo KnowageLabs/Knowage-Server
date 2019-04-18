@@ -19,7 +19,10 @@
       			<input type="text" ng-model="searchText"/>
       		</md-input-container>
       	</div>
-	    <md-list>
+      	<div ng-show="selectables.length == 0" layout="row" layout-align="center center">
+      		<div class="kn-noItems" flex="60">{{translate.load('kn.cockpit.widget.selector.noitems')}}</div>
+      	</div>
+	    <md-list ng-show="selectables.length > 0">
 			<md-virtual-repeat-container id="vertical-container">
 		      <md-list-item md-virtual-repeat="item in selectables | filter:{name:searchText}" class="selectableList" ng-class="{'disabled': !settings.hideDisabled && isDisabled(item.name)}">
 		         	<p class="truncated"> {{ item.name }} </p>
