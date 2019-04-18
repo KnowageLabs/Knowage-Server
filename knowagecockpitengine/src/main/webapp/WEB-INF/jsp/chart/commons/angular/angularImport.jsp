@@ -26,22 +26,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="width=device-width">
 
 <!-- Font awesome CSS for fancy icons. -->
-<link rel="stylesheet" href="<%=engineContext%>/node_modules/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/font-awesome/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<!-- START-DEBUG -->
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular.js"></script>
-<!-- END-DEBUG -->
-<!-- START-PRODUCTION 
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
-END-PRODUCTION -->
+	<!-- START-DEBUG -->
+	<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular/angular.js"></script>
+	<!-- END-DEBUG -->
+	
+	<!-- START-PRODUCTION 
+	<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/node_modules/angular/angular.min.js"></script>
+	  -- END-PRODUCTION -->
+
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-aria/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-cookies/angular-cookies.min.js"></script>
+
 <!-- angular-material-->
 <script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=engineContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%=engineContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=engineContext%>/themes/sbi_default/css/angular-toastr.css">
