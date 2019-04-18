@@ -202,13 +202,13 @@ public class Signup {
 			if (userAttribute != null) {
 				userAttribute.getCommonInfo().setTimeUp(new Date(System.currentTimeMillis()));
 				userAttribute.getCommonInfo().setUserUp(userId);
-				userAttribute.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+				userAttribute.getCommonInfo().setSbiVersionUp(SbiCommonInfo.getVersion());
 			} else {
 				userAttribute = new SbiUserAttributes();
 				userAttribute.getCommonInfo().setOrganization(defaultTenant);
 				userAttribute.getCommonInfo().setTimeIn(new Date(System.currentTimeMillis()));
 				userAttribute.getCommonInfo().setUserIn(userId);
-				userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+				userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
 
 				SbiUserAttributesId pk = new SbiUserAttributesId();
 				pk.setAttributeId(attributeId);

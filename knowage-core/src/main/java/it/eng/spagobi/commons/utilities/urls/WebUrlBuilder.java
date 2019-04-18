@@ -20,12 +20,16 @@ package it.eng.spagobi.commons.utilities.urls;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.wapp.Environment;
+import it.eng.knowage.wapp.Version;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
@@ -38,6 +42,8 @@ public class WebUrlBuilder implements IUrlBuilder {
 
 	private String baseURL = "";
 	private String baseResourceURL = "";
+	private String KNOWAGE_VERSION = Version.getCompleteVersion();
+	private Environment ENVIRONMENT = Version.getEnvironment();
 
 	/**
 	 * Inits the.
@@ -115,6 +121,8 @@ public class WebUrlBuilder implements IUrlBuilder {
 			originalUrl = originalUrl.substring(1);
 		}
 		originalUrl = baseResourceURL + originalUrl;
+		if (ENVIRONMENT == Environment.PRODUCTION)
+			originalUrl = concatSrcWithKnowageVersion(originalUrl);
 		logger.debug("OUT.originalUrl=" + originalUrl);
 		return originalUrl;
 	}
@@ -151,6 +159,20 @@ public class WebUrlBuilder implements IUrlBuilder {
 
 		logger.debug("OUT");
 		return getResourceLink(aHttpServletRequest, urlByTheme);
+	}
+
+	private String concatSrcWithKnowageVersion(String url) {
+		logger.debug("IN");
+		Pattern srcPattern = Pattern.compile("/js/(src)");
+		Matcher srcMatcher = srcPattern.matcher(url);
+
+		if (srcMatcher.find()) {
+			String src = srcMatcher.group(1);
+			url = url.replace(src, src + "-" + KNOWAGE_VERSION);
+		}
+
+		logger.debug("OUT");
+		return url;
 	}
 
 }

@@ -19,99 +19,93 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*${disable.console.logging}*/
 </script>
 <%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+	String spagoBiContext = GeneralUtilities.getSpagoBiContext();
+	String cockpitEngineContext = request.getContextPath();
 %>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<link rel="stylesheet" href="<%=GeneralUtilities.getSpagoBiContext()%>/node_modules/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/font-awesome/css/font-awesome.min.css")%>">
 
 <!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script-->
 
 <!-- angular reference-->
 <!-- START-DEBUG -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular/angular.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular/angular.js")%>"></script>
 
 <!-- END-DEBUG -->
 <!-- START-PRODUCTION 
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
 END-PRODUCTION -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-aria/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-cookies/angular-cookies.min.js"></script>
-<!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-cookies.js"></script-->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-animate/angular-animate.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-aria/angular-aria.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-sanitize/angular-sanitize.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-messages/angular-messages.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-cookies/angular-cookies.min.js")%>"></script>
 
 <!-- POLYFILLS -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/canvas-toBlob/canvas-toBlob.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/map-polyfill/map-polyfill.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/append-polyfill/append-polyfill.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/canvas-toBlob/canvas-toBlob.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/promise-polyfill/promise-polyfill.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/map-polyfill/map-polyfill.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/append-polyfill/append-polyfill.js")%>"></script>
 
 
 <!-- angular-material-->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
-<link rel="stylesheet" href="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
 
 <!-- angular tree -->
-<link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-tree/angular-ui-tree.js"></script> 
+<link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- context menu -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/contextmenu/ng-context-menu.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/contextmenu/ng-context-menu.js")%>"></script>
 
 <!--pagination-->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/pagination/dirPagination.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/pagination/dirPagination.js")%>"></script>
 
 
 <!-- expanderBox -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/expander-box/expanderBox.js")%>"></script>
 
 <!-- angular table -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cockpit-angular-table/CockpitAngularTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cockpit-table/cockpitTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/accessible-angular-table/AccessibleAngularTable.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/cockpit-angular-table/CockpitAngularTable.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/cockpit-table/cockpitTable.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/accessible-angular-table/AccessibleAngularTable.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script>
 
 <!-- document tree -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
 
 <!-- component tree -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/component-tree/componentTree.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
 
 <!-- file upload -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script>
 
 <!-- 	angular time picker -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script>
 
 <!-- 	angular list dewtail template -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script>
 
  <!-- angular-gridster-->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-gridster/angular-gridster.min.js"></script>
-<link rel="stylesheet" href="<%=spagoBiContext%>/js/lib/angular/angular-gridster/angular-gridster.min.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-gridster/angular-gridster.min.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-gridster/angular-gridster.min.css")%>">
  
  
 <!-- colorpicker -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinycolor-min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/color-picker/tinygradient.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/color-picker/tinycolor-min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/color-picker/tinygradient.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
 
 <!--  wysiwyg -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/ngWYSIWYG/wysiwyg.min.js"></script>	
-<link rel="stylesheet" type="text/css" href="<%=spagoBiContext%>/js/lib/angular/ngWYSIWYG/editor.min.css">
-
-
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/ngWYSIWYG/editor.min.css")%>">
 
 
 <!-- 		angular-drag-and-drop-lists -->

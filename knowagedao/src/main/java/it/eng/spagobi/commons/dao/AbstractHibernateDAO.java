@@ -173,7 +173,7 @@ public class AbstractHibernateDAO {
 	 */
 	protected SbiHibernateModel updateSbiCommonInfo4Update(SbiHibernateModel obj) {
 		obj.getCommonInfo().setTimeUp(new Date());
-		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.getVersion());
 		obj.getCommonInfo().setUserUp(userID);
 		String tenantId = this.getTenant();
 		// sets the tenant if it is set and input object hasn't
@@ -194,7 +194,7 @@ public class AbstractHibernateDAO {
 	 */
 	protected SbiHibernateModel updateSbiCommonInfo4Update(SbiHibernateModel obj, boolean useDefaultTenant) {
 		obj.getCommonInfo().setTimeUp(new Date());
-		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.getVersion());
 		obj.getCommonInfo().setUserUp(userID);
 		String tenantId = this.getTenant();
 		// sets the tenant if it is set and input object hasn't
@@ -212,7 +212,7 @@ public class AbstractHibernateDAO {
 
 	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj) {
 		obj.getCommonInfo().setTimeIn(new Date());
-		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
 		obj.getCommonInfo().setUserIn(userID);
 
 		// sets the tenant if it is set and input object hasn't
@@ -228,7 +228,7 @@ public class AbstractHibernateDAO {
 
 	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj, boolean useDefaultTenant) {
 		obj.getCommonInfo().setTimeIn(new Date());
-		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
 		obj.getCommonInfo().setUserIn(userID);
 		// sets the tenant if it is set and input object hasn't
 		String tenantId = this.getTenant();

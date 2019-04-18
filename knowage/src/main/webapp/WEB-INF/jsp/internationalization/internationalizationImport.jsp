@@ -15,7 +15,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/internationalization/internationalizationController.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/internationalization/internationalizationController.js")%>"></script>
 
 <%@include file="/WEB-INF/jsp/internationalization/i18nAvailableLanguagesModule.jspf"%>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">

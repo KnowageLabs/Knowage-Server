@@ -45,8 +45,7 @@ END-PRODUCTION -->
 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js"></script>
-
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js")%>"></script>
 <!-- angular tree -->
 <link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>

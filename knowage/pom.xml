@@ -13,64 +13,154 @@
 	<packaging>war</packaging>
 	<name>knowage</name>
 	
-	<build>
-		<finalName>knowage</finalName>
-		<pluginManagement>
-		    <plugins>
-		        <plugin>
-		            <artifactId>maven-war-plugin</artifactId>
-		            <configuration>
-		                <attachClasses>true</attachClasses>
-		                <classesClassifier>classes</classesClassifier>
-		            </configuration>
-		        </plugin>
-	
-				<plugin>
-					<groupId>org.codehaus.cargo</groupId>
-					<artifactId>cargo-maven2-plugin</artifactId>
-					<version>1.6.9</version>
-					<configuration>
-						<container>
-							<containerId>tomcat8x</containerId>
-							<type>installed</type>
-							<home>${application-home}</home>
-						</container>
-						<configuration>
-							<type>existing</type>
-							<home>${application-home}</home>
-						</configuration>
-					</configuration>
-				</plugin>
-		    </plugins>
-		  </pluginManagement>
-		  <plugins>
-		  		<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.6.0</version>
-					<executions>
-						<execution>		
-							<id>npm-package-install</id>
-							<phase>prepare-package</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<executable>npm</executable>
-	                    <arguments>
-                      		<argument>install</argument>
-	                    </arguments>
-	                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-					</configuration>
-		  	</plugin>
-		  
-		  </plugins>
-	</build>
-	
-	<profiles>	
-
+	<profiles>			
+		<profile>
+			<id>development</id>
+            <activation>
+                <!-- this profile is active by default -->
+                <activeByDefault>true</activeByDefault>
+                <property>
+                	<name>env</name>
+                    <value>development</value>
+                </property>
+            </activation>
+            <properties>
+           		<application.environment>development</application.environment>
+            </properties>
+			<build>
+				<finalName>knowage</finalName>
+				<pluginManagement>
+				    <plugins>				        			
+						<plugin>
+							<groupId>org.codehaus.cargo</groupId>
+							<artifactId>cargo-maven2-plugin</artifactId>
+							<version>1.6.9</version>
+							<configuration>
+								<container>
+									<containerId>tomcat8x</containerId>
+									<type>installed</type>
+									<home>${application-home}</home>
+								</container>
+								<configuration>
+									<type>existing</type>
+									<home>${application-home}</home>
+								</configuration>
+							</configuration>
+						</plugin>
+				    </plugins>
+				  </pluginManagement>
+				  <plugins>
+				  		<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>exec-maven-plugin</artifactId>
+							<version>1.6.0</version>
+							<executions>
+								<execution>		
+									<id>npm-package-install</id>
+									<phase>prepare-package</phase>
+			                  		<goals>
+				                    	<goal>exec</goal>
+				                  	</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<executable>npm</executable>
+			                    <arguments>
+		                      		<argument>install</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
+				  	</plugin>
+				  </plugins>
+				 <resources>
+			       <resource>
+			          <directory>src/main/resources</directory>
+			          <filtering>true</filtering>
+			       </resource>
+		   		 </resources>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>production</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>production</value>                  
+                </property>
+            </activation>
+            <properties>
+           		<application.environment>production</application.environment>
+            </properties>
+			<build>
+				<finalName>knowage</finalName>
+				<pluginManagement>
+				    <plugins>
+				        <plugin>
+				            <artifactId>maven-war-plugin</artifactId>
+				            <configuration>
+				                <attachClasses>true</attachClasses>
+				                <classesClassifier>classes</classesClassifier>
+								<warSourceExcludes>js/src/**</warSourceExcludes>
+								<webResources>
+							        <resource>
+							          <directory>src/main/webapp/js/src</directory>
+							          <targetPath>js/src-${project.version}</targetPath>
+							        </resource>
+						      </webResources>
+				            </configuration>
+				        </plugin>
+			
+						<plugin>
+							<groupId>org.codehaus.cargo</groupId>
+							<artifactId>cargo-maven2-plugin</artifactId>
+							<version>1.6.9</version>
+							<configuration>
+								<container>
+									<containerId>tomcat8x</containerId>
+									<type>installed</type>
+									<home>${application-home}</home>
+								</container>
+								<configuration>
+									<type>existing</type>
+									<home>${application-home}</home>
+								</configuration>
+							</configuration>
+						</plugin>
+				    </plugins>
+				  </pluginManagement>
+				  <plugins>
+				  		<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>exec-maven-plugin</artifactId>
+							<version>1.6.0</version>
+							<executions>
+								<execution>		
+									<id>npm-package-install</id>
+									<phase>prepare-package</phase>
+			                  		<goals>
+				                    	<goal>exec</goal>
+				                  	</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<executable>npm</executable>
+			                    <arguments>
+		                      		<argument>install</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
+				  	</plugin>
+				  </plugins>
+				 <resources>
+			       <resource>
+			          <directory>src/main/resources</directory>
+			          <filtering>true</filtering>
+			       </resource>
+		   		 </resources>
+			</build>
+		</profile>
+		
 		<profile>
 			<id>hsql</id>
 			<build>
@@ -89,10 +179,10 @@
 								<goal>copy-resources</goal>
 							</goals>
 							<configuration>		
-								<outputDirectory>src/main/resources</outputDirectory>	
+								<outputDirectory>src-${project.version}/main/resources</outputDirectory>	
 								<resources>
 									<resource>
-										<directory>src/main/resources/hsql</directory>
+										<directory>src-${project.version}/main/resources/hsql</directory>
 										<includes>
 											<include>hibernate.cfg.xml</include>
 											<include>quartz.properties</include>
@@ -109,7 +199,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<dependencies>
 		
 		<dependency>

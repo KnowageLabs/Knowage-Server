@@ -39,7 +39,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
     return {
 
         restrict: 'E',
-        templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/menuBarAdmin.html",
+        templateUrl: sbiModule_config.dynamicResourcesBasePath + "/angular_1.4/menu/templates/menuBarAdmin.html",
         replace: true,
         link:function($scope, elem, attrs) {
 

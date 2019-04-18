@@ -38,12 +38,15 @@
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
 <%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
+	UrlBuilder urlBuilder = new UrlBuilder();
+
 	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
 	String chartEngineContextName = sb.getCharacters();
 

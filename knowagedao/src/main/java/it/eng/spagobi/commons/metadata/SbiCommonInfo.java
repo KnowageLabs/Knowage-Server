@@ -19,7 +19,7 @@ package it.eng.spagobi.commons.metadata;
 
 import java.util.Date;
 
-import it.eng.knowage.wapp.VersionInfo;
+import it.eng.knowage.wapp.Version;
 
 public class SbiCommonInfo implements java.io.Serializable {
 
@@ -28,7 +28,7 @@ public class SbiCommonInfo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String SBI_VERSION = VersionInfo.COMPLETE_VERSION;
+	private static String VERSION = Version.getVersionForDatabase();
 
 	private String userIn = "server";
 	private String userUp = null;
@@ -42,7 +42,7 @@ public class SbiCommonInfo implements java.io.Serializable {
 	private Date timeDe = null;
 
 	public SbiCommonInfo() {
-		sbiVersionIn = SbiCommonInfo.SBI_VERSION;
+		sbiVersionIn = VERSION;
 		timeIn = new Date();
 	}
 
@@ -125,4 +125,9 @@ public class SbiCommonInfo implements java.io.Serializable {
 	public void setTimeDe(Date timeDe) {
 		this.timeDe = timeDe;
 	}
+
+	public static String getVersion() {
+		return VERSION;
+	}
+
 }

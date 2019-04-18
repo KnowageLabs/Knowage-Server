@@ -3,6 +3,8 @@
 <%@page import="it.eng.spagobi.tenant.TenantManager"%>
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
 <script>
 var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 
@@ -10,7 +12,14 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
 <%	
-String contextNameForEngineComposition = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
+	String contextNameForEngineComposition = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
+	Environment environment = Version.getEnvironment();
+	String dynamicResourcesBasePath;
+	if (environment == Environment.PRODUCTION) {
+		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src-" + Version.getCompleteVersion();
+	} else {
+		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src";
+	}	
 %>
 sbiM.factory('sbiModule_config',function(){ 
 	return {
@@ -46,7 +55,7 @@ sbiM.factory('sbiModule_config',function(){
         isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
         layerFileMaxSize: '<%= GeneralUtilities.getGisLayerFileMaxSize() %>',
         workspaceShowGrid: '<%= SingletonConfig.getInstance().getConfigValue("KNOWAGE.WORKSPACE_SHOW_GRID") %>',
-                
+        dynamicResourcesBasePath: '<%= dynamicResourcesBasePath %>',        
         
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>

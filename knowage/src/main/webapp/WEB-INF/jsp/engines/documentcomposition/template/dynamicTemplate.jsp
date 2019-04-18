@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	logger.debug("IN");
     String urlIframe = "";
 	logger.debug("urlIframe: " + urlIframe);
-	String compositeJSDocumentUrl=urlBuilder.getResourceLink(request, "/js/documentcomposition/documentcomposition.js");
+	String compositeJSDocumentUrl=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/documentcomposition/documentcomposition.js");
 	String restServicetUrl=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js");
 %> 
 <!-- LIBS AJAX-->

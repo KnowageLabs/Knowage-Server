@@ -1,5 +1,20 @@
 package it.eng.spagobi.tools.alert.job;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
@@ -13,16 +28,6 @@ import it.eng.spagobi.tools.alert.dao.IAlertDAO;
 import it.eng.spagobi.tools.alert.exception.AlertActionException;
 import it.eng.spagobi.tools.alert.exception.AlertListenerException;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
-import org.apache.log4j.Logger;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractAlertListener extends AbstractSuspendableJob implements IAlertListener {
 	private static Logger logger = Logger.getLogger(AbstractAlertListener.class);
@@ -67,7 +72,7 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		alertLog.setDetail(errorMsg);
 		alertLog.setListenerParams(listenerParams);
 		alertLog.getCommonInfo().setTimeIn(new Date());
-		alertLog.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		alertLog.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
 		Tenant tenant = TenantManager.getTenant();
 		if (tenant != null) {
 			alertLog.getCommonInfo().setOrganization(tenant.getName());
@@ -106,8 +111,8 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		}
 	}
 
-	protected List<SbiHibernateModel> exportAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj) throws EMFUserError,
-			AlertListenerException {
+	protected List<SbiHibernateModel> exportAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj)
+			throws EMFUserError, AlertListenerException {
 		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass()).toString();
 		IAlertAction action = getActionInstance(actionId);
 		return action.exportAction(actionParams);

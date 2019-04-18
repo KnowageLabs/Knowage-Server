@@ -37,9 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		
 		<%-- <%@include file="/WEB-INF/jsp/analiticalmodel/document/documentDetailsImport.jsp"%> --%>
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/resourceService.js")%>"></script>
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/drivers.js")%>"></script>
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/resourceService.js")%>"></script>
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/modules/driversModule.js")%>"></script>
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/drivers.js")%>"></script>
 		
 		<!-- Styles -->
 		<!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
@@ -273,7 +273,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      </md-tab>
 			      <md-tab label="Drivers" ng-if="selectedBusinessModel.id">			  	
 				  	<md-tab-body>
-				  		<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/drivers.html")%>'" />
+				  		<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/templates/drivers.html")%>'" />
 				  	</md-tab-body>
 				  </md-tab>
 	

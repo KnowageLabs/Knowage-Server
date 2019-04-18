@@ -36,26 +36,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/resourceService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/documentDetails.controller.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/resourceService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/documentDetails.controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/modules/driversModule.js")%>"></script>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/drivers.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/templates.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/outputParameters.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/informations.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/dataLineage.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/subreports.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/drivers.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/templates.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/outputParameters.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/informations.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/dataLineage.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/controllers/subreports.js")%>"></script>
 
 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/documentDataService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/interceptors/httpInterceptor.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/closingIFrame.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/templateService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/outputParametersService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/dataLineageService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/subreportsService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/documentDataService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/interceptors/httpInterceptor.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/closingIFrame.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/templateService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/outputParametersService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/dataLineageService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/subreportsService.js")%>"></script>
 
 
 
