@@ -1,5 +1,12 @@
 $aggrid-border-color: #d9dcde;
 .ag-theme-balham {
+	.ag-root .ag-cell-focus {
+		-webkit-user-select: text;
+		-moz-user-select: text;
+		-ms-user-select: text;
+		user-select: text;
+	}
+
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.ag-header {
 		font-family: $defaultFontFamily;
