@@ -222,6 +222,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar> 
 		<md-content layout-margin>
 			<md-list> 
+				<md-list-item class="md-2-line">
+					<div class="md-list-item-text">
+						<h3>
+							<b>{{translate.load("sbi.generic.author")}}</b>
+						</h3>
+						<p>{{selectedDocument.creationUser}}</p>
+					</div>
+				</md-list-item>
 				<md-list-item class="md-2-line" ng-if="selectedDocument.description">
 					<div class="md-list-item-text " flex>
 						<h3> <b>{{translate.load("sbi.generic.descr")}}</b> </h3>
@@ -252,6 +260,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<p>{{selectedDocument.creationDate | asDate | date:'medium' }}</p>
 					</div>
 				</md-list-item> 
+				<md-list-item class="md-2-line">
+					<div class="md-list-item-text">
+						<h3>
+							<b>{{translate.load("sbi.generic.visibility")}}</b>
+						</h3>
+						<p>{{selectedDocument.visible ? translate.load("sbi.generic.visible") : translate.load("sbi.generic.notvisible")}}</p>
+					</div>
+				</md-list-item>
 			</md-list>
 		</md-content>
 	</md-sidenav> 
