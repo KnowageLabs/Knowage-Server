@@ -285,28 +285,6 @@ angular.module('cockpitModule')
 				}
 			}
 			
-			
-			
-//			if(selectables){
-//				for(var k in selectables){
-//					if(settings.hideDisabled && activeSelections.length > 0){
-//						if(activeSelections.indexOf(selectables[k]) != -1){
-//							scope.selectables.push({name: selectables[k], selected: true});
-//						}
-//					}else scope.selectables.push({name: selectables[k], selected: (activeSelections && activeSelections.indexOf(selectables[k]) != -1) ? true : false });
-//						
-//				}
-//			}else {
-//				for(var j in itemsList){
-//					if(settings.hideDisabled && activeSelections.length > 0){
-//						if(activeSelections.indexOf(itemsList[j].column_1) != -1){
-//							scope.selectables.push({name: itemsList[j].column_1, selected: true});
-//						}
-//					}else scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false });
-//				}
-//			}
-			
-			
 			scope.targetColumn = targetModel.selectedColumn;
 			scope.close = function() {
 				scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
