@@ -18,7 +18,7 @@
 
 var olapMod = angular.module('olap.controllers', [ 'olap.configuration',
 		'olap.directives', 'olap.settings', 'olap.services'])
-		
+
 olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
@@ -55,7 +55,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.filterDialogHeight = olapSharedSettings.getSettings().filterDialogHeight;
 	$scope.allowEditingCC = olapSharedSettings.getSettings().disableManualEditingCC;
 	$scope.showWarningDT = olapSharedSettings.getSettings().showDTWarning;
-		
+
 	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText = "";
 	$scope.searchSucessText="";
@@ -99,7 +99,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 
 	$scope.draggedFrom = "";
 	$scope.dragIndex;
-	
+
 	$scope.doneonce = false;
 	$scope.level;
 	$scope.data = [];
@@ -116,12 +116,12 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	// flag for showing olap designer specific stuff
 	$scope.olapMode = false;
 
-	$scope.showSiblings = true;
+	$scope.showSiblings = false;
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
 	$scope.crossNavigationEnabled = false;
-	$scope.sortingModes = [ 
+	$scope.sortingModes = [
 	{
 		'label' : 'no sorting',
 		'value' : 'no sorting'
@@ -129,7 +129,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	{
 		'label' : 'basic',
 		'value' : 'basic'
-	}, 
+	},
 	{
 		'label' : 'breaking',
 		'value' : 'breaking'
@@ -143,9 +143,9 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.saveSortingSettings = function() {
 		if($scope.sortingCount<1||!$scope.sortingCount){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sortingSetting.count.error'), 'Error');
-			
+
 		}else{
-			
+
 			$mdDialog.hide();
 			//$scope.sortDisable();
 			switch($scope.selectedSortingMode) {
@@ -160,13 +160,13 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 		    	if($scope.modelConfig.sortingEnabled!=true){
 		        	$scope.sortDisable();
 		        }
-		       
+
 		        break;
 		    default:
-		        
+
 		}
 		}
-		
+
 	}
 	$scope.loadingNodes = false;
 	$scope.activeaxis;
@@ -174,22 +174,22 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.member;
 	$scope.selecetedMultiHierUN;
 	$scope.selectedVersion = null;
-	
+
 	$scope.buffer = null;
 	$scope.max =0;
 
 	$scope.handleResponse = function(response) {
-		
-		
-		
-		
+
+
+
+
 		source = response.data;
-		
+
 		if($scope.modelConfig&&$scope.modelConfig.pagination){
 			$scope.tableSubsets=source.tables;
 			$scope.tableSubsets=null;
 			$scope.buffer = {};
-			
+
 			$scope.tableSubsets=response.data.tables;
 			for(var x in $scope.tableSubsets){
 				$scope.buffer[x]=$scope.tableSubsets[x];
@@ -206,13 +206,13 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 		}else{
 			$scope.table = $sce.trustAsHtml(source.table);
 		}
-		
+
 		$scope.modelConfig = source.modelConfig;
-		
+
 		//$scope.table = {};
-		
+
 		//angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
-		
+
 		$scope.columns = source.columns;
 		$scope.rows = source.rows;
 		$scope.columnsAxisOrdinal = source.columnsAxisOrdinal;
@@ -223,7 +223,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = false;
-		
+
 		$scope.selectedVersion = source.modelConfig.actualVersion;
 		handleSlicers(source.filters);
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije
@@ -232,13 +232,13 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 				$scope.executeClicks();
 				$scope.ready = true;
 			}
-			
+
 			firstLoad = false;
 		}
 		source = null;
 		$scope.ready = true;
 	}
-	
+
 	handleSlicers = function(filters){
 		$scope.filterSelected = [];
 		for(var i=0; i<filters.length;i++){
@@ -254,40 +254,40 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 				obj.caption = hier[selPos].slicers[0].name;
 				obj.uniqueName = hier[selPos].slicers[0].uniqueName;
 				obj.visible = true;
-				
+
 				$scope.filterSelected[posInAx] = obj
 			}
 			else{
 				$scope.filterSelected[posInAx] = obj;
 			}
-				
+
 		}
 	}
-	
-	
-	
+
+
+
 	$scope.sendModelConfig = function(modelConfig,noloading) {
 		console.log("Sending model config" + " "+ modelConfig);
-		
-		
+
+
 		if($scope.tableSubsets){
 			$scope.tableSubsets.length = 0;
 		}
-		
+
 		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
 			sbiModule_restServices.promisePost("1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID+"&NOLOADING="+noloading, "",
 					modelConfig).then(
-					
+
 					function(response) {
-						
-						
-						
+
+
+
 						if(!$scope.buffer){
 							$scope.buffer ={};
 						}
-						
+
 						$scope.tableSubsets=response.data.tables;
 						for(var x in $scope.tableSubsets){
 							$scope.buffer[x]=$scope.tableSubsets[x];
@@ -301,7 +301,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 							if(startRow!=undefined&&!isNaN(startRow)){
 								response.data.modelConfig.startRow  = startRow;
 							}
-							
+
 							angular.copy(response.data.modelConfig,$scope.modelConfig)
 							if($scope.table){
 								angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
@@ -312,41 +312,41 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 							if($scope.table){
 								$scope.table = $sce.trustAsHtml(response.data.table);
 							}
-							
+
 						}
-						
-						
-						
-						
-						
+
+
+
+
+
 						//$scope.table = $sce.trustAsHtml(response.data.table);
 //						if(!angular.equals(modelConfigTest,$scope.modelConfig)){
 //							$scope.ready = true;
 //							$scope.sendModelConfig($scope.modelConfig,true)
 //							return;
-//							
+//
 //						}else{
 //							angular.copy(modelConfigTest,$scope.modelConfig );
 //						}
 						//$scope.modelConfigBuffer.length = 0;
-						
+
 						$scope.ready = true;
 						$scope.isScrolling = false;
-						
+
 					},
 					function(response) {
-						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.modelConfig.error'), 'Error');		
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.modelConfig.error'), 'Error');
 						$scope.ready = true;
 					});
 
 		}
-			
+
 	}
-	
+
 	$scope.$watch('modelConfig.startRow',function(newValue,oldValue){
-		
+
 		if(newValue!=undefined&&!isNaN(newValue)) {
-			
+
 			if($scope.buffer!=null&&
     		   		$scope.buffer[$scope.modelConfig.startRow]!=undefined&&
     		   		$scope.buffer[$scope.modelConfig.startRow]!=null){
@@ -360,35 +360,35 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
     		   	}else{
     		   		$scope.sendModelConfig($scope.modelConfig,false);
     		   		$rootScope.$broadcast("loader_show");
-    		   	}    
-			
+    		   	}
+
 			if($scope.modelConfig.rowCount>$scope.max+1 && $scope.max<$scope.modelConfig.startRow+2*$scope.modelConfig.pageSize &&
         			$scope.modelConfig.startRow+2*$scope.modelConfig.pageSize<$scope.modelConfig.rowCount){
 		   		$scope.sendModelConfig($scope.modelConfig, true);
         	}
 		}
-		
-		
-	},true)	
-	
+
+
+	},true)
+
 	$scope.$watch('modelConfig.rowsSet',function(newValue,oldValue){
 		if(newValue!=undefined&&!isNaN(newValue)&&newValue!=0) {
-			
-			
+
+
 		   		$scope.sendModelConfig($scope.modelConfig, $scope.modelConfig.rowsSet===50);
-        	
+
 		}
-		
-		
-	},true)	
-		
+
+
+	},true)
+
 		$scope.$watch('modelConfigBuffer',function(newValue,oldValue){
-			
+
 				if($scope.modelConfigBuffer.length>0){
 					$scope.sendModelConfig($scope.modelConfigBuffer[0],true);
 				}
-				
-			
+
+
 	},true);
 	$scope.startFrom = function(start) {
 		if ($scope.ready) {
@@ -398,7 +398,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 					"1.0",
 					'/member/start/1/' + start + '?SBI_EXECUTION_ID='
 							+ JSsbiExecutionID).then(function(response) {
-			
+
 				angular.copy($sce.trustAsHtml(response.data.table),scope.table);
 				$scope.ready = true;
 				$scope.handleResponse(response);
@@ -438,5 +438,5 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 				});
 	};
-	
+
 }
