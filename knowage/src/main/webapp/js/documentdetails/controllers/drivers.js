@@ -66,16 +66,20 @@ angular
              var setSelectedDriver = function(driver){
             	 self.selectedDriver = driver;
              }
+
              driversService.setSelectedDriver = setSelectedDriver;
-             var getDriverNames = function(driversOnObject){
+
+
+             var getDriverNames = function(analyticalDrivers){
             	 var driverNames=[];
-		            if(driversService.driverRelatedObject.id){
-		            	 for(var i = 0; i< driversOnObject.length;i++){
-		            		 driverNames.push(driversOnObject[i].name);
-		            	 }
-		            return driverNames;
-		            	 }
+		         if(driversService.driverRelatedObject.id){
+		        	 for(var i = 0; i< analyticalDrivers.length;i++){
+		        		 driverNames.push(analyticalDrivers[i].label);
+		        	 }
+		        	 return driverNames;
+		         }
              }
+
              self.clearSearch = function(){
             	 self.searchTerm = "";
              }
@@ -116,7 +120,7 @@ angular
              }
 
              self.addToChangedDrivers = function(driver){
-            	 self.setParameterInfo(driver);
+            	 self.setInfoForChangedDriver(driver);
             	 if(driversService.changedDrivers.indexOf(driver) == -1)
             		 driversService.changedDrivers.push(driver);
              }
@@ -186,7 +190,6 @@ angular
              self.selectDriver = function(priority) {
             	 if( self.analyticalDrivers.length == 0)
             		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
-            	 if(self.drivers.length==1 && self.drivers.length == 0){self.selectedDriver = self.drivers[0];}
             	  var querryParams = "";
             	  var basePath = driversService.visualDependencies;
             	  var baseDataPath = driversService.dataDependenciesName;
@@ -195,7 +198,6 @@ angular
 	                    	 self.setParameterInfo(self.drivers[i]);
 	                         self.selectedDriver = self.drivers[i];
 	                     	 driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
-	                         self.setParameterInfo(self.selectedDriver);
 							 if(self.selectedDriver.parID)
 	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);
 	                         	if(self.selectedDriver.id ){
@@ -540,16 +542,29 @@ angular
                 	 return false;
                  }
                 }
+
              self.setParameterInfo = function(driver){
             	 if(driversService.analyticalDrivers){
                	 for(var i = 0 ; i<driversService.analyticalDrivers.length; i++){
                		 if((driver.parameter && driversService.analyticalDrivers[i].id==driver.parID) || (driver.parameter && driversService.analyticalDrivers[i].name==driver.parameter.name) ){
-               			 driver.parameter = driversService.analyticalDrivers[i];
+               			 driver.parameter =angular.copy( driversService.analyticalDrivers[i]);
                		 	 driver.parID = driversService.analyticalDrivers[i].id;
-               		 	driver.parameter.name = driversService.analyticalDrivers[i].name}
+               		 }
                	 }
                 }
              }
+
+             self.setInfoForChangedDriver = function(driver){
+            	 if(driversService.analyticalDrivers){
+	               	 for(var i = 0 ; i < driversService.analyticalDrivers.length; i++){
+	               		 if(driver.parameter && driversService.analyticalDrivers[i].label==driver.parameter.label){
+	               			 driver.parameter = angular.copy(driversService.analyticalDrivers[i]);
+	               		 	 driver.parID = driversService.analyticalDrivers[i].id;
+	               		 }
+	               	 }
+                }
+             }
+
              self.hasDependencies = function(driverName){
 
             	 var driver = {}
