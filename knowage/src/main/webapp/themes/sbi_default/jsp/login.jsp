@@ -241,9 +241,10 @@
 				
                 <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
                 </form>
-
+                <% 
+				if (activeSignup){ %>
                 <button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
-			
+				<%} %> 
                 
 		<div>
 		<div class="row">
