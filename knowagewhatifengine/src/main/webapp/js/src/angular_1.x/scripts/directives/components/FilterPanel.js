@@ -144,7 +144,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.unSelectAll = function(tree){
 
 		hierarchyTreeService.setVisibilityForAll(tree,false);
-		filterPlaceMemberOnAxis()
+		tree[0].visible = true;
+		filterPlaceMemberOnAxis();
+		tree[0].visible = false;
+
 	}
 
 	$scope.parameterBindings=[];
@@ -518,11 +521,18 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			filterSlice();
 		}
 		else
-			filterPlaceMemberOnAxis();
-		$scope.bindMode=false;
-		selectedFlag = false;
-		$scope.isSlicer=true;
-		$mdDialog.hide();
+
+			if(hierarchyTreeService.isAnyVisible($scope.data)){
+				filterPlaceMemberOnAxis();
+				$scope.bindMode=false;
+				selectedFlag = false;
+				$scope.isSlicer=true;
+				$mdDialog.hide();
+			}else{
+
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filtering.no.selected.members'))
+			}
+
 	}
 
 	//Save action called from filters axis=-1
