@@ -430,6 +430,13 @@
 			.documentBrowserGrid  {
 				height: 100%;
 			}
+			.emptyContainer {
+				.outerIcon {
+					.emptyIconSvg {
+						display: none;
+					}
+				}
+			}
 		}
 	}
 }
