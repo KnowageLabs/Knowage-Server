@@ -232,7 +232,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		$scope.checkValiditymeasureRule().then(function(){
 			$mdDialog.show({
 				controller: DialogSaveController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRuleSubController/saveDialogTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/kpi/measureRuleSubController/saveDialogTemplate.jsp',
 				clickOutsideToClose:true,
 				fullscreen: true,
 				locals:{

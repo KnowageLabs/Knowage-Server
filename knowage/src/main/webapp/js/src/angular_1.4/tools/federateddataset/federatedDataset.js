@@ -356,8 +356,7 @@ function federationDefinitionFunction
 
 						}
 					},
-//					templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
-					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
+					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
 					targetEvent: ev
 				});
 		}
@@ -676,7 +675,7 @@ function federationDefinitionFunction
 				});
 			},
 			disableParentScroll: true,
-			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/federatedDatasetAutodetectChoice.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/federateddataset/commons/templates/federatedDatasetAutodetectChoice.html',
 //				hasBackdrop: true,
 			position: $mdPanel.newPanelPosition().absolute().center(),
 			trapFocus: true,
@@ -967,8 +966,7 @@ function federationDefinitionFunction
 			.show({
 				scope: $scope,
 				preserveScope: true,
-//				templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
-				templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
 				$event: param
 			});
 	}

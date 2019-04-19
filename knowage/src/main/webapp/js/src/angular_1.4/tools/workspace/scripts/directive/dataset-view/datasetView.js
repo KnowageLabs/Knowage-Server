@@ -24,7 +24,6 @@
 angular.module('dataset_view', ['ngMaterial'])
 .directive('datasetView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/dataset-view/dataset-view.html',
 		templateUrl: currentScriptPath + 'dataset-view.html',
 		controller: datasetViewControllerFunction,
 		 priority: 10,

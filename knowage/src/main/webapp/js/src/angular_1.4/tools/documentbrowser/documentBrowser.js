@@ -430,7 +430,7 @@ function documentBrowserFunction($window,
 		var deferred = $q.defer();
 		 $mdDialog.show({
  		      controller: DialogEditDocumentController,
- 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+ 		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
  		      clickOutsideToClose:false,
  		      escapeToClose :false,
  		      fullscreen: true,
@@ -452,7 +452,7 @@ function documentBrowserFunction($window,
 	$scope.newDocument=function(type){
 		$mdDialog.show({
 			controller: DialogNewDocumentController,
-			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,
 			fullscreen: true,

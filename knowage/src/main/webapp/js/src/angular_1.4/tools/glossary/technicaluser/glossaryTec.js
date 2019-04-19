@@ -1162,8 +1162,7 @@ function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_r
 
 						})
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
-			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/info_word.html',
 			clickOutsideToClose :true
 		})
 	}
@@ -1203,8 +1202,7 @@ function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_r
 							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 						})
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
-			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/info_document.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1231,8 +1229,7 @@ function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_r
 						})
 
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
-			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1253,8 +1250,7 @@ function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_r
 						})
 
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
-			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1277,8 +1273,7 @@ function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_r
 						})
 
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_table.html',
-			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_table.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/info_table.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})

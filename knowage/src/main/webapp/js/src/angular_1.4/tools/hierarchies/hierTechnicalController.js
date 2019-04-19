@@ -320,7 +320,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			 }
 		 }
 		 return $mdDialog.show({
-					templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
+					templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 					parent: angular.element(document.body),
 					locals: {
 						   translate: $scope.translate,
@@ -505,7 +505,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
 		return $mdDialog.show({
-				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 				parent: angular.element(document.body),
 				locals: {
 					   translate: $scope.translate,

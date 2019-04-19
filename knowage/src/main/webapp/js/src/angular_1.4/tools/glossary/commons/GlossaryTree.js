@@ -7,7 +7,6 @@
 angular.module('glossary_tree', ['ng-context-menu','ngMaterial','ui.tree', 'sbiModule'])
 .directive('glossaryTree', function() {
   return {
-//	  templateUrl: '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary-tree.html',
     templateUrl: currentScriptPath + 'templates/glossary-tree.html',
     controller: controllerFunction,
     replace:true,
@@ -246,7 +245,6 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 
 						})
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
 			templateUrl : currentScriptPath + 'templates/info_word.html',
 			clickOutsideToClose :true
 		})
@@ -272,7 +270,6 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 
 						})
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_content.html',
 			templateUrl : currentScriptPath + 'templates/info_content.html',
 			clickOutsideToClose :true
 		})

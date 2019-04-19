@@ -460,7 +460,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			preserveScope : true,
 			parent : angular.element(document.body),
 			controllerAs : 'LOVSctrl',
-			templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/profileAttributes.html',
+			templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/profileAttributes.html',
 			clickOutsideToClose : false,
 			hasBackdrop : false
 		});
@@ -479,7 +479,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				preserveScope : true,
 				parent : angular.element(document.body),
 				controllerAs : 'LOVSctrl',
-				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/Info.html',
+				templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/Info.html',
 				clickOutsideToClose : false,
 				hasBackdrop : false
 			});
@@ -945,7 +945,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				preserveScope : true,
 				parent : angular.element(document.body),
 				controllerAs : 'LOVSctrl',
-				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovTest.html',
+				templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovTest.html',
 				clickOutsideToClose : false,
 				hasBackdrop : false
 			});
@@ -1263,7 +1263,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 						preserveScope : true,
 						parent : angular.element(document.body),
 						controllerAs : 'LOVSctrl',
-						templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovParams.html',
+						templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovParams.html',
 						clickOutsideToClose : false,
 						hasBackdrop : false
 					});
@@ -1344,7 +1344,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 									preserveScope : true,
 									parent : angular.element(document.body),
 									controllerAs : 'LOVSctrl',
-									templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovPreview.html',
+									templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovPreview.html',
 									clickOutsideToClose : false,
 									hasBackdrop : false
 								});

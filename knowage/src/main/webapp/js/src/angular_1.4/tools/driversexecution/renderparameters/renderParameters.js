@@ -5,8 +5,8 @@
 
 			return {
 				restrict: 'E',
-				templateUrl: sbiModule_config.contextName
-					+ '/js/src/angular_1.4/tools/driversexecution/renderparameters/template/renderParameters.html',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath
+					+ '/angular_1.4/tools/driversexecution/renderparameters/template/renderParameters.html',
 				controller: renderParametersController,
 				scope: {
 					param: '=',

@@ -151,8 +151,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.showTabDialog = function(result, isDemoExecution) {
 		$mdDialog.show({
 			controller : functionCatalogResultsController,
-			templateUrl : sbiModule_config.contextName
-					+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'
+			templateUrl : sbiModule_config.dynamicResourcesBasePath
+					+ '/angular_1.4/tools/functionsCatalog/templates/'
 					+ 'functionCatalogResults.jsp',
 			preserveScope : true,
 			locals : {
@@ -168,8 +168,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.showNewInputDialog = function(data, datasetList, isDemoFunction) {
 		var executionResult = $mdDialog.show({
 			controller : executeWithNewDataController,
-			templateUrl : sbiModule_config.contextName
-					+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'
+			templateUrl : sbiModule_config.dynamicResourcesBasePath
+					+ '/angular_1.4/tools/functionsCatalog/templates/'
 					+ 'functionCatalogNewInputs.jsp',
 			preserveScope : true,
 			locals : {
@@ -615,8 +615,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.showDatasetPreviewDialog = function(datasetToSee, labelDS) {
 		var executionResult = $mdDialog.show({
 			controller : datasetPreviewController,
-			templateUrl : sbiModule_config.contextName
-					+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'
+			templateUrl : sbiModule_config.dynamicResourcesBasePath
+					+ '/angular_1.4/tools/functionsCatalog/templates/'
 					+ 'datasetPreview.jsp',
 			preserveScope : true,
 			locals : {

@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 				catalogData : "=",
 				catalogSelected: "="
 		  	},
-			templateUrl: sbiModule_config.contextName 
-				+ '/js/src/angular_1.4/tools/servermanager/directive/ngExportCatalogTemplate.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath 
+				+ '/angular_1.4/tools/servermanager/directive/ngExportCatalogTemplate.html',
 				link: link
 		};
 		

@@ -22,8 +22,8 @@
 	documentExecutionModule.directive('documentOlap', ['sbiModule_config', function(sbiModule_config){
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName 
-				+ '/js/src/angular_1.4/tools/documentexecution/documentOlap/documentOlapTemplate.jsp',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath 
+				+ '/angular_1.4/tools/documentexecution/documentOlap/documentOlapTemplate.jsp',
 			controller: documentOlapCtrl
 		};
 	}]);

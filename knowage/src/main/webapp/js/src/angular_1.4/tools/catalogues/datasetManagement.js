@@ -2937,7 +2937,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    preserveScope : true,
 		    parent : angular.element(document.body),
 		    controllerAs : 'openEditScriptDialogCtrl',
-		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/EditDataSetScript.html',
+		    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/EditDataSetScript.html',
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
 		   });
@@ -3031,7 +3031,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				    preserveScope : true,
 				    parent : angular.element(document.body),
 				    controllerAs : 'datasetController',
-				    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/qbeQueryView.html',
+				    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/qbeQueryView.html',
 				    clickOutsideToClose : false,
 				    hasBackdrop : true
 			   });
@@ -3106,7 +3106,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							    preserveScope : true,
 							    parent : angular.element(document.body),
 							    controllerAs : 'datasetController',
-							    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/datasetRestParamsInfo.html',
+							    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/datasetRestParamsInfo.html',
 							    clickOutsideToClose : false,
 							    hasBackdrop : true
 						   });
@@ -3216,7 +3216,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				{
 					scope:$scope,
 					preserveScope: true,
-					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/checkDatasetParamsBeforePreviewDialog.html'
+					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/catalogues/templates/checkDatasetParamsBeforePreviewDialog.html'
 				}
 			)
 		} else {
@@ -3311,7 +3311,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							  scope:$scope,
 							  preserveScope: true,
 						      controller: DatasetPreviewController,
-						      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
+						      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
 						      clickOutsideToClose:false,
 						      escapeToClose :false
 						    });
@@ -3692,7 +3692,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							    preserveScope : true,
 							    parent : angular.element(document.body),
 							    controllerAs : 'datasetController',
-							    templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
+							    templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/catalogues/templates/helpDataSet.html',
 							    clickOutsideToClose : false,
 							    hasBackdrop : true
 						   });
@@ -3717,7 +3717,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		    scope : $scope,
     		    preserveScope : true,
     		    parent : angular.element(document.body),
-    		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
+    		    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
     		    clickOutsideToClose : false,
     		    hasBackdrop : false
     		   });
@@ -3747,7 +3747,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    scope : $scope,
 		    preserveScope : true,
 		    parent : angular.element(document.body),
-		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/avaliableProfileAttributes.html',
+		    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/avaliableProfileAttributes.html',
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
 		   });

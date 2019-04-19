@@ -4,8 +4,8 @@
 	documentExecutionModule.directive('documentScheduler', ['sbiModule_config', function(sbiModule_config){
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName
-				+ '/js/src/angular_1.4/tools/documentexecution/documentScheduler/documentSchedulerTemplate.jsp',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath
+				+ '/angular_1.4/tools/documentexecution/documentScheduler/documentSchedulerTemplate.jsp',
 			controller: documentSchedulerCtrl,
 		};
 	}]);

@@ -6,7 +6,6 @@
 angular.module('angular_time_picker', ['ngMaterial'])
 .directive('angularTimePicker', function() {
   return {
-//	  templateUrl: '/knowage/js/src/angular_1.4/tools/commons/angular-time-picker//angular-time-picker.html',
     templateUrl: currentScriptPath + 'angular-time-picker.html',
     controller: angularTimePickerFunction,
     scope: {

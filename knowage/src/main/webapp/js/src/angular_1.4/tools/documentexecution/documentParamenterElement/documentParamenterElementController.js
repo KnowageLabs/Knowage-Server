@@ -23,8 +23,8 @@
 			 function(sbiModule_config) {
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName
-				+ '/js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementTemplate.jsp',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath
+				+ '/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementTemplate.jsp',
 			controller: documentParamenterElementCtrl,
 			scope: {
 				parameter: '=',
@@ -76,8 +76,8 @@
 			}
 
 			var treeLovNode = (innerNode != undefined && innerNode != null)? innerNode.id : 'lovroot';
-			var templateUrl = sbiModule_config.contextName
-				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
+			var templateUrl = sbiModule_config.dynamicResourcesBasePath
+				+ '/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 
 			var params = {};
 			if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
@@ -250,8 +250,8 @@
 
 			$scope.execProperties.hideProgressCircular.status=false;
 			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
-			var templateUrl = sbiModule_config.contextName
-				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
+			var templateUrl = sbiModule_config.dynamicResourcesBasePath
+				+ '/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 
 			$scope.popupParameterDialog(parameter, templateUrl);
 		};

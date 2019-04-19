@@ -297,7 +297,7 @@
 
 			$mdDialog.show({
 				controller: rankControllerFunction,
-				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentRank.html',
+				templateUrl:sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentRank.html',
 				scope:$scope,
 				preserveScope: true,
 				clickOutsideToClose:true
@@ -403,7 +403,7 @@
 				$mdDialog.show({
 					locals: {publicUrl: urlToSend, embedHTML: embedHTML, isPublic: canExec},
 					//flex: 80,
-					templateUrl: sbiModule_config.contextName+"/js/src/angular_1.4/tools/documentexecution/templates/publicExecutionUrl.html",
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+"/angular_1.4/tools/documentexecution/templates/publicExecutionUrl.html",
 					parent: angular.element(document.body),
 					clickOutsideToClose:true,
 					escapeToClose :true,
@@ -460,8 +460,8 @@
 					};
 				},
 
-				templateUrl : sbiModule_config.contextName
-				+ '/js/src/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
+				templateUrl : sbiModule_config.dynamicResourcesBasePath
+				+ '/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
 			});
 		};
 
@@ -487,7 +487,7 @@
 
 			$mdDialog.show({
 				controller: noteControllerFunction,
-				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentNote.html',
+				templateUrl:sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentNote.html',
 				scope:$scope,
 				preserveScope: true,
 				clickOutsideToClose:true

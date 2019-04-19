@@ -72,8 +72,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 	$scope.listAssociation = function(){
 		$mdDialog.show({
 			controller: $scope.dialogController ,
-//			templateUrl: '/knowage/js/src/angular_1.4/tools/servermanager/documentImportExport/templates/importExportListAssociation.html',
-			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/servermanager/documentImportExport/templates/importExportListAssociation.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/servermanager/documentImportExport/templates/importExportListAssociation.html',
 			parent: angular.element(document.body),
 			locals : {
 				translate : $scope.translate,

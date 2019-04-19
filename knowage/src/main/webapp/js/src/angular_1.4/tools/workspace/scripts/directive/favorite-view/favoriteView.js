@@ -24,7 +24,6 @@
 angular.module('favorite_view', ['ngMaterial'])
 .directive('favoriteView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/favorite-view/favorite-view.html',
 		templateUrl: currentScriptPath + 'favorite-view.html',
 		controller: favoriteViewControllerFunction,
 		priority: 10,

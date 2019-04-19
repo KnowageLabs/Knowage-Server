@@ -352,7 +352,7 @@
 						}
 					},
 					disableParentScroll: true,
-					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
+					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
 					position: $mdPanel.newPanelPosition().absolute().center(),
 					trapFocus: true,
 //					zIndex: 150,

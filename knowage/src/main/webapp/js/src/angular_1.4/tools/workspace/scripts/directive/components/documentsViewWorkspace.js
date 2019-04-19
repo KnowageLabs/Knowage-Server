@@ -29,7 +29,6 @@ angular
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/documentsViewWorkspace.html',
 		      templateUrl: currentScriptPath + '../../../templates/documentsViewWorkspace.html',
 		      controller: documentsController
 		  };
@@ -247,7 +246,7 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 			  scope:$scope,
 			  preserveScope: true,
 		      controller: AddNewFolderController,
-		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/createFolderDialog.html',
+		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/createFolderDialog.html',
 		      clickOutsideToClose:false,
 		      escapeToClose :false
 		 });
@@ -531,7 +530,7 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 			  scope:$scope,
 			  preserveScope: true,
 		      controller: MoveDocumentToFolderController,
-		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/folderTreeTemplate.html',
+		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/folderTreeTemplate.html',
 		      clickOutsideToClose:false,
 		      escapeToClose :false,
 		      locals:{

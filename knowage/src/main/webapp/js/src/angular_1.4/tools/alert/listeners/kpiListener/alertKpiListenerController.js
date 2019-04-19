@@ -109,7 +109,7 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	$scope.addAction=function(item){   
 		$mdDialog.show({ 
 		      controller: addActionDialogController, 
-		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/alert/listeners/kpiListener/templates/addKpiActionTemplate.html',  
+		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/alert/listeners/kpiListener/templates/addKpiActionTemplate.html',  
 		      clickOutsideToClose:false,
 		      preserveScope:true, 
 		      locals:{

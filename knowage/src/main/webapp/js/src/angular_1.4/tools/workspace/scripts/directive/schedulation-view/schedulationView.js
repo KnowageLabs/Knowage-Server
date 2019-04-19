@@ -23,7 +23,6 @@
 angular.module('schedulation_view', ['ngMaterial'])
 .directive('schedulationView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/recent-view/recent-view.html',
 		templateUrl: currentScriptPath + 'schedulation-view.html',
 		controller: recentViewControllerFunction,
 		priority: 10,

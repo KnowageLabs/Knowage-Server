@@ -35,7 +35,6 @@
 		return {
 			restrict: 'E',
 			replace: 'true',
-//			templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/analysisViewWorkspace.html',
 			templateUrl: currentScriptPath + '../../../templates/analysisViewWorkspace.html',
 			controller: analysisController
 		};
@@ -211,7 +210,7 @@
 			
 			$mdDialog.show({
 				controller: editAnalysisDocumentController,
-				templateUrl: sbiModule_config.contextName + "/js/src/angular_1.4/tools/workspace/templates/editAnalysisDocumentTemp.html",
+				templateUrl: sbiModule_config.dynamicResourcesBasePath + "/angular_1.4/tools/workspace/templates/editAnalysisDocumentTemp.html",
 				locals: {
 					document: selectedDocument		
 				},
@@ -343,7 +342,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: CreateNewAnalysisController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true
@@ -359,7 +358,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: CreateNewGeoMapController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true
@@ -378,7 +377,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: CreateNewKPIController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true
@@ -416,7 +415,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: UploadPreviewFileController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/analysisUploadPreviewFile.html',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/analysisUploadPreviewFile.html',
 				clickOutsideToClose: false,
 				escapeToClose :true,
 				//fullscreen: true,
@@ -433,7 +432,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: $scope.editControllers[docType],
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true,
@@ -473,7 +472,7 @@
 							scope:$scope,
 							preserveScope: true,
 							controller: ShareDocumentrController,
-							templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/folderTreeTemplateAnalysis.html',
+							templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/folderTreeTemplateAnalysis.html',
 							clickOutsideToClose:false,
 							escapeToClose :false,
 							locals:{

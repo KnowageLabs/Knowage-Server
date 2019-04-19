@@ -133,7 +133,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	       var parentEl = angular.element(document.body);
         	       $mdDialog.show({
         	         parent: parentEl,
-        	         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/languageDialog.html",
+        	         templateUrl: sbiModule_config.dynamicResourcesBasePath + "/angular_1.4/menu/templates/languageDialog.html",
         	         locals: {
         	           languages: $scope.languages
         	         }
@@ -534,7 +534,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 			      var parentEl = angular.element(document.body);
        	       $mdDialog.show({
        	         parent: parentEl,
-       	         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/accessibilityDialogTemplate.html",
+       	         templateUrl: sbiModule_config.dynamicResourcesBasePath+"/angular_1.4/menu/templates/accessibilityDialogTemplate.html",
        	         locals: {
 
        	         }

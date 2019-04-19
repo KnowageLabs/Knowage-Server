@@ -23,7 +23,6 @@
 angular.module('organizer_view', ['ngMaterial'])
 .directive('organizerView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/organizer-view/organizer-view.html',
 		templateUrl: currentScriptPath + 'organizer-view.html',
 		controller: organizerViewControllerFunction,
 		priority: 10,

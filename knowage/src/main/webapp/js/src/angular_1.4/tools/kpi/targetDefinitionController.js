@@ -182,7 +182,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			kpiIdToIdx['' + $scope.kpis[i].id] = i;
 		}
 		$mdDialog.show({
-			templateUrl: sbiModule_config.contextName + '//js/src/angular_1.4/tools/kpi/template/targetKpiAddDialog.jsp',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/kpi/template/targetKpiAddDialog.jsp',
 			hasBackdrop: true,
 			clickOutsideToClose: false,
 			locals:{translate:sbiModule_translate},

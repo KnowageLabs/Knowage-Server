@@ -52,7 +52,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
   						) {
     return {
         restrict: 'E',
-        templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/menuBar.html",
+        templateUrl: sbiModule_config.dynamicResourcesBasePath+"/angular_1.4/menu/templates/menuBar.html",
         replace: true,
         link: function ($scope, elem, attrs) {
         	$scope.translate = sbiModule_translate;
@@ -111,7 +111,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         	       var parentEl = angular.element(document.body);
         	       $mdDialog.show({
         	         parent: parentEl,
-        	         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/languageDialog.html",
+        	         templateUrl: +"/angular_1.4/menu/templates/languageDialog.html",
         	         locals: {
         	           languages: $scope.languages
         	         }
@@ -288,7 +288,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 			      var parentEl = angular.element(document.body);
        	       $mdDialog.show({
        	         parent: parentEl,
-       	         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/accessibilityDialogTemplate.html",
+       	         templateUrl: sbiModule_config.dynamicResourcesBasePath+"/angular_1.4/menu/templates/accessibilityDialogTemplate.html",
        	         locals: {
 
        	         }

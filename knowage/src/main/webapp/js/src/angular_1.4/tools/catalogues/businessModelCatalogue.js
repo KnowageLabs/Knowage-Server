@@ -737,7 +737,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								controller: generateDatamartOptionsController,
 								preserveScope: true,
 								locals: {selectedBusinessModel:$scope.selectedBusinessModel,userId:sbiModule_user.userId,catalogName:catalogName,schemaName:schemaName,parentController:$scope},
-								templateUrl:sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/generateDatamartOptions.html',
+								templateUrl:sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/catalogues/templates/generateDatamartOptions.html',
 								clickOutsideToClose:false,
 								escapeToClose :false,
 								fullscreen: true

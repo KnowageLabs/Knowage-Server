@@ -54,8 +54,7 @@ angular
 							scope:$scope,
 							preserveScope: true,
 							controller: openQbeInterfaceController,
-	//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+							templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
 							locals:{
 									url:url,
@@ -90,7 +89,7 @@ angular
 							scope:$scope,
 							preserveScope: true,
 							controller: openQbeInterfaceController,
-							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+							templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 							fullscreen: true,
 							locals:{
 								url:url,
@@ -140,7 +139,7 @@ angular
 			var openConfirmationPanel = function(okFunction,cancelFunction){
 				var config = {
 						attachTo:  angular.element(document.body),
-						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/closingConfirmationPanel.html',
+						templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/closingConfirmationPanel.html',
 						position: $mdPanel.newPanelPosition().absolute().center(),
 						fullscreen :false,
 						controller: function($scope,mdPanelRef,sbiModule_translate){
@@ -177,7 +176,7 @@ angular
 			var openPanelForSavingQbeDataset = function() {
 				savingPanelConfig = {
 						attachTo:  angular.element(document.body),
-						templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
+						templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
 						position: $mdPanel.newPanelPosition().absolute().center(),
 						panelClass:"layout-column",
 						fullscreen: true,
@@ -356,7 +355,7 @@ angular
 					autoWrap: false,
 					skipHide: true,
 					preserveScope : true,
-					templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
+					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
 					controllerAs : 'vpCtrl',
 					controller : function($mdDialog) {
 						var vpctl = this;
@@ -392,7 +391,7 @@ angular
 						};
 					},
 
-					templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
+					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 				});
 			};
 

@@ -21,7 +21,7 @@
 		module.directive('filterByTags',['sbiModule_config','sbiModule_restServices','sbiModule_urlBuilderService','$timeout','$filter',function(sbiModule_config,$timeout,$filter) {
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/tags/filterByTags/filterByTags.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/tags/filterByTags/filterByTags.html',
 			controller: filterTagsController,
 			scope:	{
 					tagsArray : '=',

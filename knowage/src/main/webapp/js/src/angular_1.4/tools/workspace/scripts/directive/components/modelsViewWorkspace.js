@@ -32,7 +32,6 @@
 		return {
 			restrict: 'E',
 			replace: 'true',
-//			templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/modelsViewWorkspace.html',
 			templateUrl: currentScriptPath + '../../../templates/modelsViewWorkspace.html',
 			controller: modelsController
 		};
@@ -303,7 +302,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: DialogEditFederationController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true,
@@ -367,7 +366,7 @@
 				scope:$scope,
 				preserveScope: true,
 				controller: DialogEditFederationController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true,

@@ -24,7 +24,6 @@
 angular.module('federation_view', ['ngMaterial'])
 .directive('federationView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/federation-view/federation-view.html',
 		 templateUrl: currentScriptPath + 'federation-view.html',
 		controller: federationViewControllerFunction,
 		 priority: 10,

@@ -41,7 +41,7 @@
 		openInfoMetadata : function(){
 		    $mdDialog.show({
 				preserveScope : true,
-		    	templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/documentMetadata.jsp',
+		    	templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/documentMetadata.jsp',
 		    	locals : {
 					sbiModule_translate: sbiModule_translate,
 					sbiModule_config: sbiModule_config,

@@ -24,7 +24,6 @@
 angular.module('ckan_view', ['ngMaterial'])
 .directive('ckanView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/ckan-view/ckan-view.html',
 		templateUrl: currentScriptPath + 'ckan-view.html',
 		controller: ckanViewControllerFunction,
 		 priority: 10,

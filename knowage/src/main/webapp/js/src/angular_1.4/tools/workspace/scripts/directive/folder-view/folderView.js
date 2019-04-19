@@ -23,7 +23,6 @@
 angular.module('folder_view', ['ngMaterial'])
 .directive('folderView', function() {
 	return {
-//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/folder-view/folder-view.html',
 		templateUrl: currentScriptPath + 'folder-view.html',
 		controller: folderViewControllerFunction,
 		priority: 10,

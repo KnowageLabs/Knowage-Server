@@ -4,9 +4,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", UsersManagementFunction]);
+app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", "sbiModule_config", UsersManagementFunction]);
 
-function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging) {
+function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging, sbiModule_config) {
 
     //VARIABLES
 
@@ -114,7 +114,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
         $mdDialog.show({
                 controller: lovsDialogController,
-                templateUrl: '../js/src/angular_1.4/tools/catalogues/templates/lovValues.html',
+                templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/catalogues/templates/lovValues.html',
                 targetEvent: ev,
                 clickOutsideToClose: true,
                // fullscreen: true,

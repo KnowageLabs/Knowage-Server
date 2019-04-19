@@ -669,7 +669,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				autoWrap: false,
 				parent : angular.element(document.body),
 				controllerAs : 'AnalyticalDriversController',
-				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/useModeDetails.html',
+				templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/useModeDetails.html',
 				clickOutsideToClose : false,
 				hasBackdrop : true
 			});
@@ -827,7 +827,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				preserveScope : true,
 				parent : angular.element(document.body),
 				controllerAs : 'AnalyticalDriversController',
-				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/useModeDetails.html',
+				templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/useModeDetails.html',
 				clickOutsideToClose : false,
 				hasBackdrop : true
 			});
