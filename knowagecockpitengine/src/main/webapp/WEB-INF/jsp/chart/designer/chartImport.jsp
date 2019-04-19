@@ -16,23 +16,29 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/customDirectives.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/advanced-tab/advanced-tab.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/custom_directives/preview/preview.js"></script>
+<!-- --------------------------------------------------------------------------------------
+	urlBuilder - for dynamically getting the full URL path to the specific resource.
+	spagoBiContext - context path of core engine: /knowage
+	cockpitEngineContext - context name of particular engine, in this case: /cockpitengine  
+  --------------------------------------------------------------------------------------- -->
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/commons/Settings.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/customDirectives.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/advanced-tab/advanced-tab.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/preview/preview.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/common_directives/commonDirectives.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/commons/Settings.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/third_party/thirdPartyDirectives.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/common_directives/commonDirectives.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/directives/chartDirectives.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/third_party/thirdPartyDirectives.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/services/chartDesignerServices.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/services/channelMessaging.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/chartDirectives.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/chartDesigner.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/treemap/treemap.js"></script>	
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/services/chartDesignerServices.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/services/channelMessaging.js")%>"></script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/chartDesigner.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/treemap/treemap.js")%>"></script>	

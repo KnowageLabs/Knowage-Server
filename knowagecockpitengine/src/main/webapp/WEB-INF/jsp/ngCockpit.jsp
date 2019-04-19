@@ -49,7 +49,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		EXPORT_MODE: <%=exportMode%>,
 		INITIALIZED_WIDGETS : [],
 		DIRTY_WIDGETS : [],
-		CURRENT_KNOWAGE_VERSION: "<%=it.eng.knowage.wapp.VersionInfo.COMPLETE_VERSION%>"
+		CURRENT_KNOWAGE_VERSION: "<%=it.eng.knowage.wapp.Version.getVersionForDatabase()%>"
 	}
 });
 

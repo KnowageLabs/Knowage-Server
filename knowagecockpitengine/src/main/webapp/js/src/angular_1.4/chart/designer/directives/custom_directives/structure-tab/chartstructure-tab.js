@@ -27,7 +27,7 @@ app.directive('chartstructureTab', function(sbiModule_config) {
 			restrict: 'AE',
 			replace: true,
 			templateUrl: function(){
-			      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.html'
+			      return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.html'
 		      },
 			controller: structureTabControllerFunction
 		}

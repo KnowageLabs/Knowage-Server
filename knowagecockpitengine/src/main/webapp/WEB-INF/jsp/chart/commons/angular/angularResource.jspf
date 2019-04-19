@@ -52,9 +52,26 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
 
 <%
-
+	UrlBuilder urlBuilder = new UrlBuilder();	
+	String spagoBiContext = GeneralUtilities.getSpagoBiContext(); 	//  /knowage
+	String cockpitEngineContext = request.getContextPath(); 	    //  /cockpitengine
+	String dynamicResourcesBasePath;  								//  /knowage/js/src
+	String dynamicResourcesEnginePath;  							//  /cockpitengine/js/src
+	Environment dynamicEnvironment = Version.getEnvironment();
+	
+	if (dynamicEnvironment == Environment.PRODUCTION) {
+		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src-" + Version.getCompleteVersion();
+		dynamicResourcesEnginePath = cockpitEngineContext + "/js/src-" + Version.getCompleteVersion();
+	} else {
+		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src";
+		dynamicResourcesEnginePath = cockpitEngineContext + "/js/src";
+	}	
+	
 	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
 	String chartEngineContextName = sb.getCharacters();
 	

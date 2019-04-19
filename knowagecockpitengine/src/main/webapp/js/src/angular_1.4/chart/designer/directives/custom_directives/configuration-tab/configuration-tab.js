@@ -23,7 +23,7 @@ angular.module('configuration-tab', [])
 		restrict: 'AE',
 		replace:true,
 		templateUrl: function(){
-		      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.html'
+		      return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.html'
 	      },
 		controller: configurationTabControllerFunction
 	}

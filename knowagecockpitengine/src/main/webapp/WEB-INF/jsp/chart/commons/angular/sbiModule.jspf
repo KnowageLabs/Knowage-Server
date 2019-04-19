@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
 	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
 	        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
+			dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",		//  /knowage/js/src
+			dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"	//  /cockpitengine/js/src
 		};
 	});
 	

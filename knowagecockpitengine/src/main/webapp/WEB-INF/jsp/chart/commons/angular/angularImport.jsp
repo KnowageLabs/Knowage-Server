@@ -18,51 +18,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 /*${disable.console.logging}*/
 </script>
-<%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+"/"+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
-%>
+
+<!-- --------------------------------------------------------------------------------------
+	urlBuilder - for dynamically getting the full URL path to the specific resource.
+	spagoBiContext - context path of core engine: /knowage
+	cockpitEngineContext - context name of particular engine, in this case: /cockpitengine  
+  --------------------------------------------------------------------------------------- -->
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
 <!-- Font awesome CSS for fancy icons. -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
 
 <!-- angular reference-->
 <!-- START-DEBUG -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular_1.4/angular.js")%>"></script>
 <!-- END-DEBUG -->
 <!-- START-PRODUCTION 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script>
 END-PRODUCTION -->
 <!-- angular-material-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular_1.4/angular-animate.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular_1.4/angular-aria.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular_1.4/angular-sanitize.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular_1.4/angular-messages.min.js")%>"></script>
 
 <!-- toastr -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/themes/sbi_default/css/angular-toastr.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/commons/angular-toastr.tpls.js")%>"></script>
 <!-- angular tree -->
-<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+<link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script>
 
 <!-- angular json tree -->
-<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-json-tree/json-tree.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-json-tree/json-tree.js"></script>
+<link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-json-tree/json-tree.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-json-tree/json-tree.js")%>"></script>
 
 <!-- expanderBox -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/expander-box/expanderBox.js")%>"></script>
 
 <!-- colorpicker -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/tinycolor-min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/tinygradient.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
 	
 
 <!-- 

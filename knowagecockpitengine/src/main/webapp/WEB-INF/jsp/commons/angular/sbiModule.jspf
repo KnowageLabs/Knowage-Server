@@ -1,4 +1,19 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
 
 <script>
 
@@ -11,7 +26,6 @@ var sbiM=angular.module('sbiModule',["ngSanitize"]);
 sbiM.factory('sbiModule_config',function(){ 
 	return {
     	contextName: '${pageContext.request.contextPath}',
-<%--     	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>', --%>
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
@@ -19,40 +33,12 @@ sbiM.factory('sbiModule_config',function(){
     	curr_language: '<%= curr_language%>',
     	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
         dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
-    	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
-    	<%--     	currTheme: '<%= currTheme %>', --%>
-		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
-<%--  		dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(permanentSession) %>',  // the date format localized according to user language and country  --%>
-<%--  		localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',  // the date format localized according to user language and country  --%>
-<%-- 		localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country --%>
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
-<%-- 		engineUrls:<%= aServiceResponse.getAttribute("engineUrls") %>, --%>
-<%-- 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>', --%>
-		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
-		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
-		<%-- <%}%> --%>
-		
-		<%-- <%if(parameterStatePersistenceScope != null) {%> --%>
-		<%-- parameterStatePersistenceScope: '<%= parameterStatePersistenceScope.toUpperCase() %>', --%>
-		<%-- <%}%> --%>
-		
-		<%-- <%if(parametersMementoPersistenceEnabled != null) {%> --%>
-		<%-- isParametersMementoPersistenceEnabled: <%= Boolean.valueOf(parametersMementoPersistenceEnabled) %>, --%>
-		<%-- <%}%> --%>
-		
-		<%-- <%if(parameterMementoPersistenceScope != null) {%> --%>
-		<%-- parameterMementoPersistenceScope: '<%= parameterMementoPersistenceScope.toUpperCase() %>', --%>
-		<%-- <%}%> --%>
-		
-		<%-- <%if(parameterMementoPersistenceDepth != null) {%> --%>
-		<%-- parameterMementoPersistenceDepth: <%= parameterMementoPersistenceDepth %>, --%>
-		<%-- <%}%> --%>
-		
-		<%-- isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %> --%>
-
 		externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
-		chartEngineContextName:"<%=chartEngineContextName%>"
+		chartEngineContextName:"<%=chartEngineContextName%>",
+		dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",  	//  /knowage/js/src
+		dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"   //  /cockpitengine/js/src
 	};
 });
 
