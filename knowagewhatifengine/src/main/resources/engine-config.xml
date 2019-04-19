@@ -43,8 +43,7 @@
 			<ALGORITHM name="Fix values" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.FakeAllocatyionAlg"/>
 		</ALGORITHMS>
 	</WRITEBACK>
-	<DEPTHLIMIT value="10">
-	</DEPTHLIMIT>
+	<!-- <DEPTHLIMIT value="10" /> -->
 	<DRILLTROUGH_MAX_ROWS value="10">
 	</DRILLTROUGH_MAX_ROWS>
 	<PIVOT_TABLE_PAGES_LOAD_COUNT value ="100"></PIVOT_TABLE_PAGES_LOAD_COUNT>
