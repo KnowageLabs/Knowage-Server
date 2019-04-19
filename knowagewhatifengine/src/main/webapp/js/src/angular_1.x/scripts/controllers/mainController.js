@@ -116,7 +116,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	// flag for showing olap designer specific stuff
 	$scope.olapMode = false;
 
-	$scope.showSiblings = true;
+	$scope.showSiblings = false;
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
