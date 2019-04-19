@@ -32,6 +32,7 @@ function documentBrowserFunction($window,
 	$scope.hideProgressCircular=true;
 	$scope.searchingDocuments=false;
 	$scope.lastSearchInputInserted = "";
+	$scope.imageServletUrl = sbiModule_config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=";
 
 	//$scope.defaultFolderId = defaultFolderId;
 	if(defaultFoldersId != undefined && defaultFoldersId != ''){
@@ -54,86 +55,88 @@ function documentBrowserFunction($window,
 		}
 
 
-$scope.documentBrowserGrid = {
-		angularCompileRows: true,
-        enableColResize: false,
-        enableFilter: true,
-        enableSorting: true,
-        pagination: true,
-        paginationAutoPageSize: true,
-        onGridSizeChanged: resizeColumns,
-        onRowClicked: onSelectionChanged
-};
-
-$scope.searchResultGrid = {
-		angularCompileRows: true,
-		enableColResize: false,
-        enableFilter: false,
-        pagination: true,
-        paginationAutoPageSize: true,
-        onRowClicked: onSelectionChanged,
-        columnDefs : $scope.columns
-}
-
-$scope.documentBrowserGrid.onGridReady = function(){
-	$scope.documentBrowserGrid.api.setColumnDefs($scope.columns);
-		$scope.documentBrowserGrid.api.sizeColumnsToFit();
-}
-
-
-$scope.tableElement = angular.element(document.querySelectorAll(".documentBrowserGrid")[0]);
-
-$scope.$watch(function () {
-    return $scope.tableElement[0].clientWidth;
-   }, function(newVal, oldVal) {
-	   if(newVal!=oldVal){
-		   $scope.documentBrowserGrid.api.sizeColumnsToFit();
-		   if(newVal<600){
-			   $scope.openDocumentDetail = false;
-		   }
-	   }
-});
-
-function resizeColumns(){
-	var columnsToHideOnMobile = ['creationUser','viewLabel','visible'];
-	if(document.getElementsByClassName('mainContent')[0].clientWidth < 800){
-		$scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, false);
-	}else $scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, true);
+	$scope.documentBrowserGrid = {
+			angularCompileRows: true,
+	        enableColResize: false,
+	        enableFilter: true,
+	        enableSorting: true,
+	        pagination: true,
+	        paginationAutoPageSize: true,
+	        onGridSizeChanged: resizeColumns,
+	        onRowClicked: onSelectionChanged
+	};
 	
-	$scope.documentBrowserGrid.api.sizeColumnsToFit();
-}
-
-function onSelectionChanged(node){
-	if($scope.selectedDocument == node.data){
-		node.node.setSelected(false,true);
-		$scope.selectedDocument = {};
-		$scope.openDocumentDetail = false;
-		$mdSidenav('right').close();
-		return;
-	}else{
-		node.node.setSelected(true,true);
-		$scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
-		$scope.selectedDocument = node.data;
-		$mdSidenav('right').open();
+	$scope.searchResultGrid = {
+			angularCompileRows: true,
+			enableColResize: false,
+	        enableFilter: false,
+	        pagination: true,
+	        paginationAutoPageSize: true,
+	        onRowClicked: onSelectionChanged,
+	        columnDefs : $scope.columns
 	}
-	$scope.$apply();
-}
-
- function buttonRenderer(params){
-	return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)">'+
-			'	<md-tooltip md-delay="500">'+$scope.translate.load('sbi.documentbrowser.execute')+'</md-tooltip>'+
-			'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
-			'</md-button>';
-}
- 
- function statusRenderer(params){
-	 return $filter('translateLoad')(params.data.stateCodeStr);
- }
- 
- function visibilityRenderer(params){
-	 return params.data.visible ? '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.visible')+'</md-tooltip></i></span>' 
-			 : '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x"></i><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.notvisible')+'</md-tooltip></span>';
- }
+	
+	$scope.documentBrowserGrid.onGridReady = function(){
+		$scope.documentBrowserGrid.api.setColumnDefs($scope.columns);
+			$scope.documentBrowserGrid.api.sizeColumnsToFit();
+	}
+	
+	
+	$scope.tableElement = angular.element(document.querySelectorAll(".documentBrowserGrid")[0]);
+	
+	$scope.$watch(function () {
+	    return $scope.tableElement[0].clientWidth;
+	   }, function(newVal, oldVal) {
+		   if(newVal!=oldVal){
+			   $scope.documentBrowserGrid.api.sizeColumnsToFit();
+			   if(newVal<600){
+				   $scope.openDocumentDetail = false;
+			   }
+		   }
+	});
+	
+	function resizeColumns(){
+		var columnsToHideOnMobile = ['creationUser','viewLabel','visible'];
+		if(document.getElementsByClassName('mainContent')[0].clientWidth < 800){
+			$scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, false);
+		}else $scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, true);
+		
+		$scope.documentBrowserGrid.api.sizeColumnsToFit();
+	}
+	
+	function onSelectionChanged(node){
+		if($scope.selectedDocument == node.data){
+			node.node.setSelected(false,true);
+			$scope.selectedDocument = {};
+			$scope.openDocumentDetail = false;
+			$mdSidenav('right').close();
+			return;
+		}else{
+			node.node.setSelected(true,true);
+			$scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
+			$scope.selectedDocument = node.data;
+			if($scope.selectedDocument.previewFile) $scope.tempPreviewSrc = $scope.imageServletUrl + $scope.selectedDocument.previewFile;
+			else{delete $scope.tempPreviewSrc}
+			$mdSidenav('right').open();
+		}
+		$scope.$apply();
+	}
+	
+	 function buttonRenderer(params){
+		return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)">'+
+				'	<md-tooltip md-delay="500">'+$scope.translate.load('sbi.documentbrowser.execute')+'</md-tooltip>'+
+				'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
+				'</md-button>';
+	}
+	 
+	 function statusRenderer(params){
+		 return $filter('translateLoad')(params.data.stateCodeStr);
+	 }
+	 
+	 function visibilityRenderer(params){
+		 return params.data.visible ? '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.visible')+'</md-tooltip></i></span>' 
+				 : '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x"></i><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.notvisible')+'</md-tooltip></span>';
+	 }
 
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
