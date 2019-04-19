@@ -131,13 +131,23 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
                 	action : function(item, event){ctr.navigationList.removeItem(item, event);}
                 }],
                 removeItem : function(item, event){
-					sbiModule_restServices.promisePost('1.0/crossNavigation/remove', "", "{'id':"+item.id+"}")
-					.then(function(response) {
-						ctr.navigationList.loadNavigationList();
-						$scope.showActionOK("sbi.crossnavigation.remove.ok");
-					},function(response){
-						$scope.showActionOK("sbi.crossnavigation.remove.ko");
-					});
+                	
+                	 var confirm = $mdDialog.confirm()
+	                     .title(sbiModule_translate.load('kn.crossnavigation.delete'))
+	                     .textContent(sbiModule_translate.load('kn.crossnavigation.confirm'))
+	                     .targetEvent(event)
+	                     .ok(sbiModule_translate.load('kn.generic.yes'))
+	                     .cancel(sbiModule_translate.load('kn.generic.cancel'));
+
+	               $mdDialog.show(confirm).then(function() {
+	            	   sbiModule_restServices.promisePost('1.0/crossNavigation/remove', "", "{'id':"+item.id+"}")
+						.then(function(response) {
+							ctr.navigationList.loadNavigationList();
+							$scope.showActionOK("sbi.crossnavigation.remove.ok");
+						},function(response){
+							$scope.showActionOK("sbi.crossnavigation.remove.ko");
+						});
+	               }, function() {});
 				}
 			};
 
