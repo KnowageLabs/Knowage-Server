@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])
 						|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])) {
 			%>
-			<md-menu ng-if="selectedFolder && selectedFolder.code!='Functionalities'" style="padding: 0;">
+			<md-menu ng-if="selectedFolder && selectedFolder.parentId != null" style="padding: 0;">
 				<md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)">
 					<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary">
 					</md-icon>
