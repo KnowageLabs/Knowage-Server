@@ -34,27 +34,6 @@ firstUrlTocallvar = firstUrl;
 </script>
 <iframe src="<%= firstUrlToCall %>" id="iframeDoc" width="100%" height="100%" frameborder="0"></iframe>
 
-<style>
-	#pleaserotate-graphic{
-        fill: #fff;
-    }
-
-    #pleaserotate-backdrop {
-        color: #fff;
-        background-color: #000;
-    }
-</style>
-<script>
-var PleaseRotateOptions = {
-	    message: "Please Rotate Your Device",
-	    subMessage: "For a better mobile experience",
-	    allowClickBypass: false,
-	    onlyMobile: false,
-	    zIndex: 9999
-	};
-</script>
-
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/pleaserotate.js/pleaserotate.min.js")%>"></script>
 <script type="text/javascript"	src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/menu/menuApp.js")%>"></script>
 

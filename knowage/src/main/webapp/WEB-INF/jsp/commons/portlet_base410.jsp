@@ -372,6 +372,29 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	
 </script>
 
+<style>
+	#pleaserotate-graphic{
+        fill: #fff;
+    }
+
+    #pleaserotate-backdrop {
+        color: #fff;
+        background-color: #000;
+    }
+</style>
+<script>
+var PleaseRotateOptions = {
+	    message: "Please Rotate Your Device",
+	    subMessage: "For a better mobile experience",
+	    allowClickBypass: false,
+	    onlyMobile: false,
+	    zIndex: 9999
+	};
+	
+</script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/pleaserotate.js/pleaserotate.min.js")%>"></script>
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Angular JS														--%>
 <%-- ---------------------------------------------------------------------- --%>
