@@ -411,28 +411,29 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				lovSingleMandatoryParameterMonitor.stop();
 			}
 
-			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-			Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
-			try {
-				if (!jsonParameters.isNull(objParameter.getId())) {
-					Integer paruseId = objParameter.getParameterUseId();
-					if (parameterUse == null) {
-						parameterUse = parameterUseDAO.loadByUseID(paruseId);
-					}
-					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
-							&& parameterUse.getValueSelection().equals("man_in")) {
-						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
-						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
-						if (objParameter.isMultivalue()) {
-							jsonParamRet = jsonParamRet.replaceAll("\"", "'");
-						}
-						jsonParameters.put(objParameter.getId(), jsonParamRet);
-					}
-
-				}
-			} finally {
-				crossNavParameterMonitor.stop();
-			}
+			// commented out because of KNOWAGE-3900: it is breaking member's name syntax
+//			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+//			Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
+//			try {
+//				if (!jsonParameters.isNull(objParameter.getId())) {
+//					Integer paruseId = objParameter.getParameterUseId();
+//					if (parameterUse == null) {
+//						parameterUse = parameterUseDAO.loadByUseID(paruseId);
+//					}
+//					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
+//							&& parameterUse.getValueSelection().equals("man_in")) {
+//						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
+//						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+//						if (objParameter.isMultivalue()) {
+//							jsonParamRet = jsonParamRet.replaceAll("\"", "'");
+//						}
+//						jsonParameters.put(objParameter.getId(), jsonParamRet);
+//					}
+//
+//				}
+//			} finally {
+//				crossNavParameterMonitor.stop();
+//			}
 
 		}
 
