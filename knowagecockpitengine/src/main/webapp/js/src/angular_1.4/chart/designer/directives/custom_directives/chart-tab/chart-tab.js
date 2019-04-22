@@ -203,7 +203,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				base = StructureTabService.getGaugeTemplate();
 				break;
 			case 'line':
-				base = StructureTabService.getBaseTemplate();
+				base = StructureTabService.getBaseTemplate(type);
 				break;
 			case 'heatmap':
 				base = StructureTabService.getHeatmapTemplate();
@@ -212,10 +212,10 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				base = StructureTabService.getRadarTemplate();
 				break;
 			case 'bar':
-				base = StructureTabService.getBaseTemplate();
+				base = StructureTabService.getBaseTemplate(type);
 				break;
 			case 'pie':
-				base = StructureTabService.getBaseTemplate();
+				base = StructureTabService.getBaseTemplate(type);
 				break;
 			case 'chord':
 				base = StructureTabService.getChordTemplate();
@@ -249,7 +249,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate
 			} else {
 
-				$scope.chartTemplate = StructureTabService.getBaseTemplate();
+				$scope.chartTemplate = StructureTabService.getBaseTemplate('bar');
 				$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 				$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 				$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
@@ -283,7 +283,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			}
 			else {
 
-				$scope.chartTemplate = StructureTabService.getBaseTemplate();
+				$scope.chartTemplate = StructureTabService.getBaseTemplate('bar');
 				/*
 					@author: radmila.selakovic@mht.net
 					adding options for 3D

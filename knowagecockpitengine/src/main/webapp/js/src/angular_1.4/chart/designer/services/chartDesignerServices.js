@@ -287,7 +287,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 		var translate = sbiModule_translate;
 
-	this.getBaseTemplate = function() {
+	this.getBaseTemplate = function(type) {
 		var barLine  = {
 				   "CHART":{
 					      "TITLE":{
@@ -356,13 +356,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					              }
 					         ]
 					      },
-					      "type":"BAR",
-					      "alignAxis": true,
+
 					      "AXES_LIST":{
 					    	  "AXIS":[
 					    		  {
-					    		   "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-						    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+
 					               "id":"Y",
 					               "alias":"Y",
 					               "type":"Serie",
@@ -395,54 +393,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                	  "color":""
 					                  }
 					               },
-					               "TITLE":{
-					                  "text":"",
-					                  "style":{
-					                	  "align":"",
-					                	  "color":"",
-					                	  "fontFamily":"",
-					                	  "fontWeight":"",
-					                	  "fontSize":""
-					                  }
-					               },
-					               "TITLESERIE":{
-					            	   "showTitle": false,
-					            	   "style":{
-						                	  "align":"",
-						                	  "color":"",
-						                	  "fontFamily":"",
-						                	  "fontWeight":"",
-						                	  "fontSize":""
-						                  }
-						               }
+
 					            },
-					            {
-					               "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-						    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
-					               "id":"X",
-					               "alias":"X",
-					               "type":"Category",
-					               "position":"",
-					               "step" : "",
-					               "style":{
-					            	   "rotate":"",
-					            	   "align":"",
-					            	   "color":"",
-					            	   "fontFamily":"",
-					            	   "fontSize":"",
-					            	   "fontWeight":""
-					               },
-					               "TITLE":{
-						                  "text":"",
-						                  "style":{
-						                	  "align":"",
-						                	  "color":"",
-						                	  "fontFamily":"",
-						                	  "fontWeight":"",
-						                	  "fontSize":""
-						                  }
-						               }
-					            }
+
 					         ]
 					      },
 					      "COLORPALETTE":{
@@ -518,13 +471,91 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			              "depth":  0,
 			              "viewDistance":  0,
 			              "show3D" : false,
-			              "groupCategories" : false,
-			              "groupSeries" : false,
-			              "groupSeriesCateg" : false,
-			              "dateTime":false,
-			              "dateFormat":"day"
+
 					   }
 					}
+
+
+		var titleSerie = {
+     	   "showTitle": false,
+    	   "style":{
+            	  "align":"",
+            	  "color":"",
+            	  "fontFamily":"",
+            	  "fontWeight":"",
+            	  "fontSize":""
+              }
+           }
+
+           var chartType = type.toUpperCase();
+
+		   var tempPlots = {
+			   "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
+	    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}]
+			}
+
+           var tempXAxis = {
+	               "plotBands":tempPlots.plotBands,
+		    	   "plotLines": tempPlots.plotLines,
+	               "id":"X",
+	               "alias":"X",
+	               "type":"Category",
+	               "position":"",
+	               "step" : "",
+	               "style":{
+	            	   "rotate":"",
+	            	   "align":"",
+	            	   "color":"",
+	            	   "fontFamily":"",
+	            	   "fontSize":"",
+	            	   "fontWeight":""
+	               },
+	               "TITLE":{
+		                  "text":"",
+		                  "style":{
+		                	  "align":"",
+		                	  "color":"",
+		                	  "fontFamily":"",
+		                	  "fontWeight":"",
+		                	  "fontSize":""
+		                  }
+		               }
+	            }
+
+           var axisTitle = {
+
+	                  "text":"",
+	                  "style":{
+	                	  "align":"",
+	                	  "color":"",
+	                	  "fontFamily":"",
+	                	  "fontWeight":"",
+	                	  "fontSize":""
+		                  }
+		               };
+
+
+			if(type == 'PIE'){
+
+				barLine.CHART.AXES_LIST.AXIS[0].TITLESERIE = titleSerie;
+				barLine.CHART.type = chartType;
+			}else {
+
+				barLine.CHART.type = chartType;
+				barLine.CHART.alignAxis = {"alignAxis": true};
+				barLine.CHART.AXES_LIST.AXIS[0].plotBands = tempPlots.plotBands;
+				barLine.CHART.AXES_LIST.AXIS[0].plotLines = tempPlots.plotLines;
+				barLine.CHART.AXES_LIST.AXIS.push(tempXAxis);
+				barLine.CHART.AXES_LIST.AXIS[0].TITLE = axisTitle;
+				barLine.CHART.groupCategories = false;
+				barLine.CHART.groupSeries = false;
+				barLine.CHART.groupSeriesCateg = false;
+				barLine.CHART.dateTime = false;
+				barLine.CHART.dateFormat = "day";
+				barLine.CHART.hideAxisTitleSerie = true;
+				barLine.CHART.hideAxisTitleCategory = true;
+			}
+
 		return barLine.CHART;
 	}
 
@@ -2654,7 +2685,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			angular.copy(StructureTabService.getGaugeTemplate(), baseTemplate);
 			break;
 		case 'line':
-			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(type), baseTemplate);
 			baseTemplate.type="LINE";
 			break;
 		case 'heatmap':
@@ -2664,10 +2695,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			angular.copy(StructureTabService.getRadarTemplate(), baseTemplate);
 			break;
 		case 'bar':
-			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(type), baseTemplate);
 			break;
 		case 'pie':
-			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(type), baseTemplate);
 			baseTemplate.type="PIE";
 			break;
 		case 'chord':
