@@ -22,7 +22,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 				.extractCategories($scope.selectedPhysicalModel.properties),
 				$scope.currentPhysicalModelParameterCategories);
 	}
-	
+
 	$scope.openedItems = [];
 
 	$scope.openBusinessModel = function(model,e){
@@ -33,7 +33,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 			$scope.openedItems.push(model.name);
 		}
 	}
-	
+
 	$scope.physicalModel_getlevelIcon = function(node) {
 		if (node.hasOwnProperty("columns")) {
 			// is business model node
@@ -142,8 +142,8 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 		                    	   }
 		                       }
 	                       ]
-	
-	
+
+
 	$scope.getPropertyAttributes = function(prop){
 		return prop[Object.keys(prop)[0]];
 	}
@@ -228,27 +228,23 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			return true
 		}
 	};
-	
-	$scope.moveUp = function(index, bmColumns) {
-		
-		var listOfColumns = bmColumns;
-		
-		if(index > -1 && index < listOfColumns.length) {
-			var tmp = listOfColumns[index - 1];
-			listOfColumns[index - 1] = listOfColumns[index];
-			listOfColumns[index] = tmp;
-		}
+	$scope.moveBusinessColumn=function(index,direction,businessModel){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "moveBusinessColumn",metaModelServices.createRequestRest({businessModelUniqueName:businessModel.uniqueName,index:index,direction:direction}))
+		   .then(function(response){
+				metaModelServices.applyPatch(response.data);
+		   },function(response){
+			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+		   })
+	}
+
+	$scope.moveUp = function(index, businessModel) {
+
+		$scope.moveBusinessColumn(index,-1,businessModel)
 	};
-	
-	$scope.moveDown = function(index, bmColumns) {
-		
-		var listOfColumns = bmColumns;
-		
-		if(index > -1 && index < listOfColumns.length - 1) {
-			var tmp = listOfColumns[index + 1];
-			listOfColumns[index + 1] = listOfColumns[index];
-			listOfColumns[index] = tmp;
-		}
+
+	$scope.moveDown = function(index, businessModel) {
+
+		$scope.moveBusinessColumn(index,1,businessModel)
 	};
 
 	$scope.addBusinessModel=function(){
@@ -323,7 +319,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 }
 
 function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
-	
+
 	$scope.businessModelMiscInfo = [ {
 		name : "name",
 		label : sbiModule_translate.load("name")
@@ -342,11 +338,11 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 	$scope.buildRoleVisibility=function(rv,val){
 		val.value=rv.join(";");
 	}
-	
+
 	$scope.getPropertyAttributes = function(prop){
 		return prop[Object.keys(prop)[0]];
 	}
-	
+
 	$scope.getPropertyKey = function(prop){
 		return Object.keys(prop)[0];
 	}
@@ -530,6 +526,7 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 		   })
 	}
+
 	$scope.deleteBusinessColumn=function(businessColumnUniqueName,businessModel){
 		sbiModule_restServices.promisePost("1.0/metaWeb", "deleteBusinessColumn",metaModelServices.createRequestRest({businessColumnUniqueName:businessColumnUniqueName ,businessModelUniqueName:businessModel.uniqueName}))
 		.then(function(response){

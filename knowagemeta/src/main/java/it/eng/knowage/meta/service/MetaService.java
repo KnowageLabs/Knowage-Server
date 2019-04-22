@@ -1056,6 +1056,32 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@POST
+	@Path("/moveBusinessColumn")
+	public Response moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		applyDiff(jsonRoot, model);
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String businessModelUniqueName = json.getString("businessModelUniqueName");
+		Integer index = json.getInt("index");
+		Integer direction = json.getInt("direction");
+
+		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
+		List<BusinessColumn> columns = currBM.getColumns();
+		BusinessColumn movingColumn = columns.get(index);
+		columns.remove(movingColumn);
+		columns.add(index + direction, movingColumn);
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+	}
+
+	@POST
 	@Path("/deleteBusinessColumn")
 	public Response deleteBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
