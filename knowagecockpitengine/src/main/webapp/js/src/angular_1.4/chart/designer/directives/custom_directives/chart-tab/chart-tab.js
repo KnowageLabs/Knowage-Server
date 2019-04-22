@@ -202,7 +202,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 
 			} else {
 
-				$scope.chartTemplate = StructureTabService.getBaseTemplate();
+				$scope.chartTemplate = StructureTabService.getBaseTemplate('bar');
 				$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 				$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 				$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
@@ -234,7 +234,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			}
 			else {
 
-				$scope.chartTemplate = StructureTabService.getBaseTemplate();
+				$scope.chartTemplate = StructureTabService.getBaseTemplate('bar');
 				/*
 					@author: radmila.selakovic@mht.net
 					adding options for 3D
