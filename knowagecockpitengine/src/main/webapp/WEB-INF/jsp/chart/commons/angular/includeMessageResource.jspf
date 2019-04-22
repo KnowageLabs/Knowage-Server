@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
+	src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/messageResource/messageResource.min.js")%>"></script>
 	
 
 <script type="text/javascript">
@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : "${pageContext.request.contextPath}/js/src/messages"
+  		filePath : '<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/messages")%>'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

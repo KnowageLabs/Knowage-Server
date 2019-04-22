@@ -28,7 +28,7 @@
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '../js/spagobi/messages/'
+  		filePath : '<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/messages/")%>'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

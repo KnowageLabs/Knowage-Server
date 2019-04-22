@@ -389,7 +389,7 @@
         			{
     					controller: DialogController,
     					parent: angular.element(document.body),
-    					templateUrl: sbiModule_config.contextName + '/registry/dependentColumnsDialog.tpl.html',
+    					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
     					locals: {    						
     						dontShowAgain: self.stopShow,
     						columns: self.dependentColumns

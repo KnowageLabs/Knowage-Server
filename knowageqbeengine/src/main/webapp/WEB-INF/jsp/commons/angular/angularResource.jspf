@@ -48,7 +48,9 @@ author:...
 <%@page import="it.eng.spagobi.utilities.StringUtils"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
-
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -56,26 +58,38 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-      
-       //UserProfile profile;
-       Locale locale =null;
-       String isFromCross;
-       String spagobiServerHost = null;
-       String spagobiContext = null;
-       String documentLabel = null;
-       String documentId = null;
-       String engine = null;
-       String sbiExecutionID = null;
-       IFormulaDAO formulaDAO = null;
-       List<Formula> formulas = null;
-       String datasourceId= request.getParameter("DATA_SOURCE_ID");
-       ObjectMapper objectMapper = new ObjectMapper();
-       ExecutionSession es = new ExecutionSession(request, request.getSession());
-       JSONArray paramsJsonArray = new JSONArray();
-       
-       
-      
+	UrlBuilder urlBuilder = new UrlBuilder();
+	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);		//  /knowage
+	String qbeEngineContext = request.getContextPath(); 							//  /qbeengine
+	String dynamicResourcesBasePath;  												//  /knowage/js/src
+	String dynamicResourcesEnginePath;  											//  /qbeengine/js/src
+	Environment environment = Version.getEnvironment();
+	
+	if (environment == Environment.PRODUCTION) {
+		dynamicResourcesBasePath = spagoBiContext + "/js/src-" + Version.getCompleteVersion();
+		dynamicResourcesEnginePath = qbeEngineContext + "/js/src-" + Version.getCompleteVersion();
+	} else {
+		dynamicResourcesBasePath = spagoBiContext + "/js/src";
+		dynamicResourcesEnginePath = qbeEngineContext + "/js/src";
+	}      
 
+    //UserProfile profile;
+    Locale locale =null;
+    String isFromCross;
+    String spagobiServerHost = null;
+    String spagobiContext = null;
+    String documentLabel = null;
+    String documentId = null;
+    String engine = null;
+    String sbiExecutionID = null;
+    IFormulaDAO formulaDAO = null;
+    List<Formula> formulas = null;
+    String datasourceId= request.getParameter("DATA_SOURCE_ID");
+    ObjectMapper objectMapper = new ObjectMapper();
+    ExecutionSession es = new ExecutionSession(request, request.getSession());
+    JSONArray paramsJsonArray = new JSONArray();
+
+    
    	//load user profile 
    	IEngUserProfile userProfile  = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
    	String userUniqueIdentifier="";

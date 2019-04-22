@@ -175,7 +175,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/saveTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/saveTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
@@ -617,7 +617,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
                 scope: $scope,
                 preserveScope:true,
-                templateUrl:  sbiModule_config.contextName +'/qbe/templates/joinDefinitionsDialog.html',
+                templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/joinDefinitionsDialog.html',
 
                 clickOutsideToClose:true
             })
@@ -630,7 +630,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     	var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/parameterTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/parameterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
@@ -684,7 +684,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
             },
             scope: $scope,
             preserveScope:true,
-            templateUrl:  sbiModule_config.contextName +'/qbe/templates/temporalOperand.html',
+            templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/temporalOperand.html',
 
             clickOutsideToClose:true
         })
@@ -694,7 +694,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/filterVisualizationTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterVisualizationTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
@@ -730,7 +730,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/filterTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
@@ -764,7 +764,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		var finishEdit = $q.defer();
 		var config = {
 			attachTo : angular.element(document.body),
-			templateUrl : sbiModule_config.contextName
+			templateUrl : sbiModule_config.dynamicResourcesEnginePath
 					+ '/qbe/templates/havingTemplate.html',
 			position : $mdPanel.newPanelPosition().absolute().center(),
 			fullscreen : true,
@@ -849,7 +849,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	            },
 	            scope: $scope,
 	            preserveScope:true,
-	            templateUrl:  sbiModule_config.contextName +'/qbe/templates/relations.html',
+	            templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/relations.html',
 
 	            clickOutsideToClose:true
 	        })
@@ -935,7 +935,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                 	$mdDialog.hide()};
                 $scope.cancel = function() {$mdDialog.cancel()};
             },
-            templateUrl: sbiModule_config.contextName +'/qbe/templates/calculatedFieldsDialog.html',
+            templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/calculatedFieldsDialog.html',
             targetEvent: ev,
             clickOutsideToClose: true,
             scope: $scope,

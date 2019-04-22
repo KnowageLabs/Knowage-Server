@@ -102,7 +102,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		$mdDialog.show({
 			  scope: $scope,
 			  preserveScope: true,
-		      templateUrl: sbiModule_config.contextName + '/qbe/templates/temporalFilters.html',
+		      templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/qbe/templates/temporalFilters.html',
 		      clickOutsideToClose:true
 		    })
 		    .then(function(answer) {

@@ -11,18 +11,65 @@
 
 	<artifactId>knowageqbeengine</artifactId>
 	<packaging>war</packaging>
-
-	<build>
-	    <plugins>
-	        <plugin>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <configuration>
-	                <attachClasses>true</attachClasses>
-	                <classesClassifier>classes</classesClassifier>
-	            </configuration>
-	        </plugin>
-	    </plugins>
-	</build>
+	
+	<profiles>
+		<profile>
+			<id>development</id>
+            <activation>
+                <!-- this profile is active by default -->
+                <activeByDefault>true</activeByDefault>
+                <property>
+                	<name>env</name>
+                    <value>development</value>
+                </property>
+            </activation>
+            <properties>
+           		<application.environment>development</application.environment>
+            </properties>
+           	<build>
+			    <plugins>
+			        <plugin>
+			            <artifactId>maven-war-plugin</artifactId>
+			            <configuration>
+			                <attachClasses>true</attachClasses>
+			                <classesClassifier>classes</classesClassifier>
+			            </configuration>
+			        </plugin>
+			    </plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>production</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>production</value>                  
+                </property>
+            </activation>
+            <properties>
+           		<application.environment>production</application.environment>
+            </properties>
+           	<build>
+			    <plugins>
+			        <plugin>
+			            <artifactId>maven-war-plugin</artifactId>
+			            <configuration>
+			                <attachClasses>true</attachClasses>
+			                <classesClassifier>classes</classesClassifier>
+			                <warSourceExcludes>js/src/**</warSourceExcludes>
+								<webResources>
+							        <resource>
+							          <directory>src/main/webapp/js/src</directory>
+							          <targetPath>js/src-${project.version}</targetPath>
+							        </resource>
+						      </webResources>
+			            </configuration>
+			        </plugin>
+			    </plugins>
+			</build>
+		</profile>
+	</profiles>
 	
 	<dependencies>
 		

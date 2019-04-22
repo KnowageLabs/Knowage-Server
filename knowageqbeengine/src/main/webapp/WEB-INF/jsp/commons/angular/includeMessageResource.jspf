@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/qbe/config/messageResource/messageResource.min.js"></script>
+	src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/config/messageResource/messageResource.min.js")%>"></script>
 
 	
 	
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : "../qbe/messages"
+  		filePath : '<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/messages/")%>'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

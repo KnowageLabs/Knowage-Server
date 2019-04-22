@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
+	src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/messageResource/messageResource.min.js")%>"></script>
 
 
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Format.js' ></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/formats/LocaleUtils.js' ></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/ext4/sbi/commons/Format.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/ext4/sbi/formats/LocaleUtils.js")%>"></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '${pageContext.request.contextPath}/js/src/ext4/sbi/messages/'
+  		filePath : '<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/ext4/sbi/messages/")%>'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

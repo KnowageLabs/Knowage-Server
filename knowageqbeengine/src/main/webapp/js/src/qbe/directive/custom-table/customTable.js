@@ -148,7 +148,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
             scope: $scope,
             locals :{field:field},
             preserveScope:true,
-            templateUrl:  sbiModule_config.contextName +'/qbe/templates/alias.html',
+            templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/alias.html',
 
             clickOutsideToClose:true
         })
@@ -249,7 +249,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.contextName +'/qbe/templates/datasetPreviewDialogTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/datasetPreviewDialogTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center().top("50%"),
 				fullscreen :false,
 				controller: function($scope,mdPanelRef,sbiModule_translate){
@@ -571,7 +571,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	            },
 	            scope: $scope,
 	            preserveScope:true,
-	            templateUrl:  sbiModule_config.contextName +'/qbe/templates/filtersInfo.html',
+	            templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filtersInfo.html',
 
 	            clickOutsideToClose:true
 	        })
