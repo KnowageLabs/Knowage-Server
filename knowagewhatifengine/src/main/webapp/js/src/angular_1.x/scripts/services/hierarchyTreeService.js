@@ -62,7 +62,7 @@
 
 		var isAnyVisible = function(tree){
 			var visibleMembers = getVisibleMembers(tree)
-			return Array.isArray(visibleMembers) &&  visibleMembers.legth > 0;
+			return Array.isArray(visibleMembers) &&  visibleMembers.length > 0;
 		}
 
 
