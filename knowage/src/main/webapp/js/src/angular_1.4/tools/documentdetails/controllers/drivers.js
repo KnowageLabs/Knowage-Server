@@ -18,8 +18,8 @@
 (function () {
 angular
         .module('DriversModule')
-        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter',
-        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter){
+        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config',
+        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config){
 
         	 var self = this;
         	 var driversService = DriversService;
@@ -289,7 +289,7 @@ angular
                  }
              $mdDialog.show({
                          controller: CorrelationDialogController,
-                         templateUrl: '../js/documentdetails/templates/correlationDialog.html',
+                         templateUrl: sbiModule_config.dynamicResourcesBasePath + 'angular_1.4/tools/documentdetails/templates/correlationDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
@@ -325,7 +325,7 @@ angular
 
              $mdDialog.show({
                          controller: CorrelationDataDialogController,
-                         templateUrl: '../js/documentdetails/templates/correlationDataDialog.html',
+                         templateUrl: sbiModule_config.dynamicResourcesBasePath + 'angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
