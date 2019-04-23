@@ -16,7 +16,7 @@
         			ng-show="true" 
         			ng-model="searchText" 
         			placeholder="Insert text here" 
-        			ng-keypress="searchFilter($event)"
+        			ng-keypress="(searchText.length > 0 && searchText.length >= minNumOfLetters) ? searchFilter($event):''"
         			width="70%!important"/>				
 				<!-- showSearchInput -->
 				<md-button ng-show="true" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
