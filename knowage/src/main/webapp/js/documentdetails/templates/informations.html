@@ -77,7 +77,7 @@
 					                   placeholder="Search for dataset..."
 					                    onkeydown="event.stopPropagation()" >
 					          </md-select-header>
-                            <md-option ng-repeat="dataset in di.dataSetsComboBox | filter:di.searchTerm track by dataset" ng-value="dataset">{{dataset}}</md-option>
+                            <md-option ng-repeat="dataset in di.dataSetsComboBox | filter:di.searchTerm track by dataset.label" ng-value="dataset.id">{{dataset.label}}</md-option>
                         </md-select>
                                            
                     </md-input-container>

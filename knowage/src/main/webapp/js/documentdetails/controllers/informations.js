@@ -144,11 +144,14 @@ angular
              self.getDatasets();
 
              var getDataSetNames = function(allDatasets){
-            	 var dataSetNames=[];
+            	 var dataSetIdLabels = [];
 		         	for(var i = 0; i < allDatasets.length;i++){
-		         		dataSetNames.push(allDatasets[i].label);
+		         		var newDataset = {};
+		         		newDataset.id = allDatasets[i].id.dsId;
+		         		newDataset.label = allDatasets[i].label;
+		         		dataSetIdLabels.push(newDataset);
 		            }
-		         return dataSetNames;
+		         return dataSetIdLabels;
              }
 
              self.getImage = function(){
