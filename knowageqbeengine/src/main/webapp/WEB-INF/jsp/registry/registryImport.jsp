@@ -31,4 +31,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@include file="/WEB-INF/jsp/registry/registryConfig/registryConfigModule.jspf"%>
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(qbeEngineContext, "js/src/registry/registry.controller.js")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(qbeEngineContext, "js/src/registry/css/registry.css")%>">

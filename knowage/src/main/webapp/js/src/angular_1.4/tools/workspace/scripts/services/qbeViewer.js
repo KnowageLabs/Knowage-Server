@@ -355,7 +355,6 @@ angular
 					autoWrap: false,
 					skipHide: true,
 					preserveScope : true,
-					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
 					controllerAs : 'vpCtrl',
 					controller : function($mdDialog) {
 						var vpctl = this;
