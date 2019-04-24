@@ -94,14 +94,7 @@
 				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
 					    	<input name="rightOperand" ng-model="filter.rightOperandDescription" ng-change="edit(filter)">
 					    </md-input-container>
-   
-   						<md-input-container flex=5  >
-				        	<label class="filterLabel">{{translate.load("kn.qbe.havings.connector")}}</label>
-					    	<md-select ng-model="filter.booleanConnector" >
-				               <md-option ng-repeat="connector in booleanConnectors" value="{{connector}}">{{connector}}</md-option>
-				           </md-select>  
-					    </md-input-container>
-					    
+
 				        <md-button  class="md-icon-button" ng-click="deleteFilter(filter)">
 				        	<md-icon md-font-icon="fa fa-eraser" ></md-icon>
 				        	<md-tooltip md-delay="1000" >{{translate.load("kn.qbe.filters.clear")}}</md-tooltip>
