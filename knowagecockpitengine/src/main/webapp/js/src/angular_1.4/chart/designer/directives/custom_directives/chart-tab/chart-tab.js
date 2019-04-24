@@ -466,7 +466,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'line':
 			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.type="LINE";
 			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			$scope.chartTemplate.VALUES.SERIE = serie;
@@ -491,7 +491,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'bar':
 			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.VALUES.SERIE = serie;
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
@@ -501,7 +501,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'pie':
 			serie = $scope.chartTemplate.VALUES.SERIE;
-			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.type="PIE";
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;

@@ -391,7 +391,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						base = StructureTabService.getGaugeTemplate();
 						break;
 					case 'line':
-						base = StructureTabService.getBaseTemplate();
+						base = StructureTabService.getBaseTemplate($scope.selectedChartType);
 						break;
 					case 'heatmap':
 						base = StructureTabService.getHeatmapTemplate();
@@ -400,10 +400,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						base = StructureTabService.getRadarTemplate();
 						break;
 					case 'bar':
-						base = StructureTabService.getBaseTemplate();
+						base = StructureTabService.getBaseTemplate($scope.selectedChartType);
 						break;
 					case 'pie':
-						base = StructureTabService.getBaseTemplate();
+						base = StructureTabService.getBaseTemplate($scope.selectedChartType);
 						break;
 					case 'chord':
 						base = StructureTabService.getChordTemplate();
