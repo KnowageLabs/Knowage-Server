@@ -216,7 +216,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		}
 	}
 
-	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
+	$scope.booleanConnectors = filters_service.booleanConnectors;
 	$scope.getConditionOptions = filters_service.getOperators;
 
 	$scope.entityTypes = entity_service.getEntityTypes();
@@ -373,9 +373,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.ngModel.queryFilters.length = 0;
 			$scope.ngModel.advancedFilters.length = 0;
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-			filters_service.generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
+			angular.copy(filters_service.generateExpressions ($scope.filters,$scope.ngModel.expression) ,$scope.ngModel.expression);
 			Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
-			//$scope.ngModel.field.expression = generateExpressions ($scope.filters);
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
@@ -387,6 +386,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				filter.rightOperandValue.length = 0;
 				Array.prototype.push.apply(filter.rightOperandValue, splitted);
 			} else {
+				filter.rightOperandValue.length = 0;
 				filter.rightOperandValue.push(filter.rightOperandDescription);
 			}
 		}
@@ -410,7 +410,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		$scope.ngModel.pars.length = 0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-		filters_service.generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
+		angular.copy(filters_service.generateExpressions ($scope.filters,$scope.ngModel.expression) ,$scope.ngModel.expression);
 		$scope.ngModel.mdPanelRef.close();
 	};
 

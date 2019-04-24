@@ -43,7 +43,7 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 	$scope.translate = sbiModule_translate;
 	$scope.subqueries = $scope.ngModel.subqueries;
 	$scope.selFields = $scope.ngModel.selectedFields
-	
+
 	var checkForIndex = function(){
 		var arrayOfIndex = [];
 		if($scope.havings.length==0){
@@ -62,7 +62,7 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 		    return arrayOfIndex[arrayOfIndex.length-1]+1;
 		}
 	}
-	
+
 	$scope.addNewHaving = function (){
 		$scope.havingIndex = checkForIndex();
 		$scope.showTable = false;
@@ -95,7 +95,7 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 			}
 		$scope.havings.push(object);
 	}
-	
+
 	if($scope.havings.length == 0) {
 		$scope.addNewHaving();
 	}
@@ -106,13 +106,13 @@ function qbeHaving($scope, $rootScope, filters_service, sbiModule_translate) {
 	};
 
 	$scope.fieldHaving = function (item) {
-		if(item.leftOperandValue==$scope.field.id) 
+		if(item.leftOperandValue==$scope.field.id)
 			return item;
 	}
 
 	$scope.getConditionOptions = filters_service.getSpecialOperators;
 	$scope.getFunctions = filters_service.aggFunctions;
-	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
+	$scope.booleanConnectors = filters_service.booleanConnectors;
 	$scope.getHavingTargetTypes = filters_service.getHavingTargetTypes;
 
 	$scope.changeTarget = function(option, having) {

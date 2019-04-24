@@ -49,7 +49,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 
 	  };
 
-	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
+	$scope.booleanConnectors = filters_service.booleanConnectors;
 
 	$scope.$watch('models.dropzones', function(model) {
         $scope.modelAsJson = angular.toJson(model, true);
@@ -243,7 +243,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
         	"name":"booleanConnector",
         	hideTooltip:true,
         	transformer: function() {
-        		return '<md-select ng-model=row.booleanConnector class="noMargin" ><md-option ng-repeat="connector in scopeFunctions.logicalOperators" ng-click="scopeFunctions.setBooleanConnector(connector, row)" value="{{connector}}">{{connector}}</md-option></md-select>';
+        		return '<md-select ng-model=row.booleanConnector class="noMargin" ><md-option ng-repeat="connector in scopeFunctions.booleanConnectors" ng-click="scopeFunctions.setBooleanConnector(connector, row)" value="{{connector}}">{{connector}}</md-option></md-select>';
         	}
     	}
     ]
@@ -381,10 +381,9 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		$scope.arrayForGroup.push(filter);
 
 	}
-	$scope.logicalOperators = filters_service.getBooleanConnectors;
 
 	$scope.advancedVisualizationScopeFunctions = {
-		logicalOperators: $scope.logicalOperators,
+		booleanConnectors: $scope.booleanConnectors,
 		setBooleanConnector: function (connector, row) {
 			row.booleanConnector = connector;
 		},

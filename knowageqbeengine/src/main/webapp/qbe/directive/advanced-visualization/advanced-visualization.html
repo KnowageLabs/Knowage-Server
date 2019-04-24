@@ -35,7 +35,7 @@
 		<div class="filterOperator" layout="column">
 			<md-icon md-font-icon="fa fa-link"></md-icon>
 			<md-select ng-model="item.connector" >
-				<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+				<md-option ng-repeat="c in booleanConnectors" value="{{c}}"  >
 		    		{{c}}
 				</md-option>
 			</md-select>
@@ -54,7 +54,7 @@
 	<div layout="column" class="filterOperator">
 		<md-icon md-font-icon="fa fa-link"></md-icon>
 		<md-select ng-model="item.connector" >
-			<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+			<md-option ng-repeat="c in booleanConnectors" value="{{c}}"  >
 		    	{{c}}
 			</md-option>
 		</md-select>

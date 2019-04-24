@@ -733,7 +733,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				templateUrl: sbiModule_config.contextName +'/qbe/templates/filterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
-				controller: function($scope,field,mdPanelRef){
+				controller: function($scope,mdPanelRef){
 					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries, "expression":expression, "advancedFilters":advancedFilters};
 				},
 				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters, subqueries: subqueries, expression : expression, advancedFilters : advancedFilters},
