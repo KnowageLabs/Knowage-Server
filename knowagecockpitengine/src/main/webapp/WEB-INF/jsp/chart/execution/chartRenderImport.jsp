@@ -22,47 +22,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Chart initiliazer Module-->
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/chartInitializerModule.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/services/chartDesignerServices.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/chartInitializerModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/services/chartDesignerServices.js")%>"></script>
 
 <!-- Chart initiliazer Services-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/chartInitializerRetriverService.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/services/chartInitializerRetriverService.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/chartJsInitializerService.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/d3js244InitializerService.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/highchartsInitializerService.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/services/chartJsInitializerService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/services/d3js244InitializerService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/services/highchartsInitializerService.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/highchartsDrilldownHelper.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/services/highchartsDrilldownHelper.js")%>"></script>
 
 
 <!-- Chart Renderer -->
 
 <!-- Chart Renderer Module-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartRenderer/chartRendererModule.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartRenderer/chartRendererModule.js")%>"></script>
 
 <!-- Chart Renderer Directives-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartRenderer/directives/chartRenderer.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartRenderer/directives/chartRenderer.js")%>"></script>
 
 <!-- JsonChartTemplateService -->
 
 <!-- JsonChartTemplateService Module -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/JsonChartTemplateService/JsonChartTemplateServiceModule.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/JsonChartTemplateService/JsonChartTemplateServiceModule.js")%>"></script>
 
 <!-- JsonChartTemplateService -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/JsonChartTemplateService/services/JsonChartTemplateService.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/JsonChartTemplateService/services/JsonChartTemplateService.js")%>"></script>
 
 
 <!-- d3  -->
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/d3/d3.js'/></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/d3/d3.js")%>"></script>
 
 <!-- ChartJs  -->
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/chartJs/Chart.js'/></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/chartJs/Chart.js")%>"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Wordcloud.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Sunburst.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Parallel.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/d3/renderD3Chord.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/d3/renderD3.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/d3/renderD3Wordcloud.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/d3/renderD3Sunburst.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/d3/renderD3Parallel.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/d3/renderD3Chord.js")%>"></script>
 
 <!-- Settings  -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/commons/Settings.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/commons/Settings.js")%>"></script>

@@ -47,7 +47,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		<%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
 		
 		<!-- TODO: provide comment!!! -->
-		<script src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/ChartExecutionWebServiceManagerFactory.js"></script>
+		<script src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/ChartExecutionWebServiceManagerFactory.js")%>"></script>
 		
 		<!-- 
 			Import the D3 library, needed for the rendering of charts that are implemented in this language 
