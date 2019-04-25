@@ -118,7 +118,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 	this.setChartTemp=function(newModel,targetVisualization){
-		newModel.content.chartTemplate = {"CHART" :  StructureTabService.getBaseTemplate()};
+		newModel.content.chartTemplate = {"CHART" :  StructureTabService.getBaseTemplate(targetVisualization)};
 		for (var i = 0; i < newModel.content.columnSelectedOfDataset.length; i++) {
 			if(newModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"){
 				if(newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name=="") {
