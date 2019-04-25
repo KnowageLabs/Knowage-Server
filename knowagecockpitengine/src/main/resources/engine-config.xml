@@ -71,7 +71,7 @@
 		<!-- 
 			Not needed, not handled by the Designer.
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm"	/> 
+		<chart type="column"	name="highcharts" 	vmName="column_chart.vm"	/> 
 		-->
 		
 		<!-- chart js conf START -->
@@ -85,21 +85,21 @@
 		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"		enabledInCockpit="true"/>
 		<!-- chart js conf END -->
 
-		<!-- highcharts414 conf START
-		<chart type="line" 		name="highcharts414"	vmName="column_chart.vm"	enabledInCockpit="true"/> 
-		<chart type="pie"		name="highcharts414" 	vmName="pie_chart.vm"		enabledInCockpit="true"/>	
-		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
+		<!-- highcharts conf START
+		<chart type="line" 		name="highcharts"	vmName="column_chart.vm"	enabledInCockpit="true"/> 
+		<chart type="pie"		name="highcharts" 	vmName="pie_chart.vm"		enabledInCockpit="true"/>	
+		<chart type="bar" 		name="highcharts" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
 				
-		<chart type="radar"		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
-		<chart type="gauge" 	name="highcharts414" 	vmName="gauge_chart.vm"		enabledInCockpit="true"/> 	
-		<chart type="scatter"	name="highcharts414" 	vmName="scatter_chart.vm"	enabledInCockpit="true"/>
+		<chart type="radar"		name="highcharts" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
+		<chart type="gauge" 	name="highcharts" 	vmName="gauge_chart.vm"		enabledInCockpit="true"/> 	
+		<chart type="scatter"	name="highcharts" 	vmName="scatter_chart.vm"	enabledInCockpit="true"/>
 		<chart type="sunburst"	name="d3js244"  		vmName="sunburst_chart.vm"	enabledInCockpit="true"/>
 		<chart type="parallel"	name="d3js244"  		vmName="parallel_chart.vm"	enabledInCockpit="true"/>
 		<chart type="wordcloud"	name="d3js244"  		vmName="wordcloud_chart.vm"	enabledInCockpit="true"/> 
-		<chart type="treemap" 	name="highcharts414" 	vmName="treemap_chart.vm"	enabledInCockpit="false"/> 
-		<chart type="heatmap" 	name="highcharts414" 	vmName="heatmap_chart.vm"	enabledInCockpit="true"/>
+		<chart type="treemap" 	name="highcharts" 	vmName="treemap_chart.vm"	enabledInCockpit="false"/> 
+		<chart type="heatmap" 	name="highcharts" 	vmName="heatmap_chart.vm"	enabledInCockpit="true"/>
 		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"		enabledInCockpit="true"/>
-		highcharts414 conf END -->
+		highcharts conf END -->
 		
 	</chartConfiguration>
 	

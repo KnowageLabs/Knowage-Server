@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/chartJsInitializerService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/d3js244InitializerService.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/highcharts414InitializerService.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/highchartsInitializerService.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/highchartsDrilldownHelper.js"></script>
 

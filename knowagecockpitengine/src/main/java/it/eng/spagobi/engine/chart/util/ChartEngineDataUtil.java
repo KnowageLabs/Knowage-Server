@@ -222,7 +222,7 @@ public class ChartEngineDataUtil {
 			velocityContext.put("drilldownCategoryName", drilldownCategoryName);
 			velocityContext.put("enableNextDrilldown", enableNextDrilldown);
 
-			Template velocityTemplate = ve.getTemplate("/chart/templates/highcharts414/drilldowndata.vm");
+			Template velocityTemplate = ve.getTemplate("/chart/templates/highcharts/drilldowndata.vm");
 			result = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 		}
 

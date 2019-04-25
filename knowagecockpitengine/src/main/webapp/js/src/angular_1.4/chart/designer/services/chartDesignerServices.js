@@ -2572,13 +2572,13 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			var chartConf = eval("(" + response.data + ")");
 
 			var chartType = chartConf.chart.type;
-			var d3Types = ["sunburst","parallel","wordcloud","chord"];
-			var highSpec = ["heatmap", "treemap"]
+			var d3Types = ["parallel","wordcloud","chord"];
+			var highSpec = ["heatmap", "treemap","sunburst"]
 			var lib = "d3js244";
 			if(d3Types.indexOf(chartType.toLowerCase())>=0){
 				lib = "d3js244"
 			} else {
-				lib="highcharts414"
+				lib="highcharts"
 			}
 			var encoded = {};
 			var prepareDataForRequest = function (){
@@ -2621,7 +2621,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			}
 			if(d3Types.indexOf(chartType.toLowerCase())>=0 || highSpec.indexOf(chartType.toLowerCase())>=0){
 				var chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
-				if(lib=="highcharts414"){
+				if(lib=="highcharts"){
 					var renderObj = {};
 					renderObj.chartConf = chartConf;
 					renderObj.exportWebApp = true;

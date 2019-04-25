@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts414',['highchartsDrilldownHelper','jsonChartTemplate',function(highchartsDrilldownHelper,jsonChartTemplate){
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate',function(highchartsDrilldownHelper,jsonChartTemplate){
 
 	this.chart = null;
 	var chartConfConf = null;
