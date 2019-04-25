@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%@include file="/WEB-INF/jsp/chart/designer/chartImport.jsp"%>
 		<%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%> 
 	
-		<link rel="stylesheet" type="text/css" href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/commons/css/customStyle.css">
+		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>">
 		
 	
 		<script>
