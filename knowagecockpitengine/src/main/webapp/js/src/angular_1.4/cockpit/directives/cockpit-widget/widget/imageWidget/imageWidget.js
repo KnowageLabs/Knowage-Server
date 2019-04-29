@@ -43,7 +43,7 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,$q,$mdPanel,$timeout, sbiModule_user){
+function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_properties,$mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,$q,$mdPanel,$timeout, sbiModule_user){
 	$scope.property={
 		style:{}
 	};
