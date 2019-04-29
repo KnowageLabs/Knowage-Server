@@ -9,6 +9,7 @@ public class ViewportDimensions {
 
 	public static final ViewportDimensions VIEW_1280_1024 = new ViewportDimensions(1280, 1024);
 	public static final ViewportDimensions VIEW_1600_1200 = new ViewportDimensions(1600, 1200);
+	public static final ViewportDimensions VIEW_1920_1080 = new ViewportDimensions(1920, 1080);
 
 	public ViewportDimensions(int width, int height) {
 		this.width = width;
