@@ -442,6 +442,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         "layout":"",
 					         "position":"top",
 					         "show":false,
+					         "showCheckboxes":true,
 					         "style":{
 			                	  "align":"",
 			                	  "color":"",
