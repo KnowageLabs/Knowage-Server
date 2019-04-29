@@ -68,8 +68,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 
 								var treeFolders = [];
 								var personalFolders = {
+									id: 1,
 									codType: "LOW_FUNCT",
-									code: "Personal Folders",
+									code: "Personal_Folders",
 									createRoles: [],
 									description: "Personal Folders",
 									name: scope.personalFolders,
