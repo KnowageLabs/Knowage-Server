@@ -143,6 +143,7 @@
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRoles.hbm.xml" />
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" />
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" />
+		<mapping resource="it/eng/spagobi/profiling/mapping/SbiAccessibilityPreferences.hbm.xml"/>
 
 		<!-- User Defined Attributes -->
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
@@ -155,6 +156,9 @@
 		<!-- massive export -->
 		<!-- -->
 		<mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml" />
+		
+		<!-- dossier activity -->
+        <mapping resource="it/eng/spagobi/dossier/metadata/mapping/SbiDossierActivity.hbm.xml" />
 
 
 		<!-- tools: Meta-models catalogue -->
@@ -197,7 +201,10 @@
         <!-- Cross Navigation -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigation.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigationPar.hbm.xml" />
-
+		
+		<!-- News Management -->
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNewsRead.hbm.xml" />
         
         <!-- Document Output Parameters -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
@@ -237,12 +244,15 @@
          <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputVariable.hbm.xml" />
      	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputDataset.hbm.xml" />
          <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />
-           <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputFile.hbm.xml" />
-         
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputFile.hbm.xml" />
+		   
+		   
          <!-- Workspace organizer mapping -->   
          <mapping resource="it/eng/spagobi/workspace/metadata/mapping/SbiFunctionsOrganizer.hbm.xml" />
          <mapping resource="it/eng/spagobi/workspace/metadata/mapping/SbiObjFuncOrganizer.hbm.xml" />
-         
+		 
+		 <!-- Whatif workflow mapping -->
+         <mapping resource="it/eng/spagobi/whatif/metadata/mapping/SbiWhatifWorkflow.hbm.xml" />
          
         <!-- end mapping -->
         
