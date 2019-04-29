@@ -1002,6 +1002,14 @@ color-picker {
   }
 }
 
+.md-icon-button.md-knowage-theme {
+  &.md-secondary:not([disabled]) {
+    &:hover {
+      background-color: $ternaryColor;
+    }
+  }
+}
+
 .kn-select {
   border-bottom: 1px solid $bordersColor; 
   width: 100%; 

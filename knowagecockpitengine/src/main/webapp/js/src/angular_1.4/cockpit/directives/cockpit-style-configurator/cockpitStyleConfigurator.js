@@ -101,11 +101,26 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	$scope.resetBordersStyle=function(){
-		$scope.ngModel.borders=$scope.cockpitStyle.borders
+		$scope.ngModel.borders = $scope.cockpitStyle.borders;
 		angular.copy($scope.cockpitStyle.border,$scope.ngModel.border);
 	}
+	
+	if($scope.ngModel && !$scope.ngModel.padding) $scope.ngModel.padding = {};
+	$scope.resetPaddingStyle=function(){
+		$scope.ngModel.padding = $scope.cockpitStyle.padding;
+		angular.copy($scope.cockpitStyle.padding,$scope.ngModel.padding);
+	}
+	
+	$scope.linkPaddings = function(link){
+		$scope.ngModel.padding.unlinked = link;
+	}
+	
+	$scope.checkPaddingLink = function(padding){
+		if(!$scope.ngModel.padding.unlinked) $scope.ngModel.padding['padding-left'] = $scope.ngModel.padding['padding-top'] = $scope.ngModel.padding['padding-right'] = $scope.ngModel.padding['padding-bottom'] = $scope.ngModel.padding[padding];
+	}
+	
 	$scope.resetTitlesStyle=function(){
-		$scope.ngModel.titles=$scope.cockpitStyle.titles;
+		$scope.ngModel.titles = $scope.cockpitStyle.titles;
 		$scope.ngModel.headerHeight=0;
 		angular.copy($scope.cockpitStyle.title,$scope.ngModel.title);
 	}

@@ -275,6 +275,7 @@ function cockpitWidgetControllerFunction(
 	$scope.isOriginal = false;//for previewing different types of chart
 
 	$scope.borderShadowStyle= {};
+	$scope.paddingStyle		= {};
 	$scope.titleStyle		= {};
 
 	$scope.widgetSpinner	= false;
@@ -1069,6 +1070,12 @@ function cockpitWidgetControllerFunction(
 				delete $scope.borderShadowStyle['border-width'];
 				delete $scope.borderShadowStyle['border-style'];
 			}
+		}
+		
+		if($scope.extendedStyle.padding && $scope.extendedStyle.padding.enabled){
+			$scope.paddingStyle = angular.copy($scope.extendedStyle.padding);
+		}else {
+			$scope.paddingStyle = {};
 		}
 
 		// update shadow style
