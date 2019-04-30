@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%
 	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
 	Map data = (request.getAttribute("data")==null)?new HashMap():(Map)request.getAttribute("data");
@@ -43,9 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String location = (data.get("location")==null)?"":(String)data.get("location");
 	String short_bio = (data.get("short_bio")==null)?"":(String)data.get("short_bio");
 	String userIn = (data.get("userIn")==null)?"":(String)data.get("userIn");
-
-
-
+    boolean activeSignup = (request.getAttribute("activeSignup")==null)?false:(Boolean)request.getAttribute("activeSignup");
 %>
 
 <!DOCTYPE html>
@@ -84,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Username</label>
-			        <input ng-model="newUser.username" name="username" type="text" required>
+			        <input ng-model="newUser.username" name="username" type="text" required ng-disabled="true">
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Email address</label>
@@ -98,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>Confirm Password</label>
 			        <input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required>
 			      </md-input-container>  
+			      <!--
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Location</label>
 			        <input ng-model="newUser.address" name="location" type="text" >
@@ -105,7 +105,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Birthday</label>
 			        <input ng-model="newUser.birthDate" name="birthday" type="text" >
-			      </md-input-container>	
+			      </md-input-container>
+			      -->
 			      <!-- 
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Language</label>
@@ -123,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
         <md-card-actions layout="column" layout-align="center">
           <md-button class="md-primary md-raised" ng-click="update()" type="submit">Modify</md-button>
-          <md-button class="md-primary md-raised goTologin" ng-click="eraseAccount()">Delete Account</md-button>
+          <md-button class="md-primary md-raised goTologin" ng-click="eraseAccount()" ng-if="activeSignup">Delete Account</md-button>
         </md-card-actions>
          </form>
       </md-card>
@@ -153,8 +154,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<!-- Your application bootstrap  -->
   	<script type="text/javascript">    
 
-    angular.module('signUp', ['ngMaterial'])
-    .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog) {
+    angular.module('signUp', ['ngMaterial','sbiModule'])
+    .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog,sbiModule_messaging) {
 	  $scope.newUser = {};
 	  $scope.newUser.name = '<%=name%>';
 	  $scope.newUser.surname = '<%=surname%>';
@@ -164,8 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //$scope.newUser.language = '<%=language%>';	 
 	  $scope.newUser.address = '<%=location%>';	  
 	  //$scope.newUser.biography = '<%=short_bio%>';	  
-	  
-	  
+	  $scope.activeSignup= <%=activeSignup%>;
 	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
 	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
 		    if (newValue == $scope.newUser.password) {
@@ -229,16 +229,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  , $scope.newUser)
 			  .then(function(response) {
 				  if(response.data.errors){
-						$mdToast.show(
-						    $mdToast.simple()
-						      .textContent(response.data.errors[0].message)
-						  );
+						sbiModule_messaging.showAlertMessage('Account not updated',response.data.errors[0].message);
 				  }else{
-					  $mdToast.show(
-					    $mdToast.simple()
-					      .textContent('Account correctly updated')
-					  );
-					  
+					  sbiModule_messaging.showAlertMessage('Account correctly updated');
 				  }
 			  });
 		  }else{
