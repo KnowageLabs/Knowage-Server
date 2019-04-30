@@ -97,20 +97,7 @@
 	    		  }
 	    		  return false;
 	    	  }
-	      } ,
-	      {
-	    	  icon:'fa fa-sliders' ,
-	    	  action : function(item,event) {
-	    		  $scope.addSummaryInfo(item);
-	    	  },
-	    	  visible : function(row,column) {
-	    		  if(row.fieldType == "MEASURE"){
-	    			  return true;
-	    		  }
-	    		  return false;
-	    	  }
-	      } ,
-	      {
+	      },{
 	    	  icon:'fa fa-trash' ,
 	    	  action : function(item,event) {
 	    		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
@@ -302,30 +289,6 @@
 			}
 		}
 
-		$scope.addSummaryInfo = function(currentRow){
-			var deferred = $q.defer();
-			var promise ;
-			$mdDialog.show({
-				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitSummaryInfo.html',
-				parent : angular.element(document.body),
-				clickOutsideToClose:true,
-				escapeToClose :true,
-				preserveScope: true,
-				autoWrap:false,
-				locals: {items: deferred,model:$scope.model, getMetadata : $scope.getMetadata, actualItem : currentRow},
-				fullscreen: true,
-				controller: controllerCockpitSummaryInfo
-			}).then(function(answer) {
-				deferred.promise.then(function(result){
-					console.log(result);
-					currentRow.funcSummary = result.funcSummary;
-				});
-			}, function() {
-			});
-			promise =  deferred.promise;
-
-
-		}
 
 		$scope.addNewCalculatedField = function(currentRow){
 

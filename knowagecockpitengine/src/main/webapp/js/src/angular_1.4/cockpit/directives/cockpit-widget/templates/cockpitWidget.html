@@ -141,13 +141,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-eraser"></md-icon>
 			</md-button-->
 			
-			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" ng-if="ngModel.type=='table' || ngModel.type=='chart' || ngModel.type=='static-pivot-table' || ngModel.type == 'document'">
+			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" ng-if="ngModel.type=='table'|| ngModel.type=='advanced-table' || ngModel.type=='chart' || ngModel.type=='static-pivot-table' || ngModel.type == 'document'">
 				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button " ng-if="ngModel.type == 'table' && !cockpitModule_properties.EDIT_MODE && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
+			<md-button class="md-icon-button " ng-if="(ngModel.type == 'table' || ngModel.type=='advanced-table') && !cockpitModule_properties.EDIT_MODE && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-search"></md-icon>
 			</md-button>
@@ -179,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
 				<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
 			</md-button>
-			<md-button class="md-icon-button" ng-click="exportToExcel($event,ngModel)" ng-disabled="ngModel.loadingScreen" ng-if="ngModel.type=='table' || ngModel.type=='chart' || ngModel.type=='static-pivot-table'">
+			<md-button class="md-icon-button" ng-click="exportToExcel($event,ngModel)" ng-disabled="ngModel.loadingScreen" ng-if="ngModel.type=='table' || ngModel.type=='advanced-table' || ngModel.type=='chart' || ngModel.type=='static-pivot-table'">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export")}}</md-tooltip>					
 				<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
 			</md-button>
