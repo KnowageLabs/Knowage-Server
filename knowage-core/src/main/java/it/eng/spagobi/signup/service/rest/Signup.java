@@ -46,6 +46,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.commons.validation.PasswordChecker;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -138,8 +139,14 @@ public class Signup {
 
 			String url = "/themes/" + currTheme + "/jsp/signup/modify.jsp";
 			logger.debug("url for modify: " + url);
+
 			List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
 			req.setAttribute("communities", communities);
+
+			String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+			boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
+			req.setAttribute("activeSignup", activeSignup);
+
 			req.getRequestDispatcher(url).forward(req, servletResponse);
 			// req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
 		} catch (ServletException e) {
@@ -239,6 +246,7 @@ public class Signup {
 			logger.error("Error during body read", t);
 			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
 		}
+
 		String name = GeneralUtilities.trim(requestJSON.optString("name"));
 		String surname = GeneralUtilities.trim(requestJSON.optString("surname"));
 		String password = GeneralUtilities.trim(requestJSON.optString("password"));
@@ -249,12 +257,24 @@ public class Signup {
 		// String language = GeneralUtilities.trim(requestJSON.optString("language"));
 
 		try {
-
 			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
 
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
+
+			try {
+				new PasswordChecker(user).isValid(user.getPassword(), password, password);
+			} catch (Exception e) {
+				logger.error("Password is not valid", e);
+				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+				if (e instanceof EMFUserError) {
+					throw new SpagoBIServiceException(message, ((EMFUserError) e).getDescription());
+				} else {
+					throw new SpagoBIServiceException(message, e);
+				}
+			}
+
 			int userId = user.getId();
 
 			user.setFullName(name + " " + surname);
@@ -277,8 +297,8 @@ public class Signup {
 			profile.setAttributeValue("location", address);
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
+			logger.error("An unexpected error occurred while executing the subscribe action", t);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 		logger.debug("OUT");
 		return new JSONObject().toString();

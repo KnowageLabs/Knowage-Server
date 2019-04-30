@@ -274,8 +274,8 @@ public class MenuListJSONSerializer implements Serializer {
 		List funcs = (List) userProfile.getFunctionalities();
 
 		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
-		boolean activeSignup = (strActiveSignup.equalsIgnoreCase("true") ? true : false);
-		if (activeSignup && !userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
+		boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
+		if (!userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
 			// build myAccount
 			JSONObject myAccount = new JSONObject();
 
