@@ -125,8 +125,8 @@ public class Signup {
 			req.setAttribute("data", data);
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
+			logger.error("An unexpected error occurred while executing the subscribe action", t);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 		try {
 			String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
@@ -154,8 +154,8 @@ public class Signup {
 		} catch (IOException e) {
 			logger.error("Error writing content");
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
+			logger.error("An unexpected error occurred while executing the subscribe action", t);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 		logger.debug("OUT");
 	}
@@ -187,8 +187,8 @@ public class Signup {
 			// servletResponse.sendRedirect(url.toString());
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
+			logger.error("An unexpected error occurred while executing the subscribe action", t);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 		logger.debug("OUT");
 		return new JSONObject().toString();
@@ -400,8 +400,8 @@ public class Signup {
 			logger.debug("OUT");
 			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
+			logger.error("An unexpected error occurred while executing the subscribe action", t);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 	}
 
@@ -455,6 +455,18 @@ public class Signup {
 			logger.error("Passwortd and confirm password are different");
 			JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.pwdNotEqual");
 			return Response.ok(errObj.toString()).build();
+		}
+
+		try {
+			new PasswordChecker(null).isValid(null, password, password);
+		} catch (Exception e) {
+			logger.error("Password is not valid", e);
+			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+			if (e instanceof EMFUserError) {
+				throw new SpagoBIServiceException(message, ((EMFUserError) e).getDescription());
+			} else {
+				throw new SpagoBIServiceException(message, e);
+			}
 		}
 
 		String email = GeneralUtilities.trim(requestJSON.optString("email"));
@@ -658,7 +670,7 @@ public class Signup {
 		} catch (IOException e) {
 			logger.error("Error writing content");
 		} catch (Exception e) {
-			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", e);
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", e);
 		}
 	}
 

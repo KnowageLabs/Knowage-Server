@@ -35,14 +35,21 @@ public class PasswordChecker {
 		List configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
 		logger.debug("checks found on db: " + configChecks.size());
 
-		if (StringUtilities.isEmpty(oldPwd) || StringUtilities.isEmpty(newPwd) || StringUtilities.isEmpty(newPwd2)) {
-			logger.debug("Some fields are empty.");
+		if(oldPwd != null && StringUtilities.isEmpty(oldPwd)) {
+			logger.debug("The old password is empty.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
 		}
-		
-		if (!Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())) {
-			logger.debug("The old pwd is uncorrect.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
+
+		if (StringUtilities.isEmpty(newPwd) || StringUtilities.isEmpty(newPwd2)) {
+			logger.debug("The new password is empty.");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
+		}
+
+		if(tmpUser != null) {
+			if (!Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())) {
+				logger.debug("The old pwd is uncorrect.");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
+			}
 		}
 		
 		if (!newPwd.equals(newPwd2)) {
@@ -153,7 +160,7 @@ public class PasswordChecker {
 			}
 
 			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_CHANGE)) {
-				if (oldPwd.equalsIgnoreCase(newPwd)) {
+				if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
 					logger.debug("The password's doesn't be equal the lastest.");
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, new Vector(), new HashMap());
 				}
