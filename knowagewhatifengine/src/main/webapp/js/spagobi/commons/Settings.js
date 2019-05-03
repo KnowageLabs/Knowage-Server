@@ -20,7 +20,7 @@ var olapSet = angular.module('olap.settings',[]);
 
 olapSet.service('olapSharedSettings',function(){
 		var settings = {
-				minSearchLength:4,
+				minSearchLength:3,
 				filterDialogWidth:'60%',
 				filterDialogHeight:'80%',
 				disableManualEditingCC: false,
