@@ -746,8 +746,7 @@ public class StringUtilities {
 		// check if numbers are number otherwise throw exception
 		try {
 			if (parType.equalsIgnoreCase("NUMBER")) {
-				toReturn = replacement.replaceAll("\'", "");
-				toReturn = replacement.replaceAll(";", ",");
+				toReturn = toReturn.replaceAll("'", "").replaceAll(";", ",");
 				if (toReturn.indexOf(",") >= 0) {
 					// multivalues management
 					String[] values = toReturn.split(",");
