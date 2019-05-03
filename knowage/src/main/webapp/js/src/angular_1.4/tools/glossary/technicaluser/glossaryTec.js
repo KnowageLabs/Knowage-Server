@@ -950,7 +950,7 @@ function hidePreloader(pre) {
 
 //--------------------------------------------------------------------------navigazione--------------------------------------------------------
 
-function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,sbiModule_config,$documentViewer) {
+function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,$documentViewer) {
 	navi=this;
 	global.initializer.navigation={state:false,scope:navi};
 	navi.pagination={};
