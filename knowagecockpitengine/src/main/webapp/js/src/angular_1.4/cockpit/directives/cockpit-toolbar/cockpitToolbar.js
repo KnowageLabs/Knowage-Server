@@ -276,7 +276,13 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 		 			}
 		 			else {
 		 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
-		 				getScreenshot(cockpitModule_template.sheets[sheet.index + 1]);
+		 				for(var y in cockpitModule_template.sheets){
+		 					if(cockpitModule_template.sheets[y].index == sheet.index + 1){
+		 						getScreenshot(cockpitModule_template.sheets[y]);
+		 						break;
+		 					}
+		 				}
+		 				
 		 			}
 				}
 				          
