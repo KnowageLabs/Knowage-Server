@@ -14,6 +14,7 @@
 		<div class="widgetsContainer" layout="row" layout-wrap layout-align="center center">
 			<div class="widgetContainer" ng-repeat="widget in widgetType | filter:searchWidgetText" ng-if="showWidgetType(widget)" flex="20" flex-sm="25" flex-xs="50">
 				<div class="widget" ng-click="addWidget(widget.type)" layout="column" layout-margin layout-align="center center">
+					<div ng-if="widget.beta" class="betaBadge">BETA</div>
 					<md-tooltip md-delay="500">{{widget.description}}</md-tooltip>
 					<i ng-class="widget.class"></i>
 					<p class="widgetDescription">{{widget.name}}</p>

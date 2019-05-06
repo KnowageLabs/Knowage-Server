@@ -2020,7 +2020,7 @@
 /* WIDGET DIALOG */
 .addNewWidget {
 	md-dialog-content {
-		height: 500px;
+		height: 600px;
 		.widgetsContainer {
 			margin: 8px;
 			.widgetContainer {
@@ -2030,6 +2030,8 @@
 					transition: all linear .4s;
 					cursor: pointer;
 					outline: none;
+					overflow: hidden;
+    				position: relative;
 					background-color: $detailBackground;
 					-webkit-box-shadow: 0px 2px 5px 0px $shadowsColor;
 					-moz-box-shadow: 0px 2px 5px 0px $shadowsColor;
@@ -2052,6 +2054,16 @@
 						font-size: $defaultSize;
 						font-weight: 100;
 						color: $smallTextColor;
+					}
+					.betaBadge {
+						background-color: $baseColor;
+					    text-align: center;
+					    transform: rotate(45deg);
+					    padding: 4px 30px;
+					    position: absolute;
+					    right: -38px;
+					    top: 0px;
+					    color: white;
 					}
 				} 
 			}

@@ -197,6 +197,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						tags : ["advanced"],
 						img : "5.png",
 						class: "fa fa-table",
+						beta: true,
 						type : "advanced-table"
 					},{
 						name:"Cross Table",
