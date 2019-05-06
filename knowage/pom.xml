@@ -101,7 +101,7 @@
 				            <configuration>
 				                <attachClasses>true</attachClasses>
 				                <classesClassifier>classes</classesClassifier>
-								<warSourceExcludes>js/src/**</warSourceExcludes>
+								
 								<webResources>
 							        <resource>
 							          <directory>src/main/webapp/js/src</directory>
