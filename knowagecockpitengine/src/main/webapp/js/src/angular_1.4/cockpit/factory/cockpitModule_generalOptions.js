@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(sbiModule_translate){
+angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(sbiModule_config,sbiModule_translate){
 	return{
 		//Deprecated dimensioning to let the user choose between px,rem and %
 		fontSizeDimension: [
@@ -100,6 +100,24 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ],
+
+		 typesMap: {
+			"java.lang.String": {label:"string",icon:"fa fa-quote-right"}, 
+			"java.lang.Boolean": {label:"boolean",icon:"fa fa-star-half-o"}, 
+			"java.lang.Long" : {label:"long",icon:"fa fa-hashtag"},
+			"java.lang.Integer": {label:"integer",icon:"fa fa-hashtag"},
+			"java.math.BigInteger" :{label:"integer",icon:"fa fa-hashtag"},
+			"java.lang.Double": {label:"float",icon:"fa fa-hashtag"},
+			"java.lang.Float": {label:"float",icon:"fa fa-hashtag"},
+			"java.math.BigDecimal": {label:"float",icon:"fa fa-hashtag"}, 
+			"oracle.sql.TIMESTAMP": {label:'timestamp',icon:'fa fa-calendar'},
+			"java.sql.Timestamp": {label:'timestamp',icon:'fa fa-calendar'},
+			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
+			"java.sql.Date": {label:'date',icon:'fa fa-calendar'},
+			"java.sql.Time": {label:'time',icon:'fa fa-clock-o'},
+			"oracle.sql.BLOB": {label:'blob',icon:'fa fa-archive'},
+			"oracle.sql.CLOB": {label:'clob',icon:'fa fa-archive'}
+		},
 		 dateFormat: [
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.long"),value:'dd EEEE yyyy HH:mm:ss',hint:'September 03 2010 12:05:08 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.medium"),value:'medium',hint:'Sep 3, 2010 12:05:08 PM'},
@@ -107,11 +125,25 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.fullDate"),value:'fullDate',hint:'Friday, September 3, 2010'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.longDate"),value:'longDate',hint:'September 3, 2010'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumDate"),value:'mediumDate',hint:'Sep 3, 2010'},
-			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'shortDate',hint:'09/03/2010'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'shortDate',hint:'09/03/10'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'dd/MM/yyyy',hint:'09/03/2010 (dd/mm/yyyy)'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'MM/dd/yyyy',hint:'09/03/2010 (mm/dd/yyyy)'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumTime"),value:'mediumTime',hint:'12:05:08 PM'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'shortTime',hint:'12:05 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'yyyy',hint:'2010'}
+		 ],
+		 momentDateFormat : [
+			 {value:'LLLL',hint:moment().locale(sbiModule_config.curr_language).format('LLLL')},
+			 {value:'llll',hint:moment().locale(sbiModule_config.curr_language).format('llll')},
+			 {value:'LLL',hint:moment().locale(sbiModule_config.curr_language).format('LLL')},
+			 {value:'lll',hint:moment().locale(sbiModule_config.curr_language).format('lll')},
+			 {value:'LL',hint:moment().locale(sbiModule_config.curr_language).format('LL')},
+			 {value:'ll',hint:moment().locale(sbiModule_config.curr_language).format('ll')},
+			 {value:'L',hint:moment().locale(sbiModule_config.curr_language).format('L')},
+			 {value:'l',hint:moment().locale(sbiModule_config.curr_language).format('l')},
+			 {value:'LT',hint:moment().locale(sbiModule_config.curr_language).format('LT')},
+			 {value:'LTS',hint:moment().locale(sbiModule_config.curr_language).format('LTS')},
+			 
 		 ]
 	}
 });

@@ -192,6 +192,13 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						class: "fa fa-table",
 						type : "table"
 					},{
+						name:"Advanced Table",
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),
+						tags : ["advanced"],
+						img : "5.png",
+						class: "fa fa-table",
+						type : "advanced-table"
+					},{
 						name:"Cross Table",
 						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.cross"),
 						tags : ["table","pivot","cross"],
@@ -206,13 +213,13 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						class: "fa fa-file",
 						type : "document"
 					},{
-                                      name:"Map",
-                                      description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.map"),
-                                      tags : ["map"],
-                                      img : "7.png",
-                                      class: "fa fa-map",
-                                      type : "map"
-                                  },{
+	                    name:"Map",
+	                    description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.map"),
+	                    tags : ["map"],
+	                    img : "7.png",
+	                    class: "fa fa-map",
+	                    type : "map"
+	                },{
 						name:"Active Selections",
 						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
 						tags : ["selection"],

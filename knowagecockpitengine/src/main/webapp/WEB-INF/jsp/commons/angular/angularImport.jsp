@@ -127,7 +127,7 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/css/css.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.js"></script>
 
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">

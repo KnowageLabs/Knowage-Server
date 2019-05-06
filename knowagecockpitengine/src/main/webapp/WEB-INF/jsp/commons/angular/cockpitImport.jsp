@@ -71,6 +71,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/tableWidget/tableWidget.js")%>"></script>
 
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/advancedTableWidget/advancedTableWidgetEdit.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/advancedTableWidget/advancedTableWidget.js")%>"></script>
+
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/mapWidgetEdit.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/mapWidget.js")%>"></script>
 
