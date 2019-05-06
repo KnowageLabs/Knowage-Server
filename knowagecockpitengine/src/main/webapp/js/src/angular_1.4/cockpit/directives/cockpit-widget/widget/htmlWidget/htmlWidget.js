@@ -82,6 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
+		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
 		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
@@ -132,7 +133,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.init=function(element,width,height){
-			$scope.refreshWidget(null, 'init');
+			$scope.showWidgetSpinner();
+			if($scope.ngModel.htmlToRender.search($scope.noAggregationsExistRegex) == -1) $scope.refresh(element,width,height,null,'init')
+			else $scope.refreshWidget(null, 'init');
 		}
 		
 		/**
@@ -141,7 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.reinit = function(){
 			$scope.showWidgetSpinner();
-			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId && $scope.ngModel.htmlToRender.search($scope.noAggregationsExistRegex) != -1){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
