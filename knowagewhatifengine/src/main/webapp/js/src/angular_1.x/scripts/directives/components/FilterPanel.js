@@ -519,6 +519,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 
 			filterSlice();
+			$mdDialog.hide();
 		}
 		else
 
