@@ -325,9 +325,9 @@
 			#else		
 				
 				#if ($chart.COLORPALETTE.COLOR)
-					'$chart.COLORPALETTE.COLOR.value'
+					'$chart.COLORPALETTE.COLOR.value',
 				#else
-					'#518BC6'
+					'#518BC6',
 				#end
 				
 			#end
@@ -349,7 +349,7 @@
 					'$color.get('value')',			
 				#end			
 			#else
-				'$chart.COLORPALETTE.COLOR.value'
+				'$chart.COLORPALETTE.COLOR.value',
 			#end	*#
 			
 			#*
@@ -377,7 +377,7 @@
 				*#
 				
 				#if ($chart.COLORPALETTE.COLOR)
-					'$chart.COLORPALETTE.COLOR.value'
+					'$chart.COLORPALETTE.COLOR.value',
 				#else
 					'#518BC6'
 				#end
