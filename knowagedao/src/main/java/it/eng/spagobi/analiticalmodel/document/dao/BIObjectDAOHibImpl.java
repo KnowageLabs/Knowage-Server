@@ -30,19 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.spagobi.analiticalmodel.document.util.EscapedLikeRestrictions;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.transform.Transformers;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -2716,6 +2711,55 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return realResult;
+	}
+
+	@Override
+	public List<BIObject> loadAllBIObjectsBySearchKey(String searchKey, String attributes) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria hibQuery = aSession.createCriteria(SbiObjects.class);
+
+			Criterion labelCriterion = EscapedLikeRestrictions.ilikeEscaped("label", searchKey, MatchMode.ANYWHERE);
+			Criterion nameCriterion = EscapedLikeRestrictions.ilikeEscaped("name", searchKey, MatchMode.ANYWHERE);
+			Criterion descrCriterion = EscapedLikeRestrictions.ilikeEscaped("descr", searchKey, MatchMode.ANYWHERE);
+
+			if ("LABEL".equalsIgnoreCase(attributes)) {
+				hibQuery.add(labelCriterion);
+			} else if ("NAME".equalsIgnoreCase(attributes)) {
+				hibQuery.add(nameCriterion);
+			} else if ("DESCRIPTION".equalsIgnoreCase(attributes)) {
+				hibQuery.add(descrCriterion);
+			} else {
+				Disjunction disjunction = Restrictions.disjunction();
+				disjunction.add(labelCriterion);
+				disjunction.add(nameCriterion);
+				disjunction.add(descrCriterion);
+				hibQuery.add(disjunction);
+			}
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
 			}
 			logger.debug("OUT");
 		}

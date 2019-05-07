@@ -622,8 +622,8 @@ public class DocumentResource extends AbstractDocumentResource {
                 logger.debug("Folder id parameter found: [" + functionalityId + "]. Loading documents belonging to that folder...");
                 allObjects = documentsDao.loadAllBIObjectsByFolderId(functionalityId);
             } else if (isSearchFilterValid) {
-                logger.debug("Search key found: [" + searchKey + "]. Using Lucene indexes...");
-                allObjects = this.searchDocumentsWithLucene(searchKey, attributes, similar);
+				logger.debug("Search key found: [" + searchKey + "]. Loading documents that match search key...");
+				allObjects = documentsDao.loadAllBIObjectsBySearchKey(searchKey, attributes);
             } else {
                 logger.debug("Neither filter on date nor on folder nor a search key was found, loading all documents...");
                 allObjects = documentsDao.loadAllBIObjects();

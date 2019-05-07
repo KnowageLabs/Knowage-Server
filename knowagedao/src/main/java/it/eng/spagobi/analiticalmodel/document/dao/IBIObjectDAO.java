@@ -91,6 +91,8 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	public List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError;
 
+	public  List<BIObject> loadAllBIObjectsBySearchKey(String searchKey, String attributes) throws EMFUserError;
+
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>id</code> identifier integer. All these information, achived by a query to the DB,
 	 * are stored into a <code>BIObject</code> object, which is returned.

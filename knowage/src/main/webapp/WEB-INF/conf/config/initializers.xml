@@ -35,9 +35,9 @@
 	<INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
 	
 	<!-- END-WEB  -->
-	<!--  LUCENE INDEXER -->
+	<!-- LUCENE INDEXER 
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.indexing.IndexingInitializer" config="" />
-	<!--  /LUCENE INDEXER -->
+	 LUCENE INDEXER -->
 	
 	<!-- INTERNAL PROFILING -->
 	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="" />
