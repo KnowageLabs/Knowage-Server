@@ -36,6 +36,12 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
 	
+	function moveInArray(arr, fromIndex, toIndex) {
+        var element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+    }
+	
 	$scope.columnsDefition = [
     	{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
@@ -51,7 +57,9 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	        enableColResize: false,
 	        enableFilter: false,
 	        enableSorting: false,
-	        onRowDragMove: onRowDragMove,
+	        rowDragManaged: true,
+	        onRowDragEnter: rowDragEnter,
+	        onRowDragEnd: onRowDragEnd,
 	        onGridReady : resizeColumns,
 	        onCellEditingStopped: refreshRow,
 	        singleClickEdit: true,
@@ -60,24 +68,13 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 			rowData: $scope.newModel.content.columnSelectedOfDataset
 		}
 	
-	function onRowDragMove(event) {
-	    if (event.node !== event.overNode) {
-	    	var fromIndex = $scope.newModel.content.columnSelectedOfDataset.indexOf(event.node.data);
-	    	var toIndex = $scope.newModel.content.columnSelectedOfDataset.indexOf(event.overNode.data);
-
-	    	var newStore = $scope.newModel.content.columnSelectedOfDataset.slice();
-	        moveInArray(newStore, fromIndex, toIndex);
-	        $scope.newModel.content.columnSelectedOfDataset = newStore;
-	        
-	        $scope.columnsGrid.api.setRowData(newStore);
-	        $scope.columnsGrid.api.clearFocusedCell();
-	    }
-
-	    function moveInArray(arr, fromIndex, toIndex) {
-	        var element = arr[fromIndex];
-	        arr.splice(fromIndex, 1);
-	        arr.splice(toIndex, 0, element);
-	    }
+	
+	
+	function rowDragEnter(event){
+		$scope.startingDragRow = event.overIndex;
+	}
+	function onRowDragEnd(event){
+		moveInArray($scope.newModel.content.columnSelectedOfDataset, $scope.startingDragRow, event.overIndex);
 	}
 	
 	function resizeColumns(){
