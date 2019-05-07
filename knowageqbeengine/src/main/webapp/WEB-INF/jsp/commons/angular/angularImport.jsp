@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-ui-codemirror/src/ui-codemirror.js")%>"></script>
 
 <!-- AG GRID -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ag-grid-community/dist/ag-grid-community.min.js")%>"></script>
 
 <!-- main css -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>">
