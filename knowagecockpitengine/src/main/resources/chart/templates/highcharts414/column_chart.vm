@@ -81,13 +81,19 @@
 #if($chart.groupedSerie)
 #set($groupedSerie = $chart.groupedSerie)
 #else
+#if($series.get(0))
 #set($groupedSerie = $series.get(0).column)
-
+#else
+#set($groupedSerie = $series.column)
+#end
 #end
 #end
 
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+	#if($series.column == $groupedSerie)
+		#set($groupedSerie = "$series.name.toLowerCase()"+"_"+"$series.groupingFunction.toLowerCase()")
+	#end
 #else
 	#set($serieKeyFeed = 0)
 	#foreach($serie in $series)
