@@ -171,6 +171,22 @@ $aggrid-border-color: #d9dcde;
 			align-items: center;
 		}
 	}
+	.ag-header-cell {
+		.ag-header-cell-label {
+			.cellContainer {
+				display: flex;
+				align-items: center;
+				overflow: hidden;
+				span {
+					line-height: 100%;
+				}
+			}
+		}
+	}
+	.ag-header-cell::after, .ag-header-group-cell::after, .ag-header-cell-resize::after {
+		height: 60% !important;
+		margin-top: 16px;
+	}
 }
 
 $exportBarHeight : 36px;

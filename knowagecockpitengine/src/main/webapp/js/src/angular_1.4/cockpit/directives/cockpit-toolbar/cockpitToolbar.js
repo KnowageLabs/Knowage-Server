@@ -268,6 +268,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 	windowCommunicationService.addMessageHandler(handler);
 	
 	$scope.exportPdf = function(){
+		
 		return $q(function(resolve, reject) {
 			cockpitModule_properties.LOADING_SCREENSHOT = true;
 			$mdDialog.show({
@@ -308,6 +309,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 		var exportSheetBar = false;
 				 		var element = document.getElementById('kn-cockpit');
 				 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
+				 		
 				 		if(element.scrollHeight < gridsterElement.scrollHeight){
 				 			element = gridsterElement;
 				 			heightToUse = gridsterElement.scrollHeight + 32;

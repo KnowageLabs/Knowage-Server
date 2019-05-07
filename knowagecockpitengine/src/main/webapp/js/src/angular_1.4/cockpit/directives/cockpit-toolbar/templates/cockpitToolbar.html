@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <div ng-cloak>
-	<div class="kn-fab-toolbar hide-print" layout="column" layout-align="start end" >
+	<div class="kn-fab-toolbar hide-print" data-html2canvas-ignore layout="column" layout-align="start end" >
     	<md-fab-speed-dial  md-open="fabSpeed.isOpen" md-direction="left" class="md-scale" ng-hide="(cockpitModule_properties.EXPORT_MODE) || (!cockpitModule_properties.EDIT_MODE && !cockpitModule_template.configuration.showMenuOnView)" ng-if="!cockpitModule_widgetServices.isFullPageWidget()">
         	<md-fab-trigger>
           		<md-button aria-label="menu" class="md-fab md-warn" ng-click="toggleFab()" >

@@ -114,8 +114,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function headerTemplate() { 
 			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+$scope.ngModel.style.th["background-color"]+'">'+
 					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
-					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation"  style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'">'+
-					'       <span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+$scope.ngModel.style.th.color+';font-style:'+$scope.ngModel.style.th["font-style"]+';font-size:'+$scope.ngModel.style.th["font-size"]+';font-weight:'+$scope.ngModel.style.th["font-weight"]+'"></span>'+
+					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'">'+
+					'       <div class="cellContainer" style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'"><span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+$scope.ngModel.style.th.color+';font-style:'+$scope.ngModel.style.th["font-style"]+';font-size:'+$scope.ngModel.style.th["font-size"]+';font-weight:'+$scope.ngModel.style.th["font-weight"]+'"></span></div>'+
 					'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
 					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
 					'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
