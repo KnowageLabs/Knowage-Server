@@ -344,7 +344,7 @@ function onSelectionChanged(node){
 			if (newSearchInput == $scope.searchInput) {
 				if (newSearchInput.length > 0){
 					$scope.searchingDocuments=true;
-					sbiModule_restServices.promiseGet("2.0", "documents?searchAttributes=all&searchKey=" + encodeURIComponent(newSearchInput))
+					sbiModule_restServices.promiseGet("2.0", "documents?searchAttributes=all&searchKey=" + encodeURIComponent(newSearchInput + "*"))
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
 						$scope.translateDocuments($scope.searchDocuments);
