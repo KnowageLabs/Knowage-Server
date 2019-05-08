@@ -381,7 +381,7 @@
 			}
 		}
 		md-card {
-			height: calc(100% - 80px);
+			height: 100%;
 			.documentBrowserGrid {
 				height: 100%;
 				width: 100%;
@@ -456,12 +456,6 @@
 				}
 			}
 		}
-		.mainContent {
-			md-card {
-				height: 100%;
-			}
-		}
-
 	}
 }
 
