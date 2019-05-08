@@ -6,6 +6,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.datasetMapByLabel={};
 
 	this.infoColumns = [];
+	this.datasetTypes = {
+			"SbiQueryDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.query'),
+			"SbiCkanDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.ckan'),
+			"SbiCustomDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.custom'),
+			"SbiFileDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.file'),
+			"SbiFlatDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.flat'),
+			"SbiJClassDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.jclass'),
+			"SbiScriptDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.script'),
+			"SbiFederatedDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.federated'),
+			"SbiQbeDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.qbe'),
+			"SbiSolrDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.solr'),
+			"SbiSPARQLDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.sparql'),
+			"SbiRESTDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.rest')
+	}
 
 	this.isDatasetFromTemplateLoaded = false;
 
@@ -1020,6 +1034,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				locals :{currentAvaiableDataset:container,multiple:multiple,deferred:deferred},
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
 
+					$scope.translate = sbiModule_translate;
+					$scope.datasetSearchText = '';
+					$scope.filterDataset = function(){
+						var tempDatasetList = $filter('filter')($scope.datasetList,$scope.datasetSearchText);
+						$scope.cockpitDatasetGrid.api.setRowData(tempDatasetList);
+					}
+					
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
@@ -1029,7 +1050,36 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.multiple=multiple;
 
-					$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
+					$scope.cockpitDatasetColumn = [
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
+							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
+
+					$scope.cockpitDatasetGrid = {
+					        enableColResize: false,
+					        enableFilter: true,
+					        enableSorting: true,
+					        pagination: true,
+					        paginationAutoPageSize: true,
+					        rowSelection: multiple ? 'multiple' : 'single',
+					        rowMultiSelectWithClick: multiple,
+					        onGridSizeChanged: resizeColumns,
+					        columnDefs : $scope.cockpitDatasetColumn
+					};
+
+					function resizeColumns(){
+						$scope.cockpitDatasetGrid.api.sizeColumnsToFit();
+					}
+
+					function hasParametersRenderer(params){
+						return (params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
+					}
+					
+					function typeRenderer(params){
+						return cockpitModule_datasetServices.datasetTypes[params.value] || sbiModule_translate.load('kn.cockpit.dataset.type.generic');
+					}
 
 					$scope.isDatasetListLoaded = false;
 
@@ -1088,6 +1138,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						
 						$scope.datasetList = datasetList;
 						$scope.isDatasetListLoaded = true;
+						$scope.cockpitDatasetGrid.api.setRowData($scope.datasetList);
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,"");
 						def.reject();
@@ -1101,6 +1152,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.saveDataset=function(){
 						if(multiple){
+							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
 								$scope.tmpCurrentAvaiableDataset[i].expanded = true;
 								if(autoAdd){
@@ -1115,6 +1167,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.$destroy();
 
 						}else{
+							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows()[0];
 							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0 && !skipParameters){
 								//fill the parameter
 
