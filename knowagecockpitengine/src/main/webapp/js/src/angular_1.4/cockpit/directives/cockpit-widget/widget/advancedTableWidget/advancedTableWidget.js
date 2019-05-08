@@ -86,11 +86,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
-						tempCol.fieldType = $scope.ngModel.content.columnSelectedOfDataset[c].type;
-						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						tempCol.headerComponentParams = {template: headerTemplate()};
+						
 						tempCol.cellStyle = getCellStyle;
+						
+						tempCol.fieldType = cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type].label;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+						if(tempCol.fieldType == 'date') tempCol.valueFormatter = dateFormatter;
+						if(tempCol.fieldType == 'timestamp') tempCol.valueFormatter = dateTimeFormatter;
+						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) tempCol.valueFormatter = numberFormatter;
+						
 						tempCol.cellRenderer = cellRenderer;
+						
 						if($scope.ngModel.settings.autoRowsHeight) {
 							tempCol.autoHeight = true;
 							if(tempCol.style) tempCol.style['white-space'] = 'normal';
@@ -143,6 +150,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return tempStyle;
 		}
 		
+		//VALUE FORMATTERS
+		function dateFormatter(params){
+			return isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
+		}
+		
+		function dateTimeFormatter(params){
+			return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
+		}
+		
+		function numberFormatter(params){
+			if(params.colDef.style && !params.colDef.style.asString) {
+				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+			}else return params.value;
+		}
+		
+		//CELL RENDERERS
 		function cellRenderer(params){
 			if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
 				var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
@@ -150,20 +174,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(percentage > 100) percentage = 100;
 				return '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
 			}
-			var tempValue = params.value;
-			var tempValueType = cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label;
-			if(tempValueType == 'date') {
-				tempValue = isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
-			}
-			if(tempValueType == 'timestamp') {
-				tempValue = isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
-			}
-			if(tempValueType == 'float' || tempValueType == 'integer') {
-				if(params.colDef.style && !params.colDef.style.asString) {
-					var defaultPrecision = (tempValueType == 'float') ? 2 : 0;
-					tempValue = $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
-				}
-			}
+			var tempValue = params.valueFormatted || params.value;
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
 				for(var k in params.colDef.ranges){
 					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
@@ -184,6 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui = document.createElement('div');
 		    this.eGui.style.color = (params.style && params.style.color) || "";
 		    this.eGui.style.backgroundColor = (params.style && params.style['background-color']) || "";
+		    this.eGui.style.justifyContent = (params.style && params.style['justify-content']) || "";
 		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
