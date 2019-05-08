@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail full-screen=true layout-column>
 		<list label="translate.load('sbi.config.manageconfig')" new-function="addConfig" >
 			<div class="kn-grid-container">
-				<div ag-grid="configurationGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="width:100%;"></div>
+				<div ag-grid="configurationGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-default" style="width:100%;"></div>
 			</div>
 			 <!--  angular-table flex 
 				id="table" ng-model="data" 

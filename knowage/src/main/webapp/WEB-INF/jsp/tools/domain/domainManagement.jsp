@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<list label="translate.load('sbi.domain.managedomains')" new-function="addDomain" >
 			
 				<div class="kn-grid-container">
-						<div ag-grid="gridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="width:100%;"></div>
+						<div ag-grid="gridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-default" style="width:100%;"></div>
 				</div>
 
 	 		</list>

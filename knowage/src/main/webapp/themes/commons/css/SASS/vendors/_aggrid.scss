@@ -22,6 +22,7 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-center-cols-viewport {
+		overflow-x: hidden;
 		.md-button {
 			height: 24px;
 			width: 24px;
@@ -208,7 +209,6 @@ $aggrid-border-color: #d9dcde;
 	}
 	.ag-header-cell::after, .ag-header-group-cell::after, .ag-header-cell-resize::after {
 		height: 60% !important;
-		margin-top: 16px;
 	}
 }
 
