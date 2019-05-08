@@ -169,6 +169,29 @@ $aggrid-border-color: #d9dcde;
 			line-height: 100%;
 			display: inline-flex;
 			align-items: center;
+			.inner-chart-bar {
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 4px;
+				width: calc(100% - 8px);
+				display: inline-flex;
+				align-items: center;
+				background-color: $contentBackground;
+				.bar {
+					height: 100%;
+					display: flex;
+					justify-content: inherit;
+					align-items: center;
+					transition: opacity .3s ease-out;
+					&:hover {
+						opacity: .5;
+					}
+					span {
+						padding: 4px;
+					}
+				}
+			}
 		}
 	}
 	.ag-header-cell {

@@ -96,7 +96,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							if(tempCol.style) tempCol.style['white-space'] = 'normal';
 							else tempCol.style = {'white-space':'normal'};
 						}else if(tempCol.style) tempCol.style['white-space'] = 'nowrap';
-						tempCol.autoHeight = $scope.ngModel.settings.autoRowsHeight || false,
+						tempCol.autoHeight = $scope.ngModel.settings.autoRowsHeight || false;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].visType) {
+							tempCol.visType = $scope.ngModel.content.columnSelectedOfDataset[c].visType;
+							if($scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'chart' || $scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'text & chart') tempCol.chart = $scope.ngModel.content.columnSelectedOfDataset[c].barchart;
+						}
 						columns.push(tempCol);
 						break;
 					}
@@ -140,6 +144,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function cellRenderer(params){
+			if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
+				var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
+				if(percentage < 0) percentage = 0;
+				if(percentage > 100) percentage = 100;
+				return '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
+			}
 			var tempValue = params.value;
 			var tempValueType = cockpitModule_generalOptions.typesMap[params.colDef.fieldType].label;
 			if(tempValueType == 'date') {
