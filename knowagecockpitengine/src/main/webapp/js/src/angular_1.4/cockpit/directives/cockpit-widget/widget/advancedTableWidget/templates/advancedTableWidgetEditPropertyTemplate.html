@@ -214,6 +214,11 @@
 									<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
 									<input class="input_class" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.title" />
 								</md-input-container>
+								<div flex layout="row" layout-align="start center">
+									<md-checkbox layout-align="space-around center" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.style.pinnedOnly" class="md-block">
+										{{::translate.load('sbi.cockpit.table.summary.pinnedonly')}}
+									</md-checkbox>
+								</div>
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
 									<md-select ng-disabled ="!newModel.settings.summary.enabled" aria-label="aria-label" ng-model="newModel.settings.summary.style['font-family']">

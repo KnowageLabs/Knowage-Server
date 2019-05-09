@@ -74,6 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].alias === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name};
+						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
@@ -168,23 +169,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//CELL RENDERERS
 		function cellRenderer(params){
-			if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
-				var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
-				if(percentage < 0) percentage = 0;
-				if(percentage > 100) percentage = 100;
-				return '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
-			}
 			var tempValue = params.valueFormatted || params.value;
-			if(params.colDef.ranges && params.colDef.ranges.length > 0){
-				for(var k in params.colDef.ranges){
-					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-						tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>'
-                        if (params.colDef.ranges[k].operator == '==') break;
-                    }
+			if(!params.node.rowPinned){
+				if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
+					var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
+					if(percentage < 0) percentage = 0;
+					if(percentage > 100) percentage = 100;
+					return '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
 				}
-			}
-			if(params.colDef.style && params.colDef.style.maxChars){
-				tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
+				if(params.colDef.ranges && params.colDef.ranges.length > 0){
+					for(var k in params.colDef.ranges){
+						if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
+							tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>'
+	                        if (params.colDef.ranges[k].operator == '==') break;
+	                    }
+					}
+				}
+				if(params.colDef.style && params.colDef.style.maxChars){
+					tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
+				}
 			}
 			return ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
@@ -197,10 +200,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.backgroundColor = (params.style && params.style['background-color']) || "";
 		    this.eGui.style.justifyContent = (params.style && params.style['justify-content']) || "";
 		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
-		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
+		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
-		    if(cellRenderer(params)){
-		    	this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
+		    this.eGui.innerHTML = '';
+		    if(params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+		    if(params.valueFormatted || params.value){
+		    	if(((!params.style || !params.style['pinnedOnly']) && params.title)) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+			    this.eGui.innerHTML += params.valueFormatted || params.value;
 		    }
 		};
 

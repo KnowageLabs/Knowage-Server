@@ -7,6 +7,9 @@ $aggrid-border-color: #d9dcde;
 	.ag-body-viewport.ag-layout-normal,.ag-body-horizontal-scroll-viewport {
 		@include coolScrollBars($baseColor,6px);
 	}
+	.ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
+		overflow-x: auto;
+	}
 	.ag-floating-bottom {
 		overflow-y: hidden !important;
 		.ag-row {
@@ -202,7 +205,7 @@ $aggrid-border-color: #d9dcde;
 				align-items: center;
 				overflow: hidden;
 				span {
-					line-height: 100%;
+					line-height: 30px;
 				}
 			}
 		}

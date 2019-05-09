@@ -23,12 +23,20 @@
 							<label>{{::translate.load('sbi.cockpit.table.maxChars')}}</label>
 							<input ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
 						</md-input-container>
+						<md-input-container class="md-block" class="small counter" flex>
+	          				<label>{{::translate.load('sbi.cockpit.table.pinned')}}</label>
+          					<md-select ng-model="selectedColumn.pinned">
+            					<md-option value=""></md-option>
+            					<md-option value="left">{{::translate.load('sbi.cockpit.table.pinnedleft')}}</md-option>
+            					<md-option value="right">{{::translate.load('sbi.cockpit.table.pinnedright')}}</md-option>
+          					</md-select>
+	        			</md-input-container>
 						<md-switch ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
 							{{::translate.load('sbi.cockpit.table.hiddencolumn')}}
 						</md-switch>
-						<md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
+						<!--  md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 							{{::translate.load('sbi.cockpit.table.hide')}}
-						</md-switch>
+						</md-switch-->
 						<md-switch ng-model="selectedColumn.hideTooltip" aria-label="Hide tooltip" flex>
 							{{::translate.load('sbi.cockpit.table.hidetooltip')}}
 						</md-switch>
