@@ -23,10 +23,6 @@
 			<activation>
                 <!-- this profile is active by default -->
                 <activeByDefault>true</activeByDefault>
-                <property>
-                	<name>env</name>
-                    <value>development</value>
-                </property>
             </activation>
             <properties>
            		<application.environment>development</application.environment>
@@ -57,12 +53,6 @@
 		
 		<profile>
 			<id>production</id>
-			<activation>
-                <property>
-                	<name>env</name>
-                    <value>production</value>
-                </property>
-            </activation>
             <properties>
            		<application.environment>production</application.environment>
             </properties>

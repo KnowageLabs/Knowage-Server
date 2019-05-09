@@ -11,18 +11,60 @@
 
 	<artifactId>knowagemeta</artifactId>
 	<packaging>war</packaging>
-
-	<build>
-	    <plugins>
-	        <plugin>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <configuration>
-	                <attachClasses>true</attachClasses>
-	                <classesClassifier>classes</classesClassifier>
-	            </configuration>
-	        </plugin>
-	    </plugins>
-	</build>
+	
+	<profiles>
+		<profile>
+			<id>development</id>
+            <activation>
+                <!-- this profile is active by default -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+	       		<application.environment>development</application.environment>
+      		</properties>
+      		<build>
+			    <plugins>
+			        <plugin>
+			        	<groupId>org.apache.maven.plugins</groupId>
+			            <artifactId>maven-war-plugin</artifactId>
+			            <configuration>
+			                <attachClasses>true</attachClasses>
+			                <classesClassifier>classes</classesClassifier>
+			            </configuration>
+			        </plugin>
+			    </plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>production</id>
+			<properties>
+	       		<application.environment>production</application.environment>
+	       		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
+	        </properties>
+			<build>
+			    <plugins>
+			        <plugin>
+			        	<groupId>org.apache.maven.plugins</groupId>
+			            <artifactId>maven-war-plugin</artifactId>
+			            <configuration>
+			                <attachClasses>true</attachClasses>
+			                <classesClassifier>classes</classesClassifier>
+			                <webResources>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/angularImport.jsp</include>
+									</includes>										
+								</resource>					      
+					      </webResources>
+			            </configuration>
+			        </plugin>
+			    </plugins>
+			</build>
+		</profile>
+	</profiles>
 	
 	<dependencies>
 		

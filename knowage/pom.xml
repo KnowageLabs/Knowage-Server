@@ -19,10 +19,6 @@
             <activation>
                 <!-- this profile is active by default -->
                 <activeByDefault>true</activeByDefault>
-                <property>
-                	<name>env</name>
-                    <value>development</value>
-                </property>
             </activation>
             <properties>
            		<application.environment>development</application.environment>
@@ -83,26 +79,29 @@
 		
 		<profile>
 			<id>production</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>production</value>                  
-                </property>
-            </activation>
             <properties>
            		<application.environment>production</application.environment>
+           		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
             </properties>
 			<build>
 				<finalName>knowage</finalName>
 				<pluginManagement>
 				    <plugins>
 				        <plugin>
+				        	<groupId>org.apache.maven.plugins</groupId>
 				            <artifactId>maven-war-plugin</artifactId>
 				            <configuration>
 				                <attachClasses>true</attachClasses>
 				                <classesClassifier>classes</classesClassifier>
-						<warSourceExcludes>js/src/**</warSourceExcludes>
+								<warSourceExcludes>js/src/**</warSourceExcludes>
 								<webResources>
+									<resource>
+										<directory>src/main/webapp</directory>
+										<filtering>true</filtering>
+										<includes>
+											<include>**/angularImport.jsp</include>
+										</includes>										
+									</resource>
 							        <resource>
 							          <directory>src/main/webapp/js/src</directory>
 							          <targetPath>js/src-${project.version}</targetPath>
