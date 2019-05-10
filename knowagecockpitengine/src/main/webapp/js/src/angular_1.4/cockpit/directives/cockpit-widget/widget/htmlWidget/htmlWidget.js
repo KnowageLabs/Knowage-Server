@@ -123,7 +123,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.showWidgetSpinner();
 			if(datasetRecords) $scope.htmlDataset = datasetRecords;
 			$scope.manageHtml();
-			$scope.hideWidgetSpinner();
 			if(nature == 'init'){
 				$timeout(function(){
 					$scope.widgetIsInit=true;
@@ -191,6 +190,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					)
 				}else $scope.hideWidgetSpinner();
+			},function(error){
+				$scope.hideWidgetSpinner();
 			})
 		}
 
@@ -247,7 +248,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							$scope.aggregationDataset = data;
 							resolve();
 						},function(error){
-							$scope.hideWidgetSpinner();
 							reject();
 						});
 				}else{
