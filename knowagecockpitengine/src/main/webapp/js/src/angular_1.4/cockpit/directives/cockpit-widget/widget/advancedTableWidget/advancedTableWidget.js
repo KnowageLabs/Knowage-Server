@@ -161,7 +161,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function numberFormatter(params){
-			if(params.colDef.style && !params.colDef.style.asString) {
+			if(!params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
