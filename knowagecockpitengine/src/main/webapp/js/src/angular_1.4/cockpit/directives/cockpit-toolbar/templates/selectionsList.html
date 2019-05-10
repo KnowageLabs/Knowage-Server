@@ -1,4 +1,4 @@
-<md-dialog>
+<md-dialog style="width:60%">
 	<md-toolbar class="secondaryToolbar" layout="row">
 		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.selections.title')}}</h1>
 		<md-button  class="md-icon-button" ng-click="clearAllSelection()" ng-if="selection.length >0">
@@ -7,13 +7,10 @@
 		</md-button>
 	</md-toolbar>
 	
-	<md-dialog-content layout="column" flex-xs="100" style="min-height:200px; min-width:300px;">
-		<angular-table layout-padding ng-show="selection.length >0" 
-			id='selectionTable' ng-model="selection"
-			columns='columnTableSelection'
-			columns-search='["label"]'
-			no-pagination=true  speed-menu-option= actionsOfSelectionColumns
-		> </angular-table> 
+	<md-dialog-content layout="column" style="min-height:200px;">
+		<div style="padding:8px">
+			<div ng-if="selection.length >0" ag-grid="selectionsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-default"></div>
+		</div>
 		<div layout="row" layout-align="center center" ng-if="selection.length ==0" flex>
 			<div class="kn-noItems">
 				{{translate.load('sbi.cockpit.selections.noselections')}}

@@ -413,7 +413,6 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
 
-
 	angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
 	$scope.tmpFilters = {};
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
@@ -458,7 +457,6 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		}
 	}
 
-
 	for(var ds in $scope.tmpFilters){
 		var currentDs = cockpitModule_datasetServices.getDatasetByLabel(ds).metadata.fieldsMeta;
 		for(var col in $scope.tmpFilters[ds]){
@@ -481,42 +479,40 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			}
 		}
 	}
+	
+	$scope.selectionsGrid = {
+		angularCompileRows: true,
+		domLayout :'autoHeight',
+        enableColResize: false,
+        enableFilter: false,
+        enableSorting: false,
+        pagination: false,
+        onGridSizeChanged: resizeColumns,
+        columnDefs : [{headerName: $scope.translate.load('sbi.cockpit.dataset'), field:'ds'},
+        	{headerName: $scope.translate.load('sbi.cockpit.dataset.columnname'), field:'columnName'},
+        	{headerName: $scope.translate.load('sbi.cockpit.core.selections.list.columnValues'), field:'value'},
+        	{headerName:"",cellRenderer: buttonRenderer,"field":"id","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},width: 50,suppressSizeToFit:true, tooltip: false}],
+        defaultColDef: {
+        	suppressMovable: true,
+        	suppressSorting:true,
+        	suppressFilter:true,
+        	tooltip: function (params) {
+                return params.value;
+            },
+        },
+        rowData: $scope.selection
+	};
+	
+	function resizeColumns(){
+		$scope.selectionsGrid.api.sizeColumnsToFit();
+	}
+	
+	function buttonRenderer(params){
+		return 	'<md-button class="md-icon-button" ng-click="deleteSelection(\''+params.rowIndex+'\')"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+	}
 
-	$scope.columnTableSelection =[
-	                              {
-	                            	  label:"Dataset",
-	                            	  name:"ds",
-
-	                            	  hideTooltip:true
-	                              },
-	                              {
-	                            	  label:"Column Name",
-	                            	  name:"columnName",
-
-	                            	  hideTooltip:true
-	                              },
-	                              ,
-	                              {
-	                            	  label:"Values",
-	                            	  name:"value",
-
-	                            	  hideTooltip:true
-	                              }
-	                              ];
-
-
-	$scope.actionsOfSelectionColumns = [
-
-	                                    {
-	                                    	icon:'fa fa-trash' ,
-	                                    	action : function(item,event) {
-	                                    		$scope.deleteSelection(item);
-
-	                                    	}
-	                                    }
-	                                    ];
-
-	$scope.deleteSelection=function(item){
+	$scope.deleteSelection=function(rowIndex){
+		var item = $scope.selection[rowIndex];
 		if(item.aggregated){
 			var key = item.ds + "." + item.columnName;
 
@@ -537,12 +533,13 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			var index=$scope.selection.indexOf(item);
 			$scope.selection.splice(index,1);
 		}
+		$scope.selectionsGrid.api.setRowData($scope.selection)
 
 	}
 
 	$scope.clearAllSelection = function(){
 		while($scope.selection.length!=0){
-			$scope.deleteSelection($scope.selection[0]);
+			$scope.deleteSelection(0);
 		}
 	}
 
