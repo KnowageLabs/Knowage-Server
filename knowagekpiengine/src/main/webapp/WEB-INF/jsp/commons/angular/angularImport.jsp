@@ -39,7 +39,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
 <!-- angular table -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
 
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
@@ -58,4 +58,4 @@
 <!-- sbiModule_dateServices -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/sbiModule_services/sbiModule_dateServices.js"></script>
 <!-- sbiModule_dateServices -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/sbiModule_services/knModule_selections.js"></script>	
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/sbiModule_services/knModule_selections.js")%>"></script>	

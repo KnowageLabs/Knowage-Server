@@ -19,10 +19,25 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineStartServletIOManager"%>
-
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
 
 <%
-
+	UrlBuilder urlBuilder = new UrlBuilder();
+	String spagoBiContext = GeneralUtilities.getSpagoBiContext();	//  /knowage
+	String metaEngineContext = request.getContextPath(); 			//  /knowagemetaengine
+	String dynamicResourcesBasePath;  								//  /knowage/js/src
+	String dynamicResourcesEnginePath;  							//  /knowagemetaengine/js/src
+	Environment environment = Version.getEnvironment();
+	
+	if (environment == Environment.PRODUCTION) {
+		dynamicResourcesBasePath = spagoBiContext + "/js/src-" + Version.getCompleteVersion();
+		dynamicResourcesEnginePath = metaEngineContext + "/js/src-" + Version.getCompleteVersion();
+	} else {
+		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src";
+		dynamicResourcesEnginePath = metaEngineContext + "/js/src";
+	}	
 
 	RequestContainer aRequestContainer = null;
 	ResponseContainer aResponseContainer = null;

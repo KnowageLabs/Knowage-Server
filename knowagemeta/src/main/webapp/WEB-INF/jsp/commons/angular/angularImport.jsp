@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
 
 <!-- angular table -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
 
 <!-- document tree -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>

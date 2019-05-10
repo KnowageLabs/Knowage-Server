@@ -17,7 +17,9 @@
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
 
 <%
 /*
@@ -54,6 +56,22 @@ String selections = "";
 String associations = "";
 String widgetId = "";
 String metaData = "";
+
+// Dynamic Url Builder - Caching Management
+UrlBuilder urlBuilder = new UrlBuilder();
+String spagoBiContext = GeneralUtilities.getSpagoBiContext();	//  /knowage
+String kpiEngineContext = request.getContextPath(); 			//  /kpiengine
+String dynamicResourcesBasePath;  								//  /knowage/js/src
+String dynamicResourcesEnginePath;  							//  /kpiengine/js/src
+Environment dynamicEnvironment = Version.getEnvironment();
+
+if (dynamicEnvironment == Environment.PRODUCTION) {
+	dynamicResourcesBasePath = spagoBiContext + "/js/src-" + Version.getCompleteVersion();
+	dynamicResourcesEnginePath = kpiEngineContext + "/js/src-" + Version.getCompleteVersion();
+} else {
+	dynamicResourcesBasePath = spagoBiContext + "/js/src";
+	dynamicResourcesEnginePath = kpiEngineContext + "/js/src";
+}		
 
 engineInstance = (KpiEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 env = engineInstance.getEnv();
