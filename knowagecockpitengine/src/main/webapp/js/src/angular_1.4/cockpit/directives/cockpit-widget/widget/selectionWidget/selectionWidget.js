@@ -133,7 +133,7 @@ function cockpitSelectionWidgetControllerFunction($scope,$timeout,cockpitModule_
 						aggregated:true
 					};
 
-					if(associatedDsLabels.indexOf(obj.ds) > -1 && !$scope.filterForInitialSelection(obj)){
+					if((associatedDsLabels.indexOf(obj.ds) > -1 || dsLabelsInSameSheet.indexOf(obj.ds) > -1) && !$scope.filterForInitialSelection(obj)){
 						$scope.selection.push(obj);
 					}
 				}
@@ -157,7 +157,7 @@ function cockpitSelectionWidgetControllerFunction($scope,$timeout,cockpitModule_
 					aggregated:false
 				};
 
-				if(associatedDsLabels.indexOf(tmpObj.ds) > -1 && !$scope.filterForInitialFilter(tmpObj)){
+				if((associatedDsLabels.indexOf(tmpObj.ds) > -1 || dsLabelsInSameSheet.indexOf(tmpObj.ds) > -1) && !$scope.filterForInitialFilter(tmpObj)){
 					$scope.selection.push(tmpObj);
 				}
 			}
@@ -301,7 +301,6 @@ function cockpitSelectionWidgetControllerFunction($scope,$timeout,cockpitModule_
 			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 				$scope.translate=sbiModule_translate;
 				
-				
 				$scope.localModel = {};
 				angular.copy(model,$scope.localModel);
 				$scope.colorPickerPropertyEvenOddRows={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style || !$scope.localModel.style.alternateRows || !$scope.localModel.style.alternateRows.enabled};
@@ -309,7 +308,7 @@ function cockpitSelectionWidgetControllerFunction($scope,$timeout,cockpitModule_
 					$scope.colorPickerPropertyEvenOddRows.disabled = !$scope.localModel.style.alternateRows.enabled;
 				}
 				
-				$scope.colorPickerPropertyChips = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style.chips.enabled};
+				$scope.colorPickerPropertyChips = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style.chips || !$scope.localModel.style.chips.enabled};
 				$scope.toggleChips = function(){
 					$scope.colorPickerPropertyChips.disabled = $scope.localModel.style.chips.enabled ? false : true;
 				}
