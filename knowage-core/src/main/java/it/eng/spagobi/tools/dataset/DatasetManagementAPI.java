@@ -28,6 +28,7 @@ import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
 
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -460,6 +461,9 @@ public class DatasetManagementAPI {
 
 	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
+			if (dataSet instanceof VersionedDataSet) {
+				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+			}
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
 				cache.put(dataSet);

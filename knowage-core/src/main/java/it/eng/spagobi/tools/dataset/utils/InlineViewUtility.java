@@ -43,6 +43,9 @@ public class InlineViewUtility {
 			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 
 		}
+		if (dataSet instanceof VersionedDataSet) {
+			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+		}
 		Assert.assertTrue(dataSet instanceof AbstractJDBCDataset || dataSet instanceof QbeDataSet,
 				"Dataset need to be query or qbe dataset. Your dataset is: " + dataSet.getClass());
 
