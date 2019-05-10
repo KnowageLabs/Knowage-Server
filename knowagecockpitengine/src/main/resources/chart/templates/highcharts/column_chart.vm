@@ -108,11 +108,11 @@
 		
 	#end
 #end
-#set($seriesMapGrouping = {}) 
+#set($seriesMapGroupingFunction = {}) 
 #foreach($serie in $series)
 	
 		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
-		#set($workAroundNoPrint = $seriesMapGrouping.put($withgroup, $serie))
+		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
 		
 		
 	#end
@@ -1052,7 +1052,10 @@
 			#if($chart.VALUES.SERIE.get(0))
 			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
 				#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+		 
+				
 				#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+			 
 				#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
@@ -1693,21 +1696,23 @@
 		#set($selectedValue = false)
 		#end
 		
+
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
+		
 		{	
 			selected: $selectedValue,
 			name: "$escapeTool.javascript($valueKey)",
-			#if($seriesMapGrouping.get($valueKey) && $seriesMapGrouping.get($valueKey).type != "")
-
-			type:"$seriesMapGrouping.get($valueKey).type",
+			#if($seriesMapGroupingFunction.get($valueKey) && $seriesMapGroupingFunction.get($valueKey).type != "")
+			
+			type:"$seriesMapGroupingFunction.get($valueKey).type",
 			#end
+			
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
-				#set ($counter = $counter+1)
-				
+				 #* #set ($counter = $counter+1) *#
 				#foreach($customColor in $customColors)
            		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
                 color:'$customColor.customValue',
