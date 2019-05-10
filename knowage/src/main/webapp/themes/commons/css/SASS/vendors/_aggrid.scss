@@ -13,7 +13,17 @@ $aggrid-border-color: #d9dcde;
 	.ag-floating-bottom {
 		overflow-y: hidden !important;
 		.ag-row {
-			border-top: 1px solid $aggrid-border-color;
+			.ag-cell{
+				padding: 0;
+				border: none;
+				div {
+					display: inline-flex;
+					padding: 0 12px;
+					width: 100%;
+					height: 100%;
+					align-items:center;
+				}
+			}
 		}
 	}
 	.ag-header {

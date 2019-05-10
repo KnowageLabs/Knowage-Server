@@ -203,7 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
 		    this.eGui.innerHTML = '';
-		    if(params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+		    if(params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
 		    if(params.valueFormatted || params.value){
 		    	if(((!params.style || !params.style['pinnedOnly']) && params.title)) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
 			    this.eGui.innerHTML += params.valueFormatted || params.value;
