@@ -43,6 +43,7 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
@@ -266,6 +267,9 @@ public class DatasetManagementAPI {
 
 	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
+			if (dataSet instanceof VersionedDataSet) {
+				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+			}
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
 				cache.put(dataSet);
