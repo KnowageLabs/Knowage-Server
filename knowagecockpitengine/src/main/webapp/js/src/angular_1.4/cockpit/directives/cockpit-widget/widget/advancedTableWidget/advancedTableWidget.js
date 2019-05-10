@@ -283,6 +283,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				enableSorting: true,
 				pagination : true,
 				onCellClicked: onCellClicked,
+				defaultColDef: {
+					resizable: cockpitModule_properties.EDIT_MODE,
+				},
+				onColumnResized: columnResized,
 				getRowHeight: function(params){
 					if(_rowHeight > 0) return parseInt(_rowHeight);
 					else return 28;
@@ -309,6 +313,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');
+			}
+		}
+		function columnResized(params){
+			if(params.source != "sizeColumnsToFit"){
+				if(params.finished){
+					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[c].name == params.columns[0].colDef.headerName){
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style) $scope.ngModel.content.columnSelectedOfDataset[c].style.width = params.columns[0].actualWidth;
+							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.columns[0].actualWidth};	
+							break;
+						}
+					}
+				}
 			}
 		}
 		
