@@ -264,7 +264,8 @@ public class AdapterHTTP extends HttpServlet {
 
             if (item.isFormField()) {
                 String name = item.getFieldName();
-                String value = item.getString();
+		//document name support utf8
+		String value = item.getString("utf-8");
                 serviceRequest.setAttribute(name, value);
             } else {
                 processFileField(item, requestContext);
