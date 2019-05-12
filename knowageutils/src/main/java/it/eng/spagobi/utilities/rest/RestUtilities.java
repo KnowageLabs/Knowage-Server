@@ -122,7 +122,10 @@ public class RestUtilities {
 		try {
 			InputStream inputStream = request.getInputStream();
 			if (inputStream != null) {
-				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				//bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				//document name support utf8
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+
 				char[] charBuffer = new char[128];
 				int bytesRead = -1;
 				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
