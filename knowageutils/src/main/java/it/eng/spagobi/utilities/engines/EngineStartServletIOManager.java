@@ -502,6 +502,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			try {
 				parameterName = (String) parameterNames.next();
 				String parameterValue = (String) this.getParameter(parameterName);
+				//document name support utf8
+				parameterValue = new String(parameterValue.getBytes("ISO-8859-1"),"UTF-8");
 
 				logger.debug("Parameter [" + parameterName + "] has been read from request");
 				logger.debug("Parameter [" + parameterName + "] is of type  " + parameterValue.getClass().getName());
