@@ -122,6 +122,9 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		JSError error = new JSError();
 		Integer id = null;
 		try {
+			//document name support utf8
+			req.setCharacterEncoding("UTF-8");
+
 			JSONObject request = RestUtilities.readBodyAsJSONObject(req);
 
 			if (request.optBoolean("updateFromWorkspace")) {
