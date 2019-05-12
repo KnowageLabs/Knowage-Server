@@ -11,12 +11,14 @@
 					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
 				</FIELD>
 				<FIELD name="name" label="#SBIDev.docConf.docDet.nameField">
-				    <VALIDATOR validatorName="MANDATORY"/>
-				    <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				    	<VALIDATOR validatorName="MANDATORY"/>
+					<!-- document name support utf8 -->
+				    	<!-- <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/> -->
 					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
 				</FIELD>
 				<FIELD name="description" label="#SBIDev.docConf.docDet.descriptionField">
-					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<!-- document name support utf8 -->
+					<!-- <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/> -->
 					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
 				</FIELD>	
 				<FIELD name="relName" label="#SBIDev.docConf.docDet.relNameField">
