@@ -745,7 +745,10 @@ public class DataSetTransformer {
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		logger.debug("GroupedSerie: " + groupedSerie);
 
-		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+		String columnForGroupingSerie = "";
+		if (!groupSeriesBool) {
+			columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+		}
 		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
 				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
 			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
