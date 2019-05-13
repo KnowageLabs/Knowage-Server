@@ -18,6 +18,7 @@
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -25,29 +26,16 @@ import it.eng.spagobi.commons.serializer.DocumentsJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
-import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,8 +47,7 @@ import org.json.JSONObject;
 public class SearchContentAction extends AbstractSpagoBIAction {
 
 	// REQUEST PARAMETERS
-	public static final String ATTRIBUTES = "attributes";
-	public static final String SIMILAR = "similar";
+	private static final String ATTRIBUTES = "attributes";
 
 	// logger component
 	private static Logger logger = Logger.getLogger(SearchContentAction.class);
@@ -75,108 +62,32 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 		try {
 			UserProfile profile = (UserProfile) getUserProfile();
 
-			Vector<String> fieldsToSearch = new Vector<String>();
 			String valueFilter = getAttributeAsString(SpagoBIConstants.VALUE_FILTER);
+			logger.debug("Parameter [" + SpagoBIConstants.VALUE_FILTER + "] is equal to [" + valueFilter + "]");
 
 			String attributes = getAttributeAsString(ATTRIBUTES);
-			String metaDataToSearch = null;
-			if (attributes != null) {
-				if (attributes.equalsIgnoreCase("ALL")) {// SEARCH IN ALL FIELDS
-					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
-					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
-					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
-					fieldsToSearch.add(IndexingConstants.METADATA);
-					// search metadata binary content
-					fieldsToSearch.add(IndexingConstants.CONTENTS);
-					// search subobject fields
-					fieldsToSearch.add(IndexingConstants.SUBOBJ_DESCR);
-					fieldsToSearch.add(IndexingConstants.SUBOBJ_NAME);
-				} else if (attributes.equalsIgnoreCase("LABEL")) {// SEARCH IN
-																	// LABEL DOC
-					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
-				} else if (attributes.equalsIgnoreCase("NAME")) {// SEARCH IN
-																	// NAME DOC
-					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
-				} else if (attributes.equalsIgnoreCase("DESCRIPTION")) {// SEARCH
-																		// IN
-																		// DESCRIPTION
-																		// DOC
-					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
-				} else {// SEARCH IN CATEGORIES DOC
-						// get categories name
-					metaDataToSearch = attributes;
-					// fieldsToSearch.add(IndexingConstants.METADATA);
-					fieldsToSearch.add(IndexingConstants.CONTENTS);
-				}
+			logger.debug("Parameter [" + ATTRIBUTES + "] is equal to [" + attributes + "]");
 
-			}
+			IBIObjectDAO documentsDao = DAOFactory.getBIObjectDAO();
+			List<BIObject> biObjects = documentsDao.loadAllBIObjectsBySearchKey(valueFilter, attributes);
 
-			boolean similar = getAttributeAsBoolean(SIMILAR);
-
-			logger.debug("Parameter [" + SpagoBIConstants.VALUE_FILTER + "] is equal to [" + valueFilter + "]");
-			String index = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + "idx";
-			IndexReader reader;
-			HashMap returned = null;
-			try {
-				reader = IndexReader.open(FSDirectory.open(new File(index)), true);
-				// read-only=true
-				IndexSearcher searcher = new IndexSearcher(reader);
-
-				String[] fields = new String[fieldsToSearch.size()];
-				fieldsToSearch.toArray(fields);
-
-				// getting documents
-
-				if (similar) {
-					returned = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, index, fields, metaDataToSearch, true);
-				} else {
-					returned = LuceneSearcher.searchIndex(searcher, valueFilter, index, fields, metaDataToSearch, true);
-				}
-				ScoreDoc[] hits = (ScoreDoc[]) returned.get("hits");
-
-				objects = new ArrayList();
-				if (hits != null) {
-					for (int i = 0; i < hits.length; i++) {
-						ScoreDoc hit = hits[i];
-						Document doc = searcher.doc(hit.doc);
-						String biobjId = doc.get(IndexingConstants.BIOBJ_ID);
-
-						BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
-						if (obj != null) {
-							boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
-							if (canSee) {
-								objects.add(obj);
-							}
+			objects = new ArrayList();
+			if (biObjects != null) {
+				for (BIObject biObject : biObjects) {
+					Integer id = biObject.getId();
+					BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(id);
+					if (obj != null) {
+						boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
+						if (canSee) {
+							objects.add(obj);
 						}
 					}
 				}
-				searcher.close();
-			} catch (CorruptIndexException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Index corrupted", e);
-
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Unable to read index", e);
-
-			} // only searching, so
-			catch (ParseException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Wrong query syntax", e);
-
 			}
 
 			JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects, null);
-			for (int i = 0; i < documentsJSON.length(); i++) {
-				JSONObject jsonobj = documentsJSON.getJSONObject(i);
-				String biobjid = jsonobj.getString("id");
-				String summary = (String) returned.get(biobjid);
-				jsonobj.put("summary", summary);
-				String views = (String) returned.get(biobjid + "-views");
-				jsonobj.put("views", views);
-			}
-			Collection func = profile.getFunctionalities();
 
+			Collection func = profile.getFunctionalities();
 			if (func.contains("SeeMetadataFunctionality")) {
 				JSONObject showmetadataAction = new JSONObject();
 				showmetadataAction.put("name", "showmetadata");
@@ -236,7 +147,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 	/**
 	 * Creates a json array with children document informations
 	 *
-	 * @param rows
+	 * @param documents
 	 * @return
 	 * @throws JSONException
 	 */

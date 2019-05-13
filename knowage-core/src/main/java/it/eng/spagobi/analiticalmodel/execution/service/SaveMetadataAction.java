@@ -27,11 +27,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -102,14 +100,8 @@ public class SaveMetadataAction extends AbstractSpagoBIAction {
 					dao.modifyObjMetacontent(aObjMetacontent);
 				}
 
-			}		
-			/*
-			*indexes biobject by modifying document in index
-			**/
-			BIObject biObjToIndex = DAOFactory.getBIObjectDAO().loadBIObjectById(biobjectId);
-			LuceneIndexer.updateBiobjInIndex(biObjToIndex, false);
-			
-			
+			}
+
 			try {
 				writeBackToClient( new JSONAcknowledge() );
 			} catch (IOException e) {
