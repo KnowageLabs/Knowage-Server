@@ -600,7 +600,11 @@
 		   	
 		    #set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
 			#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
+			#set($styleOfDataLabelsBool = false)
+			#if($relatedSerie.dataLabels)
 			#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
+			#set($styleOfDataLabelsBool = true)
+			#end
 			#if(!$relatedSerie.showCategoryValue)
 				#set($relatedSerieCategoryValue = true)
 			#else
@@ -618,11 +622,13 @@
 				dataLabels: 
 					{		
 					style:{
+						#if($styleOfDataLabelsBool)
 		    			color:"$styleOfDataLabels.color",
 	                	fontFamily:"$styleOfDataLabels.fontFamily",
 	                	fontWeight:"$styleOfDataLabels.fontWeight",
 	                	fontSize:"$styleOfDataLabels.fontSize",
 	                	fontStyle:"$styleOfDataLabels.fontStyle",
+						#end
 	    			},					
 			         enabled: true,
 			                    
@@ -705,11 +711,13 @@
 			                dataLabels: 
 							{	
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},						
 			                    enabled: true,			                    
 			                    format: '{point.percentage:.' + $precision + 'f}%'
@@ -721,11 +729,13 @@
 							dataLabels: 
 							{
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},
 			                    enabled: true,
 			                    
@@ -813,11 +823,13 @@
 							dataLabels: 
 							{
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},
 			                    enabled: true,
 			                    
@@ -829,11 +841,13 @@
 							dataLabels: 
 							{
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},
 			                    enabled: true,
 			                    
@@ -920,11 +934,13 @@
 							dataLabels: 
 							{
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},
 			                    enabled: true,
 			                    
@@ -1009,11 +1025,13 @@
 							dataLabels: 
 							{
 							style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
+				    			#if($styleOfDataLabelsBool)
+								color:"$styleOfDataLabels.color",
+								fontFamily:"$styleOfDataLabels.fontFamily",
+								fontWeight:"$styleOfDataLabels.fontWeight",
+								fontSize:"$styleOfDataLabels.fontSize",
+								fontStyle:"$styleOfDataLabels.fontStyle",
+								#end
 		    				},
 			                    enabled: true,
 			                    
@@ -1024,13 +1042,6 @@
 		                
 			                dataLabels: 
 			                {
-			                style:{
-				    			color:"$styleOfDataLabels.color",
-			                	fontFamily:"$styleOfDataLabels.fontFamily",
-			                	fontWeight:"$styleOfDataLabels.fontWeight",
-			                	fontSize:"$styleOfDataLabels.fontSize",
-			                	fontStyle:"$styleOfDataLabels.fontStyle",
-		    				},
 			                	enabled: false
 			                }
 			                
