@@ -652,7 +652,6 @@
 			position: relative;  
 	    }
     }
-    
 
 	cockpit-widget{
 		&>li{
@@ -681,6 +680,31 @@
 					}
 				}
 			}
+		}
+	}
+
+	cockpit-advanced-table-widget {
+		.infoBar {
+			font-size: $baseFontSize;
+			background-color: lighten($secondaryColor,20%);
+			min-height: 25px;
+			max-height: 25px;
+			border-top: 1px solid $baseColor;
+			border-bottom: 1px solid $baseColor;
+			text-align: center;
+			position: absolute;
+			width: 100%;
+			z-index: 9999;
+			opacity: .7;
+			&:hover {
+				opacity: 1;
+			}
+			button {
+				min-height: 25px;
+				line-height: 25px;
+				font-size: $smallFontSize;
+			}
+
 		}
 	}
 

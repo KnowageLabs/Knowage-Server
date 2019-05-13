@@ -54,6 +54,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 		
 		$scope.showGrid = true;
+		$scope.bulkSelection = false;
+		$scope.selectedCells = [];
+		$scope.selectedRows = [];
+		
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = {
@@ -73,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].alias === fields[f].header){
-						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name};
+						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
@@ -168,14 +172,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//CELL RENDERERS
-		function cellRenderer(params){
+		function cellRenderer () {}
+		
+		cellRenderer.prototype.init = function(params){
+			this.eGui = document.createElement('span');
 			var tempValue = params.valueFormatted || params.value;
 			if(!params.node.rowPinned){
 				if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
 					var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
 					if(percentage < 0) percentage = 0;
 					if(percentage > 100) percentage = 100;
-					return '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
+					this.eGui.innerHTML = '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
@@ -189,8 +196,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
 				}
 			}
-			return ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
+			if(this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
+		
+		cellRenderer.prototype.getGui = function() {
+		    return this.eGui;
+		};
+		
+		cellRenderer.prototype.refresh = function(params) {
+			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
+			if($scope.bulkSelection){
+				if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
+					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
+				}
+			}
+		}
+		
+		
 		
 		function SummaryRowRenderer () {}
 
@@ -219,7 +241,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$timeout(function(){
 				$scope.widgetIsInit=true;
 			},500);
-
 		}
 		
 		$scope.reinit = function(){
@@ -369,8 +390,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 		function onCellClicked(node){
+			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
-			$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, node.data);
+			if(!$scope.ngModel.settings.multiselectable || node.colDef.measure == "MEASURE") return;
+			if($scope.ngModel.settings.multiselectable) {
+				//first check to see it the column selected is the same, if not clear the past selections
+				if(!$scope.bulkSelection || $scope.bulkSelection!=node.colDef.field){
+					$scope.selectedCells.splice(0,$scope.selectedCells.length);
+					$scope.selectedRows.splice(0,$scope.selectedRows.length);
+					$scope.bulkSelection = node.colDef.field;
+					$scope.$apply();
+				}
+				//check if the selected element exists in the selectedCells array, remove it in case.
+				if(($scope.selectedCells.indexOf(node.data[node.colDef.field])==-1 && !$scope.ngModel.settings.modalSelectionColumn) || ($scope.ngModel.settings.modalSelectionColumn && $scope.selectedRows.indexOf(node.data)==-1)){
+					$scope.selectedCells.push(node.data[node.colDef.field]);
+					$scope.selectedRows.push(node.data);
+				}else{
+					$scope.selectedCells.splice($scope.selectedCells.indexOf(node.data[node.colDef.field]),1);
+					$scope.selectedRows.splice($scope.selectedRows.indexOf(node.data),1);
+					//if there are no selection left set bulk selection to false to avoid the selection button to show
+					if($scope.selectedCells.length==0) $scope.bulkSelection=false;
+				}
+				$scope.advancedTableGrid.api.refreshCells({force:true});
+			}else $scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, node.data);
+		}
+		
+		$scope.clickItem = function(e,row,column){
+			$scope.advancedTableGrid.api.deselectAll();
+			var newValue = undefined;
+			
+			function mapRow(rowData){
+				var keyMap = {};
+				for(var r in rowData){
+					for(var f in $scope.metadata.fields){
+						if(f != 0 && $scope.metadata.fields[f].dataIndex == r) keyMap[$scope.metadata.fields[f].header] = rowData[r];
+					}
+				}
+				return keyMap;
+			}
+			
+			column = getColumnName(column);
+
+			var rows = [];
+			newValue = [];
+			var valuesArray = [];
+			for(var r in row){
+				rows.push(mapRow(row[r]));
+			}
+			for(var k in rows){
+				newValue.push(rows[k][$scope.ngModel.settings.modalSelectionColumn || column]);
+				valuesArray.push(rows[k][column]);
+			}
+
+			$scope.doSelection(column,valuesArray,$scope.ngModel.settings.modalSelectionColumn,newValue,rows);
+			$scope.bulkSelection = false;
+		}
+		
+		$scope.cancelBulkSelection = function(){
+			$scope.bulkSelection = false;
+			$scope.advancedTableGrid.api.refreshCells({force:true});
 		}
 		
 		$scope.$watchCollection('ngModel.settings.pagination',function(newValue,oldValue){

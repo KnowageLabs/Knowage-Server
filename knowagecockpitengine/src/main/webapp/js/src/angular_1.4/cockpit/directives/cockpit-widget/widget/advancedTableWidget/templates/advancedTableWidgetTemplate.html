@@ -1,3 +1,11 @@
+<div class="infoBar multiSelect animation fade-down " ng-if="bulkSelection" layout="row" layout-align="center center">
+	<div flex></div>
+	<md-button ng-click="clickItem($event,selectedRows,bulkSelection)"><i class="fa fa-bolt"></i> {{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-button>
+	<div flex></div>
+	<md-button  class="md-icon-button" ng-click="cancelBulkSelection()" >
+       	<md-icon md-font-icon="fa fa-times"></md-icon>
+   	</md-button>
+</div>
 <div ag-grid="advancedTableGrid" ng-if="showGrid" class="ag-theme-balham ag-theme-knowage-advanced ag-noBorders" ng-class="{'backendPagination':ngModel.settings.pagination.enabled && !ngModel.settings.pagination.frontEnd, 'noPagination':!ngModel.settings.pagination.enabled }"></div>
 
 <div class="ag-theme-balham">
