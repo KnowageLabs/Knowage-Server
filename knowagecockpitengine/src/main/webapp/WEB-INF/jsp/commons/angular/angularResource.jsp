@@ -39,28 +39,17 @@
 <%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
-<%@page import="it.eng.knowage.wapp.Version"%>
-<%@page import="it.eng.knowage.wapp.Environment"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	UrlBuilder urlBuilder = new UrlBuilder();
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext();	//  /knowage
-	String cockpitEngineContext = request.getContextPath(); 		//  /cockpitengine
-	String dynamicResourcesBasePath;  								//  /knowage/js/src
-	String dynamicResourcesEnginePath;  							//  /cockpitengine/js/src
-	Environment environment = Version.getEnvironment();
-	
-	if (environment == Environment.PRODUCTION) {
-		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src-" + Version.getCompleteVersion();
-		dynamicResourcesEnginePath = cockpitEngineContext + "/js/src-" + Version.getCompleteVersion();
-	} else {
-		dynamicResourcesBasePath = GeneralUtilities.getSpagoBiContext() + "/js/src";
-		dynamicResourcesEnginePath = cockpitEngineContext + "/js/src";
-	}		
+	String spagoBiContext = GeneralUtilities.getSpagoBiContext();							//  /knowage
+	String cockpitEngineContext = request.getContextPath(); 								//  /cockpitengine
+	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, cockpitEngineContext);
+	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  			//  /knowage/js/src
+	String dynamicResourcesEnginePath = urlBuilder.getDynamicResourcesEnginePath();  		//  /cockpitengine/js/src
 	
 	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
 	String chartEngineContextName = sb.getCharacters();

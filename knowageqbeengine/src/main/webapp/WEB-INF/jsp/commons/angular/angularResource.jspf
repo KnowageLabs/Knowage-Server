@@ -49,8 +49,6 @@ author:...
 <%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
-<%@page import="it.eng.knowage.wapp.Version"%>
-<%@page import="it.eng.knowage.wapp.Environment"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -58,21 +56,12 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	UrlBuilder urlBuilder = new UrlBuilder();
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);		//  /knowage
-	String qbeEngineContext = request.getContextPath(); 							//  /qbeengine
-	String dynamicResourcesBasePath;  												//  /knowage/js/src
-	String dynamicResourcesEnginePath;  											//  /qbeengine/js/src
-	Environment environment = Version.getEnvironment();
+	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);		   //  /knowage
+	String qbeEngineContext = request.getContextPath(); 							   //  /qbeengine
+	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, qbeEngineContext);
+	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  	   //  /knowage/js/src
+	String dynamicResourcesEnginePath = urlBuilder.getDynamicResourcesEnginePath();    //  /qbeengine/js/src
 	
-	if (environment == Environment.PRODUCTION) {
-		dynamicResourcesBasePath = spagoBiContext + "/js/src-" + Version.getCompleteVersion();
-		dynamicResourcesEnginePath = qbeEngineContext + "/js/src-" + Version.getCompleteVersion();
-	} else {
-		dynamicResourcesBasePath = spagoBiContext + "/js/src";
-		dynamicResourcesEnginePath = qbeEngineContext + "/js/src";
-	}      
-
     //UserProfile profile;
     Locale locale =null;
     String isFromCross;
