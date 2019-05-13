@@ -57,6 +57,7 @@
 				, serverLoading : "=?"
 				, isInternalSelectionAllowed: "=?"
 				, forceVisibility: "=?" //boolean value
+				, checkChildren: '=?'	//boolean value
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -94,6 +95,10 @@
 
 						scope.seeTree = false;
 
+						if (scope.checkChildren == undefined) {
+							scope.checkChildren = true;
+						}
+						
 						scope.createTreeStructure = function (folders) {
 							if (attrs.createTree !== undefined  && (attrs.createTree == true || attrs.createTree == 'true')) {
 								if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined) {
@@ -329,7 +334,7 @@
 			if (element !== undefined && $scope.multiSelect) {
 				//check the element as the parent. If not the parent doesn't exist, toggle the element check
 //				element.checked = parent === undefined ? !element.checked : parent.checked;
-				if(parent !== undefined) {
+				if(parent !== undefined && $scope.checkChildren) {
 					element.checked = parent.checked;
 				}
 
