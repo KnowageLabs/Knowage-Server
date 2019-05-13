@@ -23,7 +23,7 @@ angular.module('sbiModule').factory('sbiModuleDeviceService',function($window){
 	if (/Firefox[\/\s](\d+\.\d+)/.test(userAgent)){
 		//detecting Firefox
 		browserObj.name='firefox';
-		browserObj.version = RegExp.$1;contentDisposition
+		browserObj.version = RegExp.$1;
 	
 	}else if(
 			/Chrome[\/\s](\d+\.\d+)/.test(userAgent)
