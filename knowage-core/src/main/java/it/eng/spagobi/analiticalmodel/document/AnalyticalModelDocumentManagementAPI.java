@@ -51,7 +51,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -170,8 +169,6 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 * Utility method. Returns the analytical drivers associated to the document object.
-	 *
-	 * @param label Could be the label of the document
 	 *
 	 * @return the list with analitycal drivers associated.
 	 */
@@ -430,7 +427,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	 *
 	 * @param profile
 	 *
-	 * @param document The document id of the document to clone
+	 * @param documentId The document id of the document to clone
 	 */
 	public BIObject cloneDocument(Integer documentId, IEngUserProfile profile) {
 		logger.debug("IN");
@@ -468,7 +465,6 @@ public class AnalyticalModelDocumentManagementAPI {
 				// metadata
 				logger.debug("Coping metadata");
 				copyMetadata(document, clonedDocument);
-				LuceneIndexer.updateBiobjInIndex(clonedDocument, false);
 			} catch (Throwable t) {
 				logger.error("Impossible to update object [" + document.getLabel() + "]", t);
 				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
@@ -643,10 +639,6 @@ public class AnalyticalModelDocumentManagementAPI {
 				}
 
 			}
-
-			BIObject biObjToIndex = DAOFactory.getBIObjectDAO().loadBIObjectById(document.getId());
-			LuceneIndexer.updateBiobjInIndex(biObjToIndex, false);
-
 		} catch (Throwable e) {
 			throw new SpagoBIRuntimeException("Exception occurred while saving metadata", e);
 		} finally {

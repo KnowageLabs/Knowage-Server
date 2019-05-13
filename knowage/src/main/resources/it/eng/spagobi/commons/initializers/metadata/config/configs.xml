@@ -291,13 +291,6 @@
 		name="default" description="default" isActive="true" valueCheck="en,US"
 		valueType="STRING" category="LANGUAGE_SUPPORTED" />
 
-	<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath"
-		description="" isActive="true" valueCheck="java://comp/env/resource_path"
-		valueType="STRING" category="SEARCH_ENGINE" />
-	<CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath"
-		description="" isActive="true" valueCheck="//idx" valueType="STRING"
-		category="SEARCH_ENGINE" />
-
 	<CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT LANGUAGE DEFAULT"
 		description="" isActive="true" valueCheck="groovy" valueType="STRING"
 		category="SCRIPT_LANGUAGE" />

@@ -62,7 +62,6 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SessionMonitor;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 
 /**
@@ -113,8 +112,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 *            The Source Bean containing all request parameters
 	 * @param response
 	 *            The Source Bean containing all response parameters
-	 * @throws exception
-	 *             If an exception occurs
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -728,10 +725,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					}
 				}
 			}
-			/*
-			 * deletes document from index
-			 */
-			LuceneIndexer.updateBiobjInIndex(obj, true);
 		} catch (Exception ex) {
 			logger.error("Cannot erase object", ex);
 			try {
@@ -1087,11 +1080,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			// Save relation between dataset and document (1:1) (for Data Lineage/Impact Analysis)
 			// DAOFactory.getSbiObjDsDAO().insertUniqueRelationFromObj(obj);
 			DAOFactory.getSbiObjDsDAO().insertRelationsFromObj(obj);
-
-			/*
-			 * indexes biobject by modifying document in index
-			 */
-			LuceneIndexer.updateBiobjInIndex(obj, false);
 
 			// based on the kind of back put different data into response
 			Object saveAndGoBack = request.getAttribute("saveAndGoBack");

@@ -23,15 +23,11 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -43,18 +39,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -88,11 +74,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
-import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
@@ -102,7 +85,6 @@ import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.JSError;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -517,99 +499,6 @@ public class DocumentResource extends AbstractDocumentResource {
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
 			logger.debug("OUT");
-		}
-	}
-
-	public List<BIObject> searchDocumentsWithLucene(String valueFilter, String attributes, Boolean similar) {
-		Monitor monitor = MonitorFactory.start("it.eng.spagobi.api.v2.DocumentResource.searchDocumentsWithLucene()");
-		logger.debug("IN");
-		try {
-			UserProfile profile = getUserProfile();
-
-			List<String> fieldsToSearch = new ArrayList<String>();
-			String metaDataToSearch = null;
-
-			if (attributes != null && !attributes.isEmpty()) {
-				if (attributes.equalsIgnoreCase("ALL")) {
-					// search in all fields
-					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
-					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
-					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
-					fieldsToSearch.add(IndexingConstants.METADATA);
-					// search metadata binary content
-					fieldsToSearch.add(IndexingConstants.CONTENTS);
-					// search subobject fields
-					fieldsToSearch.add(IndexingConstants.SUBOBJ_DESCR);
-					fieldsToSearch.add(IndexingConstants.SUBOBJ_NAME);
-				} else if (attributes.equalsIgnoreCase("LABEL")) {
-					// search in label field
-					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
-				} else if (attributes.equalsIgnoreCase("NAME")) {
-					// search in name field
-					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
-				} else if (attributes.equalsIgnoreCase("DESCRIPTION")) {
-					// search in description field
-					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
-				} else {
-					// search in categories
-					metaDataToSearch = attributes;
-					fieldsToSearch.add(IndexingConstants.CONTENTS);
-				}
-			}
-
-			String indexFolderPath = SpagoBIUtilities.getRootResourcePath() + "/idx";
-
-			HashMap hashMap = null;
-			List<BIObject> objects = new ArrayList<BIObject>();
-
-			try {
-				IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexFolderPath)), true);
-				IndexSearcher searcher = new IndexSearcher(reader);
-
-				String[] fields = new String[fieldsToSearch.size()];
-				fieldsToSearch.toArray(fields);
-
-				// getting documents
-				if (similar != null && similar) {
-					hashMap = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch, false);
-				} else {
-					hashMap = LuceneSearcher.searchIndex(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch, false);
-				}
-				ScoreDoc[] hits = (ScoreDoc[]) hashMap.get("hits");
-
-				if (hits != null) {
-					Set<String> biobjIds = new HashSet<String>();
-					for (int i = 0; i < hits.length; i++) {
-						ScoreDoc hit = hits[i];
-						Document doc = searcher.doc(hit.doc);
-						String biobjId = doc.get(IndexingConstants.BIOBJ_ID);
-						if (!biobjIds.contains(biobjId)) {
-							BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
-							if (obj != null) {
-								objects.add(obj);
-								biobjIds.add(biobjId);
-							}
-						}
-					}
-				}
-				searcher.close();
-			} catch (CorruptIndexException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Index corrupted", e);
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Unable to read index", e);
-			} catch (ParseException e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIException("Wrong query syntax", e);
-			}
-			return objects;
-		} catch (Exception e) {
-			logger.error("Error while getting the list of documents", e);
-			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
-		} finally {
-			logger.debug("OUT");
-			monitor.stop();
 		}
 	}
 
