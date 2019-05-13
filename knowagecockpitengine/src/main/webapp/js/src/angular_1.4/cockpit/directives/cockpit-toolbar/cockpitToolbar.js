@@ -255,6 +255,7 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 	$scope.exportPdf = function(){
 		return $q(function(resolve, reject) {
 			cockpitModule_properties.LOADING_SCREENSHOT = true;
+			$scope.$apply();
 			$mdDialog.show({
 				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
 					$scope.translate = sbiModule_translate;
