@@ -230,7 +230,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
             for(i in cockpitModule_template.sheets){
                 for(j in cockpitModule_template.sheets[i].widgets){
                     if(cockpitModule_template.sheets[i].widgets[j].id == config.id){
-                        currentSheet = i;
+                        currentSheet = cockpitModule_template.sheets[i].index;
                         break;
                     }
                 }
