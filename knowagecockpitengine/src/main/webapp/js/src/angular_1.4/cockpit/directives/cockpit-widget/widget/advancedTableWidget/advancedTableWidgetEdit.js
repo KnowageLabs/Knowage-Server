@@ -126,6 +126,15 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 			disabled:($scope.newModel.style.th && $scope.newModel.style.th.enabled === false)
 	};
 	
+	$scope.colorPickerMultiselection = {
+			format:'rgb', 
+			placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), 
+			disabled: !$scope.newModel.settings.multiselectable
+	}
+	$scope.enableMultiselect = function(){
+		$scope.colorPickerMultiselection.disabled = $scope.newModel.settings.multiselectable;
+	}
+	
 	$scope.toggleTh = function(){
 		$scope.colorPickerPropertyTh.disabled = $scope.newModel.style.th.enabled;
 	}

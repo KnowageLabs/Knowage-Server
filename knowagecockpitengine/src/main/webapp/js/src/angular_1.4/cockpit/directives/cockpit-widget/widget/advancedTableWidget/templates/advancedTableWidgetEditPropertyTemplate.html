@@ -85,6 +85,11 @@
 						<md-card-content>
 						<div flex layout=column >
 							<div flex layout="row" >
+								<div layout="row" flex layout-align="start center">
+									<md-checkbox ng-disabled="!newModel.style.th.enabled" ng-model="newModel.style.th.multiline" class="md-block">
+										{{::translate.load('sbi.cockpit.table.multiline')}}
+									</md-checkbox>
+								</div>
 								<md-input-container flex class="md-block">
 									<label>Header height</label>
 									<input ng-model="newModel.style.th.height" ng-disabled="!newModel.style.th.enabled" type="number"/>
@@ -149,9 +154,15 @@
 					<md-card-content >
 						<div flex layout="column" ng-cloak>
 							<div layout="row" flex>
-								<md-checkbox ng-model="newModel.settings.multiselectable" class="md-block" aria-label="Checkbox 2">
-									{{::translate.load('sbi.cockpit.table.rows.multiselectable')}}
-								</md-checkbox>
+								<div layout="row" layout-align="start center">
+									<md-checkbox ng-model="newModel.settings.multiselectable" class="md-block"  ng-click="enableMultiselect()">
+										{{::translate.load('sbi.cockpit.table.rows.multiselectable')}}
+									</md-checkbox>
+								</div>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.multiselectioncolor')}}</label>
+									<color-picker options="colorPickerMultiselection" ng-model="newModel.settings.multiselectablecolor"/>
+								</md-input-container>
 							</div>
 							<div layout="row" flex>
 								<div flex=20 layout="row" layout-align="start center">

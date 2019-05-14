@@ -33,6 +33,12 @@ $aggrid-border-color: #d9dcde;
 			display: flex;
 			align-items: center;
 		}
+		.cellContainer.multiLineHeader span{
+			text-overflow: clip;
+    		overflow: visible;
+    		white-space: normal;
+    		line-height: 1rem !important;
+		}
 	}
 	.ag-center-cols-viewport {
 		overflow-x: hidden;
