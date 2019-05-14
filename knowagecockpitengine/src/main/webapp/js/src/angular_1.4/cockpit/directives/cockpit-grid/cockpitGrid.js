@@ -79,7 +79,7 @@ function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cock
 				
 		};
 		if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
-		if(tempBgStyle.imageBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.imageBackgroundColor;
+		if(tempBgStyle.sheetsBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.sheetsBackgroundColor;
 		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
 	}
 };

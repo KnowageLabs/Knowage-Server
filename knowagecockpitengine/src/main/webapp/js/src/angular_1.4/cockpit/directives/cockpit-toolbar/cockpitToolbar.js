@@ -318,24 +318,26 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 		else heightToUse = element.scrollHeight;
 			 			
 			 			if(sheet.index != 0) doc.addPage([element.clientWidth,heightToUse],heightToUse>element.clientWidth? 'p':'l');
-				 		html2canvas(element,{
-				 			allowTaint: true,
-				 			useCORS: true,
-				 			width: element.clientWidth,
-				 			height: element.scrollHeight,
-				 			scale : 1.5
-				 		}).then(function(canvas) {
-				 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
-				 			if(exportSheetBar){
-				 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
-				 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
-				 					closeOrContinue(sheet);
-				 				})
-				 			}else{
-				 				closeOrContinue(sheet);
-				 			}
-				 		});
-				 		
+			 			$timeout(function(){
+			 				html2canvas(element,{
+					 			allowTaint: true,
+					 			useCORS: true,
+					 			width: element.clientWidth,
+					 			height: element.scrollHeight,
+					 			scale : 1.5
+					 		}).then(function(canvas) {
+					 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
+					 			if(exportSheetBar){
+					 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
+					 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
+					 					closeOrContinue(sheet);
+					 				})
+					 			}else{
+					 				closeOrContinue(sheet);
+					 			}
+					 		});
+			 			},300);
+
 				 	}
 				 	
 					 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){

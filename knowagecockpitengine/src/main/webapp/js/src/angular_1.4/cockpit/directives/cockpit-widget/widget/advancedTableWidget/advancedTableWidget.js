@@ -219,12 +219,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		SummaryRowRenderer.prototype.init = function(params) {
 		    this.eGui = document.createElement('div');
-		    this.eGui.style.color = (params.style && params.style.color) || "";
-		    this.eGui.style.backgroundColor = (params.style && params.style['background-color']) || "";
-		    this.eGui.style.justifyContent = (params.style && params.style['justify-content']) || "";
-		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || "";
-		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";
-		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
+		    this.eGui.style.color = (params.style && params.style.color) || (params.colDef.style && params.colDef.style.color) || "";
+		    this.eGui.style.backgroundColor = (params.style && params.style['background-color']) || (params.colDef.style && params.colDef.style['background-color']) || "";
+		    this.eGui.style.justifyContent = (params.style && params.style['justify-content']) || (params.colDef.style && params.colDef.style['justify-content']) || "";
+		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || (params.colDef.style && params.colDef.style['font-size']) || "";
+		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || (params.colDef.style && params.colDef.style['font-weight']) || "";
+		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || (params.colDef.style && params.colDef.style['font-style']) || "";
 		    this.eGui.innerHTML = '';
 		    if(params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
 		    if(params.valueFormatted || params.value){
