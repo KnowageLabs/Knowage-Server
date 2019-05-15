@@ -78,6 +78,9 @@
 			params.treeLovNode=treeLovNode;
 			params.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 
+			if($scope.parameter.children && !innerNode) {
+				$scope.parameter.children = [];
+			}
 
 			if(!$scope.parameter.children || $scope.parameter.children.length == 0) {
 				$scope.parameter.children = $scope.parameter.children || [];
