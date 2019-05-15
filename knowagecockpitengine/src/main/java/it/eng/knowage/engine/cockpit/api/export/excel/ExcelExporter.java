@@ -630,8 +630,10 @@ public class ExcelExporter {
 					JSONObject categoryOrMeasure = new JSONObject();
 					categoryOrMeasure.put("id", column.getString("alias"));
 					categoryOrMeasure.put("alias", aliasToShow);
-					categoryOrMeasure.put("columnName", column.getString("name"));
-					if (isSortingDefined && sortingColumn.equals(column.getString("name"))) {
+
+					String name = column.optString("name");
+					categoryOrMeasure.put("columnName", name);
+					if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 						categoryOrMeasure.put("orderType", sortingOrder);
 						isSortingUsed = true;
 					} else {
@@ -790,7 +792,7 @@ public class ExcelExporter {
 								measure.put("id", column.getString("alias"));
 								measure.put("alias", column.getString("aliasToShow"));
 								measure.put("funct", column.getString("funcSummary"));
-								measure.put("columnName", column.getString("name"));
+								measure.put("columnName", column.optString("name"));
 								measures.put(measure);
 							}
 						}
