@@ -145,8 +145,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject obj = new JSONObject();
 				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())) {
-					obj.put("label", dataset.getLabel());
 					obj.put("id", dataset.getId());
+					obj.put("label", dataset.getLabel());
+					obj.put("name", dataset.getName());
 					toReturn.put(obj);
 				}
 			}

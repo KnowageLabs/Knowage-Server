@@ -1,8 +1,23 @@
-/**
- * JS file for managing LOVs management catalog panel.
- * 
- * @author: danristo (danilo.ristovski@mht.net)
- */
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+(function() {
+	
+agGrid.initialiseAgGridWithAngular1(angular);
 
 var app = angular.module
 (
@@ -17,7 +32,8 @@ var app = angular.module
 	 	'ui.codemirror',
 	 	'ui.tree',
 	 	'ab-base64',
-	 	'knTable'
+	 	'knTable',
+	 	'agGrid'
 	 ]
 );
 
@@ -43,11 +59,12 @@ app.controller
 	 	"base64",
 	 	"sbiModule_device",
 	 	"$filter",
+	 	"$mdPanel",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64,sbiModule_device,$filter)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64,sbiModule_device,$filter, $mdPanel)
 {
 	/**
 	 * =====================
@@ -86,7 +103,9 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		name : ""	
 	};
 	$scope.selectedDataset = {
-		id : ""	
+		id : "",
+		label: "",
+		name: ""
 	};
 	$scope.lovItemEnum ={
 		"SCRIPT" : "SCRIPT",
@@ -193,7 +212,72 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		   "value" : "treeinner"
 	   }
 	                       
-	                       ]
+    ]
+		
+	var addDataset = function() {		
+		var config = {
+				attachTo: angular.element(document.body),
+				templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovAddDataset.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen: true,
+				locals: {listOfDatasets: $scope.listOfDatasets, saveDatasetFn: $scope.saveDataset},
+				controller: addDatasetController,
+				clickOutsideToClose: false,
+				escapeToClose: true,
+		};
+		
+		$mdPanel.open(config);
+	}
+	
+	function addDatasetController($scope, mdPanelRef, sbiModule_translate, listOfDatasets, saveDatasetFn) {
+		$scope.translate = sbiModule_translate;
+		$scope.listOfDatasets = listOfDatasets;
+		
+		$scope.datasetSearchText = '';
+		
+		$scope.filterDataset = function() {
+			var tempDatasetList = $filter('filter')($scope.listOfDatasets, $scope.datasetSearchText);
+			$scope.datasetGrid.api.setRowData(tempDatasetList);
+		}
+		
+		$scope.gridDatasetColumns = [
+			{"headerName": sbiModule_translate.load('sbi.ds.label'),"field":"label"},
+			{"headerName": sbiModule_translate.load('sbi.ds.name'),"field":"name"},
+		];
+		
+		$scope.datasetGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        rowSelection: 'single',
+		        rowMultiSelectWithClick: 'single',
+		        onGridSizeChanged: resizeColumns,
+		        columnDefs: $scope.gridDatasetColumns,
+		        rowData: $scope.listOfDatasets
+		};
+		
+		function resizeColumns(){
+			$scope.datasetGrid.api.sizeColumnsToFit();
+		}
+						
+		$scope.closeDialog = function() {
+			mdPanelRef.close();
+			$scope.$destroy();
+		}
+		
+		$scope.saveDataset = function() {
+			var selectedDs = $scope.datasetGrid.api.getSelectedRows()[0];			
+			saveDatasetFn(selectedDs);
+			mdPanelRef.close();
+			$scope.$destroy();
+		}
+	}
+	
+	$scope.saveDataset = function(dataSetObject) {
+		$scope.selectedDataset = dataSetObject;
+	}
 	
 	$scope.formatedVisibleValues = [];
 	$scope.formatedInvisibleValues = [];
@@ -331,7 +415,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.getInputTypes();
 		$scope.getScriptTypes();
 		$scope.getDatasources();
-		$scope.getDatasets();
     });
 	
 	$scope.setDirty=function()
@@ -923,15 +1006,17 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 */
 		
 		$scope.getDatasets = function() {
-			sbiModule_restServices.promiseGet("1.0/datasets/datasetsforlov","")
-			.then(function(response) {
-				console.log(response);
-				$scope.listOfDatasets = response.data;
-				console.log($scope.listOfDatasets);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
-				
-			});
+			if ($scope.listOfDatasets.length == 0) {
+				sbiModule_restServices.promiseGet("1.0/datasets/datasetsforlov","")
+				.then(function(response) {				
+					$scope.listOfDatasets = response.data;
+					addDataset();
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+				});
+			} else {
+				addDataset();
+			}
 		}
 		
 		$scope.testLov = function() {
@@ -1505,3 +1590,5 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 		 
 	 }
 };
+
+})();
