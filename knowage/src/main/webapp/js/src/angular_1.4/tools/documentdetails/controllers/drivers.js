@@ -289,7 +289,7 @@ angular
                  }
              $mdDialog.show({
                          controller: CorrelationDialogController,
-                         templateUrl: sbiModule_config.dynamicResourcesBasePath + 'angular_1.4/tools/documentdetails/templates/correlationDialog.html',
+                         templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
@@ -325,7 +325,7 @@ angular
 
              $mdDialog.show({
                          controller: CorrelationDataDialogController,
-                         templateUrl: sbiModule_config.dynamicResourcesBasePath + 'angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
+                         templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
