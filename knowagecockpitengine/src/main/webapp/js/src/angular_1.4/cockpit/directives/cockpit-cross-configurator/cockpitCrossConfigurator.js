@@ -153,7 +153,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 
 
-	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
+	$scope.crossTable = $scope.model != undefined && ($scope.model.type === 'table' || $scope.model.type === 'advanced-table');
 
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
 
