@@ -12,11 +12,11 @@
 				{{translate.load("sbi.cockpit.cross.check")}}
 			</md-checkbox>
 			
-			<md-checkbox ng-show="crossTable" ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
+			<md-checkbox ng-show="crossTable || crossAdvancedTable" ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
 				{{translate.load("sbi.cockpit.cross.allRow")}}
 			</md-checkbox>
 
-			<md-input-container ng-show="crossTable" class="md-block" flex>
+			<md-input-container ng-show="crossTable || crossAdvancedTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" >
 					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
@@ -30,7 +30,7 @@
 				</md-select>
 			</md-input-container>
 
-			<md-input-container ng-show="crossTable || crossChart" class="md-block" flex>
+			<md-input-container ng-show="crossTable || crossAdvancedTable || crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
 				<md-select ng-model="ngModel.cross.outputParameter">
 					<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
@@ -110,7 +110,7 @@
 			<md-input-container class="md-block" flex=25
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'dynamic' 
 					&& ngModel.cross.outputParametersList[outputParameter.name].enabled==true
-					&& crossTable == true
+					&& (crossTable || crossAdvancedTable)
 					">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
