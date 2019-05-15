@@ -325,15 +325,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div ng-if="selectedLov.itypeCd == lovItemEnum.DATASET">    
 			
 			<div layout="row">
-		        	<md-input-container flex=45>
+		        	<md-input-container flex>
 		        		<label>{{translate.load("sbi.ds.label")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.label}}">
 		        	</md-input-container>
-		        	<md-input-container flex=45>
+		        	<md-input-container flex>
 		        		<label>{{translate.load("sbi.ds.name")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.name}}">
 		        	</md-input-container>
-			        <md-button flex=10 class="md-icon-button" ng-click="getDatasets()">
+			        <md-button class="md-icon-button" ng-click="getDatasets()">
 			        	<md-tooltip>{{::translate.load("sbi.functionscatalog.adddataset")}}</md-tooltip>
 			        	<md-icon md-font-icon="fa fa-plus"></md-icon>
 			        </md-button>
