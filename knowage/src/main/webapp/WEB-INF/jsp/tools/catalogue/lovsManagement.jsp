@@ -329,7 +329,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        		<label>{{translate.load("sbi.ds.label")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.label}}">
 		        	</md-input-container>
-		        	<md-input-container flex>
+		        	<md-input-container flex ng-if="isDatasetNameVisable()">
 		        		<label>{{translate.load("sbi.ds.name")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.name}}">
 		        	</md-input-container>

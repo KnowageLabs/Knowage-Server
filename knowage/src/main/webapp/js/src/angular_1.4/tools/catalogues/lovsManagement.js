@@ -90,6 +90,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.selectedLov = {};
 	$scope.toolbarTitle ="";
 	$scope.infoTitle="";
+	$scope.datasetNameVisability = false;
 	$scope.selectedScriptType={
 		language : "",
 		text : ""
@@ -213,8 +214,21 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	   }
 	                       
     ]
-		
-	var addDataset = function() {		
+	
+	$scope.isDatasetNameVisable = function() {
+		return $scope.datasetNameVisability;
+	}
+	
+	var hideDatasetName = function() {
+		$scope.datasetNameVisability = false;
+	}
+	
+	var showDatasetName = function() {
+		$scope.datasetNameVisability = true;
+	}
+	
+	var addDataset = function() {
+		showDatasetName();
 		var config = {
 				attachTo: angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovAddDataset.html',
@@ -431,6 +445,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.createLov = function()
 	{
+		showDatasetName();
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -555,7 +570,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.openInfoFromLOV = function() {
 		if($scope.selectedLov.itypeCd != $scope.lovItemEnum.DATASET){
-			console.lo
 			$mdDialog
 			.show({
 				scope : $scope,
@@ -839,8 +853,9 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			$scope.selectedJavaClass.name = $scope.selectedLov.lovProvider.JAVACLASSLOV.JAVA_CLASS_NAME;
 			
 		}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.DATASET)) {
-			
+			hideDatasetName();
 			$scope.selectedDataset.id = $scope.selectedLov.lovProvider.DATASET.ID;
+			$scope.selectedDataset.label = $scope.selectedLov.lovProvider.DATASET.LABEL;
 		}
 		
 		if($scope.dirtyForm){
