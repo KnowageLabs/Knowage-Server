@@ -329,13 +329,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        		<label>{{translate.load("sbi.ds.label")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.label}}">
 		        	</md-input-container>
-		        	<md-input-container flex ng-if="isDatasetNameVisable()">
+		        	<md-input-container flex>
 		        		<label>{{translate.load("sbi.ds.name")}}</label>
 		        		<input type="text" disabled value="{{selectedDataset.name}}">
 		        	</md-input-container>
 			        <md-button class="md-icon-button" ng-click="getDatasets()">
 			        	<md-tooltip>{{::translate.load("sbi.functionscatalog.adddataset")}}</md-tooltip>
-			        	<md-icon md-font-icon="fa fa-plus"></md-icon>
+			        	<md-icon md-font-icon="fa fa-search"></md-icon>
 			        </md-button>
 			</div>			   
 		</div>

@@ -148,6 +148,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					obj.put("id", dataset.getId());
 					obj.put("label", dataset.getLabel());
 					obj.put("name", dataset.getName());
+					obj.put("description", dataset.getDescription());
 					toReturn.put(obj);
 				}
 			}

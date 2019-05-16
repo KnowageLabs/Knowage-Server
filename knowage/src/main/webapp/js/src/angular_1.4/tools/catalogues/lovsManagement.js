@@ -90,7 +90,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.selectedLov = {};
 	$scope.toolbarTitle ="";
 	$scope.infoTitle="";
-	$scope.datasetNameVisability = false;
 	$scope.selectedScriptType={
 		language : "",
 		text : ""
@@ -106,7 +105,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.selectedDataset = {
 		id : "",
 		label: "",
-		name: ""
+		name: "",
+		description: ""
 	};
 	$scope.lovItemEnum ={
 		"SCRIPT" : "SCRIPT",
@@ -215,20 +215,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                       
     ]
 	
-	$scope.isDatasetNameVisable = function() {
-		return $scope.datasetNameVisability;
-	}
-	
-	var hideDatasetName = function() {
-		$scope.datasetNameVisability = false;
-	}
-	
-	var showDatasetName = function() {
-		$scope.datasetNameVisability = true;
-	}
-	
 	var addDataset = function() {
-		showDatasetName();
 		var config = {
 				attachTo: angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/lovAddDataset.html',
@@ -257,6 +244,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.gridDatasetColumns = [
 			{"headerName": sbiModule_translate.load('sbi.ds.label'),"field":"label"},
 			{"headerName": sbiModule_translate.load('sbi.ds.name'),"field":"name"},
+			{"headerName": sbiModule_translate.load('sbi.ds.description'),"field":"description"},
 		];
 		
 		$scope.datasetGrid = {
@@ -445,7 +433,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.createLov = function()
 	{
-		showDatasetName();
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -853,9 +840,17 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			$scope.selectedJavaClass.name = $scope.selectedLov.lovProvider.JAVACLASSLOV.JAVA_CLASS_NAME;
 			
 		}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.DATASET)) {
-			hideDatasetName();
-			$scope.selectedDataset.id = $scope.selectedLov.lovProvider.DATASET.ID;
-			$scope.selectedDataset.label = $scope.selectedLov.lovProvider.DATASET.LABEL;
+			var dataSetId = $scope.selectedLov.lovProvider.DATASET.ID;
+		
+			sbiModule_restServices.promiseGet("1.0/datasets/dataset/id", dataSetId)
+			.then(function(response){
+				var dataSet = response.data[0];
+				$scope.selectedDataset.id = dataSet.id;
+				$scope.selectedDataset.label = dataSet.label;
+				$scope.selectedDataset.name = dataSet.name;
+			}, function(response){
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+			});
 		}
 		
 		if($scope.dirtyForm){
