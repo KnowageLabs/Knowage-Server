@@ -631,7 +631,8 @@ public class ExcelExporter {
 					categoryOrMeasure.put("id", column.getString("alias"));
 					categoryOrMeasure.put("alias", aliasToShow);
 
-					String name = column.optString("name");
+					String formula = column.optString("formula");
+					String name = formula.isEmpty() ? column.optString("name") : formula;
 					categoryOrMeasure.put("columnName", name);
 					if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 						categoryOrMeasure.put("orderType", sortingOrder);
@@ -792,7 +793,9 @@ public class ExcelExporter {
 								measure.put("id", column.getString("alias"));
 								measure.put("alias", column.getString("aliasToShow"));
 								measure.put("funct", column.getString("funcSummary"));
-								measure.put("columnName", column.optString("name"));
+								String formula = column.optString("formula");
+								String name = formula.isEmpty() ? column.optString("name") : formula;
+								measure.put("columnName", name);
 								measures.put(measure);
 							}
 						}
