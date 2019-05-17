@@ -49,6 +49,10 @@
 							if(response && response.data.filterStatus && response.data.filterStatus.length>0) {
 
 								sbiModule_i18n.loadI18nMap().then(function() {
+
+									//correlation
+									buildCorrelation(businessModel.parametersData.documentParameters, businessModel);
+
 									// keep track of start value for reset!
 									if(businessModel.parametersData.documentParameters != undefined){
 										for(var i=0; i<businessModel.parametersData.documentParameters.length; i++){

@@ -170,7 +170,7 @@
 					$scope.showSelectRoles = false;
 					//loads parameters if role is selected
 					execProperties.isParameterRolePanelDisabled.status = true;
-					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, driversExecutionService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
+					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, driversDependencyService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				}else{
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}
@@ -559,7 +559,7 @@
 			console.log("changeRole IN ");
 			if(role != execProperties.selectedRole.name) {
 				$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
-				docExecute_urlViewPointService.getParametersForExecution(role,driversExecutionService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
+				docExecute_urlViewPointService.getParametersForExecution(role,driversDependencyService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				docExecute_urlViewPointService.frameLoaded=false;
 				if($scope.firstExecutionProcessRestV1){
 					docExecute_urlViewPointService.executionProcesRestV1(role,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
@@ -655,11 +655,11 @@
             }
             return false;
 		};
-		
+
 		$scope.previewDataset = function(datasetLabel, parameters) {
 			datasetPreview_service.previewDataset(datasetLabel, parameters);
 		}
-		
+
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, otherOutputParameters){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 //			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);

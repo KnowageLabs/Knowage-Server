@@ -38,7 +38,7 @@
 	});
 
 	function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window,
-			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversExecutionService, bmOpen_urlViewPointService){
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter, driversDependencyService, bmOpen_urlViewPointService){
 
 		$scope.businessModelsInitial=[];
 		$scope.federationDefinitionsInitial=[];
@@ -68,7 +68,7 @@
 
 		$scope.showQbeFromBM=function(businessModel){
 			$scope.selectedModel = businessModel;
-			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversExecutionService.buildCorrelation, businessModel)
+			bmOpen_urlViewPointService.getParametersForExecution(sbiModule_user.roles[0], driversDependencyService.buildCorrelation, businessModel)
 			.then(function(){
 				businessModel.parametersData={}
 				businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;

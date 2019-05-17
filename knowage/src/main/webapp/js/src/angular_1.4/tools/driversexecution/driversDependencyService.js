@@ -1,6 +1,6 @@
 (function() {
 	var driversExecutionModule = angular.module('driversExecutionModule');
-		driversExecutionModule.service('driversDependencyService', [function(){
+		driversExecutionModule.service('driversDependencyService', ['driversExecutionService', function(driversExecutionService){
 			var dependencyService = {};
 			dependencyService.parametersWithVisualDependency = [];
 			dependencyService.parametersWithDataDependency = [];
@@ -19,7 +19,7 @@
 							dependency.parameterToChangeUrlName = parameters[i].urlName;
 							dependency.parameterToChangeId = getArrayIndexByDriverUrlName(parameters[i].urlName,parameters);
 							dependency.lovParameterMode = parameters[i].selectionType;
-							var keyMap = dependency.objParFatherUrlName;
+							var keyMap = dependency.parFatherUrlName;
 							if (keyMap in dependencyService.dataDependenciesMap) {
 								var dependenciesArr =  dependencyService.dataDependenciesMap[keyMap];
 								dependenciesArr.push(dependency);
@@ -39,14 +39,24 @@
 				}
 			};
 
+			dependencyService.buildCorrelation = function(parameters, execProperties){
+				dependencyService.buildVisualCorrelationMap(parameters,execProperties);
+				dependencyService.buildDataDependenciesMap(parameters,execProperties);
+				dependencyService.buildLovCorrelationMap(parameters,execProperties);
+				//INIT VISUAL CORRELATION PARAMS
+				for(var i=0; i<parameters.length; i++){
+					dependencyService.updateVisualDependency(parameters[i],execProperties);
+				}
+			};
+
 			dependencyService.buildLovCorrelationMap = function(parameters){
 				for(var i=0; i<parameters.length ; i++){
 					if(parameters[i].lovDependencies && parameters[i].lovDependencies.length>0){
 						for(var k=0; k<parameters[i].lovDependencies.length; k++){
 							var dependency = {};
-							dependency.objParFatherUrlName = parameters[i].lovDependencies[k];
+							dependency.parFatherUrlName = parameters[i].lovDependencies[k];
 							dependency.parameterToChangeUrlName = parameters[i].urlName;
-							var keyMap = dependency.objParFatherUrlName; //
+							var keyMap = dependency.parFatherUrlName; //
 							if (keyMap in dependencyService.lovCorrelationMap) {
 								var dependenciesArr =  dependencyService.lovCorrelationMap[keyMap];
 								dependenciesArr.push(dependency);
@@ -72,7 +82,7 @@
 							var dependency = parameters[i].visualDependencies[k];
 							dependency.parameterToChangeUrlName = parameters[i].urlName;
 							dependency.parameterToChangeId = getArrayIndexByDriverUrlName(parameters[i].urlName,parameters);
-							var keyMap = dependency.objParFatherUrlName;
+							var keyMap = dependency.parFatherUrlName;
 							if (keyMap in dependencyService.visualCorrelationMap) {
 								var dependenciesArr =  dependencyService.visualCorrelationMap[keyMap];
 								dependenciesArr.push(dependency);
@@ -158,7 +168,7 @@
 										condition = visualDependency.operation=='contains' && compareValueStr==dateToSubmit1;
 									}
 								}else{
-									condition = visualDependency.operation=='contains' && compareValueStr==newValueStr;
+									condition = visualDependency.operation=='equal' && compareValueStr==newValueStr;
 								}
 							}
 							if(condition){
@@ -174,10 +184,10 @@
 				}
 
 				//if return to viewpoin enable visual correlation
-				if(execProperties.returnFromVisualViewpoint.status){
-					execProperties.initResetFunctionVisualDependency.status=true;
-					execProperties.returnFromVisualViewpoint.status = false;
-				}
+//				if(execProperties.returnFromVisualViewpoint.status){
+//					execProperties.initResetFunctionVisualDependency.status=true;
+//					execProperties.returnFromVisualViewpoint.status = false;
+//				}
 			};
 
 			dependencyService.updateDependencyValues = function(newDependencyValue,execProperties){

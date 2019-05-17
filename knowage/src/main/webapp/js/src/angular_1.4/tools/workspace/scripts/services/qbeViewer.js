@@ -350,6 +350,24 @@ angular
 				}
 			};
 
+			/*
+			  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
+			  */
+				$scope.$watch( function() {
+					return driversDependencyService.parametersWithVisualDependency;
+				},
+				function(newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						for(var i=0; i<newValue.length; i++){
+							if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
+								driversDependencyService.updateVisualDependency(newValue[i],driverableObject);
+								break;
+							}
+
+						}
+					}
+				},true);
+
 			$scope.createNewViewpoint = function() {
 				$mdDialog.show({
 					autoWrap: false,
