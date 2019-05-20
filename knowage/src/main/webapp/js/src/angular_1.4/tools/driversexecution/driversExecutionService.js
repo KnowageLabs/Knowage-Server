@@ -403,7 +403,10 @@
 								tempDriver.type = drivers[i].type;
 								tempDriver.multivalue = drivers[i].multivalue;
 								if(drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)){
-									tempDriver.value =  drivers[i].parameterValue[0];
+									tempDriver.value = [];
+									for(var j = 0; j < drivers[i].parameterValue.length; j++) {
+										tempDriver.value.push(drivers[i].parameterValue[j])
+									}
 								}else{
 									tempDriver.value = drivers[i].parameterValue;
 								}
