@@ -393,7 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function onCellClicked(node){
 			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
-			if(!$scope.ngModel.settings.multiselectable || node.colDef.measure == "MEASURE") return;
+			if(node.colDef.measure == "MEASURE") return;
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
 				if(!$scope.bulkSelection || $scope.bulkSelection!=node.colDef.field){
