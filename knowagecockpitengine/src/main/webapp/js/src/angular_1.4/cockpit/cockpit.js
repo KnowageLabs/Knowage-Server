@@ -135,19 +135,21 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
             }
         }
 
-        if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
-        	for(var i=0; i < currentSheet.widgets.length; i++){
-        		var widgetId = currentSheet.widgets[i].id;
-            	var tempElement = angular.element(document.querySelector('#w' + widgetId));
-            	$rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
-        	}
-        	$scope.initializedSheets.push(newValue);
-        }else{
-            for(var i=0; i < currentSheet.widgets.length; i++){
-                var widgetId = currentSheet.widgets[i].id;
-                if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(widgetId) > -1){
+        if(currentSheet.widgets){
+            if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
+                for(var i=0; i < currentSheet.widgets.length; i++){
+                    var widgetId = currentSheet.widgets[i].id;
                     var tempElement = angular.element(document.querySelector('#w' + widgetId));
-                    $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "UPDATE_FROM_SHEET_CHANGE", {element:tempElement});
+                    $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
+                }
+                $scope.initializedSheets.push(newValue);
+            }else{
+                for(var i=0; i < currentSheet.widgets.length; i++){
+                    var widgetId = currentSheet.widgets[i].id;
+                    if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(widgetId) > -1){
+                        var tempElement = angular.element(document.querySelector('#w' + widgetId));
+                        $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "UPDATE_FROM_SHEET_CHANGE", {element:tempElement});
+                    }
                 }
             }
         }
