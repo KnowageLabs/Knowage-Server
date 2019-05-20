@@ -720,7 +720,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.useCache==false){
 			params+="&nearRealtime=true";
 		}
-		
+
 		var limitRows;
         if(ngModel.limitRows){
             limitRows = ngModel.limitRows;
@@ -845,16 +845,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
                     }
                 }
             }
-		}
-
-		var limitRows;
-		if(widgetObject.limitRows){
-			limitRows = widgetObject.limitRows;
-		}else if(widgetObject.content && widgetObject.content.limitRows){
-			limitRows = widgetObject.content.limitRows;
-		}
-		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
-			params += "&limit=" + limitRows.rows;
 		}
 
 		var filters;
