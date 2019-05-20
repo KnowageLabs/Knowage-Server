@@ -135,7 +135,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
             }
         }
 
-        if(currentSheet.widgets){
+        if(currentSheet && currentSheet.widgets){
             if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
                 for(var i=0; i < currentSheet.widgets.length; i++){
                     var widgetId = currentSheet.widgets[i].id;
