@@ -24,13 +24,16 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
 	
 	$scope.changeDS = function(id){
-		$scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
+	    var ds = cockpitModule_datasetServices.getDatasetById(id);
+		$scope.newModel.content.columnSelectedOfDataset = ds.metadata.fieldsMeta;
 		for(var c in $scope.newModel.content.columnSelectedOfDataset){
 			if(!$scope.newModel.content.columnSelectedOfDataset[c].aliasToShow) $scope.newModel.content.columnSelectedOfDataset[c].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[c].alias;
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected) $scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected = 'NONE';
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].funcSummary) $scope.newModel.content.columnSelectedOfDataset[c].funcSummary = 'SUM';
 		}
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
+		$scope.newModel.dataset.type = ds.type;
+		$scope.newModel.settings.pagination.frontEnd = ds.type == 'SbiSolrDataSet';
 	}
 	
 	function moveInArray(arr, fromIndex, toIndex) {

@@ -24,7 +24,7 @@
 							</md-input-container>
 							<md-input-container flex class="md-block"> 
 								<md-switch ng-model="newModel.settings.pagination.frontEnd" aria-label="Frontend pagination" layout-align="center center"
-										ng-disabled="!newModel.settings.pagination.enabled">
+										ng-disabled="!newModel.settings.pagination.enabled || newModel.dataset.type == 'SbiSolrDataSet'">
 									 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.frontendpagination')}}
 								</md-switch>
 						     </md-input-container>
