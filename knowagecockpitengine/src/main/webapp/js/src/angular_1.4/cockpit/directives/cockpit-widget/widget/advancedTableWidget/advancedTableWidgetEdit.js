@@ -24,16 +24,13 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
 	
 	$scope.changeDS = function(id){
-	    var ds = cockpitModule_datasetServices.getDatasetById(id);
-		$scope.newModel.content.columnSelectedOfDataset = ds.metadata.fieldsMeta;
+	    $scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
 		for(var c in $scope.newModel.content.columnSelectedOfDataset){
 			if(!$scope.newModel.content.columnSelectedOfDataset[c].aliasToShow) $scope.newModel.content.columnSelectedOfDataset[c].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[c].alias;
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected) $scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected = 'NONE';
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].funcSummary) $scope.newModel.content.columnSelectedOfDataset[c].funcSummary = 'SUM';
 		}
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
-		$scope.newModel.dataset.type = ds.type;
-		$scope.newModel.settings.pagination.frontEnd = ds.type == 'SbiSolrDataSet';
 	}
 	
 	function moveInArray(arr, fromIndex, toIndex) {
@@ -249,15 +246,89 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	})
 	
 	$scope.saveConfiguration=function(){
-		 mdPanelRef.close();
-		 angular.copy($scope.newModel,model);
-		 $scope.$destroy();
-		 finishEdit.resolve();
+	    if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined ){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
+            return;
+        }
+        if($scope.newModel.content.columnSelectedOfDataset == undefined || $scope.newModel.content.columnSelectedOfDataset.length==0){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
+            return;
+        }
+        if(!$scope.checkAggregation()){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
+            return;
+        }
+        if(!$scope.checkAliases()){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+            return;
+        }
+        if(!$scope.checkSolrRequirements()){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.errorsolr'));
+            return;
+        }
+        mdPanelRef.close();
+        angular.copy($scope.newModel,model);
+        $scope.$destroy();
+        finishEdit.resolve();
   	}
+
   	$scope.cancelConfiguration=function(){
   		mdPanelRef.close();
   		$scope.$destroy();
   		finishEdit.reject();
   	}
+
+    $scope.checkAggregation = function(){
+        var measures = 0;
+        var noneAggr = 0;
+        for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
+            var column = $scope.newModel.content.columnSelectedOfDataset[i];
+            if(column.fieldType == 'MEASURE'){
+                measures++;
+                if(column.aggregationSelected == 'NONE'){
+                    noneAggr++;
+                }
+            }
+        }
+        if(noneAggr != 0 && noneAggr != measures){
+            return false;
+        }
+        return true;
+    }
+
+    $scope.checkAliases = function(){
+        var columns = $scope.newModel.content.columnSelectedOfDataset;
+        for(var i = 0; i < columns.length - 1; i++){
+            for(var j = i + 1; j < columns.length; j++){
+                if(columns[i].aliasToShow == columns[j].aliasToShow){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    $scope.checkSolrRequirements = function(){
+        if(cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId).type == 'SbiSolrDataSet'){
+            for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
+                var column = $scope.newModel.content.columnSelectedOfDataset[i];
+                if(column.fieldType == 'MEASURE' && column.aggregationSelected != 'NONE'){
+                    return !$scope.newModel.settings.pagination.enabled || $scope.newModel.settings.pagination.frontEnd;
+                }
+            }
+        }
+        return true;
+    }
+
+    $scope.showAction = function(text) {
+        var toast = $mdToast.simple()
+                .content(text)
+                .action('OK')
+                .highlightAction(false)
+                .hideDelay(3000)
+                .position('top')
+
+        $mdToast.show(toast);
+    }
 
 }
