@@ -163,7 +163,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                 if (options != null && !options.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Map<String, Object> optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options, new TypeReference<Map<String, Object>>() {}));
-                    applyOptions(dataSet, isNearRealtime, optionMap);
+                    applyOptions(dataSet, isNearRealtime, optionMap, groups.isEmpty());
                 }
             }
 
@@ -211,8 +211,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         }
     }
 
-    private void applyOptions(IDataSet dataSet, boolean isNearRealtime, Map<String, Object> options) {
-        if (DatasetEvaluationStrategyType.SOLR.equals(dataSet.getEvaluationStrategy(isNearRealtime)) && Boolean.TRUE.equals(options.get("solrFacetPivot"))) {
+    private void applyOptions(IDataSet dataSet, boolean isNearRealtime, Map<String, Object> options, boolean emptyGroups) {
+        if (DatasetEvaluationStrategyType.SOLR.equals(dataSet.getEvaluationStrategy(isNearRealtime))
+                && Boolean.TRUE.equals(options.get("solrFacetPivot"))
+                && !emptyGroups) {
             if (dataSet instanceof VersionedDataSet) {
                 VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
                 dataSet = versionedDataSet.getWrappedDataset();
