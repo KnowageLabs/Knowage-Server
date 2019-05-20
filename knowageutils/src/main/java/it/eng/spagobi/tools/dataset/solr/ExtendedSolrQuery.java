@@ -121,7 +121,16 @@ public class ExtendedSolrQuery extends SolrQuery {
         JSONObject jsonObject = new JSONObject();
         for (Projection measure : measures) {
             IAggregationFunction aggregationFunction = measure.getAggregationFunction();
-            jsonObject.put(FACET_PIVOT_MEASURE_ALIAS_PREFIX + measure.getAlias(), String.format("%s(%s)", getAggregationFunction(aggregationFunction), measure.getName()));
+            String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + measure.getAlias();
+            if(AggregationFunctions.COUNT.equals(aggregationFunction.getName())){
+                JSONObject value = new JSONObject();
+                value.put("type", "query");
+                value.put("field", measure.getName());
+                jsonObject.put(key, value);
+            }else {
+                String value = String.format("%s(%s)", getAggregationFunction(aggregationFunction), measure.getName());
+                jsonObject.put(key, value);
+            }
         }
         return jsonObject;
     }

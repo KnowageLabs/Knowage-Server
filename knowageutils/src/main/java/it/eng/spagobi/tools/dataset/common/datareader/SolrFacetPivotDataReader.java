@@ -131,7 +131,11 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 			String rawMeasureAlias = keys.next();
 			if (isRawMeasureAlias(rawMeasureAlias)) {
 				String measureAlias = getMeasureAlias(rawMeasureAlias);
-				doc.put(measureAlias, jsonObject.get(rawMeasureAlias));
+				Object value = jsonObject.get(rawMeasureAlias);
+				if(value instanceof JSONObject){
+					value = ((JSONObject) value).getLong("count");
+				}
+				doc.put(measureAlias, value);
 			}
 		}
 		return doc;
@@ -199,21 +203,29 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 				facetContainer = facet.getJSONObject("facet");
 			}
 
-			Pattern measureDefinitionPattern = Pattern.compile("\\w+\\((\\w+)\\)");
+			Pattern aggregatedMeasureDefinitionPattern = Pattern.compile("\\w+\\((\\w+)\\)");
 			Iterator<String> keys = facetContainer.keys();
 			while (keys.hasNext()) {
 				String rawMeasureAlias = keys.next();
 				if (isRawMeasureAlias(rawMeasureAlias)) {
 					String measureAlias = getMeasureAlias(rawMeasureAlias);
+
+					String measureName;
 					String measureDefinition = facetContainer.getString(rawMeasureAlias);
-					Matcher matcher = measureDefinitionPattern.matcher(measureDefinition);
+					Matcher matcher = aggregatedMeasureDefinitionPattern.matcher(measureDefinition);
 					if (matcher.find()) {
-						String measureName = matcher.group(1);
-						nameToAliasMap.put(measureName, measureAlias);
-						newJsonPathAttributes.add(new JSONPathAttribute(measureAlias, "$." + measureAlias, jsonPathAttributeNameToTypeMap.get(measureName)));
+						measureName = matcher.group(1);
 					} else {
-						throw new SpagoBIRuntimeException("Unable to retrieve name for measure alias [" + measureAlias + "]");
+						JSONObject definition = new JSONObject(measureDefinition);
+						if(definition.has("field")){
+							measureName = definition.getString("field");
+						}else {
+							throw new SpagoBIRuntimeException("Unable to retrieve definition of measure with alias [" + measureAlias + "]");
+						}
 					}
+
+					nameToAliasMap.put(measureName, measureAlias);
+					newJsonPathAttributes.add(new JSONPathAttribute(measureAlias, "$." + measureAlias, jsonPathAttributeNameToTypeMap.get(measureName)));
 				}
 			}
 		} catch (JSONException e) {
