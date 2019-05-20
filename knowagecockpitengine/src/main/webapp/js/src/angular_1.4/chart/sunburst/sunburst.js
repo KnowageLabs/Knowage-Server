@@ -16,83 +16,83 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function renderHCSunburst(chartConf, handleCockpitSelection, handleCrossNavigationTo, exportWebApp) {
-	
+function renderHCSunburst(chartConf, handleCockpitSelection, handleCrossNavigationTo, exportWebApp,advanced,chartConfMergeService ) {
+
     chartConf = prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCrossNavigationTo, exportWebApp);
-    
+    chartConfMergeService.addProperty(advanced,chartConf);
     /**
      * Text that will be displayed inside the Back (drillup) button
-     * that appears whenever we enter deeper levels of the TREEMAP 
+     * that appears whenever we enter deeper levels of the TREEMAP
      * chart, i.e. whenever we drilldown through categories for
-     * the serie user specified. This way we will keep record of the 
+     * the serie user specified. This way we will keep record of the
      * current drill down level.
-     * 
+     *
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
     (
-		function (H) {       			
+		function (H) {
 			H.wrap
 			(
-				H.seriesTypes.sunburst.prototype, 
-				'showDrillUpButton', 
-				
-				function (proceed) 
+				H.seriesTypes.sunburst.prototype,
+				'showDrillUpButton',
+
+				function (proceed)
 				{
-					arguments[1] = this.nodeMap[this.rootNode].name;            
+					arguments[1] = this.nodeMap[this.rootNode].name;
 					proceed.apply(this, [].slice.call(arguments, 1));
 				}
-			);			
+			);
 		}(Highcharts)
 	);
     if (exportWebApp){
     	return chartConf;
     }
 	var chart = new Highcharts.Chart(chartConf);
-	
-	return chart;     
+
+	return chart;
 }
 
 
 function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCrossNavigationTo, exportWebApp) {
-		
+
 	var colors = [];
 	var defaultColors = Highcharts.getOptions().colors;
-	
+
 	if (chartConf.colors.length == Object.keys(chartConf.data[0]).length) {
 		colors = chartConf.colors;
 	} else if (chartConf.colors.length > Object.keys(chartConf.data[0]).length) {
 		chartConf.colors.length = Object.keys(chartConf.data[0]).length;
 		colors = chartConf.colors;
-	} else {		
+	} else {
 		for (var i = 0; i < defaultColors.length; i++) {
 			if(defaultColors[i] != 'transparent') {
 				colors.push(defaultColors[i])
 			}
 			if(colors.length == Object.keys(chartConf.data[0]).length){
 				break;
-			}			
+			}
 		}
-	} 
-	
+	}
+
 	/**
 	 * Designing the Center circle of Chart. If the Name of Center circle is not defined
 	 * in Chart Design Template (Configuration Tab -> EXPLANATION DETAILS, Text field), put
 	 * the value of first category as Center circle name, else put the text that User defined.
 	 */
 	var centerText = '';
-	
+
 	if(chartConf.tip) {
 		var firstLevelStyle = chartConf.tip.style;
 		if(chartConf.tip.text != '') {
 			centerText = chartConf.tip.text;
 		} else {
 			centerText = chartConf.categories[0].value;
-		}		
-	} 
-	
+		}
+	}
+
 	var points = [];
 	var legendCategories = [];
-	
+
 	precision = chartConf.series.precision ?  chartConf.series.precision : "";
 	var center = {
 		id: '0.0',
@@ -100,9 +100,9 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 		name: centerText
 	}
 	points.push(center);
-	
+
 	var counter=0;
-	
+
 	for (var dataset in chartConf.data[0]){
 		level = {
 				id: "id_" + counter,
@@ -147,18 +147,18 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			}
 			else{
 				points.push(level);
-				func(resultData[resultRecord], resultRecord, level, dataset);	
+				func(resultData[resultRecord], resultRecord, level, dataset);
 			}
 			counter++;
 		}
 	}
-	
+
 //	var scale = 0;
 //	var tickPositions1 = [];
 //	var tickPositions = [];
 //	tickPositions.push(0);
 //	var scaleObject = {};
-//	
+//
 //	for (var i = 0; i < points.length; i++) {
 //		if(scaleObject.hasOwnProperty(points[i].parentName)){
 //			scaleObject[(points[i].parentName)].push(points[i]);
@@ -167,12 +167,12 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 //			scaleObject[(points[i].parentName)].push(points[i])
 //		}
 //	}
-//	
+//
 //
 //	var sumaForMax = 0
 //	for (property in scaleObject) {
 //		var suma = 0
-//		
+//
 //		for (var i = 0; i < scaleObject[property].length; i++) {
 //			if(scaleObject[property][i].hasOwnProperty("value")){
 //				suma = suma + scaleObject[property][i].value;
@@ -185,14 +185,14 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 //			if(scaleObject[property][i].hasOwnProperty("value")){
 //				scaleObject[property][i].suma = suma
 //			}
-//		}	
+//		}
 //	}
-//	
-//	var divider = sumaForMax / colors.length; 
+//
+//	var divider = sumaForMax / colors.length;
 //	tickPositions1.push(0);
 //	var next = 0
 //	for (var i = 0; i < colors.length; i++) {
-//		
+//
 //		next = next + divider;
 //		tickPositions1.push(next);
 //	}
@@ -208,20 +208,20 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 //	}
 //	for (property in scaleObject) {
 //		var colorvalue = [];
-//		
+//
 //		for (var i = 0; i < scaleObject[property].length; i++) {
 //			if(scaleObject[property][i].hasOwnProperty("value")){
 //				colorvalue.push(scaleObject[property][i]);
 //				scaleObject[property][i].colorValue = scaleObject[property][i].value + scaleObject[property][i].scale
 //			}
-//		} 
+//		}
 //	}
-	
+
 	// Splice in transparent for the center circle
 	Highcharts.getOptions().colors.splice(0, 0, 'transparent');
-	
+
 	var levels = [];
-	
+
 	// Defining the first level - Center circle
 	var firstLevel = {
 			level: 1,
@@ -235,14 +235,14 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				}
 			}
 		};
-	
+
 	// Design for Center circle
 	if(firstLevelStyle != undefined) {
 		firstLevel.dataLabels.style = firstLevelStyle;
 	}
-	
+
 	levels.push(firstLevel);
-	
+
 	for(var k = 0; k < chartConf.categories.length; k++) {
 		if(k == 0) {
 			var lvl = {
@@ -261,50 +261,50 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			levels.push(level);
 		}
 	}
-	
+
 	var chartObject = null;
-	
+
 	if (chartConf.chart.height==""
 		|| chartConf.chart.width=="")
 	{
-		chartObject = 
+		chartObject =
 		{
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-					
+
 			/**
 			 * Leave enough space for the "Back" button for drill up.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			marginBottom: chartConf.chart.marginBottom ? chartConf.chart.marginBottom : undefined,
-					
+
 			style: {
 				fontFamily: chartConf.chart.style.fontFamily,
 				fontSize: chartConf.chart.style.fontSize,
-				fontWeight: chartConf.chart.style.fontWeight,    				
+				fontWeight: chartConf.chart.style.fontWeight,
 				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
 						textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
 								fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
 			}
 		};
-		
+
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
 	else if (chartConf.chart.height!=""
 		&& chartConf.chart.width!="")
 	{
-		chartObject =     	
+		chartObject =
 		{
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-					
+
 			/**
 			 * Leave enough space for the "Back" button for drill up.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			marginBottom: chartConf.chart.marginBottom ? chartConf.chart.marginBottom : undefined,
-					
+
 					style: {
 						fontFamily: chartConf.chart.style.fontFamily,
 						fontSize: chartConf.chart.style.fontSize,
@@ -315,7 +315,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 					}
 		};
 		if(!exportWebApp){
-			chartObject =     	
+			chartObject =
 			{
 				height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
 				width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
@@ -327,7 +327,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 	var tooltipObject={};
 	prefix = chartConf.series.prefixChar ? chartConf.series.prefixChar : "";
 	postfix = chartConf.series.postfixChar ?  chartConf.series.postfixChar : "";
-	
+
    	tooltipFormatter = function () {
 		var val = this.point.value.toFixed(precision);
         return this.point.name +  ': <b>' +
@@ -339,11 +339,11 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 	};
 
 	var chart = {
-		chart: chartObject,		
+		chart: chartObject,
 		tooltip: tooltipObject,
 		series:
 		[
-         	{	            
+         	{
 			type: "sunburst",
 			data: points,
 			allowDrillToNode: true,
@@ -354,7 +354,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				format: '{point.name}',
 				style: chartConf.labels.style
 			},
-			levels: levels,			
+			levels: levels,
 			events:{
 				// TODO: Cross Navigation functionality on Sunburst Chart
 //				click: function(event){
@@ -373,7 +373,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			text: chartConf.subtitle.text,
 			align: chartConf.subtitle.style.align,
 			style: {
-				color: chartConf.subtitle.style.fontColor,	
+				color: chartConf.subtitle.style.fontColor,
 				fontSize: chartConf.subtitle.style.fontSize,
 				fontFamily: chartConf.subtitle.style.fontFamily,
 				fontStyle: chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none",
@@ -393,7 +393,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				textDecoration: chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none",
 				fontWeight: chartConf.title.style.fontWeight ? chartConf.title.style.fontWeight : "none"
 			}
-		},		
+		},
 		lang: {
 			noData : chartConf.emptymessage.text
 		},
@@ -405,62 +405,62 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
                 fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
 				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
 				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
-            }, 
+            },
             position: {
             	align:  chartConf.emptymessage.style.textAlign,
     			verticalAlign: 'middle'
             }
 		},
-		
-		
+
+
 		/**
 		 * Credits option disabled/enabled for the SUNBURST chart. This option (boolean value)
 		 * is defined inside of the VM for the SUNBURST chart. If enabled credits link appears
 		 * in the right bottom part of the chart.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		credits: 
+		credits:
         {
     		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
 		}
-		
+
 	};
-	
-	
+
+
 	if(legendCategories.length > 0) {
 		for(var a = 0; a < legendCategories.length; a++) {
 			chart.series.push(legendCategories[a]);
-		
+
 			if(a == legendCategories.length - 1) {
 				points.map(function(i) {
 				  i.visible = true;
 				  return i;
 				});
-				
+
 				chart.plotOptions = {
 					series: {
 						events: {
 							 legendItemClick: function(e) {
-								   var self = this;								   
+								   var self = this;
 							       points.forEach(function(leaf){
 							    	   if (leaf.id === self.userOptions.id || leaf.parent === self.userOptions.id) {
 							               leaf.visible = !leaf.visible;
 							           }
 							       });
-							       
+
 							       var newData = points.filter(function(leaf){
 							    	   return leaf.visible;
 							       }).slice();
-							       							       							       
+
 							       self.chart.series[0].setData(newData, true);
 					         }
 						}
 					}
 				};
 			}
-		}		
+		}
 	}
-	
+
 	return chart;
 }
 

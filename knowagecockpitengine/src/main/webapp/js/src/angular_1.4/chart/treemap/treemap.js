@@ -1,6 +1,6 @@
-function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo, exportWebApp ) {
-
-    chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp);
+function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo, exportWebApp,advanced,chartConfMergeService ) {
+	 chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp);
+	 chartConfMergeService.addProperty(advanced,chartConf);
 
     /**
      * Text that will be displayed inside the Back (drillup) button
@@ -67,9 +67,12 @@ function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo
 
 
 
-function renderHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp){
+function renderHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp,advanced,chartConfMergeService ) {
 
     chartConfig = prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp);
+
+	chartConfMergeService.addProperty(advanced,chartConf);
+
     if (exportWebApp){
     	return chartConfig;
     }

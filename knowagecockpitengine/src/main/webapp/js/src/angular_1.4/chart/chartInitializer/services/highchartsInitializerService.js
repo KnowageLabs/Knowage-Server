@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate',function(highchartsDrilldownHelper,jsonChartTemplate){
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService){//izmena
 
 	this.chart = null;
 	var chartConfConf = null;
@@ -61,7 +61,7 @@ angular.module('chartInitializer')
 			if(exportWebApp) {
 				return  renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			} else {
-				this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+				this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,false,renderObj.chartTemplate.advanced,chartConfMergeService);
 				this.chart.drillable = chartConf.chart.drillable
 			}
 		}
@@ -71,13 +71,13 @@ angular.module('chartInitializer')
 			if(exportWebApp) {
 				return renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			}
-			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,false,renderObj.chartTemplate.advanced,chartConfMergeService);
 		} else if (chartType == 'sunburst') {
 			delete this.updateData;
 			if(exportWebApp) {
 				return renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			}
-			this.chart = renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+			this.chart = renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,false,renderObj.chartTemplate.advanced,chartConfMergeService);
 		}
 		else
 		{
@@ -119,6 +119,7 @@ angular.module('chartInitializer')
 				isBasic = true;
 			}
 
+			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;

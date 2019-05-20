@@ -82,54 +82,58 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 			return false;
 		} else return true;
 	}
-	$scope.saveChartTemplate = function() {
+	$scope.saveChartTemplate = function(saving) {//izmena
+		if(saving){
 
-		$scope.attachCategoriesToTemplate();
-		if($scope.selectedChartType == 'scatter'){
-			$scope.attachSeriesToTemplate();
-		}
+			$scope.attachCategoriesToTemplate();
+			if($scope.selectedChartType == 'scatter'){
+				$scope.attachSeriesToTemplate();
+			}
 
-		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
-		if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
-			var color = $scope.chartTemplate.COLORPALETTE.COLOR;
-			for (var i = 0; i < color.length; i++) {
-				if(color[i].hasOwnProperty("$$hashKey")){
-					delete color[i].$$hashKey;
+			$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
+			if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
+				var color = $scope.chartTemplate.COLORPALETTE.COLOR;
+				for (var i = 0; i < color.length; i++) {
+					if(color[i].hasOwnProperty("$$hashKey")){
+						delete color[i].$$hashKey;
+					}
 				}
 			}
-		}
-		prepareTemplate();
-		if(!checkChartSettings()){
-			if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
-				showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
-			}
-			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
-				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
-			}
-
-		}
-		else {
-			var temp = {"CHART":$scope.chartTemplate}
-			if(temp.CHART.VALUES.CATEGORY){
-				if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
-					temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
+			prepareTemplate();
+			if(!checkChartSettings()){
+				if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
+					showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 				}
-			}
+				if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
+					showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
+				}
 
-			var toSend = {}
-			toSend.jsonTemplate = angular.toJson(temp);
-			toSend.docLabel = docLabel;
-			sbiModule_restServices.promisePost('../api/1.0/chart/template/save','',$scope.httpParamSerializer(toSend) , {
-				transformRequest:angular.identity,
-				headers:{'Content-Type': ' application/x-www-form-urlencoded; charset=utf-8'}
-			})
-			.then(function(response) {
-				console.log("[POST]: SUCCESS!");
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.chartengine.designer.savetemplate.success"), sbiModule_translate.load("sbi.generic.success"));
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
+			}
+			else {
+				var temp = {"CHART":$scope.chartTemplate}
+				if(temp.CHART.VALUES.CATEGORY){
+					if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
+						temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
+					}
+				}
+
+				var toSend = {}
+				toSend.jsonTemplate = angular.toJson(temp);
+				toSend.docLabel = docLabel;
+				sbiModule_restServices.promisePost('../api/1.0/chart/template/save','',$scope.httpParamSerializer(toSend) , {
+					transformRequest:angular.identity,
+					headers:{'Content-Type': ' application/x-www-form-urlencoded; charset=utf-8'}
+				})
+				.then(function(response) {
+					console.log("[POST]: SUCCESS!");
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.chartengine.designer.savetemplate.success"), sbiModule_translate.load("sbi.generic.success"));
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				});
+			}//izmena
+
 		}
+
 	}
 	var showAction = function(text) {
 		var toast = $mdToast.simple()
