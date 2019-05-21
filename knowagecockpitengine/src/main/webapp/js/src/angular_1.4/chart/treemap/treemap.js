@@ -430,7 +430,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			stops: modifiedStops,
 		},
 		legend:{
-			enabled: true,
+
+			enabled: chartConf.legend.enabled,
 			itemStyle: {
 	            color: '#FFF',
 
