@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location, kn_regex){
+angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location, kn_regex, sbiModule_config){
 			var gs=this;
 	var savingDataConf = false;
 	this.savingDataConfiguration = function (isSaving){
@@ -192,8 +192,8 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 
 	//get templates location
 	gs.getTemplateUrl = function(widget,template){
-		var basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
-		var templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
+		var basePath = sbiModule_config.host;
+		var templatesUrl = sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
   		return basePath + templatesUrl + template +'.html';
   	}
 
