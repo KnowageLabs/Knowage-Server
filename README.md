@@ -30,12 +30,12 @@ check the FIWARE Catalogue entry for
 
 ## Contents
 
--   [Modules available](#modules--available)
+-   [Modules available](#modules-available)
 -   [Editions](#editions)
 -   [Contributions](#contributions)
 -   [Documentation](#documentation)
 -   [More](#More)
--   [Quality Assurance](#quality--assurance)
+-   [Quality Assurance](#quality-assurance)
 -   [License](#license)
 
 
