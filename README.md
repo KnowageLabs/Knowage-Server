@@ -27,6 +27,18 @@ check the FIWARE Catalogue entry for
 |  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/knowage) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 |---|---|---|---|---|
 
+
+## Contents
+
+-   [Modules available](#modules--available)
+-   [Editions](#editions)
+-   [Contributions](#contributions)
+-   [Documentation](#documentation)
+-   [More](#More)
+-   [Quality Assurance](#quality--assurance)
+-   [License](#license)
+
+
 ## Modules available
 
 |                                                                                                                    | Name                   | Description                                                                                                              |
