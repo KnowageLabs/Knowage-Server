@@ -32,6 +32,8 @@ check the FIWARE Catalogue entry for
 
 -   [Modules available](#modules-available)
 -   [Editions](#editions)
+-   [Install](#install)
+-   [Usage](#usage)
 -   [Contributions](#contributions)
 -   [Documentation](#documentation)
 -   [More](#More)
@@ -70,6 +72,18 @@ Knowage is available on two versions:
     commercial offering and some facilities for the administrator.
 
 This repository contains the source code of the Community Edition.
+
+## Install
+
+Information about how to install Knowage is available on official documentation on [Read the Docs](http://knowage-suite.readthedocs.io/) within Installation & Administration Manuals.
+
+An installer for Windows and Linux environments is available on [Knowage website](https://www.knowage-suite.com) within the download area.
+
+A `Dockerfile` is also available for your use - further information can be found [here](https://github.com/KnowageLabs/Knowage-Server-Docker).
+
+## Usage
+
+Information about how to use Knowage is available on official documentation on [Read the Docs](http://knowage-suite.readthedocs.io/) within User Guide and Functionalities sections.
 
 ## Contributions
 
