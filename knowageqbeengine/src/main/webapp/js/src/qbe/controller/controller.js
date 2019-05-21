@@ -275,16 +275,18 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$rootScope.$on('smartView', function (event, data) {
 		var temp = []
 
-			for (var i = 0; i < data.length; i++) {
-
-						$scope.editQueryObj.fields[i].group = data[i].group;
-						$scope.editQueryObj.fields[i].funct = data[i].funct;
-						$scope.editQueryObj.fields[i].visible = data[i].visible;
-						$scope.editQueryObj.fields[i].distinct = data[i].distinct;
-						$scope.editQueryObj.fields[i].order = data[i].ordering;
-						$scope.editQueryObj.fields[i].alias = data[i].alias;
-
+		for (var i = 0; i < data.length; i++) {
+			for (var j = 0; j < $scope.editQueryObj.fields.length; j++) {
+				if($scope.editQueryObj.fields[j].alias==data[i].alias){
+					$scope.editQueryObj.fields[j].group = data[i].group;
+					$scope.editQueryObj.fields[j].funct = data[i].funct;
+					$scope.editQueryObj.fields[j].visible = data[i].visible;
+					$scope.editQueryObj.fields[j].distinct = data[i].distinct;
+					$scope.editQueryObj.fields[j].order = data[i].ordering;
+					$scope.editQueryObj.fields[j].alias = data[i].alias;
+				}
 			}
+		}
 
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);

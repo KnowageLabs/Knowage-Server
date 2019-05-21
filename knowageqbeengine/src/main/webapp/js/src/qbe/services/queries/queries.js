@@ -1,4 +1,3 @@
-
 var queries = angular.module('queries',['sbiModule']);
 
 queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope,sbiModule_messaging, $mdDialog){
@@ -27,37 +26,43 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		promise.then(function(response) {
      		queryModel.length = 0;
      		console.log("[POST]: SUCCESS!");
-
+     		var counter = 1;
      		for (var i = 0; i < query.fields.length; i++) {
-     			var key = "column_"+(i+1);
-     			var queryObject = {
-         		    	"id":query.fields[i].id,
-         		    	"name":query.fields[i].field,
-         		    	"alias":query.fields[i].alias,
-         		    	"entity":query.fields[i].entity,
-         		    	"color":query.fields[i].color,
-         		    	"data":[],
-         		    	"funct":query.fields[i].funct,
-    					"fieldType" : query.fields[i].fieldType,
-         		    	"visible":query.fields[i].visible,
-         		    	"distinct":query.distinct,
-         		    	"group":query.fields[i].group,
-         		    	"order":i+1,
-         		    	"ordering":query.fields[i].order,
-         		    	"temporal":query.fields[i].temporal,
-         		    	"iconCls":query.fields[i].iconCls ? query.fields[i].iconCls : query.fields[i].fieldType,
-         		    	"filters": [],
-         		    	"havings": []
-         		    }
-     			for (var j = 0; j < response.data.rows.length; j++) {
-     				var row = {
-     						"value":response.data.rows[j][key],
-     						"id":response.data.rows[j].id
-     				}
-     				queryObject.data.push(row);
-				}
+     			if(query.fields[i].visible){
+         			var key = "column_"+counter;
+         			var queryObject = {
+             		    	"id":query.fields[i].id,
+             		    	"name":query.fields[i].field,
+             		    	"alias":query.fields[i].alias,
+             		    	"entity":query.fields[i].entity,
+             		    	"color":query.fields[i].color,
+             		    	"data":[],
+             		    	"funct":query.fields[i].funct,
+        					"fieldType" : query.fields[i].fieldType,
+             		    	"visible":query.fields[i].visible,
+             		    	"distinct":query.distinct,
+             		    	"group":query.fields[i].group,
+             		    	"order":i+1,
+             		    	"ordering":query.fields[i].order,
+             		    	"temporal":query.fields[i].temporal,
+             		    	"iconCls":query.fields[i].iconCls ? query.fields[i].iconCls : query.fields[i].fieldType,
+             		    	"filters": [],
+             		    	"havings": []
+             		    }
 
-     				queryModel.push(queryObject);
+         			for (var j = 0; j < response.data.rows.length; j++) {
+         				var row = {
+         						"value":response.data.rows[j][key],
+         						"id":response.data.rows[j].id
+         				}
+         				queryObject.data.push(row);
+    				}
+
+         			queryModel.push(queryObject);
+         			counter++
+
+     			}
+
 			}
 
      		if(query.filters.length > 0) {
