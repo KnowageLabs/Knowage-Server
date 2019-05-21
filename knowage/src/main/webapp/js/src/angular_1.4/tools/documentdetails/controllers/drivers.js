@@ -41,34 +41,34 @@ angular
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
              self.drivers = [];
-             if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0){
 
-            	 if(self.drivers.length == 0 ){
-
-            crudService.get(requiredPath,basePath).then(function(response){
-            	 driversService.driversOnObject = response.data;
-            	 self.drivers=driversService.driversOnObject;
-            	 self.driversNum = self.drivers.length > 1;
-             });
-
+             if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0) {
+            	 if(self.drivers.length == 0) {
+		            crudService.get(requiredPath,basePath).then(function(response) {
+		            	driversService.driversOnObject = response.data;
+		            	self.drivers = driversService.driversOnObject;
+		            	self.driversNum = self.drivers.length > 1;
+		             });
             	 }
-             }else {
+             } else {
+            	 if(self.driverRelatedObject.engine) {
+            		 self.drivers = self.driverRelatedObject.drivers;
+            		 self.driversNum = self.drivers != null && self.drivers.length > 1;
+            	 } else {
+            		 requiredPath = "2.0/businessmodels";
+            		 self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);
+            		 self.driversNum = self.drivers.length > 1
+            	 }
+             }
 
-            	 if(self.driverRelatedObject.engine){ self.drivers =self.driverRelatedObject.drivers; self.driversNum = self.drivers.length > 1;}
-            	 else{
-            		  requiredPath = "2.0/businessmodels";
-            		  self.drivers =$filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);self.driversNum = self.drivers.length > 1}}
-             			driversService.rederedDrivers = self.drivers;
+             driversService.rederedDrivers = self.drivers;
              self.required = true;
-
-
 
              var setSelectedDriver = function(driver){
             	 self.selectedDriver = driver;
              }
 
              driversService.setSelectedDriver = setSelectedDriver;
-
 
              var getDriverNames = function(analyticalDrivers){
             	 var driverNames=[];
