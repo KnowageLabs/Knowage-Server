@@ -38,6 +38,7 @@ check the FIWARE Catalogue entry for
 -   [Documentation](#documentation)
 -   [More](#More)
 -   [Quality Assurance](#quality-assurance)
+-   [Testing](#testing)
 -   [License](#license)
 
 
@@ -119,7 +120,15 @@ follows:
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Performance&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.performance&colorB=blue)
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Stability&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.stability&colorB=blue)
 
----
+## Testing
+
+To run tests, type
+
+```console
+mvn test -DskipTests=false
+```
+
+from knowage-ce-parent folder.
 
 ## License
 
