@@ -381,80 +381,54 @@ public class DataSetResource extends AbstractDataSetResource {
 	 */
 	@GET
 	@Path("/dataset/id/{id}")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSetById(@PathParam("id") String id) throws JSONException, SerializationException {
+	public String getDataSetById(@PathParam("id") Integer id) throws JSONException, SerializationException {
 		logger.debug("IN");
+		IDataSetDAO datasetDao;
+		IDataSet datasetToReturn;
+		ISchedulerDAO schedulerDAO;
 
-		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			datasetToReturn = datasetDao.loadDataSetById(id);
 
-		/**
-		 * When retrieving the dataset that is previously saved, call the method that retrieves all the available datasets since they contain also information
-		 * about all dataset versions for them. Go through all the collection and find the one that we need (according to its ID).
-		 *
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
+			if (datasetToReturn.isPersisted()) {
+				schedulerDAO = DAOFactory.getSchedulerDAO();
 
-		IDataSet datasetToReturn = null;
+				List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", datasetToReturn.getLabel());
 
-		datasetDao.setUserProfile(getUserProfile());
-		List<IDataSet> dataSets = datasetDao.loadPagedDatasetList(-1, -1);
+				if (triggers.isEmpty()) {
+					datasetToReturn.setScheduled(false);
+				} else {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		for (IDataSet datasetTemp : dataSets) {
+					// Dataset scheduling is mono-trigger
+					Trigger trigger = triggers.get(0);
 
-			if (datasetTemp.getId() == Integer.parseInt(id)) {
+					if (!trigger.isRunImmediately()) {
 
-				datasetToReturn = datasetTemp;
+						datasetToReturn.setScheduled(true);
 
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				ISchedulerDAO schedulerDAO;
-
-				try {
-					schedulerDAO = DAOFactory.getSchedulerDAO();
-				} catch (Throwable t) {
-					throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
-				}
-
-				if (datasetToReturn.isPersisted()) {
-
-					List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", datasetToReturn.getLabel());
-
-					if (triggers.isEmpty()) {
-						// itemJSON.put("isScheduled", false);
-						datasetToReturn.setScheduled(false);
-					} else {
-
-						// Dataset scheduling is mono-trigger
-						Trigger trigger = triggers.get(0);
-
-						if (!trigger.isRunImmediately()) {
-
-							// itemJSON.put("isScheduled", true);
-							datasetToReturn.setScheduled(true);
-
-							if (trigger.getStartTime() != null) {
-								datasetToReturn.setStartDateField(sdf.format(trigger.getStartTime()));
-							} else {
-								// itemJSON.put("startDate", "");
-								datasetToReturn.setStartDateField("");
-							}
-
-							if (trigger.getEndTime() != null) {
-								// itemJSON.put("endDate", sdf.format(trigger.getEndTime()));
-								datasetToReturn.setEndDateField(sdf.format(trigger.getEndTime()));
-							} else {
-								// itemJSON.put("endDate", "");
-								datasetToReturn.setEndDateField("");
-							}
-
-							// itemJSON.put("schedulingCronLine", trigger.getChronExpression().getExpression());
-							datasetToReturn.setSchedulingCronLine(trigger.getChronExpression().getExpression());
+						if (trigger.getStartTime() != null) {
+							datasetToReturn.setStartDateField(sdf.format(trigger.getStartTime()));
+						} else {
+							datasetToReturn.setStartDateField("");
 						}
+
+						if (trigger.getEndTime() != null) {
+							datasetToReturn.setEndDateField(sdf.format(trigger.getEndTime()));
+						} else {
+							datasetToReturn.setEndDateField("");
+						}
+
+						datasetToReturn.setSchedulingCronLine(trigger.getChronExpression().getExpression());
 					}
 				}
-
-				break;
 			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
 
 		return serializeDataSet(datasetToReturn, null);

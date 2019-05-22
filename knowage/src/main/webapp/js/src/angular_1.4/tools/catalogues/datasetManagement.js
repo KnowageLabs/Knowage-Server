@@ -3985,8 +3985,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 						}
 						else {
-							console.log("KOLOKOLLO");
-							console.log($scope.scheduling.weekdaysSelected );
 							$scope.scheduling.weekdaysSelected = [];
 							$scope.scheduling.weekdaysCustom = false;
 						}
