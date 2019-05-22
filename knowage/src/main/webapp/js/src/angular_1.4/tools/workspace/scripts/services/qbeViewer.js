@@ -292,16 +292,7 @@ angular
 				$scope.selectedDataSet = {};
 
 				$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
-
-				if($scope.currentOptionMainMenu=="models"){
-
-					if ($scope.currentModelsTab=="federations") {
-						// If the suboption of the Data option is Federations.
-						$scope.getFederatedDatasets();
-					}
-
-				}
-
+				
 				$mdDialog.hide();
 			}
 

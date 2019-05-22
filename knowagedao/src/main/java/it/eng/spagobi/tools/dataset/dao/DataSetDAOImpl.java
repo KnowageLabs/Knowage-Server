@@ -358,15 +358,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadMyDataFederatedDataSets(UserProfile userProfile) {
-		List<IDataSet> results = new ArrayList<IDataSet>();
-		List<IDataSet> mydatasets = loadMyDataDataSets(userProfile);
-		for (Iterator iterator = mydatasets.iterator(); iterator.hasNext();) {
-			IDataSet iDataSet = (IDataSet) iterator.next();
-			FederationDefinition fd = iDataSet.getDatasetFederation();
-			if (fd != null) {
-				results.add(iDataSet);
+	public List<SbiDataSet> loadFederatedDataSetsByFederatoinId(Integer id) {
+		logger.debug("IN");
+		List<SbiDataSet> results = new ArrayList<>();
+		Session session = null;
+
+		try {
+			session = getSession();
+			Query query = session.createQuery("select distinct ds.label, ds.name from SbiDataSet ds where ds.federation.federation_id = :federation_id");
+			query.setInteger("federation_id", id);
+			results = query.list();
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading federated datasets", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
+			logger.debug("OUT");
 		}
 
 		return results;

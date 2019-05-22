@@ -19,9 +19,19 @@
                 <column name="ORGANIZATION" />
             </key-property>
         </composite-id>
-		            <filter name="tenantFilter" condition="organization=:tenant"/>  
+        
+        <many-to-one name="dataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" update="false" insert="false">
+	    	<column name="DS_ID"/>
+	    	<column name="VERSION_NUM"/>
+	    	<column name="ORGANIZATION"/>
+    	</many-to-one>								      		    
+	    <many-to-one name="federation" class="it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition" update="false" insert="false">
+	    	<column name="FEDERATION_ID"/>
+	    </many-to-one>	
+        
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
 	</class>
-	      <filter-def name="tenantFilter">
+      <filter-def name="tenantFilter">
         <filter-param name="tenant" type="string"/>
     </filter-def>
 </hibernate-mapping>

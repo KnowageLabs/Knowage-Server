@@ -658,26 +658,18 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@GET
-	@Path("/federated")
+	@Path("/federated/{federationId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getMyFederatedDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+	public String getFederatedDataSetsByFederetionId(@PathParam("federationId") Integer federationId) {
 		logger.debug("IN");
-
+		JSONObject toReturn = new JSONObject();
 		try {
-
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			List<IDataSet> dataSets = getDatasetManagementAPI().getMyFederatedDataSets();
-
-			List<IDataSet> toBeReturned = new ArrayList<IDataSet>(0);
-
-			for (IDataSet dataset : dataSets) {
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-					toBeReturned.add(dataset);
-			}
-
-			return serializeDataSets(toBeReturned, typeDoc);
+			JSONArray dataSets = getDatasetManagementAPI().getFederatedDataSetsByFederation(federationId);
+			toReturn.put("results", dataSets);
+			return toReturn.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {

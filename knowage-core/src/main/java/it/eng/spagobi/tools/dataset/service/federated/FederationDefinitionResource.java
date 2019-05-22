@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.service.federated;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -82,6 +83,24 @@ public class FederationDefinitionResource {
 		} catch (EMFUserError e) {
 			logger.error("Error while getting federation by id", e);
 			throw new SpagoBIRuntimeException("Error getting federation by id", e);
+		}
+	}
+
+	@GET
+	@Path("/dataset/{dsId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loadFederationsByDataset(@PathParam("dsId") Integer dsId) {
+		logger.debug("IN");
+		List<FederationDefinition> toReturn = new ArrayList<>();
+		try {
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			toReturn = fdsDAO.loadFederationsUsingDataset(dsId);
+			return Response.ok(toReturn).build();
+		} catch (Exception e) {
+			logger.error("Error while loading federation models by dataset", e);
+			throw new SpagoBIRuntimeException("Error while loading federation models by dataset", e);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 

@@ -233,7 +233,7 @@
 				          	</md-button>
 				        </md-menu-item>
 				        <md-menu-item ng-show="currentDatasetsTab=='myDataSet'">
-				          	<md-button aria-label="Delete Dataset" ng-click="deleteDataset(selectedDataset)">
+				          	<md-button aria-label="Delete Dataset" ng-click="deleteDataset(selectedDataset, $event)">
 				            	<md-icon md-font-icon="fa fa-trash" md-menu-align-target></md-icon>
 				            	{{translate.load('sbi.workspace.dataset.delete')}}
 				          	</md-button>

@@ -17,10 +17,34 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.InflaterInputStream;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.UnsafeInput;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import commonj.work.Work;
 import commonj.work.WorkItem;
 import gnu.trove.set.hash.TLongHashSet;
@@ -56,7 +80,18 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.metasql.query.item.*;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SingleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -68,19 +103,6 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.naming.NamingException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-import java.util.zip.InflaterInputStream;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -245,7 +267,8 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws JSONException {
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
+			throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -350,14 +373,24 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public List<IDataSet> getMyFederatedDataSets() {
+	public JSONArray getFederatedDataSetsByFederation(Integer federationId) {
+		JSONArray toReturn = new JSONArray();
 		try {
-			return getDataSetDAO().loadMyDataFederatedDataSets(getUserProfile());
+			List<SbiDataSet> federatedDatasets = getDataSetDAO().loadFederatedDataSetsByFederatoinId(federationId);
+			Iterator<SbiDataSet> it = federatedDatasets.iterator();
+			while (it.hasNext()) {
+				JSONObject dsJson = new JSONObject();
+				SbiDataSet dataSet = it.next();
+				dsJson.put("label", dataSet.getLabel());
+				dsJson.put("name", dataSet.getName());
+				toReturn.put(dsJson);
+			}
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
 		}
+		return toReturn;
 	}
 
 	/*
@@ -448,7 +481,6 @@ public class DatasetManagementAPI {
 		}
 		return statement;
 	}
-
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
@@ -690,8 +722,8 @@ public class DatasetManagementAPI {
 	 */
 
 	// FIXME
-	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
-			List<Filter> filters, List<SimpleFilter> likeFilters) throws JSONException {
+	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Filter> filters,
+			List<SimpleFilter> likeFilters) throws JSONException {
 
 		logger.debug("IN");
 
@@ -773,7 +805,8 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter, int maxRowCount) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+			Filter filter, int maxRowCount) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
@@ -784,7 +817,7 @@ public class DatasetManagementAPI {
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
 		if (filters.size() > 0) {
-			if(filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
+			if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
 				where = filters.get(0);
 			} else {
 				AndFilter andFilter = new AndFilter(filters);

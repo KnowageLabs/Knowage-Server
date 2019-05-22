@@ -354,45 +354,67 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 
-	$scope.deleteDataset=function(dataset){
+	$scope.deleteDataset=function(dataset, $event){
 
-//		console.log(dataset);
+		var label = dataset.label;
 
-		var label= dataset.label;
-
-		var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
-		.content(sbiModule_translate.load("sbi.workspace.dataset.delete.confirm"))
-		.ariaLabel('delete Document')
-		.ok(sbiModule_translate.load("sbi.general.yes"))
-		.cancel(sbiModule_translate.load("sbi.general.No"));
-			$mdDialog.show(confirm).then(function() {
-
-			sbiModule_restServices.promiseDelete("1.0/datasets",label)
-			.then(function(response) {
-
-				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.delete.success"),
-						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-
-				$scope.reloadMyDataFn();
-				$scope.selectDataset(undefined);
-				$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
-				$scope.getFederatedDatasets(); //suppose the deleted dataste is in a federation we need to refresh the federation in order to refresh the dataste linked to federations
-				/**
-				 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
-				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				$scope.searchInput = "";
-			},function(response) {
-
-				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+		sbiModule_restServices.promiseGet("2.0/federateddataset/dataset", dataset.id)
+			.then(function(response){
+				var federationModels = response.data;
+				
+				if (federationModels.length > 0) {
+					$mdDialog.show(
+						      $mdDialog.alert()
+						        .parent(angular.element(document.body))
+						        .clickOutsideToClose(true)
+						        .title(sbiModule_translate.load("sbi.ds.deletedataset")) 
+						        .textContent(sbiModule_translate.load("sbi.federationdefinition.cant.delete.dataset")) 
+						        .ariaLabel('Delete dataset info')
+						        .ok(sbiModule_translate.load("sbi.general.close"))
+						        .targetEvent(event)
+						    ).then(function(){
+						    	// dialog closed
+						    });
+				} else {
+					var confirm = $mdDialog.confirm()
+					.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
+					.content(sbiModule_translate.load("sbi.workspace.dataset.delete.confirm"))
+					.ariaLabel('delete Document')
+					.ok(sbiModule_translate.load("sbi.general.yes"))
+					.cancel(sbiModule_translate.load("sbi.general.No"));
+				
+					$mdDialog.show(confirm).then(function() {
+	
+						sbiModule_restServices.promiseDelete("1.0/datasets",label)
+						.then(function(response) {
+	
+							// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+							toastr.success(sbiModule_translate.load("sbi.workspace.dataset.delete.success"),
+									sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+	
+							$scope.reloadMyDataFn();
+							$scope.selectDataset(undefined);
+							
+							/**
+							 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+							 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							$scope.searchInput = "";
+						},function(response) {
+	
+							// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+							toastr.error(response.data.errors[0].message,
+				        			  sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+	
+						});
+					});
+				}
+				
+			}, function(response){
 				toastr.error(response.data.errors[0].message,
 	        			  sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
 			});
-		});
-
+		
 	}
 
 	$scope.downloadDatasetFile = function(dataset) {

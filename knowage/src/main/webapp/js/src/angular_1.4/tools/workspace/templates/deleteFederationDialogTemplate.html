@@ -1,0 +1,25 @@
+<md-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{translate.load("sbi.workspace.models.federationdefinition.delete")}}</h2>
+		</div>
+	</md-toolbar>
+	<md-dialog-content layout-align="start center" layout-padding>
+		<div layout="row">
+			<div class="kn-info" flex="100">
+				{{translate.load("sbi.federationdefinition.models.delete")}}
+			</div>
+		</div>
+		<kn-table layout-padding
+			id="federationDelete"
+			columns="tableColumns"
+			model="usedInDatasetsList">
+		</kn-table>
+	</md-dialog-content>
+	 	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="close()" class="md-raised">
+       	  {{translate.load("sbi.generic.cancel")}}
+      	</md-button>
+	</md-dialog-actions>
+</md-dialog>
