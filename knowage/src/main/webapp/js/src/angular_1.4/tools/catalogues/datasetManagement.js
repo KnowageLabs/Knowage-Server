@@ -3978,8 +3978,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 								splitWeekdays.push(weekdaysTemp[i]);
 							}
 
-							console.logsplitWeekdays();
-
 							$scope.scheduling.weekdaysSelected = splitWeekdays;
 							$scope.scheduling.weekdaysCustom = true;
 
