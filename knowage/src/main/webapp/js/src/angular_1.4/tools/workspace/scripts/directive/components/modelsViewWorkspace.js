@@ -111,7 +111,7 @@
 		}
 
 		$scope.isAbletoDelete = function(federation){
-			return $scope.sbiUser.isTechnicalUser == "true"|| $scope.sbiUser.userId==federation.owner;
+			return $scope.sbiUser.isTechnicalUser == "true"|| (federation != undefined ? $scope.sbiUser.userId==federation.owner : false);
 		}
 
 		$scope.loadFederations = function(){
