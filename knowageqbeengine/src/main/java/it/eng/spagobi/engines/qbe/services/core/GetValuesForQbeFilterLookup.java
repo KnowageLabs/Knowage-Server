@@ -60,6 +60,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
@@ -210,7 +211,8 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				try {
 					drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.debug("Drivers cannot be transformed from string to map");
+					throw new SpagoBIRuntimeException("Drivers cannot be transformed from string to map", e);
 				}
 				dataSet.setDrivers(drivers);
 

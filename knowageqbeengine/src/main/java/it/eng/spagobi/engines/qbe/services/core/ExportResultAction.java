@@ -65,6 +65,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
 /**
@@ -350,7 +351,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			try {
 				drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.debug("Drivers cannot be transformed from string to map");
+				throw new SpagoBIRuntimeException("Drivers cannot be transformed from string to map", e);
 			}
 			dataSet.setDrivers(drivers);
 
