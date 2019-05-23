@@ -241,7 +241,10 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
 
-				$scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
+				var categoryBackup = angular.copy($scope.chartTemplate.VALUES.CATEGORY);
+                $scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
+                $scope.chartTemplate.VALUES.CATEGORY = categoryBackup;
+
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate
 			} else {
@@ -270,7 +273,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
 					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
-				$scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
+
+				var categoryBackup = angular.copy($scope.chartTemplate.VALUES.CATEGORY);
+                $scope.chartTemplate = angular.merge({}, $scope.getChartTemplate($scope.chartTemplate.type.toLowerCase()),$scope.chartTemplate)
+                $scope.chartTemplate.VALUES.CATEGORY = categoryBackup;
+
 				setConfigurationButtons($scope.selectedChartType);
 
 			}

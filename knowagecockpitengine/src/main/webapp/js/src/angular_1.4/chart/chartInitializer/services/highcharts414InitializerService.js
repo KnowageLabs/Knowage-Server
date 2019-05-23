@@ -80,7 +80,7 @@ angular.module('chartInitializer')
 			var plotBands = null;
 			var infoFroDrill = []
 			if (chartType == 'scatter') delete this.updateData;
-			if (chartType == 'column' || chartType == 'bar' || chartType == 'line') {
+			if ((chartType == 'column' || chartType == 'bar' || chartType == 'line') && !chartConf.plotOptions.column.stacking) {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
 
@@ -89,22 +89,17 @@ angular.module('chartInitializer')
 					var finalMin = Math.min.apply(Math, [mapAxis.min[i], plotBands && plotBands[0].from != plotBands[0].to ? plotBands[0].from : mapAxis.min[i], plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
 					var finalMax = Math.max.apply(Math, [mapAxis.max[i], plotBands && plotBands[0].to != plotBands[0].from ? plotBands[0].to : mapAxis.max[i],  plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
 
-					if(chartConf.yAxis[i].min){
-						if(chartConf.yAxis[i].min > finalMin)
-						chartConf.yAxis[i].min =  finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
-
-					} else {
+					if(chartConf.yAxis[i].min==undefined){
 						chartConf.yAxis[i].min = finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
 					}
-					if(chartConf.yAxis[i].max){
-						if(chartConf.yAxis[i].max < finalMax)
+					finalMin = chartConf.yAxis[i].min;
+
+					if(chartConf.yAxis[i].max==undefined){
 						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 
-					} else {
-						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 					}
-
-					infoFroDrill.push({"min":finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5,"max":finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9,"plotBands":plotBands,"plotLines":plotLines})
+					finalMax = chartConf.yAxis[i].max
+					infoFroDrill.push({"min":finalMin,"max":finalMax,"plotBands":plotBands,"plotLines":plotLines})
 				}
 				isBasic = true;
 			}
@@ -489,7 +484,7 @@ angular.module('chartInitializer')
 					.then(function(series){
 						var calculateMinMax = function (series){
 							var deferred = $q.defer();
-							if(chart.userOptions.chart.type!="pie"){
+							if(chart.userOptions.chart.type!="pie" && !chart.userOptions.plotOptions.column.stacking){
 								var yaxis = chart.yAxis;
 								var chartSeries = chart.series;
 								drilledSerie = series.serieName;
@@ -504,8 +499,8 @@ angular.module('chartInitializer')
 									}
 								}
 
-								var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
-								var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return 0} }));
+								var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return null} }));
+								var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return null} }));
 
 								var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
 								var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
@@ -527,7 +522,7 @@ angular.module('chartInitializer')
 							return deferred.promise;
 						}
 						calculateMinMax(series).then(function(result){
-							if(result){
+							if(result  && !chart.userOptions.plotOptions.column.stacking){
 								chart.yAxis[indexOfAxis].update({
 									max:result.max ,
 									min: result.min,
@@ -592,7 +587,7 @@ angular.module('chartInitializer')
 		var yAxisTitle={
 				text: ' '
 		};
-		if(chart.userOptions.chart.type!="pie"){
+		if(chart.userOptions.chart.type!="pie"  && !chart.userOptions.plotOptions.column.stacking){
 			setTimeout(function () {
 	            chart.yAxis[indexOfAxis].update({
 	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
@@ -617,15 +612,15 @@ angular.module('chartInitializer')
 	this.setExtremes = function (chartConf){
 		var mapAxis=  {min:{},max:{}};
 		for (var i =0; i < chartConf.series.length; i++){
-			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
-			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return 0} }));
-			if(mapAxis.min[chartConf.series[i].yAxis]){
+			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
+			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
+			if(mapAxis.min[chartConf.series[i].yAxis]!=undefined){
 				if(mapAxis.min[chartConf.series[i].yAxis] > min)
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			} else {
 				mapAxis.min[chartConf.series[i].yAxis] = min;
 			}
-			if(mapAxis.max[chartConf.series[i].yAxis]){
+			if(mapAxis.max[chartConf.series[i].yAxis]!=undefined){
 				if(mapAxis.max[chartConf.series[i].yAxis] < max)
 				mapAxis.max[chartConf.series[i].yAxis] = max;
 			} else {

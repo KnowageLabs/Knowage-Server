@@ -76,7 +76,12 @@ angular.module('chartRendererModule')
 								if(Object.keys(scope.colorMap).length<=scope.chartConf.series.length){
 									scope.colorMap = {};
 									for (var i = 0; i < scope.chartConf.series.length; i++) {
-										scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+										if(scope.chartConf.colors[i]){
+											scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+										} else {
+											//scope.chartConf.series.length%10-1
+											scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i%chartConf.colors.length]
+										}
 									}
 								}
 								scope.chartConf.colors = angular.copy(scope.chartConf.colorsCopy);
@@ -86,7 +91,11 @@ angular.module('chartRendererModule')
 							} else {
 								scope.colorMap = {};
 								for (var i = 0; i < scope.chartConf.series.length; i++) {
-									scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+									if(scope.chartConf.colors[i]){
+										scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+									} else {
+										scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i%chartConf.colors.length]
+									}
 								}
 							}
 
@@ -223,6 +232,15 @@ angular.module('chartRendererModule')
 
 			scope.$on('fullExpand',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
+				if(scope.chartConf.series.length > 0){
+                    for( var i=0 ; i < scope.chartConf.series.length ; i++ ){
+
+                        if(scope.chartConf.series[i].data[0].dataLabels){
+                            scope.chartConf.series[i].selected = scope.chartConf.series[i].data[0].dataLabels.enabled;
+                        }
+
+                    }
+                }
 
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
