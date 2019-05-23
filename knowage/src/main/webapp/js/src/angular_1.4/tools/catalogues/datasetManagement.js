@@ -1960,6 +1960,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
 			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.selectedDataSet.drivers = response.data.filterStatus;
+				var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.selectedDataSet.qbeDatamarts},true)[0];
+				 if (!selectedModel) delete $scope.selectedDataSet.qbeJSONQuery;
 			})
 		}
 	var selectDataset = function(item,index) {
