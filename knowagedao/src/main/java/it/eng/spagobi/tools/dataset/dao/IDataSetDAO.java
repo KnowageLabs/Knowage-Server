@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
@@ -70,7 +71,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public List<IDataSet> loadMyDataDataSets(UserProfile owner);
 
-	public List<SbiDataSet> loadFederatedDataSetsByFederatoinId(Integer id);
+	public List<DataSetBasicInfo> loadFederatedDataSetsByFederatoinId(Integer id);
+
+	public List<DataSetBasicInfo> loadDatasetsBasicInfoForLov();
 
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, Set<Domain> categoryList,
 			String implementation, Boolean showDerivedDatasets);
@@ -91,6 +94,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// ========================================================================================
 	// ???
 	// ========================================================================================
+
+	public List<DataSetBasicInfo> loadDatasetsBasicInfo();
 
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize);
 

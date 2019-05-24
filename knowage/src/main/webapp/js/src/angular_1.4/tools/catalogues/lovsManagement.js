@@ -245,6 +245,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			{"headerName": sbiModule_translate.load('sbi.ds.label'),"field":"label"},
 			{"headerName": sbiModule_translate.load('sbi.ds.name'),"field":"name"},
 			{"headerName": sbiModule_translate.load('sbi.ds.description'),"field":"description"},
+			{"headerName": sbiModule_translate.load('sbi.ds.owner'),"field":"owner"},
+			{"headerName": sbiModule_translate.load('sbi.ds.scope'),"field":"scope"}
 		];
 		
 		$scope.datasetGrid = {

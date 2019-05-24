@@ -61,6 +61,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -358,14 +359,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<SbiDataSet> loadFederatedDataSetsByFederatoinId(Integer id) {
+	public List<DataSetBasicInfo> loadFederatedDataSetsByFederatoinId(Integer id) {
 		logger.debug("IN");
-		List<SbiDataSet> results = new ArrayList<>();
+		List<DataSetBasicInfo> results = new ArrayList<>();
 		Session session = null;
 
 		try {
 			session = getSession();
-			Query query = session.createQuery("select distinct ds.label, ds.name from SbiDataSet ds where ds.federation.federation_id = :federation_id");
+			Query query = session.createQuery(
+					"select distinct new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.label, ds.name) from SbiDataSet ds where ds.federation.federation_id = :federation_id");
 			query.setInteger("federation_id", id);
 			results = query.list();
 		} catch (Exception e) {
@@ -775,6 +777,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	// ========================================================================================
 
 	@Override
+	public List<DataSetBasicInfo> loadDatasetsBasicInfo() {
+		logger.debug("IN");
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
+		Session session = null;
+
+		try {
+			session = getSession();
+			toReturn = session.createQuery(
+					"select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.id.dsId, ds.label, ds.name, ds.description, ds.owner, ds.scope.valueCd) from SbiDataSet ds where ds.active = ?")
+					.setBoolean(0, true).list();
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	@Override
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize) {
 
 		List<IDataSet> toReturn;
@@ -1083,6 +1108,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				session.close();
 		}
 		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public List<DataSetBasicInfo> loadDatasetsBasicInfoForLov() {
+		logger.debug("IN");
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
+		Session session = null;
+
+		try {
+			session = getSession();
+			toReturn = session.createQuery(
+					"select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.id.dsId, ds.label, ds.name, ds.description, ds.owner, ds.scope.valueCd) from SbiDataSet ds where ds.active = ? and ds.parameters is null")
+					.setBoolean(0, true).list();
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info for LOV", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+
+			logger.debug("OUT");
+		}
+
 		return toReturn;
 	}
 

@@ -64,6 +64,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
@@ -132,28 +133,12 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/datasetsforlov")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSetsForLOV(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+	public Response getDataSetsForLOV(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
-
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
 		try {
-
-			// The old implementation. (commented by: danristo)
-			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
-			JSONArray toReturn = new JSONArray();
-
-			for (IDataSet dataset : dataSets) {
-
-				JSONObject obj = new JSONObject();
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())) {
-					obj.put("id", dataset.getId());
-					obj.put("label", dataset.getLabel());
-					obj.put("name", dataset.getName());
-					obj.put("description", dataset.getDescription());
-					toReturn.put(obj);
-				}
-			}
-
-			return toReturn.toString();
+			toReturn = getDatasetManagementAPI().getDatasetsForLov();
+			return Response.ok(toReturn).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
@@ -635,15 +620,15 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/federated/{federationId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getFederatedDataSetsByFederetionId(@PathParam("federationId") Integer federationId) {
+	public Response getFederatedDataSetsByFederetionId(@PathParam("federationId") Integer federationId) {
 		logger.debug("IN");
-		JSONObject toReturn = new JSONObject();
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
 		try {
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			JSONArray dataSets = getDatasetManagementAPI().getFederatedDataSetsByFederation(federationId);
-			toReturn.put("results", dataSets);
-			return toReturn.toString();
+			toReturn = getDatasetManagementAPI().getFederatedDataSetsByFederation(federationId);
+
+			return Response.ok(toReturn).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {

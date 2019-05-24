@@ -36,7 +36,6 @@ import java.util.zip.InflaterInputStream;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,6 +64,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -80,7 +80,6 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
@@ -182,6 +181,10 @@ public class DatasetManagementAPI {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	public List<DataSetBasicInfo> getDatasetsForLov() {
+		return getDataSetDAO().loadDatasetsBasicInfoForLov();
 	}
 
 	public IDataSet getDataSet(String label) {
@@ -373,18 +376,10 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public JSONArray getFederatedDataSetsByFederation(Integer federationId) {
-		JSONArray toReturn = new JSONArray();
+	public List<DataSetBasicInfo> getFederatedDataSetsByFederation(Integer federationId) {
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
 		try {
-			List<SbiDataSet> federatedDatasets = getDataSetDAO().loadFederatedDataSetsByFederatoinId(federationId);
-			Iterator<SbiDataSet> it = federatedDatasets.iterator();
-			while (it.hasNext()) {
-				JSONObject dsJson = new JSONObject();
-				SbiDataSet dataSet = it.next();
-				dsJson.put("label", dataSet.getLabel());
-				dsJson.put("name", dataSet.getName());
-				toReturn.put(dsJson);
-			}
+			toReturn = getDataSetDAO().loadFederatedDataSetsByFederatoinId(federationId);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
