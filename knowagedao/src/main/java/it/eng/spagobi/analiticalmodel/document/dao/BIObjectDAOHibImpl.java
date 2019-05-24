@@ -2722,7 +2722,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List result = new ArrayList();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -2745,11 +2745,19 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				disjunction.add(descrCriterion);
 				hibQuery.add(disjunction);
 			}
+
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
+			Set<Integer> resultIds = new HashSet<>();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+				SbiObjects next = (SbiObjects) it.next();
+				Integer id = next.getBiobjId();
+				if(!resultIds.contains(id)) {
+					resultIds.add(id);
+					result.add(toBIObject(next, aSession));
+				}
 			}
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("HibernateException", he);
@@ -2763,7 +2771,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			logger.debug("OUT");
 		}
-		return realResult;
+		return result;
 	}
 
 	/**
