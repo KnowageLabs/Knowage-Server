@@ -13,6 +13,19 @@
 	<packaging>war</packaging>
 	<name>knowagecockpitengine</name>
 	
+	<build>
+		<finalName>knowagecockpitengine</finalName>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+      	</plugins>
+	</build>
+	
 	<profiles>
 		<profile>
 			<id>development</id>
@@ -24,15 +37,7 @@
            		<application.environment>development</application.environment>
             </properties>
          	<build>
-				<finalName>knowagecockpitengine</finalName>
 			    <plugins>
-			        <plugin>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
-			            </configuration>
-			        </plugin>
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
@@ -60,14 +65,11 @@
            		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
             </properties>
          	<build>
-				<finalName>knowagecockpitengine</finalName>
 			    <plugins>
 			        <plugin>
 			        	<groupId>org.apache.maven.plugins</groupId>
 			            <artifactId>maven-war-plugin</artifactId>
 			            <configuration>   		            	   
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
 							<warSourceExcludes>js/src/**</warSourceExcludes>
 							<webResources>
 								<resource>

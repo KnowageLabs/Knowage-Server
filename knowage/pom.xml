@@ -13,6 +13,19 @@
 	<packaging>war</packaging>
 	<name>knowage</name>
 	
+	<build>
+		<finalName>knowage</finalName>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+      	</plugins>
+	</build>
+	
 	<profiles>			
 		<profile>
 			<id>development</id>
@@ -24,7 +37,6 @@
            		<application.environment>development</application.environment>
             </properties>
 			<build>
-				<finalName>knowage</finalName>
 				<pluginManagement>
 				    <plugins>				        			
 						<plugin>
@@ -43,9 +55,7 @@
 								</configuration>
 							</configuration>
 						</plugin>
-				    </plugins>
-				  </pluginManagement>
-				  <plugins>
+				  
 				  		<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>exec-maven-plugin</artifactId>
@@ -66,8 +76,9 @@
 			                    </arguments>
 			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 							</configuration>
-				  	</plugin>
-				  </plugins>
+				  		</plugin>
+				    </plugins>
+				 </pluginManagement>
 				 <resources>
 			       <resource>
 			          <directory>src/main/resources</directory>
@@ -84,15 +95,12 @@
            		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
             </properties>
 			<build>
-				<finalName>knowage</finalName>
 				<pluginManagement>
 				    <plugins>
 				        <plugin>
 				        	<groupId>org.apache.maven.plugins</groupId>
 				            <artifactId>maven-war-plugin</artifactId>
 				            <configuration>
-				                <attachClasses>true</attachClasses>
-				                <classesClassifier>classes</classesClassifier>
 								<warSourceExcludes>js/src/**</warSourceExcludes>
 								<webResources>
 									<resource>
@@ -126,9 +134,7 @@
 								</configuration>
 							</configuration>
 						</plugin>
-				    </plugins>
-				  </pluginManagement>
-				  <plugins>
+
 				  		<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>exec-maven-plugin</artifactId>
@@ -151,6 +157,7 @@
 							</configuration>
 				  	</plugin>
 				  </plugins>
+				 </pluginManagement>
 				 <resources>
 			       <resource>
 			          <directory>src/main/resources</directory>
