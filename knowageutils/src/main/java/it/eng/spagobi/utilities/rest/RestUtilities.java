@@ -18,6 +18,7 @@
 package it.eng.spagobi.utilities.rest;
 
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -50,9 +51,34 @@ public class RestUtilities {
 
 	private static String proxyAddress;
 	private static int proxyPort;
+	private static int timeout;
+
+	private static final String HTTP_TIMEOUT_PROPERTY = "http.timeout";
+	private static final int HTTP_TIMEOUT_DEFAULT_VALUE = 1 * 1000;
+
+	static {
+		loadHttpTimeout();
+	}
+
+	private static void loadHttpTimeout() {
+		timeout = HTTP_TIMEOUT_DEFAULT_VALUE;
+
+		String timeoutProp = System.getProperty(HTTP_TIMEOUT_PROPERTY);
+		if (StringUtilities.isNotEmpty(timeoutProp)) {
+			try {
+				logger.debug("HTTP timeout found with value [" + timeoutProp + "].");
+				int timeoutValue = Integer.parseInt(timeoutProp);
+				if (timeoutValue >= 0) {
+					timeout = timeoutValue;
+				}
+			} catch (NumberFormatException e) {
+				logger.error("Unable to set HTTP timeout to value [" + timeoutProp + "]. It must be a number.", e);
+			}
+		}
+	}
 
 	/**
-	 * Fort testing purpose
+	 * For testing purpose
 	 *
 	 * @param proxyAddress
 	 */
@@ -61,12 +87,21 @@ public class RestUtilities {
 	}
 
 	/**
-	 * Fort testing purpose
+	 * For testing purpose
 	 *
 	 * @param proxyPort
 	 */
 	public static void setProxyPort(int proxyPort) {
 		RestUtilities.proxyPort = proxyPort;
+	}
+
+	/**
+	 * For testing purpose
+	 *
+	 * @param timeout
+	 */
+	public static void setTimeout(int timeout) {
+		RestUtilities.timeout = timeout;
 	}
 
 	/**
@@ -336,7 +371,7 @@ public class RestUtilities {
 
 	protected static HttpClient getHttpClient(String address) {
 		HttpClient client = new HttpClient();
-		client.setTimeout(500);
+		client.setTimeout(timeout);
 		setHttpClientProxy(client, address);
 		return client;
 	}
