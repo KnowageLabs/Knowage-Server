@@ -12,7 +12,7 @@ entities.service('entity_service',function(sbiModule_action_builder,$filter){
     }
 
     this.getEntityType = function(entities,fieldId){
-    	return $filter('filter')(entities,{$:fieldId},true)[0].iconCls;
+    	return $filter('filter')(entities,{$:fieldId},true)[0] ? $filter('filter')(entities,{$:fieldId},true)[0].iconCls : "";
     }
 
     this.isEntityType = function(entities,fieldId,type){

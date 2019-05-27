@@ -45,6 +45,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"order":i+1,
              		    	"ordering":query.fields[i].order,
              		    	"temporal":query.fields[i].temporal,
+             		    	"type":query.fields[i].type,
              		    	"iconCls":query.fields[i].iconCls ? query.fields[i].iconCls : query.fields[i].fieldType,
              		    	"filters": [],
              		    	"havings": []

@@ -176,7 +176,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"leftOperandValue": $scope.ngModel.field.id,
 				"leftOperandDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
 				"leftOperandLongDescription": $scope.ngModel.field.entity+ " : " + $scope.ngModel.field.name,
-				"leftOperandType": "Field Content",
+				"leftOperandType":  $scope.ngModel.field.type== "inline.calculated.field" ? "inline.calculated.field":"Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
 				"leftOperandAlias": $scope.ngModel.field.name,
