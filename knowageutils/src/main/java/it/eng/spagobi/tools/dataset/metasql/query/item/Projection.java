@@ -89,4 +89,11 @@ public class Projection {
 		return dataSet;
 	}
 
+	public boolean hasAlias(){
+		return alias != null;
+	}
+
+	public String getAliasOrName() {
+		return hasAlias() ? getAlias() : getName();
+	}
 }
