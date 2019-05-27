@@ -335,7 +335,11 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (dependencies != null && dependencies.size() > 0 && drivers != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
-			buildWhereClause(buffer, dependencies, drivers);
+			String queryLowerCase = getQueryDefinition().toLowerCase();
+			int index = queryLowerCase.indexOf("order by");
+			String orderByClause = getQueryDefinition().substring(index);
+			buildWhereClause(buffer, dependencies, BIObjectParameters);
+			buffer.append(" " + orderByClause);
 			result = buffer.toString();
 		}
 		logger.debug("OUT.result=" + result);
