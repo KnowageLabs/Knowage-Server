@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
-					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].alias === fields[f].header){
+					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header){
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
@@ -129,12 +129,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function headerTemplate() { 
 			var cellClasses = 'cellContainer ';
-			if($scope.ngModel.style && $scope.ngModel.style.th && $scope.ngModel.style.th.multiline) cellClasses = 'cellContainer multiLineHeader';
-			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+$scope.ngModel.style.th["background-color"]+'">'+
+			var headerStyle = {};
+			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = $scope.ngModel.style.th;
+			if(headerStyle && headerStyle.multiline) cellClasses = 'cellContainer multiLineHeader';
+			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
 					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
-					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'">'+
-					'       <div class="'+cellClasses+'" style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'">'+
-					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+$scope.ngModel.style.th.color+';font-style:'+$scope.ngModel.style.th["font-style"]+';font-size:'+$scope.ngModel.style.th["font-size"]+';font-weight:'+$scope.ngModel.style.th["font-weight"]+'"></span></div>'+
+					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+headerStyle["justify-content"]+'">'+
+					'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
+					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+headerStyle.color+';font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'"></span></div>'+
 					'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
 					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
 					'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
