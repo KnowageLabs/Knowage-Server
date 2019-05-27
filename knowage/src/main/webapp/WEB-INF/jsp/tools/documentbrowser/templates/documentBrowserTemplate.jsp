@@ -168,7 +168,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-content>
 			
 
-		<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="openDocumentDetail" ng-class="{'full-screen-sidenav': smallScreen}" > 
+		<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" ng-class="{'full-screen-sidenav': smallScreen}" > 
 			
 			<md-toolbar class="ternaryToolbar">
 				<div layout="row" layout-align="space-around center">

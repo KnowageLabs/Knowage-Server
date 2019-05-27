@@ -41,7 +41,7 @@ function documentBrowserFunction($window,
 	}
 
 	$scope.columns = [
-		{"headerName":$scope.translate.load('kn.documentbrowser.type'),"field":"typeCode"},
+		{"headerName":$scope.translate.load('kn.documentbrowser.type'),"field":"typeCode",width: 200,suppressSizeToFit:true},
 		{"headerName":$scope.translate.load('kn.documentbrowser.name'),"field":"name"},
 		{"headerName":$scope.translate.load('kn.documentbrowser.author'),"field":"creationUser"},
 		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},
@@ -49,7 +49,7 @@ function documentBrowserFunction($window,
 	
 		if(eval(sbiModule_user.isAdminUser) || eval(sbiModule_user.isSuperAdmin) || eval(sbiModule_user.isTechnicalUser) || eval(sbiModule_user.isTesterUser)) {
 			$scope.columns.splice(2, 0, {"headerName":$scope.translate.load('kn.documentbrowser.label'),"field":"viewLabel"});
-			$scope.columns.splice(4, 0, {"headerName":$scope.translate.load('kn.documentbrowser.status'),"field":"stateCodeStr",cellRenderer: statusRenderer});
+			$scope.columns.splice(4, 0, {"headerName":$scope.translate.load('kn.documentbrowser.status'),"field":"stateCodeStr",cellRenderer: statusRenderer,width: 200,suppressSizeToFit:true});
 			$scope.columns.splice(5, 0, {"headerName":$scope.translate.load('kn.documentbrowser.visible'),"field":"visible",cellRenderer: visibilityRenderer,"cellStyle":{"display":"inline-flex","justify-content":"center"},
 				suppressFilter:true,width: 100,suppressSizeToFit:true,suppressMovable:true});
 		}
