@@ -7,12 +7,12 @@
 	</md-toolbar>
 	<md-card-content flex layout="column" class="noPadding">
 		<md-tabs flex md-border-bottom >
-	  		<md-tab label="{{translate.load('sbi.cockpit.style')}}">
+	  		<md-tab label="{{::translate.load('sbi.cockpit.style')}}">
 	  		
 	  			<md-card>
 					<md-toolbar class="ternaryToolbar" >
 						<div class="md-toolbar-tools" layout="row">
-							<h2>{{translate.load('sbi.cockpit.widget.table.rows')}}</h2>
+							<h2>{{::translate.load('sbi.cockpit.widget.table.rows')}}</h2>
 							<span flex></span>
 						</div>
 					</md-toolbar>
@@ -20,20 +20,20 @@
 						<div flex layout="column" ng-cloak>
 							<div layout="row">
 								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
-									{{translate.load('sbi.cockpit.widget.selection.showdataset')}}
+									{{::translate.load('sbi.cockpit.widget.selection.showdataset')}}
 								</md-checkbox>
 								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showColumn" class="md-block" flex="20">
-									Show Column
+									{{::translate.load('sbi.cockpit.widget.selection.showcolumn')}}
 								</md-checkbox>
 								<md-input-container flex class="md-block" >
-									<label>{{translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
+									<label>{{::translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
 									<input class="input_class" ng-model="localModel.style.row.height" type="number" />
 								</md-input-container>
 							</div>
 							
 							<div layout="row">
 								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" ng-change="changeAlternatedRows()" class="md-block" flex="20">
-									{{translate.load('sbi.cockpit.widget.selection.row.alternate')}}
+									{{::translate.load('sbi.cockpit.widget.selection.row.alternate')}}
 								</md-checkbox>
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
@@ -51,7 +51,7 @@
 				<md-card>
 					<md-toolbar class="ternaryToolbar" >
 						<div class="md-toolbar-tools" layout="row">
-							<md-switch ng-model="localModel.style.chips.enabled" ng-change="toggleChips()">{{translate.load('sbi.cockpit.widget.selection.chips')}}</md-switch>
+							<md-switch ng-model="localModel.style.chips.enabled" ng-change="toggleChips()">{{::translate.load('sbi.cockpit.widget.selection.chips')}}</md-switch>
 							<span flex></span>
 						</div>
 					</md-toolbar>
@@ -59,11 +59,11 @@
 						<div flex layout="column" ng-cloak>
 							<div layout="row">
 								<md-input-container flex class="md-block">
-									<label>{{translate.load('sbi.cockpit.widget.selection.chips.color')}}</label>
+									<label>{{::translate.load('sbi.cockpit.widget.selection.chips.color')}}</label>
 									<color-picker options="colorPickerPropertyChips" ng-model="localModel.style.chips.color"/>
 								</md-input-container>
 								<md-input-container flex class="md-block">
-									<label>{{translate.load('sbi.cockpit.widget.selection.chips.background')}}</label>
+									<label>{{::translate.load('sbi.cockpit.widget.selection.chips.background')}}</label>
 									<color-picker options="colorPickerPropertyChips" ng-model="localModel.style.chips['background-color']"/>
 								</md-input-container>
 							</div>
@@ -71,6 +71,28 @@
 					</md-card-content>
 				</md-card>
 	  		
+	  			<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{::translate.load('sbi.cockpit.widget.selection.nomessage')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div flex layout="column" ng-cloak>
+							<div layout="row">
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.noSelectionsMessage" class="md-block" flex="20">
+									{{::translate.load('sbi.cockpit.widget.selection.disablemessage')}}
+								</md-checkbox>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.widget.selection.message')}}</label>
+									<input class="input_class" ng-disabled="localModel.style.noSelectionsMessage" ng-model="localModel.style.noSelectionsMessageText" type="text" />
+									<div class="hint">{{::translate.load('sbi.cockpit.widget.selection.messagehint')}}</div>
+								</md-input-container>
+							</div>
+						</div>
+					</md-card-content>
+				</md-card>
 	  		
 		     	<cockpit-style-configurator widget ng-model="localModel.style">
 		     	</cockpit-style-configurator>
@@ -79,10 +101,10 @@
     </md-card-content>
     <md-card-actions layout="row" layout-align="end center">
       <md-button ng-click="cancelConfiguration()" class="md-raised">
-         {{translate.load('sbi.generic.cancel')}}
+         {{::translate.load('sbi.generic.cancel')}}
       </md-button>
       <md-button ng-click="saveConfiguration()" class="md-raised md-primary">
-         {{translate.load('sbi.generic.save')}}
+         {{::translate.load('sbi.generic.save')}}
       </md-button>
     </md-card-actions>
 </md-card>
