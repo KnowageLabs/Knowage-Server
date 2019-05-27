@@ -279,7 +279,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.settings.pagination.enabled && $scope.ngModel.settings.pagination.frontEnd && $scope.ngModel.settings.pagination.itemsNumber) $scope.advancedTableGrid.api.paginationSetPageSize($scope.ngModel.settings.pagination.itemsNumber);
 				resizeColumns();
 				$scope.hideWidgetSpinner();
-			}
+			}else $scope.hideWidgetSpinner();
 			
 			if(nature == 'init'){
 				$timeout(function(){
