@@ -192,14 +192,6 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						class: "fa fa-table",
 						type : "table"
 					},{
-						name:"Advanced Table",
-						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),
-						tags : ["advanced"],
-						img : "5.png",
-						class: "fa fa-table",
-						beta: true,
-						type : "advanced-table"
-					},{
 						name:"Cross Table",
 						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.cross"),
 						tags : ["table","pivot","cross"],

@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
-		.directive('cockpitAdvancedTableWidget',function(){
+		.directive('cockpitTableWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/advancedTableWidget/templates/advancedTableWidgetTemplate.html',
 				controller: cockpitAdvancedTableWidgetControllerFunction,
@@ -495,6 +495,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	/**
 	 * register the widget in the cockpitModule_widgetConfigurator factory
 	 */
-	addWidgetFunctionality("advanced-table",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
+	addWidgetFunctionality("table",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
 
 })();

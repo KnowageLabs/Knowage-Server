@@ -581,10 +581,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
 	$scope.availableIcons = knModule_fontIconsService.icons;	
-
-	$scope.getTemplateUrl = function(template){
-		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
-	}
 	
 	$scope.isDateColumn = function(type){
 		if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){

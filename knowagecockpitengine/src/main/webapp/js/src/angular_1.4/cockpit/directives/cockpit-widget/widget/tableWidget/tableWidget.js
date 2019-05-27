@@ -1033,6 +1033,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
-	addWidgetFunctionality("table",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
+	addWidgetFunctionality("old-table",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
 
 })();

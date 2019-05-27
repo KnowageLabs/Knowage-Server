@@ -73,9 +73,7 @@ END-PRODUCTION -->
 
 <!-- angular table -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/cockpit-angular-table/CockpitAngularTable.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/cockpit-table/cockpitTable.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/accessible-angular-table/AccessibleAngularTable.js")%>"></script>
+
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script>
 
 <!-- document tree -->
