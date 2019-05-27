@@ -35,10 +35,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import it.eng.spagobi.utilities.database.IDataBase;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
@@ -68,9 +64,13 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -103,6 +103,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static String ALIAS_DELIMITER = null;
 	private static String VALUE_ALIAS = "VALUE";
 	private static String DESCRIPTION_ALIAS = "DESCRIPTION";
+
 	/**
 	 * constructor.
 	 */
@@ -112,8 +113,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * constructor.
 	 *
-	 * @param dataDefinition the xml representation of the lov
-	 * @throws SourceBeanException the source bean exception
+	 * @param dataDefinition
+	 *            the xml representation of the lov
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
 
 	public QueryDetail(String dataDefinition) throws SourceBeanException {
@@ -123,8 +126,10 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * loads the lov from an xml string.
 	 *
-	 * @param dataDefinition the xml definition of the lov
-	 * @throws SourceBeanException the source bean exception
+	 * @param dataDefinition
+	 *            the xml definition of the lov
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
 	@Override
 	public void loadFromXML(String dataDefinition) throws SourceBeanException {
@@ -331,7 +336,11 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (dependencies != null && dependencies.size() > 0 && BIObjectParameters != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
+			String queryLowerCase = getQueryDefinition().toLowerCase();
+			int index = queryLowerCase.indexOf("order by");
+			String orderByClause = getQueryDefinition().substring(index);
 			buildWhereClause(buffer, dependencies, BIObjectParameters);
+			buffer.append(" " + orderByClause);
 			result = buffer.toString();
 		}
 		logger.debug("OUT.result=" + result);
@@ -491,8 +500,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @param dataSourceDialect
 	 * @return
 	 */
-    private boolean isDateFormat(DatabaseDialect dialect) {
-        return DatabaseDialect.TERADATA.equals(dialect);
+	private boolean isDateFormat(DatabaseDialect dialect) {
+		return DatabaseDialect.TERADATA.equals(dialect);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -600,7 +609,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "'" + escapeString(value) + "'";
 		} else if (parameterType.equals(SpagoBIConstants.DATE_TYPE_FILTER)) {
 			validateDate(value);
-            DatabaseDialect dialect = getDataSourceDialect();
+			DatabaseDialect dialect = getDataSourceDialect();
 			String toReturn = composeStringToDt(dialect, value);
 			return toReturn;
 		} else {
@@ -613,7 +622,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (!notValidate) {
 			validateDate(value);
 		}
-        DatabaseDialect dialect = getDataSourceDialect();
+		DatabaseDialect dialect = getDataSourceDialect();
 		String toReturn = composeStringToDt(dialect, value);
 		return toReturn;
 	}
@@ -634,22 +643,22 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 	}
 
-    private DatabaseDialect getDataSourceDialect() {
+	private DatabaseDialect getDataSourceDialect() {
 		return databaseDialect;
 	}
 
 	private void setDataSourceDialect() {
-        IDataSource ds;
-        try {
-            ds = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSource);
+		IDataSource ds;
+		try {
+			ds = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSource);
 
-		if (ds != null) {
-                IDataBase dataBase = DataBaseFactory.getDataBase(ds);
-                databaseDialect = dataBase.getDatabaseDialect();
-                ALIAS_DELIMITER = dataBase.getAliasDelimiter();
+			if (ds != null) {
+				IDataBase dataBase = DataBaseFactory.getDataBase(ds);
+				databaseDialect = dataBase.getDatabaseDialect();
+				ALIAS_DELIMITER = dataBase.getAliasDelimiter();
 			}
-        } catch (EMFUserError | DataBaseException e) {
-            throw new SpagoBIRuntimeException(e);
+		} catch (EMFUserError | DataBaseException e) {
+			throw new SpagoBIRuntimeException(e);
 		}
 	}
 
@@ -660,41 +669,41 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		return StringEscapeUtils.escapeSql(value);
 	}
 
-    private String composeStringToDt(DatabaseDialect dialect, String date) {
+	private String composeStringToDt(DatabaseDialect dialect, String date) {
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
 		if (dialect != null) {
-            if (dialect.equals(DatabaseDialect.MYSQL)) {
+			if (dialect.equals(DatabaseDialect.MYSQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
 				} else {
 					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %h:%i:%s') ";
 				}
-            } else if (dialect.equals(DatabaseDialect.ORACLE)) {
+			} else if (dialect.equals(DatabaseDialect.ORACLE)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-            } else if (dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
+			} else if (dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-            } else if (dialect.equals(DatabaseDialect.POSTGRESQL)) {
+			} else if (dialect.equals(DatabaseDialect.POSTGRESQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				} else {
 					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-            } else if (dialect.equals(DatabaseDialect.SQLSERVER)) {
+			} else if (dialect.equals(DatabaseDialect.SQLSERVER)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = date;
 				} else {
 					toReturn = "'" + date + "'";
 				}
-            } else if (dialect.equals(DatabaseDialect.TERADATA)) {
+			} else if (dialect.equals(DatabaseDialect.TERADATA)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " CAST(" + date + " AS DATE FORMAT 'dd/mm/yyyy') ";
 				} else {
@@ -725,7 +734,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "LIKE";
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 			BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
-            Assert.assertNotNull(fatherPar, "Parent parameter cannot be null");
+			Assert.assertNotNull(fatherPar, "Parent parameter cannot be null");
 			List values = fatherPar.getParameterValues();
 			if (values != null && values.size() > 1) {
 				return "IN";
@@ -891,7 +900,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		StringBuffer buffer = new StringBuffer();
 
-        if (!lovType.equals("treeinner")) {
+		if (!lovType.equals("treeinner")) {
 			buffer.append("SELECT ");
 			buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
 			buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
@@ -920,7 +929,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-    public List getProfileAttributeNames() {
+	public List getProfileAttributeNames() {
 		List names = new ArrayList();
 		String query = getQueryDefinition();
 		while (query.indexOf("${") != -1) {
@@ -954,7 +963,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-    public boolean requireProfileAttributes() {
+	public boolean requireProfileAttributes() {
 		boolean contains = false;
 		String query = getQueryDefinition();
 		if (query.indexOf("${") != -1) {
@@ -1247,7 +1256,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *             the exception
 	 */
 	@Override
-    public Set<String> getParameterNames(){
+	public Set<String> getParameterNames() {
 		Set<String> names = new HashSet<String>();
 		String query = getQueryDefinition();
 		while (query.indexOf(StringUtilities.START_PARAMETER) != -1) {
