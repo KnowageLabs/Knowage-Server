@@ -343,9 +343,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(params.source != "sizeColumnsToFit"){
 				if(params.finished){
 					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-						if($scope.ngModel.content.columnSelectedOfDataset[c].name == params.columns[0].colDef.headerName){
-							if($scope.ngModel.content.columnSelectedOfDataset[c].style) $scope.ngModel.content.columnSelectedOfDataset[c].style.width = params.columns[0].actualWidth;
-							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.columns[0].actualWidth};	
+						if($scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == params.column.colDef.headerName){
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style) $scope.ngModel.content.columnSelectedOfDataset[c].style.width = params.column.actualWidth;
+							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.column.actualWidth};	
 							break;
 						}
 					}
