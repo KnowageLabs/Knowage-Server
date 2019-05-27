@@ -310,12 +310,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 
     $scope.checkSolrRequirements = function(){
         if(cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId).type == 'SbiSolrDataSet'){
-            for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
-                var column = $scope.newModel.content.columnSelectedOfDataset[i];
-                if(column.fieldType == 'MEASURE' && column.aggregationSelected != 'NONE'){
-                    return !$scope.newModel.settings.pagination.enabled || $scope.newModel.settings.pagination.frontEnd;
-                }
-            }
+            return !$scope.newModel.settings.pagination.enabled || $scope.newModel.settings.pagination.frontEnd;
         }
         return true;
     }

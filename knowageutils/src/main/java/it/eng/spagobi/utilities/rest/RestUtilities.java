@@ -272,8 +272,7 @@ public class RestUtilities {
 		}
 
 		try {
-			HttpClient client = new HttpClient();
-			setHttpClientProxy(client, address);
+			HttpClient client = getHttpClient(address);
 			int statusCode = client.executeMethod(method);
 			Header[] headers = method.getResponseHeaders();
 			String res = method.getResponseBodyAsString();
@@ -316,8 +315,7 @@ public class RestUtilities {
 			}
 		}
 
-		HttpClient client = new HttpClient();
-		setHttpClientProxy(client, address);
+		HttpClient client = getHttpClient(address);
 		int statusCode = client.executeMethod(method);
 		logger.debug("Status code " + statusCode);
 		Header[] headers = method.getResponseHeaders();
@@ -334,6 +332,13 @@ public class RestUtilities {
 				}
 			}
 		};
+	}
+
+	protected static HttpClient getHttpClient(String address) {
+		HttpClient client = new HttpClient();
+		client.setTimeout(500);
+		setHttpClientProxy(client, address);
+		return client;
 	}
 
 	private static void setHttpClientProxy(HttpClient client, String address) {

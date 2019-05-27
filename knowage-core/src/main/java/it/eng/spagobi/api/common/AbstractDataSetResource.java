@@ -150,20 +150,23 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                 loadColumnAliasToName(categoriesObject, columnAliasToName);
                 loadColumnAliasToName(measuresObject, columnAliasToName);
 
+                Map<String, Object> optionMap;
+                if (options != null && !options.isEmpty()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options, new TypeReference<Map<String, Object>>() {}));
+                } else {
+                    optionMap = new HashMap<>();
+                }
+                applyOptions(dataSet, optionMap);
+
                 projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
-                groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName));
+                groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName, hasSolrFacetPivotOption(dataSet, optionMap)));
                 sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 
                 if (summaryRow != null && !summaryRow.isEmpty()) {
                     JSONObject summaryRowObject = new JSONObject(summaryRow);
                     JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
                     summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
-                }
-
-                if (options != null && !options.isEmpty()) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    Map<String, Object> optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options, new TypeReference<Map<String, Object>>() {}));
-                    applyOptions(dataSet, isNearRealtime, optionMap, groups.isEmpty());
                 }
             }
 
@@ -211,16 +214,45 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         }
     }
 
-    private void applyOptions(IDataSet dataSet, boolean isNearRealtime, Map<String, Object> options, boolean emptyGroups) {
-        if (DatasetEvaluationStrategyType.SOLR.equals(dataSet.getEvaluationStrategy(isNearRealtime))
-                && Boolean.TRUE.equals(options.get("solrFacetPivot"))
-                && !emptyGroups) {
-            if (dataSet instanceof VersionedDataSet) {
-                VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
-                dataSet = versionedDataSet.getWrappedDataset();
-            }
-            SolrDataSet solrDataSet = (SolrDataSet) dataSet;
-            solrDataSet.setEvaluationStrategy(DatasetEvaluationStrategyType.SOLR_FACET_PIVOT);
+    private void applyOptions(IDataSet dataSet, Map<String, Object> options) {
+        if (hasSolrFacetPivotOption(dataSet, options)) {
+            applySolrFacetPivotOption(dataSet);
+        }
+    }
+
+    private void applySolrFacetPivotOption(IDataSet dataSet) {
+        if (dataSet instanceof VersionedDataSet) {
+            VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+            dataSet = versionedDataSet.getWrappedDataset();
+        }
+        SolrDataSet solrDataSet = (SolrDataSet) dataSet;
+        solrDataSet.setEvaluationStrategy(DatasetEvaluationStrategyType.SOLR_FACET_PIVOT);
+    }
+
+    private boolean hasSolrFacetPivotOption(IDataSet dataSet, Map<String, Object> options) {
+        return isSolrDataset(dataSet)
+                && Boolean.TRUE.equals(options.get("solrFacetPivot"));
+    }
+
+    private boolean isSolrDataset(IDataSet dataSet) {
+        if(dataSet instanceof VersionedDataSet){
+            dataSet = ((VersionedDataSet)dataSet).getWrappedDataset();
+        }
+        return dataSet instanceof SolrDataSet;
+    }
+
+    protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+            throws JSONException {
+        ArrayList<Projection> projections = new ArrayList<>(categories.length() + measures.length());
+        addProjections(dataSet, categories, columnAliasToName, projections);
+        addProjections(dataSet, measures, columnAliasToName, projections);
+        return projections;
+    }
+
+    private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<Projection> projections) throws JSONException {
+        for (int i = 0; i < categories.length(); i++) {
+            JSONObject category = categories.getJSONObject(i);
+            addProjection(dataSet, projections, category, columnAliasToName);
         }
     }
 
@@ -238,29 +270,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                 projections.add(projection);
             }
         } else {
-            // function Objetc contains only one aggregation
+            // only one aggregation function
             Projection projection = getProjection(dataSet, catOrMeasure, columnAliasToName);
             projections.add(projection);
         }
 
-    }
-
-    protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-            throws JSONException {
-        ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
-
-        for (int i = 0; i < categories.length(); i++) {
-            JSONObject category = categories.getJSONObject(i);
-            addProjection(dataSet, projections, category, columnAliasToName);
-        }
-
-        for (int i = 0; i < measures.length(); i++) {
-            JSONObject measure = measures.getJSONObject(i);
-            addProjection(dataSet, projections, measure, columnAliasToName);
-
-        }
-
-        return projections;
     }
 
     private Projection getProjectionWithFunct (IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
@@ -305,7 +319,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         return columnAlias;
     }
 
-    protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+    protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName, boolean forceGroups)
             throws JSONException {
         ArrayList<Projection> groups = new ArrayList<>(0);
 
@@ -314,13 +328,33 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         for (int i = 0; i < categories.length(); i++) {
             JSONObject category = categories.getJSONObject(i);
             String functionName = category.optString("funct");
-            if (hasAggregatedMeasures || AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT)) {
+            if (forceGroups || hasAggregatedMeasures  || hasCountAggregation(functionName)) {
                 Projection projection = getProjection(dataSet, category, columnAliasToName);
                 groups.add(projection);
             }
         }
 
+        if(forceGroups) {
+            for (int i = 0; i < measures.length(); i++) {
+                JSONObject measure = measures.getJSONObject(i);
+                String functionName = measure.optString("funct");
+                if (hasNoneAggregation(functionName)) {
+                    Projection projection = getProjection(dataSet, measure, columnAliasToName);
+                    groups.add(projection);
+                }
+            }
+        }
+
         return groups;
+    }
+
+    private boolean hasCountAggregation(String functionName) {
+        return AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT)
+                || AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT_DISTINCT);
+    }
+
+    private boolean hasNoneAggregation(String functionName) {
+        return AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE);
     }
 
     private boolean hasAggregations(JSONArray fields) throws JSONException {
