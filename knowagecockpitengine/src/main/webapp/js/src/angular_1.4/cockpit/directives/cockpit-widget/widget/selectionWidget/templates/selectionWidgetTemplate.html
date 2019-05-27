@@ -34,8 +34,9 @@
 		</span>
      </div>
      
-	<div layout="column" flex layout-align="center center" ng-if="selection.length == 0" layout-padding>
-		<span class="kn-info">{{::translate.load('sbi.cockpit.selections.noselections')}}</span>
+	<div layout="column" flex layout-align="center center" ng-if="selection.length == 0 && !ngModel.style.noSelectionsMessage" layout-padding>
+		<span class="kn-info" ng-if="!ngModel.style.noSelectionsMessageText">{{::translate.load('sbi.cockpit.selections.noselections')}}</span>
+		<span class="kn-info" ng-if="ngModel.style.noSelectionsMessageText">{{ngModel.style.noSelectionsMessageText}}</span>
 	</div>	
 </div>
 
