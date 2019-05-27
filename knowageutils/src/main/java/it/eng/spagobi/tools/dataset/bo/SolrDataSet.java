@@ -121,11 +121,22 @@ public class SolrDataSet extends RESTDataSet {
         setDataReader(new SolrDataReader("$.response.docs.[*]", getJsonPathAttributes()));
     }
 
-    private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes() {
-        JSONArray solrFields = getSolrFields();
-        Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
-        return getJsonPathAttributes(solrFieldTypes);
-    }
+	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes() {
+		JSONArray solrFields = getSolrFields();
+
+		String config = getConfiguration();
+        try {
+            JSONObject jsonConfig = new JSONObject(config);
+            jsonConfig.put("solrFields", solrFields.toString());
+            setConfiguration(jsonConfig.toString());
+        } catch (JSONException e) {
+            throw new ConfigurationException("Unable to update Solr fields", e);
+        }
+        solrConfiguration.setSolrFields(solrFields.toString());
+
+		Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
+		return getJsonPathAttributes(solrFieldTypes);
+	}
 
     private Map<String, String> getSolrFieldTypes(JSONArray solrFields) {
         Map<String, String> solrFieldTypes = new HashMap<>(solrFields.length());
@@ -151,12 +162,13 @@ public class SolrDataSet extends RESTDataSet {
 
 	public JSONArray getSolrFields() {
         RESTDataProxy dataProxy = getDataProxy();
-        JSONArray solrFields;
+        JSONArray solrFields = new JSONArray();
         String configurationSolrFields = solrConfiguration.getSolrFields();
         try {
             if(configurationSolrFields != null){
                 solrFields = new JSONArray(configurationSolrFields);
-            }else {
+            }
+            if(solrFields.length() == 0) {
                 RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
                         solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json",
                         dataProxy.getRequestHeaders(), null,
@@ -170,7 +182,6 @@ public class SolrDataSet extends RESTDataSet {
             }
 		} catch (Exception e) {
 			logger.error("Unable to read Solr fields", e);
-            solrFields = new JSONArray();
 		}
 
 		return solrFields;
