@@ -63,6 +63,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -136,11 +137,11 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback,
-							  @QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-							  @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
-							  @QueryParam("spatialOnly") boolean spatialOnly) {
+			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
+			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
+			@QueryParam("spatialOnly") boolean spatialOnly) {
 		logger.debug("IN");
 
 		if ("no".equalsIgnoreCase(includeDerived)) {
@@ -172,11 +173,30 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/basicinfo/all")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDatasetsBasicInfo() {
+		logger.debug("IN");
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
+		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+
+		try {
+			toReturn = dsDAO.loadDatasetsBasicInfo();
+			return Response.ok(toReturn).build();
+		} catch (Exception e) {
+			logger.error("Error while loading the datasets basic info", e);
+			throw new SpagoBIRuntimeException("Error while loading the datasets basic info", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	@Override
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
 		return super.getDataSet(label);
 	}
@@ -185,13 +205,13 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		return super.execute(label, body);
 	}
 
 	@POST
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
@@ -227,7 +247,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@PUT
 	@Path("/{label}")
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
 
@@ -264,7 +284,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	@DELETE
 	@Path("/{label}")
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		return super.deleteDataset(label);
 	}
@@ -467,7 +487,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	private SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
-								   Map<String, String> columnAliasToColumnName) throws JSONException {
+			Map<String, String> columnAliasToColumnName) throws JSONException {
 		SimpleFilter filter = null;
 
 		if (operatorString != null) {
@@ -534,10 +554,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
-												 @DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
-												 @QueryParam("nearRealtime") boolean isNearRealtime) {
+			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
+			@QueryParam("nearRealtime") boolean isNearRealtime) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -581,7 +601,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{label}/preview")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePreview(@PathParam("label") String label, String body) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
@@ -660,7 +680,7 @@ public class DataSetResource extends AbstractDataSetResource {
 						JSONObject jsonParameter = jsonParameters.getJSONObject(i);
 						String columnName = jsonParameter.getString("name");
 						json.put(columnName, jsonParameter.get("defaultValue"));
-						if(jsonPars != null) {
+						if (jsonPars != null) {
 							for (int j = 0; j < jsonPars.length(); j++) {
 								JSONObject jsonPar = jsonPars.getJSONObject(j);
 								if (columnName.equals(jsonPar.getString("name"))) {
@@ -684,7 +704,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/addDatasetInCache")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT})
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {

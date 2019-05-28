@@ -18,8 +18,8 @@
 (function () {
 angular
         .module('DocumentDetails')
-        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService',
-        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService){
+        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', 'sbiModule_config', 'sbiModule_messaging',
+        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, sbiModule_config, sbiModule_messaging){
 
         	 var self = this;
         	 self.documentService = DocumentService;
@@ -40,7 +40,8 @@ angular
              self.datasets1 = documentAndInfo.datasets;
              self.datasets =[];
              self.document = self.documentService.document;
-             console.log(self.document)
+             self.selectedDataset = {};
+             
              if(self.document.visible != false )self.document.visible = true;
 
              if(self.document.refreshSeconds == null)
@@ -55,6 +56,22 @@ angular
              self.file = templateService.file;
              var pathForFolderLocation = [];
 
+             var initializeDataset = function() {
+            	 if(!self.document.hasOwnProperty('dataSetId'))
+            		 self.selectedDataset.name = "";
+            	 else {
+            		 crudService.get("1.0/datasets/dataset/id", self.document.dataSetId)
+            		 	.then(function(response){
+            		 		var dataset = response.data[0];
+            		 		self.selectedDataset.name = dataset.name;
+            		 	}, function(response){
+            		 		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+            		 	});
+            	 }
+             }             
+             
+             initializeDataset();
+             
              var createStringPath = function(folderArray){
             	 var stringPath = "";
             	 for(var i = folderArray.length-1 ; i >= 0; i-- ){
@@ -136,23 +153,88 @@ angular
               };
 
              self.getDatasets = function(){
-              	 crudService.get("2.0/datasets","").then(function(response){
-              		self.datasets = response.data;
-              		self.dataSetsComboBox = getDataSetNames(self.datasets);
-                 	});
+            	 if (self.datasets.length == 0) {
+	              	 crudService.get("2.0/datasets/basicinfo/all", "").then(function(response){
+	              		self.datasets = response.data;
+	              		addDataset();
+	                 	}, function(response){
+	                 		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	                 	});
+            	 } else {
+            		 addDataset();
+            	 }
              }
-             self.getDatasets();
-
-             var getDataSetNames = function(allDatasets){
-            	 var dataSetIdLabels = [];
-		         	for(var i = 0; i < allDatasets.length;i++){
-		         		var newDataset = {};
-		         		newDataset.id = allDatasets[i].id.dsId;
-		         		newDataset.label = allDatasets[i].label;
-		         		dataSetIdLabels.push(newDataset);
-		            }
-		         return dataSetIdLabels;
+             
+             var addDataset = function() {
+         		var config = {
+        				attachTo: angular.element(document.body),
+        				templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/documentdetails/templates/datasets.html',
+        				position: $mdPanel.newPanelPosition().absolute().center(),
+        				fullscreen: true,
+        				locals: {listOfDatasets: self.datasets, saveDatasetFn: self.saveDataset},
+        				controller: addDatasetControllerFunction,
+        				clickOutsideToClose: false,
+        				escapeToClose: true,
+        		};
+        		
+        		$mdPanel.open(config);
              }
+             
+         	function addDatasetControllerFunction($scope, mdPanelRef, sbiModule_translate, listOfDatasets, saveDatasetFn) {
+        		$scope.translate = sbiModule_translate;
+        		$scope.listOfDatasets = listOfDatasets;
+        		
+        		$scope.datasetSearchText = '';
+        		
+        		$scope.filterDataset = function() {
+        			var tempDatasetList = $filter('filter')($scope.listOfDatasets, $scope.datasetSearchText);
+        			$scope.datasetGridTable.api.setRowData(tempDatasetList);
+        		}
+        		
+        		$scope.gridDatasetTableColumns = [
+        			{"headerName": sbiModule_translate.load('sbi.ds.label'),"field":"label"},
+        			{"headerName": sbiModule_translate.load('sbi.ds.name'),"field":"name"},
+        			{"headerName": sbiModule_translate.load('sbi.ds.description'),"field":"description"},
+        			{"headerName": sbiModule_translate.load('sbi.ds.owner'),"field":"owner"},
+        			{"headerName": sbiModule_translate.load('sbi.ds.scope'),"field":"scope"}
+        		];
+        		
+        		$scope.datasetGridTable = {
+        		        enableColResize: false,
+        		        enableFilter: true,
+        		        enableSorting: true,
+        		        pagination: true,
+        		        paginationAutoPageSize: true,
+        		        rowSelection: 'single',
+        		        rowMultiSelectWithClick: 'single',
+        		        onGridSizeChanged: resizeColumns,
+        		        columnDefs: $scope.gridDatasetTableColumns,
+        		        rowData: $scope.listOfDatasets
+        		};
+        		
+        		function resizeColumns(){
+        			$scope.datasetGridTable.api.sizeColumnsToFit();
+        		}
+        						
+        		$scope.closeDialog = function() {
+        			mdPanelRef.close();
+        			$scope.$destroy();
+        		}
+        		
+        		$scope.saveDataset = function() {
+        			var selectedDs = $scope.datasetGridTable.api.getSelectedRows()[0];			
+        			saveDatasetFn(selectedDs);
+        			mdPanelRef.close();
+        			$scope.$destroy();
+        		}
+        	}
+             
+         	
+         	self.saveDataset = function(dataSetObject) {
+         		self.document.dataSetId = dataSetObject.id;
+         		self.selectedDataset.name = dataSetObject.name;
+         	}
+         	
 
              self.getImage = function(){
              	 crudService.get(self.documentService.requiredPath,basePath + '/image').then(function(response){
@@ -163,8 +245,9 @@ angular
              self.getProfileAttributes = function(){
             	 crudService.get("2.0/attributes","").then(function(response){
             		 self.attributeValues = response.data;
-            		 console.log(response.data)
-            	 })
+            	 }, function(response){
+            		 sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+            	 });
              }
              self.getProfileAttributes();
 
