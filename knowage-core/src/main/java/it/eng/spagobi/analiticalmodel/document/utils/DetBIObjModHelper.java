@@ -29,6 +29,9 @@ import java.util.Vector;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -427,24 +430,34 @@ public class DetBIObjModHelper {
 		try {
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			domaindao.setUserProfile(profile);
+			Monitor loadingMonitor = MonitorFactory.start("fillResponse.Types");
 			List types = domaindao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");
-
+			loadingMonitor.stop();
 			// List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");
 			// load list of states and engines
-
+			Monitor loadingMonitorStates = MonitorFactory.start("fillResponse.States");
 			List states = domaindao.loadListDomainsByType("STATE");
+			loadingMonitorStates.stop();
 			// List states = domaindao.loadListDomainsByTypeAndTenant("STATE");
 			IEngineDAO enginedao = DAOFactory.getEngineDAO();
 			enginedao.setUserProfile(profile);
+			Monitor loadingMonitorEngines = MonitorFactory.start("fillResponse.Engines");
 			List engines = enginedao.loadAllEnginesByTenant();
+			loadingMonitorEngines.stop();
 
 			IDataSourceDAO datasourcedao = DAOFactory.getDataSourceDAO();
 			datasourcedao.setUserProfile(profile);
+			Monitor loadingMonitorDatasoruces = MonitorFactory.start("fillResponse.Datasoruces");
 			List datasource = datasourcedao.loadAllDataSources();
+			loadingMonitorDatasoruces.stop();
 			IDataSetDAO datasetdao = DAOFactory.getDataSetDAO();
 			datasetdao.setUserProfile(profile);
+			Monitor loadingMonitorDatasets = MonitorFactory.start("fillResponse.Datasets");
 			List dataset = datasetdao.loadDataSets();
+			loadingMonitorDatasets.stop();
+			Monitor loadingMonitorCommunities = MonitorFactory.start("fillResponse.Communities");
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(((UserProfile) profile).getUserId().toString());
+			loadingMonitorCommunities.stop();
 
 			// List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
 			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);
@@ -457,10 +470,14 @@ public class DetBIObjModHelper {
 			List functionalities = new ArrayList();
 			try {
 				if (initialPath != null && !initialPath.trim().equals("")) {
+					Monitor loadingMonitorFuncs = MonitorFactory.start("fillResponse.Funcs");
 					functionalities = DAOFactory.getLowFunctionalityDAO().loadSubLowFunctionalities(initialPath, false);
+					loadingMonitorFuncs.stop();
 					response.setAttribute(TreeObjectsModule.PATH_SUBTREE, initialPath);
 				} else {
+					Monitor loadingMonitorFuncs = MonitorFactory.start("fillResponse.Funcs");
 					functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
+					loadingMonitorFuncs.stop();
 				}
 			} catch (EMFUserError e) {
 				SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, "DetailBIObjectsMOdule", "fillResponse", "Error loading functionalities", e);
