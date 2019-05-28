@@ -338,7 +338,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			String queryLowerCase = getQueryDefinition().toLowerCase();
 			int index = queryLowerCase.indexOf("order by");
 			String orderByClause = getQueryDefinition().substring(index);
-			buildWhereClause(buffer, dependencies, BIObjectParameters);
+			buildWhereClause(buffer, dependencies, drivers);
 			buffer.append(" " + orderByClause);
 			result = buffer.toString();
 		}
