@@ -61,11 +61,9 @@ import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractBasicCheckListModule;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SessionMonitor;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 
 /**
@@ -145,39 +143,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		logger.debug(" MESSAGEDET = " + message);
 
-		// get attribute from session
-		String moduleName = (String) session.getAttribute("RETURN_FROM_MODULE");
-		if (moduleName != null) { // TODO clear session with a proper method of returning module
-			if (moduleName.equalsIgnoreCase("ListLookupParametersModule")) {
-				String returnState = (String) session.getAttribute("RETURN_STATUS");
-				if (returnState.equalsIgnoreCase("SELECT"))
-					lookupReturnHandler(request, response);
-				else if (returnState.equalsIgnoreCase("DELETE")) {
-					logger.debug("Return to list from DELETE parameter");
-					return;
-				} else
-					lookupReturnBackHandler(request, response);
-				session.delAttribute("RETURN_STATUS");
-				session.delAttribute("RETURN_FROM_MODULE");
-				return; // force refresh
-				// TODO force refresh in a standard way with a generic methods
-			} else if (moduleName.equalsIgnoreCase("CheckLinksModule")) {
-				SessionMonitor.printSession(session);
-				AbstractBasicCheckListModule.clearSession(session, moduleName);
-				SessionMonitor.printSession(session);
-			} else if (moduleName.equalsIgnoreCase("ListObjParuseModule")) {
-				lookupReturnBackHandler(request, response);
-				session.delAttribute("RETURN_FROM_MODULE");
-				return;
-			}
-		}
-
-		// these attributes, if defined, represent events triggered by one
-		// of the submit buttons present in the main form
-		boolean parametersLookupButtonClicked = request.getAttribute("loadParametersLookup") != null;
-		boolean linksLookupButtonClicked = request.getAttribute("loadLinksLookup") != null;
-		boolean dependenciesButtonClicked = request.getAttribute("goToDependenciesPage") != null;
-
 		try {
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
@@ -185,18 +150,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				throw userError;
 			}
 
-			// check for events first...
-			if (parametersLookupButtonClicked) {
-				logger.debug("loadParametersLookup != null");
-				startParametersLookupHandler(request, message, response);
-			} else if (linksLookupButtonClicked) {
-				logger.debug("editSubreorts != null");
-				startLinksLookupHandler(request, message, response);
-			} else if (dependenciesButtonClicked) {
-				logger.debug("goToDependenciesPage != null");
-				startDependenciesLookupHandler(request, message, response);
-			} // ...then check for other service request types
-			else if (message.trim().equalsIgnoreCase(ObjectsTreeConstants.DETAIL_SELECT)) {
+			if (message.trim().equalsIgnoreCase(ObjectsTreeConstants.DETAIL_SELECT)) {
 				getDetailObject(request, response);
 			} else if (message.trim().equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 				modBIObject(request, ObjectsTreeConstants.DETAIL_MOD, response);
@@ -378,7 +332,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				int selectedObjParId = DetBIObjModHelper.findBIObjParId(selectedObjParIdObj);
 				selectedObjParIdStr = new Integer(selectedObjParId).toString();
 			}
-			helper.fillResponse(initialPath);
 			prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
@@ -788,9 +741,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			obj.setFunctionalities(functionalitites);
 
 			response.setAttribute(NAME_ATTR_OBJECT, obj);
-
-			helper.fillResponse(initialPath);
-
 		} catch (Exception ex) {
 			logger.error("Cannot prepare page for the insertion", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
