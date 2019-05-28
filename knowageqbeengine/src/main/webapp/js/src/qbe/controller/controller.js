@@ -69,6 +69,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	consoleHandler.handleMessage = function(message){
 		if(message === 'close'){
 			var saveObj = {};
+			saveObj.message = message
 			saveObj.qbeQuery = {catalogue: {queries: [$scope.editQueryObj]}};
 			saveObj.pars = $scope.pars;
 			comunicator.sendMessage(saveObj);
@@ -78,6 +79,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			saveObj.name = "workspace"
 			saveObj.qbeQuery = {catalogue: {queries: [$scope.editQueryObj]}};
 			saveObj.meta = $scope.meta;
+			saveObj.pars = $scope.pars;
 			comunicator.sendMessage(saveObj);
 		}
 

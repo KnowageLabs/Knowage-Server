@@ -35,6 +35,7 @@ angular
 			var workspaceDSUpdateProces = function(message, dataset, openPanelForSavingQbeDataset){
 				dataset.qbeJSONQuery = updateDSQuery(message);
 				dataset.meta = message.meta;
+				dataset.pars = message.pars;
 				openPanelForSavingQbeDataset();
 			}
 			var datasetCatalogUpdateProces = function(message,dataset,parameters){
@@ -56,7 +57,7 @@ angular
 			}
 
 			var isFromDatasetCatalog = function(message){
-				return message.pars;
+				return message.message;
 			}
 
 			return crudHandler
