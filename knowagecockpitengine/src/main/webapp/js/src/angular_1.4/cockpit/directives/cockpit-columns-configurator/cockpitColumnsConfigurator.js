@@ -412,6 +412,37 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		$scope.model.dataset= {};
 		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	}
+	
+	$scope.filterColumns = function(){
+		var tempColumnsList = $filter('filter')($scope.localDataset.metadata.fieldsMeta,$scope.columnsSearchText);
+		$scope.columnsGridOptions.api.setRowData(tempColumnsList);
+	}
+	
+	$scope.columnsGridOptions = {
+            enableColResize: false,
+            enableFilter: true,
+            enableSorting: true,
+            pagination: true,
+            paginationAutoPageSize: true,
+            onGridSizeChanged: resizeColumns,
+            rowSelection: 'multiple',
+			rowMultiSelectWithClick: true,
+            defaultColDef: {
+            	suppressMovable: true,
+            	tooltip: function (params) {
+                    return params.value;
+                },
+            },
+            columnDefs :[{"headerName":"Column","field":"alias",headerCheckboxSelection: true, checkboxSelection: true},
+        		{"headerName":"Field Type","field":"fieldType"},
+        		{"headerName":"Type","field":"type"}],
+        	rowData : $scope.localDataset.metadata.fieldsMeta
+	};
+	
+	function resizeColumns(){
+		$scope.columnsGridOptions.api.sizeColumnsToFit();
+	}
+
 	$scope.saveColumnConfiguration=function(){
 		model = $scope.model;
 
@@ -419,14 +450,12 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 			model.content.columnSelectedOfDataset = [];
 		}
 
-
-		for(var i=0;i<$scope.columnSelected.length;i++){
-			var obj = $scope.columnSelected[i];
-			obj.aggregationSelected = 'NONE';
-			obj["funcSummary"] = "NONE";
-			obj.typeSelected = $scope.columnSelected[i].type;
-			obj.label = $scope.columnSelected[i].alias;
-			obj.aliasToShow = $scope.columnSelected[i].alias;
+		for(var i in $scope.columnsGridOptions.api.getSelectedRows()){
+			var obj = $scope.columnsGridOptions.api.getSelectedRows()[i];
+			obj.aggregationSelected = 'SUM';
+			obj.typeSelected = obj.type;
+			obj.label = obj.alias;
+			obj.aliasToShow = obj.alias;
 			model.content.columnSelectedOfDataset.push(obj);
 		}
 

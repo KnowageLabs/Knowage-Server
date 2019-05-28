@@ -110,6 +110,13 @@ $aggrid-border-color: #d9dcde;
 		    span {
 		    	font-weight: $headerFontSize;
 		    }
+		    .ag-header-select-all {
+		    	position: relative;
+		    	top: 7px;
+		    	&+ .ag-cell-label-container {
+					width: calc(100% - 36px);
+				}
+		    }
 		}
 		.ag-row-odd, .ag-row-even {
 			background-color: transparent;
