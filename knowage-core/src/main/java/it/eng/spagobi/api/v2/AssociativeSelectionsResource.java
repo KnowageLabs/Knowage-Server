@@ -122,7 +122,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			JSONObject associationGroupObject = new JSONObject(associationGroupString);
 			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
-			fixAssociationGroup(associationGroup);
+			fixAssociationGroup(associationGroup);   // fixes qbe dataset columns
 
 			// parse documents
 			Set<String> documents = new HashSet<>();

@@ -18,22 +18,31 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.metasql.query.item.*;
+import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor implements ISelectQueryVisitor {
 
@@ -146,22 +155,25 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	@Override
 	public void visit(InFilter item) {
-		if (hasNullOperand(item)
-				|| !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
-				|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
-			queryBuilder.append("(");
-			visit(transformToAndOrFilters(item));
-			queryBuilder.append(")");
+		if (item.getOperands().isEmpty()) {
+			visit(new UnsatisfiedFilter());
 		} else {
-			append(item);
+			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+				queryBuilder.append("(");
+				visit(transformToAndOrFilters(item));
+				queryBuilder.append(")");
+			} else {
+				append(item);
+			}
 		}
 	}
 
 	private boolean hasNullOperand(InFilter item) {
 		boolean hasNullOperand = false;
-		if(item != null){
+		if (item != null) {
 			for (Object operand : item.getOperands()) {
-				if(operand == null){
+				if (operand == null) {
 					hasNullOperand = true;
 					break;
 				}
@@ -227,8 +239,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	/**
 	 * @param projection
-	 * @param useAlias
-	 *            enables the output of an alias. Column name is used as alias if related flag is true.
+	 * @param useAlias   enables the output of an alias. Column name is used as alias if related flag is true.
 	 */
 	protected void append(Projection projection, boolean useAlias) {
 		String aliasDelimiter = database.getAliasDelimiter();
