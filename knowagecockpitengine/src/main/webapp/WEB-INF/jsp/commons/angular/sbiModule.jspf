@@ -1,5 +1,8 @@
 
 
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
+
 <script>
 
 var sbiM=angular.module('sbiModule',["ngSanitize"]);
@@ -808,7 +811,7 @@ sbiM.factory('sbiModule_cockpitDocument', function(){
 	return {
 		docId: <%= docId %>,
 		docLabel: '<%= docLabel %>',
-		docName: '<%= docName %>',
+		docName: '<%= docName.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
 		docDescription: '<%= docDescription %>'
 	}
 });
