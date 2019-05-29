@@ -118,6 +118,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
+			if(($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
+				columns.push({headerName:"",field:($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.column) || "",
+					crossIcon: ($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
+					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
+					suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false});
+			}
 			return columns
 		}
 		
@@ -215,6 +221,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}
 			}
+		}
+		
+		function crossIconRenderer(params){
+			return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
 		}
 		
 		function SummaryRowRenderer () {}
@@ -396,6 +406,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
 			if(node.colDef.measure == "MEASURE") return;
+			if(node.colDef.crossIcon) {
+				$scope.doSelection(node.colDef.field || null, null, null, null, node.data);
+				return;
+			}
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
 				if(!$scope.bulkSelection || $scope.bulkSelection!=node.colDef.field){

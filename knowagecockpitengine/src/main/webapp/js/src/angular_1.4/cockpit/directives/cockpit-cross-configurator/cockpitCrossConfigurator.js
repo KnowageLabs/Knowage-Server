@@ -160,18 +160,20 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	}
 	
-	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
+	$scope.crossTable = $scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table';
 	
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
+	
+	$scope.crossImage = (!$scope.crossTable && !$scope.crossChart);
 	
 	$scope.toggleEnabled = function(type){
 		
 		if($scope.crossTable){
 			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
-				$scope.model.cross.enable = $scope.ngModel.cross.enable = false;
+				$scope.$parent.newModel.cross.enable = $scope.ngModel.cross.enable = false;
 			}
 			if(type=='cross' && $scope.ngModel.preview && $scope.ngModel.preview.enable) {
-				$scope.model.preview.enable = $scope.ngModel.preview.enable = false;
+				$scope.$parent.newModel.preview.enable = $scope.ngModel.preview.enable = false;
 			}
 		}else{
 			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {

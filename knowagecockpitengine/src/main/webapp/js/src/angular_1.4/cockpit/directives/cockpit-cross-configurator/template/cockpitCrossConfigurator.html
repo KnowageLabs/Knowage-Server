@@ -18,7 +18,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!ngModel.cross.crossType" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.cross.crossType && !crossImage" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					Choose an interaction type to enable a cross navigation
 				</div>
@@ -28,7 +28,7 @@
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in model.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in $parent.newModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.cross.crossType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
@@ -41,7 +41,7 @@
 				</md-select>
 			</md-input-container>
 
-			<md-input-container ng-if="ngModel.cross.crossType" ng-show="crossTable || crossChart" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType || crossImage" ng-show="crossTable || crossChart || crossImage" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
 				<md-select ng-model="ngModel.cross.outputParameter" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
@@ -49,7 +49,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<md-input-container ng-if="ngModel.cross.crossType" class="md-block" flex>
+			<md-input-container ng-if="ngModel.cross.crossType || crossImage" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.crossName")}}</label>
 				<md-select ng-model="ngModel.cross.crossName" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
@@ -151,7 +151,7 @@
 		</md-card-content>	
 	</md-card>
 	
-	<md-card>
+	<md-card  ng-if="!crossImage">
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.preview.enable" ng-change="toggleEnabled('preview')"></md-switch> Preview Navigation</md-subheader>
 		<md-card-content layout="row" layout-align="space-around center">
 			
@@ -177,11 +177,11 @@
 			
 			<dataset-selector ng-show="ngModel.preview.previewType || crossChart" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
 			
-			<md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow'" ng-show="crossTable" class="md-block" flex>
+			<md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow' && ngModel.preview.previewType !='icon'" ng-show="crossTable" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">
 					<md-option></md-option>
-					<md-option ng-repeat="c in model.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+					<md-option ng-repeat="c in $parent.newModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
 				</md-select>
 				<div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
