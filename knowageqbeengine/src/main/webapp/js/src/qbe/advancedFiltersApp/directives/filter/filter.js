@@ -23,7 +23,7 @@
 			  	},
 			  	link:function(scope, element, attrs){
 			  		element.bind('mousedown', function(e) {
-			  		  
+
 			  		   e.stopPropagation()
 			  		   $rootScope.$broadcast('nodrag',scope.node)
 			  		});
@@ -35,55 +35,55 @@
 			    	$scope.$on('nodrag',function(event,data){
 			    		if(data!==$scope.node){
 			    			$scope.draggable = false;
-			    			
+
 			    		}
-			    		
+
 			    	})
 			    	var filterTreeService = $injector.get('filterTreeService');
 			    	$scope.selectedOperandService = $injector.get('selectedOperandService');
-			    	
+
 			    	$scope.select = function(node){
 			    		$scope.selectedOperandService.addOrRemove(node);
-			    		
+
 			    	}
-			    	
+
 			    	$scope.isSelected = function(){
 			    		return $scope.selectedOperandService.contains($scope.node)
 			    	}
-			    	
+
 			    	$scope.isSelectable = function(){
 			    		return $scope.selectedOperandService.isSelectable($scope.node)
 			    	}
-			    	
-			    	
+
+
 			    	$scope.onDropComplete = function($data,$event){
-			    		
+
 			    		$event.event.stopImmediatePropagation();
 			    		console.log($scope.node)
 			    		console.log($data)
 			    		if(!angular.equals($data.node,$scope.node)){
 			    		advancedFiltersService.swap(filterTreeService.filterTree,$data.node,$scope.node)
 			    		}
-			    		
-			    		
+
+
 			    	}
-			    	
+
 			    	$scope.onDropMove = function($data,$event){
-			    		 if(!advancedFiltersService.getGroup(filterTreeService.filterTree,$data.node)||
+			    		 if($scope.selectedOperandService.getFirstLevelOperandsCount($data.node)>2||
 			    				 $scope.selectedOperandService.getGroupOperandsCount($data.node)>2){
 			    			 $event.event.stopImmediatePropagation();
-					    		
+
 					    		if(!angular.equals($data.node,$scope.node)){
 					    		advancedFiltersService.move(filterTreeService.filterTree,$data.node,$scope.node)
 					    		}
 			    		 }
-			    		
-			    		
-			    		
+
+
+
 			    	}
 			    }
 			  };
-			  
-			  
+
+
 			});
 })()

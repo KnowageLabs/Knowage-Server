@@ -21,25 +21,25 @@
 		var advancedFiltersService = $injector.get('advancedFiltersService');
 		var filterTreeService = $injector.get('filterTreeService');
 		var selected = []
-		
+
 		var getSelected = function(){
 			return selected;
 		}
-		
+
 		var add = function(operand){
 			selected.push(operand)
 		}
-		
+
 		var contains = function(operand){
 			for(var i =0;i<selected.length;i++){
 				if(angular.equals(selected[i],operand)){
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
-		
+
 		var remove = function(operand){
 			for(var i =0;i<selected.length;i++){
 				if(angular.equals(selected[i],operand)){
@@ -47,56 +47,72 @@
 				}
 			}
 		}
-		
+
 		var addOrRemove = function(operand){
 			if(contains(operand)){
 				remove(operand)
 			}else{
 				add(operand)
 			}
-			
+
 			console.log(selected)
 		}
-		
+
 		var unSelectAll = function(){
 			selected.length = 0;
 		}
-		
+
 		var isSingleGroupSelected = function(){
 			return selected.length ===1 && selected[0].value==='PAR'
 		}
-		
+
 		var isSelectable = function(operand){
-			return isEmpty()||(!isEmpty()&&isSameGroupAsSelected(operand))&&!allOtherGroupMembersAreSelected(operand)
+			return isEmpty()||(!isEmpty()&&isSameGroupAsSelected(operand))&&
+			!allOtherGroupMembersAreSelected(operand)&&!allOtherSameLevelMembersAreSelected(operand)
 		}
-		
+
 		var isEmpty = function(){
 			return selected.length===0
 		}
-		
+
 		var isSameGroupAsSelected = function(operand){
 			return advancedFiltersService.isSameGroup(filterTreeService.filterTree,[selected[0],operand])
 		}
-		
+
 		var getGroupOperands = function(groupOperand){
 			return advancedFiltersService.getGroupOperands(advancedFiltersService.getGroup(filterTreeService.filterTree,groupOperand))
 		}
-		
+
 		var getGroupOperandsCount = function(groupOperand){
 			if(getGroupOperands(groupOperand)&&angular.isArray(getGroupOperands(groupOperand))){
 				return getGroupOperands(groupOperand).length;
 			}
 			return 0;
 		}
-		
+
 		var allOtherGroupMembersAreSelected = function(operand){
 			return getGroupOperandsCount(operand) - getSelectedCount() === 1 && !contains(operand)
 		}
-		
+
+		var allOtherSameLevelMembersAreSelected = function(operand){
+			return getFirstLevelOperandsCount(operand) - getSelectedCount() === 1 && !contains(operand)
+		}
+
+		var getFirstLevelOperands = function(){
+			return advancedFiltersService.getFirstLevelOperands(filterTreeService.filterTree);
+		}
+
+		var getFirstLevelOperandsCount = function(){
+			if(getFirstLevelOperands()&&angular.isArray(getFirstLevelOperands())){
+				return getFirstLevelOperands().length;
+			}
+			return 0;
+		}
+
 		var getSelectedCount = function(){
 			return selected.length;
 		}
-		
+
 		return {
 			addOrRemove:addOrRemove,
 			getSelected:getSelected,
@@ -105,7 +121,8 @@
 			contains:contains,
 			isSelectable:isSelectable,
 			getSelectedCount:getSelectedCount,
-			getGroupOperandsCount:getGroupOperandsCount
+			getGroupOperandsCount:getGroupOperandsCount,
+			getFirstLevelOperandsCount:getFirstLevelOperandsCount
 		}
 	})
 })()

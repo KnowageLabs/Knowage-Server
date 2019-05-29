@@ -22,6 +22,7 @@
 
 				var treeService = $injector.get('treeService');
 				var operatorUtilService = $injector.get('operatorUtilService');
+				var groupUtilService = $injector.get('groupUtilService');
 				var filterTreeFactoryService = $injector
 						.get('filterTreeFactoryService');
 
@@ -58,7 +59,7 @@
 					treeService.replace(filterTree, createInsertExpression(
 							filterTree, angular.copy(operand), operator, beforeOperand),
 							getInsertPosition(filterTree, beforeOperand))
-							
+
 							return treeService.find(filterTree,beforeOperandCopy)
 
 				}
@@ -99,28 +100,28 @@
 				}
 
 				var remove = function(filterTree, operand) {
-					
+
 					if(!getSibilng(filterTree, operand)){
 						treeService.remove(filterTree,operand)
-						
+
 						return;
-						
+
 					}
-					
+
 					if (!isInSimpleExpression(filterTree, operand)) {
 
 						operatorUtilService.swapOperators(filterTree,
 								getNextOperand(filterTree, operand), operand);
 					}
-					
+
 					treeService.replace(filterTree,
 							getSibilng(filterTree, operand), getExpressionOperator(
 									filterTree, operand))
 
-					
+
 				}
-				
-				
+
+
 
 				var getExpressionOperator = function(filterTree, operand) {
 					return treeService.getParent(filterTree, operand)
@@ -139,12 +140,23 @@
 							operand)
 				}
 
+				var getFirstLevelOperands = function(filterTree){
+					var operands = [];
+					treeService.traverseDF(filterTree,function(node){
+						if(!groupUtilService.getGroup(filterTree,node)&&!operatorUtilService.isOperator(node)){
+							operands.push(node)
+						}
+					})
+					return operands;
+				}
+
 				return {
 					getSibilng : getSibilng,
 					insertAfter : insertAfter,
 					swapOperands : swapOperands,
 					getNextOperand : getNextOperand,
-					remove : remove
+					remove : remove,
+					getFirstLevelOperands:getFirstLevelOperands
 				}
 
 			})

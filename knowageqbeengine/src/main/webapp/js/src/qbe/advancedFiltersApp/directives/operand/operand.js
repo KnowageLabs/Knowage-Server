@@ -35,15 +35,15 @@
 				  				return advancedFilterAppBasePath+ '/directives/operand/operand3.html';
 				  			 }
 			  			 }
-			  			 
-			                
+
+
 			           }
-			  		
+
 			  	},
 			  	restrict:'E',
 			    template: "<div ng-include='getContentUrl()'></div>",
 			    controller:function($scope){
-			    	
+
 			    }
 			  };
 			});
