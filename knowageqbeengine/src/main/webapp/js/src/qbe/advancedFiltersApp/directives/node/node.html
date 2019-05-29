@@ -1,0 +1,5 @@
+
+<node ng-if="node.type!=='NODE_CONST'" node ="node.childNodes[0]" ></node>
+{{node.value}}
+
+<node ng-if="node.type!=='NODE_CONST'&& node.childNodes[1]!==undefined" node ="node.childNodes[1]" ></node>

@@ -1,0 +1,10 @@
+
+<script>
+(function(){
+	angular.module('advancedFiltersApp').config(function($provide){
+		$provide.constant("advancedFilterAppBasePath",'<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp")%>')
+		
+	})
+})()
+</script>
+	

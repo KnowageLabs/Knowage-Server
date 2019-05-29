@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<body ng-controller="qbeController" class="kn-qbe md-knowage-theme">
 	<rest-loading></rest-loading>
-	<div layout="row">
+	<div ng-if="show" layout="row">
 		<div flex=30 layout-fill class="qbeList">
 			<qbe-expander-list 
 			flex drag-action="droppedFunction(data)" 
@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div flex layout="column">
 			<qbe-custom-table 
+			
 			ng-drop="true" 
 			ng-drop-success="onDropComplete($data,$event)" 
 			ng-model="queryModel" expression="expression" 

@@ -1,0 +1,11 @@
+
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/advancedFiltersApp.js")%>"></script>
+
+<%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/appConfig.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/servicesImport.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/directiveImport.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/filtersImport.jspf"%>
+
+
+
+

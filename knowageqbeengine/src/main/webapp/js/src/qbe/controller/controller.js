@@ -64,6 +64,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.selectedRelationsService = selectedEntitiesRelationshipsService;
 	$scope.queryEntitiesService = queryEntitiesService;
 	var comunicator = windowCommunicationService;
+	$scope.show = true;
 
 	var consoleHandler = {}
 	consoleHandler.handleMessage = function(message){
@@ -696,8 +697,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     $scope.showVisualization = function (filters, advancedFilters, expression) {
 		var finishEdit=$q.defer();
+		$scope.show = false;
 		var config = {
 				attachTo:  angular.element(document.body),
+				//panelClass :"layout-column",
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterVisualizationTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
@@ -708,6 +711,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				hasBackdrop: true,
 				clickOutsideToClose: true,
 				escapeToClose: true,
+				onCloseSuccess:function(){$scope.show = true},
 				focusOnOpen: true,
 				preserveScope: true,
 		};

@@ -1,0 +1,10 @@
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/FilterTreeFactoryService/fiterTreeFactoryService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/groupUtilService/groupUtilService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/operandUtilService/operandUtilService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/operatorUtilService/operatorUtilService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/advancedFiltersService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/filterTreeService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/advancedFilters/selectedOperandService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/services/TreeService/treeService.js")%>"></script>
+ 
+

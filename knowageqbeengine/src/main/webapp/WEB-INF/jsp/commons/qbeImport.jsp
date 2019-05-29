@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/calculated-field-editor/withoutPropertyValue.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/filter/filter.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/parameters/parameter.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/group/group.js")%>"></script>
+<%-- <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/group/group.js")%>"></script> --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/save/save.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/having/having.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/relations/relationshipsModule.js")%>"></script>
@@ -64,3 +64,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/common/export/exportModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/common/export/services/exportService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/common/export/directives/export-menu/exportMenu.js")%>"></script>
+
+<!-- ADVANCE FILTERS -->
+<%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/advancedFilterImport.jspf"%>

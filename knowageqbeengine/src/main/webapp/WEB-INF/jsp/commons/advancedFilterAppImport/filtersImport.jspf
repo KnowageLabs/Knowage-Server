@@ -1,0 +1,2 @@
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/filters/filterName.js")%>"></script>
+

@@ -1,0 +1,13 @@
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/panels/advanceFilterPanel/advanceFilterPanel.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/panels/commandPanel/commnadPanel.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/panels/contentPanel/contentPanel.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/panels/expressionPanel/expressionPanel.js")%>"></script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/node/node.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/operand/operand.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/operator/operator.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/group/group.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/filter/filter.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/dropZone/dropZone.js")%>"></script>
+
+

@@ -1,0 +1,36 @@
+
+<drop-zone
+ 		style="width: 15px;background-color:yellow"
+		ng-drop="true"
+		layout="column"
+		ng-drop-success="onDropComplete($data,$event);$event.stopPropagation();$event.preventDefault()"> 
+		
+
+</drop-zone>
+<md-card  layout="row" ng-drag="{{draggable}}"  
+		ng-drag-data="{node}">
+	<h4 >{{node.value | filterName}}</h4>
+	
+	
+	<div flex layout="row">
+		<div flex></div>
+			<i class="fa fa-hand-pointer-o" 
+			ng-class ="isSelected()?'fa fa-thumbs-o-up':'fa fa-hand-pointer-o'" 
+			ng-click="select(node);$event.stopPropagation()"
+			ng-if="isSelectable()"
+			></i>
+	</div>
+
+
+</md-card>
+
+<drop-zone
+ 		style="width: 15px;background-color:yellow"
+		ng-drop="true"
+		layout="column"
+		ng-drop-success="onDropMove($data,$event);$event.stopPropagation();$event.preventDefault()" > 
+		
+
+</drop-zone>
+
+<!--  ng-click="select(node);$event.stopPropagation()" -->

@@ -1,6 +1,6 @@
 /**
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2019 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,15 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular
-	.module('directive', [
-		'qbe_custom_table',
-		'qbe_expander_list',
-		'qbe_filter',
-		'qbe_having',
-		'qbe_advanced_visualization',
-		'qbe_filter_visualization',
-		'qbe_parameters',
-		'qbe_calculated_field_editor',
-		'save',
-        'relationshipsModule']);
+(function(){
+	angular.module('advancedFiltersApp').service('filterTreeService',function($http){
+		
+		var filterTree = {};
+		
+		return {
+			
+			filterTree:filterTree
+		}
+	})
+})()

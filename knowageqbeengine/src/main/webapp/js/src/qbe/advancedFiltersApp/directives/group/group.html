@@ -1,0 +1,33 @@
+<drop-zone
+ 		style="height: 25px;background-color:blue"
+		ng-drop="true"
+		layout="column"
+		ng-drop-success="onDropComplete($data,$event);$event.stopPropagation();$event.preventDefault()"
+		
+
+></drop-zone>
+
+<div  ng-drag="true" 
+		ng-drag-data="{node}"
+		
+flex layout="row" style="border-style: solid;">
+	<operator flex layout="row" node="node.childNodes[0]"></operator>
+	
+		
+		<i class="fa fa-hand-pointer-o" 
+		ng-class ="isSelected()?'fa fa-thumbs-o-up':'fa fa-hand-pointer-o'" 
+		ng-click="select(node);$event.stopPropagation()"
+		ng-if="isSelectable()"
+		></i>
+	
+</div>
+
+<drop-zone
+ 		style="height: 25px;background-color:blue"
+		ng-drop="true"
+		layout="column"
+		ng-drop-success="onDropMove($data,$event);$event.stopPropagation();$event.preventDefault()" class="filterItem"> 
+		
+
+</drop-zone>
+<!-- ng-click="select(node);$event.stopPropagation()" -->
