@@ -95,12 +95,24 @@
 		}
 
 		var allOtherSameLevelMembersAreSelected = function(operand){
-			return getFirstLevelOperandsCount(operand) - getSelectedCount() === 1 && !contains(operand)
+			return getFirstLevelOperandsCount(operand) - getSelectedCount() === 1 && !contains(operand) && isFirstLevelOperand(operand)
 		}
 
 		var getFirstLevelOperands = function(){
 			return advancedFiltersService.getFirstLevelOperands(filterTreeService.filterTree);
 		}
+
+		var isFirstLevelOperand = function(operand){
+			for(var i =0;i<getFirstLevelOperands().length;i++){
+				if(angular.equals(getFirstLevelOperands()[i],operand)){
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
 
 		var getFirstLevelOperandsCount = function(){
 			if(getFirstLevelOperands()&&angular.isArray(getFirstLevelOperands())){
