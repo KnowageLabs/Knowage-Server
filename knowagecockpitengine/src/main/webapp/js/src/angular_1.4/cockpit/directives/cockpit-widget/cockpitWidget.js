@@ -166,6 +166,12 @@ angular.module('cockpitModule')
 	                    			}
 
 	                    		}
+
+	                    		scope.showNegativer = true;
+	                    		if(!scope.ngModel.cliccable && !scope.ngModel.drillable && !scope.cockpitModule_properties.EDIT_MODE){
+	                    			scope.showNegativer = false;
+	                    		}
+
 	                    		if(scope.ngModel.type == "selector"){
 	                    			scope.updateble = true;
 	                    		}else{
@@ -647,6 +653,9 @@ function cockpitWidgetControllerFunction(
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = true;
 		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
+			if(!$scope.cockpitModule_properties.EDIT_MODE){
+				$scope.showNegativer = true;
+			}
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = false;
 		}  else {
