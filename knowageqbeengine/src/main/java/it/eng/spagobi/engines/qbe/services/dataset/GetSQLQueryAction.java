@@ -164,7 +164,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			for (int i = 0; i < selectFields.size(); i++) {
 				int startColAlias = queryString.indexOf("as col_");
 				int endColAlias = queryString.indexOf(",", startColAlias);
-				int fromPosition = queryString.lastIndexOf(" from ");
+				int fromPosition = queryString.indexOf(" from ");
 				if (endColAlias == -1 || fromPosition < endColAlias) {
 					endColAlias = fromPosition;
 				}
