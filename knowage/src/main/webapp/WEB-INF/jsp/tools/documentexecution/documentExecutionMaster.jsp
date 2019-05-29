@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'OBJECT_LABEL' : 		'<%=request.getParameter("OBJECT_LABEL") != null
 					? request.getParameter("OBJECT_LABEL")
 					: aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL")%>',
-				'OBJECT_NAME' : 		'<%=objectName%>',
+				'OBJECT_NAME' : 		'<%=objectName.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'"))%>',
 				'isSourceDocument' : 	'<%=request.getParameter("IS_SOURCE_DOCUMENT") != null
 					? request.getParameter("IS_SOURCE_DOCUMENT")
 					: aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT")%>',

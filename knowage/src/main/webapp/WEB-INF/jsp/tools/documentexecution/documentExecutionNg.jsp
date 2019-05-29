@@ -16,6 +16,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@page import="org.jgrapht.util.PrefetchIterator.NextElementFunctor"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO"%>
@@ -501,7 +503,7 @@ if(executionRoleNames.size() > 0) {
                         'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
                         'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
                         'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
-                        'OBJECT_NAME' : '<%= obj.getName() %>',
+                        'OBJECT_NAME' : '<%= obj.getName().replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
                         'REFRESH_SECONDS' : <%= obj.getRefreshSeconds().intValue() %>,
                         'OBJECT_TYPE_CODE' : '',
                         'isFromCross' : <%=isFromCross%>,

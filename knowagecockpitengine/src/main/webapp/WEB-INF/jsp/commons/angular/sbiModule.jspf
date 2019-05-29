@@ -15,6 +15,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
+
 <script>
 
 var sbiM=angular.module('sbiModule',["ngSanitize"]);
@@ -835,7 +838,7 @@ sbiM.factory('sbiModule_cockpitDocument', function(){
 	return {
 		docId: <%= docId %>,
 		docLabel: '<%= docLabel %>',
-		docName: '<%= docName %>',
+		docName: '<%= docName.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
 		docDescription: '<%= docDescription %>'
 	}
 });
