@@ -73,11 +73,15 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			boolean replaceParametersWithQuestion = getAttributeAsBoolean("replaceParametersWithQuestion");
 
 			// retrieving query specified by id on request
-			query = getEngineInstance().getActiveQuery();
+
+			;
+			query = getEngineInstance().getQueryCatalogue().getQuery(getAttributeAsString("queryId"));
 			if (query == null) {
 				query = getEngineInstance().getQueryCatalogue().getFirstQuery();
-				getEngineInstance().setActiveQuery(query);
+
 			}
+
+			getEngineInstance().setActiveQuery(query);
 			Assert.assertNotNull(query, "Query not found!!");
 
 			if (replaceParametersWithQuestion) {

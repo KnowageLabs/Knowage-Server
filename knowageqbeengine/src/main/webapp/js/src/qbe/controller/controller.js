@@ -382,6 +382,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.getSQL = function () {
 		item = {};
     	item.replaceParametersWithQuestion=true;
+    	item.queryId = $scope.editQueryObj.id
 
     	queryParam = {};
 
