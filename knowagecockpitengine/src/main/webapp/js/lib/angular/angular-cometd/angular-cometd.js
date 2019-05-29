@@ -28,12 +28,12 @@ angular.module('cometd', [])
                 $http.post(packet.url, packet.body, {
                     headers: hdrs,
                     withCredentials: true
-                }).success(function(data, status) {
-                    xhr.status = status;
-                    packet.onSuccess(data);
-                }).error(function(data, status, headers, config, reason) {
-                    xhr.status = status;
-                    packet.onError(reason);
+                }).then(function(result) {
+                    xhr.status = result.status;
+                    packet.onSuccess(result.data);
+                },function(error) {
+                    xhr.status = error.status;
+                    packet.onError(error.statusText);
                 });
 
                 return xhr;
@@ -54,10 +54,10 @@ angular.module('cometd', [])
                         // In callback-polling, the content must be sent via the 'message' parameter.
                         message: packet.body
                     }
-                }).success(function(data) {
-                    packet.onSuccess(data);
-                }).error(function(data, status, headers, config, reason) {
-                    packet.onError(reason);
+                }).then(function(result) {
+                    packet.onSuccess(result.data);
+                },function(error) {
+                    packet.onError(error.statusText);
                 });
             };
 
