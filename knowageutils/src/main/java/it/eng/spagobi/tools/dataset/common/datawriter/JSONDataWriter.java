@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.common.datawriter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -246,6 +247,8 @@ public class JSONDataWriter implements IDataWriter {
 			if (field.getValue() != null) {
 				if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = TIMESTAMP_FORMATTER.format(field.getValue());
+				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = DATE_FORMATTER.format(field.getValue());
 				} else {
@@ -442,10 +445,10 @@ public class JSONDataWriter implements IDataWriter {
 
 				} else if (String.class.isAssignableFrom(clazz)) {
 					String jsonPathType = (String) fieldMetaData.getProperty("jsonPathType");
-					if("text".equals(jsonPathType)){
+					if ("text".equals(jsonPathType)) {
 						logger.debug("Column [" + (i + 1) + "] type is equal to [TEXT]");
 						fieldMetaDataJSON.put("type", "text");
-					}else {
+					} else {
 						logger.debug("Column [" + (i + 1) + "] type is equal to [" + "STRING" + "]");
 						fieldMetaDataJSON.put("type", "string");
 					}
@@ -455,6 +458,11 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("subtype", "timestamp");
 					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s.uuu");
 					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
+				} else if (Time.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "DATE" + "]");
+					fieldMetaDataJSON.put("type", "time");
+					fieldMetaDataJSON.put("dateFormat", "H:i:s.uuu");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss.SSS");
 				} else if (Date.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "DATE" + "]");
 					fieldMetaDataJSON.put("type", "date");
