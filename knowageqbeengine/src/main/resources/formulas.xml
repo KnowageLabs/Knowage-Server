@@ -187,6 +187,44 @@
 	</formula>
 	
 	<formula >
+		<name>Upper</name>
+		<syntax>Upper(string)</syntax>
+			<body>Upper(string)</body>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Expression than returns string</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			Convert the string value to upper case.
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Trim</name>
+		<syntax>Trim(string)</syntax>
+			<body>Trim(string)</body>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Expression than returns string</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			The TRIM function trims the specified character from a string. 
+			The keywords LEADING, TRAILING, BOTH are all optional, if not specified BOTH is assumed. 
+			If the char to be trimmed is not specified, it will be assumed to be space (or blank). 
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
 		<name>Substring</name>
 		<syntax>Substring(string, start_pos, number_of_chars))</syntax>
 			<body>Substring(string, start_pos, number_of_chars)</body>
