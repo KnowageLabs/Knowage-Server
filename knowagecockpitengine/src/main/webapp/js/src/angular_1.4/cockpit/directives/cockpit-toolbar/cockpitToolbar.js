@@ -261,19 +261,20 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 	
 	$scope.exportPdf = function(){
 		
+		$mdDialog.show({
+			controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
+				$scope.translate = sbiModule_translate;
+				$scope.cockpitModule_properties = cockpitModule_properties;
+				$scope.cockpitModule_template = cockpitModule_template;
+			 },
+			 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
+			 parent: angular.element(document.body),
+			 hasBackdrop: false,
+			 clickOutsideToClose:false
+			 })
+		
 		return $q(function(resolve, reject) {
 			cockpitModule_properties.LOADING_SCREENSHOT = true;
-			$mdDialog.show({
-				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
-					$scope.translate = sbiModule_translate;
-					$scope.cockpitModule_properties = cockpitModule_properties;
-					$scope.cockpitModule_template = cockpitModule_template;
-				 },
-				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
-				 parent: angular.element(document.body),
-				 hasBackdrop: false,
-				 clickOutsideToClose:false
-				 })
 				 
 				 function closeOrContinue(sheet){
 					if(sheet.index + 1 == cockpitModule_template.sheets.length) {
@@ -286,7 +287,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 		 				document.querySelector(".sheetPageButton-"+(sheet.index+1)).parentNode.click();
 		 				for(var y in cockpitModule_template.sheets){
 		 					if(cockpitModule_template.sheets[y].index == sheet.index + 1){
-		 						getScreenshot(cockpitModule_template.sheets[y]);
+		 						$timeout(function(){
+			 						getScreenshot(cockpitModule_template.sheets[y]);
+		 						},300);
 		 						break;
 		 					}
 		 				}
@@ -355,6 +358,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					for(var s in cockpitModule_template.sheets){
 						if(cockpitModule_template.sheets[s].index == 0) {
 							if(cockpitModule_properties.CURRENT_SHEET != 0) document.querySelector(".sheetPageButton-0").parentNode.click();
+							
 							var tempElement = document.getElementById('kn-cockpit');
 					 		var gridsterElement = document.querySelector('#gridsterSheet-0 #gridsterContainer');
 					 		var sheetBarHeight = cockpitModule_template.sheets.length == 1 ? 0 : 32;
