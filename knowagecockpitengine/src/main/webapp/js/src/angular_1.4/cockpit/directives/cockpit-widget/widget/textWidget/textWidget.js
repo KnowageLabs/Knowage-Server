@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
 angular.module('cockpitModule')
-.directive('textWidgetTextRender', function ($compile,$q,cockpitModule_utilstServices,cockpitModule_datasetServices,cockpitModule_generalServices) {
+.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices,cockpitModule_datasetServices,cockpitModule_generalServices) {
     return {
         restrict: 'A',
         replace: true,
@@ -40,33 +40,34 @@ angular.module('cockpitModule')
 	                	elems.push(dsLabel);
 	                }
 
-	                scope.checkPlaceholders= function(counter, refreshBool){
-						return $q(function(resolve, reject) {
-							if(counter == 0 && refreshBool != undefined && refreshBool == true){
-								html = scope.ngModel.content.text;
+	                scope.checkPlaceholders= function(counter, refreshBool, callback){
+						if(counter == 0 && refreshBool != undefined && refreshBool == true){
+							html = scope.ngModel.content.text;
+						}
+
+						if (counter < elems.length){
+							// call this only if reference is really contained
+							if(html.indexOf(elems[counter])>=0){
+								cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
+									html = htmlReturned;
+									ele.html(html);
+									$compile(ele.contents())(scope);
+									counter++;
+									scope.checkPlaceholders(counter,null,callback);
+								},function(error){
+								});
+							}
+							else{
+								counter++;
+								scope.checkPlaceholders(counter,null, callback);
+							}
+						}else{
+							scope.ngModel.isReady=true; //view the content replaced
+							if (callback && typeof callback === "function") {
+								return callback();
 							}
 
-							if (counter < elems.length){
-								// call this only if reference is really contained
-								if(html.indexOf(elems[counter])>=0){
-									cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
-										html = htmlReturned;
-										ele.html(html);
-										$compile(ele.contents())(scope);
-										counter++;
-										scope.checkPlaceholders(counter);
-									},function(error){
-									});
-								}
-								else{
-									counter++;
-									scope.checkPlaceholders(counter);
-								}
-							}else{
-								scope.ngModel.isReady=true; //view the content replaced
-								resolve();
-							}
-						});
+						}
 					}
 
 	                scope.checkPlaceholders(0);

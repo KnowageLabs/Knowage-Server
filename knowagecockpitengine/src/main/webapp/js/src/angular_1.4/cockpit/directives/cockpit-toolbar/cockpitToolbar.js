@@ -253,10 +253,8 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 	windowCommunicationService.addMessageHandler(handler);
 
 	$scope.exportPdf = function(){
-		return $q(function(resolve, reject) {
-			cockpitModule_properties.LOADING_SCREENSHOT = true;
-			$scope.$apply();
-			$mdDialog.show({
+		
+		$mdDialog.show({
 				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
 					$scope.translate = sbiModule_translate;
 					$scope.cockpitModule_properties = cockpitModule_properties;
@@ -267,6 +265,10 @@ function cockpitToolbarControllerFunction($scope,$q,$timeout,windowCommunication
 				 hasBackdrop: false,
 				 clickOutsideToClose:false
 				 })
+		
+		return $q(function(resolve, reject) {
+			cockpitModule_properties.LOADING_SCREENSHOT = true;
+			$scope.$apply();
 				 
 				 function closeOrContinue(sheet){
 					if(sheet.index + 1 == cockpitModule_template.sheets.length) {
