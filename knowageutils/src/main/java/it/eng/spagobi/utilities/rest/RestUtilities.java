@@ -54,7 +54,7 @@ public class RestUtilities {
 	private static int timeout;
 
 	private static final String HTTP_TIMEOUT_PROPERTY = "http.timeout";
-	private static final int HTTP_TIMEOUT_DEFAULT_VALUE = 1 * 1000;
+	private static final int HTTP_TIMEOUT_DEFAULT_VALUE = 30 * 1000;
 
 	static {
 		loadHttpTimeout();
