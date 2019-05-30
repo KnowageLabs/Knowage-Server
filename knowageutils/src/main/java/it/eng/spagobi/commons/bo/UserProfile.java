@@ -35,10 +35,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.common.JWTSsoService;
-import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -158,13 +156,14 @@ public class UserProfile implements IEngUserProfile {
 		this.userId = userId;
 		this.userName = userName;
 		this.organization = organization;
+		this.roles = new ArrayList();
+		this.functionalities = new ArrayList();
+		this.userAttributes = new HashMap();
+		setPredefinedProfileAttributes();
 	}
 
 	public UserProfile(String userId, String organization) {
-		this.userUniqueIdentifier = userId;
-		this.userId = userId;
-		this.userName = userId;
-		this.organization = organization;
+		this(userId, userId, userId, organization);
 	}
 
 	/**
@@ -193,9 +192,6 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Checks if is scheduler user.
-	 *
-	 * @param userId
-	 *            String
 	 *
 	 * @return true, if checks if is scheduler user
 	 */
@@ -400,9 +396,6 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Adds an attribute.
-	 *
-	 * @param attrs
-	 *            the new attributes
 	 */
 	public void addAttributes(String key, Object value) {
 		this.userAttributes.put(key, value);
@@ -410,9 +403,6 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Modify an attribute value
-	 *
-	 * @param attrs
-	 *            the new attributes
 	 */
 	public void setAttributeValue(String key, Object value) {
 		this.userAttributes.remove(key);
