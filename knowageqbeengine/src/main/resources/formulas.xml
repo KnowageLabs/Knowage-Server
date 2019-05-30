@@ -281,6 +281,106 @@
 		<type>time</type>
 	</formula>
 	
+	<formula >
+		<name>Hour</name>
+		<syntax>Hour( Datetime_expression )</syntax>
+			<body>Hour(datetime_expression)</body>
+			<argument>
+				<name>datetime_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>datetime expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns the hour part for a given date.
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>Second</name>
+		<syntax>Second( Datetime_expression )</syntax>
+			<body>Second(datetime_expression)</body>
+			<argument>
+				<name>datetime_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>datetime expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns  the seconds part of a time/datetime . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>Year</name>
+		<syntax>Year( Date_expression )</syntax>
+			<body>Year(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns  the year part for a given date  . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>Month</name>
+		<syntax>Month( Date_expression )</syntax>
+			<body>Month(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns  the month part for a given date  . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>Day</name>
+		<syntax>Day( Date_expression )</syntax>
+			<body>Day(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns  the day part for a given date  . 
+		</description>
+		<type>time</type>
+	</formula>
+	
 	<formula>
 		<name>Distance</name>
 		<syntax>Distance (Geom1, Dim1, Geom2, Dim2, Unit, Tol)</syntax>
