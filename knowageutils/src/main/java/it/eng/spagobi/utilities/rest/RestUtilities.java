@@ -276,6 +276,11 @@ public class RestUtilities {
 	@SuppressWarnings("deprecation")
 	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
 			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+		logger.debug("httpMethod = " + httpMethod);
+		logger.debug("address = " + address);
+		logger.debug("requestHeaders = " + requestHeaders);
+		logger.debug("requestBody = " + requestBody);
+
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {

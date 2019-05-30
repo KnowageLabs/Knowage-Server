@@ -173,9 +173,11 @@ public class SolrDataSet extends RESTDataSet {
                         solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json",
                         dataProxy.getRequestHeaders(), null,
                         null);
+                logger.debug(response.getStatusCode());
                 Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
 
                 String responseBody = response.getResponseBody();
+                logger.debug(responseBody);
                 Assert.assertNotNull(responseBody, "Response body is null");
 
                 solrFields = new JSONObject(responseBody).getJSONArray("fields");
