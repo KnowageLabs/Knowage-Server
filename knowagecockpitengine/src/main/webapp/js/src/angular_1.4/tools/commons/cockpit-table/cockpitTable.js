@@ -257,7 +257,17 @@
                     
                     scope.hasPrecision = function(column){
                     	if(column.style && column.style.asString) return false;
-                    	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer'){return true}
+                    	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer') return true;
+                    	return false;
+                    }
+                    
+                    scope.isDate = function(column){
+                    	if(column.type == 'java.util.Date' || column.type == 'java.sql.Date' || column.type == 'oracle.sql.DATE') return true;
+                    	return false;
+                    }
+                    
+                    scope.isDateTime = function(column){
+                    	if(column.type == 'java.sql.Timestamp' || column.type == 'oracle.sql.TIMESTAMP' || column.type == 'java.sql.Time' || column.type == 'oracle.sql.TIMESTAMPTZ' || column.type == 'oracle.sql.TIMESTAMPLTZ') return true;
                     	return false;
                     }
 
