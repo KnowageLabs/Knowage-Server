@@ -459,7 +459,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				valuesArray.push(rows[k][column]);
 			}
 
-			$scope.doSelection(column,valuesArray,$scope.ngModel.settings.modalSelectionColumn,newValue,rows);
+			$scope.doSelection(column,valuesArray,$scope.ngModel.settings.modalSelectionColumn || null,newValue,rows);
 			$scope.bulkSelection = false;
 		}
 		
