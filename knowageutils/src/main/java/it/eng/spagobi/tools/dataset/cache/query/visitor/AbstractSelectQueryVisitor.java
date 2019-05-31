@@ -199,14 +199,18 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	@Override
 	public void visit(InFilter item) {
-		if (hasNullOperand(item)
-				|| !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
-				|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
-			queryBuilder.append("(");
-			visit(transformToAndOrFilters(item));
-			queryBuilder.append(")");
+		if (item.getOperands().isEmpty()) {
+			visit(new UnsatisfiedFilter());
 		} else {
-			append(item);
+			if (hasNullOperand(item)
+					|| !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+				queryBuilder.append("(");
+				visit(transformToAndOrFilters(item));
+				queryBuilder.append(")");
+			} else {
+				append(item);
+			}
 		}
 	}
 
