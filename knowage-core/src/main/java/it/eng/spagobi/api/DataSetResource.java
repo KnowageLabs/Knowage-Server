@@ -700,6 +700,10 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	/**
+	 * @param typeDoc
+	 * @return List of Datasets that Final User can see. All DataSet Tab in Workspace.
+	 */
 	@GET
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -707,12 +711,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	public String getMyDataDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
-			List<IDataSet> dataSets;
-			if (UserUtilities.isAdministrator(getUserProfile())) {
-				dataSets = getDatasetManagementAPI().getAllDataSet();
-			} else {
-				dataSets = getDatasetManagementAPI().getMyDataDataSet();
-			}
+			List<IDataSet> dataSets = getDatasetManagementAPI().getMyDataDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);

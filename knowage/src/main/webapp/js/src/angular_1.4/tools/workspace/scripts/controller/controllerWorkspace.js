@@ -460,27 +460,8 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 
 						console.info("[LOAD START]: Loading of Datasets is started.");
 
-//						if ($scope.reloadMyData==true) {
-//							console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
-//							$scope.loadNotDerivedDatasets();
-//						}
-
-						/**
-						 * We are getting names of all functions in this scope that we need to call after loading not
-						 * derived datasets. These names are sent in a form of an array of strings, where each of these
-						 * strings represent the name of the function that should be called. At the same time, the order
-						 * of those strings is set appropriately. This way we will call RETS services for loading specific
-						 * dataset type(s) in cascade, instead of their almost simultaneous call.
-						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						 */
-						$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets","loadEnterpriseDatasets","loadSharedDatasets");
-
-						/*
-						 * OLD IMPLEMENTATION: Simultaneous call of REST services for getting different types of datasets.
-						 * code commented by: danristo
-						 * */
 //						$scope.loadDatasets();
-//						$scope.loadMyDatasets();
+						$scope.loadMyDatasets();
 //						$scope.loadEnterpriseDatasets();
 //						$scope.loadSharedDatasets();
 
@@ -490,18 +471,11 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 					}
 					else {
 						if ($scope.reloadMyData==true) {
-							console.info("[LOAD]: Not derivated datasets, All datasets and  My Datasets, because of reloading of MyData.");
-
-							// The same as in the if-part of the if-else statement. (danristo)
-							$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets");
-
-							/*
-							 * OLD IMPLEMENTATION: Simultaneous call of REST services for getting different types of datasets.
-							 * code commented by: danristo
-							 * */
-//							$scope.loadNotDerivedDatasets();
+							console.info("[LOAD]: My Datasets, because of reloading of MyData.");
 //							$scope.loadDatasets();
-//				        	$scope.loadMyDatasets();
+							$scope.myDatasets = [];
+							$scope.datasets = [];
+				        	$scope.loadMyDatasets();
 
 				        	$scope.reloadMyData = false;
 						}

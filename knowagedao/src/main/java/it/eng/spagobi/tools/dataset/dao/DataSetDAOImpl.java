@@ -347,13 +347,41 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadMyDataDataSets(UserProfile userProfile) {
-		List<IDataSet> results = new ArrayList<IDataSet>();
-		List<IDataSet> owened = loadDataSetsOwnedByUser(userProfile, true);
-		results.addAll(owened);
-		List<IDataSet> shared = loadDatasetsSharedWithUser(userProfile, true);
-		results.addAll(shared);
-		List<IDataSet> enterprise = loadEnterpriseDataSets(userProfile);
-		results.addAll(enterprise);
+		logger.debug("IN");
+		List<IDataSet> results = new ArrayList<>();
+		Session session = null;
+		Set<Domain> categoryList;
+		List<Integer> categoryIds = null;
+		StringBuffer statement = new StringBuffer("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
+		try {
+			session = getSession();
+			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
+			if (categoryList.isEmpty()) {
+				statement.append("ds.category.valueId is null ");
+			} else {
+				categoryIds = extractCategoryIds(categoryList);
+				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories)) ");
+			}
+
+			statement.append(
+					"and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
+
+			Query query = session.createQuery(statement.toString());
+			query.setBoolean("active", true);
+			query.setString("owner", userProfile.getUserId().toString());
+
+			if (categoryIds != null && !categoryIds.isEmpty())
+				query.setParameterList("categories", categoryIds);
+
+			results = executeQuery(query, session);
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading all datasets for final user", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
 
 		return results;
 	}
@@ -2801,5 +2829,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private List<Integer> extractCategoryIds(Set<Domain> categoryList) {
+		List<Integer> toReturn = new ArrayList<>();
+		Iterator<Domain> it = categoryList.iterator();
+		while (it.hasNext()) {
+			Domain category = it.next();
+			toReturn.add(category.getValueId());
+		}
+		return toReturn;
 	}
 }

@@ -62,7 +62,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.paginationDisabled = null;
     $scope.ckanFilter = "";
     $scope.newOffset=0;
-    $scope.allTags = [];
+    $scope.myDSTags = [];
+	$scope.sharedDSTags = [];
+	$scope.enterpriseDSTags = [];
+	$scope.allDSTags = [];
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
 
@@ -111,239 +114,104 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			}
 		}
 	}
-
-    $scope.markNotDerived = function(datasets){
-
-    	for(i=0;i<datasets.length;i++){
-
-    		if($scope.notDerivedDatasets.indexOf(datasets[i].label)>-1){
-
-    			datasets[i].derivated=false;
-
-    		}else{
-    			datasets[i].derivated=true;
-    		}
-    	}
-    }
-
+   
 	/**
-	 * load all datasets
+	 * load all datasets - All Data Set Tab
 	 */
-	$scope.loadDatasets = function(){
-
-		/**
-		 * 'functionsToCall' - array of functions in this scope (that load different dataset types) that we expect to
-		 * load after the one that loads all not derived datasets.
-		 * 'indexForNextFn' - index of the one that should be loaded next (if there is one - if not, array item on this
-		 * index should be undefined).
-		 *
-		 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
-		 *
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		var functionsToCall = arguments[0][0];
-		var indexForNextFn = arguments[0][1];
-
-		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
-		.then(function(response) {
-			angular.copy(response.data.root,$scope.datasets);
-			tagsHandlerService.setAllDS(response.data.root)
-			createSourceNameOnDataset($scope.datasets);
-
-			$scope.markNotDerived($scope.datasets);
-			angular.copy($scope.datasets,$scope.datasetsInitial);
-			console.info("[LOAD END]: Loading of All datasets is finished.");
-
-			/**
-			 * After this REST call (loading all datasets), call the next one (the one with the index
-			 * of indexForNextFn+1 in the array of all functions that are expected to be called after
-			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
-			 *
-			 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
-			 *
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		},function(response){
-
-			/*
-			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-			 * further execution of REST services.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(sbiModule_translate.load("sbi.ds.alldatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
-			/**
-			 * Even if the REST call of this one was unsuccessful, call the next one (the one with the index
-			 * of indexForNextFn+1 in the array of all functions that are expected to be called after this.
-			 * If there are no other datasets that should be loaded (after this one), do nothing.
-			 *
-			 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
-			 *
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-		});
-
+	$scope.loadDatasets = function(){		
+		if ($scope.datasets.length == 0) {
+			sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
+			.then(function(response) {
+				angular.copy(response.data.root,$scope.datasets);
+				tagsHandlerService.setAllDS(response.data.root);
+				createSourceNameOnDataset($scope.datasets);
+	
+				angular.copy($scope.datasets,$scope.datasetsInitial);
+			},function(response){
+	
+				/*
+				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+				 * further execution of REST services.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+	
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load("sbi.ds.alldatasets.loading.error.msg"),
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+				
+			});
+		} 
 	}
 
-	$scope.loadMyDatasets = function(){
-
-		var functionsToCall = arguments[0][0];
-		var indexForNextFn = arguments[0][1];
-
-		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
-		.then(function(response) {
-			angular.copy(response.data.root,$scope.myDatasets);
-			tagsHandlerService.setOwnedDS(response.data.root)
-			createSourceNameOnDataset($scope.myDatasets);
-			$scope.markNotDerived($scope.myDatasets);
-			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
-			console.info("[LOAD END]: Loading of My datasets is finished.");
-
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		},function(response){
-
-			/*
-			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-			 * further execution of REST services.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(sbiModule_translate.load("sbi.ds.mydatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		});
+	$scope.loadMyDatasets = function(){		
+		if ($scope.myDatasets.length == 0) {
+			sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
+			.then(function(response) {
+				angular.copy(response.data.root,$scope.myDatasets);
+				tagsHandlerService.setOwnedDS(response.data.root);
+				createSourceNameOnDataset($scope.myDatasets);
+				angular.copy($scope.myDatasets,$scope.myDatasetsInitial);				
+			},function(response){
+	
+				/*
+				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+				 * further execution of REST services.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+	
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load("sbi.ds.mydatasets.loading.error.msg"),
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+		
+			});
+		} 
 	}
-
+	
 	$scope.loadEnterpriseDatasets = function(){
-
-		var functionsToCall = arguments[0][0];
-		var indexForNextFn = arguments[0][1];
-
-		sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
-		.then(function(response) {
-			var enterpriseDatasetsWithParams = [];
-			angular.copy(response.data.root,enterpriseDatasetsWithParams);
-
-			for (var i = 0; i < enterpriseDatasetsWithParams.length; i++) {
-				if(enterpriseDatasetsWithParams[i].pars.length==0){
-					$scope.enterpriseDatasets.push(enterpriseDatasetsWithParams[i]);
-				}
-			}
-			//angular.copy(response.data.root,$scope.enterpriseDatasets);
-			createSourceNameOnDataset($scope.enterpriseDatasets);
-			$scope.markNotDerived($scope.enterpriseDatasets);
-
-			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
-			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets)
-			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		},function(response){
-
-			/*
-			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-			 * further execution of REST services.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		});
+		if ($scope.enterpriseDatasets.length == 0) {
+			sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
+			.then(function(response) {
+				angular.copy(response.data.root,$scope.enterpriseDatasets);
+				createSourceNameOnDataset($scope.enterpriseDatasets);
+	
+				angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
+				tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);				
+			},function(response){
+	
+				/*
+				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+				 * further execution of REST services.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"),
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+		
+			});
+		}
 	}
 
-	$scope.loadSharedDatasets = function(){
-
-		var functionsToCall = arguments[0][0];
-		var indexForNextFn = arguments[0][1];
-
-		sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
-		.then(function(response) {
-			//angular.copy(response.data.root,$scope.sharedDatasets);
-			var sharedDatasetsWithParams = [];
-			angular.copy(response.data.root,sharedDatasetsWithParams);
-			for (var i = 0; i < sharedDatasetsWithParams.length; i++) {
-				if(sharedDatasetsWithParams[i].pars.length==0){
-					$scope.sharedDatasets.push(sharedDatasetsWithParams[i]);
-				}
-			}
-			createSourceNameOnDataset($scope.sharedDatasets);
-			$scope.markNotDerived($scope.sharedDatasets);
-		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
-		    tagsHandlerService.setSharedDS($scope.sharedDatasets)
-			console.info("[LOAD END]: Loading of Shared datasets is finished.");
-
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		},function(response){
-
-			/*
-			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-			 * further execution of REST services.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
-			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
-
-		});
-	}
-
-	$scope.loadNotDerivedDatasets = function(){
-
-		/**
-		 * We are getting names of all functions in this scope that we need to call after loading not
-		 * derived datasets. These names are sent in a form of an array of strings, where each of these
-		 * strings represent the name of the function that should be called. At the same time, the order
-		 * of those strings is set appropriately. This way we will call RETS services for loading specific
-		 * dataset type(s) in cascade, instead of their almost simultaneous call.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		var functionsToCall = arguments;
-
-		sbiModule_restServices.promiseGet("2.0/datasets", "", "includeDerived=no")
-		.then(function(response) {
-
-			//angular.copy(response.data,$scope.notDerivedDatasets);
-			$scope.extractNotDerivedLabels(response.data);
-			console.info("[LOAD END]: Loading of Not derived datasets is finished.");
-
-			/**
-			 * After this REST call (loading all not derived datasets), call the next one (the one
-			 * with the index of 1 in the array of all functions that are expected to be called after
-			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
-
-		},function(response){
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.load.error'), $scope.toasterConfig);
-
-			/**
-			 * Even if the REST call of this one was unsuccessful, call the next one (the one
-			 * with the index of 1 in the array of all functions that are expected to be called after
-			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
-
-		});
+	$scope.loadSharedDatasets = function(){		
+		if ($scope.sharedDatasets.length == 0) {
+			sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
+			.then(function(response) {
+				angular.copy(response.data.root,$scope.sharedDatasets);
+				createSourceNameOnDataset($scope.sharedDatasets);
+			    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
+			    tagsHandlerService.setSharedDS($scope.sharedDatasets);
+			},function(response){
+	
+				/*
+				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+				 * further execution of REST services.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"),
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+	
+			});
+		}
 	}
 
 	$scope.loadInitialForDatasets=function(){
@@ -663,14 +531,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		})
     }
 
-    $scope.extractNotDerivedLabels= function(datasets){
-
-    	for(i=0;i<datasets.length;i++){
-    		$scope.notDerivedDatasets.push(datasets[i].label);
-    	}
-
-    }
-
     $scope.creationDatasetEnabled= function(){
 
     return datasetParameters.CAN_CREATE_DATASET_AS_FINAL_USER==="true";
@@ -871,7 +731,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset, "visible": function(){return true;} },
     		{"name": "Show dataset details", "icon": "fa fa-pencil-square-o", "action": $scope.editFileDataset, "visible": function(ds){ return (ds.fileType) && (ds.dsTypeCd=='File')} },
     		{"name": "Edit dataset", "icon": "fa fa-pencil-square-o", "action": $scope.editQbeDataset, "visible": function(ds){ return ds.dsTypeCd == 'Qbe'} },
-    		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.derivated && ds.pars.length == 0}}
+    		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.hasOwnProperty('federationId') && ds.pars.length == 0}}
     	]}
     ];
 
@@ -1101,30 +961,30 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
          }
-
+    	
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
-
-    	switch(oldTab){
+    	    	
+    	switch(datasetsTab){
 		case "myDataSet":
-			$scope.myDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			$scope.loadMyDatasets();
 			break;
 		case "sharedDataSet":
-			$scope.sharedDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			$scope.loadSharedDatasets();
 			break;
 		case "enterpriseDataSet":
-			$scope.enterpriseDatasets = angular.copy(tagsHandlerService.restore($scope.allTags,oldTab));
+			$scope.loadEnterpriseDatasets();
 			break;
 		case "ckanDataSet":
 			break;
 		case "allDataSet":
-			$scope.datasets = angular.copy( tagsHandlerService.restore($scope.allTags,oldTab));
+			$scope.loadDatasets();			
 			break;
 		}
 
     }
-
+    
     $scope.isAbleToEditQbeDataset = function(selectedDataset) {
     	if(selectedDataset !== undefined) {
 	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userName == selectedDataset.owner;
@@ -1200,18 +1060,13 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
      * function that is called after adding new dataset, to syncronize model
      */
     $scope.reloadMyDataFn = function() {
-
-//    	$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets");
-
     	if ($scope.datasetsDocumentsLoaded == true) {
-//    		$scope.loadDatasets();
-//        	$scope.loadMyDatasets();
-    		$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets");
+    		$scope.loadDatasets();
+        	$scope.loadMyDatasets();
     	}
     	else {
-    		$scope.loadNotDerivedDatasets();
+    		$scope.loadMyDatasets();
     	}
-
     }
 
     function parseCkanRepository(){
@@ -1569,7 +1424,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	var getAllTags = function(){
 		sbiModule_restServices.promiseGet("2.0/tags","")
 		.then(function(response) {
-			$scope.allTags = response.data;
+			$scope.myDSTags = angular.copy(response.data);
+			$scope.sharedDSTags = angular.copy(response.data);
+			$scope.enterpriseDSTags = angular.copy(response.data);
+			$scope.allDSTags = angular.copy(response.data);
 		});
 	}
     getAllTags();
