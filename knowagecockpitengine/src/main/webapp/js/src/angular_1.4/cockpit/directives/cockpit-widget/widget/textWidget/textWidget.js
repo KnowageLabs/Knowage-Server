@@ -128,15 +128,13 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		$scope.property.style["font-size"]= fontSize+"px";
 		$scope.property.style["line-height"]= fontSize+"px";
 
-		$scope.checkPlaceholders(0, true).then(
-			function(){
-				if(nature == 'init'){
-					$timeout(function(){
-						$scope.widgetIsInit=true;
-						cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
-					},500);
-				}
-			})
+		if($scope.checkPlaceholders) $scope.checkPlaceholders(0, true);
+		if(nature == 'init'){
+			$timeout(function(){
+				$scope.widgetIsInit=true;
+				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+			},500);
+		}
 
 	};
 
