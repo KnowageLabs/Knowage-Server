@@ -46,7 +46,7 @@ function documentBrowserFunction($window,
 		{"headerName":$scope.translate.load('kn.documentbrowser.author'),"field":"creationUser"},
 		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},
 			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}];
-	
+
 		if(eval(sbiModule_user.isAdminUser) || eval(sbiModule_user.isSuperAdmin) || eval(sbiModule_user.isTechnicalUser) || eval(sbiModule_user.isTesterUser)) {
 			$scope.columns.splice(2, 0, {"headerName":$scope.translate.load('kn.documentbrowser.label'),"field":"viewLabel"});
 			$scope.columns.splice(4, 0, {"headerName":$scope.translate.load('kn.documentbrowser.status'),"field":"stateCodeStr",cellRenderer: statusRenderer,width: 200,suppressSizeToFit:true});
@@ -65,7 +65,7 @@ function documentBrowserFunction($window,
 	        onGridSizeChanged: resizeColumns,
 	        onRowClicked: onSelectionChanged
 	};
-	
+
 	$scope.searchResultGrid = {
 			angularCompileRows: true,
 			enableColResize: false,
@@ -75,15 +75,15 @@ function documentBrowserFunction($window,
 	        onRowClicked: onSelectionChanged,
 	        columnDefs : $scope.columns
 	}
-	
+
 	$scope.documentBrowserGrid.onGridReady = function(){
 		$scope.documentBrowserGrid.api.setColumnDefs($scope.columns);
 			$scope.documentBrowserGrid.api.sizeColumnsToFit();
 	}
-	
-	
+
+
 	$scope.tableElement = angular.element(document.querySelectorAll(".documentBrowserGrid")[0]);
-	
+
 	$scope.$watch(function () {
 	    return $scope.tableElement[0].clientWidth;
 	   }, function(newVal, oldVal) {
@@ -94,16 +94,16 @@ function documentBrowserFunction($window,
 			   }
 		   }
 	});
-	
+
 	function resizeColumns(){
 		var columnsToHideOnMobile = ['creationUser','viewLabel','visible'];
 		if(document.getElementsByClassName('mainContent')[0].clientWidth < 800){
 			$scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, false);
 		}else $scope.documentBrowserGrid.columnApi.setColumnsVisible(columnsToHideOnMobile, true);
-		
+
 		$scope.documentBrowserGrid.api.sizeColumnsToFit();
 	}
-	
+
 	function onSelectionChanged(node){
 		if($scope.selectedDocument == node.data){
 			node.node.setSelected(false,true);
@@ -121,20 +121,20 @@ function documentBrowserFunction($window,
 		}
 		$scope.$apply();
 	}
-	
+
 	 function buttonRenderer(params){
 		return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)">'+
 				'	<md-tooltip md-delay="500">'+$scope.translate.load('sbi.documentbrowser.execute')+'</md-tooltip>'+
 				'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
 				'</md-button>';
 	}
-	 
+
 	 function statusRenderer(params){
 		 return $filter('translateLoad')(params.data.stateCodeStr);
 	 }
-	 
+
 	 function visibilityRenderer(params){
-		 return params.data.visible ? '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.visible')+'</md-tooltip></i></span>' 
+		 return params.data.visible ? '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.visible')+'</md-tooltip></i></span>'
 				 : '<span class="fa-stack"><i class="fa fa-eye fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x"></i><md-tooltip md-delay="500">'+$scope.translate.load('sbi.generic.notvisible')+'</md-tooltip></span>';
 	 }
 
@@ -449,21 +449,42 @@ function documentBrowserFunction($window,
 		$scope.loadFolderDocuments($scope.selectedFolder.id);
 		$scope.setSearchInput($scope.lastSearchInputInserted);
 	}
+
 	$scope.newDocument=function(type){
-		$mdDialog.show({
-			controller: DialogNewDocumentController,
-			templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
-			clickOutsideToClose:false,
-			escapeToClose :false,
-			fullscreen: true,
-			locals:{
-				selectedFolder: $scope.selectedFolder,
-				typeDocument:type}
-		}) .then(function() {
-			if($scope.selectedFolder!=undefined){
-				$scope.loadFolderDocuments($scope.selectedFolder.id);
+		var createDocument = false;
+		for(var i = 0; i < $scope.selectedFolder.createRoles.length; i++) {
+			if($scope.selectedFolder.createRoles[i].name == sbiModule_user.roles[0]) {
+				createDocument = true;
 			}
-	    } );
+		}
+
+		if(createDocument) {
+			$mdDialog.show({
+				controller: DialogNewDocumentController,
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				clickOutsideToClose:false,
+				escapeToClose :false,
+				fullscreen: true,
+				locals:{
+					selectedFolder: $scope.selectedFolder,
+					typeDocument:type}
+			}) .then(function() {
+				if($scope.selectedFolder!=undefined){
+					$scope.loadFolderDocuments($scope.selectedFolder.id);
+				}
+		    });
+		} else {
+			var errorMessage = sbiModule_translate.load('sbi.documentbrowser.create.error.novalidrole');
+	        var okMessage = sbiModule_translate.load('sbi.general.ok');
+
+	        $mdDialog.show(
+	            $mdDialog.alert()
+	                .clickOutsideToClose(false)
+	                .content(errorMessage)
+	                .ariaLabel(errorMessage)
+	                .ok(okMessage)
+	        )
+	    }
 	};
 
 	$scope.deleteDocument = function(Document){
@@ -599,20 +620,20 @@ function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document
 
 function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
 
-	var folderId = selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
-	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
+		var folderId = selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
+		$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
 
-	 if(typeDocument=="cockpit"){
+		if(typeDocument=="cockpit"){
 			$scope.iframeUrl= sbiModule_config.engineUrls.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT"+folderId;
-	 }
-
-	$scope.closeDialogFromExt=function(reloadFolder){
-		if(reloadFolder){
-			$mdDialog.hide();
-		}else{
-			$mdDialog.cancel();
 		}
-	}
+
+		$scope.closeDialogFromExt=function(reloadFolder){
+			if(reloadFolder){
+				$mdDialog.hide();
+			}else{
+				$mdDialog.cancel();
+			}
+		}
 
 		$scope.closeConfirm=function(confirm,reloadFolder){
 
