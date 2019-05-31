@@ -115,7 +115,8 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             $scope.addFromFunction = function(funct) {
                 var str = funct.body;
                 angular.forEach(funct.arguments, function(value, key) {
-                    var regex = new RegExp(value.placeholder.toLowerCase() + '(?=[,\)])');
+                	var regString = '\\$\\{('+value.placeholder+')\\}'
+                    var regex = new RegExp(regString,"g");
                     str = str.replace(regex, funct.temp[value.name]);
                 });
                 $scope.toggleFunctionWizard();

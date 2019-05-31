@@ -138,7 +138,7 @@
 	<formula >
 		<name>Locate</name>
 		<syntax>Locate(substring, string, start)</syntax>
-			<body>Locate(substring, string, start)</body>
+			<body>Locate(${substring}, ${string}, ${start})</body>
 			<argument>
 				<name>Substring</name>
 				<expected_value></expected_value>
@@ -227,7 +227,7 @@
 	<formula >
 		<name>Substring</name>
 		<syntax>Substring(string, start_pos, number_of_chars))</syntax>
-			<body>Substring(string, start_pos, number_of_chars)</body>
+			<body>Substring(${string}, ${start_pos}, ${number_of_chars})</body>
 			<argument>
 				<name>String</name>
 				<expected_value></expected_value>
@@ -384,43 +384,49 @@
 	<formula>
 		<name>Distance</name>
 		<syntax>Distance (Geom1, Dim1, Geom2, Dim2, Unit, Tol)</syntax>
-		<body>Distance(geom1, dim1, geom2, dim2, unit, tol)</body>
+		<body>Distance(${geom1}, ${dim1}, ${geom2}, ${dim2}, ${unit}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object whose distance from geom2 is to be computed.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object whose distance from geom1 is to be computed.</argument_description>
+			<placeholder>geom2</placeholder>
 		</argument>
 		<argument>
 			<name>Dim2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+			<placeholder>dim2</placeholder>
 		</argument>
 		<argument>
 			<name>Unit</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Unit of measurement.</argument_description>
+			<placeholder>unit</placeholder>
 		</argument>
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Number</output>
@@ -431,43 +437,49 @@
 	<formula>
 		<name>Dwithin</name>
 		<syntax>Dwithin (Geom1, Dim1, Dist, Geom2, Dim2, Tol)</syntax>
-		<body>Dwithin(geom1, dim1, dist, geom2, dim2, tol)</body>
+		<body>Dwithin(${geom1}, ${dim1}, ${dist}, ${geom2}, ${dim2}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>
 		<argument>
 			<name>Dist</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Distance value.</argument_description>
+			<placeholder>dist</placeholder>
 		</argument>
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom2</placeholder>
 		</argument>
 		<argument>
 			<name>Dim2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+			<placeholder>Dim2</placeholder>
 		</argument>		
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Boolean</output>
@@ -488,37 +500,42 @@
 	<formula>
 		<name>Difference</name>
 		<syntax>Difference (Geom1, Dim1, Geom2, Dim2, Tol)</syntax>
-		<body>Difference(geom1, dim1, geom2, dim2, tol)</body>
+		<body>Difference(${geom1}, ${dim1}, ${geom2}, ${dim2}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom2</placeholder>
 		</argument>
 		<argument>
 			<name>Dim2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+			<placeholder>dim2</placeholder>
 		</argument>		
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Object</output>
@@ -529,25 +546,28 @@
 	<formula>
 		<name>Centroid</name>
 		<syntax>Centroid (Geom1, Dim1, Tol)</syntax>
-		<body>Centroid(geom1, dim1, tol)</body>
+		<body>Centroid(${geom1}, ${dim1}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>		
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Number</output>
@@ -568,37 +588,42 @@
 	<formula>
 		<name>Union</name>
 		<syntax>Union (Geom1, Dim1, Geom2, Dim2, Tol)</syntax>
-		<body>Union(geom1, dim1, geom2, dim2, tol)</body>
+		<body>Union(${geom1}, ${dim1}, ${geom2}, ${dim2}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom2</placeholder>
 		</argument>
 		<argument>
 			<name>Dim2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+			<placeholder>dim2</placeholder>
 		</argument>		
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Object</output>
@@ -609,31 +634,35 @@
 	<formula>
 		<name>Length</name>
 		<syntax>Length (Geom, Dim, Unit, Tol)</syntax>
-		<body>Length(geom, dim, unit, tol)</body>
+		<body>Length(${geom}, ${dim}, ${unit}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom.</argument_description>
+			<placeholder>dim</placeholder>
 		</argument>
 		<argument>
 			<name>Unit</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Unit of measurement.</argument_description>
+			<placeholder>unit</placeholder>
 		</argument>
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>Number</output>
@@ -644,43 +673,49 @@
 	<formula>
 		<name>Relate</name>
 		<syntax>Relate (Geom1, Dim1, Mask, Geom2, Dim2, Tol)</syntax>
-		<body>Relate(geom1, dim1, mask, geom2, dim2, tol))</body>
+		<body>Relate(${geom1}, ${dim1}, ${mask}, ${geom2}, ${dim2}, ${tol}))</body>
 		
 		<argument>
 			<name>Geom1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
 			<name>Dim1</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+			<placeholder>dim1</placeholder>
 		</argument>
 		<argument>
 			<name>Mask</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Specifies a list of relationships to check.</argument_description>
+			<placeholder>mask</placeholder>
 		</argument>
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom2</placeholder>
 		</argument>
 		<argument>
 			<name>Dim2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+			<placeholder>dim2</placeholder>
 		</argument>
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
 		</argument>
 		
 		<output>String</output>
@@ -691,24 +726,27 @@
 	<formula>
 		<name>Case</name>
 		<syntax>Case when Exp then val else val2 end </syntax>
-		<body>Case when Exp then val else val2 end</body>
+		<body>Case when ${Exp} then ${val} else ${val2} end</body>
 		<argument>
 			<name>Exp</name>
 			<expected_value/>
 			<default_value/>
 			<argument_description>Exp</argument_description>
+			<placeholder>Exp</placeholder>
 		</argument>
 		<argument>
 			<name>val</name>
 			<expected_value/>
 			<default_value/>
 			<argument_description>val</argument_description>
+			<placeholder>val</placeholder>
 		</argument>
 		<argument>
 			<name>val2</name>
 			<expected_value/>
 			<default_value/>
 			<argument_description>val2</argument_description>
+			<placeholder>val2</placeholder>
 		</argument>
 		<output>Object</output>
 		<description>Returns the result if condition is true.</description>
