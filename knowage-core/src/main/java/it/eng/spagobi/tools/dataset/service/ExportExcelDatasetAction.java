@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
@@ -46,12 +48,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
-	public static final String VERSION_ID = "id";
-
 	// logger component
 	private static Logger logger = Logger.getLogger(ExportExcelDatasetAction.class);
+
+	public static final String VERSION_ID = "id";
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	public static final String DATE_FORMAT = "dd/MM/yyyy";
+	public static final String PARAMETERS = "parameters";
 
 	@Override
 	public void doService() {
@@ -62,6 +65,24 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
 		Integer id = this.getAttributeAsInteger(VERSION_ID);
 		JSONObject driversJson = this.getAttributeAsJSONObject("DRIVERS");
+
+		JSONObject parametersAttribute = getAttributeAsJSONObject(PARAMETERS.toUpperCase());
+		JSONArray paramsJson = new JSONArray();
+		Map<String, Object> parameters = new HashMap<>();
+		try {
+			if (parametersAttribute != null)
+				paramsJson = parametersAttribute.getJSONArray(PARAMETERS);
+			for (int i = 0; i < paramsJson.length(); i++) {
+				JSONObject parameter = paramsJson.getJSONObject(i);
+				Object value = parameter.get("value");
+				if (value instanceof String == false)
+					value = String.valueOf(value);
+				parameters.put(parameter.getString("name"), value);
+			}
+		} catch (Exception ex) {
+			logger.debug("Cannot get Dataset parameters");
+			throw new SpagoBIServiceException(this.getActionName(), "Impossible to transform parameters from json object to map", ex);
+		}
 
 		// GET DATA STORE INFO
 		IDataSetDAO dao = DAOFactory.getDataSetDAO();
@@ -76,6 +97,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(this.getActionName(), "Impossible to transform drivers from json object to map", e);
 		}
 		dataSet.setDrivers(drivers);
+
+		dataSet.setParamsMap(parameters);
 
 		IDataStore dataStore = null;
 		try {

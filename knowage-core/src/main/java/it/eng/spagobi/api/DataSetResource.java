@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -473,9 +474,26 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType,
-			@QueryParam("DRIVERS") JSONObject driversJson) {
+			@QueryParam("DRIVERS") JSONObject driversJson, @QueryParam("PARAMETERS") JSONObject params) {
 
 		Map<String, Object> drivers = null;
+		Map<String, Object> parameters = new HashMap<>();
+
+		if (params != null) {
+			try {
+				JSONArray paramsJson = params.getJSONArray("parameters");
+				for (int i = 0; i < paramsJson.length(); i++) {
+					JSONObject parameter = paramsJson.getJSONObject(i);
+					Object value = parameter.get("value");
+					if (value instanceof String == false)
+						value = String.valueOf(value);
+					parameters.put(parameter.getString("name"), value);
+				}
+			} catch (Exception e) {
+				logger.debug("Cannot read dataset parameters");
+				throw new SpagoBIRestServiceException(getLocale(), e);
+			}
+		}
 
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
@@ -486,6 +504,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
 
 		dataSet.setDrivers(drivers);
+		dataSet.setParamsMap(parameters);
 
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 		Assert.assertNotNull(dataSet, "Impossible to find a dataset with id [" + id + "]");
