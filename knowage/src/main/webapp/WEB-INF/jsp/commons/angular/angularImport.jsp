@@ -64,6 +64,7 @@ if (!String.prototype.endsWith) {
 	};
 }
 </script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/polyfills/includes-polyfill/includes-polyfill.js")%>"></script>
 
 <!-- angular-material-->
 
