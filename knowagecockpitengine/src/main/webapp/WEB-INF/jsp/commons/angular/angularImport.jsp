@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/map-polyfill/map-polyfill.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/append-polyfill/append-polyfill.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/includes-polyfill/includes-polyfill.js"></script>
 
 <!-- angular-material-->
 <script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext()%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
