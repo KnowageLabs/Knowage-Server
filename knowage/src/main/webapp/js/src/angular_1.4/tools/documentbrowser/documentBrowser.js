@@ -453,8 +453,10 @@ function documentBrowserFunction($window,
 	$scope.newDocument=function(type){
 		var createDocument = false;
 		for(var i = 0; i < $scope.selectedFolder.createRoles.length; i++) {
-			if($scope.selectedFolder.createRoles[i].name == sbiModule_user.roles[0]) {
-				createDocument = true;
+			for(var j = 0; j < sbiModule_user.roles.length; j++) {
+				if($scope.selectedFolder.createRoles[i].name == sbiModule_user.roles[j]) {
+					createDocument = true;
+				}
 			}
 		}
 
