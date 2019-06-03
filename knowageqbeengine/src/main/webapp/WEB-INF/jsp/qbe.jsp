@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			ng-model="queryModel" expression="expression" 
 			filters="filters" 
 			is-temporal ="(entityModel.entities | filter:'temporal_dimension').length > 0 " >
-				<div >
+				<div layout="row">
 					<md-button  ng-if="subqueriesModel.subqueries.length > 0"ng-click="stopEditingSubqueries()">
                     	{{query.name}}
                 	</md-button>
