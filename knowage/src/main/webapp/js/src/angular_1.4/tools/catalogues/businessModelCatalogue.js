@@ -307,7 +307,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	  					activeFlagStyle();
 	  					millisToDate($scope.bmVersions);
 	  					$scope.versionLoadingShow = false;
-	  				//	$scope.$apply();
+	  					$scope.$apply();
 					 },600);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

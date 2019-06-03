@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										{{translate.load("sbi.bm.generate")}}
 									</md-button>
 									
-									<md-input-container ng-show="selectedBusinessModel.id!=unRdefined" flex>
+									<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex>
 							          <md-switch ng-model="metaWebFunctionality" >{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
 							        </md-input-container>
 									<%} %>
