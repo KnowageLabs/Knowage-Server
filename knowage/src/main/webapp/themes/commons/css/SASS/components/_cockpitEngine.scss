@@ -2044,7 +2044,7 @@
 /* WIDGET DIALOG */
 .addNewWidget {
 	md-dialog-content {
-		height: 600px;
+		max-height: 600px;
 		.widgetsContainer {
 			margin: 8px;
 			.widgetContainer {
