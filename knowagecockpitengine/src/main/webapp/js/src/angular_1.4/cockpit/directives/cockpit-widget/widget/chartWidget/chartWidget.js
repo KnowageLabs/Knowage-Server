@@ -889,13 +889,11 @@ function cockpitChartWidgetControllerFunction(
 		}
 
 		if(model.cross != undefined
-				&& model.cross.enable === true
-				&& model.cross.column != undefined
-				&& model.cross.outputParameter != undefined
-				){
-
+                && model.cross.enable === true
+                && model.cross.column != undefined && ( model.cross.outputParameter != undefined || model.cross.outputParameterList != undefined)
+			){
 			var outputParameter = {};
-			outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
+			if (model.cross.outputParameter!= undefined) outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
 
 
 			// parse output parameters if enabled
