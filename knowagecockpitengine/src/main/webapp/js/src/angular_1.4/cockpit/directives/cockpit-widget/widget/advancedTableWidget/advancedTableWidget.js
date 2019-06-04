@@ -400,14 +400,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		$scope.ngModel.settings.page = $scope.totalPages;
 	  		$scope.refreshWidget();
 		}
-		
+	  	
+	  	function mapRow(rowData){
+			var keyMap = {};
+			for(var r in rowData){
+				for(var f in $scope.metadata.fields){
+					if(f != 0 && $scope.metadata.fields[f].dataIndex == r) keyMap[$scope.metadata.fields[f].header] = rowData[r];
+				}
+			}
+			return keyMap;
+		}
 		
 		function onCellClicked(node){
 			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
 			if(node.colDef.measure == "MEASURE") return;
 			if(node.colDef.crossIcon) {
-				$scope.doSelection(node.colDef.field || null, null, null, null, node.data);
+				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
 				return;
 			}
 			if($scope.ngModel.settings.multiselectable) {
@@ -429,22 +438,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.selectedCells.length==0) $scope.bulkSelection=false;
 				}
 				$scope.advancedTableGrid.api.refreshCells({force:true});
-			}else $scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, node.data);
+			}else $scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
 		}
+		
 		
 		$scope.clickItem = function(e,row,column){
 			$scope.advancedTableGrid.api.deselectAll();
 			var newValue = undefined;
-			
-			function mapRow(rowData){
-				var keyMap = {};
-				for(var r in rowData){
-					for(var f in $scope.metadata.fields){
-						if(f != 0 && $scope.metadata.fields[f].dataIndex == r) keyMap[$scope.metadata.fields[f].header] = rowData[r];
-					}
-				}
-				return keyMap;
-			}
 			
 			column = getColumnName(column);
 
