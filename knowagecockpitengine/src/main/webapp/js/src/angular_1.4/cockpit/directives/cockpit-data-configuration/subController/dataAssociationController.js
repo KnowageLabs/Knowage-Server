@@ -212,7 +212,7 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		 
 			var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.cockpit.associations.delete.title"))
-	        .textContent(sbiModule_translate.load("sbi.cockpit.associations.delete.content"))
+	        .textContent(sbiModule_translate.load("sbi.cockpit.associations.delete.text"))
 	        .ariaLabel('delete associations')
 	        .ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 	        .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
@@ -237,7 +237,7 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 	 $scope.clearAssociations=function(){
 		 var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.cockpit.associations.delete.title"))
-	        .textContent(sbiModule_translate.load("sbi.cockpit.associations.delete.content"))
+	        .textContent(sbiModule_translate.load("sbi.cockpit.associations.delete.text"))
 	        .ariaLabel('delete associations')
 	        .ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 	        .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
