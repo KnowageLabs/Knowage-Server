@@ -30,6 +30,7 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
         	expression: '=',
             filters: '=',
             isTemporal: '='
+
         },
         templateUrl: currentScriptPath + 'custom-table.html',
         replace: true,
@@ -251,19 +252,53 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/datasetPreviewDialogTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center().top("50%"),
-				fullscreen :false,
+				panelClass :"layout-row",
+				fullscreen :true,
 				controller: function($scope,mdPanelRef,sbiModule_translate){
-					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
-					$scope.first = true;
-					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-						if($scope.first){
-							$scope.first = false
-						}else{
-							$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+
+
+					var gridOptions = {
+					        enableColResize: true,
+					        enableSorting: false,
+						    enableFilter: false,
+						    pagination: false,
+						    resizable: true,
+						    onGridSizeChanged: resizeColumns,
+						    suppressDragLeaveHidesColumns : true,
+					        columnDefs :getColumns(completeResultsColumns),
+					    	rowData: previewModel
+						};
+
+					    function getColumns(fields) {
+							var columns = [];
+							for(var f in fields){
+								if(typeof fields[f] != 'object') continue;
+								var tempCol = {"headerName":fields[f].label,"field":fields[f].name, "tooltipField":fields[f].name};
+
+								columns.push(tempCol);
+							}
+							return columns;
 						}
 
+					    function resizeColumns(){
+							gridOptions.api.sizeColumnsToFit();
+						}
+					$scope.model ={"gridOptions":gridOptions, "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
+					$scope.$watch('model.previewModel',function(){
+						console.log($scope.model)
+						gridOptions.api.setRowData($scope.model.previewModel);
+					},true)
+					$scope.itemsPerPage = 20;
+					$scope.currentPageNumber = 0;
+					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
+
+							$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+
 					}
+
+					$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber)
 					$scope.closePanel = function () {
+
 						angular.copy(null,$scope.changeDatasetPage)
 						mdPanelRef.close();
 						mdPanelRef.destroy();

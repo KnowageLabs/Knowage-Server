@@ -1,25 +1,58 @@
-<md-card class="qbePreviewDialog">
-	<md-card-content flex layout="column" class="noPadding">
-		<md-toolbar class="secondaryToolbar" >
-			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}}
-				<span flex></span>
-				<md-button class="md-icon-button" aria-label="Close" ng-click="closePanel()" 
-					title="Close">
-					<md-icon md-font-icon="fa fa-times" ></md-icon>
-				</md-button>
+<!-- <md-card   layout="column" > -->
+<!-- 	<md-card-content flex layout="column" class="noPadding"> -->
+<!-- 		<md-toolbar class="secondaryToolbar" > -->
+<!-- 			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}} -->
+<!-- 				<span flex></span> -->
+<!-- 				<md-button class="md-icon-button" aria-label="Close" ng-click="closePanel()"  -->
+<!-- 					title="Close"> -->
+<!-- 					<md-icon md-font-icon="fa fa-times" ></md-icon> -->
+<!-- 				</md-button> -->
+<!-- 			</div> -->
+<!-- 		</md-toolbar> -->
+<!-- <!-- 		<angular-table  -->
+<!-- <!-- 				id="basicView" -->
+<!-- <!-- 				flex layout-padding -->
+<!-- <!-- 				ng-model="model.previewModel" -->
+<!-- <!-- 				columns='model.completeResultsColumns' -->
+<!-- <!-- 				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)" -->
+<!-- <!-- 				total-item-count="model.totalNumberOfItems" -->
+<!-- <!-- 				disable-auto-load-on-init="true" -->
+<!-- <!-- 				items-per-page=15 -->
+<!-- <!--  				fixed-item-per-page=true> -->
+<!-- <!-- 		</angular-table> -->
+<!-- 		<div  ag-grid="model.gridOptions" flex class="ag-theme-balham ag-noBorders ag-theme-knowage" ></div> -->
+<!-- 		<div dir-paginate="row in model.previewModel | itemsPerPage: itemsPerPage"  total-items="model.totalNumberOfItems" current-page="currentPageNumber" ></div>		 -->
+<!-- 		<md-whiteframe  class="md-whiteframe-3dp" layout="row" flex> -->
+<!--   			<span flex></span> -->
+<!--   		 	<dir-pagination-controls  max-size="5"  flex on-page-change="changeDatasetPage(itemsPerPage,currentPageNumber)"></dir-pagination-controls> -->
+<!--   		</md-whiteframe>	 -->
+<!-- 	</md-card-content> -->
+
+<!-- </md-card> -->
+<div flex layout="column">
+	<div  layout="row">
+		<md-toolbar class="secondaryToolbar">
+			<div class="md-toolbar-tools">
+				{{translate.load("kn.qbe.custom.table.preview")}} <span flex></span>
+				<md-button class="md-icon-button" aria-label="Close"
+			ng-click="closePanel()" title="Close"> <md-icon
+			md-font-icon="fa fa-times"></md-icon> </md-button>
 			</div>
 		</md-toolbar>
-		<angular-table 
-				id="basicView"
-				flex layout-padding
-				ng-model="model.previewModel"
-				columns='model.completeResultsColumns'
-				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
-				total-item-count="model.totalNumberOfItems"
-				disable-auto-load-on-init="true"
-				items-per-page=15
- 				fixed-item-per-page=true>
-		</angular-table>		
-	</md-card-content>
+	</div>
+	<md-content layout="column" flex>
+		<div  ag-grid="model.gridOptions" flex class="ag-theme-balham ag-noBorders ag-theme-knowage" ></div>
+	</md-content>
+	
+		<md-card>
+		<md-card-content flex layout="column" class="noPadding">
+			<div ng-show="false" dir-paginate="row in model.previewModel | itemsPerPage: itemsPerPage"  total-items="model.totalNumberOfItems" current-page="currentPageNumber" ></div>		
+			<md-whiteframe  class="md-whiteframe-3dp" layout="row" >
+  				<span flex></span>
+  		 		<dir-pagination-controls  max-size="5"   on-page-change="changeDatasetPage(itemsPerPage,currentPageNumber)"></dir-pagination-controls>
+  		</md-whiteframe>
+  		</md-card-content>
+		</md-card>
+			
 
-</md-card>
+</div>
