@@ -218,12 +218,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
 			if($scope.bulkSelection){
 				if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow'){
-					for(var f in $scope.metadata.fields){
-						if($scope.metadata.fields[f].header == $scope.ngModel.cross.cross.column){
-							if($scope.selectedCells.indexOf(params.data[$scope.metadata.fields[f].name] > -1)) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
-							break;
-						}
-					}
+					if($scope.selectedCells.indexOf(params.data[$scope.bulkSelection]) > -1) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}else if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
 					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}
@@ -419,6 +414,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function onCellClicked(node){
+			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
 			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
 			if(node.colDef.crossIcon) {
@@ -427,21 +423,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
-				if(!$scope.bulkSelection || $scope.bulkSelection!=node.colDef.field){
+				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && !allRowEnabled)){
 					$scope.selectedCells.splice(0,$scope.selectedCells.length);
 					$scope.selectedRows.splice(0,$scope.selectedRows.length);
-					$scope.bulkSelection = node.colDef.field;
+					if($scope.ngModel.cross && allRowEnabled){
+						for(var f in $scope.metadata.fields){
+							if($scope.metadata.fields[f].header && $scope.metadata.fields[f].header == $scope.ngModel.cross.cross.column){
+								$scope.bulkSelection = $scope.metadata.fields[f].name;
+								break;
+							}
+						}
+					}else $scope.bulkSelection = node.colDef.field;
 					$scope.$apply();
 				}
-				//check if the selected element exists in the selectedCells array, remove it in case.
-				if(($scope.selectedCells.indexOf(node.data[node.colDef.field])==-1 && !$scope.ngModel.settings.modalSelectionColumn) || ($scope.ngModel.settings.modalSelectionColumn && $scope.selectedRows.indexOf(node.data)==-1)){
-					$scope.selectedCells.push(node.data[node.colDef.field]);
-					$scope.selectedRows.push(node.data);
+				if($scope.ngModel.cross && allRowEnabled){
+					if(($scope.selectedCells.indexOf(node.data[$scope.bulkSelection])==-1)){
+						$scope.selectedCells.push(node.data[$scope.bulkSelection]);
+						$scope.selectedRows.push(node.data);
+					}else{
+						$scope.selectedCells.splice($scope.selectedCells.indexOf(node.data[$scope.bulkSelection]),1);
+						$scope.selectedRows.splice($scope.selectedRows.indexOf(node.data),1);
+						//if there are no selection left set bulk selection to false to avoid the selection button to show
+						if($scope.selectedCells.length==0) $scope.bulkSelection=false;
+					}
 				}else{
-					$scope.selectedCells.splice($scope.selectedCells.indexOf(node.data[node.colDef.field]),1);
-					$scope.selectedRows.splice($scope.selectedRows.indexOf(node.data),1);
-					//if there are no selection left set bulk selection to false to avoid the selection button to show
-					if($scope.selectedCells.length==0) $scope.bulkSelection=false;
+					//check if the selected element exists in the selectedCells array, remove it in case.
+					if(($scope.selectedCells.indexOf(node.data[node.colDef.field])==-1 && !$scope.ngModel.settings.modalSelectionColumn) || ($scope.ngModel.settings.modalSelectionColumn && $scope.selectedRows.indexOf(node.data)==-1)){
+						$scope.selectedCells.push(node.data[node.colDef.field]);
+						$scope.selectedRows.push(node.data);
+					}else{
+						$scope.selectedCells.splice($scope.selectedCells.indexOf(node.data[node.colDef.field]),1);
+						$scope.selectedRows.splice($scope.selectedRows.indexOf(node.data),1);
+						//if there are no selection left set bulk selection to false to avoid the selection button to show
+						if($scope.selectedCells.length==0) $scope.bulkSelection=false;
+					}
 				}
 				$scope.advancedTableGrid.api.refreshCells({force:true});
 			}else $scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
