@@ -18,7 +18,7 @@
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!ngModel.cross.crossType && !crossImage" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.cross.crossType && !crossImage && !crossChart" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					Choose an interaction type to enable a cross navigation
 				</div>
@@ -33,7 +33,7 @@
 				<div class="hint" ng-if="ngModel.cross.crossType != 'singleColumn'">Optional column to use as modal</div>
 			</md-input-container>
 			
-			<md-input-container ng-if="ngModel.cross.crossType" ng-show="crossChart" class="md-block" flex>
+			<md-input-container ng-if="crossChart" class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
 				<md-select ng-model="ngModel.cross.column" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>

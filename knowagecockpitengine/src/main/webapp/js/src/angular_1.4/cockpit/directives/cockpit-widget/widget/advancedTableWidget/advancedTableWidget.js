@@ -217,7 +217,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		cellRenderer.prototype.refresh = function(params) {
 			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
 			if($scope.bulkSelection){
-				if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
+				if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow'){
+					for(var f in $scope.metadata.fields){
+						if($scope.metadata.fields[f].header == $scope.ngModel.cross.cross.column){
+							if($scope.selectedCells.indexOf(params.data[$scope.metadata.fields[f].name] > -1)) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
+							break;
+						}
+					}
+				}else if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
 					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}
 			}
@@ -414,7 +421,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function onCellClicked(node){
 			if($scope.cliccable==false) return;
 			if(node.rowPinned) return;
-			if(node.colDef.measure == "MEASURE") return;
 			if(node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
 				return;
