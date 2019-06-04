@@ -34,6 +34,8 @@ public class SolrConfiguration {
     }
 
     public void setUrl(String url) {
+        if(!url.endsWith("/"))
+            url += "/";
         this.url = url;
     }
 
