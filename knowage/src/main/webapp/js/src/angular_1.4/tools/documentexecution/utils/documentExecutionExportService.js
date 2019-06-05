@@ -282,9 +282,13 @@
 				dee.exporting = true;
 	
 				dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
-					buildRequestConfiguration(exportType, parameters)
-					.then(function(requestConf){
-						var config = {"responseType": "arraybuffer"};
+					var promise;
+					if (exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx')
+						promise = buildRequestConfiguration(exportType, parameters);
+					else
+						promise = dee.buildBackendRequestConf(exportType, mimeType, parameters);						
+					
+					promise.then(function(requestConf){
 						var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
 						$http(requestConf)
 						.then(function successCallback(response) {
