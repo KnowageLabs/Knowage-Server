@@ -407,7 +407,7 @@ function cockpitWidgetControllerFunction(
 		    }
 			break;
 		case "UPDATE_FROM_SHEET_CHANGE" :
-            $scope.refreshWidget();
+			 $scope.refreshWidget(null,$scope.ngModel.type=="document" ? "parameter_change" : null);
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
