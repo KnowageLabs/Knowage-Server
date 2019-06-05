@@ -74,6 +74,7 @@ public class ExcelExporter {
 
 	private final JSONObject body;
 
+	// Old implementation with parameterMap
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
@@ -502,8 +503,9 @@ public class ExcelExporter {
 	}
 
 	private void loadCockpitSelections(JSONObject configuration) throws JSONException {
-		String[] cockpitSelections = parameterMap.get("COCKPIT_SELECTIONS");
-		if (cockpitSelections != null && cockpitSelections.length == 1) {
+		// String[] cockpitSelections = parameterMap.get("COCKPIT_SELECTIONS");
+		JSONObject cockpitSelections = body.optJSONObject("COCKPIT_SELECTIONS");
+		if (cockpitSelections != null) {
 			JSONArray configDatasets = configuration.getJSONArray("datasets");
 
 			JSONObject paramDatasets = new JSONObject();
@@ -519,9 +521,8 @@ public class ExcelExporter {
 				}
 			}
 
-			JSONObject cs = new JSONObject(cockpitSelections[0]);
-			loadAggregationsFromCockpitSelections(paramDatasets, paramNearRealtime, cs);
-			loadFiltersFromCockpitSelections(cs);
+			loadAggregationsFromCockpitSelections(paramDatasets, paramNearRealtime, cockpitSelections);
+			loadFiltersFromCockpitSelections(cockpitSelections);
 		} else {
 			logger.warn("Unable to load cockpit selections");
 		}
@@ -735,9 +736,8 @@ public class ExcelExporter {
 			if (parameterMatcher.matches()) {
 				String newValue = "";
 				String parameterName = parameterMatcher.group(1);
-				String[] parameterArray = parameterMap.get(parameterName);
-				if (parameterArray != null && parameterArray.length > 0) {
-					String parameterValue = parameterArray[0];
+				String parameterValue = body.optString(parameterName);
+				if (parameterValue != null) {
 					String multiValueRegex = "\\{;\\{(.*)\\}(.*)\\}";
 					Matcher multiValueMatcher = Pattern.compile(multiValueRegex).matcher(parameterValue);
 					if (multiValueMatcher.matches()) {
