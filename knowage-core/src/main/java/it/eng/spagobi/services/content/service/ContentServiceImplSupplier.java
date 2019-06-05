@@ -57,19 +57,14 @@ public class ContentServiceImplSupplier {
 	/**
 	 * Read template.
 	 *
-	 * @param user
-	 *            the user
-	 * @param document
-	 *            the document
+	 * @param user     the user
+	 * @param document the document
 	 *
 	 * @return the content
 	 *
-	 * @throws SecurityException
-	 *             the security exception
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws SecurityException the security exception
+	 * @throws EMFUserError      the EMF user error
+	 * @throws EMFInternalError  the EMF internal error
 	 */
 	public Content readTemplate(String user, String document, HashMap parameters) throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
@@ -176,19 +171,14 @@ public class ContentServiceImplSupplier {
 	/**
 	 * Read template by label.
 	 *
-	 * @param user
-	 *            the user
-	 * @param document
-	 *            the document
+	 * @param user     the user
+	 * @param document the document
 	 *
 	 * @return the content
 	 *
-	 * @throws SecurityException
-	 *             the security exception
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws SecurityException the security exception
+	 * @throws EMFUserError      the EMF user error
+	 * @throws EMFInternalError  the EMF internal error
 	 */
 	public Content readTemplateByLabel(String user, String label, HashMap parameters) throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
@@ -267,10 +257,8 @@ public class ContentServiceImplSupplier {
 	 * if the required document is a valid subreport, take a look at execution parameters: the parameter document should be the document id of the master
 	 * document and the required document should be a subreport of its.
 	 *
-	 * @param biobj
-	 *            The required biobject
-	 * @param parameters
-	 *            The execution parameters.
+	 * @param biobj      The required biobject
+	 * @param parameters The execution parameters.
 	 * @return true if it is a call to retrieve a subreport
 	 */
 	private boolean isSubReportCall(BIObject biobj, HashMap parameters) {
@@ -334,7 +322,7 @@ public class ContentServiceImplSupplier {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error while cheking parameters", e);
 			return false;
 		} finally {
 			logger.debug("OUT");
@@ -347,12 +335,9 @@ public class ContentServiceImplSupplier {
 	 * specified on the parameters map, it must be a valid role) 3. if parameters are correct for the user In case the request is not valid (the previuos
 	 * conditions are not satisfied), an exception is thrown.
 	 *
-	 * @param user
-	 *            The user identifier
-	 * @param biobj
-	 *            The document
-	 * @param parameters
-	 *            The document parameters
+	 * @param user       The user identifier
+	 * @param biobj      The document
+	 * @param parameters The document parameters
 	 * @throws SecurityException
 	 * @throws EMFInternalError
 	 * @throws EMFUserError
