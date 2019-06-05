@@ -887,11 +887,12 @@ function cockpitChartWidgetControllerFunction(
 		} else {
 			model = $scope.ngModel.content;
 		}
+		var crossEnabled = model.cross != undefined && model.cross.enable === true;
 
-		if(model.cross != undefined
-                && model.cross.enable === true
-                && model.cross.column != undefined && ( model.cross.outputParameter != undefined || model.cross.outputParameterList != undefined)
-			){
+		var outputParameterExists = crossEnabled &&  (model.cross.column!=undefined &&  model.cross.outputParameter != undefined);
+		var outputParametersListExists = crossEnabled && model.cross.outputParametersList != undefined;
+
+		if( outputParameterExists || outputParametersListExists){
 			var outputParameter = {};
 			if (model.cross.outputParameter!= undefined) outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
 
