@@ -294,10 +294,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		$scope.refreshWidget();
 		}
 		
+	  	function mapRow(rowData){
+			var keyMap = {};
+			for(var r in rowData){
+				for(var f in $scope.metadata.fields){
+					if(f != 0 && $scope.metadata.fields[f].dataIndex == r) keyMap[$scope.metadata.fields[f].header] = rowData[r];
+				}
+			}
+			return keyMap;
+		}
 		
 		function onCellClicked(node){
 			if(node.rowPinned) return;
-			$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, node.data);
+			$scope.doSelection(node.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
 		}
 		
 		$scope.$watchCollection('ngModel.settings.pagination',function(newValue,oldValue){
