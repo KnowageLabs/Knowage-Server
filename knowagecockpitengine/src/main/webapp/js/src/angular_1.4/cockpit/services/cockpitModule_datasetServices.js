@@ -523,10 +523,27 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
 							this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
-					},params)
+							if (item == undefined) {
+								
+								var datasetFound=ds.getDatasetById(dsId);
+								var paramsFound = datasetFound.parameters;
+								for (var j = 0; j < paramsFound.length; j++) {
+									
+									if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
+										this[key] = paramsFound[j].defaultValue;
+										cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
+									}
+									
+								}
+								
+							}
+					},params);
+					
+					
 				}
 			}
 
+			
 			var datasetLabel=ds.getDatasetById(dsId).label;
 			var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
 			if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){

@@ -18,19 +18,24 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.metamodel.data.DataSet;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.jgrapht.graph.Pseudograph;
+
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import org.apache.metamodel.data.DataSet;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.jgrapht.graph.Pseudograph;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 
 public class AssociativeLogicUtils {
 
@@ -109,6 +114,19 @@ public class AssociativeLogicUtils {
 		config.setNearRealtimeDatasets(nearRealtimeDatasets);
 		config.setDatasetParameters(datasetParameters);
 		config.setDocuments(documents);
+		return config;
+	}
+	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
+			List<SimpleFilter> selections, List<SimpleFilter> filters, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+		Config config = new Config();
+		config.setStrategy(strategy);
+		config.setGraph(graph);
+		config.setDatasetToAssociations(datasetToAssociations);
+		config.setSelections(selections);
+		config.setNearRealtimeDatasets(nearRealtimeDatasets);
+		config.setDatasetParameters(datasetParameters);
+		config.setDocuments(documents);
+		config.setFilters(filters);
 		return config;
 	}
 }

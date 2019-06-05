@@ -18,15 +18,22 @@
 
 package it.eng.spagobi.tools.dataset.associativity;
 
-import it.eng.spago.error.EMFUserError;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -37,15 +44,9 @@ import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDa
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-
-import java.util.*;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -59,8 +60,10 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected Map<String, Map<String, String>> datasetToAssociations;
 	protected Pseudograph<String, LabeledEdge<String>> graph;
 	protected Map<String, IAssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
+	protected Map<String, List<SimpleFilter>> datasetFilters = new HashMap<>();
 	protected Set<String> documentsAndExcludedDatasets;
 	protected List<SimpleFilter> selections;
+	protected List<SimpleFilter> filters;
 
 	protected AssociativeLogicResult result = new AssociativeLogicResult();
 
@@ -116,6 +119,24 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	private void initDatasets(Config config) throws SpagoBIException {
 		datasetToAssociations = config.getDatasetToAssociations();
 		selections = config.getSelections();
+		filters = config.getFilters();
+		String datasetFilter = null;
+		for (SimpleFilter fil : filters) {
+		     datasetFilter = fil.getDataset().getName();
+
+		     if (datasetFilters.get(datasetFilter)!=null) {
+		    	 List<SimpleFilter> listaTemp = datasetFilters.get(datasetFilter);
+		    	 listaTemp.add(fil);
+		    	 datasetFilters.put(datasetFilter, listaTemp);
+
+		     }
+		     else {
+		    	 List<SimpleFilter> listaTemp = new ArrayList();
+		    	 listaTemp.add(fil);
+		    	 datasetFilters.put(datasetFilter, listaTemp);
+		     }
+
+		}
 
 		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 		if (userProfile != null) {

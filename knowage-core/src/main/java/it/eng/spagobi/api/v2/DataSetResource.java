@@ -389,7 +389,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@Override
-	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
+	public List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
@@ -486,7 +486,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
-	private SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
+	public SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName) throws JSONException {
 		SimpleFilter filter = null;
 

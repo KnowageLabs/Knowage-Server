@@ -94,6 +94,13 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 		Set<String> totalChildren = new HashSet<>();
 
 		IAssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
+
+		if(datasetFilters.get(dataset)!=null) {
+			for (SimpleFilter filterInDataset : datasetFilters.get(dataset)) {
+
+				container.addFilter(filterInDataset);
+			}
+		}
 		container.addFilter(filter);
 
 		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");

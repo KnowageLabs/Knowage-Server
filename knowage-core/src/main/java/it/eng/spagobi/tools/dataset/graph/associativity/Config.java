@@ -18,11 +18,16 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jgrapht.graph.Pseudograph;
 
-import java.util.*;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 
 public class Config {
 
@@ -30,6 +35,7 @@ public class Config {
 	private Pseudograph<String, LabeledEdge<String>> graph;
 	private Map<String, Map<String, String>> datasetToAssociations;
 	private List<SimpleFilter> selections;
+	private List<SimpleFilter> filters;
 	private Set<String> nearRealtimeDatasets;
 	private Map<String, Map<String, String>> datasetParameters;
 	private Set<String> documents;
@@ -94,6 +100,14 @@ public class Config {
 
 	public void setDocuments(Set<String> documents) {
 		this.documents = documents;
+	}
+
+	public List<SimpleFilter> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<SimpleFilter> filters) {
+		this.filters = filters;
 	}
 
 }
