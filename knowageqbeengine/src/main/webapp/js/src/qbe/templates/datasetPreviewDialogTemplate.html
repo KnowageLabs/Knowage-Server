@@ -49,7 +49,10 @@
 			<div ng-show="false" dir-paginate="row in model.previewModel | itemsPerPage: itemsPerPage"  total-items="model.totalNumberOfItems" current-page="currentPageNumber" ></div>		
 			<md-whiteframe  class="md-whiteframe-3dp" layout="row" >
   				<span flex></span>
-  		 		<dir-pagination-controls  max-size="5"   on-page-change="changeDatasetPage(itemsPerPage,currentPageNumber)"></dir-pagination-controls>
+  		 		<qbe-pagination
+  		 		total-count="model.totalNumberOfItems" 
+  		 		on-page-change='changeDatasetPage(itemsPerPage,currentPageNumber)'></qbe-pagination>
+  		 		<div flex="5"></div>
   		</md-whiteframe>
   		</md-card-content>
 		</md-card>

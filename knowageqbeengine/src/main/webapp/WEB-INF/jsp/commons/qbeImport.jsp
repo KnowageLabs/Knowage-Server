@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/having/having.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/relations/relationshipsModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/relations/joinTypeDefinition.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/pagination/pagination.js")%>"></script>
 
 
 <!-- SERVICES -->

@@ -27,4 +27,5 @@ angular
 		'qbe_parameters',
 		'qbe_calculated_field_editor',
 		'save',
-        'relationshipsModule']);
+        'relationshipsModule',
+        'qbe_pagination']);

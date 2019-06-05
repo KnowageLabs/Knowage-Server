@@ -255,9 +255,12 @@
   </md-content>
   </md-whiteframe>
   	
-  		<md-whiteframe ng-if="smartPreview" class="md-whiteframe-3dp" layout="row">
+  		<md-whiteframe ng-if="smartPreview && ngModel.length>0" class="md-whiteframe-3dp" layout="row">
   			<span flex></span>
-  		 	<dir-pagination-controls  max-size="5"   on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+  		 	<qbe-pagination
+  		 		total-count="results" 
+  		 		on-page-change='pageChanged(newPageNumber)'></qbe-pagination>
+  		 		<div flex="5"></div>
   		</md-whiteframe>
   		
   	
