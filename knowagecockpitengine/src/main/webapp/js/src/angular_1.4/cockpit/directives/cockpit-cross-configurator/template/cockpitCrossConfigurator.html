@@ -85,7 +85,7 @@
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
 				<label>{{::translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" >
-					<md-option ng-repeat="opt in outputParametersType" ng-value="opt.value" ng-if="opt.value == 'dynamic' && crossImage">
+					<md-option ng-repeat="opt in outputParametersType" ng-value="opt.value" ng-hide="crossImage && opt.value == 'dynamic'">
 						{{opt.label}}
 					</md-option>
 				</md-select>
