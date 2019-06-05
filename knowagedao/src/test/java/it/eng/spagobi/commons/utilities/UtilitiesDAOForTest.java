@@ -33,7 +33,7 @@ public class UtilitiesDAOForTest {
 		DAOConfig.setHibernateConfigurationFileFile(new File("../knowage/src/hibernate.cfg.xml"));
 
 		try {
-			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			Class.forName("org.hsqldb.jdbcDriver");
 		} catch (Exception e) {
 			System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
 			e.printStackTrace();
@@ -43,9 +43,8 @@ public class UtilitiesDAOForTest {
 		// Create initial context
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockFactory.class.getName());
 
-		// Construct DataSources
-		MysqlConnectionPoolDataSource knowageDs = new MysqlConnectionPoolDataSource();
-		knowageDs.setURL("jdbc:mysql://localhost/athena3");
+		/* Construct DataSources*/MysqlConnectionPoolDataSource knowageDs = new MysqlConnectionPoolDataSource();
+		knowageDs.setURL("jdbc:mysql://localhost/knowage_master");
 		knowageDs.setUser("root");
 		knowageDs.setPassword("root");
 

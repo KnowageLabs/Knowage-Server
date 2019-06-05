@@ -17,11 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import com.hazelcast.config.MulticastConfig;
-import com.hazelcast.config.TcpIpConfig;
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
 import it.eng.spagobi.tenant.Tenant;
@@ -29,9 +30,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
 import it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -42,129 +40,82 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.Pseudograph;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class AssociativeLogicManagerTest {
 
-	private static final String STORE = "store";
-	private static final String PRODUCT = "product";
-	private static final String SALES = "sales";
-	private static final String CUSTOMER = "customer";
+	private static final String DS_STORE = "store";
+	private static final String DS_PRODUCT = "product";
+	private static final String DS_SALES_FACT_1997 = "sales_fact_1997";
+	private static final String DS_SALES_FACT_1998 = "sales_fact_1998";
+	private static final String DS_CUSTOMER = "customer";
 
-	private static final String Y = "Y";
-	private static final String W = "W";
-	private static final String X = "X";
-	private static final String Z = "Z";
-	private static final String K = "K";
+	private static final String COL_STORE_ID = "store_id";
+	private static final String COL_PRODUCT_ID = "product_id";
+	private static final String COL_STORE_CITY = "store_city";
+	private static final String COL_CITY = "city";
+	private static final String COL_STORE_COUNTRY = "store_country";
+	private static final String COL_COUNTRY = "country";
 
-	private static final String R4 = "R4";
-	private static final String R1 = "R1";
-	private static final String R5 = "R5";
-	private static final String R6 = "R6";
-	private static final String R3 = "R3";
-
-	private static final String R4_COLUMN = "the_date";
-	private static final String R1_COLUMN = "customer_id";
-	private static final String R5_COLUMN = "occupation";
-	private static final String R6_COLUMN = "city";
-	private static final String R3_COLUMN = "product_id";
-
-	private static final String A3 = "A3";
-	private static final String A4 = "A4";
-	private static final String A7 = "A7";
-	private static final String A8 = "A8";
-
-	private static final String A3_COLUMN = "store_id";
-	private static final String A4_COLUMN = "product_id";
-	private static final String STORE_A7_COLUMN = "store_city";
-	private static final String CUSTOMER_A7_COLUMN = "city";
-	private static final String STORE_A8_COLUMN = "store_country";
-	private static final String CUSTOMER_A8_COLUMN = "country";
-
-	private static ICache cache;
 	private static IDataSetDAO dataSetDAO;
 
 	@BeforeClass
 	public static void setUp() {
 		try {
-			UtilitiesForTest.setUpMasterConfiguration();
 			UtilitiesDAOForTest.setUpDatabaseTestJNDI();
+
+			System.setProperty("AF_CONFIG_FILE", "master.xml");
+			String absolutePath = new File(UtilitiesForTest.class.getResource(".").getFile()).getAbsolutePath()  + "/../../../";
+			ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration(absolutePath));
+			ConfigSingleton.getRootPath();
+			DAOConfig.setHibernateConfigurationFileFile(new File(absolutePath + "../../../knowage/src/main/resources/hibernate.cfg.xml"));
+
 			TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
 			UserProfileManager.setProfile(new UserProfile("biadmin", "DEFAULT_TENANT"));
-			setHazelcastDefaultConfig();
-			cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-			dataSetDAO = DAOFactory.getDataSetDAO();
 
-			loadDataSetInCache(STORE);
-			loadDataSetInCache(SALES);
-			loadDataSetInCache(PRODUCT);
-			loadDataSetInCache(CUSTOMER);
+			dataSetDAO = DAOFactory.getDataSetDAO();
 		} catch (Exception e) {
 			fail(e.toString());
 		}
-		// loadDataSetInCache(K);
-		// loadDataSetInCache(W);
-		// loadDataSetInCache(X);
-		// loadDataSetInCache(Y);
-		// loadDataSetInCache(Z);
-	}
-
-	private static void setHazelcastDefaultConfig() {
-		com.hazelcast.config.Config cfg = new com.hazelcast.config.Config();
-
-		cfg.getNetworkConfig().setPort(5701);
-		cfg.getNetworkConfig().setPortAutoIncrement(true);
-		cfg.getNetworkConfig().setPortCount(100);
-		MulticastConfig multicastConfig = new MulticastConfig();
-		multicastConfig.setEnabled(false);
-		cfg.getNetworkConfig().getJoin().setMulticastConfig(multicastConfig);
-
-		TcpIpConfig tcpIpConfig = new TcpIpConfig();
-		tcpIpConfig.setEnabled(true);
-		List<String> members = new ArrayList<String>();
-		members.add("127.0.0.1");
-		tcpIpConfig.setMembers(members);
-		cfg.getNetworkConfig().getJoin().setTcpIpConfig(tcpIpConfig);
-
-		cfg.setProperty("hazelcast.socket.bind.any", "false");
-		cfg.setProperty("hazelcast.logging.type", "log4j");
-
-		DistributedLockFactory.setDefaultConfig(cfg);
 	}
 
 	@Test
 	public void testProcessTwoDatasetsOneSimpleAssociation() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<>(
 				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
-		graph.addVertex(STORE);
-		graph.addVertex(SALES);
-		LabeledEdge<String> labeledEdge = new LabeledEdge<String>(STORE, SALES, A3);
-		graph.addEdge(STORE, SALES, labeledEdge);
+		graph.addVertex(DS_STORE);
+		graph.addVertex(DS_SALES_FACT_1998);
+		LabeledEdge<String> labeledEdge = new LabeledEdge<>(DS_STORE, DS_SALES_FACT_1998, COL_STORE_ID);
+		graph.addEdge(DS_STORE, DS_SALES_FACT_1998, labeledEdge);
 
-		Map<String, Map<String, String>> datasetToAssociations = new HashMap<String, Map<String, String>>();
-		Map<String, String> associationToColumns = new HashMap<String, String>();
-		associationToColumns.put(A3, A3_COLUMN);
-		datasetToAssociations.put(STORE, associationToColumns);
-		datasetToAssociations.put(SALES, associationToColumns);
+		Map<String, Map<String, String>> datasetToAssociations = new HashMap<>();
+		Map<String, String> associationToColumns = new HashMap<>();
+		associationToColumns.put(COL_STORE_ID, COL_STORE_ID);
+		datasetToAssociations.put(DS_STORE, associationToColumns);
+		datasetToAssociations.put(DS_SALES_FACT_1998, associationToColumns);
 
 		List<SimpleFilter> selections = new ArrayList<>(1);
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(STORE);
-		selections.add(new InFilter(new Projection(dataSet, "store_type"), Arrays.asList(("Small Grocery".split("")))));
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(DS_STORE);
+		selections.add(new InFilter(new Projection(dataSet, "store_type"), Arrays.asList(new String[]{"Small Grocery"})));
 
-		// TODO: Manage real time here!
-		Set<String> realtimeDatasets = new HashSet<String>();
-		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
-		Set<String> documents = new HashSet<String>();
+		Set<String> realtimeDatasets = new HashSet<>();
+		realtimeDatasets.add(DS_STORE);
+		realtimeDatasets.add(DS_SALES_FACT_1998);
+
+		Map<String, Map<String, String>> datasetParameters = new HashMap<>();
+		HashMap<String, String> storeParameters = new HashMap<>();
+		storeParameters.put("store_id", "100");
+		datasetParameters.put(DS_STORE, storeParameters);
+
+		Set<String> documents = new HashSet<>();
 
 		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
@@ -174,7 +125,7 @@ public class AssociativeLogicManagerTest {
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			manager.process();
-			manager.getResult().getEdgeGroupValues();
+			edgeGroupToValues = manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -182,51 +133,58 @@ public class AssociativeLogicManagerTest {
 
 		assertNotNull(edgeGroupToValues);
 
-		Set<LabeledEdge<String>> labeledEdges = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> labeledEdges = new HashSet<>();
 		labeledEdges.add(labeledEdge);
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 
 		Set<Tuple> values = edgeGroupToValues.get(edgeGroup);
 		assertEquals(4, values.size());
-		assertTrue(values.contains("('2')"));
-		assertTrue(values.contains("('5')"));
-		assertTrue(values.contains("('14')"));
-		assertTrue(values.contains("('22')"));
+		assertTrue(values.contains(new Tuple(Arrays.asList(new Integer[]{2}))));
+		assertTrue(values.contains(new Tuple(Arrays.asList(new Integer[]{5}))));
+		assertTrue(values.contains(new Tuple(Arrays.asList(new Integer[]{14}))));
+		assertTrue(values.contains(new Tuple(Arrays.asList(new Integer[]{22}))));
 	}
 
 	@Test
 	public void testProcessThreeDatasetsTwoSimpleAssociations() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<>(
 				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
-		graph.addVertex(STORE);
-		graph.addVertex(SALES);
-		graph.addVertex(PRODUCT);
-		LabeledEdge<String> labeledEdgeStoreSales = new LabeledEdge<String>(STORE, SALES, A3);
-		graph.addEdge(STORE, SALES, labeledEdgeStoreSales);
-		LabeledEdge<String> labeledEdgeSalesProduct = new LabeledEdge<String>(SALES, PRODUCT, A4);
-		graph.addEdge(SALES, PRODUCT, labeledEdgeSalesProduct);
+		graph.addVertex(DS_STORE);
+		graph.addVertex(DS_SALES_FACT_1997);
+		graph.addVertex(DS_PRODUCT);
+		LabeledEdge<String> labeledEdgeStoreSales = new LabeledEdge<>(DS_STORE, DS_SALES_FACT_1997, COL_STORE_ID);
+		graph.addEdge(DS_STORE, DS_SALES_FACT_1997, labeledEdgeStoreSales);
+		LabeledEdge<String> labeledEdgeSalesProduct = new LabeledEdge<>(DS_SALES_FACT_1997, DS_PRODUCT, COL_PRODUCT_ID);
+		graph.addEdge(DS_SALES_FACT_1997, DS_PRODUCT, labeledEdgeSalesProduct);
 
-		Map<String, String> associationToColumnStore = new HashMap<String, String>();
-		associationToColumnStore.put(A3, A3_COLUMN);
-		Map<String, String> associationToColumnProduct = new HashMap<String, String>();
-		associationToColumnProduct.put(A4, A4_COLUMN);
-		Map<String, String> associationToColumnSales = new HashMap<String, String>();
-		associationToColumnSales.put(A3, A3_COLUMN);
-		associationToColumnSales.put(A4, A4_COLUMN);
-		Map<String, Map<String, String>> datasetToAssociations = new HashMap<String, Map<String, String>>();
-		datasetToAssociations.put(STORE, associationToColumnStore);
-		datasetToAssociations.put(PRODUCT, associationToColumnProduct);
-		datasetToAssociations.put(SALES, associationToColumnSales);
+		Map<String, String> associationToColumnStore = new HashMap<>();
+		associationToColumnStore.put(COL_STORE_ID, COL_STORE_ID);
+		Map<String, String> associationToColumnProduct = new HashMap<>();
+		associationToColumnProduct.put(COL_PRODUCT_ID, COL_PRODUCT_ID);
+		Map<String, String> associationToColumnSales = new HashMap<>();
+		associationToColumnSales.put(COL_STORE_ID, COL_STORE_ID);
+		associationToColumnSales.put(COL_PRODUCT_ID, COL_PRODUCT_ID);
+		Map<String, Map<String, String>> datasetToAssociations = new HashMap<>();
+		datasetToAssociations.put(DS_STORE, associationToColumnStore);
+		datasetToAssociations.put(DS_PRODUCT, associationToColumnProduct);
+		datasetToAssociations.put(DS_SALES_FACT_1997, associationToColumnSales);
 
 		List<SimpleFilter> selections = new ArrayList<>(1);
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(PRODUCT);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(DS_PRODUCT);
 		selections.add(new InFilter(new Projection(dataSet, "brand_name"), "Queen"));
 
-		// TODO: Manage real time here!
-		Set<String> realtimeDatasets = new HashSet<String>();
-		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
-		Set<String> documents = new HashSet<String>();
+		Set<String> realtimeDatasets = new HashSet<>();
+		realtimeDatasets.add(DS_STORE);
+		realtimeDatasets.add(DS_SALES_FACT_1997);
+		realtimeDatasets.add(DS_PRODUCT);
+
+		Map<String, Map<String, String>> datasetParameters = new HashMap<>();
+		HashMap<String, String> storeParameters = new HashMap<>();
+		storeParameters.put("store_id", "100");
+		datasetParameters.put(DS_STORE, storeParameters);
+
+		Set<String> documents = new HashSet<>();
 
 		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
@@ -236,8 +194,7 @@ public class AssociativeLogicManagerTest {
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			manager.process();
-			manager.getResult().getEdgeGroupValues();
-			;
+			edgeGroupToValues = manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -246,7 +203,7 @@ public class AssociativeLogicManagerTest {
 		assertNotNull(edgeGroupToValues);
 		assertEquals(2, edgeGroupToValues.size());
 
-		Set<LabeledEdge<String>> labeledEdges = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> labeledEdges = new HashSet<>();
 		labeledEdges.add(labeledEdgeSalesProduct);
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
@@ -270,33 +227,32 @@ public class AssociativeLogicManagerTest {
 
 	@Test
 	public void testProcessTwoDatasetsOneComplexAssociation() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<>(
 				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
-		graph.addVertex(STORE);
-		graph.addVertex(CUSTOMER);
-		LabeledEdge<String> labeledEdgeStoreCustomer1 = new LabeledEdge<String>(STORE, CUSTOMER, A7);
-		graph.addEdge(STORE, CUSTOMER, labeledEdgeStoreCustomer1);
-		LabeledEdge<String> labeledEdgeStoreCustomer2 = new LabeledEdge<String>(STORE, CUSTOMER, A8);
-		graph.addEdge(STORE, CUSTOMER, labeledEdgeStoreCustomer2);
+		graph.addVertex(DS_STORE);
+		graph.addVertex(DS_CUSTOMER);
+		LabeledEdge<String> labeledEdgeStoreCustomer1 = new LabeledEdge<>(DS_STORE, DS_CUSTOMER, COL_CITY);
+		graph.addEdge(DS_STORE, DS_CUSTOMER, labeledEdgeStoreCustomer1);
+		LabeledEdge<String> labeledEdgeStoreCustomer2 = new LabeledEdge<>(DS_STORE, DS_CUSTOMER, COL_COUNTRY);
+		graph.addEdge(DS_STORE, DS_CUSTOMER, labeledEdgeStoreCustomer2);
 
-		Map<String, String> associationToColumnStore = new HashMap<String, String>();
-		associationToColumnStore.put(A7, STORE_A7_COLUMN);
-		associationToColumnStore.put(A8, STORE_A8_COLUMN);
-		Map<String, String> associationToColumnCustomer = new HashMap<String, String>();
-		associationToColumnCustomer.put(A7, CUSTOMER_A7_COLUMN);
-		associationToColumnCustomer.put(A8, CUSTOMER_A8_COLUMN);
-		Map<String, Map<String, String>> datasetToAssociations = new HashMap<String, Map<String, String>>();
-		datasetToAssociations.put(STORE, associationToColumnStore);
-		datasetToAssociations.put(CUSTOMER, associationToColumnCustomer);
+		Map<String, String> associationToColumnStore = new HashMap<>();
+		associationToColumnStore.put(COL_CITY, COL_STORE_CITY);
+		associationToColumnStore.put(COL_COUNTRY, COL_STORE_COUNTRY);
+		Map<String, String> associationToColumnCustomer = new HashMap<>();
+		associationToColumnCustomer.put(COL_CITY, COL_CITY);
+		associationToColumnCustomer.put(COL_COUNTRY, COL_COUNTRY);
+		Map<String, Map<String, String>> datasetToAssociations = new HashMap<>();
+		datasetToAssociations.put(DS_STORE, associationToColumnStore);
+		datasetToAssociations.put(DS_CUSTOMER, associationToColumnCustomer);
 
 		List<SimpleFilter> selections = new ArrayList<>(1);
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(CUSTOMER);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(DS_CUSTOMER);
 		selections.add(new InFilter(new Projection(dataSet, "gender"), "F"));
 
-		// TODO: Manage real time here!
-		Set<String> realtimeDatasets = new HashSet<String>();
-		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
-		Set<String> documents = new HashSet<String>();
+		Set<String> realtimeDatasets = new HashSet<>();
+		Map<String, Map<String, String>> datasetParameters = new HashMap<>();
+		Set<String> documents = new HashSet<>();
 
 		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
@@ -306,7 +262,7 @@ public class AssociativeLogicManagerTest {
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			manager.process();
-			manager.getResult().getEdgeGroupValues();
+			edgeGroupToValues = manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -315,7 +271,7 @@ public class AssociativeLogicManagerTest {
 		assertNotNull(edgeGroupToValues);
 		assertEquals(1, edgeGroupToValues.size());
 
-		Set<LabeledEdge<String>> labeledEdges = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> labeledEdges = new HashSet<>();
 		labeledEdges.add(labeledEdgeStoreCustomer1);
 		labeledEdges.add(labeledEdgeStoreCustomer2);
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
@@ -323,126 +279,5 @@ public class AssociativeLogicManagerTest {
 
 		Set<Tuple> values = edgeGroupToValues.get(edgeGroup);
 		assertEquals(23, values.size());
-	}
-
-	@Test
-	public void testProcessFiveDatasetsTwoComplexAssociationsTwoSimpleAssociations() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
-				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
-
-		graph.addVertex(W);
-		graph.addVertex(Y);
-		graph.addVertex(X);
-		graph.addVertex(Z);
-		graph.addVertex(K);
-
-		LabeledEdge<String> labeledEdgeWY = new LabeledEdge<String>(W, Y, R4);
-		graph.addEdge(W, Y, labeledEdgeWY);
-
-		LabeledEdge<String> labeledEdgeYX1 = new LabeledEdge<String>(Y, X, R1);
-		graph.addEdge(Y, X, labeledEdgeYX1);
-		LabeledEdge<String> labeledEdgeYX5 = new LabeledEdge<String>(Y, X, R5);
-		graph.addEdge(Y, X, labeledEdgeYX5);
-
-		LabeledEdge<String> labeledEdgeYZ1 = new LabeledEdge<String>(Y, Z, R1);
-		graph.addEdge(Y, Z, labeledEdgeYZ1);
-		LabeledEdge<String> labeledEdgeYZ5 = new LabeledEdge<String>(Y, Z, R5);
-		graph.addEdge(Y, Z, labeledEdgeYZ5);
-
-		LabeledEdge<String> labeledEdgeXZ1 = new LabeledEdge<String>(X, Z, R1);
-		graph.addEdge(X, Z, labeledEdgeXZ1);
-		LabeledEdge<String> labeledEdgeXZ5 = new LabeledEdge<String>(X, Z, R5);
-		graph.addEdge(X, Z, labeledEdgeXZ5);
-		LabeledEdge<String> labeledEdgeXZ6 = new LabeledEdge<String>(X, Z, R6);
-		graph.addEdge(X, Z, labeledEdgeXZ6);
-
-		LabeledEdge<String> labeledEdgeZK = new LabeledEdge<String>(Z, K, R3);
-		graph.addEdge(Z, K, labeledEdgeZK);
-
-		Map<String, String> associationToColumnW = new HashMap<String, String>();
-		associationToColumnW.put(R4, R4_COLUMN);
-
-		Map<String, String> associationToColumnY = new HashMap<String, String>();
-		associationToColumnY.put(R4, R4_COLUMN);
-		associationToColumnY.put(R1, R1_COLUMN);
-		associationToColumnY.put(R5, R5_COLUMN);
-
-		Map<String, String> associationToColumnX = new HashMap<String, String>();
-		associationToColumnX.put(R1, R1_COLUMN);
-		associationToColumnX.put(R5, R5_COLUMN);
-		associationToColumnX.put(R6, R6_COLUMN);
-
-		Map<String, String> associationToColumnZ = new HashMap<String, String>();
-		associationToColumnZ.put(R1, R1_COLUMN);
-		associationToColumnZ.put(R5, R5_COLUMN);
-		associationToColumnZ.put(R6, R6_COLUMN);
-		associationToColumnZ.put(R3, R3_COLUMN);
-
-		Map<String, String> associationToColumnK = new HashMap<String, String>();
-		associationToColumnK.put(R3, R3_COLUMN);
-
-		Map<String, Map<String, String>> datasetToAssociations = new HashMap<String, Map<String, String>>();
-		datasetToAssociations.put(W, associationToColumnW);
-		datasetToAssociations.put(Y, associationToColumnY);
-		datasetToAssociations.put(X, associationToColumnX);
-		datasetToAssociations.put(Z, associationToColumnZ);
-		datasetToAssociations.put(K, associationToColumnK);
-
-		List<SimpleFilter> selections = new ArrayList<>(1);
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(Z);
-		selections.add(new InFilter(new Projection(dataSet, "country"), "USA"));
-
-		// TODO: Manage real time here!
-		Set<String> realtimeDatasets = new HashSet<String>();
-		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
-		Set<String> documents = new HashSet<String>();
-
-		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
-
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.OUTER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
-				datasetParameters, documents);
-
-		try {
-			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
-			manager.process();
-			manager.getResult().getEdgeGroupValues();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.toString());
-		}
-
-		assertNotNull(edgeGroupToValues);
-		assertEquals(4, edgeGroupToValues.size());
-
-		Set<LabeledEdge<String>> labeledEdges = new HashSet<LabeledEdge<String>>();
-		labeledEdges.add(labeledEdgeZK);
-		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
-		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
-	}
-
-	@AfterClass
-	public static void tearDown() {
-		deleteDataSetFromCache(STORE);
-		deleteDataSetFromCache(SALES);
-		deleteDataSetFromCache(PRODUCT);
-		deleteDataSetFromCache(CUSTOMER);
-		// deleteDataSetFromCache(K);
-		// deleteDataSetFromCache(W);
-		// deleteDataSetFromCache(X);
-		// deleteDataSetFromCache(Y);
-		// deleteDataSetFromCache(Z);
-	}
-
-	private static void loadDataSetInCache(String dataSetLabel) throws DataBaseException {
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
-		if (!cache.contains(dataSet)) {
-			dataSet.loadData();
-			cache.put(dataSet, dataSet.getDataStore());
-		}
-	}
-
-	private static void deleteDataSetFromCache(String dataSetLabel) {
-		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
-		cache.delete(dataSet);
 	}
 }

@@ -20,11 +20,7 @@ package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.metamodel.data.DataSet;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -78,9 +74,9 @@ public class AssociativeLogicUtils {
 	public static Set<Tuple> getTupleOfValues(String parameterValues) {
 		Set<Tuple> tuples = new HashSet<>();
 		String[] values = parameterValues.split(",");
-		for (int i = 0; i < values.length; i++) {
+		for (String value : values) {
 			Tuple tuple = new Tuple(1);
-			tuple.add(values[i]);
+			tuple.add(value);
 			tuples.add(tuple);
 		}
 		return tuples;
@@ -105,17 +101,10 @@ public class AssociativeLogicUtils {
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
-		Config config = new Config();
-		config.setStrategy(strategy);
-		config.setGraph(graph);
-		config.setDatasetToAssociations(datasetToAssociations);
-		config.setSelections(selections);
-		config.setNearRealtimeDatasets(nearRealtimeDatasets);
-		config.setDatasetParameters(datasetParameters);
-		config.setDocuments(documents);
-		return config;
+									 List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+		return buildConfig(strategy, graph, datasetToAssociations, selections, new ArrayList<SimpleFilter>(), nearRealtimeDatasets, datasetParameters, documents);
 	}
+
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
 			List<SimpleFilter> selections, List<SimpleFilter> filters, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
 		Config config = new Config();
