@@ -763,7 +763,8 @@ function cockpitWidgetControllerFunction(
 						crossColumnOrAlias = col.aliasToShow;
 					}
 				}
-				doCross = true;
+				if(model.cross.cross.crossType == "icon" && columnValue && model.cross.cross.column) doCross = false;
+				else doCross = true;
 				// get value to pass to cross navigation
 				if(row){
 					if(row[crossColumnOrAlias]){

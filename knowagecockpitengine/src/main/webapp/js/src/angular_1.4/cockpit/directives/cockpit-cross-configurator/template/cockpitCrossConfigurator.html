@@ -44,7 +44,7 @@
 				</md-select>
 			</md-input-container>
 
-			<md-input-container ng-if="outputParametersList.length > 0" ng-show="(crossTable && ngModel.cross.crossType) || crossChart || crossImage" class="md-block" flex>
+			<md-input-container ng-if="outputParametersList.length > 0" ng-show="(crossTable && ngModel.cross.crossType) || crossChart" class="md-block" flex>
 				<label>{{::translate.load("sbi.cockpit.cross.output")}}</label>
 				<md-select ng-model="ngModel.cross.outputParameter" ng-disabled="!ngModel.cross.enable">
 					<md-option></md-option>
