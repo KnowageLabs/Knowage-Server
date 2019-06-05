@@ -58,7 +58,8 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 				});
 			}else tempString = tempString.replace('%%'+tag.inputs[i].name+'%%','');
 		}
-		$scope.newModel.htmlToRender += tempString;
+		if($scope.newModel.htmlToRender) $scope.newModel.htmlToRender += tempString;
+		else  $scope.newModel.htmlToRender = tempString;
 	}
 
 	$scope.toggleCss = function() {
