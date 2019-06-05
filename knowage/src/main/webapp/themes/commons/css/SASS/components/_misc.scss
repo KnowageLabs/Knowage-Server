@@ -54,7 +54,7 @@ md-toolbar.md-knowage-theme {
 		.md-toolbar-tools {
 			height: $toolbarHeight;
 			font-size: $headerFontSize;
-			text-transform: uppercase;
+			text-transform: none;
 			font-weight: $headerFontWeight;
       button:not(.md-fab){
         min-height: $toolbarHeight;
