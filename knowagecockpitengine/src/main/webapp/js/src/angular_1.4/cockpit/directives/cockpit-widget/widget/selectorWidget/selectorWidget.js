@@ -590,7 +590,7 @@ angular.module('cockpitModule')
 			mdPanelRef.destroy();
 
 			if(!scopeFather.ngModel.isNew){
-				scopeFather.refreshWidget();
+				scopeFather.refreshWidget(null,'init');
 			}
 
 			$scope.$destroy();
