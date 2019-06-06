@@ -8,8 +8,10 @@
 		    
 					<md-tab id="bmtab" label="{{translate.load('sbi.workspace.models.business')}}" ng-click="switchModelsTab('businessModels')" flex>
 				   		
-				   		 <md-tab-body style="background-color: red;">
-						 	
+				   		 <md-content layout-fill>
+				   		 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
+						 		<div ag-grid="businessModelGridOptions" class="ag-theme-balham ag-theme-knowage" style="width:100%;" ></div>
+						 	</md-card>
 						 	<federation-view class="kn-documentBrowser" flex  style='overflow: auto;' ng-model="businessModels"
 									selected-federation=selectedModel
 									table-columns=tableColumnsModels
@@ -21,14 +23,16 @@
 									show-business-models=true>
 							</federation-view>
 								
-				 	 	</md-tab-body>
+				 	 	</md-content>
 				 	 	
 		 			</md-tab> 
 		   			<div ng-if="federationsEnabled()" >
 						<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
 					         
-					         	<md-tab-body >
-							 	
+				         	<md-content layout-fill>
+							 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
+						 			<div ag-grid="federationsGridOptions" class="ag-theme-balham ag-theme-knowage" style="width:100%;"></div>
+						 		</md-card>
 							 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
 									show-grid-view="showGridView"
 									selected-federation=selectedModel
@@ -42,7 +46,7 @@
 									show-business-models=false
 							 	  ></federation-view>	
 	                    
-					        </md-tab-body>
+					        </md-content>
 					               
 				 		</md-tab>  
 			 		</div>
@@ -58,7 +62,12 @@
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">
 				
-                <md-button aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
+                <md-button aria-label="Open qbe" class="md-icon-button" ng-show="currentModelsTab!='federations'" ng-click="showQbeModel(selectedModel)">
+                	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
+				
+				<md-button aria-label="Open qbe" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="showQbeFederation(selectedModel)">
                 	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe')}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>

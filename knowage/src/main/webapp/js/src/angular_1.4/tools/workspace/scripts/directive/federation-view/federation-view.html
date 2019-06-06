@@ -1,8 +1,8 @@
 
-<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+<!--  kn-table ng-hide="showGridView==true || ngModel.length==0 "
 	columns='tableColumns' 
 	model="ngModel"
-	click-function="clickFederation(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed kn-firefox-height-fix"></kn-table>		
+	click-function="clickFederation(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed kn-firefox-height-fix"></kn-table-->		
 
 <!-- Federation Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true ">
@@ -13,7 +13,7 @@
 		           	<p class=" ellipsis" ng-if="!showBusinessModels">{{federation.name}}</p>
 		           	<p class=" ellipsis" ng-if="showBusinessModels && federation.description==null">{{federation.name}}</p>
 		            <md-tooltip ng-if="!showBusinessModels" md-delay="1500">{{federation.name}}</md-tooltip>
-		           	<p class=" ellipsis" ng-if="showBusinessModels"><i>{{federation.description}}</i></p>
+		           	<p class=" ellipsis" ng-if="showBusinessModels">{{federation.description}}</p>
 	       		</md-card-title-text>
 	       		
 	   		</md-card-title>

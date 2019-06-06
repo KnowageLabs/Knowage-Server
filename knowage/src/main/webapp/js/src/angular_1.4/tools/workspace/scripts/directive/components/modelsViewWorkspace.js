@@ -65,6 +65,10 @@
 				$scope.showQbeFromBM(model);
 			}
 		}
+		
+		$scope.showQbeFromBMIndex = function(index){
+			$scope.showQbeFromBM($scope.businessModels[index]);
+		}
 
 		$scope.showQbeFromBM=function(businessModel){
 			$scope.selectedModel = businessModel;
@@ -95,15 +99,80 @@
 				}
 			})
 		}
-		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [
-			{"label":"Name","name":"name","type":"text"},
-			{"label":"Description","name":"description","type":"text"},
-			{"type": "buttons", "buttons": [
-				{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible":function(){return true;}}
-			]}
-		];
-
+		
+		$scope.businessModelGridOptions = {
+				angularCompileRows: true,
+	            enableColResize: false,
+	            enableFilter: true,
+	            enableSorting: true,
+	            pagination: false,
+	            onGridSizeChanged: resizeColumns,
+	            onRowClicked: modelsOnSelectionChanged,
+	            defaultColDef: {
+	            	suppressMovable: true,
+	            	tooltip: function (params) {
+	                    return params.value;
+	                },
+	            },
+	            columnDefs: [{"headerName":"Name","field":"name"},{"headerName":"Description","field":"description"},
+	    			{"headerName":"",cellRenderer: modelsButtonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
+	    			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false}]
+		}
+		
+		$scope.federationsGridOptions = {
+				angularCompileRows: true,
+	            enableColResize: false,
+	            enableFilter: true,
+	            enableSorting: true,
+	            pagination: false,
+	            onGridSizeChanged: resizeColumns,
+	            onRowClicked: federationsOnSelectionChanged,
+	            defaultColDef: {
+	            	suppressMovable: true,
+	            	tooltip: function (params) {
+	                    return params.value;
+	                },
+	            },
+	            columnDefs: [{"headerName":"Label","field":"label"},{"headerName":"Name","field":"name"},
+	    			{"headerName":"",cellRenderer: federationsButtonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
+	    			suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true, tooltip: false}]
+		}
+		
+		function modelsOnSelectionChanged(params) {
+			$scope.selectModel($scope.businessModels[params.rowIndex]);
+			$scope.$apply();
+		}
+		
+		function federationsOnSelectionChanged(params) {
+			$scope.selectModel($scope.federationDefinitions[params.rowIndex]);
+			$scope.$apply();
+		}
+		
+		function modelsButtonRenderer(params){
+			return 	'<md-button class="md-icon-button" ng-click="showQbeFromBMIndex('+params.rowIndex+')"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.qbe\')}}</md-tooltip><md-icon md-font-icon="fa fa-search"></md-icon></md-button>';
+		}
+		
+		function federationsButtonRenderer(params){
+			return 	'<md-button class="md-icon-button" ng-click="federationGridClick(\'show\','+params.rowIndex+',$event)"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.qbe\')}}</md-tooltip>'+
+					'	<md-icon md-font-icon="fa fa-search"></md-icon></md-button>'+
+					'<md-button class="md-icon-button" ng-click="federationGridClick(\'edit\','+params.rowIndex+',$event)"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.edit\')}}</md-tooltip>'+
+					'	<md-icon md-font-icon="fa fa-pencil"></md-icon></md-button>'+
+					'<md-button class="md-icon-button" ng-click="federationGridClick(\'delete\','+params.rowIndex+',$event)"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.edit\')}}</md-tooltip>'+
+					'	<md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+		}
+		
+		function resizeColumns(params){
+			params.api.sizeColumnsToFit();
+		}
+		
+		$scope.$watchCollection('businessModels',function(newValue,oldValue){
+			if(newValue && newValue != oldValue) $scope.businessModelGridOptions.api.setRowData(newValue);
+		})
+		
+		$scope.$watchCollection('federationDefinitions',function(newValue,oldValue){
+			if(newValue && newValue != oldValue) $scope.federationsGridOptions.api.setRowData(newValue);
+		})
+		
 		$scope.showModelInfo = false;
 
 		$scope.federationsEnabled= function (){
@@ -148,16 +217,7 @@
 					for (var i = 0 ; i < $scope.businessModels.length; i ++ ){
 						$scope.businessModels[i].description = $scope.i18n.getI18n($scope.businessModels[i].description);
 					}
-
-					// S.Lupo - businessModels must be filtered by categories backend side
-					/*
-			for (var i = 0; i < response.data.length; i++) {
-				for (var j = 0; j < categoriesForUser.length; j++) {
-					if(categoriesForUser[j].valueId == response.data[i].category) {
-						$scope.businessModels.push(response.data[i]);
-					}
-				}
-			}*/
+					
 					angular.copy($scope.businessModels,$scope.businessModelsInitial);
 					console.info("[LOAD END]: Loading of Business models is finished.");
 				}); // end of load I 18n
@@ -244,6 +304,13 @@
 				$scope.setDetailOpenModel(model !== undefined);
 			}
 		};
+		
+		$scope.federationGridClick = function(type,index,evt){
+			evt.stopImmediatePropagation();
+			if(type == 'show') $scope.showQbeFederation($scope.federationDefinitions[index]);
+			if(type == 'edit') $scope.editFederation($scope.federationDefinitions[index]);
+			if(type == 'delete') $scope.deleteFederation($scope.federationDefinitions[index]);
+		}
 
 		$scope.showQbeFederation = function(federation){
 

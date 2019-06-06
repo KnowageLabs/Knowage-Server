@@ -40,5 +40,6 @@ angular
 	                                'organizer_view',
 	                                'document_tree',
 	                                'schedulation_view',
-	                                'document_schedulation'
+	                                'document_schedulation',
+	                                'agGrid'
 	                                ]);
