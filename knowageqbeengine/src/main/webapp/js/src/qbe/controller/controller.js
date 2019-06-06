@@ -17,7 +17,7 @@
  */
 
 angular
-	.module('qbe.controller', ['configuration','directive','services'])
+	.module('qbe.controller', ['configuration','directive','services', 'exportModule'])
 	.controller('qbeController',
 
 		["$scope",
@@ -44,10 +44,11 @@ angular
 		"selectedEntitiesRelationshipsService",
 		"queryEntitiesService",
 		"expression_service",
+		"exportService",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService,expression_service){
+function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService,expression_service, exportService){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -101,7 +102,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	});
 	var queryHandler = function(newCatalogue,oldCatalogue){
 		$scope.meta.length = 0;
-		$rootScope.$broadcast('editQueryObj',newCatalogue);
+		exportService.setQuery(newCatalogue);
 		for (var i = 0; i < newCatalogue.fields.length; i++) {
 			var meta = {
 					"displayedName":newCatalogue.fields[i].alias,
@@ -134,7 +135,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 		}
-		$rootScope.$broadcast('bodySend', $scope.bodySend);
+		exportService.setBody($scope.bodySend);
 		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 
 	}

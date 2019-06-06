@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -354,7 +355,15 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				logger.debug("Drivers cannot be transformed from string to map");
 				throw new SpagoBIRuntimeException("Drivers cannot be transformed from string to map", e);
 			}
-			dataSet.setDrivers(drivers);
+
+			Set<String> driverUrlNames = drivers.keySet();
+			for (String driverName : driverUrlNames) {
+				Map mapOfValues = (Map) drivers.get(driverName);
+				if (mapOfValues.containsKey("value")) {
+					logger.debug("Setting drivers");
+					dataSet.setDrivers(drivers);
+				}
+			}
 
 			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
 
