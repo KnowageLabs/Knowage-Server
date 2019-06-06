@@ -19,6 +19,8 @@ package it.eng.spagobi.engines.qbe.services.dataset;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.hibernate.jdbc.util.BasicFormatterImpl;
@@ -159,24 +161,25 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	}
 
 	public String addAliasInSql(Query query, String queryString) {
+		String pattern = "col_(.*?)\\w+";
 		List<ISelectField> selectFields = query.getSelectFields(true);
 		if (selectFields != null) {
+
 			for (int i = 0; i < selectFields.size(); i++) {
-				int startColAlias = queryString.indexOf("as col_");
-				int endColAlias = queryString.indexOf(",", startColAlias);
-				int fromPosition = queryString.indexOf(" from ");
-				if (endColAlias == -1 || fromPosition < endColAlias) {
-					endColAlias = fromPosition;
-				}
+				Pattern r = Pattern.compile(pattern);
+				Matcher m = r.matcher(queryString);
+
 				String fieldAlias = selectFields.get(i).getAlias();
 				if (fieldAlias == null) {
 					fieldAlias = selectFields.get(i).getName();
 					fieldAlias = fieldAlias.replace(" ", "_");
 					fieldAlias = "`" + fieldAlias + "`";
 				}
-				queryString = queryString.substring(0, startColAlias) + " as " + fieldAlias + queryString.substring(endColAlias);
+				queryString = m.replaceFirst(fieldAlias);
+
 			}
 		}
+
 		return queryString;
 	}
 
