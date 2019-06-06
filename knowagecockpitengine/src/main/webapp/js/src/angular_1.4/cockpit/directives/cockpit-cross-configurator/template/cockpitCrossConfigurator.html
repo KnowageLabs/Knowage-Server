@@ -206,7 +206,7 @@
           		<md-input-container class="md-block" flex=25>
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
 					<md-select ng-model="parameter.bindType" >
-						<md-option ng-repeat="opt in previewParametersType" ng-value="opt.value">
+						<md-option ng-repeat="opt in previewParametersType" ng-value="opt.value" ng-hide="opt.value == 'dynamic' && !crosschart">
 							{{opt.label}}
 						</md-option>
 					</md-select>
@@ -215,6 +215,13 @@
 				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'static'">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
 					<input ng-model="parameter.value" type="{{parameter.type}}"/>
+				</md-input-container>
+				
+				<md-input-container  class="md-block" flex=25 ng-if="parameter.bindType == 'dynamic'">
+					<label>{{::translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+					<md-select ng-model="parameter.column" >
+						<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
+					</md-select>
 				</md-input-container>
 				
 				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection'">
