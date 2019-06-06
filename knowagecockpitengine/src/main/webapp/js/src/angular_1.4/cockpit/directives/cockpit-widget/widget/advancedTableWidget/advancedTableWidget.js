@@ -176,7 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		function numberFormatter(params){
-			if(!params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
+			if(params.value != undefined && !params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
@@ -416,6 +416,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function onCellClicked(node){
 			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
 			if($scope.cliccable==false) return;
+			if(node.value == "" || node.value == undefined) return;
 			if(node.rowPinned) return;
 			if(node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
