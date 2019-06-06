@@ -826,8 +826,8 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 						 * SEARCH FOR MODELS
 						 */
 						case "models":
-							$scope.federationDefinitions = filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
-							$scope.businessModels = filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
+							if($scope.currentModelsTab == 'federations') $scope.federationDefinitions = filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
+							if($scope.currentModelsTab != 'federations') $scope.businessModels = filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
 							$scope.searching = false;
 							break;
 
