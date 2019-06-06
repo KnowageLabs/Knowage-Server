@@ -431,7 +431,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.categ.min.heatmap = 2;
 		minMaxCategoriesSeries.categ.max.heatmap = 2;
 		minMaxCategoriesSeries.categ.min.radar = 1;
-		minMaxCategoriesSeries.categ.max.radar = 1;
 		minMaxCategoriesSeries.categ.min.bar = 1;
 		minMaxCategoriesSeries.categ.min.pie = 1;
 

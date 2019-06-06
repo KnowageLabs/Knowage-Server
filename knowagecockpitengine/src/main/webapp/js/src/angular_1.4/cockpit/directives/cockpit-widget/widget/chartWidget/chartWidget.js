@@ -1172,6 +1172,7 @@ function cockpitChartWidgetControllerFunction(
 };
 
 function setAggregationsOnChartEngine(wconf){
+	var chartsForGrouping = ["bar","line", "radar"]
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
@@ -1227,7 +1228,7 @@ function setAggregationsOnChartEngine(wconf){
 
 				aggregations.push(obj);
 
-				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
+				if((chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) {
 						subs = chartCategory.groupby
