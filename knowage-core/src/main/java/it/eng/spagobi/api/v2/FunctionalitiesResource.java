@@ -66,8 +66,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	/**
-	 * Getting list of all functionalities. Arrays of Roles that belong to one
-	 * functionality are implemented to be like: One Role only with id and name
+	 * Getting list of all functionalities. Arrays of Roles that belong to one functionality are implemented to be like: One Role only with id and name
 	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
@@ -75,8 +74,8 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects,
-			@QueryParam("perm") String permissionOnFolder, @QueryParam("dateFilter") String dateFilter) {
+	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
+			@QueryParam("dateFilter") String dateFilter) {
 		logger.debug("IN");
 
 		try {
@@ -93,8 +92,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
 				for (LowFunctionality lf : allFolders) {
-					if (ObjectsAccessVerifier.canSee(lf, profile)
-							&& checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
+					if (ObjectsAccessVerifier.canSee(lf, profile) && checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
 						folders.add(lf);
 					}
 				}
@@ -238,6 +236,31 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 
 		return result;
+	}
+
+	@GET
+	@Path("forsharing/{objectId}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getFunctionalitiesForSharing(@PathParam("objectId") Integer objectId) {
+		logger.debug("IN");
+		List<LowFunctionality> folders = new ArrayList<>();
+		try {
+			UserProfile profile = getUserProfile();
+			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
+			dao.setUserProfile(profile);
+			List<LowFunctionality> foldersForSharing = dao.loadFunctionalitiesForSharing(objectId);
+			for (LowFunctionality folder : foldersForSharing) {
+				if (ObjectsAccessVerifier.canSee(folder, profile))
+					folders.add(folder);
+			}
+			return Response.ok(folders).build();
+		} catch (Exception e) {
+			String errorString = "Cannot get available folders for sharing";
+			logger.error(errorString, e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	/**
@@ -402,8 +425,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateLowFunctionality(@PathParam("id") Integer id,
-			@javax.ws.rs.core.Context HttpServletRequest req) {
+	public Response updateLowFunctionality(@PathParam("id") Integer id, @javax.ws.rs.core.Context HttpServletRequest req) {
 		ILowFunctionalityDAO objDao = null;
 		IRoleDAO roleDao = null;
 		try {
@@ -476,13 +498,10 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Defines all roles that have to be erased in order to keep functionalities
-	 * tree consistence. When we leave some permissions to a functionality,
-	 * those permissions will not be assignable to all the children
-	 * functionality. If any child has a permission that his parent anymore has,
-	 * this permission mus be deleted for all father's children and descendants.
-	 * This metod recusively scans all father's descendants and saves inside a
-	 * Set all roles that must be erased from the Database.
+	 * Defines all roles that have to be erased in order to keep functionalities tree consistence. When we leave some permissions to a functionality, those
+	 * permissions will not be assignable to all the children functionality. If any child has a permission that his parent anymore has, this permission mus be
+	 * deleted for all father's children and descendants. This metod recusively scans all father's descendants and saves inside a Set all roles that must be
+	 * erased from the Database.
 	 *
 	 * @param lowFuncParent
 	 *            the parent Functionality
@@ -508,8 +527,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 				String childPath = childNode.getPath();
 				// LowFunctionality lowFuncParent =
 				// DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(parentPath);
-				LowFunctionality lowFuncChild = DAOFactory.getLowFunctionalityDAO()
-						.loadLowFunctionalityByPath(childPath, false);
+				LowFunctionality lowFuncChild = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(childPath, false);
 				if (lowFuncChild != null) {
 					// control childs permissions and fathers permissions
 					// remove from childs those persmissions that are not
@@ -527,8 +545,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 							roles.add(1, testChildRoles[j].getId());
 							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
 							rolesToErase.add(roles);
-							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule,
-									SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
 							// rolesToErase.put(lowFuncChild.getId(),testChildRoles[j].getId());
 							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,testChildRoles[j].getId());
 						}
@@ -545,8 +562,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 							roles.add(1, devChildRoles[j].getId());
 							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
 							rolesToErase.add(roles);
-							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule,
-									SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
 							// rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
 							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId());
 						}
@@ -563,8 +579,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 							roles.add(1, execChildRoles[j].getId());
 							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
 							rolesToErase.add(roles);
-							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule,
-									SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
 							// rolesToErase.put(lowFuncChild.getId(),execChildRoles[j].getId());
 							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,execChildRoles[j].getId());
 						}
@@ -579,8 +594,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 							roles.add(1, createChildRoles[j].getId());
 							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
 							rolesToErase.add(roles);
-							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule,
-									SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
 							// rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
 							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId());
 						}
@@ -597,8 +611,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Erases the defined input role from a functionality object, if this one
-	 * has the role.The updated functionality object is returned.
+	 * Erases the defined input role from a functionality object, if this one has the role.The updated functionality object is returned.
 	 *
 	 * @param func
 	 *            the input functionality object
@@ -662,9 +675,8 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Controls if a particular role belongs to the parent functionality. It is
-	 * called inside functionalities Jsp in ordet to identify those roles that a
-	 * child functionality is able to select.
+	 * Controls if a particular role belongs to the parent functionality. It is called inside functionalities Jsp in ordet to identify those roles that a child
+	 * functionality is able to select.
 	 *
 	 * @param rule
 	 *            The role id string identifying the role
