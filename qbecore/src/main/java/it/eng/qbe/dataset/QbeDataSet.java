@@ -141,6 +141,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	public void initDs(it.eng.qbe.datasource.IDataSource qbeDataSource, Query query) {
 		ds = QbeDatasetFactory.createDataSet(qbeDataSource.createStatement(query));
+		ds.setUserProfile(getUserProfile());
 		ds.setUserProfileAttributes(attributes);
 		ds.setParamsMap(params);
 		ds.setTransformerId(transformerId);

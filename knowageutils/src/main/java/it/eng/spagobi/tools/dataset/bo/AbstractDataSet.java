@@ -49,6 +49,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -644,8 +645,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persisted
-	 *            the persisted to set
+	 * @param persisted the persisted to set
 	 */
 	@Override
 	public void setPersisted(boolean persisted) {
@@ -672,8 +672,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param scheduled
-	 *            the scheduled to set
+	 * @param scheduled the scheduled to set
 	 */
 	@Override
 	public void setScheduled(boolean scheduled) {
@@ -709,8 +708,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param persistTableName
-	 *            the persistTableName to set
+	 * @param persistTableName the persistTableName to set
 	 */
 	@Override
 	public void setPersistTableName(String persistTableName) {
@@ -726,8 +724,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param configuration
-	 *            the configuration to set
+	 * @param configuration the configuration to set
 	 */
 	@Override
 	public void setConfiguration(String configuration) {
@@ -743,8 +740,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param userIn
-	 *            the userIn to set
+	 * @param userIn the userIn to set
 	 */
 	@Override
 	public void setUserIn(String userIn) {
@@ -760,8 +756,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param dateIn
-	 *            the dateIn to set
+	 * @param dateIn the dateIn to set
 	 */
 	@Override
 	public void setDateIn(Date dateIn) {
@@ -777,8 +772,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param noActiveVersions
-	 *            the noActiveVersions to set
+	 * @param noActiveVersions the noActiveVersions to set
 	 */
 	@Override
 	public void setNoActiveVersions(List noActiveVersions) {
@@ -794,8 +788,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param owner
-	 *            the owner to set
+	 * @param owner the owner to set
 	 */
 	@Override
 	public void setOwner(String owner) {
@@ -861,14 +854,10 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * TemporaryTableManager; in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a
 	 * datasource for writing must be provided.
 	 *
-	 * @param fieldName
-	 *            The dataset's field
-	 * @param start
-	 *            The offset on results
-	 * @param limit
-	 *            The limit on result
-	 * @param filter
-	 *            The optional filter
+	 * @param fieldName The dataset's field
+	 * @param start     The offset on results
+	 * @param limit     The limit on result
+	 * @param filter    The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
 	@Override
@@ -1052,7 +1041,12 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public UserProfile getUserProfile() {
-		return userProfile;
+		if (userProfile != null) {
+			return userProfile;
+		}
+		// if profile is not set into this dataset instance, try to get it from UserProfileManager
+		// TODO: user profile object is a mandatory object, it should be provided within constructor method for all datasets
+		return UserProfileManager.getProfile();
 	}
 
 	@Override
