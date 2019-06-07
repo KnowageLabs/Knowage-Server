@@ -67,10 +67,10 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 	private boolean preserveOriginalDataTypes = false;
 
-	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
-	public static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
-	public static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
+	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -118,8 +118,7 @@ public class JSONDataWriter implements IDataWriter {
 	/**
 	 *
 	 * @param dataStore
-	 * @param useIdProperty
-	 *            added for configuration of Ext.data.JsonReader: it defined the id field in the Record
+	 * @param useIdProperty added for configuration of Ext.data.JsonReader: it defined the id field in the Record
 	 * @return
 	 * @throws RuntimeException
 	 */
@@ -512,8 +511,7 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	/**
-	 * @param setRenderer
-	 *            the setRenderer to set
+	 * @param setRenderer the setRenderer to set
 	 */
 	public void setSetRenderer(boolean setRenderer) {
 		this.setRenderer = setRenderer;
