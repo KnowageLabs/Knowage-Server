@@ -167,15 +167,13 @@
 	}
 
 	.btn.btn-signup {
-	    background-color: rgba(8, 92, 70, 0.53);
+	    background-color: $baseColor;
 	    padding: 0px;
 	    font-weight: 700;
 	    font-size: 14px;
-	    height: 36px;
-	    -moz-border-radius: 3px;
-	    -webkit-border-radius: 3px;
-	    border-radius: 3px;
+	    height: $defaultSize*3;
 	    border: none;
+	    border-radius: 0;
 	    -o-transition: all 0.2s;
 	    -moz-transition: all 0.2s;
 	    -webkit-transition: all 0.2s;
