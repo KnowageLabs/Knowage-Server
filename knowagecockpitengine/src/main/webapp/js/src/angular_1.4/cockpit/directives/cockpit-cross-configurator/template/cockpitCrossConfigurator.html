@@ -217,7 +217,7 @@
 					<input ng-model="parameter.value" type="{{parameter.type}}"/>
 				</md-input-container>
 				
-				<md-input-container ng-if="outputParametersList.length > 0 || parameter.bindType == 'driver'" class="md-block" flex="25">
+				<md-input-container ng-if="outputParametersList.length > 0 && parameter.bindType == 'driver'" class="md-block" flex="25">
 					<label>{{::translate.load("sbi.cockpit.cross.output")}}</label>
 					<md-select ng-model="parameter.driver">
 						<md-option></md-option>
