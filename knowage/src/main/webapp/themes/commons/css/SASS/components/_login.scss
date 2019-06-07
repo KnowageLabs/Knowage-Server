@@ -132,12 +132,13 @@
 	    -moz-transition: all 0.2s;
 	    -webkit-transition: all 0.2s;
 	    transition: all 0.2s;
+	    cursor: pointer;
 	}
 
 	.btn.btn-signin:hover,
 	.btn.btn-signin:active,
 	.btn.btn-signin:focus {
-	    background-color: rgba($secondaryColor, 0.3);
+	    background-color: lighten($fabPrimaryColor, 15%);
 	}
 
 	.forgot-password {
@@ -178,12 +179,13 @@
 	    -moz-transition: all 0.2s;
 	    -webkit-transition: all 0.2s;
 	    transition: all 0.2s;
+	    cursor: pointer;
 	}
 
 	.btn.btn-signup:hover,
 	.btn.btn-signup:active,
 	.btn.btn-signup:focus {
-	    background-color: rgba(19, 173, 133, 0.41);
+	    background-color: lighten($baseColor, 15%);
 	}
 
 	label {
