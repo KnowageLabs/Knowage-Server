@@ -171,14 +171,18 @@ public class ExcelExporter {
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) {
 		if (templateString == null) {
 			ObjTemplate template;
+			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
 			try {
+				if (documentId == null) {
+					documentId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel).getId();
+				}
 				template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
 				if (template == null) {
-					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+					throw new SpagoBIRuntimeException(message);
 				}
 				templateString = new String(template.getContent());
 			} catch (EMFAbstractError e) {
-				throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+				throw new SpagoBIRuntimeException(message);
 			}
 		}
 

@@ -64,7 +64,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			ExcelExporter excelExporter = new ExcelExporter(outputType, userId, body);
 			String mimeType = excelExporter.getMimeType();
 			if (mimeType != null) {
-				Integer documentId = body.getInt(DOCUMENT_ID);
+				Integer documentId = body.optInt(DOCUMENT_ID);
 				String documentLabel = body.getString(DOCUMENT_LABEL);
 
 				byte[] data = excelExporter.getBinaryData(documentId, documentLabel, template);
