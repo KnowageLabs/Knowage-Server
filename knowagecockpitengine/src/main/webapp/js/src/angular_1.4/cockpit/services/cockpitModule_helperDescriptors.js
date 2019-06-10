@@ -49,9 +49,16 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 					{	'name':'precision',
 						'type': 'number',
 						'flex':'flex',
-						'replacer':" precision='***'"}
+						'replacer':" precision='***'"},
+					{	'name':'format',
+						'label': 'Format to locale',
+						'type': 'check',
+						'flex':'flex-100',
+						'replacer':" format"
+							
+					}
 				],
-				'tag':"[kn-column='%%column%%'%%row%%%%aggregation%%%%precision%%]"},
+				'tag':"[kn-column='%%column%%'%%row%%%%aggregation%%%%precision%%%%format%%]"},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag2'),
 				'name': 'parameter',
