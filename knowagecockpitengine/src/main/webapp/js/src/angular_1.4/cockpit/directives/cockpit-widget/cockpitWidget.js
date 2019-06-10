@@ -665,23 +665,21 @@ function cockpitWidgetControllerFunction(
 		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
 
-	$scope.checkPreviewParameters = function(previewDataset, columnName, modalColumn, row){
+	$scope.checkPreviewParameters = function(previewSettings, previewDataset, columnName, modalColumn, row){
 		if (modalColumn == undefined || modalColumn == "") {
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
 			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 			modalColumn = angular.fromJson(parametersString);
 		}
-		for (var i = 0; i < previewDataset.parameters.length; i++) {
-			if (angular.isArray(modalColumn)) {
-				var value = row[modalColumn[i].column];
-				previewDataset.parameters[i].value = value;
-			} else if (angular.isObject(modalColumn)) {
-				previewDataset.parameters[i].value = modalColumn[previewDataset.parameters[i].name];
-			} else {
-				previewDataset.parameters[i].value = row[modalColumn];
+		for(var p in previewSettings.parameters){
+			if(previewSettings.parameters[p].bindType == 'driver'){
+				previewSettings.parameters[p].value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
+			}
+			if(previewSettings.parameters[p].bindType == 'dynamic'){
+				previewSettings.parameters[p].value = row[previewSettings.parameters[p].column];
 			}
 		}
-		return previewDataset.parameters;
+		return previewSettings.parameters;
 	}
 
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
@@ -700,7 +698,8 @@ function cockpitWidgetControllerFunction(
 		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
 
 		if (previewSettings && previewSettings.enable) {
-
+			if((previewSettings.previewType != 'singleColumn' || (previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName)) &&
+				(previewSettings.previewType != 'icon' || (previewSettings.previewType == 'icon' && columnName == ""))){
 				$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
 
 				var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
@@ -710,7 +709,7 @@ function cockpitWidgetControllerFunction(
 				};
 
 				if (previewDataset.parameters && previewDataset.parameters.length > 0)
-					config.parameters = $scope.checkPreviewParameters(previewDataset, columnName, modalColumn, row);
+					config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row);
 
 				//showing exporters
 				config.options = {
@@ -732,7 +731,7 @@ function cockpitWidgetControllerFunction(
 						clickOutsideToClose: true
 					}).then(function(response){}, function(response){});
 				return;
-
+			}
 
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
