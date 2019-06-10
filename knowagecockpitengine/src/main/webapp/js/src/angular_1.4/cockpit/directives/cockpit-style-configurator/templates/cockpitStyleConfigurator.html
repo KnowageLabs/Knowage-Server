@@ -179,16 +179,16 @@
 		</div>
 	</md-toolbar>
 	<md-card-content >
-		<div layout="row" layout-align="space-around center">
-		<md-switch ng-model="ngModel.shadows" flex="20">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
-			<md-input-container class="md-block" flex>
+		<div layout="row" layout-align="start center">
+		<md-switch ng-model="ngModel.shadows" flex="15">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
+			<md-input-container class="md-block" flex="30">
 				<label>{{::translate.load("sbi.cockpit.style.shadows.size")}}</label>
 					<md-select ng-model="ngModel.shadow['box-shadow']" ng-disabled="!ngModel.shadows">
 				<md-option ng-repeat="bs in boxShadow" ng-value="bs.value">{{bs.label}}</md-option>
 				</md-select>
 			</md-input-container>
 		</div>
-		<md-input-container flex="30" class="md-block"> 
+		<md-input-container flex class="md-block"> 
 			<label>{{::translate.load('sbi.cockpit.style.backgroundcolor')}}</label> 
 			<div layout="row">
 				<color-picker options="{format:'rgb'}" ng-model="ngModel.backgroundColor" flex style="position:relative"></color-picker> 
