@@ -814,39 +814,16 @@
 		};
 
 		this.isExecuteParameterDisabled = function() {
-			if(execProperties.parametersData.documentParameters.length > 0) {
-				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++ ) {
-
-//					if(execProperties.parametersData.documentParameters[i].mandatory
-//					&& (!execProperties.parametersData.documentParameters[i].parameterValue
-//					|| execProperties.parametersData.documentParameters[i].parameterValue == '' )) {
-//					return true;
-//					}
-
-					if(execProperties.parametersData.documentParameters[i].mandatory){
-						if(execProperties.parametersData.documentParameters[i].type=='DATE_RANGE'){
-							if(!execProperties.parametersData.documentParameters[i].parameterValue
-									|| execProperties.parametersData.documentParameters[i].parameterValue == ''
-										|| typeof execProperties.parametersData.documentParameters[i].datarange ==='undefined'
-											|| execProperties.parametersData.documentParameters[i].datarange.opt==''
-							){
-								return true;
-							}
-						}else{
-							if(!execProperties.parametersData.documentParameters[i].parameterValue
-									|| execProperties.parametersData.documentParameters[i].parameterValue == ''){
-								return true;
-							}
-
-						}
-					}
+			for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
+				if(execProperties.parametersData.documentParameters[i].mandatory && (typeof execProperties.parametersData.documentParameters[i].parameterValue === 'undefined' || execProperties.parametersData.documentParameters[i].parameterValue == '')){
+					return true;
 				}
 			}
-			return false
+			return false;
 		};
 
 		this.toggleParametersPanel = function(open) {
-			
+
 			function toggleNewPanel(opened){
 				 if(document.getElementById("parametersPanelSideNav-e")){
 					 if(opened==undefined) $mdSidenav('parametersPanelSideNav-e').toggle();
