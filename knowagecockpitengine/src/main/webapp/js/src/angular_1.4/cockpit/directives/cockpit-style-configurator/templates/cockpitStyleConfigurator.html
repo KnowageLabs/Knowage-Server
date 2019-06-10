@@ -88,6 +88,7 @@
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.style.borders.thickness")}}</label>
 				<input ng-model="ngModel.border['border-width']" type="text" ng-disabled="!ngModel.borders"/>
+				<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
 			</md-input-container>
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
@@ -180,7 +181,7 @@
 	<md-card-content >
 		<div layout="row" layout-align="space-around center">
 		<md-switch ng-model="ngModel.shadows" flex="20">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
-			<md-input-container class="md-block" flex>
+			<md-input-container class="md-block" flex="30">
 				<label>{{::translate.load("sbi.cockpit.style.shadows.size")}}</label>
 					<md-select ng-model="ngModel.shadow['box-shadow']" ng-disabled="!ngModel.shadows">
 				<md-option ng-repeat="bs in boxShadow" ng-value="bs.value">{{bs.label}}</md-option>
