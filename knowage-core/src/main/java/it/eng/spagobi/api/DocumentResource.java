@@ -321,7 +321,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 			JSONObject json = new JSONObject(requestBodyJSON.getString("jsonTemplate"));
 			docLabel = requestBodyJSON.getString("docLabel");
-			xml = JSONTemplateUtilities.convertJsonToXML(json);
+			xml = json.toString();
 
 		} catch (Exception e) {
 			logger.error("Error converting JSON Template to XML...", e);
@@ -465,7 +465,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 		ObjTemplate template = new ObjTemplate();
-		template.setName("Template.xml");
+		template.setName("Template.json");
 		template.setContent(xml.getBytes());
 		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
 
