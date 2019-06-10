@@ -678,6 +678,9 @@ function cockpitWidgetControllerFunction(
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
 				previewSettings.parameters[p].value = row[previewSettings.parameters[p].column];
 			}
+			if(previewSettings.parameters[p].bindType == 'selection'){
+				previewSettings.parameters[p].value = cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset][previewSettings.parameters[p].column];
+			}
 		}
 		return previewSettings.parameters;
 	}

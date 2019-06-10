@@ -239,10 +239,17 @@
 					</md-select>
 				</md-input-container>
 				
-				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'dataset'">
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection'">
+					<label>{{translate.load("sbi.cockpit.cross.outputParameter.dataset")}}</label>
+					<md-select ng-model="parameter.dataset" >
+						<md-option ng-repeat="c in cockpitDatasets" ng-value="c.label">{{c.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection' && parameter.dataset">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 					<md-select ng-model="parameter.column" >
-						<md-option ng-repeat="c in previewDatasetColumns" ng-value="c.name">{{c.name}}</md-option>
+						<md-option ng-repeat="c in allCockpitDatasetsColumns[parameter.dataset]" ng-value="c.name">{{c.name}}</md-option>
 					</md-select>
 				</md-input-container>
 
