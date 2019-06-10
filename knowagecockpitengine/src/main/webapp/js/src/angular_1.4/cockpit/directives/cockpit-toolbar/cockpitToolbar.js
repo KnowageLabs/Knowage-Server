@@ -231,8 +231,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						description: 'discovery',
 						tags : ["discovery"],
 						class: "fa fa-rocket",
-						type : "discovery",
-						datasetRequirement: 'SbiSolrDataSet'
+						type : "discovery"
 				  }];
 
 		    	  $scope.saveConfiguration=function(){
