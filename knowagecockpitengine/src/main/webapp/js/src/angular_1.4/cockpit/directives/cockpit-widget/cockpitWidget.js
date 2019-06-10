@@ -672,6 +672,7 @@ function cockpitWidgetControllerFunction(
 			modalColumn = angular.fromJson(parametersString);
 		}
 		for(var p in previewSettings.parameters){
+			if(previewSettings.parameters[p].bindType != 'static' && previewSettings.parameters[p].defaultValue) previewSettings.parameters[p].value = previewSettings.parameters[p].defaultValue
 			if(previewSettings.parameters[p].bindType == 'driver'){
 				previewSettings.parameters[p].value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
 			}
@@ -679,7 +680,9 @@ function cockpitWidgetControllerFunction(
 				previewSettings.parameters[p].value = row[previewSettings.parameters[p].column];
 			}
 			if(previewSettings.parameters[p].bindType == 'selection'){
-				previewSettings.parameters[p].value = cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset][previewSettings.parameters[p].column];
+				if(cockpitModule_template.configuration.filters && cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset]) {
+					previewSettings.parameters[p].value = cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset][previewSettings.parameters[p].column];
+				}
 			}
 		}
 		return previewSettings.parameters;

@@ -109,9 +109,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
 		{"value": "driver", "label":'Analytical Driver'},
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
-		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
-//		{"value": "dataset", "label":'Dataset Value'},
-		];
+		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}];
 	
 	//$scope.cockpitDatasets = cockpitModule_template.configuration.datasets;
 	$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList;
