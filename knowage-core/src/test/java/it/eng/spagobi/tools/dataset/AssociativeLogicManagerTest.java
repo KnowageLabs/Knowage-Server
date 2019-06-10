@@ -17,6 +17,24 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jgrapht.graph.ClassBasedEdgeFactory;
+import org.jgrapht.graph.Pseudograph;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
@@ -40,15 +58,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.user.UserProfileManager;
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-import org.jgrapht.graph.Pseudograph;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 public class AssociativeLogicManagerTest {
 
@@ -76,7 +85,7 @@ public class AssociativeLogicManagerTest {
 			String absolutePath = new File(UtilitiesForTest.class.getResource(".").getFile()).getAbsolutePath()  + "/../../../";
 			ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration(absolutePath));
 			ConfigSingleton.getRootPath();
-			DAOConfig.setHibernateConfigurationFileFile(new File(absolutePath + "../../../knowage/src/main/resources/hibernate.cfg.xml"));
+			DAOConfig.setHibernateConfigurationFileFile(new File(absolutePath + "hibernate.cfg.xml"));
 
 			TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
 			UserProfileManager.setProfile(new UserProfile("biadmin", "DEFAULT_TENANT"));
@@ -106,6 +115,7 @@ public class AssociativeLogicManagerTest {
 		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(DS_STORE);
 		selections.add(new InFilter(new Projection(dataSet, "store_type"), Arrays.asList(new String[]{"Small Grocery"})));
 
+		// realtimes means that they are not cached
 		Set<String> realtimeDatasets = new HashSet<>();
 		realtimeDatasets.add(DS_STORE);
 		realtimeDatasets.add(DS_SALES_FACT_1998);
@@ -135,6 +145,7 @@ public class AssociativeLogicManagerTest {
 
 		Set<LabeledEdge<String>> labeledEdges = new HashSet<>();
 		labeledEdges.add(labeledEdge);
+		// edge group is the collection if relations (associations) between 2 datasets
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 

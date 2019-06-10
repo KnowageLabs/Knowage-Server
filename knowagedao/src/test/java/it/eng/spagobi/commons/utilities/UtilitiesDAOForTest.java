@@ -17,15 +17,15 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.utilities.MockContext;
-import it.eng.spagobi.utilities.MockFactory;
-
 import java.io.File;
 
 import javax.naming.Context;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.utilities.MockContext;
+import it.eng.spagobi.utilities.MockFactory;
 
 public class UtilitiesDAOForTest {
 
@@ -46,12 +46,12 @@ public class UtilitiesDAOForTest {
 		/* Construct DataSources*/MysqlConnectionPoolDataSource knowageDs = new MysqlConnectionPoolDataSource();
 		knowageDs.setURL("jdbc:mysql://localhost/knowage_master");
 		knowageDs.setUser("root");
-		knowageDs.setPassword("root");
+		knowageDs.setPassword("123456");
 
 		MysqlConnectionPoolDataSource foodmartDs = new MysqlConnectionPoolDataSource();
 		foodmartDs.setURL("jdbc:mysql://localhost/foodmart");
 		foodmartDs.setUser("root");
-		foodmartDs.setPassword("root");
+		foodmartDs.setPassword("123456");
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
