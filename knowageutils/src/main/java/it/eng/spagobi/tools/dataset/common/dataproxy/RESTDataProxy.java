@@ -17,7 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
@@ -29,8 +32,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * This data proxy makes REST calls. Providing all attributes (address, type of method, etc..) it make a http call and read the data store from the response
@@ -112,7 +113,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
-			Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(this.address, dataReader), this.requestHeaders, this.requestBody,
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody,
 					query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {

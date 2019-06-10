@@ -17,7 +17,16 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.log4j.Logger;
+
 import com.jayway.jsonpath.JsonPath;
+
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -26,13 +35,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.log4j.Logger;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class SolrDataProxy extends RESTDataProxy {
 
