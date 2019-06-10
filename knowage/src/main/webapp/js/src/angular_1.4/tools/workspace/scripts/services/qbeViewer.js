@@ -292,7 +292,7 @@ angular
 				$scope.selectedDataSet = {};
 
 				$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
-				
+
 				$mdDialog.hide();
 			}
 
@@ -314,6 +314,26 @@ angular
 
 				}
 			}
+
+			$scope.isExecuteParameterDisabled = function() {
+				if(driverableObject.drivers.length > 0) {
+					for(var i = 0; i < driverableObject.drivers.length; i++ ) {
+						if(driverableObject.drivers[i].mandatory){
+							if(driverableObject.drivers[i].type == 'DATE_RANGE') {
+								if(!driverableObject.drivers[i].parameterValue || driverableObject.drivers[i].parameterValue == '' ||
+										typeof driverableObject.drivers[i].datarange === 'undefined' || driverableObject.drivers[i].datarange.opt == '') {
+									return true;
+								}
+							}else{
+								if(!driverableObject.drivers[i].parameterValue || driverableObject.drivers[i].parameterValue == ''){
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false
+			};
 
 
 			$scope.execute = function() {

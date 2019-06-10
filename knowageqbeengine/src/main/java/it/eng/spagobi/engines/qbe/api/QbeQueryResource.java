@@ -520,15 +520,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
-
-		Set<String> driverUrlNames = drivers.keySet();
-		for (String driverName : driverUrlNames) {
-			Map mapOfValues = (Map) drivers.get(driverName);
-			if (mapOfValues.containsKey("value")) {
-				logger.debug("Setting drivers");
-				dataSet.setDrivers(drivers);
-			}
-		}
+		dataSet.setDrivers(drivers);
 
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
@@ -1042,15 +1034,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
-
-		Set<String> driverUrlNames = drivers.keySet();
-		for (String driverName : driverUrlNames) {
-			Map mapOfValues = (Map) drivers.get(driverName);
-			if (mapOfValues.containsKey("value")) {
-				logger.debug("Setting drivers");
-				dataSet.setDrivers(drivers);
-			}
-		}
+		dataSet.setDrivers(drivers);
 
 		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
 		DataIterator iterator = null;

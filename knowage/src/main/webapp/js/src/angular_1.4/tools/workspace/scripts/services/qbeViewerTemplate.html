@@ -59,7 +59,7 @@
 				</form>
 				</div>
 				<div>
-					<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="driversForm.$invalid" ng-click="execute()">
+					<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()" ng-click="execute()">
 						{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 					</md-button>	
 				</div>
