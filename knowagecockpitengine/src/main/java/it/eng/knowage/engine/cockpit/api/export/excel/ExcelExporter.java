@@ -169,9 +169,14 @@ public class ExcelExporter {
 
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) {
 		if (templateString == null) {
-			ObjTemplate template;
+			ObjTemplate template = null;
 			try {
-				template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
+				if (documentId != null && documentId.intValue() != 0) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
+				} else if (documentLabel != null && !documentLabel.isEmpty()) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
+				}
+
 				if (template == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 				}
