@@ -11,20 +11,23 @@
 	</md-list-item>					
 					  	
 	</md-list>	
-	<md-input-container class="md-block" >
+		<div layout="row" flex=100>
+	<md-input-container class="md-block" flex=40 >
 		<label>{{translate.load("sbi.chartengine.configuration.customColors")}}</label>
 		<input name="custom_color_name" ng-model="customColorObj.customName">
 	</md-input-container>
 
-	<md-input-container class="md-block" >
+	<md-input-container class="md-block" flex=40 >
 		<label>{{translate.load("sbi.chartengine.configuration.customColor")}}</label>
 	<color-picker
 		options="colorPickerOptionsCockpit"
 		ng-model="customColorObj.customValue" name="custom_color_value">
 	</color-picker> 
 	</md-input-container>
-		<md-button ng-if="customColorObj.customName!=''" class="md-icon-button" aria-label="Info" ng-click="addCustomColor()">
-	<md-icon md-font-icon="fa fa-plus" ></md-icon>
+	
+	
+	<md-button flex=20  ng-if="customColorObj.customName!=''" class="md-icon-button" aria-label="Info" ng-click="addCustomColor()">
+		<md-icon md-font-icon="fa fa-plus" ></md-icon>
 	</md-button>
-
+</div>
 </div>
