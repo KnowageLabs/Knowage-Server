@@ -66,7 +66,7 @@
 	});
 
 	function analysisController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_config, sbiModule_user,
-			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr, $httpParamSerializer, multipartForm, sbiModule_i18n) {
+			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr, $httpParamSerializer, multipartForm, sbiModule_i18n, sbiModule_messaging) {
 
 		$scope.cockpitAnalysisDocsInitial = [];
 		$scope.activeTabAnalysis = null;
@@ -460,7 +460,7 @@
 				];
 
 		$scope.getFolders = function() {
-			sbiModule_restServices.promiseGet("2.0","functionalities?perm=CREATION").then(
+			sbiModule_restServices.promiseGet("2.0/functionalities/forsharing", $scope.docForSharing).then(		
 					function(response) {
 						for(var i=0; i<response.data.length; i++){
 							response.data[i].expanded=true;

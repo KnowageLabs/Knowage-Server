@@ -412,16 +412,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return keyMap;
 		}
+	  	
+	  	function previewDataset(row, column) {
+			if ($scope.ngModel.cross.preview.parameters && 
+				    (angular.isArray($scope.ngModel.cross.preview.parameters) && $scope.ngModel.cross.preview.parameters.length > 0)) {
+				newValue = $scope.ngModel.cross.preview.parameters;
+				$scope.doSelection(column, row[column], newValue, undefined, row);
+			} else if ($scope.ngModel.cross.preview.column && $scope.ngModel.cross.preview.column != "") {
+				// if modal column is selected
+				newValue = row[$scope.ngModel.cross.preview.column];
+				$scope.doSelection(column, row[column], $scope.ngModel.cross.preview.column, newValue, row);
+			} else {
+				// previewing common Dataset, without parameters
+				$scope.doSelection(column, row[column], undefined, undefined, row);
+			}	
+		}
 		
 		function onCellClicked(node){
 			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
+			var iconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'icon';
+			var previewIconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == 'icon';
 			if($scope.cliccable==false) return;
-			if(node.value == "" || node.value == undefined) return;
+			if(!previewIconEnabled && !iconEnabled && (node.value == "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
-			if(node.colDef.crossIcon) {
+			if(iconEnabled && node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
 				return;
 			}
+			if ($scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable) {
+				switch ($scope.ngModel.cross.preview.previewType) {
+				case 'allRow':
+					previewDataset(mapRow(node.data), node.colDef.headerName);
+					return;
+					break;
+				case 'singleColumn':
+					if (node.colDef.headerName == $scope.ngModel.cross.preview.column) {
+						previewDataset(mapRow(node.data), node.colDef.headerName);
+						return;
+					}
+					break;
+				case 'icon':
+					if (node.colDef.headerName == "") {
+						previewDataset(mapRow(node.data), node.colDef.headerName);
+						return;
+					}
+					break;
+				}
+			}
+			
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
 				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && !allRowEnabled)){

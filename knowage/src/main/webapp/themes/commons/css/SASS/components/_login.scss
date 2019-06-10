@@ -9,7 +9,13 @@
 	    width: 350px;
 	    padding: 40px 40px;
 	}
-
+	.version {
+		position: absolute;
+		bottom: 5px;
+		right: 10px;
+		font-size: $smallFontSize;
+		text-transform: uppercase;
+	}
 	.btn {
 	    font-weight: 700;
 	    height: 36px;
@@ -34,20 +40,21 @@
 	.form-control{
 		display: block;
 	    width: 100%;
-	    height: 34px;
+	    height: $defaultSize*3;
 	    padding: 6px 12px;
 	    font-size: 14px;
 	    line-height: 1.42857143;
-	    color: $lightTextColor;
-	    background-color: rgba(0, 0, 0, 0.2);
+	    color: $darkTextColor;
+	    background-color: $pageBackground;
 	    background-image: none;
 	    border: 1px solid #ccc;
-	    border-radius: 4px;
+	    border-radius: 0;
 	    -webkit-box-shadow: inset 0 1px 1px rgba($shadowsColor,.075);
 	    box-shadow: inset 0 1px 1px rgba($shadowsColor,.075);
+	    &::placeholder{
+	    	color: lighten($darkTextColor, 15%);
+	    }
 	}
-
-
 
 	.profile-img-card {
 	    width: 96px;
@@ -57,11 +64,6 @@
 	    -moz-border-radius: 50%;
 	    -webkit-border-radius: 50%;
 	    border-radius: 50%;
-	}
-
-
-	.logoHeader{
-		width: 100%;
 	}
 
 	/*
@@ -119,25 +121,24 @@
 	}
 
 	.btn.btn-signin {
-	    background-color: $baseColor;
+	    background-color: $fabPrimaryColor;
 	    padding: 0px;
 	    font-weight: 700;
 	    font-size: $defaultSize;
 	    height: $defaultSize*3;
-	    -moz-border-radius: 3px;
-	    -webkit-border-radius: 3px;
-	    border-radius: 3px;
 	    border: none;
+	    border-radius: 0;
 	    -o-transition: all 0.2s;
 	    -moz-transition: all 0.2s;
 	    -webkit-transition: all 0.2s;
 	    transition: all 0.2s;
+	    cursor: pointer;
 	}
 
 	.btn.btn-signin:hover,
 	.btn.btn-signin:active,
 	.btn.btn-signin:focus {
-	    background-color: rgba($secondaryColor, 0.3);
+	    background-color: lighten($fabPrimaryColor, 15%);
 	}
 
 	.forgot-password {
@@ -149,11 +150,6 @@
 	.forgot-password:focus{
 	    color: rgb(12, 97, 33);
 	}
-
-	.form-control::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.52); }
-	.form-control:-moz-placeholder { color: rgba(255, 255, 255, 0.52); }
-	.form-control::-moz-placeholder { color: rgba(255, 255, 255, 0.52); }
-	.form-control:-ms-input-placeholder { color: rgba(255, 255, 255, 0.52); }
 
 	.btn-default {
 	    color: $lightTextColor;
@@ -172,25 +168,24 @@
 	}
 
 	.btn.btn-signup {
-	    background-color: rgba(8, 92, 70, 0.53);
+	    background-color: $baseColor;
 	    padding: 0px;
 	    font-weight: 700;
 	    font-size: 14px;
-	    height: 36px;
-	    -moz-border-radius: 3px;
-	    -webkit-border-radius: 3px;
-	    border-radius: 3px;
+	    height: $defaultSize*3;
 	    border: none;
+	    border-radius: 0;
 	    -o-transition: all 0.2s;
 	    -moz-transition: all 0.2s;
 	    -webkit-transition: all 0.2s;
 	    transition: all 0.2s;
+	    cursor: pointer;
 	}
 
 	.btn.btn-signup:hover,
 	.btn.btn-signup:active,
 	.btn.btn-signup:focus {
-	    background-color: rgba(19, 173, 133, 0.41);
+	    background-color: lighten($baseColor, 15%);
 	}
 
 	label {

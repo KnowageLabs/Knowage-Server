@@ -60,6 +60,7 @@
 										<input ng-if="input.type == 'number'" type="number" ng-model="helper[tag.name][input.name]"/>
 										<input ng-if="input.type == 'text'" type="text" ng-model="helper[tag.name][input.name]"/>
 										<textarea ng-if="input.type == 'area'" ng-model="helper[tag.name][input.name]" md-maxlength="150" rows="3"></textarea>
+										<md-checkbox ng-if="input.type == 'check'" ng-model="helper[tag.name][input.name]">{{input.label || input.name}}</md-checkbox>
 									</md-input-container>
 								</div>
 								<div layout="row" ng-if="!tag.hidden">

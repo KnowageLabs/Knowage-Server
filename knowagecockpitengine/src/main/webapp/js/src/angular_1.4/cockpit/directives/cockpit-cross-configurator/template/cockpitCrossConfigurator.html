@@ -206,7 +206,7 @@
           		<md-input-container class="md-block" flex=25>
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
 					<md-select ng-model="parameter.bindType" >
-						<md-option ng-repeat="opt in previewParametersType" ng-value="opt.value" ng-hide="opt.value == 'dynamic' && !crosschart">
+						<md-option ng-repeat="opt in previewParametersType" ng-value="opt.value" ng-hide="opt.value == 'dynamic' && (!crossChart && !crossTable)">
 							{{opt.label}}
 						</md-option>
 					</md-select>
@@ -217,14 +217,29 @@
 					<input ng-model="parameter.value" type="{{parameter.type}}"/>
 				</md-input-container>
 				
-				<md-input-container  class="md-block" flex=25 ng-if="parameter.bindType == 'dynamic'">
+				<md-input-container ng-if="outputParametersList.length > 0 && parameter.bindType == 'driver'" class="md-block" flex="25">
+					<label>{{::translate.load("sbi.cockpit.cross.output")}}</label>
+					<md-select ng-model="parameter.driver">
+						<md-option></md-option>
+						<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container  class="md-block" flex=25 ng-if="parameter.bindType == 'dynamic' && crossChart">
 					<label>{{::translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 					<md-select ng-model="parameter.column" >
 						<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
 					</md-select>
 				</md-input-container>
 				
-				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'selection'">
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'dynamic' && crossTable">
+					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+					<md-select ng-model="parameter.column" >
+						<md-option ng-repeat="c in $parent.newModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex=25 ng-if="parameter.bindType == 'dataset'">
 					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
 					<md-select ng-model="parameter.column" >
 						<md-option ng-repeat="c in previewDatasetColumns" ng-value="c.name">{{c.name}}</md-option>

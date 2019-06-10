@@ -273,10 +273,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	var tempElement;
 				    	for(var r = 0; r<limit; r++){
 				    		var tempRow = angular.copy(repeatedElement);
-				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
+				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision,format){
 				    			var precisionPlaceholder = '';
+				    			var formatPlaceholder = '';
+				    			if(format) var formatPlaceholder = ' format';
 				    			if(precision) precisionPlaceholder = " precision='" + precision + "'";
-								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\'" + precisionPlaceholder + "]";
+								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\'" + precisionPlaceholder + formatPlaceholder + "]";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
 				    		if(r==0){

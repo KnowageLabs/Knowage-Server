@@ -468,7 +468,7 @@
 			var deferred = $q.defer();
 
 			var requestUrl = sbiModule_config.host;
-			requestUrl += '/' + execProperties.documentUrl;
+			requestUrl += execProperties.documentUrl;
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
 			
 			for (var parameter in parameters) {

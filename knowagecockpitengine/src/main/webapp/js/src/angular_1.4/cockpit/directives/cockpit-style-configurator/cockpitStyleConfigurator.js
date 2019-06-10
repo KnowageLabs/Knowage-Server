@@ -186,24 +186,6 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		                    	exampleClass:"borderExampleDotted"
 		                    }
 	                    ];
-	$scope.bordersWidth=[
-		                    {
-		                    	label:sbiModule_translate.load("sbi.cockpit.style.small"),
-		                    	value:"0.1em"
-		                    },
-		                    {
-		                    	label:sbiModule_translate.load("sbi.cockpit.style.medium"),
-		                    	value:"0.3em"
-		                    },
-		                    {
-		                    	label:sbiModule_translate.load("sbi.cockpit.style.large"),
-		                    	value:"0.7em"
-		                    },
-		                    {
-		                    	label:sbiModule_translate.load("sbi.cockpit.style.extralarge"),
-		                    	value:"1em"
-		                    },
-	                    ];
 
 	$scope.boxShadow=[
 		                    {

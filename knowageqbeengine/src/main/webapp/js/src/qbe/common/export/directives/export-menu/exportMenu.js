@@ -28,21 +28,7 @@
 		        restrict: 'E',
 		        controller: exportMenuController,
 		        scope: {},
-		        templateUrl: currentScriptPath + 'export.menu.tmpl.html',
-		        link: function link(scope, element, attrs) {
-
-		        	scope.$on('editQueryObj', function (event, data) {
-		        		console.log("editQueryObj");
-		    			console.log(data);
-		    			scope.query = data;
-		    		});
-
-		        	scope.$on('bodySend', function (event, data) {
-		        		console.log("bodySend");
-		    			console.log(data);
-		    			scope.bodySend = data;
-		    		});
-		        }
+		        templateUrl: currentScriptPath + 'export.menu.tmpl.html'
 		    };
 
 

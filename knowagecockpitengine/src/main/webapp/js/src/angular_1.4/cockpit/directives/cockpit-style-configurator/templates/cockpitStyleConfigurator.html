@@ -87,9 +87,8 @@
 			</md-input-container>
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.style.borders.thickness")}}</label>
-				<md-select ng-model="ngModel.border['border-width']" ng-disabled="!ngModel.borders">
-					<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
-				</md-select>	
+				<input ng-model="ngModel.border['border-width']" type="text" ng-disabled="!ngModel.borders"/>
+				<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
 			</md-input-container>
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
@@ -180,9 +179,9 @@
 		</div>
 	</md-toolbar>
 	<md-card-content >
-		<div layout="row" layout-align="space-around center">
-		<md-switch ng-model="ngModel.shadows" flex="20">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
-			<md-input-container class="md-block" flex>
+		<div layout="row" layout-align="start center">
+		<md-switch ng-model="ngModel.shadows" flex="15">{{::translate.load("sbi.cockpit.style.shadows")}}</md-switch>
+			<md-input-container class="md-block" flex="30">
 				<label>{{::translate.load("sbi.cockpit.style.shadows.size")}}</label>
 					<md-select ng-model="ngModel.shadow['box-shadow']" ng-disabled="!ngModel.shadows">
 				<md-option ng-repeat="bs in boxShadow" ng-value="bs.value">{{bs.label}}</md-option>

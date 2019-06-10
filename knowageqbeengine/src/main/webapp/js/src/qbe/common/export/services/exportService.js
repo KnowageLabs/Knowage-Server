@@ -24,11 +24,13 @@
 		exporters.push(new Exporter('csv','text/csv'));
 		exporters.push(new Exporter('xls','application/vnd.ms-excel'));
 		exporters.push(new Exporter('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+		var query = {};
+		var bodySend = {};
 
 
 		return {
 
-			exportQueryResults:function(query, mimeType, bodySend){
+			exportQueryResults:function(mimeType){
 				if(mimeType=='text/csv') {
 					var config = {"responseType": "arraybuffer"};
 					var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id;
@@ -66,6 +68,12 @@
 
 			getExporters:function(){
 				return exporters;
+			},
+			setQuery : function (q) {
+				query = q;
+			},
+			setBody : function (b) {
+				bodySend = b;
 			}
 		}
 

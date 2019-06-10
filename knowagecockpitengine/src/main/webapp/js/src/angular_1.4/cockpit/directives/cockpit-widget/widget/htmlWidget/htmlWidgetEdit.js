@@ -24,6 +24,7 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 	$scope.newModel = angular.copy(model);
 	$scope.helper = {'column' : {},'parameter':{}};
 	$scope.formattedAnalyticalDrivers = [];
+	$scope.aggregations = [{'name':'SUM'},{'name':'AVG'},{'name':'MIN'},{'name':'MAX'},{'name':'COUNT'},{'name':'COUNT_DISTINCT'}];
 	
 	for(var a in cockpitModule_analyticalDrivers){
 		$scope.formattedAnalyticalDrivers.push({'name':a});
@@ -43,7 +44,7 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 		}
 		if(!newValue || typeof dsIndex != 'undefined'){
 			$scope.dataset = $scope.availableDatasets[dsIndex];
-			$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.newModel.cross,$scope.availableDatasets);			
+			$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets);			
 		}
 	})
 	
