@@ -19,8 +19,22 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -28,12 +42,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.*;
 
 public class ExtendedSolrQuery extends SolrQuery {
 
@@ -158,7 +166,8 @@ public class ExtendedSolrQuery extends SolrQuery {
     }
 
     private JSONObject getJsonFacet(Projection projection, JSONObject jsonFacet) throws JSONException {
-        String field = projection.getAliasOrName();
+        String fieldFacets = projection.getAliasOrName();
+        String field = projection.getName();
 
         JSONObject innerFacet = new JSONObject();
         innerFacet.put("type", "terms");
@@ -170,7 +179,7 @@ public class ExtendedSolrQuery extends SolrQuery {
         }
 
         JSONObject outerFacet = new JSONObject();
-        outerFacet.put(field + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX, innerFacet);
+        outerFacet.put(fieldFacets + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX, innerFacet);
         return outerFacet;
     }
 

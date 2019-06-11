@@ -17,20 +17,25 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import static it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery.FACET_PIVOT_CATEGORY_ALIAS_POSTFIX;
+import static it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery.FACET_PIVOT_MEASURE_ALIAS_PREFIX;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery.FACET_PIVOT_CATEGORY_ALIAS_POSTFIX;
-import static it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery.FACET_PIVOT_MEASURE_ALIAS_PREFIX;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SolrFacetPivotDataReader extends SolrDataReader {
 
@@ -71,11 +76,19 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 		}
 
 		JSONObject facets = jsonObject.getJSONObject("facets");
-		JSONArray docs = getDocsFromFacetContainer(facets);
-		jsonObject.remove("facets");
-		JSONObject response = jsonObject.getJSONObject("response");
-		response.put("docs", docs);
-		response.put("numFound", docs.length());
+
+		if (facets.getInt("count") == 0) {
+			jsonObject.remove("facets");
+			JSONObject response = jsonObject.getJSONObject("response");
+			response.put("numFound", 0);
+		}
+		else {
+			JSONArray docs = getDocsFromFacetContainer(facets);
+			jsonObject.remove("facets");
+			JSONObject response = jsonObject.getJSONObject("response");
+			response.put("docs", docs);
+			response.put("numFound", docs.length());
+		}
 	}
 
 	private JSONArray getDocsFromFacetContainer(JSONObject facetContainer) throws JSONException {
