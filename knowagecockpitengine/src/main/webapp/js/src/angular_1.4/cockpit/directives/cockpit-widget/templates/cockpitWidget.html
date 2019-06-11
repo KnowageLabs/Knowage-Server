@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<md-button class="md-icon-button "  ng-click="clearAllSelection();$event.stopPropagation();" ng-if="ngModel.type=='selection' && selection && selection.length > 0">
-				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">Clear all selections</md-tooltip>
+				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.selections.clearselections")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-eraser"></md-icon>
 			</md-button>
 			
