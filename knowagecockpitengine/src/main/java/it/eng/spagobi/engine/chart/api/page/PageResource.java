@@ -49,7 +49,6 @@ import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
@@ -365,7 +364,7 @@ public class PageResource extends AbstractChartEngineResource {
 			String chartTemplate;
 
 			if (!jsonWidgetDataIn.isNull("chartTemplate")) {
-				chartTemplate = JSONTemplateUtilities.convertJsonToXML(jsonWidgetDataIn.getJSONObject("chartTemplate"));
+				chartTemplate = jsonWidgetDataIn.getJSONObject("chartTemplate").toString();
 			} else {
 				chartTemplate = buildBaseTemplate().toString();
 			}
