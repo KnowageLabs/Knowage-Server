@@ -24,7 +24,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 	    }return true;
 	}
 	
-	self.htmlHelperJSON = function(datasetId,meta,parameters,cross,availableDatasets){
+	self.htmlHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag1'),
@@ -41,6 +41,11 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'number',
 						'flex':'flex',
 						'replacer':" row='***'"},
+					{	'name':'aggregation',
+						'type': 'select',
+						'options': aggregations,
+						'flex':'flex-100',
+						'replacer':" aggregation='***'"},
 					{	'name':'precision',
 						'type': 'number',
 						'flex':'flex',
@@ -53,7 +58,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 							
 					}
 				],
-				'tag':"[kn-column='%%column%%'%%row%%%%precision%%%%format%%]"},
+				'tag':"[kn-column='%%column%%'%%row%%%%aggregation%%%%precision%%%%format%%]"},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag2'),
 				'name': 'parameter',
