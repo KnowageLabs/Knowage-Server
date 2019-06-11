@@ -343,16 +343,18 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throws JSONException {
 		ArrayList<Projection> groups = new ArrayList<>(0);
 
-        boolean hasAggregatedCategories = hasAggregations(categories);
+		boolean hasAggregatedCategories = hasAggregations(categories);
 
-        for (int i = 0; i < categories.length(); i++) {
-            JSONObject category = categories.getJSONObject(i);
-            String functionName = category.optString("funct");
-            if (forceGroups || hasAggregatedCategories  || hasCountAggregation(functionName)) {
-                Projection projection = getProjection(dataSet, category, columnAliasToName);
-                groups.add(projection);
-            }
-        }
+		boolean hasAggregatedMeasures = hasAggregations(measures);
+
+		for (int i = 0; i < categories.length(); i++) {
+			JSONObject category = categories.getJSONObject(i);
+			String functionName = category.optString("funct");
+			if (forceGroups || hasAggregatedMeasures || hasAggregatedCategories  || hasCountAggregation(functionName)) {
+				Projection projection = getProjection(dataSet, category, columnAliasToName);
+				groups.add(projection);
+			}
+		}
 
 		if (forceGroups) {
 			for (int i = 0; i < measures.length(); i++) {
