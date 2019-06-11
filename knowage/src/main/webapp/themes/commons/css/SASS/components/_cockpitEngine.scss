@@ -959,7 +959,7 @@
 
         .gridster-item{
         	&.fixedLeft {
-        		.showActionButtonHandler {
+        		.showActionButtonHandler, .viewModeMenu {
         			left: 0 !important;
         		}
         	}
