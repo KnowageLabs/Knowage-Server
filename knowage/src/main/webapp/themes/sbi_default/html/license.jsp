@@ -31,8 +31,8 @@
       
         <div layout="row" layout-align="center">
         	<div class="kn-info">
-        		<strong>Hardware Id: </strong>{{host.hardwareId}}
-				<strong>CPU Id: <%=cpuNumber%></strong>
+        		<p><strong>Hardware Id: </strong>{{host.hardwareId}}</p>
+				<p><strong>CPU Id: </strong><%=cpuNumber%></p>
         	</div>
         </div>
         

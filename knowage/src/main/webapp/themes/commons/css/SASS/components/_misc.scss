@@ -378,6 +378,12 @@ md-datepicker.kn-custom-datepicker {
     position: relative;
     text-transform: uppercase;
     font-size: $smallFontSize;
+	p {
+      margin: 0;
+    }
+    &.no-uppercase {
+      text-transform: none;
+    }
 }
 
 .kn-close-Info {
