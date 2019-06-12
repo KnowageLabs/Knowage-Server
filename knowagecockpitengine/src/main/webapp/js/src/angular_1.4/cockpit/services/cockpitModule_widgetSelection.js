@@ -59,7 +59,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}
 				var newCategArray = [];
-				if(ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+				if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
 					var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 
 					if(category){
@@ -72,13 +72,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 								}
 							}
 						}else{
-							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
-								obj["orderColumn"] = col.name;
-								obj["orderType"] = "asc";
-							} else {
-								obj["orderColumn"] = col.orderColumn;
-								obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
-							}
+
+							obj["orderColumn"] = col.orderColumn === undefined ||  col.orderColumn == ""? col.name  : col.orderColumn;
+							obj["orderType"] = col.orderType === undefined || col.orderType == "" ? "ASC ": col.orderType;
 						}
 					}
 				}
@@ -632,20 +628,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				var idWidget = ws.timestampedSelections[i].widgetId;
 
-				for (var i1 = 0; i1 < cockpitModule_template.sheets.length; i1++) {			
+				for (var i1 = 0; i1 < cockpitModule_template.sheets.length; i1++) {
 
-					for(var i2=0;i2<cockpitModule_template.sheets[i1].widgets.length;i2++){					
+					for(var i2=0;i2<cockpitModule_template.sheets[i1].widgets.length;i2++){
 
 						if (cockpitModule_template.sheets[i1].widgets[i2].id == idWidget) {
 
 							if (cockpitModule_template.sheets[i1].widgets[i2].filters.length != 0) {
 
 								for (var i3 = 0; i3 < cockpitModule_template.sheets[i1].widgets[i2].filters.length; i3++) {
-									
+
 
 									var filterElement = cockpitModule_template.sheets[i1].widgets[i2].filters[i3];
-									
-								
+
+
 
 											// if filter.dataset is not defined means filter coming from old interface and then set it to current dataset
 										//	if(filterElement.dataset == undefined){
@@ -697,30 +693,30 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 													var filter = { filterOperator: filterOperator, filterVals: values, dataset: filterElement.dataset, colName : filterElement.colName };
 
-												
+
 														filtersToSend.push(filter);
-											
+
 												}
-											
+
 											}
-									
-							
-									
-									
+
+
+
+
 								}
-								
+
 								//angular.merge(filtersToSend, filters);
-								
-								
+
+
 								body["filters"] = JSON.parse( JSON.stringify(filtersToSend)) ;
-								
-								
-													
-								
 
-							}						
 
-						}		
+
+
+
+							}
+
+						}
 					}
 				}
 			}
