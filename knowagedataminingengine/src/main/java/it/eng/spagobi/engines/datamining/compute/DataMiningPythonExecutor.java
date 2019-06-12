@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
-import it.eng.spagobi.engines.datamining.model.DataMiningFile;
-import it.eng.spagobi.engines.datamining.model.Output;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +29,16 @@ import org.apache.log4j.Logger;
 import org.jpy.PyLib;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DataMiningPythonExecutor implements IDataMiningExecutor {
 	static private Logger logger = Logger.getLogger(DataMiningPythonExecutor.class);
@@ -78,7 +79,12 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		DataMiningResult result = null;
 		logger.debug("Set up environment");
 
-		PyLib.startPython();
+		try {
+			PyLib.startPython();
+		} catch (Throwable t) {
+			logger.error("Error while starting Python", t);
+			throw new SpagoBIRuntimeException("Error while starting Python", t);
+		}
 		logger.debug("Start Python");
 
 		// datasets preparation
@@ -173,8 +179,8 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 	}
 
 	@Override
-	public DataMiningResult unsetExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command,
-			IEngUserProfile userProfile, Boolean rerun, String documentLabel) throws Exception {
+	public DataMiningResult unsetExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command, IEngUserProfile userProfile,
+			Boolean rerun, String documentLabel) throws Exception {
 		// Delete files if presents
 		if (fileExecutor.dataminingInstance.getFiles() != null) {
 			if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
