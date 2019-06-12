@@ -88,10 +88,11 @@ angular.module('cockpitModule').directive('cockpitCrossCustomWidgetConfigurator'
 });
 
 function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,cockpitModule_generalServices,knModule_fontIconsService,
-		cockpitModule_generalOptions,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_documentServices, cockpitModule_crossServices, $filter){
+		cockpitModule_generalOptions,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_documentServices, cockpitModule_crossServices, $filter,cockpitModule_analyticalDrivers){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_properties=cockpitModule_properties;
+	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
 	$scope.angular=angular;
 	$scope.cockpitCross={};
 	$scope.localDataset = {};
