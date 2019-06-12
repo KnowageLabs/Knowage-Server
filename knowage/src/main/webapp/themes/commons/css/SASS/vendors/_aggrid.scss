@@ -223,6 +223,10 @@ $aggrid-border-color: #d9dcde;
 					}
 				}
 			}
+			&.cross-cell {
+				text-decoration: underline;
+				cursor: pointer;
+			}
 		}
 	}
 	.ag-header-cell {

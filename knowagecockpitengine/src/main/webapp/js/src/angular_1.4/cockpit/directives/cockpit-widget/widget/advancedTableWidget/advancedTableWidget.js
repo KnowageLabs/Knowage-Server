@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}else $scope.ngModel.settings.page = 1;
 		
 		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}}; 
-		
+		var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 		function getColumns(fields) {
 			var columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
@@ -80,6 +80,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
+						if(crossEnabled && $scope.ngModel.cross.cross.crossType == 'singleColumn' && $scope.ngModel.cross.cross.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow) {
+							tempCol.cellClass = 'cross-cell';
+							delete tempCol.tooltipField;
+							tempCol.tooltip = crossNavigationTooltip;
+						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
 						if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
@@ -118,9 +123,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			if(($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
-				columns.push({headerName:"",field:($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.column) || "",
-					crossIcon: ($scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
+			if((crossEnabled &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
+				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
+					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
 					suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false});
 			}
@@ -131,6 +136,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var k in $scope.metadata.fields){
 				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
 			}
+		}
+		
+		function crossNavigationTooltip() {
+			return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
 		}
 		
 		function headerTemplate() { 
