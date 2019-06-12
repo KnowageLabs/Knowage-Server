@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>org.jpy</groupId>
 			<artifactId>jpy</artifactId>
-			<version>0.8</version>
+			<version>0.9.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
