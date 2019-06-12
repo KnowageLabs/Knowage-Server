@@ -1228,8 +1228,8 @@ function setAggregationsOnChartEngine(wconf){
 					groupby['aliasToShow'] = subs;
 					groupby['fieldType'] = "ATTRIBUTE";
 					if(chartCategory.drillOrder){
-						groupby['orderType'] = chartCategory.drillOrder[subs].orderType;
-						groupby['orderColumn'] = chartCategory.drillOrder[subs].orderColumn;
+						groupby['orderType'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderType : obj.orderType ;
+						groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : obj.orderColumn;
 					} else {
 						groupby['orderType'] = chartCategory.orderType;
 						groupby['orderColumn'] = chartCategory.orderColumn;
