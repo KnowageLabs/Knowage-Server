@@ -71,8 +71,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}else $scope.ngModel.settings.page = 1;
 		
 		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}}; 
-		var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 		function getColumns(fields) {
+			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
