@@ -36,9 +36,9 @@
       <md-tab ng-repeat="host in hosts" label="{{host.hostName}}">
       
         <div layout="row" layout-align="center">
-        	<div class="kn-info">
-        		<strong>Hardware Id: </strong>{{host.hardwareId}}<br>
-        		<strong>CPU Id: <%=cpuNumber%></strong>
+        	<div class="kn-info no-uppercase">
+        		<p><strong>Hardware Id: </strong>{{host.hardwareId}}<p>
+        		<p><strong>CPU Id: <%=cpuNumber%></strong></p>
         	</div>
         </div>
         
