@@ -1227,8 +1227,13 @@ function setAggregationsOnChartEngine(wconf){
 					groupby['alias'] = subs;
 					groupby['aliasToShow'] = subs;
 					groupby['fieldType'] = "ATTRIBUTE";
-					obj['orderType'] = chartCategory.orderType;
-					obj['orderColumn'] = chartCategory.orderColumn;
+					if(chartCategory.drillOrder){
+						groupby['orderType'] = chartCategory.drillOrder[subs].orderType;
+						groupby['orderColumn'] = chartCategory.drillOrder[subs].orderColumn;
+					} else {
+						groupby['orderType'] = chartCategory.orderType;
+						groupby['orderColumn'] = chartCategory.orderColumn;
+					}
 					aggregations.push(groupby);
 				}
 			};
