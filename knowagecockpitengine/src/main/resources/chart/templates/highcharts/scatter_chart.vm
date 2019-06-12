@@ -970,7 +970,7 @@
 							#set ($col =  $dataColumnsMapper.get($valueKey))
 							$valueKey: "$row.get($col)",
 							#end
-							
+							$relatedSerie.name :"$row.get($dataColumnsMapper.get($relatedSerieColName))"
 						},
 						
 					#end	
