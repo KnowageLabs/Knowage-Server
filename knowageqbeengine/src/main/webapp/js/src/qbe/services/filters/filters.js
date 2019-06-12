@@ -110,21 +110,33 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		    this.value = value;
 		}
 	}
+	class Const extends Node{
+		constructor(type,filter){
+			super(type)
+		    this.value = "$F{"+filter.filterId+"}";
+		    this.details = {
+		    		leftOperandAlias: filter.leftOperandAlias,
+		    		operator : filter.operator,
+		    		entity : filter.entity,
+		    		rightOperandValue : filter.rightOperandValue.join(", ")
+		    }
+		}
+	}
 
 	this.generateExpressions = function (filters){
 		var obj ={};
 
 		for(var i = 0;i<filters.length ;i++){
-			if(filters.length===1) return new Operand("NODE_CONST","$F{"+filters[i].filterId+"}");
+			if(filters.length===1) return new Const("NODE_CONST",filters[i]);
 		    obj = new Operand("NODE_OP",filters[i].booleanConnector);
 		    var temp = obj;
 		    for(var i = 0;i<filters.length ;i++){
 		    	for(;i<filters.length-2 ;i++){
-		    		temp.childNodes.push(new Operand("NODE_CONST","$F{"+filters[i].filterId+"}"))
+		    		temp.childNodes.push(new Const("NODE_CONST",filters[i]))
 		            temp.childNodes.push(new Operand("NODE_OP",filters[i].booleanConnector))
 		            temp = temp.childNodes[1]
 		    	}
-		    	temp.childNodes.push(new Operand("NODE_CONST","$F{"+filters[i].filterId+"}"))
+		    	temp.childNodes.push(new Const("NODE_CONST", filters[i]))
 		    }
 		}
 		return obj;
