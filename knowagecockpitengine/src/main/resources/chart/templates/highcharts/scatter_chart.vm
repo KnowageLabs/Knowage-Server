@@ -498,6 +498,10 @@
 	 #foreach($xAxisKey in $xAxisList.keySet())
 	 #set ($xAxis = $xAxisList[$xAxisKey])
 	 {
+	 
+	 #if($categorieColumns.orderType=="desc")
+		reversed:true,
+	 #end
 	 	#if($xAxis.plotBands)
         	plotBands:[
         		{	
