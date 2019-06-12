@@ -125,6 +125,10 @@
 			return selected.length;
 		}
 
+		var isMovable = function(operand){
+			return (isFirstLevelOperand(operand) && getFirstLevelOperandsCount(operand)>2)||getGroupOperandsCount(operand)>2
+		}
+
 		return {
 			addOrRemove:addOrRemove,
 			getSelected:getSelected,
@@ -132,6 +136,7 @@
 			isSingleGroupSelected:isSingleGroupSelected,
 			contains:contains,
 			isSelectable:isSelectable,
+			isMovable:isMovable,
 			getSelectedCount:getSelectedCount,
 			getGroupOperandsCount:getGroupOperandsCount,
 			getFirstLevelOperandsCount:getFirstLevelOperandsCount

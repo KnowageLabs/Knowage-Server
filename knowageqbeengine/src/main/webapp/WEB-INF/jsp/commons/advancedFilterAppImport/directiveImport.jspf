@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/operator/operator.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/group/group.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/filter/filter.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/filterDetails/filterDetails.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/advancedFiltersApp/directives/dropZone/dropZone.js")%>"></script>
 
 

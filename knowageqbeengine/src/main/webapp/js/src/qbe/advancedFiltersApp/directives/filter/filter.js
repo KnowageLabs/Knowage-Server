@@ -69,8 +69,7 @@
 			    	}
 
 			    	$scope.onDropMove = function($data,$event){
-			    		 if($scope.selectedOperandService.getFirstLevelOperandsCount($data.node)>2||
-			    				 $scope.selectedOperandService.getGroupOperandsCount($data.node)>2){
+			    		 if($scope.selectedOperandService.isMovable($data.node)){
 			    			 $event.event.stopImmediatePropagation();
 
 					    		if(!angular.equals($data.node,$scope.node)){

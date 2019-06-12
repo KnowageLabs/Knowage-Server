@@ -1,0 +1,8 @@
+
+<script>
+(function(){
+	angular.module('importExportCommonsModule').config(function($provide){
+		$provide.constant("importExportCommonsModuleBasePath",'<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/servermanager/importExportCommons")%>')
+	})
+})()
+</script>

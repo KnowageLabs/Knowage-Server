@@ -1,0 +1,19 @@
+<md-subheader class="md-primary">{{translate.load('SBISet.impexp.exportedRoles','component_impexp_messages');}}</md-subheader>
+<section>
+<md-list class="centerText" ng-cloak >
+		<md-list-item ng-repeat="expRol in exportedRoles" class="secondary-button-padding">
+	   		<p>{{expRol.name}}</p>
+	   		<p ng-if="associatedRoles[expRol.id].fixed==true">{{associatedRoles[expRol.id].name}}</p>
+	   		<md-input-container ng-if="associatedRoles[expRol.id].fixed!=true"  flex="50">
+		        <label>State</label>
+		        <md-select ng-model="associatedRoles[expRol.id]">
+		        <md-option ng-value="{id:''}"></md-option>
+		          <md-option ng-repeat="currRol in currentRoles" ng-value="currRol"  ng-if="currentRoleIsSelectable(currRol,expRol)">
+		            {{currRol.name}}
+		          </md-option>
+		        </md-select>
+	      </md-input-container>
+	    <md-divider></md-divider>
+	  </md-list-item>
+	</md-list>
+</section>	

@@ -7,10 +7,10 @@
 		
 
 </drop-zone>
-<md-card  layout="row" ng-drag="{{draggable}}"  
+<md-card  layout="column" ng-drag="{{draggable}}"  
 		ng-drag-data="{node}">
-	<h4 >{{node.value | filterName}}</h4>
 	
+	<filter-details details="node.details" layout="column" flex></filter-details>
 	
 	<div flex layout="row">
 		<div flex></div>
