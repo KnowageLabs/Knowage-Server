@@ -22,7 +22,7 @@ ThresholdsFactory.getThresholds = function( measure ){
   	} else if (conf.type === ThresholdsFactory.PERCENTAGE) {
   	   results = ThresholdsFactory.getPercTrasholds( measure, conf.params  );
   	} else if (conf.type === ThresholdsFactory.UNIFORM) {
-  	   results = ThresholdsFactory.getUniformTrasholds( measure, conf.params  );
+  	   results = ThresholdsFactory.getUniformThresholds( measure, conf.params  ); 
   	} else if (conf.type === ThresholdsFactory.STATIC) {
   	    results =  ThresholdsFactory.getStaticThresholds( measure, conf.params );
   	} else {
@@ -99,16 +99,16 @@ ThresholdsFactory.getUniformThresholds = function( measure, params ) {
 			
 			params = {ranges: ranges};
 			
-			return setPercTrasholds( measure, params );
+			return ThresholdsFactory.getPercTrasholds( measure, params );
 		}
 		
 ThresholdsFactory.getQuantileThresholds = function( measure, params ) {
 				
-				var results;
+		var results;
 		  
-  		  results = {};
+  		results = {};
         results.thresholds = new Array();
-  		  results.num_group = params.num_group;
+  		results.num_group = params.num_group;
 		  
         var MIN = measure.ordered_values[0];
         var MAX = measure.ordered_values[measure.ordered_values.length-1];
@@ -117,7 +117,7 @@ ThresholdsFactory.getQuantileThresholds = function( measure, params ) {
         var a = new Array();
         var i = 0;
         for(j = 0; j < measure.ordered_values.length; j++) {
-          if(i == 0 || a[i-1] != measure.ordered_values[j]) {
+        	if(i == 0 || a[i-1] != measure.ordered_values[j]) {
             
             a[i++] = measure.ordered_values[j];
           }          
@@ -182,8 +182,6 @@ ThresholdsFactory.fixLbUbVAlues = function( measure ) {
 
 
 
-
-
 // ======================================================================================================================
 /*
 
@@ -198,11 +196,7 @@ ThresholdsFactory.fixLbUbVAlues = function( measure ) {
 					measure.num_group = measure.thresholds.length -1;
 				} else {
 					setQuantileTrasholds( i );
-				}
-				
-				
-				
-				
+				}			
 			}
 		}
 		
