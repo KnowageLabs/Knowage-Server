@@ -1695,19 +1695,31 @@
 		#else
 		#set($selectedValue = false)
 		#end
-		
-
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		
+		
+
+    	
+    	
+    	
 		{	
 			selected: $selectedValue,
 			name: "$escapeTool.javascript($valueKey)",
-			#if($seriesMapGroupingFunction.get($valueKey) && $seriesMapGroupingFunction.get($valueKey).type != "")
+			#if($seriesMapGroupingFunction.get($valueKey))
 			
-			type:"$seriesMapGroupingFunction.get($valueKey).type",
+				type:"$seriesMapGroupingFunction.get($valueKey).type",
+				#if($chartType != 'radar') 	
+    				#set($referencedAxis = $seriesMapGroupingFunction.get($valueKey).axis)
+    			#end
+			#else
+				type:"$seriesMapGroupingFunction.get($groupedSerie).type",
+				#if($chartType != 'radar') 	
+    				#set($referencedAxis = $seriesMapGroupingFunction.get($groupedSerie).axis)
+    			#end
 			#end
 			
+	      	yAxis: $yAxisPositions[$referencedAxis],
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
@@ -1881,11 +1893,7 @@
 			#end
 			},
 
-		#if($chartType != 'radar') 	
-    		#set($referencedAxis = $relatedSerie.axis)
-    		yAxis: $yAxisPositions[$referencedAxis],
-    		
-    	#end
+		
 		},
 		#end
 	#end
