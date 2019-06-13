@@ -9,7 +9,7 @@
 	    	&nbsp;&nbsp;
 	       	<h2>{{translate.load('sbi.browser.document.dataset')}}: &nbsp; {{selectedDataSet.label}}</h2> 
 	       <span flex></span>
-				<md-button  ng-if = "drivers.length > 0 || dataset.pars.length > 0"  ng-click="hideDrivers()" class="md-icon-button">
+				<md-button  ng-if = "drivers.length > 0 || dataset.pars.length > 0"  ng-click="toggleDrivers()" class="md-icon-button">
 	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
 	       	 	</md-button>
 	       <md-button id="close-preview" ng-click="closeDatasetPreviewDialog()">
@@ -18,7 +18,7 @@
 	     </div>   
 	   </md-toolbar>
 	  
-	   <md-dialog-content style="height:100%;">
+	   <md-dialog-content style="height:100%;" ng-if="dataset.executed">
 	   		<div ag-grid="gridOptions" class="ag-theme-balham kn-preview-table-theme" style="width:100%;height:calc(100% - 32px)"></div>
 			<div ref="south" class="ag-theme-balham ag-noBorders">
 				<div>

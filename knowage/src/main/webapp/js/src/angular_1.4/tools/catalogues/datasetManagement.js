@@ -1959,7 +1959,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	};
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
 			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
-				$scope.selectedDataSet.drivers = response.data.filterStatus;
+				$scope.selectedDataSet.drivers = angular.copy(response.data.filterStatus);
 				var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.selectedDataSet.qbeDatamarts},true)[0];
 				 if (!selectedModel) delete $scope.selectedDataSet.qbeJSONQuery;
 			})
@@ -3130,31 +3130,29 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
 			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
-					$scope.executeParameter = function(){
-						$scope.showDrivers = false;
-						$scope.dataset.executed = true;
-						$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
-						sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+				$scope.dataset = $scope.selectedDataSet;
+				$scope.drivers = $scope.dataset.drivers;
+				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
+				$scope.dataset.executed = !$scope.showDrivers;
+
+				$scope.executeParameter = function(){
+					$scope.showDrivers = false;
+					$scope.dataset.executed = true;
+					$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
+					sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 						.then(function(response){
 							$scope.getPreviewSet(response.data);
 						},
-						function(response) {
-							// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
-							$mdDialog.cancel();
-							sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
-						})
-					}
+					function(response) {
+						// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
+						$mdDialog.cancel();
+						sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
+					})
+				}
 
-						$scope.dataset = $scope.selectedDataSet;
-						$scope.drivers = $scope.dataset.drivers;
-
-						$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
-						$scope.dataset.executed = !$scope.showDrivers;
-
-						$scope.hideDrivers =function(){
-							$scope.showDrivers = !$scope.showDrivers;
-							$scope.dataset.executed = true;
-						}
+				$scope.toggleDrivers =function(){
+					$scope.showDrivers = !$scope.showDrivers;
+				}
 			}else{
 				$scope.dataset = {}
 				$scope.dataset.executed = true;
@@ -3271,6 +3269,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
+		}
+
+		if(typeof $scope.selectedDataSet.drivers !== 'undefined') {
+			for(var i=0; i < $scope.selectedDataSet.drivers.length; i++) {
+				if($scope.selectedDataSet.drivers[i].parameterDescription && $scope.selectedDataSet.drivers[i].parameterValue) {
+					delete $scope.selectedDataSet.drivers[i].parameterDescription;
+					delete $scope.selectedDataSet.drivers[i].parameterValue;
+				}
+			}
 		}
 
 		$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
@@ -3837,8 +3844,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				function(responseDS) {
 
 					var savedDataset = responseDS.data[0];
-
 					$scope.selectedDataSet = angular.copy(savedDataset);
+
 					$scope.datasetsListTemp[index] = angular.copy($scope.selectedDataSet);
 					$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
 					$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
