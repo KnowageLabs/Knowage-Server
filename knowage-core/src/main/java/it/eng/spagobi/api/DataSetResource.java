@@ -834,7 +834,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
 		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(getLocale(), e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			// throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
 		return toReturnString;
