@@ -26,8 +26,7 @@
 <md-dialog aria-label={{title}} ng-cloak flex=40 id="licenseDialog">
 	<md-toolbar>
 	  <div class="md-toolbar-tools">
-	    <h2>{{title}}</h2>
-	    <h2>myHostName: <%=myHostName%> </h2>
+	    <h2>{{title}} - MyHostName: <%=myHostName%> </h2>
 	    <span flex></span>
 	  </div>
 	</md-toolbar>
@@ -37,6 +36,7 @@
       
         <div layout="row" layout-align="center">
         	<div class="kn-info no-uppercase">
+        		<p><strong>Host Name: </strong>{{host.hostName}}</p>
         		<p><strong>Hardware Id: </strong>{{host.hardwareId}}<p>
         		<p><strong>CPU Id: <%=cpuNumber%></strong></p>
         	</div>
@@ -61,8 +61,8 @@
 	          		<p ng-class="{'kn-success': license.status == 'LICENSE_VALID' ,'kn-danger':license.status !== 'LICENSE_VALID'}">
 	          
 <!-- 		          				{{license.status_ext}} -->
-		          		<span ng-if="license.status == 'LICENSE_VALID'"><br />Valid license</span>	
-		          		<span ng-if="license.status != 'LICENSE_VALID'"><br />Invalid license</span>
+		          		<span ng-if="license.status == 'LICENSE_VALID'"><br />{{translate.load('kn.license.valid')}}</span>	
+		          		<span ng-if="license.status != 'LICENSE_VALID'"><br />{{translate.load('kn.license.invalid')}}</span>
 		          		<span ng-if="license.expiration_date"><br />{{license.expiration_date_format}}</span>
 	          		</p>
 	         	</div>
@@ -76,19 +76,25 @@
 			      <md-button aria-label="Open phone interactions menu" class="md-icon-button">
 			    <md-icon md-font-set="fa" md-font-icon="fas fa-ellipsis-v"></md-icon>
 			  </md-button>
-			  <md-menu-content width="1">
+			  <md-menu-content>
 			    <md-menu-item>
-			        <md-icon ng-click="dowloadFile(license, host.hostName)" md-font-set="fa" md-font-icon="fa fa-download" md-menu-align-target></md-icon>
+				    <md-button ng-click="dowloadFile(license, host.hostName)">
+		            	<md-icon md-font-set="fa" md-font-icon="fa fa-download" md-menu-align-target></md-icon> {{translate.load('kn.license.download')}}
+		          	</md-button>
 			    </md-menu-item>
 			   <md-menu-item>
-			   			<label ng-disabled='ngDisabled' for="upload_license_update">
-                 			<md-icon ng-if="!isForUpdate" md-font-set="fa" md-font-icon="fa fa-edit"></md-icon>
+			   		<md-button>
+			   			<label ng-disabled='ngDisabled' for="upload_license_update" style="margin:0; padding:0;font-weight: 400">
+                 			<md-icon ng-if="!isForUpdate" md-font-set="fa" md-font-icon="fa fa-edit"></md-icon> {{translate.load('kn.license.change')}}
             			</label>
             			<input  ng-disabled='ngDisabled' id="upload_license_update" type="file" ng-hide="true" onchange="angular.element(this).scope().setFile(this, true)">
                  		<md-icon ng-if="isForUpdate" ng-click="uploadFile(host.hostName, license, isForUpdate)"   md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>
+              		</md-button>
 			   </md-menu-item>
 			    <md-menu-item>
-			        <md-icon ng-click="deleteFile(license, host.hostName)" md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
+			    	 <md-button ng-click="deleteFile(license, host.hostName)">
+		            	<md-icon md-font-set="fa" md-font-icon="fa fa-trash" md-menu-align-target></md-icon> {{translate.load('kn.license.delete')}}
+		          	</md-button>
 			    </md-menu-item>
 			  </md-menu-content>
 			</md-menu>

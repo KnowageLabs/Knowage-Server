@@ -246,15 +246,15 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.licenseData=[];
 				$scope.hostsData=[];
 
-	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').then(function(data){
-	        		if (data.data.errors){
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').then(function(response){
+	        		if (response.data.errors){
 						$scope.messaging.showErrorMessage(data.data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;
 					}
-	        		console.log("License Data:", data.data);
+	        		console.log("License Data:", response.data);
 
-	        		$scope.hostsData=data.hosts;
-	        		$scope.licenseData=data.licenses;
+	        		$scope.hostsData=response.data.hosts;
+	        		$scope.licenseData=response.data.licenses;
 					$mdDialog.show({
 						parent: parentEl,
 						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/license.jsp',
