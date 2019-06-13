@@ -363,14 +363,15 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 	private Object parseCell(Cell cell) {
 		Object valueField = null;
-
 		if (cell == null)
 			return null;
+		int cellType = cell.getCellType();
 
-		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_FORMULA:
-			valueField = cell.getNumericCellValue();
-			break;
+		if (cellType == Cell.CELL_TYPE_FORMULA) {
+			cellType = cell.getCachedFormulaResultType();
+		}
+
+		switch (cellType) {
 
 		case Cell.CELL_TYPE_NUMERIC:
 			if (DateUtil.isCellDateFormatted(cell)) {
