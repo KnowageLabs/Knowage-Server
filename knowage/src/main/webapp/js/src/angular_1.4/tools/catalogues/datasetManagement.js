@@ -1954,7 +1954,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		 if($scope.selectedDataSet.dsTypeCd == "Qbe" && !qbeParameterDeletingMessage.includes("Qbe") ){
 				qbeParameterDeletingMessage =  parameterDeletingMessage + "Parameters for Qbe Dataset should be deleted from qbeDesigner";
-		}
+		 }
+		 if($scope.selectedDataSet.dsTypeCd == "Qbe" && item.hasOwnProperty('selected') && item.selected == true) {
+			 $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
+		 }
 
 	};
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
@@ -3845,6 +3848,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 					var savedDataset = responseDS.data[0];
 					$scope.selectedDataSet = angular.copy(savedDataset);
+
+					$scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
 
 					$scope.datasetsListTemp[index] = angular.copy($scope.selectedDataSet);
 					$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
