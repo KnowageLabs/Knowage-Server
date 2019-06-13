@@ -474,7 +474,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
-			if(node.colDef.measure == "MEASURE") return;
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
 				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && !allRowEnabled)){
@@ -514,7 +513,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				$scope.advancedTableGrid.api.refreshCells({force:true});
 			}else {
-				if(node.colDef.measure == "MEASURE") return;
 				$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
 			}
 		}
