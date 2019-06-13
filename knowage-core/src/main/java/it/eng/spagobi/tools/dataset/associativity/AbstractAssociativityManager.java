@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
@@ -33,11 +32,9 @@ import org.jgrapht.graph.Pseudograph;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
@@ -48,7 +45,6 @@ import it.eng.spagobi.tools.dataset.graph.associativity.container.AssociativeDat
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
@@ -214,12 +210,41 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						String missingColumn = datasetToAssociations.get(dataset).get(edgeName);
 						if (ParametersUtilities.isParameter(missingColumn)) {
 							String missingParameter = ParametersUtilities.getParameterName(missingColumn);
-							String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
-							HashSet<Tuple> tuples = new HashSet<Tuple>();
-							Tuple tuple = new Tuple(value != null && value.startsWith("'") && value.endsWith("'") ? value.substring(1, value.length() - 1) :
+
+							if (associativeDatasetContainers.get(dataset)!=null) {  // dataset case
+
+								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
+								HashSet<Tuple> tuples = new HashSet<Tuple>();
+								Tuple tuple = new Tuple(value != null && value.startsWith("'") && value.endsWith("'") ? value.substring(1, value.length() - 1) :
 									value);
-							tuples.add(tuple);
-							groupToValues.put(missingColumn, tuples);
+								tuples.add(tuple);
+								groupToValues.put(missingColumn, tuples);
+
+							}
+							else {      // document case
+
+								if (datasetToAssociations.get(dataset)!=null) {
+
+									Map<String, String> parametersByEdgeGroup = datasetToAssociations.get(dataset);
+
+									for (String param : parametersByEdgeGroup.keySet()) {
+
+										if(parametersByEdgeGroup.get(param).equals(missingColumn)){
+
+											if(edgeName.equals(param)) {
+
+												Set<Tuple> tuples =	result.getEdgeGroupValues().get(param);  // set of associative values linked to a param and edgegroup
+
+												groupToValues.put(missingColumn, tuples);
+											}
+
+										}
+
+									}
+
+								}
+
+							}
 						}
 					}
 				}
