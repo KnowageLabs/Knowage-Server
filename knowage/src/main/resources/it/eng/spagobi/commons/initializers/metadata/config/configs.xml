@@ -457,6 +457,10 @@
 		name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user"
 		isActive="false" valueCheck="false" valueType="STRING" category="SECURITY" />
 
+	<CONFIG label="SPAGOBI.SECURITY.MY_ACCOUNT_MENU"
+			name="SPAGOBI.SECURITY.MY_ACCOUNT_MENU" description="Enables the My Account menu for the final user"
+			isActive="false" valueCheck="true" valueType="STRING" category="SECURITY" />
+
 	<CONFIG label="SPAGOBI.CACHE.NAMEPREFIX" name="SPAGOBI.CACHE.NAMEPREFIX" description="Prefix for cache tables name" isActive="true" valueCheck="sbicache" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="1073741824" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" name="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" description="% of dimension of space cleaned when the cache is full" isActive="true" valueCheck="50" valueType="NUM" category="GENERIC_CONFIGURATION"/>

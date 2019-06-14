@@ -274,10 +274,14 @@ public class MenuListJSONSerializer implements Serializer {
 
 		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 		boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
+
+		String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
+		boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
+
 		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 		boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
 		boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
-		if (isInternalSecurityServiceSupplier && !isPublicUser) {
+		if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
 			// build myAccount
 			JSONObject myAccount = new JSONObject();
 
