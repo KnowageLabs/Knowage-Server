@@ -219,7 +219,7 @@ $scope.deleteCustomColor = function(index) {
 			gradientArray.push("#"+convertToHex (c).toUpperCase());
 
 		}
-
+		gradientArray[0] = colorEnd;
 		return gradientArray;
 
 	}
