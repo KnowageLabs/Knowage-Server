@@ -252,7 +252,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
 			}else if(firtsItem.getStaticPage()!=null && !firtsItem.getStaticPage().equals("")){
 				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
-			}else if(firtsItem.getFunctionality()!=null){
+			}else if(firtsItem.getFunctionality()!=null&&!firtsItem.getFunctionality().equals("")){
 				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
 			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
 				firstUrlToCall = firtsItem.getExternalApplicationUrl();
