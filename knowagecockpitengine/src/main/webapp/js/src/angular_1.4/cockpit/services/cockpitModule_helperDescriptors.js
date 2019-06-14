@@ -137,8 +137,6 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'label':sbiModule_translate.load('kn.cockpit.html.tag6'),
 				'name': 'cross',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag6.desc'),
-				'hidden': self.isEmpty(cross) ? true : false,
-				'hiddenMessage': 'No cross defined',
 				'tag':'<div kn-cross></div>'
 				},
 			{
