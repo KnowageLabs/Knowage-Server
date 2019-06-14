@@ -28,16 +28,6 @@ angular
 		var driversDependencyService = $injector.get('driversDependencyService');
 		var comunicator = windowCommunicationService;
 		var urlBuilderService = sbiModule_urlBuilderService;
-//		var comunicator = windowCommunicationService;
-//		var consoleHandler = {}
-//		consoleHandler.name = "console"
-//		consoleHandler.handleMessage = function(message){
-//			console.log(message)
-//		}
-
-
-	//	comunicator.addMessageHandler(consoleHandler);
-
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
 
@@ -62,7 +52,7 @@ angular
 							}
 						}
 					)
-					.then(function() {
+					.then(function($scope) {
 
 					});
 			}
@@ -97,7 +87,7 @@ angular
 								   }
 						}
 					)
-					.then(function() {
+					.then(function($scope) {
 
 					});
 
@@ -108,18 +98,13 @@ angular
 
 
 
-//			$scope.$on("$destroy",function(){
-//				console.log("destroying controller")
-//				comunicator.removeMessageHandler(saveHadler);
-//			})
+
 
 			$scope.showDrivers = false;
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
 			urlBuilderService.setBaseUrl(url);
 			var savingPanelConfig;
-//			driverableObject.isParameterRolePanelDisabled = {};
-//			driverableObject.isParameterRolePanelDisabled.status = true;
 
 			var initNewDataSet = function() {
 				if ($scope.selectedDataSet == undefined || angular.equals($scope.selectedDataSet, {})) {
@@ -147,19 +132,19 @@ angular
 							var isFunction=function(func){
 								return func && typeof func === "function";
 							}
-							$scope.ok = function(){
-								if(isFunction(okFunction)){
-									okFunction();
+
+							var executeAndClose = function(func){
+								if(isFunction(func)){
+									func();
 								}
-								okFunction();
 								mdPanelRef.close();
+							}
+							$scope.ok = function(){
+								executeAndClose(okFunction)
 							}
 
 							$scope.cancel = function(){
-								if(isFunction(cancelFunction)){
-									cancelFunction();
-								}
-								mdPanelRef.close();
+								executeAndClose(cancelFunction)
 							}
 						},
 
@@ -167,7 +152,8 @@ angular
 						clickOutsideToClose: true,
 						escapeToClose: true,
 						focusOnOpen: true,
-						preserveScope: true,
+						preserveScope: true
+
 				};
 
 				$mdPanel.open(config);
@@ -226,6 +212,7 @@ angular
 							}
 
 							var closeQbe = function() {
+
 								return closeDocumentFn();
 							}
 
@@ -301,18 +288,16 @@ angular
 
 
 				if($scope.isFromDataSetCatalogue) {
-					//$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 					$mdDialog.hide();
 					comunicator.sendMessage("close");
 				}else if(confirm){
-					openConfirmationPanel(function(){
-						onClosing();
-					});
+					openConfirmationPanel(onClosing);
 
 				} else {
 						onClosing();
 
 				}
+				comunicator.removeMessageHandler(messagingHandler);
 			}
 
 			$scope.isExecuteParameterDisabled = function() {
@@ -447,11 +432,6 @@ angular
 			}
 
 
-			$scope.$on("$destroy",function(){
-				console.log("destroying controller")
-				comunicator.removeMessageHandler(messagingHandler);
-			})
-
 			var persistDataSet = function(){
 				sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
 				.then(
@@ -464,7 +444,6 @@ angular
 											$log.info("Dataset saved successfully");
 											$scope.datasetSavedFromQbe=true;
 											$scope.closeDocument();
-							//				comunicator.removeMessageHandler(saveHadler);
 
 										})})
 			}
