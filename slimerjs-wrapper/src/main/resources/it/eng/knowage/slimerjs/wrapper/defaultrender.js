@@ -360,6 +360,7 @@
 
 var sha256 = createMethod();
 
+// loads module system from PhantomJS to retrieve parameters within slimerjs executable command
 var system = require('system');
 
 // this function writes the arguments to stdout
@@ -463,7 +464,7 @@ for(var i=0; i<sheets; i++) {
 }
 
 var queue = [];
-urls.forEach(function(url, sheet) {
+urls.forEach(function(url, sheet) { // url and sheet are value and key of the Map entry
     var p = new Promise(function(resolve, reject) {
         var page = require('webpage').create();
         page.resolve = resolve;
