@@ -1,36 +1,20 @@
-
 <drop-zone
- 		style="width: 15px;background-color:yellow"
-		ng-drop="true"
-		layout="column"
-		ng-drop-success="onDropComplete($data,$event);$event.stopPropagation();$event.preventDefault()"> 
-		
-
+	style="width: 10px;"
+	ng-drop="true"
+	layout="column"
+	ng-drop-success="onDropComplete($data,$event);$event.stopPropagation();$event.preventDefault()"> 
 </drop-zone>
-<md-card  layout="column" ng-drag="{{draggable}}"  
-		ng-drag-data="{node}">
-	
-	<filter-details details="node.details" layout="column" flex></filter-details>
-	
+
+<md-card layout="column" ng-click="select(node);$event.stopPropagation()" ng-drag="{{draggable}}" ng-drag-data="{node}" ng-class="{'selectedFilter' : isSelected()}" >
+	<filter-details details="node.details" layout="column" flex ></filter-details>
 	<div flex layout="row">
 		<div flex></div>
-			<i class="fa fa-hand-pointer-o" 
-			ng-class ="isSelected()?'fa fa-thumbs-o-up':'fa fa-hand-pointer-o'" 
-			ng-click="select(node);$event.stopPropagation()"
-			ng-if="isSelectable()"
-			></i>
 	</div>
-
-
 </md-card>
 
 <drop-zone
- 		style="width: 15px;background-color:yellow"
-		ng-drop="true"
-		layout="column"
-		ng-drop-success="onDropMove($data,$event);$event.stopPropagation();$event.preventDefault()" > 
-		
-
+	style="width: 10px;"
+	ng-drop="true"
+	layout="column"
+	ng-drop-success="onDropMove($data,$event);$event.stopPropagation();$event.preventDefault()" > 
 </drop-zone>
-
-<!--  ng-click="select(node);$event.stopPropagation()" -->
