@@ -62,7 +62,7 @@ function cockpitDocumentWidgetControllerFunction($scope,$timeout, cockpitModule_
 			return;
 		}
 		var doc= $scope.getDocument();
-		if(doc!=undefined && (angular.equals(nature,'selections') || angular.equals(nature,'parameter_change') || !angular.equals(currentDocId,doc.DOCUMENT_ID))){
+		if(doc!=undefined && (angular.equals(nature,'selections') || angular.equals(nature,'parameter_change') ||  angular.equals(nature,'filters') || !angular.equals(currentDocId,doc.DOCUMENT_ID))){
 			//show the spinner, and then the spinner is hide by the directive  iframe-finish-load
 			$scope.showWidgetSpinner();
 			currentDocId=doc.DOCUMENT_ID;

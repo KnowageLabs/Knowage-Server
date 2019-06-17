@@ -486,6 +486,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.updateFromDatasetFilter=function(label){
 		var dataset= $scope.getDataset(label);
+		var document = $scope.getDocumentByLabel(label);
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -493,12 +494,20 @@ function cockpitWidgetControllerFunction(
 			console.log("widget is not updateble")
 			return;
 		}
-		if(dataset != undefined && label == dataset.label){
+		 if((dataset != undefined && label == dataset.label)|| (document != undefined && label == document.DOCUMENT_LABEL)){
 			var options = {};
 			options.label = label;
 			$scope.refreshWidget(options,'filters');
 		}
 	}
+
+	$scope.getDocumentByLabel = function(label){
+        if($scope.ngModel.document!=undefined && label != undefined){
+            return cockpitModule_documentServices.getDocumentByLabel( label);
+        } else{
+            return undefined;
+        }
+    }
 
 	$scope.safeApply=function(){
 		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
