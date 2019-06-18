@@ -232,11 +232,22 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 										if(parametersByEdgeGroup.get(param).equals(missingColumn)){
 
 											if(edgeName.equals(param)) {
+												for (EdgeGroup edgeGr : groups) {
 
-												Set<Tuple> tuples =	result.getEdgeGroupValues().get(param);  // set of associative values linked to a param and edgegroup
+													if(edgeGr.getEdgeNames().contains(edgeName)) {
 
-												groupToValues.put(missingColumn, tuples);
+
+														Set<Tuple> tuples =	result.getEdgeGroupValues().get(edgeGr);  // set of associative values linked to a param and edgegroup
+
+														groupToValues.put(missingColumn, tuples);
+													}
+
+												}
+
+
 											}
+
+
 
 										}
 
