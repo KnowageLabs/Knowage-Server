@@ -1121,12 +1121,14 @@
 			#if($yAxis.min && $yAxis.min != "auto"  && $yAxis.min!='' )
 				#set ($min = $yAxis.min)
 					min: $yAxis.min,
+					startOnTick:false,
 			#end
 			
 			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
 				#set ($max = $yAxis.max)
 				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
 					max:$yAxis.max,
+					endOnTick: false,
 				#end
 	        #end
 	        
