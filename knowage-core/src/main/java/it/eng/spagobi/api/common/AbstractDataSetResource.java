@@ -314,7 +314,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
-		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct"));
+		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct"));   // caso in cui ci siano facets complesse (coupled proj)
 	}
 
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
@@ -343,14 +343,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throws JSONException {
 		ArrayList<Projection> groups = new ArrayList<>(0);
 
-		boolean hasAggregatedCategories = hasAggregations(categories);
+		// hasAggregationInCategory se categoria di aggregazione del for ha una funzione di aggregazione
 
 		boolean hasAggregatedMeasures = hasAggregations(measures);
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			String functionName = category.optString("funct");
-			if (forceGroups || hasAggregatedMeasures || hasAggregatedCategories  || hasCountAggregation(functionName)) {
+			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category)  || hasCountAggregation(functionName)) {
 				Projection projection = getProjection(dataSet, category, columnAliasToName);
 				groups.add(projection);
 			}
@@ -370,7 +370,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return groups;
 	}
 
-	private boolean hasCountAggregation(String functionName) {
+	private boolean hasCountAggregation(String functionName) {  // caso in cui arrivano facets semplici
 		return AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT)
 				|| AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT_DISTINCT);
 	}
@@ -387,6 +387,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	private boolean hasAggregationInCategory(JSONObject field) throws JSONException {
+			String functionName = field.optString("funct");
+			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
+				return true;
+			}
+
 		return false;
 	}
 

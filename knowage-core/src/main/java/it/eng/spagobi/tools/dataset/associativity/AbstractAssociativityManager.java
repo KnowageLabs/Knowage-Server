@@ -109,6 +109,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		this.userProfile = userProfile;
 		initGraph(config);
 		initDocuments(config);
+		selections = config.getSelections();
+		// initExcludedDatasets raccogliere set dataset label dalle selezione, set datasetlabel dal grafo e fare il primo - il secondo (sottrazione) il risultato va messo nella collezione documentsAndExcludedDatasets
 		initDatasets(config);
 	}
 
@@ -118,8 +120,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	private void initDatasets(Config config) throws SpagoBIException {
 		datasetToAssociations = config.getDatasetToAssociations();
-		selections = config.getSelections();
 		filters = config.getFilters();
+		selections = config.getSelections();
 		String datasetFilter = null;
 		for (SimpleFilter fil : filters) {
 		     datasetFilter = fil.getDataset().getName();
@@ -226,10 +228,41 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						String missingColumn = datasetToAssociations.get(dataset).get(edgeName);
 						if (ParametersUtilities.isParameter(missingColumn)) {
 							String missingParameter = ParametersUtilities.getParameterName(missingColumn);
-							String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
-							HashSet<Tuple> tuples = new HashSet<Tuple>();
-							tuples.add(new Tuple(value));
-							groupToValues.put(missingColumn, tuples);
+
+							if (associativeDatasetContainers.get(dataset)!=null) {  // dataset case
+
+								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
+								HashSet<Tuple> tuples = new HashSet<Tuple>();
+								Tuple tuple = new Tuple(value != null && value.startsWith("'") && value.endsWith("'") ? value.substring(1, value.length() - 1) :
+									value);
+								tuples.add(tuple);
+								groupToValues.put(missingColumn, tuples);
+
+							}
+							else {      // document case
+
+								if (datasetToAssociations.get(dataset)!=null) {
+
+									Map<String, String> parametersByEdgeGroup = datasetToAssociations.get(dataset);
+
+									for (String param : parametersByEdgeGroup.keySet()) {
+
+										if(parametersByEdgeGroup.get(param).equals(missingColumn)){
+
+											if(edgeName.equals(param)) {
+
+												Set<Tuple> tuples =	result.getEdgeGroupValues().get(param);  // set of associative values linked to a param and edgegroup
+
+												groupToValues.put(missingColumn, tuples);
+											}
+
+										}
+
+									}
+
+								}
+
+							}
 						}
 					}
 				}

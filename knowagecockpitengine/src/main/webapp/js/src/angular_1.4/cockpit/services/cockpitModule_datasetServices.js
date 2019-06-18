@@ -1010,11 +1010,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i=0;i<columns.length;i++){
 				var col = columns[i];
 
-				if(col.fieldType!="ATTRIBUTE"){
+				if(col.fieldType!="ATTRIBUTE" && col.aggregationSelected != undefined  && col.aggregationSelected != "NONE"){  // if col.aggregationSelected == undefined or "NONE" : continue oppure obj["funct"] col.aggregationSelected 
 					var obj = {};
 					obj["id"] = col.name;
 					obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
-					obj["funct"] = col.funcSummary == undefined? "" : col.funcSummary;
+					obj["funct"] = col.aggregationSelected;  //col.funcSummary
 					obj["columnName"] = ngModel.type == "table" ? col.name : col.alias;
 
 					measures.push(obj);
