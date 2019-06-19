@@ -87,7 +87,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 		 fieldsTypes:	[
 			 {label:'string',value:'java.lang.String'},
 			 {label:'integer',value:'java.lang.Integer'},
+			 {label:'integer',value:'java.lang.Byte'},
 			 {label:'integer',value:'java.lang.Long'},
+			 {label:'integer',value:'java.lang.Short'},
 			 {label:'integer',value:'java.math.BigInteger'},
 			 {label:'float',value:'java.math.BigDecimal'},
 			 {label:'float',value:'java.lang.Double'},
@@ -104,7 +106,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 		 typesMap: {
 			"java.lang.String": {label:"string",icon:"fa fa-quote-right"}, 
 			"java.lang.Boolean": {label:"boolean",icon:"fa fa-star-half-o"}, 
+			"java.lang.Byte" : {label:"byte",icon:"fa fa-hashtag"},
 			"java.lang.Long" : {label:"long",icon:"fa fa-hashtag"},
+			"java.lang.Short" : {label:"short",icon:"fa fa-hashtag"},
 			"java.lang.Integer": {label:"integer",icon:"fa fa-hashtag"},
 			"java.math.BigInteger" :{label:"integer",icon:"fa fa-hashtag"},
 			"java.lang.Double": {label:"float",icon:"fa fa-hashtag"},
