@@ -1355,7 +1355,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			})
 			return promise;
 		}
-    function DatasetPreviewController($scope,$mdDialog,$http,$sce){
+    function DatasetPreviewController($scope,$mdDialog,$http,$sce,$httpParamSerializer){
     	if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
 
 	    	$scope.dataset = $scope.datasetInPreview;
@@ -1369,25 +1369,40 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
 			$scope.dataset.executed = !$scope.showDrivers;
 
-			$scope.hideDrivers =function(){
+			$scope.toggleDrivers = function(){
 				$scope.showDrivers = !$scope.showDrivers;
 				$scope.dataset.executed = true;
 			}
 
     	}else{
-    		$scope.urlParams = 'datasetLabel=' + $scope.datasetInPreview.label;
-        	if(Object.keys($scope.datasetInPreview.pars).length === 0 && $scope.datasetInPreview.pars.constructor === Object) {
-        		$scope.urlParams += '&parameters=' + encodeURIComponent(JSON.stringify($scope.datasetInPreview.pars));
-        	}
-        	if(true){
-        		var exports = ['CSV','XLSX'];
-        		$scope.urlParams += '&options=' + encodeURIComponent(JSON.stringify({exports:exports}));
-        	}
+    		angular.copy($scope.datasetInPreview, $scope.dataset);
 
-        	$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
-			$scope.dataset = {}
-			$scope.dataset.executed = true;
+    		$scope.previewDS = function() {
+    			var config = { datasetLabel: $scope.dataset.label };
+    	        if(typeof $scope.dataset.pars !== 'undefined' && $scope.dataset.pars.length > 0) {
+    	        	config.parameters = $scope.dataset.pars;
+    	        }
+    	        config.options = { exports: ['CSV', 'XLSX'] };
+
+    	        $scope.urlParams = $httpParamSerializer(config);
+    	        $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+    		}
+
+    		$scope.previewDS();
+        	$scope.showDrivers = false;
+
+        	$scope.toggleDrivers = function(){
+				$scope.showDrivers = !$scope.showDrivers;
+			}
+
+        	$scope.executeParameter = function(){
+        		$scope.showDrivers = false;
+        		$scope.previewDS();
+			}
+
+
 		}
+
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
 			 $scope.previewDatasetColumns=[];

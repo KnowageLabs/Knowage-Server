@@ -684,8 +684,10 @@ public class DataSetResource extends AbstractDataSetResource {
 							for (int j = 0; j < jsonPars.length(); j++) {
 								JSONObject jsonPar = jsonPars.getJSONObject(j);
 								if (columnName.equals(jsonPar.getString("name"))) {
-									json.put(columnName, jsonPar.get("value"));
-									break;
+									if (jsonPar.has("value")) {
+										json.put(columnName, jsonPar.get("value"));
+										break;
+									}
 								}
 							}
 						}
