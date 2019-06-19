@@ -667,7 +667,7 @@ function cockpitWidgetControllerFunction(
 		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});
 	}
 
-	$scope.checkPreviewParameters = function(previewSettings, previewDataset, columnName, modalColumn, row){
+	$scope.checkPreviewParameters = function(previewSettings, previewDataset, columnName, modalColumn, row, clickedValue){
 		if (modalColumn == undefined || modalColumn == "") {
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(previewDataset.id.dsId);
 			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
@@ -679,7 +679,8 @@ function cockpitWidgetControllerFunction(
 				previewSettings.parameters[p].value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
 			}
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
-				previewSettings.parameters[p].value = row[previewSettings.parameters[p].column];
+				if($scope.ngModel.type == 'chart') previewSettings.parameters[p].value = clickedValue;
+				else previewSettings.parameters[p].value = row[previewSettings.parameters[p].column];
 			}
 			if(previewSettings.parameters[p].bindType == 'selection'){
 				if(cockpitModule_template.configuration.filters && cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset]) {
@@ -717,7 +718,7 @@ function cockpitWidgetControllerFunction(
 				};
 
 				if (previewDataset.parameters && previewDataset.parameters.length > 0)
-					config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row);
+					config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
 
 				//showing exporters
 				config.options = {
