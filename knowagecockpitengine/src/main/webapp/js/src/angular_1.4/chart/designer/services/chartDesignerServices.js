@@ -2274,28 +2274,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 					]
 				},
-				"LEGEND": {
-					"floating": false,
-					"layout": "",
-					"position": "",
-					"show": false,
-					"style": {
-						"align": "",
-						"fontFamily": "",
-						"fontSize": "",
-						"fontWeight": "",
-						"borderWidth": "",
-						"color": "",
-						"backgroundColor": ""
-					},
-					"x": 0,
-					"y": 0,
-					"TITLE": {
-						"style": {
-							"color": ""
-						}
-					}
-				},
 				"SUBTITLE": {
 					"style": {
 						"align": "",
