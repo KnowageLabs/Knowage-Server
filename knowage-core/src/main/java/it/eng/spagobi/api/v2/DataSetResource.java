@@ -52,6 +52,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFUserError;
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -283,8 +284,10 @@ public class DataSetResource extends AbstractDataSetResource {
 		ResponseBuilder response = null;
 		try {
 			String resourcePath = SpagoBIUtilities.getResourcePath();
-			String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + fileName;
-			file = new File(filePath);
+			File fileDirectory = new File(resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files");
+			file = new File(fileDirectory, fileName);
+
+			PathTraversalChecker.preventPathTraversalAttack(file, fileDirectory);
 
 			if (file == null || !file.exists()) {
 				logger.error("File cannot be found");
