@@ -236,9 +236,14 @@
 			</md-tab>
 			
 			<md-tab id="filters-Tab" md-active="tabResource.selectedBusinessTab=='sqlFilterTab'" md-on-select="tabResource.selectedBusinessTab='sqlFilterTab'" label="{{translate.load('sbi.meta.model.business.filter')}}" ng-if="selectedBusinessModel.columns!=undefined">
-				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill ng-if="tabResource.selectedBusinessTab=='sqlFilterTab'">
-  					<div flex ng-repeat="bmProperty in selectedBusinessModel.properties" ng-if="bmProperty['structural.sqlFilter']">
+				<md-content ng-controller="businessModelSqlFilterController" layout layout-fill ng-if="tabResource.selectedBusinessTab=='sqlFilterTab'">					
+  					<div flex ng-repeat="bmProperty in selectedBusinessModel.properties" ng-if="bmProperty['structural.sqlFilter']">	  					
 						<md-input-container class="md-block">
+				          	<md-icon md-menu-origin class="fa fa-question-circle">
+								<md-tooltip md-direction="bottom">							
+									{{translate.load("sbi.meta.model.business.filter.helpMessage")}}
+								</md-tooltip>
+							</md-icon>
 							<textarea ng-model="bmProperty['structural.sqlFilter'].value" placeholder="SQL expression"></textarea>
 						</md-input-container>
   					</div> 
