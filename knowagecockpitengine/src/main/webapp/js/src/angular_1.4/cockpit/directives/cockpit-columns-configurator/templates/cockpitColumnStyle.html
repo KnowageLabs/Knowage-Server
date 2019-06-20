@@ -53,6 +53,11 @@
 	            					</md-option>
 	          					</md-select>
 	        			</md-input-container>
+	        			<div layout="row" ng-if="selectedColumn.visType == 'Icon only' && (!selectedColumn.ranges.length || selectedColumn.ranges.length == 0)">
+	        				<div class="kn-warning" flex="100">
+	        					{{::translate.load('sbi.cockpit.table.visualizationtype.warning')}}
+	        				</div>
+	        			</div>
 			     
 				       <div ng-if="selectedColumn.visType=='Chart'|| selectedColumn.visType== 'Text & Chart' " layout="row" layout-wrap>
 				       		<md-input-container flex class="md-block" class="small counter" >
