@@ -23,14 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         		<h2 flex>{{::translate.load('sbi.home.news')}}</h2>
 			</div>
 		</md-toolbar>
-		<div ng-show="news.length == 0" class="noNews">
+		<div ng-if="!news || news.length == 0" class="noNews flex">
 			<div class="emptyIconSvg">
 			</div>
 			<div class="emptyIconText">
 				{{::translate.load('sbi.home.news.nonews')}}
 			</div>
 		</div>
-		 <md-tabs ng-if="news.length > 0">
+		 <md-tabs ng-if="news && news.length > 0">
 	      <md-tab label="{{category.label}}" ng-repeat="category in news" ng-if="category.messages.length > 0">
 	        <md-content>
 	         <md-list flex class="noPadding">
