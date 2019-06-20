@@ -65,7 +65,6 @@ import it.eng.spagobi.tools.dataset.cache.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -258,16 +257,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
-			if (isTrueDatasetColumn(dataSet, category.optString("columnName"))) {
 			addProjection(dataSet, projections, category, columnAliasToName);
-			}
+
 		}
 
 		for (int i = 0; i < measures.length(); i++) {
 			JSONObject measure = measures.getJSONObject(i);
-			if (isTrueDatasetColumn(dataSet, measure.optString("columnName"))) {
 			addProjection(dataSet, projections, measure, columnAliasToName);
-			}
+
 
 		}
 
@@ -330,10 +327,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (isAggregationPresentOnMeasures) {
 			for (int i = 0; i < categories.length(); i++) {
 				JSONObject category = categories.getJSONObject(i);
-				if (isTrueDatasetColumn(dataSet, category.optString("columnName"))) {
 				Projection projection = getProjection(dataSet, category, columnAliasToName);
 				groups.add(projection);
-				}
+
 			}
 		}
 
@@ -346,21 +342,19 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject categoryObject = categories.getJSONObject(i);
-			if (isTrueDatasetColumn(dataSet, categoryObject.optString("columnName"))) {
 			Sorting sorting = getSorting(dataSet, categoryObject, columnAliasToName);
 			if (sorting != null) {
 				sortings.add(sorting);
-			}
+
 			}
 		}
 
 		for (int i = 0; i < measures.length(); i++) {
 			JSONObject measure = measures.getJSONObject(i);
-			if (isTrueDatasetColumn(dataSet, measure.optString("columnName"))) {
 			Sorting sorting = getSorting(dataSet, measure, columnAliasToName);
 			if (sorting != null) {
 				sortings.add(sorting);
-			}
+
 			}
 		}
 
@@ -512,7 +506,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		dataWriter.setLocale(buildLocaleFromSession());
 		return dataWriter;
 	}
-
+/*
 	protected static boolean isTrueDatasetColumn(IDataSet dataSet, String colName) {
 
 		IMetaData metadata = dataSet.getMetadata();
@@ -528,13 +522,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return false;
 
 	}
-
+*/
 
 	protected void loadColumnAliasToName(IDataSet dataSet, JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject category = jsonArray.getJSONObject(i);
-
-			if (isTrueDatasetColumn(dataSet, category.optString("columnName"))) {
 
 				String alias = category.optString("alias");
 				if (alias != null && !alias.isEmpty()) {
@@ -548,7 +540,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 						columnAliasToName.put(alias, columnName);
 					}
 				}
-			}
+
 		}
 	}
 

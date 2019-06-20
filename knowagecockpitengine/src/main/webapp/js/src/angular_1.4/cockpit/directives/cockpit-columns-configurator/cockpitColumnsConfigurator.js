@@ -149,7 +149,7 @@
 		                            	 transformer:function(item){
 		                            		 var template = "<md-input-container flex class=\"md-block noMdError\"> "
 		                            			 +"<label>Text</label>"
-		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />"
+		                            			 +"<input class=\"input_class\" ng-keydown=\"scopeFunctions.saveTempAliasToShow(row.aliasToShow)\" ng-change=\"scopeFunctions.changeAliasToShow(row)\" ng-model=row.aliasToShow />"
 		                            			 +"</md-input-container>";
 		                            		 return template;
 		                            	 },
@@ -224,6 +224,21 @@
 					}
 				}
 			},
+			changeAliasToShow: function(row){
+				for(var k in $scope.model.content.columnSelectedOfDataset){
+					if($scope.model.content.columnSelectedOfDataset[k].$$hashKey == row.$$hashKey){
+						if ($scope.model.settings.sortingColumn && $scope.model.settings.sortingColumn == $scope.tempAliasValue) {
+							$scope.model.settings.sortingColumn = row.aliasToShow;
+						}
+						$scope.model.content.columnSelectedOfDataset[k].aliasToShow = row.aliasToShow;
+						break;
+					}
+				}
+			},
+			saveTempAliasToShow: function(row){
+				
+				$scope.tempAliasValue = row;
+			},			
 			canSee : function(row){
 				return angular.equals(row.fieldType, "MEASURE");
 			},
