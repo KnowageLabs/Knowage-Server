@@ -31,7 +31,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PathTraversalChecker {
 
-	static protected Logger logger = Logger.getLogger(PathTraversalChecker.class);
+	private static Logger logger = Logger.getLogger(PathTraversalChecker.class);
+
+	private PathTraversalChecker() {
+		throw new IllegalStateException("This class provides utility methods. It cannot be instantiated");
+	}
 
 	/**
 	 * Utility method for Path Traversal Attacks prevention. It checks that input fine is inside the desired directory or within sub-directory of the desired
@@ -67,7 +71,7 @@ public class PathTraversalChecker {
 			fileToBeChecked = fileToBeChecked.getCanonicalFile();
 			desiredDirectory = desiredDirectory.getCanonicalFile();
 		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Error while converting input file into canonical ones", e);
+			throw new SpagoBIRuntimeException("Error while converting input files into canonical ones", e);
 		}
 
 		File parent = fileToBeChecked.getParentFile();
