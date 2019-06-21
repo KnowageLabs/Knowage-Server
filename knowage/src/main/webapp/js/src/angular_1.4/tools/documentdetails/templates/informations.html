@@ -118,10 +118,15 @@
             </div>
             <md-card>
                 <md-card-content>
-                    <component-tree ng-model="di.folders" id="id" create-tree="true"
-									check-children=false selected-item="selected" multi-select="true" show-files="true"> </component-tree>
-                </md-card-content>
-           
+                    <component-tree ng-model="di.folders" id="id" 
+                    	create-tree="true"
+						check-children=false
+						selected-item="selected"
+						multi-select="true"
+						show-files="true"
+						show-node-checkbox-fn="di.showNodeCheckBoxFn(node)">
+					</component-tree>
+                </md-card-content>           
              
             </md-card>
              <div layout="row " layout-align="center center">
