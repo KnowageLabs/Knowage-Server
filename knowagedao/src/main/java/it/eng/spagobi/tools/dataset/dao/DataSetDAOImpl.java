@@ -1019,6 +1019,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Session session = null;
 		Transaction transaction = null;
 		StringBuffer sb;
+		StringBuffer sbTag;
 		String entityName = "";
 		String valuefilter = null;
 		String typeFilter = null;
@@ -1058,12 +1059,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			if (tagIds.isEmpty()) {
-				sb = new StringBuffer("from SbiDataSet ds where ds.active = true ");
-				entityName = "ds.";
-			} else {
-				sb = new StringBuffer("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = true ");
-				entityName = "dst.dataSet.";
+			sb = new StringBuffer("from SbiDataSet ds where ds.active = true ");
+			entityName = "ds.";
+			if (!tagIds.isEmpty()) {
+				sbTag = new StringBuffer("select tag.dataSet.label from SbiDatasetTag tag  where tag.dsTagId.tagId in (:tagIds) group by  tag.dataSet.label");
+				sb.append(" and ds.label in ( " + sbTag.toString() + " )");
 			}
 
 			if (!isAdmin) {
@@ -1082,10 +1082,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			if (!tagIds.isEmpty()) {
-				sb.append("and dst.dsTagId.tagId in (:tagIds) ");
-			}
-
 			if (ordering != null) {
 				if (columnOrdering != null && !columnOrdering.isEmpty()) {
 					sb.append(" order by ").append(entityName).append(columnOrdering.toLowerCase());
@@ -1101,6 +1097,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			transaction = session.beginTransaction();
 
 			Query listQuery = session.createQuery(sb.toString());
+
 			if (idsCat != null && idsCat.size() > 0) {
 				listQuery.setParameterList("idsCat", idsCat);
 			}
