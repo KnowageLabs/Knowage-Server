@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
@@ -50,7 +49,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.showCkanIntegration = sbiModule_user.functionalities.indexOf("CkanIntegrationFunctionality")>-1;
 
 	$scope.selectedDataset = undefined;
-	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;
 	$scope.currentTab = "myDataSet";
     $scope.previewDatasetModel=[];
@@ -68,40 +66,32 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.allDSTags = [];
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
-
     $scope.showExportDriverPanel = false;
-
     /**
      * Flag that will tell us if we are entering the Dataset wizard from the Editing or from Creating phase (changing or adding a new dataset, respectively).
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
     $scope.editingDatasetFile = false;
-
     $scope.datasetsInitial=[];  //all
 	$scope.myDatasetsInitial= [];
 	$scope.enterpriseDatasetsInitial=[];
 	$scope.sharedDatasetsInitial=[];
-
 	/**
 	 * STEP 3
 	 */
 	$scope.allHeadersForStep3Preview = [];
 	$scope.allRowsForStep3Preview = [];
-
 	/**
 	 * The validation status after submitting the Step 2.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.validationStatus = false;
-
 	/**
 	 * An indicator if the user previously (already) uploaded an XLS/CSV file, in the case of re-browsing for a new one (this one needs to be uploaded, as well).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.prevUploadedFile = null;
-
 	$scope.datasetSavedFromQbe = false;
-
 	$scope.datasetTemp = null;
 
 	function createSourceNameOnDataset(datasetsArray) {
@@ -124,20 +114,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			angular.copy(response.data.root,$scope.datasets);
 			tagsHandlerService.setAllDS(response.data.root);
 			createSourceNameOnDataset($scope.datasets);
-
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 		},function(response){
-
 			/*
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(sbiModule_translate.load("sbi.ds.alldatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+				sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 		});
 	}
 
@@ -149,17 +135,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			createSourceNameOnDataset($scope.myDatasets);
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 		},function(response){
-
 			/*
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(sbiModule_translate.load("sbi.ds.mydatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+				sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 		});
 	}
 
@@ -168,11 +151,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
 			createSourceNameOnDataset($scope.enterpriseDatasets);
-
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);
 		},function(response){
-
 			/*
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
@@ -180,8 +161,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			 */
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+				sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 		});
 	}
 
@@ -193,7 +173,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 		    tagsHandlerService.setSharedDS($scope.sharedDatasets);
 		},function(response){
-
 			/*
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
@@ -201,8 +180,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			 */
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+				sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 		});
 	}
 
@@ -213,28 +191,24 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 	};
 
-
 	$scope.deleteDataset=function(dataset, $event){
-
 		var label = dataset.label;
-
 		sbiModule_restServices.promiseGet("2.0/federateddataset/dataset", dataset.id)
 			.then(function(response){
 				var federationModels = response.data;
-
 				if (federationModels.length > 0) {
 					$mdDialog.show(
-						      $mdDialog.alert()
-						        .parent(angular.element(document.body))
-						        .clickOutsideToClose(true)
-						        .title(sbiModule_translate.load("sbi.ds.deletedataset"))
-						        .textContent(sbiModule_translate.load("sbi.federationdefinition.cant.delete.dataset"))
-						        .ariaLabel('Delete dataset info')
-						        .ok(sbiModule_translate.load("sbi.general.close"))
-						        .targetEvent(event)
-						    ).then(function(){
-						    	// dialog closed
-						    });
+					      $mdDialog.alert()
+					        .parent(angular.element(document.body))
+					        .clickOutsideToClose(true)
+					        .title(sbiModule_translate.load("sbi.ds.deletedataset"))
+					        .textContent(sbiModule_translate.load("sbi.federationdefinition.cant.delete.dataset"))
+					        .ariaLabel('Delete dataset info')
+					        .ok(sbiModule_translate.load("sbi.general.close"))
+					        .targetEvent(event)
+				    ).then(function(){
+				    	// dialog closed
+				    });
 				} else {
 					var confirm = $mdDialog.confirm()
 					.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
@@ -246,35 +220,28 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 					$mdDialog.show(confirm).then(function() {
 
 						sbiModule_restServices.promiseDelete("1.0/datasets",label)
-						.then(function(response) {
-
-							// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-							toastr.success(sbiModule_translate.load("sbi.workspace.dataset.delete.success"),
-									sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-
-							$scope.reloadMyDataFn();
-							$scope.selectDataset(undefined);
-
-							/**
-							 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
-							 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-							 */
-							$scope.searchInput = "";
+							.then(function(response) {
+								// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+								toastr.success(sbiModule_translate.load("sbi.workspace.dataset.delete.success"),
+										sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+								$scope.reloadMyDataFn();
+								$scope.selectDataset(undefined);
+								/**
+								 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+								 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								$scope.searchInput = "";
 						},function(response) {
-
 							// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 							toastr.error(response.data.errors[0].message,
-				        			  sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+									sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 						});
 					});
 				}
-
 			}, function(response){
 				toastr.error(response.data.errors[0].message,
 	        			  sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 			});
-
 	}
 
 	$scope.downloadDatasetFile = function(dataset) {
@@ -328,7 +295,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		if (isOpen && !$mdSidenav('rightDs').isLockedOpen() && !$mdSidenav('rightDs').isOpen()) {
 			$scope.toggleDatasetDetail();
 		}
-
 		$scope.showDatasetInfo = isOpen;
 	};
 
@@ -336,13 +302,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$mdSidenav('rightDs').toggle();
 	};
 
-	$scope.selectDataset= function ( dataset ) {
-		if (dataset !== undefined) {
-			//$scope.lastDatasetSelected = dataset;
-		}
+	$scope.selectDataset= function (dataset) {
 		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
 		$scope.selectedDataset = dataset;
-
 		if (alreadySelected) {
 			$scope.selectedDataset=undefined;
 			$scope.setDetailOpen(!$scope.showDatasetDetail);
@@ -357,28 +319,25 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	 $scope.showAlert = function() {
-		    $mdDialog.show(
-		      $mdDialog.alert()
-		        .clickOutsideToClose(true)
-		        .title(sbiModule_translate.load('sbi.workspace.categories.alert.dialog'))
-		        .textContent(sbiModule_translate.load('sbi.workspace.categories.alert.msg'))
-		        .ariaLabel('Alert Dialog Categories')
-		        .ok(sbiModule_translate.load('sbi.general.ok'))
-		    );
-		  };
+	    $mdDialog.show(
+	      $mdDialog.alert()
+	        .clickOutsideToClose(true)
+	        .title(sbiModule_translate.load('sbi.workspace.categories.alert.dialog'))
+	        .textContent(sbiModule_translate.load('sbi.workspace.categories.alert.msg'))
+	        .ariaLabel('Alert Dialog Categories')
+	        .ok(sbiModule_translate.load('sbi.general.ok'))
+	    );
+	 };
 
-
-	$scope.showCategoriesDialog = function() {
+	  $scope.showCategoriesDialog = function() {
 		$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
 		      controller: DialogShareDatasetController,
 		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/shareDatasetDialogTemplate.html',
 		      clickOutsideToClose:false,
-		      escapeToClose :false,
-		      locals:{
-		      }
-		    });
+		      escapeToClose :false
+		});
 	}
 
 	$scope.applySelectedCategory = function(dataset) {
@@ -401,15 +360,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				$scope.showCategoriesDialog();
 			}
 		},function(response){
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-
 		});
 	}
 
     function DialogShareDatasetController($scope,$mdDialog){
-
     	$scope.closeShareDialog=function(){
     		$mdDialog.cancel();
     	}
@@ -436,7 +392,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				}
 			}
     	}
-
         params={};
     	params.id=id;
     	params.catTypeId = catTypeId;
@@ -448,29 +403,19 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			 dataset.catTypeId=response.data.catTypeId;
 			 dataset.catTypeCd=response.data.catTypeCd;
-
-	          if(response.data.catTypeId!=null){
-
+	         if(response.data.catTypeId!=null){
 	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
 	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.share.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-
-	          }
-	          else {
-
+	          } else {
 	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
 	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-
 	          }
-
 		},function(response){
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
-
 		});
-
     }
 
     $scope.unshareDataset = function(dataset){
@@ -488,57 +433,43 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			 dataset.catTypeId=response.data.catTypeId;
 			 dataset.catTypeCd=response.data.catTypeCd;
-	          if(response.data.catTypeId==null){
-
+	         if(response.data.catTypeId==null){
 	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
 	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-
 	          }else{
-
 	        	// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
-
 	          }
 		},function(response){
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
-
 		});
     	$mdDialog.cancel();
     }
 
     $scope.showQbeDataset= function(dataset){
-
 		var label= dataset.label;
-
 		var url= datasetParameters.qbeFromDataSetServiceUrl
 		       +'&dataset_label='+label
 		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
-		 //$window.location.href=url;
 		$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
 			$qbeViewer.openQbeInterfaceDSet($scope, false, url, true);
 		})
     }
 
     $scope.creationDatasetEnabled= function(){
-
-    return datasetParameters.CAN_CREATE_DATASET_AS_FINAL_USER==="true";
-
+    	return datasetParameters.CAN_CREATE_DATASET_AS_FINAL_USER==="true";
     }
 
     $scope.showHelpOnline= function(dataset){
-
     	sbiModule_helpOnLine.show(dataset.label);
     }
 
     $scope.isSharingEnabled=function(){
         return $scope.currentTab==="myDataSet";
     }
-
-
 
     $scope.exportDataset= function(dataset,format){
     	$scope.showExportDriverPanel = true;
@@ -553,7 +484,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     			 $scope.exportDatasetWithDrivers(dataset,format);
     		}
     	})
-
     }
 
     $scope.exportDatasetWithDrivers = function(dataset) {
@@ -602,66 +532,51 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.previewDataset = function(dataset){
-
     	console.info("DATASET FOR PREVIEW: ",dataset);
-
     	$scope.datasetInPreview=dataset;
     	$scope.disableBack=true;
     	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
-    	/**
-    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
-    	 * property (e.g. Query datasets).
-    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    	 */
-    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
-
-    	/**
-    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
-    	 * pagination in the toolbar of the preview dataset dialog.
-    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    	 */
-    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
-    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
-    		$scope.previewPaginationEnabled=true;
-    	}
-    	else{
-    		$scope.previewPaginationEnabled=false;
-    	}
-
-    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
-    	$scope.getPreviewSet($scope.datasetInPreview);
-
-    	/**
-    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
-    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
-    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    	 */
-    	if (dsRespHasResultNumb) {
-
-    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
-    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
-    			$scope.disableNext = true;
-    		}
-    		else {
-    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-    		 	$scope.disableNext = false;
-    		}
-
-    	}
-
-     	$mdDialog.show({
-			  scope:$scope,
-			  preserveScope: true,
-		      controller: DatasetPreviewController,
-		      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
-		      clickOutsideToClose:false,
-		      escapeToClose :false,
-		      //fullscreen: true,
-		      locals:{
-		    	 // previewDatasetModel:$scope.previewDatasetModel,
-		         // previewDatasetColumns:$scope.previewDatasetColumns
-		      }
-		    });
+	    	/**
+	    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
+	    	 * property (e.g. Query datasets).
+	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
+	    	/**
+	    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
+	    	 * pagination in the toolbar of the preview dataset dialog.
+	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
+	    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
+	    		$scope.previewPaginationEnabled=true;
+	    	}else{
+	    		$scope.previewPaginationEnabled=false;
+	    	}
+	    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
+	    	$scope.getPreviewSet($scope.datasetInPreview);
+	    	/**
+	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
+	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
+	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	if (dsRespHasResultNumb) {
+	    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
+	    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
+	    			$scope.disableNext = true;
+	    		} else {
+	    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+	    		 	$scope.disableNext = false;
+	    		}
+	    	}
+	     	$mdDialog.show({
+				  scope: $scope,
+				  preserveScope: true,
+			      controller: DatasetPreviewController,
+			      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
+			      clickOutsideToClose: false,
+			      escapeToClose: false
+			});
     	})
     }
 
@@ -669,47 +584,36 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.selectedDataSet = dataset;
     	var url = null;
 	     if(dataset.dsTypeCd=='Federated'){
-	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-	         +'&FEDERATION_ID='+dataset.federationId
-	         +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
+		      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+		         +'&FEDERATION_ID='+dataset.federationId
+		         +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
 	     } else {
-	      var modelName= dataset.qbeDatamarts;
-	   var dataSource=dataset.qbeDataSource;
-	      url = datasetParameters.buildQbeDataSetServiceUrl
-	           +'&DATAMART_NAME='+modelName
-	           +'&DATASOURCE_LABEL='+ dataSource
-	           +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
+		      var modelName= dataset.qbeDatamarts;
+		      var dataSource=dataset.qbeDataSource;
+		      url = datasetParameters.buildQbeDataSetServiceUrl
+		           +'&DATAMART_NAME='+modelName
+		           +'&DATASOURCE_LABEL='+ dataSource
+		           +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
 	     }
 	     $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
-	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
-	  // $window.location.href=url;
 			  $scope.isFromDataSetCatalogue = false;
 			  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
 	     });
     }
 
     $scope.editFileDataset = function (arg) {
-
   	  $scope.initializeDatasetWizard(arg);
-
   	  // Set the flag for editing the current dataaset (file)
   	  $scope.editingDatasetFile = true;
-
         $mdDialog.show({
   		  scope:$scope,
   		  preserveScope: true,
   	      controller: DatasetCreateController,
   	      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
   	      clickOutsideToClose: false,
-  	      escapeToClose :true,
-  	      //fullscreen: true,
-  	      locals:{
-  	    	 // previewDatasetModel:$scope.previewDatasetModel,
-  	         // previewDatasetColumns:$scope.previewDatasetColumns
-  	      }
+  	      escapeToClose :true
   	    });
     }
-
 
     $scope.tableDatasets = [
     	{"label":"Label","name":"label","type":"text"},
@@ -724,25 +628,22 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     ];
 
     $scope.getPreviewSet = function(dataset){
-
     	var datasetType = dataset.dsTypeCd.toUpperCase();
-
     	/**
     	 * If the type of the dataset is File, set these flags so the pagination toolbar on the Preview dataset panel
     	 * is hidden and the pagination is performed on the client-side. Other dataset types should have the server-side
     	 * pagination (else-branch).
     	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	 */
-    	if (datasetType!="FILE") {
+    	if (datasetType != "FILE") {
     		 $scope.paginationDisabled = true;
     		 $scope.previewPaginationEnabled = true;
-    	}
-    	else {
+    	} else {
     		$scope.paginationDisabled = false;
     		$scope.previewPaginationEnabled = true;
     	}
     	if (datasetType == "QBE") {
-
+    		params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
     	}
     	params={};
     	params.start = $scope.startPreviewIndex;
@@ -755,17 +656,13 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	params.columnsFilterDescription=null;
     	params.typeValueFilter=null;
     	params.typeFilter=null;
-    	params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
     	$scope.previewUrl = '';
     	config={};
     	config.params=params;
 
-
     	sbiModule_restServices.promiseGet("selfservicedatasetpreview/values", dataset.label,"",config)
 			.then(function(response) {
-
 				var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
-
 				/**
 				 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
 				 * take this property if provided.
@@ -774,7 +671,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				if (response.data.results) {
 					$scope.totalItemsInPreview = response.data.results;
 				}
-
 		    	/**
 		    	 * If the the initial 'totalItemsInPreview' value is -1, that means that this property is not set yet or there is no this property in the response
 		    	 * (total number of results - rows). This serves just to initialize the indicators used in the if-else block (such as 'endPreviewIndex'), in order
@@ -783,74 +679,53 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		    	 */
 				if(totalItemsInPreviewInit==-1) {
-
 					if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
 		   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview
 		   		 		$scope.disableNext = true;
-					}
-					else {
+					} else {
 			   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
 			   		 	$scope.disableNext = false;
 			       	}
-
 		       	}
-
 			    angular.copy(response.data.rows,$scope.previewDatasetModel);
-
 			    if( $scope.previewDatasetColumns.length==0){
 			    	$scope.createColumnsForPreview(response.data.metaData.fields);
 			    }
-
-			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
-
-		},
-
-		function(response){
-
+			}, function(response){
 			/**
 			 * Handling the error while trying to preview the dataset.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(sbiModule_translate.load(response.data.errors[0].message),
-					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
-
+				sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 		});
-
     }
 
     $scope.createColumnsForPreview=function(fields){
-
-    	for(i=1;i<fields.length;i++){
-    	 var column={};
-    	 column.label=fields[i].header;
-    	 column.name=fields[i].name;
-
-    	 $scope.previewDatasetColumns.push(column);
+    	for(var i = 1; i < fields.length; i++){
+	    	var column={};
+	    	column.label=fields[i].header;
+	    	column.name=fields[i].name;
+	    	$scope.previewDatasetColumns.push(column);
     	}
-
     }
 
     $scope.cloneDataset = function(dataset) {
     	var clonedDataset = angular.copy(dataset);
-
     	clonedDataset.id = "";
     	clonedDataset.dsVersions = [];
     	clonedDataset.usedByNDocs = 0;
-
 		clonedDataset.name = "CLONE_" + clonedDataset.name;
 		clonedDataset.label = "CLONE_" + clonedDataset.label;
 		clonedDataset.description = "CLONED " + clonedDataset.description;
-
 		clonedDataset.scopeCd = "USER";
-
     	if(sbiModule_user.userId != clonedDataset.owner){
     		clonedDataset.owner = sbiModule_user.userId;
     	}
-
-    	if(clonedDataset.catTypeId)
+    	if(clonedDataset.catTypeId){
     		delete clonedDataset.catTypeId;
-
+    	}
     	$mdDialog.show({
     		controller: cloneQbeDatasetDialogController,
 			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
@@ -865,7 +740,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		clonedDataset.name = result.name;
     		clonedDataset.label = result.label;
     		clonedDataset.description = result.description;
-
     		sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
     		.then(function(response){
     			clonedDataset.id = response.data.id;
@@ -880,57 +754,44 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}, function(response){
     		// canceled mdDialog
     	});
-
     }
 
     function cloneQbeDatasetDialogController($scope, $mdDialog, sbiModule_translate, kn_regex, clonedLabel, clonedName, clonedDescription) {
     	 $scope.translate = sbiModule_translate;
     	 $scope.regex = kn_regex;
-
     	 $scope.dataset = {
 			 label: clonedLabel,
 			 name: clonedName,
 			 description: clonedDescription
     	 };
-
     	 $scope.cancel = function() {
     		 $mdDialog.cancel();
     	 }
-
     	 $scope.save = function(result){
     		 $mdDialog.hide(result);
     	 }
     }
 
     $scope.addNewFileDataset=function(){
-
-      console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");
-
-      $scope.editingDatasetFile = false;
-
-      /**
-       * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
-       * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should
-       * be the reseting of all fields on the Step 1.
-       * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-       */
-      $scope.initializeDatasetWizard(undefined);
-
-      $mdDialog.show({
+	  console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");
+	  $scope.editingDatasetFile = false;
+	  /**
+	   * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
+	   * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should
+	   * be the reseting of all fields on the Step 1.
+	   * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   */
+	  $scope.initializeDatasetWizard(undefined);
+	  $mdDialog.show({
 		  scope:$scope,
 		  preserveScope: true,
 	      controller: DatasetCreateController,
 	      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
 	      clickOutsideToClose: false,
 	      escapeToClose :true,
-	      fullscreen: false,
-	      locals:{
-	    	 // previewDatasetModel:$scope.previewDatasetModel,
-	         // previewDatasetColumns:$scope.previewDatasetColumns
-	      }
+	      fullscreen: false
 	    });
     }
-
 
     /**
 	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active).
@@ -941,36 +802,31 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.switchDatasetsTab = function(datasetsTab) {
     	var oldTab = angular.copy($scope.currentDatasetsTab);
     	$scope.currentDatasetsTab = datasetsTab;
-
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
          }
-
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
          }
-
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
-
     	switch(datasetsTab){
-		case "myDataSet":
-			$scope.loadMyDatasets();
-			break;
-		case "sharedDataSet":
-			$scope.loadSharedDatasets();
-			break;
-		case "enterpriseDataSet":
-			$scope.loadEnterpriseDatasets();
-			break;
-		case "ckanDataSet":
-			break;
-		case "allDataSet":
-			$scope.loadDatasets();
-			break;
+			case "myDataSet":
+				$scope.loadMyDatasets();
+				break;
+			case "sharedDataSet":
+				$scope.loadSharedDatasets();
+				break;
+			case "enterpriseDataSet":
+				$scope.loadEnterpriseDatasets();
+				break;
+			case "ckanDataSet":
+				break;
+			case "allDataSet":
+				$scope.loadDatasets();
+				break;
 		}
-
     }
 
     $scope.isAbleToEditQbeDataset = function(selectedDataset) {
@@ -981,14 +837,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     };
 
     $scope.getBackPreviewSet=function(){
-
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
     		 $scope.startPreviewIndex=0;
     		 $scope.endPreviewIndex=$scope.itemsPerPage;
     		 $scope.disableBack=true;
     		 $scope.disableNext=false;
-    	 }
-    	 else{
+    	 } else {
     		 $scope.endPreviewIndex=$scope.startPreviewIndex;
              $scope.startPreviewIndex= $scope.startPreviewIndex-$scope.itemsPerPage;
              if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -996,20 +850,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         		 $scope.endPreviewIndex=$scope.itemsPerPage;
         		 $scope.disableBack=true;
         		 $scope.disableNext=false;
-             }else{
-             $scope.disableBack=false;
-             $scope.disableNext=false;
+             } else {
+	             $scope.disableBack=false;
+	             $scope.disableNext=false;
              }
     	 }
-
     	 $scope.getPreviewSet($scope.datasetInPreview);
-
     }
 
     $scope.getNextPreviewSet= function(){
-
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
-
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
     		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
     		 $scope.disableNext=true;
@@ -1019,29 +869,24 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
     		 $scope.disableNext=true;
     		 $scope.disableBack=false;
-    	 } else{
+    	 } else {
               $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
-
               if($scope.endPreviewIndex >= $scope.totalItemsInPreview){
             	  if($scope.endPreviewIndex == $scope.totalItemsInPreview){
             		  $scope.startPreviewIndex=$scope.totalItemsInPreview-$scope.itemsPerPage;
-            	  }else{
-            	  $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
+            	  } else {
+            		  $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
             	  }
          		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
          		 $scope.disableNext=true;
          		 $scope.disableBack=false;
          	 }else{
-
-
-              $scope.disableNext=false;
-              $scope.disableBack=false;
+         		 $scope.disableNext=false;
+         		 $scope.disableBack=false;
          	 }
     	 }
-
     	 $scope.getPreviewSet($scope.datasetInPreview);
-
     }
 
     /**
@@ -1051,8 +896,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	if ($scope.datasetsDocumentsLoaded == true) {
     		$scope.loadDatasets();
         	$scope.loadMyDatasets();
-    	}
-    	else {
+    	} else {
     		$scope.loadMyDatasets();
     	}
     }
@@ -1062,8 +906,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	var repos=[];
     	if(ckanUrls){
 	    	var ckanUrlsSplitted= ckanUrls.split("|");
-
-	    	for(i=0;i<ckanUrlsSplitted.length-1;i+=2){
+	    	for(var i = 0; i < ckanUrlsSplitted.length-1; i+=2){
 	    		repo={};
 	    		repo.url=ckanUrlsSplitted[i];
 	    		repo.name=ckanUrlsSplitted[i+1];
@@ -1072,8 +915,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     	return repos;
     }
-    //CKAN
 
+    //CKAN
     $scope.ckanRepos=parseCkanRepository();
     $scope.selectedCkanRepo={};
     $scope.ckanDatasetsList=[];
@@ -1102,63 +945,52 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var repo = selectedCkanRepo;
 
 		// The implementation when the Load button is present and clicked. (danristo)
-//		var repo=$scope.selectedCkanRepo;
-
 		if(repo.url==undefined){
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.warning(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),
-					sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'), $scope.toasterConfig);
-
-		}else{
-		params={};
-		params.isTech=false;
-		params.showDerivedDataset=false;
-		params.ckanDs=true;
-		if($scope.ckanFilter!=undefined && $scope.ckanFilter.length>0 ){
-			params.ckanFilter=$scope.ckanFilter;
+				sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'), $scope.toasterConfig);
 		} else {
-			params.ckanFilter="NOFILTER";
-		}
-
-		params.showOnlyOwner=true;
-		params.ckanOffset=offset;
-		params.ckanRepository=repo.url;
-
-		config={};
-		config.params=params;
-		sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
-		.then(function(response) {
-			if($scope.ckanDatasetsList.length==0){
-				angular.copy(response.data.root,$scope.ckanDatasetsList);
+			params={};
+			params.isTech=false;
+			params.showDerivedDataset=false;
+			params.ckanDs=true;
+			if($scope.ckanFilter!=undefined && $scope.ckanFilter.length>0 ){
+				params.ckanFilter=$scope.ckanFilter;
 			} else {
-				if(response.data.root.length==$scope.ckanDatasetsList.length){
-					$mdDialog.show(
+				params.ckanFilter="NOFILTER";
+			}
+			params.showOnlyOwner=true;
+			params.ckanOffset=offset;
+			params.ckanRepository=repo.url;
+			config={};
+			config.params=params;
+			sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
+			.then(function(response) {
+				if($scope.ckanDatasetsList.length==0){
+					angular.copy(response.data.root,$scope.ckanDatasetsList);
+				} else {
+					if(response.data.root.length==$scope.ckanDatasetsList.length){
+						$mdDialog.show(
 						      $mdDialog.alert()
 						        .clickOutsideToClose(true)
 						        .title(sbiModule_translate.load("sbi.generic.info"))
 						        .textContent(sbiModule_translate.load("sbi.mydata.ckandataset.repo.loaded"))
 						        .ariaLabel('Alert Dialog repo is loaded')
 						        .ok('OK')
-						    );
-				} else {
-					for (var i = 0; i < response.data.root.length; i++) {
-						$scope.ckanDatasetsList.push(response.data.root[i]);
+						);
+					} else {
+						for (var i = 0; i < response.data.root.length; i++) {
+							$scope.ckanDatasetsList.push(response.data.root[i]);
+						}
 					}
 				}
-
-			}
-            $scope.newOffset = $scope.newOffset + 200;
-            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
-		},function(response){
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-
-		});
-
-
-	}
+	            $scope.newOffset = $scope.newOffset + 200;
+	            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
+			},function(response){
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			});
+		}
 	}
 
 	$scope.clearFilteredCKANDatasets = function () {
@@ -1166,64 +998,46 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.loadFilteredCkanDatasets("NOFILTER");
 	}
 
-
-
 	$scope.loadFilteredCkanDatasets=function(filter) {
 		if($scope.selectedCkanRepo.hasOwnProperty("name")&&$scope.selectedCkanRepo.hasOwnProperty("url")){
-
-
-
-		var repo = $scope.selectedCkanRepo
-
-		// The implementation when the Load button is present and clicked. (danristo)
-//		var repo=$scope.selectedCkanRepo;
-
-		if(repo.url==undefined){
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.warning(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),
+			var repo = $scope.selectedCkanRepo;
+			// The implementation when the Load button is present and clicked. (danristo)
+			if(repo.url==undefined){
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.warning(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),
 					sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'), $scope.toasterConfig);
-
-		}else{
-		params={};
-		params.isTech=false;
-		params.showDerivedDataset=false;
-		params.ckanDs=true;
-		params.ckanFilter=filter;
-
-		//params.ckanFilter="USA";
-		params.showOnlyOwner=true;
-		params.ckanOffset=$scope.ckanOffset;
-		params.ckanRepository=repo.url;
-
-		config={};
-		config.params=params;
-		sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
-		.then(function(response) {
-			//console.log(response.data);
-            angular.copy(response.data.root,$scope.ckanDatasetsList);
-            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
-		},function(response){
-
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-
-		});
-
-
-		}
-	} else {
-		if(filter!=""){
-			$mdDialog.show(
+			} else {
+				params={};
+				params.isTech=false;
+				params.showDerivedDataset=false;
+				params.ckanDs=true;
+				params.ckanFilter=filter;
+				params.showOnlyOwner=true;
+				params.ckanOffset=$scope.ckanOffset;
+				params.ckanRepository=repo.url;
+				config={};
+				config.params=params;
+				sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
+				.then(function(response) {
+		            angular.copy(response.data.root,$scope.ckanDatasetsList);
+		            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
+				},function(response){
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+				});
+			}
+		} else {
+			if(filter!=""){
+				$mdDialog.show(
 				      $mdDialog.alert()
 				        .clickOutsideToClose(true)
 				        .title(sbiModule_translate.load("sbi.generic.error"))
 				        .textContent(sbiModule_translate.load("sbi.mydata.ckandataset.select.repo"))
 				        .ariaLabel('Alert Dialog Select a CKAN Repo')
 				        .ok('OK')
-				    );
+				);
+			}
 		}
-	}
 	}
 
 	$scope.showCkanDetails = function() {
@@ -1239,7 +1053,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		if (isOpen && !$mdSidenav('rightCkan').isLockedOpen() && !$mdSidenav('rightCkan').isOpen()) {
 			$scope.toggleCkanDetail();
 		}
-
 		$scope.showCkanInfo = isOpen;
 	};
 
@@ -1247,10 +1060,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$mdSidenav('rightCkan').toggle();
 	};
 
-	$scope.selectCkan= function ( dataset ) {
-		if (dataset !== undefined) {
-			//$scope.lastDatasetSelected = dataset;
-		}
+	$scope.selectCkan= function (dataset) {
 		var alreadySelected = (dataset !== undefined && $scope.selectedCkan === dataset);
 		$scope.selectedCkan = dataset;
 		if (alreadySelected) {
@@ -1262,7 +1072,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.showDetailCkan=function(ckan){
-
 		$mdDialog.show({
   		  scope:$scope,
 			  preserveScope: true,
@@ -1271,12 +1080,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		      clickOutsideToClose:false,
 		      escapeToClose :false,
 		      fullscreen: true,
-		      locals:{ckan:ckan }
-		    })
+		      locals:{ckan: ckan}
+		})
 	}
 
 	$scope.editCkan=function(ckan){
-		//console.log(ckan);
 		config={};
 		params={};
         params.url=ckan.configuration.Resource.url;
@@ -1287,7 +1095,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         config.params=params;
 		sbiModule_restServices.promiseGet("ckan-management/download", "","",config)
 		.then(function(response) {
-			//console.log(response.data);
 			var data=response.data;
 			var ckanObj=createCkanForWizard(data,ckan);
 			$scope.initializeDatasetWizard(ckanObj);
@@ -1300,24 +1107,15 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	    	      controller: DatasetCreateController,
 	    	      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
 	    	      clickOutsideToClose: false,
-	    	      escapeToClose :true,
-	    	      //fullscreen: true,
-	    	      locals:{
-
-	    	      }
-	    	    });
-
-
+	    	      escapeToClose :true
+	    	 });
 		},function(response){
-
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-
 		});
 	}
 
 	function createCkanForWizard(data, ckan){
-
 		var toReturn={
 			fileType: data.filetype,
 		    fileName: data.filename,
@@ -1335,22 +1133,23 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    description:'',
 		    meta:[]
 		};
-
 		return toReturn;
 	}
 
-	var prevScope = $scope;
+	 var prevScope = $scope;
+
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
 		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.drivers = response.data.filterStatus;
 				selectedDataset.drivers = $scope.drivers;
-			})
-			return promise;
-		}
+		})
+		return promise;
+	}
+
     function DatasetPreviewController($scope,$mdDialog,$http,$sce,$httpParamSerializer){
     	if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
-
 	    	$scope.dataset = $scope.datasetInPreview;
+
 	    	$scope.executeParameter = function(){
 				$scope.showDrivers = false;
 				$scope.dataset.executed = true;
@@ -1365,7 +1164,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				$scope.showDrivers = !$scope.showDrivers;
 				$scope.dataset.executed = true;
 			}
-
     	}else{
     		angular.copy($scope.datasetInPreview, $scope.dataset);
 
@@ -1391,8 +1189,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         		$scope.showDrivers = false;
         		$scope.previewDS();
 			}
-
-
 		}
 
 		$scope.closeDatasetPreviewDialog=function(){
@@ -1405,9 +1201,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			 $scope.counter = 0;
 			 $mdDialog.cancel();
 	    }
-
-
-
 	}
 
     function DialogCkanController($scope,$mdDialog,ckan){
@@ -1415,7 +1208,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.closeCkanDetail=function(){
     		$mdDialog.cancel();
     	}
-
     }
 
 	if(initialOptionMainMenu){
