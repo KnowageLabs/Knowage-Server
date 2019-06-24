@@ -164,50 +164,46 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.loadEnterpriseDatasets = function(){
-		if ($scope.enterpriseDatasets.length == 0) {
-			sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
-			.then(function(response) {
-				angular.copy(response.data.root,$scope.enterpriseDatasets);
-				createSourceNameOnDataset($scope.enterpriseDatasets);
+		sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
+		.then(function(response) {
+			angular.copy(response.data.root,$scope.enterpriseDatasets);
+			createSourceNameOnDataset($scope.enterpriseDatasets);
 
-				angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
-				tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);
-			},function(response){
+			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
+			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);
+		},function(response){
 
-				/*
-				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-				 * further execution of REST services.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-				toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"),
-						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+			/*
+			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+			 * further execution of REST services.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"),
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 
-			});
-		}
+		});
 	}
 
 	$scope.loadSharedDatasets = function(){
-		if ($scope.sharedDatasets.length == 0) {
-			sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
-			.then(function(response) {
-				angular.copy(response.data.root,$scope.sharedDatasets);
-				createSourceNameOnDataset($scope.sharedDatasets);
-			    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
-			    tagsHandlerService.setSharedDS($scope.sharedDatasets);
-			},function(response){
+		sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
+		.then(function(response) {
+			angular.copy(response.data.root,$scope.sharedDatasets);
+			createSourceNameOnDataset($scope.sharedDatasets);
+		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
+		    tagsHandlerService.setSharedDS($scope.sharedDatasets);
+		},function(response){
 
-				/*
-				 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
-				 * further execution of REST services.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-				toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"),
-						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+			/*
+			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
+			 * further execution of REST services.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"),
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 
-			});
-		}
+		});
 	}
 
 	$scope.loadInitialForDatasets=function(){
