@@ -537,40 +537,6 @@
 			</md-whiteframe>
 			
 		</div>
-		
-		<!-- 
-			PREVIEW OF THE CHART
-		 -->
-		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
-		<!-- <div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0">  -->
-		
-		<!--commented perview panel -->
-		<div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0" ng-if=!isCockpitEng ng-show="openPreviewPanel"> 
-			<md-toolbar class="secondaryToolbar">
-				<div class="md-toolbar-tools">
-					<h2>
-						<span>{{translate.load("sbi.chartengine.designer.tabs.preview.title")}}</span>
-					</h2>
-					<span flex></span>				   		
-				</div>		      
-			</md-toolbar>
-		
-			<md-whiteframe flex layout="row" class="md-whiteframe-4dp whiteframe-element">
-			
-			<div loading ng-show="showEl" flex layout="row" layout-align="center center">
-		 			 <md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-			</div>	
-			
-			<div  width="100%" ng-show="showimg">
-				<img ng-src="{{previewUrl}}" width="100%" ng-show="!showEl" />
-			</div>
-			
-				
-			<div id ="forSVGPreview" />
-			</md-whiteframe>
-			
-		</div>  
-	
 	</div>
 	
 </md-tab-content>

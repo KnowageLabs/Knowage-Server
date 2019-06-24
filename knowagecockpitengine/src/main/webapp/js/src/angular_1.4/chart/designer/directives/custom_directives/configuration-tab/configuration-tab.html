@@ -176,34 +176,5 @@
 			</md-whiteframe>
 			
 		</div>
-		
-		<!--commented perview panel -->
-	<div layout="column" flex=40 style="padding:0 8 0 0" ng-if=!isCockpitEng ng-show="openPreviewPanel">  
-		
-			<md-toolbar class="secondaryToolbar">
-				<div class="md-toolbar-tools">
-					<h2>
-						<span>{{translate.load("sbi.chartengine.designer.tabs.preview.title")}}</span>
-					</h2>
-					<span flex></span>				   		
-				</div>		      
-			</md-toolbar>
-			
-			<md-whiteframe flex layout="row" class="md-whiteframe-4dp whiteframe-element">
-			
-			<div loading ng-show="showEl" flex layout="row" layout-align="center center">
-		 			 <md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-			</div>	
-			
-			<div  width="100%" ng-show="showimg">
-				<img ng-src="{{previewUrl}}" width="100%" ng-show="!showEl" />
-			</div>
-			
-				
-			
-			</md-whiteframe>
-			
-		</div>	
-
 </div>
 </md-tab-content>

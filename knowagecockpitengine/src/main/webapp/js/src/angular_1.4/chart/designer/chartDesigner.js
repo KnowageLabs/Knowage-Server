@@ -23,11 +23,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","channelMessaging","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","$mdDialog","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
+app.controller("ChartDesignerController", ["sbiModule_translate","channelMessaging","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","sbiModule_logger", "$mdToast","$mdDialog","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
 
-function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
+function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
 
-	$scope.previewChartEnable =( sbiModule_user.functionalities.indexOf("PreviewChart")>-1)? true:false;
 	if(parent.angular.element(window.frameElement).scope().isCockpitEng){
 		$scope.isCockpitEng = parent.angular.element(window.frameElement).scope().isCockpitEng;
 	}else{
@@ -38,8 +37,6 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 	//sbiModule_logger.disableConsole();
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
-	$scope.showimg = false;
-	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
 
 	var urlForDataset="";
@@ -152,21 +149,6 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		channelMessaging.sendMessage();
 	}
 
-	// The chart template (beneath the CHART tag, i.e. property)
-
-
-/*	var templateObj = angular.fromJson(template);
-	$scope.chartTemplate = templateObj.CHART;
-	console.log("chart template: ",$scope.chartTemplate);
-	*/
-
-
-
-
-
-	//$scope.nik = {"a":"b","c":"d","e":"f"}
-
-	// Needed for the preview of the chart (calling the Highcharts exporter
 	$scope.exporterContextName = exporterContextName;
 
 	$scope.allMeasures = [];
@@ -424,33 +406,4 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		  }
 		return f;
 	}
-	$scope.previewChart = function () {
-		$scope.openPreviewPanel = true;
-		$scope.hideStructureDetails();
-		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
-		prepareTemplate();
-
-		if(!checkChartSettings()){
-			if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
-				showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
-			}
-			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
-				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
-			}
-
-		}
-		else {
-			$scope.showimg = false;
-			$scope.showEl = true;
-			PreviewService.run($scope.chartTemplate).then(
-					function successPreviewUrl (response) {
-						$scope.showEl = false;
-						$scope.showimg = true;
-						$scope.previewUrl = sbiHost + '/highcharts-export-web/' + response.data;
-					}, function errorPreviewUrl (response) {
-						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					});
-		}
-	}
-
 }

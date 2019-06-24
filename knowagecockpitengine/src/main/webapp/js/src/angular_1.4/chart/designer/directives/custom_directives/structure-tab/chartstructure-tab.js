@@ -37,12 +37,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	$scope.translate = sbiModule_translate;
 	$scope.structureDetailsShown = false;
-	$scope.structurePreviewFlex = 50;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-	$scope.openPreviewPanel = false;
 	$scope.seriesNumber = 0;
 	$scope.checkCategoriesLength = 0;
 
@@ -157,7 +155,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 		$scope.structureTabDetailsName = StructureTabService.getStructureTabDetailsName(detailsForOption);
 		$scope.structureTabDetailsTemplateURL = StructureTabService.getSeriesItemsConfDetailsTemplateURL(detailsForOption);
-		$scope.structurePreviewFlex = 25;
 		$scope.structureDetailsShown = true;
 
 		$scope.axisForDisplay = null;
@@ -174,7 +171,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 
 	$scope.hideStructureDetails = function() {
-		$scope.structurePreviewFlex = 50;
 		$scope.structureDetailsShown = false;
 	}
 

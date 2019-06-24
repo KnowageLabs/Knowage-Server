@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/advanced-tab/advanced-tab.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/preview/preview.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/commons/Settings.js")%>"></script>
 
