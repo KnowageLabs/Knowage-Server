@@ -528,7 +528,9 @@
 					document: execProperties.executionInstance.OBJECT_ID,
 					DOCUMENT_LABEL: execProperties.executionInstance.OBJECT_LABEL,
 					SBI_COUNTRY: sbiModule_config.curr_country,
-					SBI_LANGUAGE: sbiModule_config.curr_language
+					SBI_LANGUAGE: sbiModule_config.curr_language,
+					parametersDataArray : execProperties.parametersData.documentParameters
+
 				};
 				
 				for (var parameter in parameters) {
@@ -536,7 +538,6 @@
 				    	body.parameter = parameters[parameter];
 				    }
 				}
-
 				var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
 				var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
 				var cockpitSelections = {};

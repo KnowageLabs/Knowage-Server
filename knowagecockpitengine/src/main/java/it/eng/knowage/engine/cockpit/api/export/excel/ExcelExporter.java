@@ -446,6 +446,7 @@ public class ExcelExporter {
 					body.put("aggregations", aggregations);
 
 					JSONObject parameters = getParametersFromWidget(widget, configuration);
+
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
@@ -477,8 +478,8 @@ public class ExcelExporter {
 						logger.debug("limit = " + limit);
 						map.put("limit", limit);
 					}
-
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
+
 					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
 					datastoreObj.put("sheetName", sheetName);
 					JSONObject content = widget.optJSONObject("content");
@@ -529,7 +530,9 @@ public class ExcelExporter {
 
 			loadAggregationsFromCockpitSelections(paramDatasets, paramNearRealtime, cockpitSelections);
 			loadFiltersFromCockpitSelections(cockpitSelections);
-		} else {
+		}
+
+		else {
 			logger.warn("Unable to load cockpit selections");
 		}
 	}
@@ -684,6 +687,9 @@ public class ExcelExporter {
 	}
 
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
+
+		JSONArray cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
+
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");
 		String datasetName = dataset.getString("name");
@@ -702,7 +708,30 @@ public class ExcelExporter {
 			}
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
 			return getReplacedParameters(params, datasetId);
-		} else
+		} else if (cockpitSelectionsDatasetParameters!=null && parameters.length()!=0) {
+			JSONObject newParameters = new JSONObject();
+
+			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
+
+				 JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(i);
+
+				 Iterator<String> iterator = parameters.keys();
+				    while (iterator.hasNext()) {
+				        String obj = iterator.next();
+				        String val = parameters.getString(obj);
+				        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+				        	Object values = jsonobject.get("parameterValue");
+				        	newParameters.put("p_"+jsonobject.getString("label"), values);
+				        }
+
+				}
+
+
+			}
+
+			return newParameters;
+		}
+		  else
 			return getReplacedParameters(parameters, datasetId);
 	}
 
