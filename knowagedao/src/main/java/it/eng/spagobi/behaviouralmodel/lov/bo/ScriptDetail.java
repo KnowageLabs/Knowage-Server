@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -30,19 +43,6 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
@@ -198,8 +198,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 *      executionInstance) throws Exception;
 	 */
 	@Override
-	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters, Locale locale)
-			throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> BIObjectParameters,
+			Locale locale) throws Exception {
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to
@@ -221,7 +221,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		setScript(cleanScript);
 
 		List<Object> imports = null;
-		if ("groovy".equals(languageScript)) {
+		if ("".equals(languageScript) || "groovy".equals(languageScript)) {
 			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			try {
@@ -312,8 +312,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			}
 
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax", "the result of the lov is not formatted "
-					+ "with the right structure so it will be wrapped inside an xml envelope");
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax",
+					"the result of the lov is not formatted " + "with the right structure so it will be wrapped inside an xml envelope");
 			toconvert = true;
 		}
 		return toconvert;
@@ -489,7 +489,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# getDescriptionColumnName()
 	 */
 	@Override
@@ -499,7 +499,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -509,7 +509,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
@@ -519,7 +519,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
@@ -529,7 +529,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -539,7 +539,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java .lang.String)
 	 */
 	@Override
@@ -549,7 +549,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -559,7 +559,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames( java.util.List)
 	 */
 	@Override
