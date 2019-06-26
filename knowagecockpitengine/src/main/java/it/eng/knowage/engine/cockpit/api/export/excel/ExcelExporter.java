@@ -539,11 +539,35 @@ public class ExcelExporter {
 
 	private void loadAggregationsFromCockpitSelections(JSONObject paramDatasets, JSONArray paramNearRealtime, JSONObject cs) throws JSONException {
 		JSONArray aggregations = cs.getJSONArray("aggregations");
+		JSONArray cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
 		for (int i = 0; i < aggregations.length(); i++) {
 			JSONObject aggregation = aggregations.getJSONObject(i);
 			JSONObject selections = aggregation.getJSONObject("selection");
 			if (selections != null && selections.names() != null && selections.names().length() > 0) {
 				aggregation.remove("selection");
+
+
+				JSONObject newParameters = new JSONObject();
+
+				String objToChange = "";
+				for (int j = 0; j < cockpitSelectionsDatasetParameters.length(); j++) {
+
+					 JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(j);
+
+					 Iterator<String> iterator = paramDatasets.keys();
+					    while (iterator.hasNext()) {
+					        String obj = iterator.next();
+					        String val = paramDatasets.getString(obj);
+					        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+					        	objToChange = obj;
+					        	Object values = jsonobject.get("parameterValue");
+					        	newParameters.put("p_"+jsonobject.getString("label"), values);
+					        }
+
+					}
+
+				}
+				paramDatasets.put(objToChange, newParameters);
 
 				JSONObject associativeSelectionsPayload = new JSONObject();
 				associativeSelectionsPayload.put("associationGroup", aggregation);
@@ -694,11 +718,11 @@ public class ExcelExporter {
 		JSONObject parameters = dataset.getJSONObject("parameters");
 		String datasetName = dataset.getString("name");
 		Integer datasetId = dataset.getInt("dsId");
-
+		JSONObject newParameters = new JSONObject();
 		if (actualSelectionMap.containsKey(datasetName)) {
 			JSONObject actualSelections = actualSelectionMap.get(datasetName);
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
-			JSONObject newParameters = new JSONObject();
+
 			while (actualSelectionKeys.hasNext()) {
 				String key = actualSelectionKeys.next();
 				if (key.contains("$")) {
@@ -707,9 +731,8 @@ public class ExcelExporter {
 				}
 			}
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
-			return getReplacedParameters(params, datasetId);
-		} else if (cockpitSelectionsDatasetParameters!=null && parameters.length()!=0) {
-			JSONObject newParameters = new JSONObject();
+			newParameters = getReplacedParameters(params, datasetId);
+		} if (cockpitSelectionsDatasetParameters!=null && parameters.length()!=0) {
 
 			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
 
