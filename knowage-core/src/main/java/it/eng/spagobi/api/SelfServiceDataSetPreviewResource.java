@@ -166,8 +166,11 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			for (String driverName : driverUrlNames) {
 				Map mapOfValues = (Map) driversRuntimeMap.get(driverName);
 				if (mapOfValues.containsKey("value")) {
-					logger.debug("Setting drivers");
-					ds.setDrivers(driversRuntimeMap);
+					if (mapOfValues.get("value") instanceof List && mapOfValues.get("value") != null && !((List) mapOfValues.get("value")).isEmpty()
+							|| !(mapOfValues.get("value") instanceof List) && !"".equals(mapOfValues.get("value"))) {
+						logger.debug("Setting drivers");
+						ds.setDrivers(driversRuntimeMap);
+					}
 				}
 			}
 

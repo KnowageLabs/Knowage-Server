@@ -642,9 +642,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		$scope.paginationDisabled = false;
     		$scope.previewPaginationEnabled = true;
     	}
-    	if (datasetType == "QBE") {
-    		params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
-    	}
+
     	params={};
     	params.start = $scope.startPreviewIndex;
     	params.limit = $scope.itemsPerPage;
@@ -656,6 +654,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	params.columnsFilterDescription=null;
     	params.typeValueFilter=null;
     	params.typeFilter=null;
+
+    	if (datasetType == "QBE") {
+    		params.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
+    	}
+
     	$scope.previewUrl = '';
     	config={};
     	config.params=params;
