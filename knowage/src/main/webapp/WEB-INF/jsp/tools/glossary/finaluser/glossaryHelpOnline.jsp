@@ -199,10 +199,14 @@ var parameter2='<%= parameter2 %>';
 				</div>
 			</md-toolbar>
 
-			<md-content class="ToolbarBox miniToolbar infoBox"> 
-				<bread-crumb ng-model=storyItem item-name='WORD'
+			<md-content class="ToolbarBox miniToolbar infoBox noPadding"> 
+				<md-toolbar class="ternaryToolbar" style="width:100%;">
+                	<div class="md-toolbar-tools noPadding" layout="row" layout-align="center center">
+						<bread-crumb flex="100" ng-model=storyItem item-name='WORD'
 						selected-index='selectedIndex' selected-item='selectedWord'
 						control='breadControl'></bread-crumb>
+					</div>
+				</md-toolbar>
 
 				<p ng-if="selectedWord.noDataFound!=undefined">{{selectedWord.noDataFound}}</p>
 				<div layout="column" ng-if="selectedWord!=undefined && selectedWord.noDataFound==undefined">
