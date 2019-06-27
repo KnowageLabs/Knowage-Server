@@ -561,10 +561,14 @@ public class ExcelExporter {
 					        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
 					        	objToChange = obj;
 					        	Object values = jsonobject.get("parameterValue");
-					        	newParameters.put("p_"+jsonobject.getString("label"), values);
+					        	String valuesToChange = values.toString();
+					        	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+					        	valuesToChange = valuesToChange.replaceAll("\"", "\'");
+					        	newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
 					        }
 
 					}
+
 
 				}
 				paramDatasets.put(objToChange, newParameters);
@@ -744,7 +748,10 @@ public class ExcelExporter {
 				        String val = parameters.getString(obj);
 				        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
 				        	Object values = jsonobject.get("parameterValue");
-				        	newParameters.put("p_"+jsonobject.getString("label"), values);
+				        	String valuesToChange = values.toString();
+				        	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+				        	valuesToChange = valuesToChange.replaceAll("\"", "");
+				        	newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
 				        }
 
 				}
