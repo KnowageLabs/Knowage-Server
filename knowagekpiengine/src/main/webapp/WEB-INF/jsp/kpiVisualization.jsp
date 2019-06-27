@@ -280,9 +280,8 @@ author:
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
 	</script>
-	<script type="text/javascript"
-		src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicator.js">
-	</script>
+	<script type="text/javascript" 
+		src="<%=urlBuilder.getResourcePath(knowageContext, "/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicator.js")%>"></script>	
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>
 	<script type="text/javascript"
