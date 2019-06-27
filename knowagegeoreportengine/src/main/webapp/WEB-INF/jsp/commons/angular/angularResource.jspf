@@ -27,11 +27,20 @@
 <%@page import="it.eng.spagobi.commons.ParameterValuesDecoder"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <% 
+ 
+	//Dynamic Url Builder - Caching Management
+	String knowageContext = GeneralUtilities.getSpagoBiContext();       			//  /knowage
+	String georeportEngineContext = request.getContextPath();         				//  /georeportengine
+	UrlBuilder urlBuilder = new UrlBuilder(knowageContext, georeportEngineContext);
+	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();     //  /knowage/js/src
+	String dynamicResourcesEnginePath = urlBuilder.getDynamicResourcesEnginePath(); //  /georeportengine/js/src
+	
 	GeoReportEngineInstance engineInstance;
 	Map env;
 	String executionRole;

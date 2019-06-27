@@ -26,8 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/geoImport.jsp"%>
 
-<!-- document-viewer -->
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>
+<!-- document-viewer 
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>-->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(knowageContext, "/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js")%>"></script>
 
 <title>{{::translate.load("gisengine.designer.title")}}</title>
 <script>

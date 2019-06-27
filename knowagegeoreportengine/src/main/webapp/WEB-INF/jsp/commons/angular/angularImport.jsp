@@ -40,8 +40,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
 <!-- angular table 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>-->
-	<script type="text/javascript" src="<%=knowageCoreContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
+	<script type="text/javascript" src="<%=knowageCoreContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>-->
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(knowageContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
+
+	
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
@@ -59,5 +62,6 @@
 <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.min.css"> --%>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/commons/Settings.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script> 
+	
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jsp"%>
