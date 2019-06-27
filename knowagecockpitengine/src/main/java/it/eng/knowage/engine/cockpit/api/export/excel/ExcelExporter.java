@@ -544,7 +544,7 @@ public class ExcelExporter {
 			JSONObject aggregation = aggregations.getJSONObject(i);
 			JSONObject selections = aggregation.getJSONObject("selection");
 			if (selections != null && selections.names() != null && selections.names().length() > 0) {
-				aggregation.remove("selection");
+				//	aggregation.remove("selection");
 
 
 				JSONObject newParameters = new JSONObject();
@@ -552,25 +552,32 @@ public class ExcelExporter {
 				String objToChange = "";
 				for (int j = 0; j < cockpitSelectionsDatasetParameters.length(); j++) {
 
-					 JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(j);
+					JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(j);
 
-					 Iterator<String> iterator = paramDatasets.keys();
-					    while (iterator.hasNext()) {
-					        String obj = iterator.next();
-					        String val = paramDatasets.getString(obj);
-					        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
-					        	objToChange = obj;
-					        	Object values = jsonobject.get("parameterValue");
-					        	String valuesToChange = values.toString();
-					        	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
-					        	valuesToChange = valuesToChange.replaceAll("\"", "\'");
-					        	newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
-					        }
+					Iterator<String> iterator = paramDatasets.keys();
+					while (iterator.hasNext()) {
+						String obj = iterator.next();
+						String val = paramDatasets.getString(obj);
+						if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+							objToChange = obj;
+							if (!jsonobject.isNull("parameterValue")) {
+								Object values = jsonobject.get("parameterValue");
+								String valuesToChange = values.toString();
+								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+								valuesToChange = valuesToChange.replaceAll("\"", "\'");
+								newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
+							}
+							else {
+								newParameters.put("p_"+jsonobject.getString("label"), "");
+							}
+
+						}
 
 					}
 
 
 				}
+
 				paramDatasets.put(objToChange, newParameters);
 
 				JSONObject associativeSelectionsPayload = new JSONObject();
@@ -740,19 +747,31 @@ public class ExcelExporter {
 
 			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
 
-				 JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(i);
+				JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(i);
 
-				 Iterator<String> iterator = parameters.keys();
-				    while (iterator.hasNext()) {
-				        String obj = iterator.next();
-				        String val = parameters.getString(obj);
-				        if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
-				        	Object values = jsonobject.get("parameterValue");
-				        	String valuesToChange = values.toString();
-				        	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
-				        	valuesToChange = valuesToChange.replaceAll("\"", "");
-				        	newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
-				        }
+				Iterator<String> iterator = parameters.keys();
+				while (iterator.hasNext()) {
+					String obj = iterator.next();
+					String val = parameters.getString(obj);
+					String key = "p_"+jsonobject.getString("label");
+					if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+						if (!jsonobject.isNull("parameterValue")) {
+							Object values = jsonobject.get("parameterValue");
+							String valuesToChange = values.toString();
+							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+							valuesToChange = valuesToChange.replaceAll("\"", "");
+							if (!(newParameters.length()!=0 && newParameters.has(key) &&newParameters.getString(key).length()!=0))
+							newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
+						}
+						else {
+
+							if (newParameters.getString(key).length()==0) {
+
+								newParameters.put(key, "");
+							}
+
+						}
+					}
 
 				}
 
@@ -761,7 +780,7 @@ public class ExcelExporter {
 
 			return newParameters;
 		}
-		  else
+		else
 			return getReplacedParameters(parameters, datasetId);
 	}
 
