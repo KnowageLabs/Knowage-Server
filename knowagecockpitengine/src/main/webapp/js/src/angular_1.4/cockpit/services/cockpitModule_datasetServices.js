@@ -1061,6 +1061,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
+						{"headerName": "tags","field":"Tags", cellRenderer:tagsRenderer},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 
@@ -1086,6 +1087,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					
 					function typeRenderer(params){
 						return cockpitModule_datasetServices.datasetTypes[params.value] || sbiModule_translate.load('kn.cockpit.dataset.type.generic');
+					}
+					
+					function tagsRenderer(params){
+						debugger;
+						if(params.value && params.value.length > 0) {
+							var cell = '';
+							for(var i in params.value){
+								cell += '<span class="miniChip">'+params.value[i].name+'</span>';
+							}
+							return cell;
+						}
 					}
 
 					$scope.isDatasetListLoaded = false;

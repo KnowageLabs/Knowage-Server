@@ -20,6 +20,13 @@
 	    		bottom: 4px;
 	    	}
     	}
+    	.miniChip {
+    		font-size: $mediumFontSize;
+		    background-color: $ternaryColor;
+		    padding: 4px;
+		    border-radius: 50px;
+		    margin: 0 4px;
+    	}
     }
 
     .exportingPdfDialog {
