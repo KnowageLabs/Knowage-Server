@@ -52,7 +52,7 @@
                     </md-input-container>
                     <md-input-container flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.engine")}}</label>
-                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="engine" ng-model="di.document.engine" ng-disabled="!di.document.typeCode || di.document.typeCode== '' ">
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="engine" ng-model="di.document.engine" ng-disabled="!di.document.typeCode || di.document.typeCode== ''">
                             <md-option ng-value=" "></md-option>
                             <md-option ng-repeat="engine in di.engines | filter:{biobjTypeId:(di.types|filter:{valueCd:di.document.typeCode})[0].valueId}  " ng-value="engine.label">{{engine.name}}</md-option>
                         </md-select>
@@ -70,7 +70,7 @@
                     </md-input-container>
                     <md-input-container flex ng-if="di.isDatasetVisible()">
                         <label>{{di.translate.load("sbi.documentdetails.informations.dataset")}}</label>
-                        <input type="text" ng-model="di.selectedDataset.name" ng-disabled="true" ng-required="di.selectedDataset.name == ''">
+                        <input type="text" ng-model="di.selectedDataset.name" ng-disabled="true" ng-required="di.selectedDataset.name == '' && di.isDataSetRequired()">
                     </md-input-container>
              		<md-button ng-if="di.isDatasetVisible()" class="md-icon-button" ng-click="di.getDatasets()">
 			        	<md-tooltip>{{::translate.load("sbi.functionscatalog.adddataset")}}</md-tooltip>

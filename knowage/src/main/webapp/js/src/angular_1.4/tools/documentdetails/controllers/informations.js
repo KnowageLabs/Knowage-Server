@@ -119,6 +119,14 @@ angular
             	 default : return false;
             	 }
              }
+             self.isDataSetRequired = function(){
+            	 self.dataSetRequired = true;
+            	 if(self.document.engine == "knowagegisengine") {
+            		 self.dataSetRequired = false;
+            	 }
+            	 return self.dataSetRequired;
+             }
+
              var setCheckedFolder = function(folders){
             	 for(var i = 0; i < folders.length; i++){
             		 if(!self.document.functionalities && documentAndInfo.folderId == folders[i].id){
