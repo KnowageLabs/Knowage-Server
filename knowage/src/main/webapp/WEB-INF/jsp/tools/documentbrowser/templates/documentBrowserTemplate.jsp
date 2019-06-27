@@ -133,7 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</bread-crumb>
 					</div>
 				</md-toolbar>
-				<md-card ng-show="!searchingDocuments && searchDocuments.length==0">
+				<md-card ng-show="!searchingDocuments && searchDocuments.length==0" flex>
 					<md-card-content class="noPadding" style="height:100%;">
 						<div ng-show="folderDocuments.length==0" class="emptyContainer">
 							<div class="outerIcon">
