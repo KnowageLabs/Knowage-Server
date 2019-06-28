@@ -321,21 +321,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			function exportDataset(format){
        			var pars = {
      				parameters: parameters
-   				};
+   				};       			
 				if(format == 'CSV') {
-					if(DATASET.isIterable) {
-		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id.dsId+'/export'+'?PARAMETERS='+JSON.stringify(pars);
-		       		}else{
-		       			alert('Dataset is not exportable in CSV format');
-		       			return;
+					if(DATASET.isIterable) {						
+		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id.dsId+'/export'+'?PARAMETERS='+JSON.stringify(pars);		       			
+		       		}else{		       				   				
+		   				var requestParams = '?fileName=' + DATASET.configuration.fileName + '&type=' + DATASET.configuration.fileType.toLowerCase();
+		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/download/file' + requestParams;		       				       		
 		       		}
+					
 	       		}else if (format == 'XLSX') {
 		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id.dsId
-		       				+'&PARAMETERS='+JSON.stringify(pars);
+		       				+'&PARAMETERS='+JSON.stringify(pars);		       		
 		       	}
 				url = encodeURI(url);
 		       	window.location.href = url;
-		    }
+		    }			
 			  
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
