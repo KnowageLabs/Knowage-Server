@@ -1061,7 +1061,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
-						{"headerName": "tags","field":"Tags", cellRenderer:tagsRenderer},
+						{"headerName": "Tags","field":"tags", cellRenderer:tagsRenderer},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 
