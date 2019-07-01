@@ -64,7 +64,7 @@
 
 								jsonConf.properties = geoFieldConfig.properties;
 								var isComplexFeature = false;
-								if (jsonConf.coordinates.length > 1){
+								if (jsonConf.coordinates && jsonConf.coordinates.length >= 1){
 									//more features within the managed one: it loops on subfeature definition
 									isComplexFeature = true;
 									var tmpJsonConf = angular.copy(jsonConf);
