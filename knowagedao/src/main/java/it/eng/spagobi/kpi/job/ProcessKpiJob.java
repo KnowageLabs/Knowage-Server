@@ -736,7 +736,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 					}
 					String rowFormula = rowsFormulae.get(r);
-					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", measureValue + "$1"));
+					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", "cast (" + measureValue + " as numeric)$1"));
 				}
 			}
 
