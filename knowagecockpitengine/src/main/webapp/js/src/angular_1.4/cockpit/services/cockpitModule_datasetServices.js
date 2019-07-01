@@ -74,7 +74,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser)
 			.then(function(response){
 				var allDatasets = response.data.item;
-
 				var newDatasets = [];
 				angular.forEach(allDatasets,function(item){
 					var found = false;
@@ -96,11 +95,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				ds.initNearRealTimeValues(newDatasets);
 				ds.initSpatialAttributesFlag(newDatasets);
 
-				for(var i in newDatasets){
-					var dataset = newDatasets[i];
-					ds.datasetList.push(dataset);
-					ds.datasetMapById[dataset.id.dsId] = dataset;
-					ds.datasetMapByLabel[dataset.label] = dataset;
+				for(var k in newDatasets){
+					if(newDatasets[k].id){
+						ds.datasetList.push(newDatasets[k]);
+						ds.datasetMapById[newDatasets[k].id.dsId] = newDatasets[k];
+						ds.datasetMapByLabel[newDatasets[k].label] = newDatasets[k];
+					}
 				}
 
 				ds.isDatasetListLoaded = true;

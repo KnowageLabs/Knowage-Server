@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			%>
 		</div>
 	</md-toolbar>
-	<md-content layout="row" flex>
+	<md-content layout="row" flex class="width:100%;">
 			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-xs')" ng-show="searchDocuments==0">
 				<md-content> 
 					<document-tree ng-model="folders" personal-folders="{{::translate.load('sbi.generic.personalFolders')}}" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder" click-function="setSelectedFolder(item)" translate="false"></document-tree>
@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</md-toolbar>
 				<md-card ng-show="!searchingDocuments && searchDocuments.length==0" flex>
-					<md-card-content class="noPadding" style="height:100%;">
+					<md-card-content class="noPadding">
 						<div ng-show="folderDocuments.length==0" class="emptyContainer">
 							<div class="outerIcon">
 								<div class="emptyIconSvg"></div>
@@ -154,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-content> 
 				
 				<md-card ng-show="searchDocuments.length>0">
-					<md-card-content class="noPadding" style="height:100%;">
+					<md-card-content class="noPadding">
 						<div layout="row" layout-align="center center">
 							<div class="kn-info" flex="60">
 								<span ng-show="searchDocuments.length == 0">{{translate.load("sbi.browser.document.noDocument")}}</span>
