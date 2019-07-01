@@ -558,7 +558,8 @@ public class ExcelExporter {
 					while (iterator.hasNext()) {
 						String obj = iterator.next();
 						String val = paramDatasets.getString(obj);
-						if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+						String key = "p_"+jsonobject.getString("urlName");
+						if (val.contains("$P{"+jsonobject.getString("urlName")+"}") || val.contains("$P{"+key+"}")) {
 							objToChange = obj;
 							if (!jsonobject.isNull("parameterValue")) {
 								Object values = jsonobject.get("parameterValue");
@@ -568,7 +569,7 @@ public class ExcelExporter {
 								newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
 							}
 							else {
-								newParameters.put("p_"+jsonobject.getString("label"), "");
+								newParameters.put("p_"+jsonobject.getString("urlName"), "");
 							}
 
 						}
@@ -753,8 +754,8 @@ public class ExcelExporter {
 				while (iterator.hasNext()) {
 					String obj = iterator.next();
 					String val = parameters.getString(obj);
-					String key = "p_"+jsonobject.getString("label");
-					if (val.contains("$P{"+jsonobject.getString("label")+"}")) {
+					String key = "p_"+jsonobject.getString("urlName");
+					if (val.contains("$P{"+jsonobject.getString("urlName")+"}") || val.contains("$P{"+key+"}")) {
 						if (!jsonobject.isNull("parameterValue")) {
 							Object values = jsonobject.get("parameterValue");
 							String valuesToChange = values.toString();
@@ -765,10 +766,8 @@ public class ExcelExporter {
 						}
 						else {
 
-							if (newParameters.getString(key).length()==0) {
-
 								newParameters.put(key, "");
-							}
+
 
 						}
 					}
