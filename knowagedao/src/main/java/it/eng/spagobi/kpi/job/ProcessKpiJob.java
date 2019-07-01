@@ -701,7 +701,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					}
 					// sb.append("[" + field.getValue() + "]");
 				}
-				String rowFormula = parsedKpi.formula.replaceFirst("M" + mainMeasure + "([^\\d].*)*$", measureValue + "$1");
+				String rowFormula = parsedKpi.formula.replaceFirst("M" + mainMeasure + "([^\\d].*)*$", "cast (" + measureValue + " as float)$1");
 				rowsFormulae.add(rowFormula);
 				rowsAttributesValues.add(rowAttributesValues);
 				// sb.append("###");
@@ -736,7 +736,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 					}
 					String rowFormula = rowsFormulae.get(r);
-					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", "cast (" + measureValue + " as numeric)$1"));
+					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", "cast (" + measureValue + " as float)$1"));
 				}
 			}
 
