@@ -1150,25 +1150,33 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
     function DatasetPreviewController($scope,$mdDialog,$http,$sce,$httpParamSerializer){
-    	if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
-	    	$scope.dataset = $scope.datasetInPreview;
-
-	    	$scope.executeParameter = function(){
-				$scope.showDrivers = false;
-				$scope.dataset.executed = true;
-				$scope.dataset["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
-				$scope.getPreviewSet($scope.datasetInPreview);
-			}
-
-			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
-			$scope.dataset.executed = !$scope.showDrivers;
-
-			$scope.toggleDrivers = function(){
-				$scope.showDrivers = !$scope.showDrivers;
-				$scope.dataset.executed = true;
-			}
-    	}else{
+//    	if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
+//	    	$scope.dataset = $scope.datasetInPreview;
+//
+//	    	$scope.executeParameter = function(){
+//				$scope.showDrivers = false;
+//				$scope.dataset.executed = true;
+//				$scope.dataset["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
+//				$scope.getPreviewSet($scope.datasetInPreview);
+//			}
+//
+//			$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
+//			$scope.dataset.executed = !$scope.showDrivers;
+//
+//			$scope.toggleDrivers = function(){
+//				$scope.showDrivers = !$scope.showDrivers;
+//				$scope.dataset.executed = true;
+//			}
+//    	}else{
     		angular.copy($scope.datasetInPreview, $scope.dataset);
+    		
+			$scope.driversAreSet = function(){
+				for(var k in driversExecutionService.prepareDriversForSending($scope.drivers)){
+					if(typeof driversExecutionService.prepareDriversForSending($scope.drivers)[k].value == 'undefined') return false
+				}
+				return true;
+			}
+
 
     		$scope.previewDS = function() {
     			var config = { datasetLabel: $scope.dataset.label };
@@ -1177,22 +1185,34 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	        }
     	        config.options = { exports: ['CSV', 'XLSX'] };
 
+				if($scope.dataset.drivers && $scope.dataset.drivers.length > 0){
+					config.drivers =  driversExecutionService.prepareDriversForSending($scope.drivers);
+				}
+				debugger;
     	        $scope.urlParams = $httpParamSerializer(config);
-    	        $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+				if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
+					if(driversExecutionService.hasMandatoryDrivers($scope.drivers)){
+						if($scope.driversAreSet()) $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+						}else{
+							$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+						}
+				}else {
+					$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+				}
     		}
 
     		$scope.previewDS();
-        	$scope.showDrivers = false;
+    		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
 
         	$scope.toggleDrivers = function(){
 				$scope.showDrivers = !$scope.showDrivers;
 			}
 
         	$scope.executeParameter = function(){
-        		$scope.showDrivers = false;
+        		$scope.showDrivers = !$scope.showDrivers;
         		$scope.previewDS();
 			}
-		}
+//		}
 
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];

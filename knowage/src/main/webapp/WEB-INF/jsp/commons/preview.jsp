@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("datasetLabel");
 	  		var parameters = url.searchParams.getAll("parameters");
+	  		var drivers = url.searchParams.getAll("drivers");
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		if(options && options['exports']) {
 	  			document.getElementById('utility-bar').classList.remove("hidden");
@@ -282,6 +283,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						parameters[i] = JSON.parse(parameters[i]);
 					}
 					fetchParams.body.pars = parameters;
+				}
+				if(!isEmpty(drivers)){
+					for (var i = 0; i < drivers.length; i++) {
+						drivers[i] = JSON.parse(drivers[i]);
+					}
+					fetchParams.body.drivers = drivers;
 				}
 				fetchParams.body = JSON.stringify(fetchParams.body);
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)

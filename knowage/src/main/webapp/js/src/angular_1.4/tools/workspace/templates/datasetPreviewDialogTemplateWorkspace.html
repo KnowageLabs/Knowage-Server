@@ -17,7 +17,7 @@
 	       </md-button>
 	     </div>   
 	   </md-toolbar>
-		<div ng-if="dataset.executed && datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
+		<!-- div ng-if="dataset.executed && datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
 			<md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
 			   		<md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="disableBack" ng-click="getBackPreviewSet()">
@@ -31,12 +31,12 @@
 		       		</md-button>
 		   		</div>
 		   	</md-toolbar>
-	   	</div>
-	   <md-card-content ng-if="datasetInPreview.dsTypeCd.toLowerCase() != 'qbe'" style="height:100%">
+	   	</div-->
+	   <md-card-content style="height:100%">
 	   		<iframe ng-src={{previewUrl}} style="height: calc(100% - 34px); width:100%; border:none;"></iframe>
 	   </md-card-content>
 
-		<md-content style="overflow-y:hidden;" ng-if="datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
+		<!-- md-content style="overflow-y:hidden;" ng-if="datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
 		
 		<div layout-fill >
 			<angular-table
@@ -51,7 +51,7 @@
 		 </div>
 		 
 		
-	</md-content>
+	</md-content-->
 </md-dialog>
 <div layout="column" flex=20 style="height:100%" ng-if="showDrivers">
 
