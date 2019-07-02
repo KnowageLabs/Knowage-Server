@@ -15,43 +15,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Password checker singleton.
+ */
 public class PasswordChecker {
 	private static Logger logger = Logger.getLogger(PasswordChecker.class);
 
 	private static final String PROP_NODE = "changepwdmodule.";
-	private final SbiUser tmpUser;
 
-	public PasswordChecker(SbiUser tmpUser) {
-		this.tmpUser = tmpUser;
+	private static final PasswordChecker INSTANCE = new PasswordChecker();
+	
+	private PasswordChecker() {
 	}
 
+	public static PasswordChecker getInstance() {
+		return INSTANCE;
+	}
+	
 	/**
 	 * This method checks the syntax of new pwd.
 	 *
 	 * @return true if the new password is correct
 	 */
-	public boolean isValid(String oldPwd, String newPwd, String newPwd2) throws Exception {
+	public boolean isValid(String newPwd, String newPwd2) throws Exception {
 		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 		List configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
 		logger.debug("checks found on db: " + configChecks.size());
-
-		if(oldPwd != null && StringUtilities.isEmpty(oldPwd)) {
-			logger.debug("The old password is empty.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
-		}
 
 		if (StringUtilities.isEmpty(newPwd) || StringUtilities.isEmpty(newPwd2)) {
 			logger.debug("The new password is empty.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
 		}
 
-		if(tmpUser != null) {
-			if (!Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())) {
-				logger.debug("The old pwd is uncorrect.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
-			}
-		}
-		
 		if (!newPwd.equals(newPwd2)) {
 			logger.debug("The two passwords are not the same.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14000);
@@ -159,14 +154,44 @@ public class PasswordChecker {
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_CHANGE)) {
-				if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
-					logger.debug("The password's doesn't be equal the lastest.");
-					throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, new Vector(), new HashMap());
+		}
+
+		return true;
+	}	
+	/**
+	 * This method checks the syntax of new pwd.
+	 *
+	 * @return <code>true</code> if the new password is correct, exception otherwise
+	 */
+	public boolean isValid(final SbiUser tmpUser, String oldPwd, String newPwd, String newPwd2) throws Exception {
+		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+		List configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
+		logger.debug("checks found on db: " + configChecks.size());
+
+		if (isValid(newPwd, newPwd2)) {
+			if(oldPwd != null && StringUtilities.isEmpty(oldPwd)) {
+				logger.debug("The old password is empty.");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
+			}
+	
+			if (tmpUser == null || tmpUser != null
+					&& !Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())) {
+				logger.debug("The old pwd is uncorrect.");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
+			}
+			
+			for (Object lstConfigCheck : configChecks) {
+				Config check = (Config) lstConfigCheck;
+				
+				if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_CHANGE)) {
+					if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
+						logger.debug("The password's doesn't be equal the lastest.");
+						throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, new Vector(), new HashMap());
+					}
 				}
 			}
 		}
-
+		
 		return true;
 	}
 }

@@ -35,14 +35,16 @@
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="java.net.URLEncoder"%>
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="java.util.Enumeration"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 
 
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);	
     
 	String authFailed = "";
-	String startUrl = "";
 	ResponseContainer aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 	RequestContainer requestContainer = RequestContainer.getRequestContainer();
 
@@ -83,12 +85,7 @@
 			SourceBean loginModuleResponse = (SourceBean) aServiceResponse
 					.getAttribute("LoginModule");
 			if (loginModuleResponse != null) {
-				String authFailedMessage = (String) loginModuleResponse
-						.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
-				startUrl = (loginModuleResponse
-						.getAttribute("start_url") == null) ? ""
-						: (String) loginModuleResponse
-								.getAttribute("start_url");
+				String authFailedMessage = (String) loginModuleResponse .getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
 				if (authFailedMessage != null) {
 					authFailed = authFailedMessage;
 				}
@@ -235,7 +232,7 @@
 						-->
 						
 						<!-- Uncomment this for adding the Change Password Link -->
-						<!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
+						<div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div>
 					</div>
 			
 		 			<spagobi:error/>

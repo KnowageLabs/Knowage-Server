@@ -64,7 +64,6 @@ public class ChangePwdServlet extends HttpServlet {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String USER_ID = "user_id";
 	private static final String USERNAME = "username";
-	private static final String URL = "start_url";
 	private static final String OLD_PWD = "oldPassword";
 	private static final String NEW_PWD = "NewPassword";
 	private static final String NEW_PWD2 = "NewPassword2";
@@ -104,16 +103,12 @@ public class ChangePwdServlet extends HttpServlet {
 			userId = request.getParameter(USERNAME);
 		logger.debug("Check syntax pwd for the user: " + userId);
 
-		String url = request.getParameter(URL);
-		logger.debug("Start url for final redirect: " + url);
-
 		String oldPwd = request.getParameter(OLD_PWD);
 		String newPwd = request.getParameter(NEW_PWD);
 		String newPwd2 = request.getParameter(NEW_PWD2);
 
 		try {
 			request.setAttribute(USER_ID, userId);
-			request.setAttribute(URL, url);
 			if (message == null) {
 				getServletContext().getRequestDispatcher(TARGET_JSP).forward(request, response);
 				return;
@@ -122,9 +117,10 @@ public class ChangePwdServlet extends HttpServlet {
 			//gets the user bo from db
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser tmpUser = userDao.loadSbiUserByUserId(userId);
-
+			
 			if (message.trim().equalsIgnoreCase("CHANGE_PWD")) {
-				if (new PasswordChecker(tmpUser).isValid(oldPwd, newPwd, newPwd2)) {
+				if (PasswordChecker.getInstance()
+						.isValid(tmpUser, oldPwd, newPwd, newPwd2)) {
 					//getting days number for calculate new expiration date
 					IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 					List lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
@@ -154,8 +150,6 @@ public class ChangePwdServlet extends HttpServlet {
 					tmpUser.setFlgPwdBlocked(false); //reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
 					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
-					//if it's all ok, redirect on login page 
-					response.sendRedirect(url);
 				}
 			}
 		} catch (EMFUserError eex) {

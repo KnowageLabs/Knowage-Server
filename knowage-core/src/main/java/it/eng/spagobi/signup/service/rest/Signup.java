@@ -264,7 +264,8 @@ public class Signup {
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
 
 			try {
-				new PasswordChecker(user).isValid(user.getPassword(), password, password);
+				PasswordChecker.getInstance()
+					.isValid(user, user.getPassword(), password, password);
 			} catch (Exception e) {
 				logger.error("Password is not valid", e);
 				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
@@ -455,7 +456,8 @@ public class Signup {
 		}
 
 		try {
-			new PasswordChecker(null).isValid(null, password, password);
+			PasswordChecker.getInstance()
+				.isValid(password, password);
 		} catch (Exception e) {
 			logger.error("Password is not valid", e);
 			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);

@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%      
 	String userId = (request.getParameter("user_id")==null)?"":request.getParameter("user_id");
-	String startUrl = request.getParameter("start_url");
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	String authFailed = (request.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE) == null)?"":
 						(String)request.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
@@ -57,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				SourceBean loginModuleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule");
 				if(loginModuleResponse!=null) {
 					userId = (String)loginModuleResponse.getAttribute("user_id");
-					startUrl = (String)loginModuleResponse.getAttribute("start_url");
           			String authFailedMessage = (String)loginModuleResponse.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
   					if(authFailedMessage!=null) authFailed = authFailedMessage;
 				}
@@ -108,7 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <form class="form-signin"  role="form" action="<%=contextName%>/ChangePwdServlet" method="POST">
             	<input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
 				<input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
-				<input type="hidden" id="start_url" name="start_url" value="<%=startUrl%>" />
 				<label  >Change your password here</label>
 				<% if (("").equals(userId)) { %> 
                 <input id="username" name="username" type="text" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
@@ -121,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<button data-toggle="tooltip" data-placement="bottom" title="Clear form" type="reset" class="btn btn-lg btn-primary btn-block btn-signup" >
 					<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Clear
 					</button>
-			
+				<button class="btn btn-lg btn-primary btn-block btn-signin" type="button" onclick="window.location.href='<%=urlBuilder.getResourceLink(request, "")%>'">Home</button>
              
                 
 		<div>
