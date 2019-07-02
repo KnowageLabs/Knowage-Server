@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -53,8 +54,16 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * Defines an <code>DataSource</code> object
  *
+ * The field <code>pwd</code> must be hidden during deserialization because
+ * of security concerns: with {@link JsonIgnoreProperties} we enable it during
+ * serialization only.
  */
 @JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(
+		value = { "pwd" },
+		allowGetters = false,
+		allowSetters = true
+	)
 public class DataSource implements Serializable, IDataSource {
 
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
