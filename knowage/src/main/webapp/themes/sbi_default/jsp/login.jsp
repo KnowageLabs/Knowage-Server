@@ -232,7 +232,7 @@
 						-->
 						
 						<!-- Uncomment this for adding the Change Password Link -->
-						<div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div>
+						<!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
 					</div>
 			
 		 			<spagobi:error/>
