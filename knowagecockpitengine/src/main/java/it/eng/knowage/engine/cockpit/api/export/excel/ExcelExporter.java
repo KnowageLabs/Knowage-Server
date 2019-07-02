@@ -566,10 +566,10 @@ public class ExcelExporter {
 								String valuesToChange = values.toString();
 								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
 								valuesToChange = valuesToChange.replaceAll("\"", "\'");
-								newParameters.put("p_"+jsonobject.getString("label"), valuesToChange);
+								newParameters.put(obj, valuesToChange);
 							}
 							else {
-								newParameters.put("p_"+jsonobject.getString("urlName"), "");
+								newParameters.put(obj, "");
 							}
 
 						}
@@ -762,11 +762,11 @@ public class ExcelExporter {
 							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
 							valuesToChange = valuesToChange.replaceAll("\"", "");
 							if (!(newParameters.length()!=0 && newParameters.has(key) &&newParameters.getString(key).length()!=0))
-							newParameters.put(jsonobject.getString("urlName"), valuesToChange);
+							newParameters.put(obj, valuesToChange);
 						}
 						else {
 
-								newParameters.put(key, "");
+								newParameters.put(obj, "");
 
 
 						}
