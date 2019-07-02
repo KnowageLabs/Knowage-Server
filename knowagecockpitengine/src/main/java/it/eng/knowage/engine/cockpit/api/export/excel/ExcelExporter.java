@@ -316,7 +316,12 @@ public class ExcelExporter {
 				// Create HEADER - Column Names
 				header = sheet.createRow((short) 0); // first row
 			} else {
-				String sheetName = dataStore.getString("sheetName");
+				String sheetName = "empty";
+				if (dataStore.getString("widgetName")!=null && !dataStore.getString("widgetName").isEmpty()) {
+					sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+
+				}
+
 				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
 				sheet = wb.createSheet(sheetName);
 				// First row for Widget name in case exporting whole Cockpit document
@@ -326,10 +331,37 @@ public class ExcelExporter {
 				header = sheet.createRow((short) 1);
 			}
 
+			JSONObject widgetData = dataStore.getJSONObject("widgetData");
+			JSONObject widgetContent = widgetData.getJSONObject("content");
+			ArrayList<String> arrayHeader = new ArrayList<String>();
+
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+
+				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length()>0 ) {
+
+
+					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+
+						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+						arrayHeader.add(column.getString("aliasToShow"));
+
+
+
+					}
+				}
+
+			}
+
+
+
 			// Fill Header
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String columnName = column.getString("header");
+				if (widgetData.getString("type").equalsIgnoreCase("table")) {
+					columnName = arrayHeader.get(i);
+				}
+
 				Cell cell = header.createCell(i);
 				cell.setCellValue(columnName);
 			}
@@ -353,7 +385,7 @@ public class ExcelExporter {
 				for (int c = 0; c < columns.length(); c++) {
 					JSONObject column = columns.getJSONObject(c);
 					String type = column.getString("type");
-					String colIndex = column.getString("name"); // column_1, column_2, column_3...
+					String  colIndex = column.getString("name"); // column_1, column_2, column_3...
 
 					Cell cell = row.createCell(c);
 					Object value = rowObject.get(colIndex);
@@ -482,12 +514,14 @@ public class ExcelExporter {
 
 					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
 					datastoreObj.put("sheetName", sheetName);
+					datastoreObj.put("widgetData",widget);
 					JSONObject content = widget.optJSONObject("content");
 					String widgetName = null;
 					if (content != null) {
 						widgetName = content.getString("name");
 					}
 					datastoreObj.put("widgetName", widgetName);
+					datastoreObj.put("sheetInfo", sheet.getString("label"));
 					excelSheets.add(datastoreObj);
 				}
 			}
