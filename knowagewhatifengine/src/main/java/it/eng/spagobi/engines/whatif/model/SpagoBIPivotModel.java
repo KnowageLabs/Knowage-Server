@@ -90,22 +90,19 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	/*
 	 * public void addCalucatedMembers(boolean add) {
 	 *
-	 * if (add) { QueryAxis qaRows = getQueryAxis(Axis.ROWS); QueryAxis
-	 * qaColumns = getQueryAxis(Axis.COLUMNS);
+	 * if (add) { QueryAxis qaRows = getQueryAxis(Axis.ROWS); QueryAxis qaColumns = getQueryAxis(Axis.COLUMNS);
 	 *
 	 * Exp rowsExp = qaRows.getExp();
 	 *
 	 * List<Exp> rowsArgs = new ArrayList<Exp>(1); rowsArgs.add(rowsExp);
 	 *
-	 * FunCall rowsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
-	 * rowsArgs); qaRows.setExp(rowsCC);
+	 * FunCall rowsCC = new FunCall("AddCalculatedMembers", Syntax.Function, rowsArgs); qaRows.setExp(rowsCC);
 	 *
 	 * Exp columnsExp = qaColumns.getExp();
 	 *
 	 * List<Exp> columsArgs = new ArrayList<Exp>(1); columsArgs.add(columnsExp);
 	 *
-	 * FunCall columnsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
-	 * columsArgs); qaColumns.setExp(columnsCC); }
+	 * FunCall columnsCC = new FunCall("AddCalculatedMembers", Syntax.Function, columsArgs); qaColumns.setExp(columnsCC); }
 	 *
 	 * fireModelChanged();
 	 *
@@ -172,7 +169,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		getQuery.stop();
 
 		try {
-			Monitor injectCalculatedFieldsIntoMdxQueryTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.injectCalculatedFieldsIntoMdxQueryTime");
+			Monitor injectCalculatedFieldsIntoMdxQueryTime = MonitorFactory
+					.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.injectCalculatedFieldsIntoMdxQueryTime");
 			String queryString = CalculatedMemberManager.injectCalculatedFieldsIntoMdxQuery(this);
 			injectCalculatedFieldsIntoMdxQueryTime.stop();
 
@@ -184,8 +182,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 			getCellSetTime.stop();
 
-//			System.out.println("rows "+ cs.getAxes().get(0).getPositions().size());
-//			System.out.println("columns "+cs.getAxes().get(1).getPositions().size());
+			// System.out.println("rows "+ cs.getAxes().get(0).getPositions().size());
+			// System.out.println("columns "+cs.getAxes().get(1).getPositions().size());
 
 		} catch (Exception e) {
 
@@ -251,8 +249,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	 * Persist the modifications in the selected version
 	 *
 	 * @param version
-	 *            the version of the model in witch persist the modification. In
-	 *            null persist in the version selected in the Version dimension
+	 *            the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
 	 * @throws WhatIfPersistingTransformationException
 	 */
 	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException {
@@ -336,6 +333,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	public void addCalculatedField(CalculatedMember calculatedField) {
+		this.removeCalculatedField(calculatedField.getCalculateFieldName());
 		this.calculatedFields.add(calculatedField);
 	}
 
@@ -505,7 +503,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	private boolean isSubset(QueryAxis qa) {
-		if(qa.getExp() instanceof FunCall){
+		if (qa.getExp() instanceof FunCall) {
 			FunCall f = (FunCall) qa.getExp();
 			if (f.getFunction().equalsIgnoreCase("Subset")) {
 				return true;
@@ -516,7 +514,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	private FunCall getSubSetFunction(QueryAxis qa) {
-		if(qa.getExp() instanceof FunCall){
+		if (qa.getExp() instanceof FunCall) {
 			FunCall f = (FunCall) qa.getExp();
 			f.getFunction();
 			return f;
