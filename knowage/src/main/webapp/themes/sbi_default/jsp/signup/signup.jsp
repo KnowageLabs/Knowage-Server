@@ -166,6 +166,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  }, 1000);
 					  
 				  }
+				  
+				  // Reset the captcha
+				  angular.element(document.getElementById("sticky"))
+				  	.css("background-image", "url('<%= urlBuilder.getResourceLink(request, "stickyImg") %>?" + Math.random() + "')");
+				  $scope.newUser.captcha = "";
+				  
 			  });
 		  }else{
 			  return;

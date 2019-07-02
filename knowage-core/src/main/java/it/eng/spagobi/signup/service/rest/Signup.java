@@ -614,6 +614,10 @@ public class Signup {
 			sendMail(email, subject, mailTxt);
 
 			String okMsg = msgBuilder.getMessage("signup.ok.message", "messages", locale);
+
+			// Captcha is burned and must be reloaded at client side
+			req.getSession().removeAttribute(Captcha.NAME);
+			
 			logger.debug("OUT");
 			return Response.ok(new JSONObject().put("message", okMsg).toString()).build();
 
