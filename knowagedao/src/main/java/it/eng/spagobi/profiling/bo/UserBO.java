@@ -26,8 +26,22 @@ import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import it.eng.spagobi.services.validation.Xss;
 
+/**
+ * Store data of a user.
+ * 
+ * The field <code>password</code> must be hidden during deserialization because
+ * of security concerns: with {@link JsonIgnoreProperties} we enable it during
+ * serialization only.
+ */
+@JsonIgnoreProperties(
+		value = { "password" },
+		allowGetters = false,
+		allowSetters = true
+	)
 public class UserBO implements Serializable {
 
 	/**
