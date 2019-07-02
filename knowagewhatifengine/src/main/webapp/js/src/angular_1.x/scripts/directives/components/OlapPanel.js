@@ -25,8 +25,8 @@ angular
 						restrict : "E",
 						replace : 'true',
 						templateUrl : function(){
-						return sbiModule_config.contextName + '/html/template/main/olap/olapPanel.html'	
-						},   
+						return sbiModule_config.contextName + '/html/template/main/olap/olapPanel.html'
+						},
 						controller : olapPanelController
 					}
 				});
@@ -59,7 +59,7 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 			memberUniqueName : uniqueName,
 			positionUniqueName : positionUniqueName
 		});
-		
+
 		var encoded = encodeURI('/member/drilldown/' + axis + '/' + position
 				+ '/' + member + '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost("1.0", encoded, data).then(
@@ -89,8 +89,8 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 				function(response) {
 
 					$scope.handleResponse(response);
-					
-					
+
+
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.drillUp.error'), 'Error');
@@ -99,14 +99,14 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 	}
 
 	$scope.swapAxis = function() {
-	
+
 		var encoded = encodeURI("1.0/axis/swap?SBI_EXECUTION_ID="
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost(encoded, "").then(
 				function(response) {
 					//var row  = $scope.modelConfig.startColumn;
 					//var column = $scope.modelConfig.startRow;
-					
+
 					$scope.handleResponse(response);
 					//$scope.modelConfig.startColumn = row;
 					//$scope.modelConfig.startRow = column;
@@ -119,11 +119,11 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 	}
 
 	$scope.exportDynamic = function() {
-		
-		
+
+
 		if($scope.selectedVersion == null){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionSlice.error'), 'Error');
-					
+
 		}else{
 			var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
 			sbiModule_restServices.promiseGet(encoded,"").then(
@@ -141,13 +141,13 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 								}
 								sbiModule_messaging.showErrorMessage(errorMessage, sbiModule_translate.load('sbi.common.error'));
 							}
-							
+
 						})
-			
+
 		}
 	}
-	
-	
+
+
 	$scope.getCollections = function() {
 
 		var toSend = {};
@@ -186,7 +186,7 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 		else {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dtLevelsChecking.error'), 'Error');
 		}
-			
+
 		for (var i = 0; i < tempArr.length; i++) {
 			$scope.checkCheckboxes(tempArr[i], $scope.dtAssociatedLevels);
 		}
@@ -200,23 +200,23 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
-	
+
 	$scope.drillThrough = function(ordinal){
 		if(ordinal){
 			$scope.usedOrdinal = ordinal;
 		}
-		
-		
-if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
-	
-	
 
-			
+
+if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
+
+
+
+
 			if($scope.showWarningDT){
 				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.dt.warning'), 'Warning');
-				
+
 			}
-			
+
 			var toSend = {};
 			toSend.ordinal = ordinal;
 			if (toSend.ordinal != undefined) {
@@ -227,23 +227,23 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						.promisePost("1.0", encoded, toSend)
 						.then(
 								function(response) {
-									
-									
+
+
 									$scope.dtData = [];
 									$scope.dtColumns = [];
-									
+
 									$scope.dtData = response.data;
 									for ( var key in response.data[0]) {
 
 										$scope.dtColumns.push(key);
 									}
-								
+
 									$scope.formateddtColumns = $scope
 											.formatColumns($scope.dtColumns);
 									$scope.getCollections();
-									
+
 									$scope.openDtDialog();
-									
+
 								},
 								function(response) {
 									sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dt.error'), 'Error');
@@ -252,8 +252,8 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.selectCell.error'), 'Error');
 			}
 		} else {
-			
-			
+
+
 			console.log("from dialog");
 			console.log($scope.usedOrdinal)
 			var toSend = {};
@@ -282,8 +282,8 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					});
 
 		}
-		
-		
+
+
 	}
 
 	$scope.exportDrill = function(JSONData, ReportTitle, ShowLabel) {
@@ -501,13 +501,13 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		if ($scope.selectedVersion == null){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionSlice.error'), 'Error');
 			return;
-			
+
 		}
 		if ($scope.modelConfig && $scope.isMeasureEditable(measureName)) {
 
 			var cell = angular.element(document.querySelector("[id='" + id
 					+ "']"));
-			
+
 			// check if the user is editing the same cell twice. If so we present
 			// again the last formula
 			if (!String.prototype.startsWith) {
@@ -524,9 +524,9 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				$scope.cellValue = $scope.lastEditedFormula
 			} else {
 				var type = "float";
-				
 
-				
+
+
 				if (originalValue == '') { // in case the cell was empty, we type 0
 					unformattedValue = 0;
 				} else {
@@ -545,23 +545,23 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					return;
 				}
 
-				
+
 
 			}
 			$scope.showEditCell(cell, id, originalValue);
-			
+
 		}else{
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.measureEditable.error'), 'Error');
 		}
 
-		
-		
-		
+
+
+
 	}
 
 	/**
 	 * checks if measure is editable
-	 * 
+	 *
 	 * @param measureName
 	 *            the name of the measure to check
 	 * @returns {Boolean} return if the measure is editable
@@ -580,13 +580,13 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					var contained = measureName;
 					return contained;
 				}*/
-				
+
 				for (var i = 0;i<measures.length;i++) {
-					
+
 					if (measures[i] === measureName){
 						return true;
 					}
-						
+
 				}
 
 			}
@@ -598,14 +598,14 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		console.log("writeBackCell");
 		var type = "float";
 		if(value!==""){
-			
+
 			if($scope.isItStartWithOperator(value)){
 				$scope.originalValue=$scope.originalValue.replace(/,/g , "");
 				value =$scope.originalValue+value;
 			}else if($scope.isItStarsWithEqual(value)){
 				value = value.slice(1);
 			}
-			
+
 			if (startValue) {
 				startValue = parseFloat(startValue);// Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,
 													// Sbi.locale.formats[type]);
@@ -627,12 +627,12 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					// Value is a string/expression
 					unformattedValue = value;
 				}
-				
+
 				// update the last edited values
 				this.lastEditedFormula = unformattedValue;
 				var separatorIndex = id.lastIndexOf('!');
 				this.lastEditedCell = id.substring(0, separatorIndex);
-				
+
 				$scope.sendWriteBackCellService(position, unformattedValue);
 			} else {
 				/*
@@ -642,7 +642,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				console.log(originalValue);
 			}
 		}
-		
+
 	}
 
 	$scope.showEditCell = function(cell, id, originalValue) {
@@ -685,16 +685,16 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 								'important');
 						cell[0].style.setProperty('z-index', '1');
 						cell.css('transform', 'translatey(0px)');
-						
+
 
 					},
 					clickOutsideToClose : true,
 					autoWrap : false
 				});
-		
-		
-		
-		
+
+
+
+
 	}
 	$scope.showFormulaDialog = function() {
 
@@ -706,15 +706,15 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						$scope.sendFormula = function() {
 							$scope.writeBackCell($scope.id, $scope.cellValue,
 									$scope.startVaue, $scope.originalValue);
-							
+
 							$mdDialog.hide();
 						}
-						
+
 						$scope.closeFormulaDialog = function(){
 							$mdDialog.hide();
 						}
-						
-						
+
+
 
 					},
 					controllerAs : 'olapCtrl',
@@ -745,13 +745,13 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 		});
 	}
-	
+
 	$scope.isItStartWithOperator = function(value){
 		value = value.toString();
 		var firstChar = value.charAt(0);
 		return firstChar === '+'||firstChar === '-'||firstChar === '*'||firstChar === '/';
 	}
-	
+
 	$scope.isItStarsWithEqual = function(value){
 		value = value.toString();
 		var firstChar = value.charAt(0);
@@ -792,8 +792,8 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				});
 	};
 	$scope.closeDialog = function(ev) {
-		
-		
+
+
 		$scope.dtData = [];
 		$scope.dtAssociatedLevels = [];
 		$scope.formateddtColumns = [];
@@ -808,11 +808,11 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 	};
 
 	$scope.showCCWizard = function() {
-		
-		$localStorage.recents = [];
+
+
 		formulasSplit();
 		cleanCC();
-		
+
 		$mdDialog
 				.show({
 					scope : $scope,
@@ -825,7 +825,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					hasBackdrop : false
 				});
 
-		$scope.getFromCookies();
+
 	}
 
 	$scope.checkValidity = function() {
@@ -960,25 +960,25 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						});
 
 	}
-	
+
 	$scope.hideNameInputCC = function(option) {
 		if(option == "select"){
 			$scope.hideName = true;
 		}else{
 			$scope.hideName = false;
 		}
-		
+
 	}
-	
+
 	var formulasSplit = function() {
-		
+
 		$scope.aggregationArray = [];
 		$scope.arithmeticArray = [];
 		$scope.temporalArray = [];
 		$scope.customArray = [];
-		
+
 		for (var i = 0; i < $scope.formulasData.length; i++) {
-			
+
 			switch ($scope.formulasData[i].type) {
 			case "aggregation":
 				$scope.aggregationArray.push($scope.formulasData[i]);
@@ -988,40 +988,40 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				break;
 			case "temporal":
 				$scope.temporalArray.push($scope.formulasData[i]);
-				break;	
+				break;
 			case "custom":
 				$scope.customArray.push($scope.formulasData[i]);
-				break;	
+				break;
 			default:
 				break;
 			}
-			
+
 		}
 	}
 
 	var formatFormulaforSending = function() {
-		
+
 		String.prototype.replaceAll = function(search, replace) {
 		    if (replace === undefined) {
 		        return this.toString();
 		    }
 		    return this.split(search).join(replace);
 		}
-		
+
 		var tempString =  $scope.selectedMDXFunction.body;
 		var finString = tempString;
 
 			for (var i = 0; i < $scope.selectedMDXFunction.argument.length; i++) {
-			
+
 			if ($scope.selectedMDXFunction.argument[i].default_value != undefined) {
-				
+
 				finString = finString.replaceAll($scope.selectedMDXFunction.argument[i].name,$scope.selectedMDXFunction.argument[i].default_value);
-						
+
 			}
 		}
-	
+
 		$scope.finalFormula = finString;
-		
+
 	}
 
 	var cleanCC = function() {
@@ -1063,6 +1063,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						'name' : $scope.selectedMDXFunctionName,
 						'value' : $scope.finalFormula,
 						'type' : 'Member',
+						'parentMemberUniqueName':$scope.selectedMember.parentMember,
 						'formula' : $scope.selectedMDXFunction,
 						'img' : sbiModule_config.contextName + "/img/m.png"
 					}
@@ -1070,7 +1071,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					checkForDuplicates(namedMember);
 
 					$scope.cookieArray.push(namedMember);
-					$localStorage.recents = $scope.cookieArray;
+
 					cleanCC();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.memberSave.success'), 'Success');
 
@@ -1098,7 +1099,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		checkForDuplicates(namedSet);
 
 		$scope.cookieArray.push(namedSet);
-		$localStorage.recents = $scope.cookieArray;
+
 		cleanCC();
 		sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.setSave.success'), 'Success');
 
@@ -1123,19 +1124,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 	}
 
-	$scope.getFromCookies = function() {
-		
-		
-
-		if ($localStorage.recents.length > 0 ) {
-
-			$scope.cookieArray = $localStorage.recents;
-			console.log($scope.cookieArray);
-		} else {
-			console.log("no cookies");
-		}
-
-	}
 
 	$scope.setIt = function(index, set) {
 
@@ -1153,6 +1141,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				console.log("same one in editing")
 				$scope.selectedMDXFunction = item.formula;
 				$scope.selectedMDXFunctionName = item.name;
+
 				console.log($scope.selectedMDXFunction);
 			}
 		}
@@ -1162,9 +1151,9 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 	$scope.deleteFromCookie = function(index, item) {
 
-		$scope.cookieArray = $localStorage.recents;
+
 		$scope.cookieArray.splice(index, 1);
-		$localStorage.recents = $scope.cookieArray;
+
 		if (item.name != null) {
 			$scope.deleteCC(item.name);
 			$scope.selectedMDXFunction = {};
@@ -1208,7 +1197,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		return false;
 
 	}
-	
-	
+
+
 
 };
