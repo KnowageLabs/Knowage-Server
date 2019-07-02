@@ -28,9 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			function versionToArray(v){
 				var snapshot = v.indexOf('-S');
+				var releaseCandidate = v.indexOf('-RC');
 			    if(snapshot != -1) v = v.substring(0,snapshot);
+			    if(releaseCandidate != -1) v = v.substring(0,releaseCandidate);
 			    v = v.split('.').map(Number);
 			    if(snapshot != -1) v.push('S');
+			    if(releaseCandidate != -1) v.push('RC');
 			    return v;
 			}
 			
@@ -64,6 +67,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.td) {
 								model.content.columnSelectedOfDataset[k].style['justify-content'] = model.content.columnSelectedOfDataset[k].style.td['justify-content'];
 								delete model.content.columnSelectedOfDataset[k].style.td;
+							}
+						}
+					}
+				}
+			}
+			//to version 7.0
+			if(!self.compareVersion("7.0.0",model.knowageVersion)){
+				if(model.type=='table'){
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(k in model.content.columnSelectedOfDataset){
+							if(model.content.columnSelectedOfDataset[k].fieldType == "ATTRIBUTE" && model.content.columnSelectedOfDataset[k].funcSummary) {
+								delete model.content.columnSelectedOfDataset[k].funcSummary;
 							}
 						}
 					}
