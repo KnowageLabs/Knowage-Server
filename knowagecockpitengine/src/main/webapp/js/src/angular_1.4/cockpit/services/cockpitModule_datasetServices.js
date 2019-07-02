@@ -640,7 +640,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// apply sorting order on categories
 				for(var i=0; i<aggregations.categories.length; i++){
 					var category = aggregations.categories[i];
-					if(category.columnName == ngModel.settings.sortingColumn && category.orderType == ""){
+					if(category.alias == ngModel.settings.sortingColumn && category.orderType == ""){
 						category.orderType = ngModel.settings.sortingOrder;
 						isSortingApplied = true;
 						break;
@@ -651,7 +651,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!isSortingApplied){
 					for(var i=0; i<aggregations.measures.length; i++){
 						var measure = aggregations.measures[i];
-						if(measure.columnName == ngModel.settings.sortingColumn && measure.orderType == ""){
+						if(measure.alias == ngModel.settings.sortingColumn && measure.orderType == ""){
 							measure.orderType = ngModel.settings.sortingOrder;
 							isSortingApplied = true;
 							break;
