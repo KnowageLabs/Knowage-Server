@@ -84,9 +84,9 @@
                     <md-switch ng-model="dd.selectedDriver.visible " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document visibility " flex="33 ">
                         <md-icon md-font-icon="fa fa-eye"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.visible")}}
                     </md-switch>
-<!--                     <md-switch ng-model="dd.selectedDriver.required " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document locked " flex="33 "> -->
-<!--                         <md-icon md-font-icon="fa fa-asterisk"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.required")}} -->
-<!--                     </md-switch> -->
+                    <md-switch ng-if="dd.driverRelatedObject.engine" ng-model="dd.selectedDriver.required " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document locked " flex="33 ">
+                        <md-icon md-font-icon="fa fa-asterisk"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.required")}}
+                    </md-switch>
                     <md-switch ng-model="dd.selectedDriver.multivalue " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document locked " flex="33 ">
                         <md-icon md-font-icon="fa fa-list"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.multivalue")}}
                     </md-switch>
