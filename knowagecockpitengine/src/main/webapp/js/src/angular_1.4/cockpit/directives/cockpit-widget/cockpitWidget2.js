@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('cockpitModule')
-.config( ['$compileProvider', function( $compileProvider ){
+.config( ['$compileProvider', function( $compileProvider ){   
         	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
     	}
 ])
@@ -134,7 +134,7 @@ angular.module('cockpitModule')
 		return sbiModule_i18n.getI18n(label);
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,cockpitModule_generalServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -166,12 +166,6 @@ angular.module('cockpitModule')
 	                    			}
 
 	                    		}
-
-	                    		scope.showNegativer = true;
-	                    		if(!scope.ngModel.cliccable && !scope.ngModel.drillable && !scope.cockpitModule_properties.EDIT_MODE){
-	                    			scope.showNegativer = false;
-	                    		}
-
 	                    		if(scope.ngModel.type == "selector"){
 	                    			scope.updateble = true;
 	                    		}else{
@@ -235,7 +229,6 @@ function cockpitWidgetControllerFunction(
 		$scope,
 		$rootScope,
 		cockpitModule_widgetServices,
-		cockpitModule_generalServices,
 		cockpitModule_properties,
 		cockpitModule_template,
 		cockpitModule_analyticalDrivers,
@@ -258,25 +251,21 @@ function cockpitWidgetControllerFunction(
 
 	{
 
-	$scope.cockpitModule_properties = cockpitModule_properties;
-
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
-
+	    
 	if(!cockpitModule_backwardCompatibility.compareVersion(cockpitModule_properties.CURRENT_KNOWAGE_VERSION,$scope.ngModel.knowageVersion)){
 		$scope.ngModel = cockpitModule_backwardCompatibility.updateModel($scope.ngModel);
 	}
-
+	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
 	$scope.i18n		= sbiModule_i18n;
-	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
+	$scope.enterpriseEdition = true;
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {};
-
-	$scope.isOriginal = false;//for previewing different types of chart
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
@@ -328,7 +317,7 @@ function cockpitWidgetControllerFunction(
 		$scope.activeSearch = false;
 		$scope.refreshWidget();
 	}
-
+	
 	$scope.showScreenshotButton = function(){
 		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection') return false;
 		if(typeof($scope.ngModel.style.showScreenshot) == 'undefined' ) {
@@ -346,6 +335,7 @@ function cockpitWidgetControllerFunction(
 			$scope.updateFromDatasetFilter(config.label);
 			break;
 		case "UPDATE_FROM_CLEAN_CACHE":
+
 			$scope.refreshWidget();
 			break;
 		case "UPDATE_FROM_NEAR_REALTIME":
@@ -356,7 +346,6 @@ function cockpitWidgetControllerFunction(
 				 * radmila.selakovic@mht.net checking type of widget because of
 				 * removing load spinner in case of updating charts
 				 */
-				cockpitModule_generalServices.setNearRealTime(true)
 				$scope.refreshWidget();
 			}
 			break;
@@ -385,33 +374,22 @@ function cockpitWidgetControllerFunction(
 
 		switch(eventType){
 		case "REFRESH"  :
-		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
-		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
-                if(dirtyIndex > -1){
-                    $scope.cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
-                }
+			if($scope.refresh==undefined){
+				/*$timeout(function(){
+					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
+				},1000);*/
+				$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 
-		        if($scope.refresh==undefined){
-                    $timeout(function(){
-                        $scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
-                    },1000);
-                }else{
-                    $scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
-                }
-		    }else{
-		        if(dirtyIndex == -1){
-                    $scope.cockpitModule_properties.DIRTY_WIDGETS.push($scope.ngModel.id);
-                }
-		    }
+			}else{
+
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
+			}
 			break;
-		case "UPDATE_FROM_SHEET_CHANGE" :
-            $scope.refreshWidget();
-            break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
@@ -461,17 +439,17 @@ function cockpitWidgetControllerFunction(
 			console.log("widget is not updateble")
 			return;
 		}
-		var document = $scope.getDocument();
+		var document= $scope.getDocument();
 		if(dataset != undefined && cockpitModule_widgetSelection.getCurrentSelections(dataset.label)!=undefined){
-            if(isInit){
-                $scope.initWidget();
-            }else{
-                if(associativeSelection==undefined || associativeSelection.hasOwnProperty(dataset.label)){
-                    var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
-                    cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
-                }
-            }
-        }
+				if(isInit){
+					$scope.initWidget();
+				}else{
+					if(associativeSelection==undefined || associativeSelection.hasOwnProperty(dataset.label)){
+						var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
+						cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
+					}
+				}
+		}
 		if(document != undefined && cockpitModule_widgetSelection.getCurrentSelections(document.DOCUMENT_LABEL)!=undefined){
 			if(isInit){
 				$scope.initWidget();
@@ -488,7 +466,8 @@ function cockpitWidgetControllerFunction(
 
 	$scope.updateFromDatasetFilter=function(label){
 		var dataset= $scope.getDataset(label);
-		var document = $scope.getDocumentByLabel(label);
+
+
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -496,20 +475,21 @@ function cockpitWidgetControllerFunction(
 			console.log("widget is not updateble")
 			return;
 		}
-		 if((dataset != undefined && label == dataset.label)|| (document != undefined && label == document.DOCUMENT_LABEL)){
+		if(dataset != undefined &&
+			(
+				(angular.isArray(label) && label.indexOf(dataset.label)!=-1)
+				||
+				(angular.isString(label) && angular.equals(label,dataset.label))
+			)
+		){
+
 			var options = {};
 			options.label = label;
 			$scope.refreshWidget(options,'filters');
+
+
 		}
 	}
-
-	$scope.getDocumentByLabel = function(label){
-        if($scope.ngModel.document!=undefined && label != undefined){
-            return cockpitModule_documentServices.getDocumentByLabel( label);
-        } else{
-            return undefined;
-        }
-    }
 
 	$scope.safeApply=function(){
 		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
@@ -656,13 +636,10 @@ function cockpitWidgetControllerFunction(
 
 	$scope.chartsForDrill = ["bar","pie","line","treemap"]
 	$scope.changeClickability = function(){
-		if($scope.ngModel.cliccable && !$scope.ngModel.drillable && $scope.enterpriseEdition){
+		if($scope.ngModel.cliccable && !$scope.ngModel.drillable){
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = true;
 		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
-			if(!$scope.cockpitModule_properties.EDIT_MODE){
-				$scope.showNegativer = true;
-			}
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = false;
 		}  else {
@@ -773,7 +750,7 @@ function cockpitWidgetControllerFunction(
 						else if(content.type == 'dynamic'){
 							if(content.column){
 								var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-								var valToAdd = row[columnNameToSearch];
+								var valToAdd = row[columnNameToSearch.toLowerCase()];
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
@@ -887,8 +864,7 @@ function cockpitWidgetControllerFunction(
 					//check on pivot table structure: rows and columns definition
 					if (originalColumnName == undefined || originalColumnName == ""){
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()) ||
-									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === columnName.toUpperCase()){
+							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()){
 									originalColumnName = $scope.ngModel.content.crosstabDefinition.columns[i].id;
 								break;
 							}
@@ -896,8 +872,7 @@ function cockpitWidgetControllerFunction(
 					}
 					if (originalColumnName == undefined || originalColumnName == ""){
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()) ||
-								$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === columnName.toUpperCase()){
+							if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()){
 								originalColumnName = $scope.ngModel.content.crosstabDefinition.rows[i].id;
 								break;
 							}
@@ -920,8 +895,7 @@ function cockpitWidgetControllerFunction(
 						var foundInColumns = false;
 						var foundInRows = false;
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
-									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === singleColumnName.toUpperCase()){
+							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
 								originalColumnName.push($scope.ngModel.content.crosstabDefinition.columns[i].id);
 								foundInColumns = true;
 								break;
@@ -929,8 +903,7 @@ function cockpitWidgetControllerFunction(
 						}
 						if (!foundInColumns){
 							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-								if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
-										$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === singleColumnName.toUpperCase()){
+								if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
 									originalColumnName.push($scope.ngModel.content.crosstabDefinition.rows[i].id);
 									foundInRows = true;
 									break;
@@ -1008,6 +981,7 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.doEditWidget=function(initOnFinish){
+
 		var deferred;
 		if(initOnFinish){
 			deferred=$q.defer();
@@ -1362,37 +1336,20 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
-		if(!tempOriginalChartType){
-			var tempOriginalChartType = $scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase();
-		}
-
 		$mdDialog.show({
 			controller: function ($scope,$mdDialog,ngModel) {
 				$scope.widgetName = widgetName;
 
-				$scope.changeChartType = function(type, isOriginal){
-
+				$scope.changeChartType = function(type){
 					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
-
-					if(tempOriginalChartType == type){
-
-						$scope.isOriginal = true;
-						$scope.ngModel.content.chartTemplate.CHART = angular.copy($scope.ngModel.content.chartTemplateOriginal.CHART);
-
-					}else {
-
-						$scope.isOriginal = false;
-						var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
-						delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-						var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
-						$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
-						if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
-						$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
-
-					}
-					$scope.$broadcast("changeChart",{ "type": type, "isOriginal":$scope.isOriginal});
+					var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
+					delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+					var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
+					$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
+					if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
+					$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
+					$scope.$broadcast("changeChart",{ "type": type});
 					$mdDialog.hide();
-
 				}
 				$scope.cancel = function(){
 					$mdDialog.cancel();
@@ -1406,7 +1363,7 @@ function cockpitWidgetControllerFunction(
 	      locals: {ngModel:$scope.ngModel}
 	    })
 	}
-
+	
 	$scope.captureScreenShot = function(ev,model){
 		model.loadingScreen = true;
 		var element = document.querySelector('#w'+model.id+' .placedWidget');
@@ -1420,15 +1377,13 @@ function cockpitWidgetControllerFunction(
 			        tempCtx.clearRect(0, 0, 0, 0);
 			    });
 			}});
-
-
+			
+		    
 		}else{
 			html2canvas(element,{
 				imageTimeout: 0,
 				ignoreElements: document.querySelector('#viewModeMenu'),
 				async: false,
-				useCORS: true,
-				allowTaint: true,
 				width: element.scrollWidth,
 			    height: element.scrollHeight
 			    }
@@ -1439,15 +1394,15 @@ function cockpitWidgetControllerFunction(
 			});
 		}
 		delete model.loadingScreen;
-
-
-
+		
+		
+		
 	};
-
+	
 	$scope.exportToExcel = function(event, ngModel) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel);
 	}
-
+	
 };
 
 })();

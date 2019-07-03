@@ -272,6 +272,13 @@ function cockpitChartWidgetControllerFunction(
 				objForDrill.par += "&limit=" + limitRows.rows;
 			}
 			objForDrill.par += "&widgetName=" + encodeURIComponent($scope.ngModel.content.name);
+			var saving = undefined
+			if(cockpitModule_generalServices.isNearRealTime() ){
+				 saving = false
+			}
+			if(cockpitModule_generalServices.isSavingDataConfiguration() ){
+				 saving = true
+			}
 			if (dataset.isRealtime == true){
 				//Refresh for Realtime datasets
 				var dataToPass = data;
@@ -285,14 +292,16 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf,objForDrill,cockpitModule_generalServices.isSavingDataConfiguration());
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf,objForDrill,saving);
 				cockpitModule_generalServices.savingDataConfiguration(false)
+				cockpitModule_generalServices.setNearRealTime(false)
 
 			} else {
 				//Refresh for Not realtime datasets
 				$timeout(function (){
-					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill, cockpitModule_generalServices.isSavingDataConfiguration());
+					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill, saving);
 					cockpitModule_generalServices.savingDataConfiguration(false)
+					cockpitModule_generalServices.setNearRealTime(false)
 				},400)
 			}
 		 	if(nature == 'init'){

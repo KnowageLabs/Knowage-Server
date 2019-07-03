@@ -7,6 +7,13 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	this.isSavingDataConfiguration = function (){
 		return savingDataConf
 	}
+	var nearRealTime = false;
+	this.setNearRealTime = function (nearRT){
+		nearRealTime = nearRT
+	}
+	this.isNearRealTime = function (){
+		return nearRealTime
+	}
 	this.openGeneralConfiguration=function(){
 		 var position = $mdPanel.newPanelPosition().absolute().center();
 
