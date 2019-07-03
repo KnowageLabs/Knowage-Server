@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,7 +47,7 @@ public class Parameter implements Serializable {
 	@Max(value = 11)
 	private Integer id;
 	@Xss
-	@Max(value = 160)
+	@Size(max = 160)
 	private String description = "";
 	@Xss
 	@NotNull
@@ -54,18 +55,18 @@ public class Parameter implements Serializable {
 	private Integer length;
 	@Xss
 	@NotNull
-	@Max(value = 20)
+	@Size(max = 20)
 	private String label = "";
 	@Xss
 	@NotNull
-	@Max(value = 40)
+	@Size(max = 40)
 	private String name = "";
 	@Xss
 	@NotNull
-	@Max(value = 20)
+	@Size(max = 20)
 	private String type = "";
 	@Xss
-	@Max(value = 20)
+	@Size(max = 20)
 	private String mask = "";
 	@Xss
 	@NotNull

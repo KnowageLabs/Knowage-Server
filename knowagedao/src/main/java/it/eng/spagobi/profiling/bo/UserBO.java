@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -55,14 +56,14 @@ public class UserBO implements Serializable {
 	private int id;
 	@Xss
 	@NotNull
-	@Max(value = 100)
+	@Size(max = 100)
 	private String userId;
 	@Xss
 	@NotNull
-	@Max(value = 150)
+	@Size(max = 150)
 	private String password;
 	@Xss
-	@Max(value = 255)
+	@Size(max = 255)
 	private String fullName;
 	private Date dtPwdBegin;
 	private Date dtPwdEnd;
