@@ -492,8 +492,8 @@ if(executionRoleNames.size() > 0) {
                 var obj = {
                     roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
                     executionInstance: {
-                        'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
-                        'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
+                        'OBJECT_ID' : <%= obj.getId() %>,
+                        'OBJECT_LABEL' : '<%= obj.getLabel().replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
                         'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
                         'OBJECT_NAME' : '<%= obj.getName().replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
                         'REFRESH_SECONDS' : <%= obj.getRefreshSeconds().intValue() %>,
@@ -733,7 +733,7 @@ if(executionRoleNames.size() > 0) {
                         .ariaLabel(errorMessage)
                         .ok(okMessage)
                 ).then(function() { 
-                    $documentBrowserScope.closeDocument(<%= request.getParameter("OBJECT_ID") %>);
+                    $documentBrowserScope.closeDocument(<%= obj.getId() %>);
                 }, function() {});
             };
         })();
