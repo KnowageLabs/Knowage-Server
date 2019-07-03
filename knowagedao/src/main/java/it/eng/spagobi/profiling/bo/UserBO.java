@@ -52,7 +52,6 @@ public class UserBO implements Serializable {
 
 	@Xss
 	@NotNull
-	@Max(value = 11)
 	private int id;
 	@Xss
 	@NotNull
