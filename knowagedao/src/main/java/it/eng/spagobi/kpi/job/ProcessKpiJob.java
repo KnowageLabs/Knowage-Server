@@ -50,6 +50,8 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.kpi.jdbc.ISQLDialect;
+import it.eng.spagobi.kpi.jdbc.SQLDialectFactory;
 import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -679,6 +681,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			List<Map<String, String>> queriesAttributesTemporalTypes, List<Set<String>> queriesIgnoredAttributes, Date timeRun) throws JobExecutionException {
 		KpiValueExecLog result = new KpiValueExecLog();
 		Session session = HibernateSessionManager.getCurrentSession();
+		ISQLDialect dialect = SQLDialectFactory.getSQLDialect(session);
+
 		try {
 			logger.info(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
 
@@ -701,7 +705,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					}
 					// sb.append("[" + field.getValue() + "]");
 				}
-				String rowFormula = parsedKpi.formula.replaceFirst("M" + mainMeasure + "([^\\d].*)*$", "cast (" + measureValue + " as float)$1");
+				// we are casting measures as float values because formulas are not working on Oracle and Postgres the
+				// same way, for example: 1283 / 48204 is returning 0.0266... on Oracle and 0 on Postgres
+				String rowFormula = parsedKpi.formula.replaceFirst("M" + mainMeasure + "([^\\d].*)*$", dialect.getCastingToFloatFormula(measureValue) + "$1");
 				rowsFormulae.add(rowFormula);
 				rowsAttributesValues.add(rowAttributesValues);
 				// sb.append("###");
@@ -736,7 +742,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 					}
 					String rowFormula = rowsFormulae.get(r);
-					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", "cast (" + measureValue + " as float)$1"));
+					// we are casting measures as float values because formulas are not working on Oracle and Postgres the
+					// same way, for example: 1283 / 48204 is returning 0.0266... on Oracle and 0 on Postgres
+					rowsFormulae.set(r, rowFormula.replaceFirst("M" + m + "([^\\d].*)*$", dialect.getCastingToFloatFormula(measureValue) + "$1"));
 				}
 			}
 
