@@ -251,7 +251,8 @@ angular
 						$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
 				}
 
-				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers);
+				driversExecutionService.hasMandatoryDrivers($scope.drivers);
+				$scope.showDrivers = $scope.drivers.length > 0;
 				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 			}
 

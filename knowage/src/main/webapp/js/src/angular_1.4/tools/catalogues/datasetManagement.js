@@ -3135,7 +3135,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
 				$scope.dataset = $scope.selectedDataSet;
 				$scope.drivers = $scope.dataset.drivers;
-				$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.selectedDataSet.pars.length > 0;
+				$scope.showDrivers = $scope.drivers.length > 0 || $scope.selectedDataSet.pars.length > 0;
 				$scope.dataset.executed = !$scope.showDrivers;
 
 				$scope.executeParameter = function(){

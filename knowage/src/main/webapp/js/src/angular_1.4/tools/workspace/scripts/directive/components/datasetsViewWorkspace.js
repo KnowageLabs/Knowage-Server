@@ -553,8 +553,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	    	}else{
 	    		$scope.previewPaginationEnabled=false;
 	    	}
-	    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
-	    	$scope.getPreviewSet($scope.datasetInPreview);
+//	    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
+//	    	$scope.getPreviewSet($scope.datasetInPreview);
 	    	/**
 	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
 	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
@@ -1169,7 +1169,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 //			}
 //    	}else{
     		angular.copy($scope.datasetInPreview, $scope.dataset);
-    		
+
 			$scope.driversAreSet = function(){
 				for(var k in driversExecutionService.prepareDriversForSending($scope.drivers)){
 					if(typeof driversExecutionService.prepareDriversForSending($scope.drivers)[k].value == 'undefined') return false
@@ -1188,7 +1188,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				if($scope.dataset.drivers && $scope.dataset.drivers.length > 0){
 					config.drivers =  driversExecutionService.prepareDriversForSending($scope.drivers);
 				}
-				debugger;
     	        $scope.urlParams = $httpParamSerializer(config);
 				if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
 					if(driversExecutionService.hasMandatoryDrivers($scope.drivers)){
@@ -1202,14 +1201,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		}
 
     		$scope.previewDS();
-    		$scope.showDrivers = driversExecutionService.hasMandatoryDrivers($scope.drivers) || $scope.dataset.pars.length > 0;
+    		$scope.showDrivers = $scope.drivers.length > 0 || $scope.dataset.pars.length > 0;
+    		$scope.dataset.executed = !$scope.showDrivers;
 
         	$scope.toggleDrivers = function(){
 				$scope.showDrivers = !$scope.showDrivers;
 			}
 
         	$scope.executeParameter = function(){
-        		$scope.showDrivers = !$scope.showDrivers;
+        		$scope.showDrivers = false;
+        		$scope.dataset.executed = true;
         		$scope.previewDS();
 			}
 //		}
