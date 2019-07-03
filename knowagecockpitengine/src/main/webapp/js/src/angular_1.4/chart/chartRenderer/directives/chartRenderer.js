@@ -88,7 +88,7 @@ angular.module('chartRendererModule')
 								for (var i = 0; i < scope.chartConf.series.length; i++) {
 									if(scope.colorMap.hasOwnProperty(scope.chartConf.series[i].name)) {
 										scope.chartConf.colors[i]=scope.colorMap[chartConf.series[i].name];
-									} 
+									}
 								}
 							} else {
 								scope.colorMap = {};
@@ -163,7 +163,7 @@ angular.module('chartRendererModule')
 			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams, shouldUpdate){
 				if(scope.updateble){
 					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
-					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData && !shouldUpdate){
+					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData && shouldUpdate!=undefined && !shouldUpdate){
 						scope.updateChart(scope.widgetData,dataForSending);
 					}else{
 						var transformedData = dataForSending;

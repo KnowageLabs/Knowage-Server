@@ -134,7 +134,7 @@ angular.module('cockpitModule')
 		return sbiModule_i18n.getI18n(label);
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService, $httpParamSerializer){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,cockpitModule_generalServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService, $httpParamSerializer){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -235,6 +235,7 @@ function cockpitWidgetControllerFunction(
 		$scope,
 		$rootScope,
 		cockpitModule_widgetServices,
+		cockpitModule_generalServices,
 		cockpitModule_properties,
 		cockpitModule_template,
 		cockpitModule_analyticalDrivers,
@@ -359,6 +360,7 @@ function cockpitWidgetControllerFunction(
 				 * radmila.selakovic@mht.net checking type of widget because of
 				 * removing load spinner in case of updating charts
 				 */
+				cockpitModule_generalServices.setNearRealTime(true)
 				$scope.refreshWidget();
 			}
 			break;
@@ -491,7 +493,7 @@ function cockpitWidgetControllerFunction(
 	$scope.updateFromDatasetFilter=function(label){
 		var dataset= $scope.getDataset(label);
 		var document = $scope.getDocumentByLabel(label);
-		
+
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -517,7 +519,7 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.clearAllSelectionsAndRefresh=function(){
-		cockpitModule_widgetSelection.clearAllSelections(); 
+		cockpitModule_widgetSelection.clearAllSelections();
 		cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset($scope.getDataset().label);
 	}
 
@@ -961,7 +963,7 @@ function cockpitWidgetControllerFunction(
 		    cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
 			var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 			if(sel!=undefined){
-		
+
 
 				if(!cockpitModule_template.configuration.aliases){
 					cockpitModule_template.configuration.aliases = [];
@@ -1089,7 +1091,7 @@ function cockpitWidgetControllerFunction(
 				delete $scope.borderShadowStyle['border-style'];
 			}
 		}
-		
+
 		if($scope.extendedStyle.padding && $scope.extendedStyle.padding.enabled){
 			$scope.paddingStyle = angular.copy($scope.extendedStyle.padding);
 		}else {
@@ -1186,7 +1188,7 @@ function cockpitWidgetControllerFunction(
 			return undefined;
 		}
 	}
-	
+
 	$scope.getDocumentByLabel = function(label){
 		if($scope.ngModel.document!=undefined && label != undefined){
 			return cockpitModule_documentServices.getDocumentByLabel( label);
