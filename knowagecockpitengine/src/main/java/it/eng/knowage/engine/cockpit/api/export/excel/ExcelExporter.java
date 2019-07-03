@@ -293,6 +293,15 @@ public class ExcelExporter {
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
+
+			datastore.put("widgetData",widget);
+			JSONObject content = widget.optJSONObject("content");
+			String widgetName = null;
+			if (content != null) {
+				widgetName = content.getString("name");
+			}
+			datastore.put("widgetName", widgetName);
+
 		} catch (Exception e) {
 			logger.error("Cannot get Datastore for widget", e);
 		}
@@ -317,9 +326,13 @@ public class ExcelExporter {
 				header = sheet.createRow((short) 0); // first row
 			} else {
 				String sheetName = "empty";
-				if (dataStore.getString("widgetName")!=null && !dataStore.getString("widgetName").isEmpty()) {
+				if (dataStore.has("widgetName") && dataStore.getString("widgetName")!=null && !dataStore.getString("widgetName").isEmpty()) {
+					if (dataStore.has("sheetInfo")) {
 					sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
-
+					}
+					else {
+						sheetName = widgetName;
+					}
 				}
 
 				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
