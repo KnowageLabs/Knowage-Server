@@ -59,7 +59,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}
 				var newCategArray = [];
-				if(ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+				if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+				
 					var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 
 					if(category){
@@ -74,13 +75,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 								}
 							}
 						else {
-							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
-								obj["orderColumn"] = col.name;
-								obj["orderType"] = "asc";
-							} else {
-								obj["orderColumn"] = col.orderColumn;
-								obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
-							}
+							obj["orderColumn"] = col.orderColumn === undefined ||  col.orderColumn == ""? col.name  : col.orderColumn;
+							obj["orderType"] = col.orderType === undefined || col.orderType == "" ? "ASC ": col.orderType;
+						
 						}
 					}
 				}
