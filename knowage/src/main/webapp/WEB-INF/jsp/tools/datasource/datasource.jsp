@@ -181,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
-													ng-maxlength="50" ng-readonly="readOnly" placeholder="{{translate.load('sbi.datasource.type.jdbc.only_if_changed')}}"> </md-input-container>
+													ng-maxlength="50" ng-readonly="readOnly" placeholder="{{translate.load('sbi.datasource.type.jdbc.onlyIfChanged')}}"> </md-input-container>
 												
 										<md-input-container ng-if="!modifyMode" flex="100" class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
@@ -196,7 +196,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<!-- <md-input-container flex="100" class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
-													ng-maxlength="50" ng-readonly="readOnly" ng-attr-placeholder="{{ modifyMode ? translate.load('sbi.datasource.type.jdbc.only_if_changed') : undefined }}"> </md-input-container> -->
+													ng-maxlength="50" ng-readonly="readOnly" ng-attr-placeholder="{{ modifyMode ? translate.load('sbi.datasource.type.jdbc.onlyIfChanged') : undefined }}"> </md-input-container> -->
 											</div>
 									
 
