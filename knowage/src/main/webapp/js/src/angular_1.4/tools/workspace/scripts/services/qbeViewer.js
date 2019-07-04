@@ -302,14 +302,13 @@ angular
 			}
 
 			$scope.isExecuteParameterDisabled = function() {
-				for(var i = 0; i < driverableObject.drivers.length; i++) {
-					if(driverableObject.drivers[i].mandatory && (typeof driverableObject.drivers[i].parameterValue === 'undefined' || driverableObject.drivers[i].parameterValue == '')){
+				for(var i = 0; i < $scope.drivers.length; i++) {
+					if($scope.drivers[i].mandatory && (typeof $scope.drivers[i].parameterValue === 'undefined' || $scope.drivers[i].parameterValue == '')){
 						return true;
 					}
 				}
 				return false;
 			};
-
 
 			$scope.execute = function() {
 				var drivers = {};
