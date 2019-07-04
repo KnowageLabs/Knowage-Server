@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -406,6 +407,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			// If DataSource Label has changed all LOVS with that DS need to be
 			// changed
 			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
+			
+			// If datasource has a null pwd, get the old value from DB
+			if (StringUtils.isEmpty(aDataSource.getPwd())) {
+				aDataSource.setPwd(hibDataSource.getPwd());
+			}
+			
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null) {
 				if (!aDataSource.getLabel().equals(hibDataSource.getLabel())) {
 					logger.debug("DataSource label is changed- update lovs and dataset referring to it");

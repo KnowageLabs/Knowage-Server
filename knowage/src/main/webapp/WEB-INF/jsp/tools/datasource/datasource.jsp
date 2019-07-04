@@ -170,11 +170,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 										<!-- PASSWORD -->
-										<div layout="row">				
-										<md-input-container flex="100" class="md-block" >
+										<div layout="row">
+										<!-- 
+											Next <md-input-container> was duplicated because this version of Angular
+											doesn't support conditional attribute (see placeholder in <input>).
+											
+											TODO : to fix
+										 -->				
+										<md-input-container ng-if="modifyMode" flex="100" class="md-block" >
+												
+												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
+												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
+													ng-maxlength="50" ng-readonly="readOnly" placeholder="{{translate.load('sbi.datasource.type.jdbc.only_if_changed')}}"> </md-input-container>
+												
+										<md-input-container ng-if="!modifyMode" flex="100" class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
 													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
+										
+										<!--
+											Replace previous duplication of <md-input-container>.
+											
+											Uncomment when Angular will be updated. 
+										 -->
+										<!-- <md-input-container flex="100" class="md-block" >
+												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
+												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
+													ng-maxlength="50" ng-readonly="readOnly" ng-attr-placeholder="{{ modifyMode ? translate.load('sbi.datasource.type.jdbc.only_if_changed') : undefined }}"> </md-input-container> -->
 											</div>
 									
 
