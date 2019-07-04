@@ -1213,6 +1213,15 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         		$scope.dataset.executed = true;
         		$scope.previewDS();
 			}
+
+        	$scope.isExecuteParameterDisabled = function() {
+				for(var i = 0; i < $scope.drivers.length; i++) {
+					if($scope.drivers[i].mandatory && (typeof $scope.drivers[i].parameterValue === 'undefined' || $scope.drivers[i].parameterValue == '')){
+						return true;
+					}
+				}
+				return false;
+			};
 //		}
 
 		$scope.closeDatasetPreviewDialog=function(){

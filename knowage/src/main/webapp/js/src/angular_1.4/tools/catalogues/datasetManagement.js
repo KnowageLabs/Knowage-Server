@@ -3153,6 +3153,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					})
 				}
 
+				$scope.isExecuteParameterDisabled = function() {
+					for(var i = 0; i < $scope.drivers.length; i++) {
+						if($scope.drivers[i].mandatory && (typeof $scope.drivers[i].parameterValue === 'undefined' || $scope.drivers[i].parameterValue == '')){
+							return true;
+						}
+					}
+					return false;
+				};
+
 				$scope.toggleDrivers =function(){
 					$scope.showDrivers = !$scope.showDrivers;
 				}
