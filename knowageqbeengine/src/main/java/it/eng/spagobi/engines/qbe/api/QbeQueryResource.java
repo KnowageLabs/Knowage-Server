@@ -341,6 +341,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					}
 
 					logger.debug("name: " + name + " / value: " + value);
+
+					getEnv().put(name + "_type", type);
 					getEnv().put(name, value);
 				}
 			}
@@ -373,11 +375,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		String toReturn = "";
 		value = value.trim();
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
-			if (!(value.startsWith("'") && value.endsWith("'"))) {
-				toReturn = value;
+
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
+				toReturn = "'" + value + "'";
 			} else {
 				toReturn = value;
 			}
+
 		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
 
 			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
@@ -387,14 +391,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 			if (toReturn == null || toReturn.length() == 0) {
 				toReturn = "";
-			}
-		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
-			toReturn = value;
-		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
 			}
 		}
 

@@ -3209,10 +3209,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
-		if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
-			var hasParameters = false;
-		}else{
-		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
+		if($scope.selectedDataSet){
+			var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
 		}
 		$scope.selectedDataSet.parametersData = {};
 		$scope.selectedDataSet.parametersData.documentParameters = {};

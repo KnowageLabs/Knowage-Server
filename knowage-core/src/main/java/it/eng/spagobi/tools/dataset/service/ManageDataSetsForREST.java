@@ -1250,7 +1250,7 @@ public class ManageDataSetsForREST {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
-			if ((!(value.startsWith("'") && value.endsWith("'"))) && !dsType.equals(DataSetConstants.QBE)) {
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
 				toReturn = "'" + value + "'";
 			} else {
 				toReturn = value;

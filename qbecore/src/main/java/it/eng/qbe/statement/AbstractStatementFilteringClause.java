@@ -342,7 +342,12 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 				boundedValue = operandValueToBound;
 			} else {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
-				return StringUtils.bound(operandValueToBound, "'");
+				if (!operandValueToBound.startsWith("$P{")) {
+
+					return StringUtils.bound(operandValueToBound, "'");
+				} else {
+					return operandValueToBound;
+				}
 			}
 		} else if (operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")) {
 			boundedValue = parseDate(operandValueToBound);

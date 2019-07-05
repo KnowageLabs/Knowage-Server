@@ -18,9 +18,8 @@
 package it.eng.spagobi.utilities;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,6 +27,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * The Class StringUtils.
@@ -122,7 +124,8 @@ public class StringUtils {
 	public static String replaceParameters(String filterCondition, String parameterTypeIdentifier, Map parameters) throws IOException {
 		String result = filterCondition;
 		Set params;
-
+		Map paramsFromEnv = new HashMap<>();
+		Map parTypeMap = new HashMap<>();
 		params = getParameters(filterCondition, parameterTypeIdentifier);
 		Iterator it = params.iterator();
 		while (it.hasNext()) {
@@ -131,8 +134,20 @@ public class StringUtils {
 				throw new IOException("No value for the parameter: " + parameterName);
 			}
 			String parameterValue = parameters.get(parameterName) == null ? null : parameters.get(parameterName).toString();
-			parameterValue = escapeHQL(parameterValue);
-			result = result.replaceAll("\\" + parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
+			String parameterType = parameters.get(parameterName + "_type") == null ? null : parameters.get(parameterName + "_type").toString();
+			paramsFromEnv.put(parameterName, parameterValue);
+			parTypeMap.put(parameterName, parameterType);
+
+			/*
+			 * parameterValue = escapeHQL(parameterValue); result = result.replaceAll("\\" + parameterTypeIdentifier + "\\{" + parameterName + "\\}",
+			 * parameterValue);
+			 */
+
+		}
+		try {
+			result = StringUtilities.substituteDatasetParametersInString(result, paramsFromEnv, parTypeMap, false);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while settin up parameters", e);
 		}
 
 		return result;
@@ -233,7 +248,7 @@ public class StringUtils {
 	 *            The collection to be joined
 	 * @param separator
 	 * @param prefix
-	 * 			 The prefix to be applied on each element
+	 *            The prefix to be applied on each element
 	 * @return Joins the input collection of string into a unique string using the specified separator
 	 */
 	public static String join(Collection<Object> objects, String separator, String prefix) {
