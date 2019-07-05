@@ -1617,16 +1617,24 @@
 							p{
 								&.metatype{
 									font-weight: bold;
+									font-size: $mediumFontSize;
+									line-height: 3rem;
 								}
 								&.metaname{
+									font-size: $mediumFontSize;
+									line-height: 3rem;
 									overflow: hidden;
 									text-overflow: ellipsis;
 									white-space: nowrap;
 								}
 							}
 						}
-	            		min-height: 36px;
-	    				height: 36px;	
+	            		min-height: 30px;
+	    				height: 30px;
+	    				.md-button {
+	    					min-height: 30px;
+	    					height: 30px;
+	    				}	
             		}
             		
             	}
