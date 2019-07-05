@@ -32,22 +32,26 @@ angular.module('advanced-tab', [])
 function advancedTabControllerFunction($scope,sbiModule_translate){
 
 
- $scope.translate = sbiModule_translate;
+	 $scope.translate = sbiModule_translate;
 
- $scope.variable = "testtest"//izmena
- $scope.advancedObject = {}
+	 $scope.advancedObject = {}
+	 $scope.input = {key : "", value : ""};
+	 $scope.deleteAdvancedProperty = function (key){
+		 delete $scope.chartTemplate.advanced[key]
+	 }
 
- $scope.deleteAdvancedProperty = function (key){
-	delete $scope.chartTemplate.advanced[key]
- }
- $scope.addProperty = function (){
-	if(!$scope.chartTemplate.advanced){
-		$scope.chartTemplate.advanced ={};
-	}
-	$scope.chartTemplate.advanced[$scope.input.key] = $scope.input.value;
- $scope.input.key = "";
- $scope.input.value = "";
- }//izmena
+	 $scope.addProperty = function (){
+		if(!$scope.chartTemplate.advanced){
+			$scope.chartTemplate.advanced ={};
+		}
+		try {
+			$scope.chartTemplate.advanced[$scope.input.key] = JSON.parse($scope.input.value);
+		} catch (e) {
+			$scope.chartTemplate.advanced[$scope.input.key] = $scope.input.value;
+		}
+		$scope.input.key = "";
+		$scope.input.value = "";
+	 }
 
 
  }

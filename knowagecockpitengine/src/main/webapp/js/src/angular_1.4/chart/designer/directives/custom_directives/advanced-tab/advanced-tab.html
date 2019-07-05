@@ -1,7 +1,7 @@
 <md-tab-content class="knowage-grey-color" layout="column">
-<div layout="row" md-content layout-padding flex>
-<div layout="column" flex=100 style="padding:0 8 0 0">  
-		
+	<div layout="row" md-content layout-padding flex>
+		<div layout="column" flex=100 style="padding:0 8 0 0">  
+				
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
 					<h2>
@@ -10,40 +10,29 @@
 				</div>		      
 			</md-toolbar>
 			<div layout="row" flex=100>
-			<md-whiteframe flex=50 class="md-whiteframe-4dp whiteframe-element" layout-padding style="overflow:auto">
-				<json-tree object="chartTemplate" start-expanded="true" root-name="'CHART'"></json-tree>
-			</md-whiteframe>
-			<md-whiteframe flex=50 class="md-whiteframe-4dp whiteframe-element" layout-padding style="overflow:auto"><!-- izmena -->
-				<div layout="row">
-				
-					<md-input-container class="md-block">
-									    	<label>Path</label>
-											<input  ng-model="input.key">
-											
-										</md-input-container>
-										
-												<md-input-container class="md-block">
-									    	<label>Value</label>
-											<input  ng-model="input.value">
-											
-										</md-input-container>
-										
-						
-						
-					<md-button ng-click="addProperty()"><md-icon md-font-icon="fa fa-plus" class="fa fa-lg"></md-icon></md-button>		
-				</div>		
-			<div flex>		
-				
-				<div ng-repeat="(key,value) in chartTemplate.advanced track by $index">
-				 {{key}} = {{value}}
-				 <md-button ng-click="deleteAdvancedProperty(this.key)"><md-icon md-font-icon="fa fa-trash" class="fa fa-lg"></md-icon></md-button>
-				 </div>		
-				
-			</div>		<!-- izmena -->
-			
-			</md-whiteframe>
-			
+				<md-whiteframe flex=50 class="md-whiteframe-4dp whiteframe-element" layout-padding style="overflow:auto">
+					<json-tree object="chartTemplate" start-expanded="true" root-name="'CHART'"></json-tree>
+				</md-whiteframe>
+				<md-whiteframe flex=50 class="md-whiteframe-4dp whiteframe-element" layout-padding style="overflow:auto"><!-- izmena -->
+					<div layout="row">
+						<md-input-container class="md-block">
+							<label>Path</label>
+							<input  ng-model="input.key">
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Value</label>
+							<input  ng-model="input.value">
+						</md-input-container>
+						<md-button ng-disabled="input.value=='' || input.key==''" ng-click="addProperty()"><md-icon md-font-icon="fa fa-plus" class="fa fa-lg"></md-icon></md-button>		
+					</div>		
+					<div flex>		
+						<div ng-repeat="(key,value) in chartTemplate.advanced track by $index">
+							{{key}} = {{value}}
+							<md-button ng-click="deleteAdvancedProperty(this.key)"><md-icon md-font-icon="fa fa-trash" class="fa fa-lg"></md-icon></md-button>
+						</div>		
+					</div>
+				</md-whiteframe>
+			</div>
 		</div>
-</div>
-</div>
+	</div>
 </md-tab-content>
