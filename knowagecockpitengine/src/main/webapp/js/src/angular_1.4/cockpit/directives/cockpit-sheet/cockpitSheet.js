@@ -69,14 +69,36 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 		cockpitModule_template.sheets[sh].index = cockpitModule_template.sheets[sh].index!=undefined?parseInt(cockpitModule_template.sheets[sh].index):sh;
 	}
 
+	$scope.checkSheetName = function(newName){
+		var names = [];
+		for(var i in cockpitModule_template.sheets){
+			names.push(cockpitModule_template.sheets[i].label);
+		}
+		var replacedName = '';
+		function replaceName(nameToReplace) {
+			if(names.indexOf(nameToReplace) > -1) {
+				replacedName = names[names.indexOf(nameToReplace)].replace(/([a-zA-Z0-9\s\_\-]+(?=\_\d))\_?(\d)?/g, function(match, g1, number){
+					return g1 + "_" + (parseInt(number)+1);
+				});
+				if(replacedName == nameToReplace) replacedName = nameToReplace + "_1"
+				if(names.indexOf(replacedName) > -1) replaceName(replacedName);
+			}else{
+				replacedName = nameToReplace;
+			}
+		}
+		replaceName(newName);
+		return replacedName;
+	}
+	
 	$scope.addSheet=function(){
-		cockpitModule_template.sheets.push({index:cockpitModule_template.sheets.length,label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]});
+		var sheetName = $scope.checkSheetName(sbiModule_translate.load("sbi.cockpit.new.sheet"));
+		cockpitModule_template.sheets.push({index:cockpitModule_template.sheets.length,label:sheetName,widgets:[]});
 	};
 
 	$scope.cloneSheet = function(sheet) {
 		var newSheet = {
 			index: cockpitModule_template.sheets.length,
-			label: sbiModule_translate.load("sbi.cockpit.new.sheet"),
+			label: $scope.checkSheetName(sheet.label),
 			widgets: angular.copy(sheet.widgets)
 		};
 
@@ -135,7 +157,7 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	      .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
 	    $mdDialog.show(confirm)
 	    .then(function(result) {
-	    	 sheet.label=result;
+	    	 sheet.label=$scope.checkSheetName(result);
 	    }, function() {});
 	}
 };
