@@ -18,9 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,68 +25,84 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
-import org.olap4j.mdx.AxisNode;
-import org.olap4j.mdx.CallNode;
-import org.olap4j.mdx.DimensionNode;
-import org.olap4j.mdx.HierarchyNode;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
-import org.olap4j.mdx.LevelNode;
-import org.olap4j.mdx.MemberNode;
 import org.olap4j.mdx.NameSegment;
 import org.olap4j.mdx.ParseTreeNode;
 import org.olap4j.mdx.PropertyValueNode;
 import org.olap4j.mdx.SelectNode;
-import org.olap4j.mdx.Syntax;
 import org.olap4j.mdx.WithMemberNode;
 import org.olap4j.mdx.parser.MdxParser;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+
+import it.eng.spagobi.engines.whatif.calculatedmember.mdxvisitor.AxisVisitor;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 public class CalculatedMemberManager {
 	public static transient Logger logger = Logger.getLogger(CalculatedMemberManager.class);
 
 	public static String injectCalculatedFieldsIntoMdxQuery(SpagoBIPivotModel model) throws SpagoBIEngineException {
 		String currentMdx = model.getCurrentMdx();
-		List<CalculatedMember> calculatedFields = model.getCalculatedFields();
-		if (calculatedFields != null) {
-			for (int i = 0; i < calculatedFields.size(); i++) {
-				boolean add = true;
 
-				CalculatedMember aCalculatedField = calculatedFields.get(i);
+		for (CalculatedMember calculatedMember : model.getCalculatedFields()) {
 
-				// check if there is just one hierarchy on the axis that where
-				// to place the calculated field. If so add it. otherwise do not
-				// add cc
-				List<Hierarchy> axisHierarchyes = model.getCellSet().getAxes().get(aCalculatedField.getParentMemberAxis().axisOrdinal()).getAxisMetaData()
-						.getHierarchies();
-				Hierarchy aCalculatedHierarchy = aCalculatedField.getHierarchy();
-				if (axisHierarchyes.size() == 1 && aCalculatedHierarchy != null
-						&& axisHierarchyes.get(0).getUniqueName().equals(aCalculatedHierarchy.getUniqueName())) {
-					/*
-					 * List<Member> members; try { //Member mp =
-					 * CubeUtilities.getMember(model.getCube(),
-					 * aCalculatedField.getParentMember().getUniqueName());
-					 * Member mp = aCalculatedField.getParentMember(); members =
-					 * (List<Member>) mp.getChildMembers(); for (int k = 0; k <
-					 * members.size(); k++) { Member m = members.get(k); boolean
-					 * calculatedField = m.isCalculated(); boolean visibleMember
-					 * = CubeUtilities.isMemberVisible(model, m,
-					 * aCalculatedField.getParentMemberAxis()); add = add ||
-					 * (!calculatedField && visibleMember); } } catch
-					 * (OlapException e) {
-					 * logger.error("Error adding calculate field"); }
-					 */
-					if (add) {
-						currentMdx = injectCalculatedIntoMdxQuery(currentMdx, model, calculatedFields.get(i));
-					}
-				}
+			if (shouldAddCF(calculatedMember, model.getCellSet().getAxes())) {
+
+				currentMdx = injectCalculatedIntoMdxQuery(currentMdx, model, calculatedMember);
+
 			}
+
 		}
 
 		return currentMdx;
+	}
+
+	/**
+	 * @param aCalculatedField
+	 * @param axes
+	 * @return
+	 */
+	private static boolean shouldAddCF(CalculatedMember aCalculatedField, List<CellSetAxis> axes) {
+		for (CellSetAxis axis : axes) {
+
+			if (isOnlyCFHierarchyOnAxis(aCalculatedField, axis.getAxisMetaData().getHierarchies())) {
+				return true;
+			}
+
+		}
+		return false;
+
+	}
+
+	/**
+	 * @param aCalculatedField
+	 * @param hierarchies
+	 * @return
+	 */
+	private static boolean isOnlyCFHierarchyOnAxis(CalculatedMember aCalculatedField, List<Hierarchy> hierarchies) {
+		return isOneHierarchyOnAxis(hierarchies) && isCFHierarchyOnAxis(aCalculatedField, hierarchies.get(0));
+	}
+
+	/**
+	 * @param aCalculatedField
+	 * @param hierarchy
+	 * @return
+	 */
+	private static boolean isCFHierarchyOnAxis(CalculatedMember aCalculatedField, Hierarchy hierarchy) {
+		return hierarchy.getUniqueName().equals(aCalculatedField.getHierarchyUniqueName());
+	}
+
+	/**
+	 * @param hierarchies
+	 * @return
+	 */
+	private static boolean isOneHierarchyOnAxis(List<Hierarchy> hierarchies) {
+		return hierarchies.size() == 1;
 	}
 
 	/**
@@ -128,43 +141,15 @@ public class CalculatedMemberManager {
 			throw new SpagoBIEngineException("Error building identifier node from segments for Measures", olapEx);
 		}
 
-		WithMemberNode withMemberNode = new WithMemberNode(null, nodoCalcolato, expression, Collections.<PropertyValueNode> emptyList());
+		WithMemberNode withMemberNode = new WithMemberNode(null, nodoCalcolato, expression, Collections.<PropertyValueNode>emptyList());
 		selectNode.getWithList().add(withMemberNode);
-
-		ParseTreeNode tree = new CallNode(null, "()", Syntax.Parentheses, nodoCalcolato);
 
 		ParseTreeNode row = selectNode.getAxisList().get(Axis.ROWS.axisOrdinal()).getExpression();
 		ParseTreeNode column = selectNode.getAxisList().get(Axis.COLUMNS.axisOrdinal()).getExpression();
-
-		selectNode.getAxisList().clear();
-
-		if (calculatedMember.getParentMemberAxis().axisOrdinal() == (Axis.ROWS.axisOrdinal())) {
-			selectNode.getAxisList().add(
-					new AxisNode(null, false, Axis.COLUMNS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, column)));
-
-			insertCalculatedInParentNode(null, 0, row, tree, calculatedMember.getParentMember().getUniqueName());
-			selectNode.getAxisList().add(new AxisNode(null, false, Axis.ROWS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, row)));
-		} else {
-
-			insertCalculatedInParentNode(null, 0, column, tree, calculatedMember.getParentMember().getUniqueName());
-			selectNode.getAxisList().add(
-					new AxisNode(null, false, Axis.COLUMNS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, column)));
-
-			selectNode.getAxisList().add(new AxisNode(null, false, Axis.ROWS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, row)));
-		}
+		row.accept(new AxisVisitor(calculatedMember.getParentMember(), nodoCalcolato));
+		column.accept(new AxisVisitor(calculatedMember.getParentMember(), nodoCalcolato));
 
 		return selectNode.toString();
-
-		//
-		//
-		// try {
-		// ei.getPivotModel().setMdx(queryString);
-		// ei.getPivotModel().refresh();
-		// } catch (Exception e) {
-		// ei.getPivotModel().setMdx(currentMdx);
-		// ei.getPivotModel().refresh();
-		// throw new SpagoBIEngineException("Error calculating the field", e);
-		// }
 
 	}
 
@@ -184,119 +169,6 @@ public class CalculatedMemberManager {
 		return parentSegments;
 
 	}
-
-	private static String getIdentifierUniqueName(IdentifierNode node) {
-
-		List<IdentifierSegment> parentSegments = node.getSegmentList();
-
-		StringBuffer uniqueName = new StringBuffer();
-
-		for (int i = 0; i < parentSegments.size(); i++) {
-			uniqueName.append(parentSegments.get(i).toString());
-			uniqueName.append(".");
-		}
-		if (uniqueName.length() > 0) {
-			uniqueName.setLength(uniqueName.length() - 1);
-		}
-
-		return uniqueName.toString();
-
-	}
-
-	/**
-	 * Service to find where to insert the calculated member in the tree
-	 *
-	 * @param parentCallNode
-	 *
-	 * @param positionInParentCallNode
-	 *
-	 * @param parseNode
-	 *
-	 * @param calculatedFieldTree
-	 *
-	 * @param parentNodeUniqueName
-	 * @return boolean true when the parent is found
-	 */
-
-	// private static boolean insertCalculatedInParentNode(ParseTreeNode
-	// grangranparent, ParseTreeNode granparent, CallNode parentCallNode, int
-	// positionInParentCallNode, ParseTreeNode parseNode,
-	private static boolean insertCalculatedInParentNode(CallNode parentCallNode, int positionInParentCallNode, ParseTreeNode parseNode,
-			ParseTreeNode calculatedFieldTree, String parentNodeUniqueName) {
-
-		if (parseNode instanceof CallNode) {
-			CallNode node = (CallNode) parseNode;
-			List<ParseTreeNode> args = node.getArgList();
-			for (int i = 0; i < args.size(); i++) {
-				ParseTreeNode aNode = args.get(i);
-				// if (insertCalculatedInParentNode(granparent, parentCallNode,
-				// node, i, aNode, calculatedFieldTree, parentNodeUniqueName)) {
-				if (insertCalculatedInParentNode(node, i, aNode, calculatedFieldTree, parentNodeUniqueName)) {
-					return true;
-				}
-			}
-		} else if (parseNode instanceof DimensionNode) {
-
-		} else if (parseNode instanceof HierarchyNode) {
-
-		} else if (parseNode instanceof IdentifierNode) {
-			IdentifierNode node = (IdentifierNode) parseNode;
-			String name = getIdentifierUniqueName(node);
-			if (parentNodeUniqueName.equals(name) && !parentCallNode.getOperatorName().equalsIgnoreCase("children")) {
-				/*
-				 * boolean add = false; for (int i = 0; i <
-				 * parentCallNode.getArgList().size(); i++) { boolean
-				 * inCrossJoin = false;//isInCrossJoin(grangranparent,
-				 * granparent, parentCallNode); if (!inCrossJoin && (
-				 * (node.getSegmentList
-				 * ().get(0).getName().equalsIgnoreCase(((IdentifierNode)
-				 * parentCallNode
-				 * .getArgList().get(i)).getSegmentList().get(0).getName()) &&
-				 * !node.getSegmentList().get(1).getName().equalsIgnoreCase(((
-				 * IdentifierNode)
-				 * parentCallNode.getArgList().get(i)).getSegmentList
-				 * ().get(1).getName())) || parentCallNode.getArgList().size()
-				 * == 1) ){ add = true; }
-				 * 
-				 * } if (add) {
-				 */
-				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);
-				return true;
-				// }
-
-				// The
-				// new
-				// calculated
-				// member
-				// goes
-				// next
-				// its
-				// parent
-				// node
-				// return false;
-
-			}
-		} else if (parseNode instanceof LevelNode) {
-
-		} else if (parseNode instanceof MemberNode) {
-
-		}
-		return false;
-
-	}
-
-	/*
-	 * private static boolean isInCrossJoin(ParseTreeNode grangranparent,
-	 * ParseTreeNode granparent, CallNode parentCallNode ){
-	 * 
-	 * boolean inCrossJoin = (granparent!=null && granparent instanceof CallNode
-	 * && ((CallNode)granparent).getOperatorName().equals("CrossJoin") ) ;
-	 * if(!inCrossJoin) inCrossJoin = (grangranparent!=null && grangranparent
-	 * instanceof CallNode &&
-	 * ((CallNode)grangranparent).getOperatorName().equals("CrossJoin") ) ;
-	 * 
-	 * return inCrossJoin && parentCallNode.getArgList().size()==1; }
-	 */
 
 	/**
 	 * Service to get an MDX Parser
