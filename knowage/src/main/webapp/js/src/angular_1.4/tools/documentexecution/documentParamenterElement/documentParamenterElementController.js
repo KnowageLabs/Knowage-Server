@@ -522,7 +522,7 @@
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
 						
 						paramDialogCtrl.columns = [{"headerName":"Label","field":"label",headerCheckboxSelection: paramDialogCtrl.tempParameter.multivalue, checkboxSelection: paramDialogCtrl.tempParameter.multivalue},
-							{"headerName":"Description","field":"DESCRIPTION"}];
+							{"headerName":"Description","field":"description"}];
 						
 						paramDialogCtrl.lookoutGridOptions = {
 				            enableColResize: false,
@@ -549,11 +549,6 @@
 						
 						function resizeColumns(){
 							paramDialogCtrl.lookoutGridOptions.api.sizeColumnsToFit();
-							if(parameter.parameterValue && parameter.parameterValue.length>0){
-								paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
-									if(parameter.parameterValue.indexOf(rowNode.data.VALUE) > -1 ) rowNode.setSelected(true);
-								});
-							}
 						}
 
 						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
@@ -564,6 +559,11 @@
 													else if(data.status=="OK"){
 														paramDialogCtrl.tableData = data.result.root;
 														paramDialogCtrl.lookoutGridOptions.api.setRowData(data.result.root);
+														if(parameter.parameterValue && parameter.parameterValue.length>0){
+															paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
+																if(parameter.parameterValue.indexOf(rowNode.data.value) > -1 ) rowNode.setSelected(true);
+															});
+														}
 														paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 													}
 								});
