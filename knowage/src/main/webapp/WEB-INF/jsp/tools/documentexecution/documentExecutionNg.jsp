@@ -476,9 +476,9 @@ if(executionRoleNames.size() > 0) {
         <script type="text/javascript">
         ///Module creation
         (function() {
-            
+        	agGrid.initialiseAgGridWithAngular1(angular);
             angular.module('documentExecutionModule', 
-                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload']);
+                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload', 'agGrid']);
             
             
             

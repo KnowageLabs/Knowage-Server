@@ -8,27 +8,24 @@
 		</div>
 	</md-toolbar>
 		
-	<md-dialog-content class="md-dialog-content" role="document" 
-			tabIndex="-1" layout flex>
+	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" layout="column" flex>
+		<div>
+			<md-input-container md-no-float class="md-block">
+				<md-icon md-font-icon="fa fa-search"></md-icon>
+				<input ng-model="paramDialogCtrl.paramSearchText" ng-change="paramDialogCtrl.filterDataset()" type="text" placeholder="{{::translate.load('kn.generic.search')}}">
+			</md-input-container>
+		</div>
 
-		<section layout flex>
-			<angular-table id="{{paramDialogCtrl.tempParameter.urlName}}" flex
-					ng-model="paramDialogCtrl.tableData" 
-					columns="paramDialogCtrl.tableColumns"
-					highlights-selected-item="true"
-					multi-select="paramDialogCtrl.tempParameter.multivalue"
-					selected-item="paramDialogCtrl.selectedTableItems"
-					show-search-bar="true"
-			></angular-table>
-		</section>
+		<div ag-grid="paramDialogCtrl.lookoutGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-default cockpitDatasetGrid" style="width:100%;height:calc(100% - 70px)"></div>
+		
 	</md-dialog-content>
 	
 	
 	<div class="md-actions">
-		<md-button ng-click="paramDialogCtrl.abort()" class="md-primary">
+		<md-button ng-click="paramDialogCtrl.abort()" class="md-raised">
 			{{ paramDialogCtrl.dialogCancelLabel }}</md-button>
 				
-		<md-button ng-click="paramDialogCtrl.save()" class="md-primary">
+		<md-button ng-click="paramDialogCtrl.save()" class="md-raised md-primary">
 			{{ paramDialogCtrl.dialogSaveLabel }}</md-button>
 	</div>
 </md-dialog>
