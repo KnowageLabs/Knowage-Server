@@ -405,7 +405,6 @@
 		        	borderWidth: $chart.LEGEND.style.borderWidth,
 			    #end
 			    
-		        shadow: true,
 		        #if($chart.LEGEND.style.disabledColor)
 		        itemHiddenStyle:
 		        {

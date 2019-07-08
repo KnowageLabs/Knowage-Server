@@ -359,7 +359,6 @@
 		        	borderWidth: $borderWidth,
 			    #end
 			    
-		        shadow: true,
 		        #if($chart.LEGEND.style.disabledColor)
 		        itemHiddenStyle:
 		        {
@@ -454,7 +453,6 @@
         borderWidth: $chart.LEGEND.style.borderWidth,
 	    #end
 	    
-        shadow: true,
         itemStyle: { 
         	color: '$chart.LEGEND.style.color', 
         	fontSize: '$chart.LEGEND.style.fontSize', 
