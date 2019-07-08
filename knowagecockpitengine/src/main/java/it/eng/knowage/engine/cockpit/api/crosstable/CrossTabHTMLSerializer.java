@@ -525,6 +525,13 @@ public class CrossTabHTMLSerializer {
 		List<String> columnsSpecification = crossTab.getColumnsSpecification();
 		boolean isDataNoStandardStyle = false;
 
+		Monitor internalserializeData1 = null;
+		Monitor internalserializeData2 = null;
+		Monitor internalserializeData3 = null;
+		Monitor internalserializeData4 = null;
+		Monitor internalserializeData5 = null;
+
+		internalserializeData1 = MonitorFactory.start("CockpitEngine.serializeData.columnsSpecificationForSelect");
 		if (columnsSpecification.size() > 0) {
 			// defines columns specification with totals and subtotals if required (for action #7 selection function setting)
 			if (crossTab.isMeasureOnRow()) {
@@ -559,6 +566,8 @@ public class CrossTabHTMLSerializer {
 				}
 			}
 		}
+		internalserializeData1.stop();
+
 
 		if (crossTab.isMeasureOnRow()) {
 			// adds the measure label
@@ -612,6 +621,7 @@ public class CrossTabHTMLSerializer {
 				String classType = "";
 				JSONObject measureConfig = new JSONObject();
 				try {
+					internalserializeData2 = MonitorFactory.start("CockpitEngine.serializeData.getMeasureConfigAndThreshold");
 					// 1. Get specific measure configuration (format, bgcolor, icon visualization,..)
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
@@ -638,9 +648,13 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 					}
+					internalserializeData2.stop();
 
 					classType = cellType.getValue();
 					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+
+					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
+
 					// 2. style and alignment management
 					if (cellType.getValue().equalsIgnoreCase("data")) {
 						String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
@@ -665,8 +679,10 @@ public class CrossTabHTMLSerializer {
 						aRow.setAttribute(aColumn);
 						continue;
 					}
+					internalserializeData3.stop();
 
 					// 3. define value (number) and its final visualization
+					internalserializeData4 = MonitorFactory.start("CockpitEngine.serializeData.formatNumberAndPS");
 					String actualText = "";
 					if (visType.indexOf("Text") >= 0) {
 						String patternFormat = null;
@@ -709,7 +725,7 @@ public class CrossTabHTMLSerializer {
 							actualText += suffix;
 						}
 					}
-
+					internalserializeData4.stop();
 					// add icon html if required
 					if (showIcon && iconSB != null) {
 						actualText += " ";
@@ -721,7 +737,7 @@ public class CrossTabHTMLSerializer {
 					aColumn.setAttribute(TITLE_ATTRIBUTE, actualText);
 
 					// 7. set selection function with the parent references (on row and column)
-
+					internalserializeData5 = MonitorFactory.start("CockpitEngine.serializeData.defineClickFunction");
 					if (cellTypeValue.equalsIgnoreCase("data")) {
 						String rowCord = "";
 						String rowHeaders = "";
@@ -770,6 +786,7 @@ public class CrossTabHTMLSerializer {
 
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "')");
+						internalserializeData5.stop();
 					}
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
