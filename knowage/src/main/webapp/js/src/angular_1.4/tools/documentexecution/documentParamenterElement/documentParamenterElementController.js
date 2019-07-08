@@ -549,6 +549,11 @@
 						
 						function resizeColumns(){
 							paramDialogCtrl.lookoutGridOptions.api.sizeColumnsToFit();
+							if(parameter.parameterValue && parameter.parameterValue.length>0){
+								paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
+									if(parameter.parameterValue.indexOf(rowNode.data.VALUE) > -1 ) rowNode.setSelected(true);
+								});
+							}
 						}
 
 						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
