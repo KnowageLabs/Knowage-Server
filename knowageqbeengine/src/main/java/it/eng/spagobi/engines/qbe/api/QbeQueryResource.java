@@ -342,7 +342,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 					logger.debug("name: " + name + " / value: " + value);
 
-					getEnv().put(name + "_type", type);
+					getEnv().put(name + SpagoBIConstants.PARAMETER_TYPE, type);
 					getEnv().put(name, value);
 				}
 			}

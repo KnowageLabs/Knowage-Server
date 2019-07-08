@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -134,7 +135,8 @@ public class StringUtils {
 				throw new IOException("No value for the parameter: " + parameterName);
 			}
 			String parameterValue = parameters.get(parameterName) == null ? null : parameters.get(parameterName).toString();
-			String parameterType = parameters.get(parameterName + "_type") == null ? null : parameters.get(parameterName + "_type").toString();
+			String parameterType = parameters.get(parameterName + SpagoBIConstants.PARAMETER_TYPE) == null ? null
+					: parameters.get(parameterName + SpagoBIConstants.PARAMETER_TYPE).toString();
 			paramsFromEnv.put(parameterName, parameterValue);
 			parTypeMap.put(parameterName, parameterType);
 

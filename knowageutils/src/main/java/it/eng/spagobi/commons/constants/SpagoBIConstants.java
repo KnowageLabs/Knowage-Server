@@ -168,6 +168,7 @@ public class SpagoBIConstants {
 	public static final String VERSION = "VERSION";
 	public static final String PATH = "PATH";
 	public static final String PARAMETERS = "PARAMETERS";
+	public static final String PARAMETER_TYPE = "_PARAM_TYPE";
 
 	public static final String PROFILE_ATTRS = "PROFILE_ATTRS";
 	public static final String USER_ID = "user_id";
@@ -411,9 +412,9 @@ public class SpagoBIConstants {
 	public static final String BUILD_QBE_QUERIES_FUNCTIONALITY = "BuildQbeQueriesFunctionality";
 	public static final String DO_MASSIVE_EXPORT_FUNCTIONALITY = "DoMassiveExportFunctionality";
 
-	public static final String CREATE_SELF_SERVICE_COCKPIT= "CreateSelfSelviceCockpit";
-	public static final String CREATE_SELF_SERVICE_GEOREPORT= "CreateSelfSelviceGeoreport";
-	public static final String CREATE_SELF_SERVICE_KPI= "CreateSelfSelviceKpi";
+	public static final String CREATE_SELF_SERVICE_COCKPIT = "CreateSelfSelviceCockpit";
+	public static final String CREATE_SELF_SERVICE_GEOREPORT = "CreateSelfSelviceGeoreport";
+	public static final String CREATE_SELF_SERVICE_KPI = "CreateSelfSelviceKpi";
 
 	public static final String SEE_DOCUMENT_BROWSER = "SeeDocBrowser";
 	public static final String SEE_MY_DATA = "SeeMyData";
