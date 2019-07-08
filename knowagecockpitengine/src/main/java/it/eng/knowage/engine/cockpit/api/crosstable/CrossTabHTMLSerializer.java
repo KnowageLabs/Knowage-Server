@@ -691,7 +691,7 @@ public class CrossTabHTMLSerializer {
 								//bgColorApplied = true;
 							}
 						}
-						if (!dataStyle.equals(DEFAULT_STYLE)) {
+						if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
