@@ -435,6 +435,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
     				scope.updateNews = function(readNews){
 	        	    	sbiModule_restServices.promiseGet("2.0", "news")
 		    			.then(function(response) {
+		    				scope.tempNews = response.data;
 		    				scope.news = [{id:1, label:'News',messages:[]},{id:2,label:'Notifications',messages:[]},{id:3,label:'Warnings',messages:[]}];
 		    				for(var n in response.data){
 		    					for(var c in scope.news){
