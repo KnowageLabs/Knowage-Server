@@ -17,6 +17,7 @@
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -70,11 +71,15 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600;";
 	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
+	private Map<String, String> customStylesMap = new  HashMap<String, String>();
+
 	private Locale locale = null;
 	private final Integer myGlobalId;
 	private final Map<Integer, NodeComparator> columnsSortKeysMap;
 	private final Map<Integer, NodeComparator> rowsSortKeysMap;
-	private final Map<Integer, NodeComparator> measuresSortKeysMap;
+	private static Map<Integer, NodeComparator> measuresSortKeysMap;
+
+
 
 	Monitor serializeTimeMonitor = null;
 	Monitor errorHitsMonitor = null;
@@ -236,7 +241,13 @@ public class CrossTabHTMLSerializer {
 					Row row = rowsDef.get(i);
 
 					JSONObject rowConfig = row.getConfig();
-					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
+					style = customStylesMap.get(rowConfig.get("id"));
+					if (style == null || style.equals("")) {
+						//loading and caching style
+						style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
+						customStylesMap.put(rowConfig.getString("id"), style);
+					}
+
 					if (!style.equals(DEFAULT_STYLE) && !style.equals(DEFAULT_HEADER_STYLE)) {
 						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
@@ -327,7 +338,14 @@ public class CrossTabHTMLSerializer {
 								JSONObject columnConfig = col.getConfig();
 								if (isLevel && !columnConfig.isNull("showHeader"))
 									showHeader = columnConfig.getBoolean("showHeader");
-								style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
+
+								style = customStylesMap.get(columnConfig.get("id"));
+								if (style == null || style.equals("")) {
+									//loading and caching style
+									style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
+									customStylesMap.put(columnConfig.getString("id"), style);
+								}
+
 								if (style.equals(DEFAULT_STYLE))
 									style = ""; // clean from default ... just for the categories headers
 								else {
@@ -654,10 +672,25 @@ public class CrossTabHTMLSerializer {
 					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
 
 					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
-
 					// 2. style and alignment management
 					if (cellType.getValue().equalsIgnoreCase("data")) {
-						String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
+						String dataStyle =  customStylesMap.get(measureConfig.get("id"));
+						if (dataStyle == null || dataStyle.equals("")) {
+							dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
+							//load and caching data style
+							customStylesMap.put((String)measureConfig.get("id"), dataStyle);
+						}
+						JSONObject colorThrJ = null;
+						if (value != null && cellTypeValue.equalsIgnoreCase("data") && !measureConfig.isNull("colorThresholdOptions")) {
+							// background management through threshold (optional)
+							double dValue = value.doubleValue();
+							colorThrJ = measureConfig.getJSONObject("colorThresholdOptions");
+							String bgThrColor = getThresholdColor(dValue, colorThrJ);
+							if (bgThrColor != null && !bgThrColor.equals("")) {
+								dataStyle += "background-color:" + bgThrColor + ";";
+								//bgColorApplied = true;
+							}
+						}
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
@@ -667,6 +700,8 @@ public class CrossTabHTMLSerializer {
 							isDataNoStandardStyle = false;
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 						}
+
+
 					} else {
 						String totalStyle = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
 						totalStyle +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "padding");
@@ -872,7 +907,13 @@ public class CrossTabHTMLSerializer {
 	private String getConfiguratedElementStyle(Double value, CellType cellType, JSONObject config, CrossTab crossTab, String prop) throws JSONException {
 		String toReturn = "";
 		String dataStyle = "";
-		dataStyle = getConfiguratedElementStyle(value, cellType, config, crossTab);
+
+		//searching style within style map, if it's not found gets it directly from configuration object
+		dataStyle = customStylesMap.get(config.get("id"));
+		if (dataStyle == null || dataStyle.equals("")) {
+			dataStyle = getConfiguratedElementStyle(value, cellType, config, crossTab);
+			customStylesMap.put(config.getString("id"), dataStyle);
+		}
 
 		if (dataStyle.equals(""))
 			return toReturn;
@@ -895,16 +936,17 @@ public class CrossTabHTMLSerializer {
 		String dataStyle = "";
 		String cellTypeValue = (cellType == null) ? "" : cellType.getValue();
 
-		if (value != null && cellTypeValue.equalsIgnoreCase("data") && !config.isNull("colorThresholdOptions")) {
-			// background management through threshold (optional)
-			double dValue = value.doubleValue();
-			colorThrJ = config.getJSONObject("colorThresholdOptions");
-			String bgThrColor = getThresholdColor(dValue, colorThrJ);
-			if (bgThrColor != null && !bgThrColor.equals("")) {
-				dataStyle += "background-color:" + bgThrColor + ";";
-				bgColorApplied = true;
-			}
-		}
+//
+//		if (value != null && cellTypeValue.equalsIgnoreCase("data") && !config.isNull("colorThresholdOptions")) {
+//			// background management through threshold (optional)
+//			double dValue = value.doubleValue();
+//			colorThrJ = config.getJSONObject("colorThresholdOptions");
+//			String bgThrColor = getThresholdColor(dValue, colorThrJ);
+//			if (bgThrColor != null && !bgThrColor.equals("")) {
+//				dataStyle += "background-color:" + bgThrColor + ";";
+//				bgColorApplied = true;
+//			}
+//		}
 		// cellType is null for rows and columns header
 		if (cellTypeValue.equals("") || !config.isNull("style")) {
 			JSONObject styleJ = (config.isNull("style")) ? new JSONObject() : config.getJSONObject("style");
