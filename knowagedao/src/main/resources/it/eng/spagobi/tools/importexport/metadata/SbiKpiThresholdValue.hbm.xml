@@ -12,7 +12,7 @@
            <column name="ID" />
         </id>
         
-        <property name="position" column="POSITION" type="int" length="11"/>
+        <property name="position" column="POSITION_NUMBER" type="int" length="11"/>
         <property name="label" column="LABEL" type="string" length="40"/>
 
         <property name="minValue" column="MIN_VALUE" type="double" />
