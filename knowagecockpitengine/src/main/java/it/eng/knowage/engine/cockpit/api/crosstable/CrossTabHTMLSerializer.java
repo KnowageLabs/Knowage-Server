@@ -29,6 +29,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column;
@@ -73,6 +76,9 @@ public class CrossTabHTMLSerializer {
 	private final Map<Integer, NodeComparator> rowsSortKeysMap;
 	private final Map<Integer, NodeComparator> measuresSortKeysMap;
 
+	Monitor serializeTimeMonitor = null;
+	Monitor errorHitsMonitor = null;
+
 	private static Logger logger = Logger.getLogger(CrossTabHTMLSerializer.class);
 
 	public CrossTabHTMLSerializer(Locale locale, Integer myGlobalId, Map<Integer, NodeComparator> columnsSortKeysMap,
@@ -110,17 +116,55 @@ public class CrossTabHTMLSerializer {
 	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean toReturn = new SourceBean(COLUMN_DIV);
 
-		SourceBean emptyTopLeftCorner = this.serializeTopLeftCorner(crossTab);
-		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
-		SourceBean topLeftCorner = this.mergeVertically(emptyTopLeftCorner, rowsHeaders);
-		SourceBean columnsHeaders = this.serializeColumnsHeaders(crossTab);
-		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders, crossTab);
-		SourceBean rowsMember = this.serializeRowsMembers(crossTab);
-		SourceBean data = this.serializeData(crossTab);
-		SourceBean body = this.mergeHorizontally(rowsMember, data, crossTab);
+		Monitor htmlserializeTopLeftCornerMonitor = null;
+		Monitor htmlserializeRowsHeaderssMonitor = null;
+		Monitor htmlmergeVerticallyTopLeftMonitor = null;
+		Monitor htmlserializeColumnsHeadersMonitor = null;
+		Monitor htmlmergeHorizontallyHeadMonitor = null;
+		Monitor htmlserializeRowsMembersMonitor = null;
+		Monitor htmlserializeDataMonitor = null;
+		Monitor htmlmergeHorizontallyBodyMonitor = null;
+		Monitor htmlmergeVerticallyFinalCTMonitor = null;
 
+		htmlserializeTopLeftCornerMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeTopLeftCornerMonitor");
+		SourceBean emptyTopLeftCorner = this.serializeTopLeftCorner(crossTab);
+		htmlserializeTopLeftCornerMonitor.stop();
+
+		htmlserializeRowsHeaderssMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeRowsHeaderssMonitor");
+		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
+		htmlserializeRowsHeaderssMonitor.stop();
+
+		htmlmergeVerticallyTopLeftMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeVerticallyTopLeftMonitor");
+		SourceBean topLeftCorner = this.mergeVertically(emptyTopLeftCorner, rowsHeaders);
+		htmlmergeVerticallyTopLeftMonitor.stop();
+
+		htmlserializeColumnsHeadersMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeColumnsHeadersMonitor");
+		SourceBean columnsHeaders = this.serializeColumnsHeaders(crossTab);
+		htmlserializeColumnsHeadersMonitor.stop();
+
+		htmlmergeHorizontallyHeadMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeHorizontallyHeadMonitor");
+		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders, crossTab);
+		htmlmergeHorizontallyHeadMonitor.stop();
+
+		htmlserializeRowsMembersMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeRowsMembersMonitor");
+		SourceBean rowsMember = this.serializeRowsMembers(crossTab);
+		htmlserializeRowsMembersMonitor.stop();
+
+		htmlserializeDataMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeDataMonitor");
+		SourceBean data = this.serializeData(crossTab);
+		htmlserializeDataMonitor.stop();
+
+		htmlmergeHorizontallyBodyMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeHorizontallyBodyMonitor");
+		SourceBean body = this.mergeHorizontally(rowsMember, data, crossTab);
+		htmlmergeHorizontallyBodyMonitor.stop();
+
+
+		htmlmergeVerticallyFinalCTMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeVerticallyFinalCTMonitor");
 		SourceBean crossTabSB = this.mergeVertically(head, body);
+		htmlmergeVerticallyFinalCTMonitor.stop();
+
 		toReturn.setAttribute(crossTabSB);
+
 		return crossTabSB;
 	}
 
