@@ -280,14 +280,14 @@
 			}else{
 
 				dee.exporting = true;
-	
+
 				dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
 					var promise;
 					if (exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx')
 						promise = buildRequestConfiguration(exportType, parameters);
 					else
-						promise = dee.buildBackendRequestConf(exportType, mimeType, parameters);						
-					
+						promise = dee.buildBackendRequestConf(exportType, mimeType, parameters);
+
 					promise.then(function(requestConf){
 						var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
 						$http(requestConf)
@@ -471,7 +471,7 @@
 			var requestUrl = sbiModule_config.host;
 			requestUrl += execProperties.documentUrl;
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
-			
+
 			for (var parameter in parameters) {
 			    if (parameters.hasOwnProperty(parameter)) {
 			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
@@ -484,7 +484,7 @@
 			cockpitSelections.aggregations = angular.copy(aggregations);
 			cockpitSelections.filters = filters;
             requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
-            
+
 			var requestConf = {
 					method: 'GET',
 					url: requestUrl,
@@ -516,12 +516,14 @@
 			}
 			return deferred.promise;
 		};
-		
+
 		var buildRequestConfiguration = function(exportType, parameters) {
 			var deferred = $q.defer();
-			
-			var requestUrl = sbiModule_config.host + '/' + execProperties.executionInstance.ENGINE_LABEL + '/api/1.0/cockpit/export/excel';
-			
+
+			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
+
+			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
+
 			var body = {
 					user_id: sbiModule_user.userUniqueIdentifier,
 					outputType: exportType,
@@ -532,7 +534,7 @@
 					parametersDataArray : execProperties.parametersData.documentParameters
 
 				};
-				
+
 				for (var parameter in parameters) {
 				    if (parameters.hasOwnProperty(parameter)) {
 				    	body.parameter = parameters[parameter];
@@ -544,18 +546,18 @@
 				cockpitSelections.aggregations = angular.copy(aggregations);
 				cockpitSelections.filters = filters;
 	            body.COCKPIT_SELECTIONS = cockpitSelections;
-	            
+
 				var requestConf = {
 					method: 'POST',
 					url: requestUrl,
 					responseType: 'arraybuffer',
 					data: body
 				};
-				
+
 				deferred.resolve(requestConf);
 				return deferred.promise;
 		}
-		
+
 		dee.getExporters = function(engine, type) {
 			 return $q(function(resolve, reject) {
 				var exportationHandlers = {};
