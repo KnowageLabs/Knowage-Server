@@ -456,6 +456,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				userToUpdate.setFullName(user.getFullName());
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.setId(id);
+				userToUpdate.setFailedLoginAttempts(user.getFailedLoginAttempts());
 				updateSbiCommonInfo4Update(userToUpdate);
 				aSession.save(userToUpdate);
 				currentSessionUser = userToUpdate;
