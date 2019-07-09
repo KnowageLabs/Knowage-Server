@@ -138,5 +138,23 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.jamonapi</groupId>
+			<artifactId>jamon</artifactId>
+			<version>2.80</version>
+		</dependency>
+		
+		 <dependency>
+  			<groupId>com.fdsapi</groupId>
+  			<artifactId>fdsapi</artifactId>
+  			<version>1.2</version>
+		</dependency> 
+
+		 <dependency>
+			<groupId>net.sf.xss-html-filter</groupId>
+			<artifactId>xss-html-filter</artifactId>
+			<version>1.5</version>
+		</dependency>
+		 
 	</dependencies>
 </project>

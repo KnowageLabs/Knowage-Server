@@ -18,15 +18,6 @@
 
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,6 +28,15 @@ import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CrosstabBuilder {
 
@@ -84,6 +84,9 @@ public class CrosstabBuilder {
 		CrosstabDefinition crosstabDefinition = null;
 
 		Monitor totalTimeMonitor = null;
+		Monitor deserializeTimeMonitor = null;
+		Monitor crossTabDefTimeMonitor = null;
+		Monitor htmlTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 
 		logger.debug("IN");
@@ -99,16 +102,22 @@ public class CrosstabBuilder {
 
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
 
+			deserializeTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.deserialize");
 			// deserialize crosstab definition
 			CrosstabJSONDeserializer crosstabJSONDeserializer = (CrosstabJSONDeserializer) CrosstabDeserializerFactory.getInstance().getDeserializer(
 					"application/json");
 
 			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
+			deserializeTimeMonitor.stop();
 
+			crossTabDefTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.CrossTab");
 			crossTab = new CrossTab(jsonDataSource, this.jsonMetaData, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap,
 					myGlobalId);
+			crossTabDefTimeMonitor.stop();
 
+			htmlTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.getHTMLCrossTab");
 			htmlCode = crossTab.getHTMLCrossTab(locale);//
+			htmlTimeMonitor.stop();
 
 		} catch (Exception e) {
 			errorHitsMonitor = MonitorFactory.start("CockpitEngine.errorHits");
