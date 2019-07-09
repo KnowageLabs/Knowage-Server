@@ -51,7 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
-			cockpitModule_properties){
+			cockpitModule_properties,
+			cockpitModule_defaultTheme){
 		
 		$scope.showGrid = true;
 		$scope.bulkSelection = false;
@@ -60,17 +61,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
-			$scope.ngModel.settings = {
-				"pagination" : {
-					'enabled': true,
-					'itemsNumber': 10,
-					'frontEnd': false
-				},
-				"page":1
-			};
+			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
 		}else $scope.ngModel.settings.page = 1;
 		
-		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}}; 
+		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
 		function getColumns(fields) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
@@ -587,6 +581,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	/**
 	 * register the widget in the cockpitModule_widgetConfigurator factory
 	 */
-	addWidgetFunctionality("table",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
+	addWidgetFunctionality("table",{'initialDimension':{'width':10, 'height':7},'updateble':true,'cliccable':true});
 
 })();
