@@ -39,6 +39,8 @@ public class SbiUser extends SbiHibernateModel {
 	private Date dtPwdEnd;
 	private Boolean flgPwdBlocked;
 	private Date dtLastAccess;
+	private int failedLoginAttempts;
+
 	private Boolean isSuperadmin;
 
 	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<SbiExtRoles>(0);
@@ -95,6 +97,10 @@ public class SbiUser extends SbiHibernateModel {
 		return this.fullName;
 	}
 
+	public void setFailedLoginAttempts(int failedLoginAttempts) {
+		this.failedLoginAttempts = failedLoginAttempts;
+	}
+
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
@@ -113,6 +119,10 @@ public class SbiUser extends SbiHibernateModel {
 
 	public void setDtPwdEnd(Date dtPwdEnd) {
 		this.dtPwdEnd = dtPwdEnd;
+	}
+
+	public int getFailedLoginAttempts() {
+		return failedLoginAttempts;
 	}
 
 	public Boolean getFlgPwdBlocked() {
