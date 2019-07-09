@@ -320,8 +320,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(referenceId, alias){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, alias);
+	    $scope.getLegend = function(referenceId){
+	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId);
 	    }
 
 
@@ -406,8 +406,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data);
-			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id, layerDef.alias);
+			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data); //add legend to internal structure
+			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -767,7 +767,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
 
-		    	$scope.getLegend($scope.ngModel.id, config.alias );
+		    	$scope.getLegend($scope.ngModel.id);
 	    	}
 
 	    	config.layerID = layerID;
