@@ -340,13 +340,12 @@
 		    return weight;
 		}
 
-		mts.getLegend = function (referenceId, alias){
+		mts.getLegend = function (referenceId){
 			var toReturn = [];
 			for (l in mts.activeLegend){
 				var colors = "";
 				var limits = [];
 				var tmpLayerName = l.split("|");
-				if (tmpLayerName[0] == referenceId){
 					if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];
@@ -354,8 +353,7 @@
 							if (limits.length == 0) limits.push(tmpConf.from);
 							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
 						}
-					}
-					toReturn.push({"layer": tmpLayerName[1], "alias": alias, "colors": colors, "limits": limits});
+					toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "colors": colors, "limits": limits});
 				}
 			}
 			return toReturn;
@@ -380,6 +378,7 @@
 				if (!mts.activeLegend[layerName]){
 					mts.activeLegend[layerName] = {choroplet:[]};
 				}
+				mts.activeLegend[layerName].alias = config.alias;
 
 				if(config.analysisConf.method == "CLASSIFY_BY_EQUAL_INTERVALS"){
 					mts.updateChoroplethLegendGradient(layerName, config.analysisConf, config.analysisConf.classes);
