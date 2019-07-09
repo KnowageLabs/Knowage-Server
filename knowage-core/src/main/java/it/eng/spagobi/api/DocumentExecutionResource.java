@@ -749,9 +749,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Object valueObj = requestValParams.get(key);
 			if (valueObj instanceof Number) {
 				String value = String.valueOf(valueObj);
+
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -759,7 +760,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -770,7 +771,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(URLDecoder.decode(value, "UTF-8"));
+						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
 					} else {
 						ValuesLstDecoded.put(value);
 						URLDecoder.decode(value, "UTF-8"); // uses the original value for list and %

@@ -1,5 +1,5 @@
 /*
-* Knowage, Open Source Business Intelligence suite
+ * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
  * Knowage is free software: you can redistribute it and/or modify
@@ -23,12 +23,21 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
 
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -65,6 +74,7 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -1199,19 +1209,28 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryDataset(IDataSet dataSet, IDataSource dataSource, List<Projection> projections, String tableName, Filter filter,
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-			throws DataBaseException {
+					throws DataBaseException {
+		IDataStore pagedDataStore = null;
+		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.queryDataset:total");
 		logger.debug("IN");
 
-		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);
-		IDataStore pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount);
+		try {
 
-		if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);
-			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
-			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+			SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);
+			pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount);
+
+			if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+				String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);
+				IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
+				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+			}
+
+
+			logger.debug("OUT");
 		}
-
-		logger.debug("OUT");
+		finally {
+			timing.stop();
+		}
 		return pagedDataStore;
 	}
 
@@ -1304,10 +1323,10 @@ public class DatasetManagementAPI {
 						for (int j = 0; j < values.length; j++) {
 							String value = values[j].trim();
 							if (!value.isEmpty()) {
-							if (!value.startsWith(delim) && !value.endsWith(delim)) {
-								newValues.add(delim + value + delim);
-							} else {
-								newValues.add(value);
+								if (!value.startsWith(delim) && !value.endsWith(delim)) {
+									newValues.add(delim + value + delim);
+								} else {
+									newValues.add(value);
 								}
 							}
 						}
@@ -1391,7 +1410,7 @@ public class DatasetManagementAPI {
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
 		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-				+ "] by user [" + userProfile.getUserId() + "].");
+		+ "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");

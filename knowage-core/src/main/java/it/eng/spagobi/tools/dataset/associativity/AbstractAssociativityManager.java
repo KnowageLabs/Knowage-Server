@@ -29,6 +29,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -73,18 +76,25 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	@Override
 	public void process() throws Exception {
-		// (1) generate the starting set of values for each associations
-		initProcess();
+		Monitor mon = MonitorFactory.start("Knowage.AbstractAssociativityManager.process:total");
 
-		// (2) user click on widget -> selection!
-		for (SimpleFilter selection : selections) {
-			if (!documentsAndExcludedDatasets.contains(selection.getDataset().getLabel())) {
-				calculateDatasets(selection.getDataset().getLabel(), null, selection);
+		try {
+			// (1) generate the starting set of values for each associations
+			initProcess();
+
+			// (2) user click on widget -> selection!
+			for (SimpleFilter selection : selections) {
+				if (!documentsAndExcludedDatasets.contains(selection.getDataset().getLabel())) {
+					calculateDatasets(selection.getDataset().getLabel(), null, selection);
+				}
 			}
-		}
 
-		// (2) correct result data structure based on actual filters for each dataset
-		endProcess();
+			// (2) correct result data structure based on actual filters for each dataset
+			endProcess();
+		}
+		finally {
+			mon.stop();
+		}
 	}
 
 	protected List<String> getColumnNames(String associationNamesString, String datasetName) {

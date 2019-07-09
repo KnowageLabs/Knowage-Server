@@ -41,8 +41,11 @@ angular.module("cockpitModule").service("cockpitModule_utilstServices",function(
 						var elements = matches[1].split(";");
 						rightArray = elements;
 					}
-					var reg = new RegExp('\\$P\\{('+item+')\\}','g');
-					adVal=adVal.replace(reg, val);
+					else {
+						var reg = new RegExp('\\$P\\{('+item+')\\}','g');
+						adVal=adVal.replace(reg, val);
+						rightArray[0] = adVal;
+					}
 				})
 			}
 			return rightArray;

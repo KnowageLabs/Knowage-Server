@@ -18,9 +18,17 @@
 
 package it.eng.spagobi.tools.dataset.associativity.strategy;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
@@ -83,106 +91,133 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 	@Override
 	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception {
-		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
 
-		logger.debug("Clean containers and groups -> set to unresolved");
-		AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
+		Monitor mon = MonitorFactory.start("Knowage.OuterAssociativityManager.calculateDatasets:total");
 
-		Set<String> totalChildren = new HashSet<>();
+		try {
 
-		IAssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
-		container.addFilter(filter);
 
-		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
-		Iterator<EdgeGroup> iterator = container.getGroups().iterator();
-		while (iterator.hasNext()) {
-			EdgeGroup group = iterator.next();
+			Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
 
-			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			logger.debug("a. Calculate the distinct values for columns " + columnNames);
-			Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
-			if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
-				throw new IllegalEdgeGroupException("Columns " + columnNames
-						+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
-			}
-			if (!ParametersUtilities.isParameter(columnNames.get(0))) {
-				// clear non parameters previously computed values
-				result.clearValues(group);
+			logger.debug("Clean containers and groups -> set to unresolved");
+			AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
 
-				Map<String, String> parameters = container.getParameters();
-				container.getDataSet().setParamsMap(new HashMap(parameters));
-				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
+			Set<String> totalChildren = new HashSet<>();
 
-				logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
-				group.addValues(distinctValues);
-				result.addValues(group, distinctValues);
+			IAssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
+			container.addFilter(filter);
 
-				logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
-				Set<String> children = result.getEdgeGroupToDataset().get(group);
-
-				for (String child : children) {
-					if (!documentsAndExcludedDatasets.contains(child)) {
-						IAssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-						List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
-						childContainer.update(group, columns, distinctValues);
-					}
-				}
-				totalChildren.addAll(children);
-
-				logger.debug("e. Setting all the children dataset as processed");
-				logger.debug("f. Declaring the dataset as resolved");
-				resolveDatasets(children);
-			}
-
-			logger.debug("f. Declaring the associative group as resolved");
-			group.resolve();
-		}
-
-		while (!getUnresolvedGroups(totalChildren).isEmpty()) {
-
-			logger.debug("3. Calculating all the unresolved associative groups related only to dataset contained in " + totalChildren);
-			Set<EdgeGroup> groups = getUnresolvedGroups(totalChildren);
-			totalChildren.clear();
-
-			logger.debug("4. For each associative group previously calculated:");
-			iterator = groups.iterator();
+			logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
+			Iterator<EdgeGroup> iterator = container.getGroups().iterator();
 			while (iterator.hasNext()) {
-				EdgeGroup group = iterator.next();
 
-				for (String childDataset : result.getDatasets(group)) {
-					container = associativeDatasetContainers.get(childDataset);
-					if (container.isResolved()) {
 
-						logger.debug("i. Calculating distinct values for the associative group " + group + " in dataset " + childDataset);
-						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
-						if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
-							throw new IllegalEdgeGroupException("Columns " + columnNames
-									+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
-						}
+				Monitor monWhile = MonitorFactory.start("Knowage.OuterAssociativityManager.calculateDatasets:edgeGroupIterationResolved");
 
-						if (!ParametersUtilities.isParameter(columnNames.get(0))) {
-							Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
+				try {
+					EdgeGroup group = iterator.next();
 
-							logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
-							group.addValues(distinctValues);
-							result.addValues(group, distinctValues);
-						}
+					List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
+					logger.debug("a. Calculate the distinct values for columns " + columnNames);
+					Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
+					if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
+						throw new IllegalEdgeGroupException("Columns " + columnNames
+								+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
 					}
-				}
-				for (String childDataset : result.getDatasets(group)) {
-					container = associativeDatasetContainers.get(childDataset);
-					if (!container.isResolved() && result.getEdgeGroupValues().keySet().contains(group)) {
-						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						container.update(group, columnNames, group.getValues());
-						totalChildren.add(childDataset);
+					if (!ParametersUtilities.isParameter(columnNames.get(0))) {
+						// clear non parameters previously computed values
+						result.clearValues(group);
+
+						Map<String, String> parameters = container.getParameters();
+						container.getDataSet().setParamsMap(new HashMap(parameters));
+						Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
+
+						logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
+						group.addValues(distinctValues);
+						result.addValues(group, distinctValues);
+
+						logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
+						Set<String> children = result.getEdgeGroupToDataset().get(group);
+
+						for (String child : children) {
+							if (!documentsAndExcludedDatasets.contains(child)) {
+								IAssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
+								List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
+								childContainer.update(group, columns, distinctValues);
+							}
+						}
+						totalChildren.addAll(children);
+
+						logger.debug("e. Setting all the children dataset as processed");
+						logger.debug("f. Declaring the dataset as resolved");
+						resolveDatasets(children);
 					}
+
+					logger.debug("f. Declaring the associative group as resolved");
+					group.resolve();
 				}
-				group.resolve();
+				finally {
+					monWhile.stop();
+				}
 			}
 
-			logger.debug("5. Finishing to work on associative groups. Setting all the processed datasets " + totalChildren + " as resolved");
-			resolveDatasets(totalChildren);
+			while (!getUnresolvedGroups(totalChildren).isEmpty()) {
+
+				Monitor monWhile2 = MonitorFactory.start("Knowage.OuterAssociativityManager.calculateDatasets:edgeGroupIterationUNResolved");
+
+				try {
+
+					logger.debug("3. Calculating all the unresolved associative groups related only to dataset contained in " + totalChildren);
+					Set<EdgeGroup> groups = getUnresolvedGroups(totalChildren);
+					totalChildren.clear();
+
+					logger.debug("4. For each associative group previously calculated:");
+					iterator = groups.iterator();
+					while (iterator.hasNext()) {
+						EdgeGroup group = iterator.next();
+
+						for (String childDataset : result.getDatasets(group)) {
+							container = associativeDatasetContainers.get(childDataset);
+							if (container.isResolved()) {
+
+								logger.debug("i. Calculating distinct values for the associative group " + group + " in dataset " + childDataset);
+								List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
+								Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
+								if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
+									throw new IllegalEdgeGroupException("Columns " + columnNames
+											+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
+								}
+
+								if (!ParametersUtilities.isParameter(columnNames.get(0))) {
+									Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
+
+									logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
+									group.addValues(distinctValues);
+									result.addValues(group, distinctValues);
+								}
+							}
+						}
+						for (String childDataset : result.getDatasets(group)) {
+							container = associativeDatasetContainers.get(childDataset);
+							if (!container.isResolved() && result.getEdgeGroupValues().keySet().contains(group)) {
+								List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
+								container.update(group, columnNames, group.getValues());
+								totalChildren.add(childDataset);
+							}
+						}
+						group.resolve();
+					}
+				}
+				finally {
+					monWhile2.stop();
+				}
+
+				logger.debug("5. Finishing to work on associative groups. Setting all the processed datasets " + totalChildren + " as resolved");
+				resolveDatasets(totalChildren);
+			}
+		}
+		finally {
+			mon.stop();
 		}
 	}
 

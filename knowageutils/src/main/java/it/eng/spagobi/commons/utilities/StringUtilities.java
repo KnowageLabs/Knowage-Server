@@ -716,7 +716,7 @@ public class StringUtilities {
 		}
 
 		attribute = quote(attribute);
-		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replacement);
+		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replaceSpecials(replacement));
 
 		// statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
 		/*
@@ -975,5 +975,14 @@ public class StringUtilities {
 		} else {
 			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
 		}
+	}
+
+
+	/**
+	 * Parse special characters with String replacement
+	 */
+	public static String replaceSpecials(String replacement) {
+
+		return replacement.replace("$", "\\$").replace("[", "\\[").replace("]", "\\]").replace("%", "\\%").replace("'", "\\'").replace("|", "\\|").replace("\"", "\\\"");
 	}
 }
