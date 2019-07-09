@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
@@ -983,6 +984,6 @@ public class StringUtilities {
 	 */
 	public static String replaceSpecials(String replacement) {
 
-		return replacement.replace("$", "\\$").replace("[", "\\[").replace("]", "\\]").replace("%", "\\%").replace("'", "\\'").replace("|", "\\|").replace("\"", "\\\"");
+		return Matcher.quoteReplacement(replacement);
 	}
 }
