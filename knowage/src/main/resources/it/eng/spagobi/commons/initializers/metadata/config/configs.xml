@@ -542,5 +542,12 @@
         isActive="true" valueCheck="true" valueType="STRING"
         category="GENERIC_CONFIGURATION" />
 
+	<CONFIG label="internal.security.login.checkForMaxFailedLoginAttempts" name="Max failed login attempts filter"
+		description="Enable filter for max value of failed login attempts" isActive="true"
+		valueCheck="true" valueType="STRING" category="SECURITY" />
+	<CONFIG label="internal.security.login.maxFailedLoginAttempts" name="Max failed login attempts"
+		description="Specify max value of failed login attempts before account locking" isActive="true"
+		valueCheck="3" valueType="NUM" category="SECURITY" />
+
 </CONFIGS>
 
