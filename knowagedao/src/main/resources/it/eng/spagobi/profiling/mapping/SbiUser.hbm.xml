@@ -68,6 +68,9 @@
         <property name="dtLastAccess" type="timestamp">
             <column name="DT_LAST_ACCESS" length="19" />
         </property>
+        <property name="failedLoginAttempts" type="int">
+            <column name="FAILED_LOGIN_ATTEMPTS" />
+        </property>
         <property name="isSuperadmin" type="java.lang.Boolean">
             <column name="IS_SUPERADMIN" />
         </property>
