@@ -425,10 +425,10 @@
 								paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 							} else {
 								if(paramDialogCtrl.tempParameter.selectionType == 'LOOKUP'){
-									parameterValueArray.push(paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
+									parameterValueArray.push(paramDialogCtrl.selectedTableItems[0][paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
 									paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 									paramDialogCtrl.tempParameter.parameterDescription = {};
-									paramDialogCtrl.tempParameter.parameterDescription[0][paramDialogCtrl.tempParameter.parameterValue] =paramDialogCtrl.selectedTableItems[0][paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
+									paramDialogCtrl.tempParameter.parameterDescription[paramDialogCtrl.tempParameter.parameterValue[0]] =paramDialogCtrl.selectedTableItems[0][paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
 								}else{
 									paramDialogCtrl.tempParameter.parameterDescription = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
 									paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()];
