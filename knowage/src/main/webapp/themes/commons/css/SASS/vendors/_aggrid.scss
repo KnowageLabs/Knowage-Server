@@ -37,7 +37,7 @@ $aggrid-border-color: #d9dcde;
 			outline: none;
 		}
 	}
-	&.ag-theme-knowage {
+	&.ag-theme-knowage:not(.ag-theme-knowage-default) {
 		&.ag-theme-knowage-secondary {
 			.ag-header {
 			    background-color: $secondaryColor;
@@ -83,7 +83,7 @@ $aggrid-border-color: #d9dcde;
 		    }
 		}
 		.ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-			width: calc(100% - 32px);
+			width: calc(100% - 36px);
 		}
 		.ag-row-odd, .ag-row-even {
 			background-color: transparent;
