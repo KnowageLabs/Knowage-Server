@@ -255,6 +255,9 @@ public class UserResource extends AbstractSpagoBIResource {
         sbiUser.setUserId(user.getUserId());
         sbiUser.setFullName(user.getFullName());
         sbiUser.setPassword(user.getPassword());
+        
+        // This reset the account lock enabled in case of too much failed login attempts 
+        sbiUser.setFailedLoginAttempts(0);
 
         List<Integer> list = user.getSbiExtUserRoleses();
         Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
