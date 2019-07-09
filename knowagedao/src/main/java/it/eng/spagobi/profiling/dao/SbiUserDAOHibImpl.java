@@ -33,7 +33,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
@@ -839,5 +842,114 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			}
 		}
 
+	}
+
+	/**
+	 * Get value of failed login attemtpts counter from DB.
+	 *  
+	 * @author Marco Libanori
+	 */
+	@Override
+	public int getFailedLoginAttempts(String userId) {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			ProjectionList projList = Projections.projectionList()
+					.add(Projections.property("failedLoginAttempts"), "failedLoginAttempts");
+			
+			SimpleExpression eq = Restrictions.eq("userId", userId);
+			
+			Integer result = (Integer) aSession.createCriteria(SbiUser.class)
+					.add(eq)
+					.setProjection(projList)
+					.uniqueResult();
+
+			tx.commit();
+			
+			return result;
+		} catch (HibernateException he) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	/**
+	 * Increment failed login attemtpts counter.
+	 * 
+	 * @author Marco Libanori
+	 */
+	@Override
+	public void incrementFailedLoginAttempts(String userId) {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = us.failedLoginAttempts + 1 WHERE us.userId = :userId")
+				.setParameter("userId", userId)
+				.executeUpdate();
+			
+			tx.commit();
+
+		} catch (HibernateException he) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	/**
+	 * Reset failed login attemtpts counter.
+	 * 
+	 * @author Marco Libanori
+	 */
+	@Override
+	public void resetFailedLoginAttempts(String userId) {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId")
+				.setParameter("userId", userId)
+				.executeUpdate();
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
 	}
 }
