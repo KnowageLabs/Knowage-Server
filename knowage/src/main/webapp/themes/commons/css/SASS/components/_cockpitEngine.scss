@@ -89,8 +89,10 @@
     	}
     }
     
-        .cockpit-map-widget {
+        cockpit-map-widget {
     	overflow: hidden;
+    	height: 100%;
+    	width: 100%;
 		.ol-popup {
 		    position: absolute;
 		    background-color: white;

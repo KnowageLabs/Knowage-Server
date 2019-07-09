@@ -293,10 +293,9 @@
 				var evalText = "";
 				var thr = config[c];
 				var idx = 0;
+				value= Number(value); //force conversion to number type
 				for (t in thr){
-//					if (typeof(value) == 'number' && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
-//					if (value != '' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
-					if (typeof(value) == 'number' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
+					if (!isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
 						if (evalText != "") evalText += " && ";
 						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
 						if (thr['operator'+idx] == '==' && eval(evalText)) {

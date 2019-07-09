@@ -77,7 +77,7 @@ public class CrossTabHTMLSerializer {
 	private final Integer myGlobalId;
 	private final Map<Integer, NodeComparator> columnsSortKeysMap;
 	private final Map<Integer, NodeComparator> rowsSortKeysMap;
-	private static Map<Integer, NodeComparator> measuresSortKeysMap;
+	private final Map<Integer, NodeComparator> measuresSortKeysMap;
 
 
 
