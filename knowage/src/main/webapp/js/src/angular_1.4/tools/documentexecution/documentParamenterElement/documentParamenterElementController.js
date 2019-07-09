@@ -406,10 +406,11 @@
 						// Lov parameters NON tree
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
 							var parameterValueArray = [];
+							if(paramDialogCtrl.lookoutGridOptions.api.getSelectedRows()) paramDialogCtrl.selectedTableItems = paramDialogCtrl.lookoutGridOptions.api.getSelectedRows();
 							if(paramDialogCtrl.tempParameter.multivalue) {
 
 								var parameterValueArrayToShow = [];
-
+								
 								for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
 									var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
 
@@ -427,10 +428,10 @@
 								paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 							} else {
 								if(paramDialogCtrl.tempParameter.selectionType == 'LOOKUP'){
-									parameterValueArray.push(paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
+									parameterValueArray.push(paramDialogCtrl.selectedTableItems[0][paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
 									paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 									paramDialogCtrl.tempParameter.parameterDescription = {};
-									paramDialogCtrl.tempParameter.parameterDescription[paramDialogCtrl.tempParameter.parameterValue] =paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
+									paramDialogCtrl.tempParameter.parameterDescription[paramDialogCtrl.tempParameter.parameterValue[0]] =paramDialogCtrl.selectedTableItems[0][paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
 								}else{
 									paramDialogCtrl.tempParameter.parameterDescription = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
 									paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()];
@@ -519,6 +520,36 @@
 						objPost.PARAMETER_ID = paramDialogCtrl.tempParameter.urlName;
 						objPost.MODE = 'extra';
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
+						
+						paramDialogCtrl.columns = [{"headerName":"Label","field":"label",headerCheckboxSelection: paramDialogCtrl.tempParameter.multivalue, checkboxSelection: paramDialogCtrl.tempParameter.multivalue},
+							{"headerName":"Description","field":"description"}];
+						
+						paramDialogCtrl.lookoutGridOptions = {
+				            enableColResize: false,
+				            enableFilter: false,
+				            enableSorting: true,
+				            pagination: true,
+				            paginationAutoPageSize: true,
+				            onGridSizeChanged: resizeColumns,
+				            rowSelection: paramDialogCtrl.tempParameter.multivalue ? 'multiple' : 'single',
+				            rowMultiSelectWithClick: paramDialogCtrl.tempParameter.multivalue,
+				            defaultColDef: {
+				            	suppressMovable: true,
+				            	tooltip: function (params) {
+				                    return params.value;
+				                },
+				            },
+				            columnDefs: paramDialogCtrl.columns
+						}
+						
+						paramDialogCtrl.filterDataset = function(){
+							var tempParametersList = $filter('filter')(paramDialogCtrl.tableData,paramDialogCtrl.paramSearchText);
+							paramDialogCtrl.lookoutGridOptions.api.setRowData(tempParametersList);
+						}
+						
+						function resizeColumns(){
+							paramDialogCtrl.lookoutGridOptions.api.sizeColumnsToFit();
+						}
 
 						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
 											  .success(function(data, status, headers, config) {
@@ -527,6 +558,12 @@
 													}
 													else if(data.status=="OK"){
 														paramDialogCtrl.tableData = data.result.root;
+														paramDialogCtrl.lookoutGridOptions.api.setRowData(data.result.root);
+														if(parameter.parameterValue && parameter.parameterValue.length>0){
+															paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
+																if(parameter.parameterValue.indexOf(rowNode.data.value) > -1 ) rowNode.setSelected(true);
+															});
+														}
 														paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 													}
 								});

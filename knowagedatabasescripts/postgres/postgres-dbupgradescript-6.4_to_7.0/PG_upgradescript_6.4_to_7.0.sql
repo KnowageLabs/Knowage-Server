@@ -268,6 +268,8 @@ CREATE TABLE SBI_DATA_SET_TAG (
 ) WITHOUT OIDS;
 -- Dataset Tags Functionality END
 
+ALTER TABLE SBI_KPI_THRESHOLD_VALUE RENAME POSITION TO POSITION_NUMBER;
+
 -- Column to count failed login attempts to lock the account and prevent brute force in login page
 ALTER TABLE SBI_USER
 	ADD COLUMN FAILED_LOGIN_ATTEMPTS INT DEFAULT 0 NOT NULL AFTER DT_LAST_ACCESS;

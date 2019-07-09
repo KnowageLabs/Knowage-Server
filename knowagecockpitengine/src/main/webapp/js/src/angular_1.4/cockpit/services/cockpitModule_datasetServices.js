@@ -1090,7 +1090,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 					
 					function tagsRenderer(params){
-						debugger;
 						if(params.value && params.value.length > 0) {
 							var cell = '';
 							for(var i in params.value){

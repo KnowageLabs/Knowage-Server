@@ -17,6 +17,7 @@
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
@@ -67,11 +71,18 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600;";
 	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
+	private Map<String, String> customStylesMap = new  HashMap<String, String>();
+
 	private Locale locale = null;
 	private final Integer myGlobalId;
 	private final Map<Integer, NodeComparator> columnsSortKeysMap;
 	private final Map<Integer, NodeComparator> rowsSortKeysMap;
-	private final Map<Integer, NodeComparator> measuresSortKeysMap;
+	private static Map<Integer, NodeComparator> measuresSortKeysMap;
+
+
+
+	Monitor serializeTimeMonitor = null;
+	Monitor errorHitsMonitor = null;
 
 	private static Logger logger = Logger.getLogger(CrossTabHTMLSerializer.class);
 
@@ -110,17 +121,55 @@ public class CrossTabHTMLSerializer {
 	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean toReturn = new SourceBean(COLUMN_DIV);
 
-		SourceBean emptyTopLeftCorner = this.serializeTopLeftCorner(crossTab);
-		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
-		SourceBean topLeftCorner = this.mergeVertically(emptyTopLeftCorner, rowsHeaders);
-		SourceBean columnsHeaders = this.serializeColumnsHeaders(crossTab);
-		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders, crossTab);
-		SourceBean rowsMember = this.serializeRowsMembers(crossTab);
-		SourceBean data = this.serializeData(crossTab);
-		SourceBean body = this.mergeHorizontally(rowsMember, data, crossTab);
+		Monitor htmlserializeTopLeftCornerMonitor = null;
+		Monitor htmlserializeRowsHeaderssMonitor = null;
+		Monitor htmlmergeVerticallyTopLeftMonitor = null;
+		Monitor htmlserializeColumnsHeadersMonitor = null;
+		Monitor htmlmergeHorizontallyHeadMonitor = null;
+		Monitor htmlserializeRowsMembersMonitor = null;
+		Monitor htmlserializeDataMonitor = null;
+		Monitor htmlmergeHorizontallyBodyMonitor = null;
+		Monitor htmlmergeVerticallyFinalCTMonitor = null;
 
+		htmlserializeTopLeftCornerMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeTopLeftCornerMonitor");
+		SourceBean emptyTopLeftCorner = this.serializeTopLeftCorner(crossTab);
+		htmlserializeTopLeftCornerMonitor.stop();
+
+		htmlserializeRowsHeaderssMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeRowsHeaderssMonitor");
+		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
+		htmlserializeRowsHeaderssMonitor.stop();
+
+		htmlmergeVerticallyTopLeftMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeVerticallyTopLeftMonitor");
+		SourceBean topLeftCorner = this.mergeVertically(emptyTopLeftCorner, rowsHeaders);
+		htmlmergeVerticallyTopLeftMonitor.stop();
+
+		htmlserializeColumnsHeadersMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeColumnsHeadersMonitor");
+		SourceBean columnsHeaders = this.serializeColumnsHeaders(crossTab);
+		htmlserializeColumnsHeadersMonitor.stop();
+
+		htmlmergeHorizontallyHeadMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeHorizontallyHeadMonitor");
+		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders, crossTab);
+		htmlmergeHorizontallyHeadMonitor.stop();
+
+		htmlserializeRowsMembersMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeRowsMembersMonitor");
+		SourceBean rowsMember = this.serializeRowsMembers(crossTab);
+		htmlserializeRowsMembersMonitor.stop();
+
+		htmlserializeDataMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlserializeDataMonitor");
+		SourceBean data = this.serializeData(crossTab);
+		htmlserializeDataMonitor.stop();
+
+		htmlmergeHorizontallyBodyMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeHorizontallyBodyMonitor");
+		SourceBean body = this.mergeHorizontally(rowsMember, data, crossTab);
+		htmlmergeHorizontallyBodyMonitor.stop();
+
+
+		htmlmergeVerticallyFinalCTMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeVerticallyFinalCTMonitor");
 		SourceBean crossTabSB = this.mergeVertically(head, body);
+		htmlmergeVerticallyFinalCTMonitor.stop();
+
 		toReturn.setAttribute(crossTabSB);
+
 		return crossTabSB;
 	}
 
@@ -192,7 +241,13 @@ public class CrossTabHTMLSerializer {
 					Row row = rowsDef.get(i);
 
 					JSONObject rowConfig = row.getConfig();
-					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
+					style = customStylesMap.get(rowConfig.get("id"));
+					if (style == null || style.equals("")) {
+						//loading and caching style
+						style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
+						customStylesMap.put(rowConfig.getString("id"), style);
+					}
+
 					if (!style.equals(DEFAULT_STYLE) && !style.equals(DEFAULT_HEADER_STYLE)) {
 						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
@@ -283,7 +338,14 @@ public class CrossTabHTMLSerializer {
 								JSONObject columnConfig = col.getConfig();
 								if (isLevel && !columnConfig.isNull("showHeader"))
 									showHeader = columnConfig.getBoolean("showHeader");
-								style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
+
+								style = customStylesMap.get(columnConfig.get("id"));
+								if (style == null || style.equals("")) {
+									//loading and caching style
+									style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
+									customStylesMap.put(columnConfig.getString("id"), style);
+								}
+
 								if (style.equals(DEFAULT_STYLE))
 									style = ""; // clean from default ... just for the categories headers
 								else {
@@ -481,6 +543,13 @@ public class CrossTabHTMLSerializer {
 		List<String> columnsSpecification = crossTab.getColumnsSpecification();
 		boolean isDataNoStandardStyle = false;
 
+		Monitor internalserializeData1 = null;
+		Monitor internalserializeData2 = null;
+		Monitor internalserializeData3 = null;
+		Monitor internalserializeData4 = null;
+		Monitor internalserializeData5 = null;
+
+		internalserializeData1 = MonitorFactory.start("CockpitEngine.serializeData.columnsSpecificationForSelect");
 		if (columnsSpecification.size() > 0) {
 			// defines columns specification with totals and subtotals if required (for action #7 selection function setting)
 			if (crossTab.isMeasureOnRow()) {
@@ -515,6 +584,8 @@ public class CrossTabHTMLSerializer {
 				}
 			}
 		}
+		internalserializeData1.stop();
+
 
 		if (crossTab.isMeasureOnRow()) {
 			// adds the measure label
@@ -568,6 +639,7 @@ public class CrossTabHTMLSerializer {
 				String classType = "";
 				JSONObject measureConfig = new JSONObject();
 				try {
+					internalserializeData2 = MonitorFactory.start("CockpitEngine.serializeData.getMeasureConfigAndThreshold");
 					// 1. Get specific measure configuration (format, bgcolor, icon visualization,..)
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
@@ -594,13 +666,32 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 					}
+					internalserializeData2.stop();
 
 					classType = cellType.getValue();
 					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+
+					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
 					// 2. style and alignment management
 					if (cellType.getValue().equalsIgnoreCase("data")) {
-						String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
-						if (!dataStyle.equals(DEFAULT_STYLE)) {
+						String dataStyle =  customStylesMap.get(measureConfig.get("id"));
+						if (dataStyle == null || dataStyle.equals("")) {
+							dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
+							//load and caching data style
+							customStylesMap.put((String)measureConfig.get("id"), dataStyle);
+						}
+						JSONObject colorThrJ = null;
+						if (value != null && cellTypeValue.equalsIgnoreCase("data") && !measureConfig.isNull("colorThresholdOptions")) {
+							// background management through threshold (optional)
+							double dValue = value.doubleValue();
+							colorThrJ = measureConfig.getJSONObject("colorThresholdOptions");
+							String bgThrColor = getThresholdColor(dValue, colorThrJ);
+							if (bgThrColor != null && !bgThrColor.equals("")) {
+								dataStyle += "background-color:" + bgThrColor + ";";
+								//bgColorApplied = true;
+							}
+						}
+						if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
@@ -609,6 +700,8 @@ public class CrossTabHTMLSerializer {
 							isDataNoStandardStyle = false;
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 						}
+
+
 					} else {
 						String totalStyle = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
 						totalStyle +=  getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "padding");
@@ -621,8 +714,10 @@ public class CrossTabHTMLSerializer {
 						aRow.setAttribute(aColumn);
 						continue;
 					}
+					internalserializeData3.stop();
 
 					// 3. define value (number) and its final visualization
+					internalserializeData4 = MonitorFactory.start("CockpitEngine.serializeData.formatNumberAndPS");
 					String actualText = "";
 					if (visType.indexOf("Text") >= 0) {
 						String patternFormat = null;
@@ -665,7 +760,7 @@ public class CrossTabHTMLSerializer {
 							actualText += suffix;
 						}
 					}
-
+					internalserializeData4.stop();
 					// add icon html if required
 					if (showIcon && iconSB != null) {
 						actualText += " ";
@@ -677,7 +772,7 @@ public class CrossTabHTMLSerializer {
 					aColumn.setAttribute(TITLE_ATTRIBUTE, actualText);
 
 					// 7. set selection function with the parent references (on row and column)
-
+					internalserializeData5 = MonitorFactory.start("CockpitEngine.serializeData.defineClickFunction");
 					if (cellTypeValue.equalsIgnoreCase("data")) {
 						String rowCord = "";
 						String rowHeaders = "";
@@ -726,6 +821,7 @@ public class CrossTabHTMLSerializer {
 
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "')");
+						internalserializeData5.stop();
 					}
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
@@ -811,7 +907,13 @@ public class CrossTabHTMLSerializer {
 	private String getConfiguratedElementStyle(Double value, CellType cellType, JSONObject config, CrossTab crossTab, String prop) throws JSONException {
 		String toReturn = "";
 		String dataStyle = "";
-		dataStyle = getConfiguratedElementStyle(value, cellType, config, crossTab);
+
+		//searching style within style map, if it's not found gets it directly from configuration object
+		dataStyle = customStylesMap.get(config.get("id"));
+		if (dataStyle == null || dataStyle.equals("")) {
+			dataStyle = getConfiguratedElementStyle(value, cellType, config, crossTab);
+			customStylesMap.put(config.getString("id"), dataStyle);
+		}
 
 		if (dataStyle.equals(""))
 			return toReturn;
@@ -834,16 +936,17 @@ public class CrossTabHTMLSerializer {
 		String dataStyle = "";
 		String cellTypeValue = (cellType == null) ? "" : cellType.getValue();
 
-		if (value != null && cellTypeValue.equalsIgnoreCase("data") && !config.isNull("colorThresholdOptions")) {
-			// background management through threshold (optional)
-			double dValue = value.doubleValue();
-			colorThrJ = config.getJSONObject("colorThresholdOptions");
-			String bgThrColor = getThresholdColor(dValue, colorThrJ);
-			if (bgThrColor != null && !bgThrColor.equals("")) {
-				dataStyle += "background-color:" + bgThrColor + ";";
-				bgColorApplied = true;
-			}
-		}
+//
+//		if (value != null && cellTypeValue.equalsIgnoreCase("data") && !config.isNull("colorThresholdOptions")) {
+//			// background management through threshold (optional)
+//			double dValue = value.doubleValue();
+//			colorThrJ = config.getJSONObject("colorThresholdOptions");
+//			String bgThrColor = getThresholdColor(dValue, colorThrJ);
+//			if (bgThrColor != null && !bgThrColor.equals("")) {
+//				dataStyle += "background-color:" + bgThrColor + ";";
+//				bgColorApplied = true;
+//			}
+//		}
 		// cellType is null for rows and columns header
 		if (cellTypeValue.equals("") || !config.isNull("style")) {
 			JSONObject styleJ = (config.isNull("style")) ? new JSONObject() : config.getJSONObject("style");
