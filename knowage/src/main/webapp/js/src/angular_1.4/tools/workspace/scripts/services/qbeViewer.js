@@ -68,9 +68,8 @@ angular
 			}else{
 
 				$scope.editQbeDset = editDSet;
-				if( $scope.selectedDataSet && !isDerived){
-					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
-				}
+
+
 
 				$mdDialog
 					.show
@@ -278,27 +277,21 @@ angular
 			var onClosing = function(){
 				console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
 				$scope.selectedDataSet = {};
-
+				comunicator.removeMessageHandler(messagingHandler);
 				$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
 
 				$mdDialog.hide();
 			}
 
 			$scope.closeDocument = function(confirm) {
-
-
-
 				if($scope.isFromDataSetCatalogue) {
 					$mdDialog.hide();
 					comunicator.sendMessage("close");
 				}else if(confirm){
 					openConfirmationPanel(onClosing);
-
 				} else {
-						onClosing();
-
+					onClosing();
 				}
-				comunicator.removeMessageHandler(messagingHandler);
 			}
 
 			$scope.isExecuteParameterDisabled = function() {

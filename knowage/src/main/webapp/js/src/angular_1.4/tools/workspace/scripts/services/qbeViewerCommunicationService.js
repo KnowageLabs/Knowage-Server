@@ -15,10 +15,14 @@ angular
 				saveHandler.handleMessage = function(message){
 					if(isFromDatasetCatalog(message)) {
 						datasetCatalogUpdateProces(message,dataset,parameters)
+						if(message.message=="close") comunicator.removeMessageHandler(this);
 					}else if(isFromWorkspace(message)){
 						workspaceDSUpdateProces(message, dataset, openPanelForSavingQbeDataset);
+					} else if(message == "qbeJSONQuery"){
+						comunicator.sendMessage({qbeJSONQuery:dataset.qbeJSONQuery})
 					}
 				}
+
 				return saveHandler;
 			};
 			crudHandler.registerHandler = function(handler){

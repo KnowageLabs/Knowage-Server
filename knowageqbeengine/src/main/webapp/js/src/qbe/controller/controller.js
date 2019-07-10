@@ -66,7 +66,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.queryEntitiesService = queryEntitiesService;
 	var comunicator = windowCommunicationService;
 	$scope.show = true;
-
+	$scope.fromDataset = false;
 	var consoleHandler = {}
 	consoleHandler.handleMessage = function(message){
 		if(message === 'close'){
@@ -83,6 +83,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			saveObj.meta = $scope.meta;
 			saveObj.pars = $scope.pars;
 			comunicator.sendMessage(saveObj);
+		}
+		if(message.qbeJSONQuery){
+	    	var qbeJsonObj = angular.fromJson(message.qbeJSONQuery)
+	    	$scope.fromDataset = true
+	    	$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
 		}
 
 		console.log(message)
@@ -112,7 +117,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			}
 			$scope.meta.push(meta);
 		}
-		if(parent.globalQbeJson){
+		if($scope.fromDataset){
 			$scope.bodySend.catalogue = [];
 			$scope.bodySend.catalogue.push($scope.editQueryObj);
 		}
@@ -830,11 +835,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     $scope.stopEditingSubqueries = function(){
     	$scope.editQueryObj = $scope.query;
     }
-
-    if(parent.globalQbeJson){
-    	var qbeJsonObj = angular.fromJson(parent.globalQbeJson)
-    	$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
-    }
+    comunicator.sendMessage("qbeJSONQuery");
 
     $scope.relationsListColumns = [
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.relation.name"), "name": "relationName"},
