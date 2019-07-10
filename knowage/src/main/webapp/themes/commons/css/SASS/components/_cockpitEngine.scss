@@ -1354,9 +1354,64 @@
 		}        
 
         .gridster-item{
-        	&.fixedLeft {
-        		.showActionButtonHandler, .viewModeMenu {
-        			left: 0 !important;
+        	&.hideUserMenu {
+        		.viewModeMenu {
+        			display: none !important;
+        		}
+        	}
+        	.viewModeMenu, .editModeMenu {
+				transition: all .3s ease;
+				position: absolute;
+				top: 0;
+				right:-40px;
+				width: 40px;
+				z-index: 20;
+
+				&:hover {
+					background-color: rgba(white,1) !important;
+				}
+				.floatingFilter {
+					opacity: 1 !important;
+					md-icon {
+						top: 8px;
+						right: 0;
+					}
+					.ban{
+						display:none;
+						color: red;
+					}
+					&:hover {
+						.ban {
+							display: block;
+						}
+					}
+				}
+				.md-button, a {
+					transition: opacity .3s ease;
+					margin: 0;
+					opacity: 0;
+				}
+			}
+			&:hover {
+				&:not(.hideUserMenu){
+					box-shadow: 0px 1px 3px #ccc;
+				}
+				.editModeMenu {	
+					background-color: rgba(white,1);
+            		.md-button, a {
+            			opacity: 1 !important;
+            		}
+            	}
+				.viewModeMenu {	
+					background-color: rgba(white,.6);
+            		.md-button, a {
+            			opacity: 1 !important;
+            		}
+            	}
+			}
+        	&.fixedLeft, &.leftPosition {
+        		.showActionButtonHandler, .viewModeMenu, .editModeMenu {
+        			left: -40px;
         		}
         	}
 			 md-card.md-knowage-theme md-card-title {
@@ -1376,6 +1431,11 @@
 			}
 			&.expandedWidget {
 				background-color: $lightTextColor;
+				.showActionButtonHandler, .viewModeMenu, .editModeMenu {
+        			right: 8px !important;
+        			top: 8px !important;
+        			left: unset;
+        		}
 			}
 			.showActionButtonHandler{
 			    position: absolute;
@@ -1428,6 +1488,8 @@
     /* CUSTOM CARDS */
 
 
+
+
     md-card.md-knowage-theme {
         md-card-title {
             padding:$standardPadding;
@@ -1452,42 +1514,6 @@
            	 	position: relative;
            	 	z-index: 9999;
            	 }
-            }
-            .viewModeMenu {
-            	transition: background-color .3s ease;
-            	position: absolute;
-            	top: 0;
-				right:0;
-            	width: 40px;
-            	z-index: 20;
-            	.floatingFilter {
-            		opacity: 1 !important;
-            		md-icon {
-            			top: 8px;
-            			right: 0;
-            		}
-            		.ban{
-            			display:none;
-            			color: red;
-            		}
-            		&:hover {
-            			.ban {
-            				display: block;
-            			}
-            		}
-            	}
-            	.md-button, a {
-            		margin: 0;
-            		opacity: 0;
-            	}
-            }
-            &:hover {
-            	.viewModeMenu {	
-					background-color: rgba(white,.6);
-            		.md-button, a {
-            			opacity: 1 !important;
-            		}
-            	}
             }
             .compressWidget {
             	position: absolute;
