@@ -65,7 +65,7 @@ angular.module("cockpitModule").factory("accessibility_preferences",function(){
 	}
 });
 
-angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate,cockpitModule_properties){
+angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate,cockpitModule_properties,cockpitModule_defaultTheme){
 	var template = <%=  template%>
 	
 	if(template.sheets==undefined){
@@ -82,7 +82,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 		template.configuration.showSelectionButton=true;
 	}
 	if(template.configuration.style==undefined){
-		template.configuration.style={titles : true};
+		template.configuration.style=cockpitModule_defaultTheme.cockpit.style;
 	}
 	
 	if(template.configuration.datasets==undefined){

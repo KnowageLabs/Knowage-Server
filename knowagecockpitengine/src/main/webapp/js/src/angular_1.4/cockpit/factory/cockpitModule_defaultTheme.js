@@ -18,6 +18,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sbiModule_config,sbiModule_translate){
 	return{
+		cockpit: {
+			"style": {
+			    "titles": false,
+			    "title": {
+			      "font": {
+			        "color": "rgb(59, 103, 140)",
+			        "text-align": "center",
+			        "font-weight": "bold",
+			        "font-size": "16px"
+			      }
+			    },
+			    "borders": true,
+			    "border": {
+			      "border-color": "rgb(212, 212, 212)",
+			      "border-width": "1px",
+			      "border-style": "solid"
+			    },
+			    "shadows": true,
+			    "shadow": {
+			      "box-shadow": "0px 2px 3px #ccc"
+			    }
+			  }
+		},
 		table:{
 			"settings": {
 				"pagination" : {
