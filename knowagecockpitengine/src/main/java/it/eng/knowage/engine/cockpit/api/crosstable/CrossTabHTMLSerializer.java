@@ -495,7 +495,7 @@ public class CrossTabHTMLSerializer {
 			Measure mis = measures.get(m);
 			if (text == null || mis.getAlias().equals(text)) {
 				JSONObject measureConfig = mis.getConfig();
-				String width = getConfiguratedElementStyle(null, null, measureConfig, crossTab, "width");
+				String width = getConfiguratedElementStyle(null, CellType.DATA, measureConfig, crossTab, "width");
 				if (!width.equals("")) {
 					if (width.indexOf("%") >= 0)
 						width = ""; // set width only with pixel values (for div)
@@ -698,8 +698,8 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 //						String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
-//						if (!dataStyle.equals(DEFAULT_STYLE)) {
-						if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
+						if (!dataStyle.equals(DEFAULT_STYLE)) {
+//						if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
