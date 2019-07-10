@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sbiModule_config,sbiModule_translate){
+	var alternatedBackgroundColor = '#E4E8EC';
 	return{
 		cockpit: {
 			"style": {
@@ -50,7 +51,7 @@ angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sb
 				},
 				"alternateRows": {
 				      "enabled": true,
-				      "evenRowsColor": "#E4E8EC"
+				      "evenRowsColor": alternatedBackgroundColor
 				    },
 				"page":1
 			},
@@ -75,6 +76,19 @@ angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sb
 			        "unlinked": true
 			      }
 			}
-		} 
+		},
+		pivotTable:{
+			"style": {
+			    "showAlternateRows": true,
+			    "measuresRow": {
+			      "odd-background-color": alternatedBackgroundColor,
+			      "even-background-color": "",
+			      "border-color": "rgb(137, 158, 175)",
+			      "border-width": "0.1em",
+			      "border-style": "solid"
+			    },
+			    "showGrid": true
+			  }
+		}
 	}
 });

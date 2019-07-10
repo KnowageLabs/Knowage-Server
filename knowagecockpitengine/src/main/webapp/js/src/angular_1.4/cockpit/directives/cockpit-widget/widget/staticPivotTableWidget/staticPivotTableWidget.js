@@ -80,7 +80,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		sbiModule_device,
 		sbiModule_i18n,
 		$timeout,
-		cockpitModule_properties){
+		cockpitModule_properties,
+		cockpitModule_defaultTheme){
 
 
 
@@ -581,6 +582,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
 				}
 			}
+		}else {
+			$scope.ngModel.content.style = cockpitModule_defaultTheme.pivotTable.style;
 		}
 
 	};
