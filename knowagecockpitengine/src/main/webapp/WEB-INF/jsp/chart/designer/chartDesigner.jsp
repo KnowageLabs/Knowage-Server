@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar>
 		
-		<md-tabs md-selected="selectedTab" flex> 
+		<md-tabs flex> 
 			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.chart");}}'><chart-tab></chart-tab> </md-tab> 
 			<md-tab>
 				<md-tab-label>
