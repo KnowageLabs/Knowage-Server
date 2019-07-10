@@ -487,7 +487,7 @@ public class CrossTabHTMLSerializer {
 			Measure mis = measures.get(m);
 			if (text == null || mis.getAlias().equals(text)) {
 				JSONObject measureConfig = mis.getConfig();
-				String width = getConfiguratedElementStyle(null, null, measureConfig, crossTab, "width");
+				String width = getConfiguratedElementStyle(null,  CellType.DATA, measureConfig, crossTab, "width");
 				if (!width.equals("")) {
 					if (width.indexOf("%") >= 0)
 						width = ""; // set width only with pixel values (for div)
