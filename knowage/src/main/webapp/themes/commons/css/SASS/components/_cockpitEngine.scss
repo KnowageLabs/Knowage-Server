@@ -1360,10 +1360,10 @@
         		}
         	}
         	.viewModeMenu, .editModeMenu {
-				transition: all .3s ease;
+				transition: background-color .3s ease;
 				position: absolute;
 				top: 0;
-				right:-40px;
+				right:-39px;
 				width: 40px;
 				z-index: 20;
 
@@ -1408,10 +1408,28 @@
             			opacity: 1 !important;
             		}
             	}
+            	.editModeMenu, .viewModeMenu {
+            		border: {
+						top: 1px solid #ccc;
+						left: unset;
+						right: 1px solid #ccc;
+						bottom: 1px solid #ccc;
+					};
+            	}
+            	&.leftPosition {
+            		.editModeMenu, .viewModeMenu {
+            			border: {
+							top: 1px solid #ccc;
+							right: unset;
+							left: 1px solid #ccc;
+							bottom: 1px solid #ccc;
+						};
+            		}
+            	}
 			}
         	&.fixedLeft, &.leftPosition {
         		.showActionButtonHandler, .viewModeMenu, .editModeMenu {
-        			left: -40px;
+        			left: -39px;
         		}
         	}
 			 md-card.md-knowage-theme md-card-title {
