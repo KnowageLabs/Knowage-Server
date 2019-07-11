@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
@@ -716,7 +717,7 @@ public class StringUtilities {
 		}
 
 		attribute = quote(attribute);
-		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replacement);
+		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replaceSpecials(replacement));
 
 		// statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
 		/*
@@ -973,7 +974,16 @@ public class StringUtilities {
 			int prefixLength = prefix.length();
 			return values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
 		} else {
-			return new String[] { values };
+			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
 		}
+	}
+
+
+	/**
+	 * Parse special characters with String replacement
+	 */
+	public static String replaceSpecials(String replacement) {
+
+		return Matcher.quoteReplacement(replacement);
 	}
 }

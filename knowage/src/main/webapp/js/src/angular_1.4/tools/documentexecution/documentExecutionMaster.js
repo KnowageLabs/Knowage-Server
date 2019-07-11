@@ -29,7 +29,7 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 	}
 
 })
-.controller('docExMasterController',function($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_urlDeserializator,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog, sbiModule_user){
+.controller('docExMasterController',function($scope,sbiModule_translate, $timeout, sourceDocumentExecProperties, sbiModule_urlDeserializator, sbiModule_config, $crossNavigationHelper,$documentNavigationScope,$mdDialog, sbiModule_user){
 	$scope.crossNavigationHelper=$crossNavigationHelper;
 	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
@@ -91,7 +91,7 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 			.replace(/'/g,"%27")
 			.replace(/"/g,"%22")
 			.replace(/%3D/g,"=")
-			.replace(/%26/g,"&");
+			.replace(/&/g, "&");
 		}
 		if(sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET && sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET!='null'){
 			url+="&IS_FROM_DOCUMENT_WIDGET="+sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET;
