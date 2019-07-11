@@ -411,7 +411,11 @@ div.lower i  {
 									 	<span flex></span>
 									  
 									  	<div class="">
-									  	
+											
+											<md-button 	ng-if="selectedDataSet != null" ng-click="downloadUploadedFile()" class="md-raised" 
+														title="{{translate.load('sbi.workspace.dataset.wizard.file.download.tooltip')}}">
+													{{translate.load("sbi.workspace.dataset.wizard.file.download")}}
+											</md-button>
 										    <md-button 	ng-click="changeUploadedFile()" class="md-raised" 
 										    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
 					                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}

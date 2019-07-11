@@ -25,7 +25,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav","tagsHandlerService","sbiModule_urlBuilderService", datasetFunction]) /// aaddd ,"driversExecutionService"
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav","tagsHandlerService","sbiModule_urlBuilderService","$httpParamSerializer","sbiModule_download", datasetFunction]) /// aaddd ,"driversExecutionService"
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -43,7 +43,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -2859,6 +2859,49 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //		}
 
 		console.info("CHANGE FILE [OUT]");
+
+	}
+
+	$scope.downloadUploadedFile=function(){
+
+		console.info("DOWNLOAD FILE [IN]");
+
+		var params = {};
+		params.fileName = $scope.selectedDataSet.fileName;
+		params.type = $scope.selectedDataSet.fileType;
+		var requestParams = '?' + $httpParamSerializer(params);
+		var config = {"responseType": "arraybuffer"};
+		sbiModule_restServices.promiseGet('2.0/datasets', 'download/file' + requestParams, undefined, config)
+			.then(function(response){
+				var mimeType = response.headers("Content-type");
+				var paramsString = response.headers("Content-Disposition");
+				if (mimeType == 'application/octet-stream' || paramsString == null) {
+					toastr.error('', sbiModule_translate.load("sbi.workspace.dataset.download.error"), $scope.toasterConfig);
+				} else {
+					var arrayParam = paramsString.split(';');
+					var fileName = "";
+					var fileType = "";
+					var extensionFile = "";
+					for (var i = 0; i< arrayParam.length; i++){
+						var p = arrayParam[i].toLowerCase();
+						if (p.includes("filename")){
+							fileName = arrayParam[i].split("=")[1];
+						}else if (p.includes("filetype")){
+							fileType = arrayParam[i].split("=")[1];
+						}else if (p.includes("extensionfile")){
+							extensionFile = arrayParam[i].split("=")[1];
+						}
+					}
+					if (fileName && fileName.endsWith("." + extensionFile)){
+						fileName = fileName.split("." + extensionFile)[0];
+					}
+					sbiModule_download.getBlob(response.data, fileName, fileType, extensionFile);
+				}
+			}, function(response){
+				toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			});
+
+		console.info("DOWNLOAD FILE [OUT]");
 
 	}
 
