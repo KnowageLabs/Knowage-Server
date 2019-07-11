@@ -1,17 +1,14 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
-
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -146,6 +143,7 @@ public class ExcelExporter {
 			logger.warn("Could get locale information from input parameters map", e);
 			return Locale.ENGLISH;
 		}
+
 	}
 
 	private String getI18NMessage(String code) {
@@ -292,6 +290,15 @@ public class ExcelExporter {
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
+
+			datastore.put("widgetData",widget);
+			JSONObject content = widget.optJSONObject("content");
+			String widgetName = null;
+			if (content != null) {
+				widgetName = content.getString("name");
+			}
+			datastore.put("widgetName", widgetName);
+
 		} catch (Exception e) {
 			logger.error("Cannot get Datastore for widget", e);
 		}
@@ -315,7 +322,16 @@ public class ExcelExporter {
 				// Create HEADER - Column Names
 				header = sheet.createRow((short) 0); // first row
 			} else {
-				String sheetName = dataStore.getString("sheetName");
+				String sheetName = "empty";
+				if (dataStore.has("widgetName") && dataStore.getString("widgetName")!=null && !dataStore.getString("widgetName").isEmpty()) {
+					if (dataStore.has("sheetInfo")) {
+					sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+					}
+					else {
+						sheetName = widgetName;
+					}
+				}
+
 				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
 				sheet = wb.createSheet(sheetName);
 				// First row for Widget name in case exporting whole Cockpit document
@@ -325,9 +341,37 @@ public class ExcelExporter {
 				header = sheet.createRow((short) 1);
 			}
 
+			JSONObject widgetData = dataStore.getJSONObject("widgetData");
+			JSONObject widgetContent = widgetData.getJSONObject("content");
+			ArrayList<String> arrayHeader = new ArrayList<String>();
+
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+
+				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length()>0 ) {
+
+
+					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+
+						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+						arrayHeader.add(column.getString("aliasToShow"));
+
+
+
+					}
+				}
+
+			}
+
+
+
+			// Fill Header
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String columnName = column.getString("header");
+				if (widgetData.getString("type").equalsIgnoreCase("table")) {
+					columnName = arrayHeader.get(i);
+				}
+
 				Cell cell = header.createCell(i);
 				cell.setCellValue(columnName);
 			}
@@ -342,12 +386,16 @@ public class ExcelExporter {
 			// FILL RECORDS
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
-				Row row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+				Row row;
+				if (exportWidget)
+					row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+				else
+					row = sheet.createRow(r + 2);
 
 				for (int c = 0; c < columns.length(); c++) {
 					JSONObject column = columns.getJSONObject(c);
 					String type = column.getString("type");
-					String colIndex = column.getString("name"); // column_1, column_2, column_3...
+					String  colIndex = column.getString("name"); // column_1, column_2, column_3...
 
 					Cell cell = row.createCell(c);
 					Object value = rowObject.get(colIndex);
@@ -440,6 +488,7 @@ public class ExcelExporter {
 					body.put("aggregations", aggregations);
 
 					JSONObject parameters = getParametersFromWidget(widget, configuration);
+
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
@@ -471,16 +520,18 @@ public class ExcelExporter {
 						logger.debug("limit = " + limit);
 						map.put("limit", limit);
 					}
-
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
+
 					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
 					datastoreObj.put("sheetName", sheetName);
+					datastoreObj.put("widgetData",widget);
 					JSONObject content = widget.optJSONObject("content");
 					String widgetName = null;
 					if (content != null) {
 						widgetName = content.getString("name");
 					}
 					datastoreObj.put("widgetName", widgetName);
+					datastoreObj.put("sheetInfo", sheet.getString("label"));
 					excelSheets.add(datastoreObj);
 				}
 			}
@@ -523,18 +574,56 @@ public class ExcelExporter {
 
 			loadAggregationsFromCockpitSelections(paramDatasets, paramNearRealtime, cockpitSelections);
 			loadFiltersFromCockpitSelections(cockpitSelections);
-		} else {
+		}
+
+		else {
 			logger.warn("Unable to load cockpit selections");
 		}
 	}
 
 	private void loadAggregationsFromCockpitSelections(JSONObject paramDatasets, JSONArray paramNearRealtime, JSONObject cs) throws JSONException {
 		JSONArray aggregations = cs.getJSONArray("aggregations");
+		JSONArray cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
 		for (int i = 0; i < aggregations.length(); i++) {
 			JSONObject aggregation = aggregations.getJSONObject(i);
 			JSONObject selections = aggregation.getJSONObject("selection");
 			if (selections != null && selections.names() != null && selections.names().length() > 0) {
-				aggregation.remove("selection");
+				//	aggregation.remove("selection");
+
+
+				JSONObject newParameters = new JSONObject();
+
+				String objToChange = "";
+				for (int j = 0; j < cockpitSelectionsDatasetParameters.length(); j++) {
+
+					JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(j);
+
+					Iterator<String> iterator = paramDatasets.keys();
+					while (iterator.hasNext()) {
+						String obj = iterator.next();
+						String val = paramDatasets.getString(obj);
+						String key = "p_"+jsonobject.getString("urlName");
+						if (val.contains("$P{"+jsonobject.getString("urlName")+"}") || val.contains("$P{"+key+"}")) {
+							objToChange = obj;
+							if (!jsonobject.isNull("parameterValue")) {
+								Object values = jsonobject.get("parameterValue");
+								String valuesToChange = values.toString();
+								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+								valuesToChange = valuesToChange.replaceAll("\"", "\'");
+								newParameters.put(obj, valuesToChange);
+							}
+							else {
+								newParameters.put(obj, "");
+							}
+
+						}
+
+					}
+
+
+				}
+
+				paramDatasets.put(objToChange, newParameters);
 
 				JSONObject associativeSelectionsPayload = new JSONObject();
 				associativeSelectionsPayload.put("associationGroup", aggregation);
@@ -678,15 +767,18 @@ public class ExcelExporter {
 	}
 
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
+
+		JSONArray cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
+
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");
 		String datasetName = dataset.getString("name");
 		Integer datasetId = dataset.getInt("dsId");
-
+		JSONObject newParameters = new JSONObject();
 		if (actualSelectionMap.containsKey(datasetName)) {
 			JSONObject actualSelections = actualSelectionMap.get(datasetName);
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
-			JSONObject newParameters = new JSONObject();
+
 			while (actualSelectionKeys.hasNext()) {
 				String key = actualSelectionKeys.next();
 				if (key.contains("$")) {
@@ -695,8 +787,43 @@ public class ExcelExporter {
 				}
 			}
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
-			return getReplacedParameters(params, datasetId);
-		} else
+			newParameters = getReplacedParameters(params, datasetId);
+		} if (cockpitSelectionsDatasetParameters!=null && parameters.length()!=0) {
+
+			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
+
+				JSONObject jsonobject = cockpitSelectionsDatasetParameters.getJSONObject(i);
+
+				Iterator<String> iterator = parameters.keys();
+				while (iterator.hasNext()) {
+					String obj = iterator.next();
+					String val = parameters.getString(obj);
+					String key = jsonobject.getString("urlName");
+					if (val.contains("$P{"+jsonobject.getString("urlName")+"}") || val.contains("$P{"+key+"}")) {
+						if (!jsonobject.isNull("parameterValue")) {
+							Object values = jsonobject.get("parameterValue");
+							String valuesToChange = values.toString();
+							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
+							valuesToChange = valuesToChange.replaceAll("\"", "");
+							if (!(newParameters.length()!=0 && newParameters.has(key) &&newParameters.getString(key).length()!=0))
+							newParameters.put(obj, valuesToChange);
+						}
+						else {
+
+								newParameters.put(obj, "");
+
+
+						}
+					}
+
+				}
+
+
+			}
+
+			return newParameters;
+		}
+		else
 			return getReplacedParameters(parameters, datasetId);
 	}
 
@@ -784,7 +911,7 @@ public class ExcelExporter {
 		JSONObject settings = widget.optJSONObject("settings");
 		if (settings != null) {
 			JSONObject summary = settings.optJSONObject("summary");
-			if (summary.optBoolean("enabled")) {
+			if (summary!=null && summary.has("enabled") && summary.optBoolean("enabled")) {
 				JSONObject summaryRow = new JSONObject();
 
 				JSONArray measures = new JSONArray();
