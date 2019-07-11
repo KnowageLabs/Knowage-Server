@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-var myApp = angular.module('menuApp', ['ngMaterial','ngAria', 'sbiModule']);
+agGrid.initialiseAgGridWithAngular1(angular);
+var myApp = angular.module('menuApp', ['ngMaterial','ngAria', 'sbiModule', 'agGrid']);
 
 
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
@@ -282,6 +282,120 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				console.log("IN ACCESSIBILITY SETTINGS");
 				$scope.toggleMenu();
 				$scope.showAccessibilityDialog();
+			}
+			
+			$scope.downloads = function(){
+				$scope.toggleMenu();
+				var parentEl = angular.element(document.body);
+				$mdDialog.show({
+					parent: parentEl,
+					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
+					controller: downloadsDialogController
+				});
+
+				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
+	        	    scope.translate = sbiModule_translate; 
+	        	    scope.closeDialog = function(){
+	        	    	$mdDialog.cancel();
+	        	    }
+	        	    
+	        	    scope.deleteDownload = function(index){
+	        	    	scope.rowData.splice(index,1);
+	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
+	        	    }
+	        	    
+					scope.rowData = [
+						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
+						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
+						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
+						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
+						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
+//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
+//						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
+//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
+//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
+//						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
+//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
+//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
+//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
+//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"}
+					];
+					
+					
+					var columnDefs = [
+					    {headerName: 'File Name', field: 'name'},
+					    {headerName: 'Referral', field: 'ref'},
+					    {headerName: 'Start Date', field: 'startDate',width: 150,suppressSizeToFit:true},
+					    {headerName: 'Status', field: 'status', cellRenderer: statusRenderer, tooltipField:'status'},
+					    {headerName: '', field: 'download', cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
+							suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
+					];
+					function isFullWidth(data) {
+					    return data.pars ? true : false;
+					}
+					
+					function buttonRenderer(params) {
+						var download = params.data.status == 'READY' ? '<md-button class="md-icon-button" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' : '';
+						return download + '<md-button class="md-icon-button" style="margin-top:4px;" ng-click="deleteDownload('+params.rowIndex+')"><md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon></md-button>';
+					}
+					
+					function statusRenderer(params){
+						var percentage = 0;
+						if(params.value == 'STARTED') percentage = 25;
+						if(params.value == 'EXECUTED') percentage = 50;
+						if(params.value == 'PREPARING') percentage = 75;
+						if(params.value == 'READY') percentage = 100;
+						return '<md-progress-linear md-mode="determinate" style="padding-top: 20px !important" value="'+percentage+'">'
+							+'<md-tooltip md-delay="500">'+params.value+'</md-tooltip>'
+							+'</md-progress-linear>';
+					}
+					
+					function FullWidthCellRenderer() {}
+	
+					FullWidthCellRenderer.prototype.init = function(params) {
+					    // trick to convert string of html into dom object
+					    var eTemp = document.createElement('div');
+					    eTemp.innerHTML = this.getTemplate(params);
+					    this.eGui = eTemp.firstElementChild;
+					};
+	
+					FullWidthCellRenderer.prototype.getTemplate = function(params) {
+					    //var data = params.node.data;
+					    return '<div class="full-width-panel" style="padding:8px">ciao</div>';
+					};
+	
+					FullWidthCellRenderer.prototype.getGui = function() {
+					    return this.eGui;
+					};
+					scope.downloadGridOptions = {
+							angularCompileRows: true,
+							//domLayout:'autoHeight',
+						    defaultColDef: {
+						        sortable: true,
+						        filter: true
+						    },
+						    columnDefs: columnDefs,
+						    rowData: scope.rowData,
+//						    getRowHeight: function (params) {
+//						        return isFullWidth(params.data) ? 100 : 25;
+//						    },
+						    onGridReady: function (params) {
+						        params.api.sizeColumnsToFit();
+						    },
+						    onGridSizeChanged: function(params){
+						    	params.api.sizeColumnsToFit();
+						    },
+						    components: {
+						        fullWidthCellRenderer: FullWidthCellRenderer
+						    },
+						    pagination: false,
+						    isFullWidthCell: function (rowNode) {
+						        return isFullWidth(rowNode.data);
+						    },
+						    fullWidthCellRenderer: 'fullWidthCellRenderer'
+						};
+				}
+				
 			}
 
 			$scope.showAccessibilityDialog= function(){
