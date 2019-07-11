@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Knowage">
 <link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>">
