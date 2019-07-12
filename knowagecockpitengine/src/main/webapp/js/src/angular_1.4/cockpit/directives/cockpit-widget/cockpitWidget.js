@@ -255,7 +255,8 @@ function cockpitWidgetControllerFunction(
 		$sce,
 		$mdDialog,cockpitModule_backwardCompatibility,
 		cockpitModule_exportWidgetService,
-		$httpParamSerializer)
+		$httpParamSerializer,
+		cockpitModule_defaultTheme)
 
 	{
 
@@ -539,11 +540,19 @@ function cockpitWidgetControllerFunction(
 		newModel.content.wtype = widgetType;
 		return newModel;
 	}
-	var addAliasToShow = function (columnSelectedOfDataset){
+	var addAliasToShow = function (columnSelectedOfDataset,dsId){
+		if(dsId) {
+			var fieldsType = {};
+			var dataset = cockpitModule_datasetServices.getDatasetById(dsId).metadata.fieldsMeta;
+			for(var k in dataset){
+				fieldsType[dataset[k].name] = dataset[k].type;
+			}
+		}
 		for(var i in columnSelectedOfDataset){
 			var thisDs = columnSelectedOfDataset[i];
 			thisDs.alias = thisDs.name;
 			thisDs.aliasToShow = thisDs.name;
+			if(fieldsType) thisDs.type = fieldsType[thisDs.name];
 		}
 	}
 	var prepareColumnSelectedOfDataset = function (newModel){
@@ -562,9 +571,11 @@ function cockpitWidgetControllerFunction(
 		newModel.content.designer= "Chart Engine Designer";
 		cockpitModule_widgetServices.setChartTemp(newModel,$scope.target.visualization);
 	}
-	$scope.addTableFromChart = function(widgetType) {
+	$scope.addTableFromChart = function(widgetType,dsId) {
 		var newModel = createNewWidget(widgetType);
-		addAliasToShow(newModel.content.columnSelectedOfDataset);
+		addAliasToShow(newModel.content.columnSelectedOfDataset,dsId);
+		newModel.settings = cockpitModule_defaultTheme.table.settings;
+		newModel.style = cockpitModule_defaultTheme.table.style;
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
 
@@ -1314,7 +1325,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.modalQuickWidget= function(ev) {
 		if($scope.ngModel.type == 'chart'){
-			$scope.addTableFromChart("table");
+			$scope.addTableFromChart("table",$scope.ngModel.dataset.dsId);
 			return;
 		} else {
 			$mdDialog.show({
