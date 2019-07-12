@@ -40,6 +40,7 @@ function mapWidgetEditControllerFunction(
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
+	$scope.widgetSpinner = false;
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
   	}
@@ -198,7 +199,7 @@ function mapWidgetEditControllerFunction(
 		}
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
-
+		  		$scope.widgetSpinner = true;
 				$scope.availableSpatialLayers = [];
 				cockpitModule_datasetServices.loadDatasetList().then(function(response){
 					var datasetList = cockpitModule_datasetServices.getDatasetList();
@@ -208,8 +209,10 @@ function mapWidgetEditControllerFunction(
 							$scope.availableSpatialLayers.push(dataset);
 						}
 					}
+					$scope.widgetSpinner = false;
 				},function(response){
 					sbiModule_restServices.errorHandler(response.data,"");
+					$scope.widgetSpinner = false;
 				});
 
 			    //Add the layers to the newModel
@@ -255,6 +258,7 @@ function mapWidgetEditControllerFunction(
 
 				//Exit the dialog without adding
 				$scope.cancel = function(){
+					$scope.widgetSpinner = false;
 					$mdDialog.cancel();
 				}
 			},
@@ -265,6 +269,9 @@ function mapWidgetEditControllerFunction(
 	      clickOutsideToClose:true,
 	      locals: {  }
 	    })
+//	    $scope.hideWidgetSpinner();
+	    $scope.widgetSpinner = false;
+  		$scope.safeApply();
   	}
 //  	$scope.colorPickerOptions = {format:'hex'};
   	$scope.colorPickerOptions = {format:'rgb'};
@@ -307,9 +314,9 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
-  	
-  	$scope.filterIcon = function (item) { 
-  	    return item.className.startsWith('fa'); 
+
+  	$scope.filterIcon = function (item) {
+  	    return item.className.startsWith('fa');
   	};
 
   	$scope.chooseImg = function(ev, layer) {
@@ -473,4 +480,5 @@ function mapWidgetEditControllerFunction(
   		mdPanelRef.close();
   		finishEdit.reject();
   	}
+
 }

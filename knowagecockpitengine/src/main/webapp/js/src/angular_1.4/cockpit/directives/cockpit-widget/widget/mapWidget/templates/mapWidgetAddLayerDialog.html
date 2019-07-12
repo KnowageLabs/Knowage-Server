@@ -1,4 +1,8 @@
 <md-dialog style="min-width:60%; ">
+	<!-- spinner is managed here because the parent scope is really isolated! -->
+  	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+      		<md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+   	</div>
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>Add Layer</h2>
