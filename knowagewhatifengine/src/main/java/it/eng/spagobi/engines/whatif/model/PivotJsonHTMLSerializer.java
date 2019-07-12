@@ -61,6 +61,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
 import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
 import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
 import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
@@ -94,7 +95,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	public static final String COLUMN_OFFSET = "COLUMN_OFFSET";
 	public static final String AXIS_LENGTH = "AXIS_LENGTH";
 	private static final String FORMULAS = "formulas";
-	private static final int PAGES_COUNT = WhatIfEngineConfig.getInstance().getPivotTableLoadCount();;
+	private static final String CALCULATED_FIELDS = "CALCULATED_FIELDS";
+	private static final int PAGES_COUNT = WhatIfEngineConfig.getInstance().getPivotTableLoadCount();
+	private static final String MDXWITHOUTCF = "MDXWITHOUTCF";;
 
 	public PivotJsonHTMLSerializer() {
 	}
@@ -279,6 +282,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			/***********************************************/
 			serializeFunctions(FORMULAS, jgen, model, modelConfig);
 			/***********************************************/
+			serializeCalculatedFields(CALCULATED_FIELDS, jgen, model);
+
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			jgen.writeObjectField(MODELCONFIG, modelConfig);
@@ -286,6 +291,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			// build the query mdx
 			String mdxQuery = formatQueryString(value.getCurrentMdx());
 			jgen.writeStringField(MDXFORMATTED, mdxQuery);
+			jgen.writeStringField(MDXWITHOUTCF, model.getQueryWithOutCC());
 
 			boolean hasPendingTransformations = value instanceof SpagoBIPivotModel && ((SpagoBIPivotModel) value).hasPendingTransformations();
 			jgen.writeBooleanField(HAS_PENDING_TRANSFORMATIONS, hasPendingTransformations);
@@ -299,6 +305,26 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		totalTime.stop();
 		logger.debug("OUT");
 
+	}
+
+	/**
+	 * @param calculatedFields
+	 * @param jgen
+	 * @param model
+	 * @throws IOException
+	 */
+	private void serializeCalculatedFields(String fieldName, JsonGenerator jgen, SpagoBIPivotModel model) throws IOException {
+
+		jgen.writeArrayFieldStart(fieldName);
+		for (CalculatedMember cf : model.getCalculatedFields()) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("name", cf.getCalculateFieldName());
+			map.put("parentMemberUniqueName", cf.getParentMemberUniqueName());
+			map.put("formula", cf.getFormula());
+
+			jgen.writeObject(map);
+		}
+		jgen.writeEndArray();
 	}
 
 	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type, OlapConnection connection, ModelConfig modelConfig)
@@ -407,9 +433,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	/*
 	 * private void serializeTables(String field, JsonGenerator jgen, Map<Integer, String> tables) throws JsonGenerationException, IOException {
 	 * jgen.writeArrayFieldStart(field);
-	 * 
+	 *
 	 * jgen.writeObject(tables);
-	 * 
+	 *
 	 * jgen.writeEndArray(); }
 	 */
 

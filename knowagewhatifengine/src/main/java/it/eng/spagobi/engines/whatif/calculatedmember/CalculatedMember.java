@@ -18,7 +18,6 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import org.apache.log4j.Logger;
-import org.olap4j.Axis;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
@@ -26,6 +25,7 @@ import org.olap4j.metadata.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.template.Formula;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class CalculatedMember {
@@ -33,15 +33,16 @@ public class CalculatedMember {
 	private String calculateFieldName;
 	private String calculateFieldFormula;
 	private Member parentMember;
-	private Axis parentMemberAxis;
+	private Formula formula;
+
 	public static transient Logger logger = Logger.getLogger(CalculatedMember.class);
 
-	public CalculatedMember(String calculateFieldName, String calculateFieldFormula, Member parentMember, Axis parentMemberAxis) {
+	public CalculatedMember(String calculateFieldName, String calculateFieldFormula, Member parentMember, Formula formula) {
 		super();
 		this.calculateFieldName = calculateFieldName;
 		this.calculateFieldFormula = calculateFieldFormula;
 		this.parentMember = parentMember;
-		this.parentMemberAxis = parentMemberAxis;
+		this.formula = formula;
 	}
 
 	public CalculatedMember(Cube cube, String calculateFieldName, String calculateFieldFormula, String parentMemberUniqueName, int axisOrdinal) {
@@ -54,8 +55,6 @@ public class CalculatedMember {
 			logger.error("Error loading the calculate field withe name " + calculateFieldFormula, e);
 			throw new SpagoBIEngineRuntimeException("Error loading the calculate field withe name " + calculateFieldFormula, e);
 		}
-
-		this.parentMemberAxis = CubeUtilities.getAxis(axisOrdinal);
 	}
 
 	public String getCalculateFieldName() {
@@ -88,19 +87,6 @@ public class CalculatedMember {
 	}
 
 	@JsonIgnore
-	public Axis getParentMemberAxis() {
-		return parentMemberAxis;
-	}
-
-	public int getParentMemberAxisOrdinal() {
-		return parentMemberAxis.axisOrdinal();
-	}
-
-	public void setParentMemberAxis(Axis parentMemberAxis) {
-		this.parentMemberAxis = parentMemberAxis;
-	}
-
-	@JsonIgnore
 	public Hierarchy getHierarchy() {
 		if (getParentMember() != null) {
 			return this.getParentMember().getHierarchy();
@@ -116,6 +102,22 @@ public class CalculatedMember {
 
 		return null;
 
+	}
+
+	/**
+	 * @return the formula
+	 */
+	@JsonIgnore
+	public Formula getFormula() {
+		return formula;
+	}
+
+	/**
+	 * @param formula
+	 *            the formula to set
+	 */
+	public void setFormula(Formula formula) {
+		this.formula = formula;
 	}
 
 }

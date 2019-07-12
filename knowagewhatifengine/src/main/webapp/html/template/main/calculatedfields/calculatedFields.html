@@ -89,7 +89,7 @@
      <md-tab label="Recent" md-on-select="hideNameInputCC('select')" md-on-deselect="hideNameInputCC('deselect')">
     <md-content class="md-padding">
       <md-list flex>
-        <md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray | filter: {'docName': olapDocName}">
+        <md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray">
 	<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
 	<p>{{ item.name }}</p>
 	<md-button class="md-warn md-secondary" ng-click="deleteFromCookie($index,item);">Delete</md-button> 

@@ -1032,17 +1032,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		$scope.members = [];
 	}
 
-	var checkForDuplicates = function(type) {
-
-		for (var i = 0; i < $scope.cookieArray.length; i++) {
-			if (type.name === $scope.cookieArray[i].name) {
-				console.log("same item replacing");
-				$scope.cookieArray.splice(i, 1);
-
-			}
-		}
-
-	}
 
 	var doMemberSaving = function() {
 
@@ -1052,6 +1041,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		toSend.parentMemberUniqueName = $scope.selectedMember.parentMember;
 		toSend.axisOrdinal = $scope.selectedMember.axisOrdinal;
 		toSend.hierarchyUniqueName = $scope.selectedMember.hierarchyUniqueName;
+		toSend.formula = $scope.selectedMDXFunction;
 		var encoded = encodeURI('/calculatedmembers?SBI_EXECUTION_ID='
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost("1.0", encoded, toSend).then(
@@ -1068,9 +1058,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						'img' : sbiModule_config.contextName + "/img/m.png"
 					}
 
-					checkForDuplicates(namedMember);
-
-					$scope.cookieArray.push(namedMember);
 
 					cleanCC();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.memberSave.success'), 'Success');
