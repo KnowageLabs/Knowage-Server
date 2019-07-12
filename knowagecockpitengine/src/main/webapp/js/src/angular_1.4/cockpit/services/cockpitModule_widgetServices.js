@@ -121,6 +121,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		newModel.content.chartTemplate = {"CHART" :  StructureTabService.getBaseTemplate(targetVisualization)};
 		for (var i = 0; i < newModel.content.columnSelectedOfDataset.length; i++) {
 			if(newModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"){
+
 				if(newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name=="") {
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[0].column = newModel.content.columnSelectedOfDataset[i].alias;
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name = newModel.content.columnSelectedOfDataset[i].alias;
@@ -129,6 +130,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].name = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].column = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
 				}
+
+				if(newModel.content.columnSelectedOfDataset[i].alias.indexOf(newModel.content.columnSelectedOfDataset[i].aggregationSelected)==-1)
+					newModel.content.columnSelectedOfDataset[i].alias+="_"+newModel.content.columnSelectedOfDataset[i].aggregationSelected
 			} else {
 				if(newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name==""){
 					newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name = newModel.content.columnSelectedOfDataset[i].alias;
