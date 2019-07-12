@@ -17,11 +17,15 @@
           <label>Name</label>
           <input ng-model="selectedMDXFunctionName" >
         </md-input-container>
+        
+     
+         
+          
       </div>
   <md-dialog-content ng-cloak>
     <md-tabs md-dynamic-height  md-selected="selectedTab" md-border-bottom>
       <md-tab label="Aggregation" ng-if="aggregationArray.length > 0">
-    <md-content class="md-padding">
+    <md-content class="md-padding" style=" height: 200px;">
       <md-list flex>
         <md-list-item class="md-3-line"
          ng-repeat="formula in aggregationArray"
@@ -37,7 +41,7 @@
     </md-content>      
       </md-tab>
       <md-tab label="Arithmetic" ng-if="arithmeticArray.length > 0">
-    <md-content class="md-padding">
+    <md-content class="md-padding" style=" height: 200px;">
       <md-list flex>
 	       <md-list-item class="md-3-line"
          ng-repeat="formula in arithmeticArray"
@@ -54,7 +58,7 @@
     </md-content>      
       </md-tab>
       <md-tab label="Temporal" ng-if="temporalArray.length > 0">
-    <md-content class="md-padding">
+    <md-content class="md-padding" style=" height: 200px;">
       <md-list flex>
         <md-list-item class="md-3-line"
          ng-repeat="formula in temporalArray"
@@ -70,7 +74,7 @@
     </md-content>      
       </md-tab>
        <md-tab label="Custom" ng-if="customArray.length > 0">
-    <md-content class="md-padding">
+    <md-content class="md-padding" style=" height: 200px;">
       <md-list flex>
         <md-list-item class="md-3-line"
          ng-repeat="formula in customArray"
@@ -87,7 +91,7 @@
       </md-tab>
       
      <md-tab label="Recent" md-on-select="hideNameInputCC('select')" md-on-deselect="hideNameInputCC('deselect')">
-    <md-content class="md-padding">
+    <md-content class="md-padding" style=" height: 200px;">
       <md-list flex>
         <md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray">
 	<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
@@ -100,13 +104,27 @@
     </md-tabs>
   </md-dialog-content>
 
-    <md-dialog-actions layout="row">
-      <md-button class="md-raised" ng-click="openArgumentsdialog()" ng-disabled="checkValidity()" md-autofocus>
-        OK
-      </md-button>
-      <md-button class="md-raised" ng-click="closeDialog()" style="margin-right:20px;" >
-       Cancel
-      </md-button>
+    <md-dialog-actions layout="column">
+     <div ayout="column" flex>
+     <md-card class="menu-text">
+          
+	Remember that, if you add more than one dimension on the pivot table, the calculated field created will be hidden
+     </md-card>
+		
+       
+      <div layout="row" flex>
+      
+       <span flex></span>
+          <md-button class="md-raised" ng-click="openArgumentsdialog()" ng-disabled="checkValidity()" md-autofocus>
+        	OK
+      		</md-button>
+      		<md-button class="md-raised" ng-click="closeDialog()" style="margin-right:20px;" >
+       		Cancel
+      		</md-button>
+      
+      	</div>
+      </div>
     </md-dialog-actions>
+    
 </md-dialog>
 
