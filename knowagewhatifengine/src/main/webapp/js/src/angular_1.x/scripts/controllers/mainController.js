@@ -184,7 +184,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 
 
 		source = response.data;
-
+		handleCalculatedFields(source);
 		if($scope.modelConfig&&$scope.modelConfig.pagination){
 			$scope.tableSubsets=source.tables;
 			$scope.tableSubsets=null;
@@ -221,6 +221,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
+		$scope.MDXWithoutCF = source.MDXWITHOUTCF;
 		$scope.formulasData = source.formulas;
 		$scope.ready = false;
 
@@ -237,6 +238,33 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 		}
 		source = null;
 		$scope.ready = true;
+	}
+
+	var handleCalculatedFields = function(data){
+		$scope.cookieArray.length = 0;
+		$scope.calculatedFields = data.CALCULATED_FIELDS;
+
+
+		for(index in data.CALCULATED_FIELDS){
+
+			for(i in data.formulas){
+				var formula = angular.copy(data.formulas[i])
+				if(data.CALCULATED_FIELDS[index].formula.name === formula.name){
+
+					for(j in formula.argument){
+						formula.argument[j].default_value = data.CALCULATED_FIELDS[index].formula.arguments[j].defaultValue;
+					}
+
+					data.CALCULATED_FIELDS[index].formula = formula;
+				}
+
+			}
+			data.CALCULATED_FIELDS[index].img = sbiModule_config.contextName + "/img/m.png";
+			$scope.cookieArray.push(data.CALCULATED_FIELDS[index])
+		}
+
+
+
 	}
 
 	handleSlicers = function(filters){

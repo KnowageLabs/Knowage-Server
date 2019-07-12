@@ -49,6 +49,8 @@ public class ToolbarButtonManager {
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_PAGINATION_WIZARD", false, false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CROSSNAV_WIZARD", false, false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_WIZARD", false, false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CC", true, false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
+
 	}
 
 	public static List<SbiToolbarButton> loadAllToolbarButtons() {

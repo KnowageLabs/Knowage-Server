@@ -31,6 +31,7 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
+import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
@@ -62,6 +63,7 @@ import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.template.Formula;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
@@ -72,9 +74,11 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private SpagoBICellSetWrapper wrapper = null;
 	private List<CalculatedMember> calculatedFields;
 	private String queryWithOutCC;
+
 	private SpagoBICrossNavigationConfig crossNavigation;
 	private List<TargetClickable> targetsClickable;
 	private List<Member> sortPosMembers1;
+	public static final String DIVISION_SIGN = new String("spagobi.operator.division");
 
 	public List<Member> getSortPosMembers1() {
 		sortPosMembers1 = new ArrayList<Member>();
@@ -337,6 +341,32 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.calculatedFields.add(calculatedField);
 	}
 
+	public void addCalculatedField(String calculatedFieldName, String calculatedFieldFormula, String parentMemberUniqueName, Formula formula) {
+		Axis axis;
+		String calculateFieldFormulaParsed = new String();
+		try {
+			if (!calculatedFieldFormula.isEmpty()) {
+				calculateFieldFormulaParsed = calculatedFieldFormula.replaceAll("\\{" + DIVISION_SIGN + "\\}", "/");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error parsing the formula. The original formula is " + calculatedFieldFormula, e);
+		}
+		try {
+
+			Member parentMember = CubeUtilities.getMember(this.getCube(), parentMemberUniqueName);
+
+			logger.debug("Adding the calculated fields into the model");
+			CalculatedMember cc = new CalculatedMember(calculatedFieldName, calculateFieldFormulaParsed, parentMember, formula);
+			this.addCalculatedField(cc);
+
+		} catch (OlapException e) {
+			logger.error("Error getting the parent of the calculated field. The unique name of the parent is " + parentMemberUniqueName, e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.celculated.definition.error", getLocale(),
+					"Error getting the parent of the calculated field. The unique name of the parent is " + parentMemberUniqueName, e);
+		}
+	}
+
 	public boolean removeCalculatedField(String calculatedFieldName) {
 
 		for (int i = 0; i < this.calculatedFields.size(); i++) {
@@ -366,6 +396,13 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	public void setTargetsClickable(List<TargetClickable> targetsClickable) {
 		this.targetsClickable = targetsClickable;
+	}
+
+	/**
+	 * @return the queryWithOutCC
+	 */
+	public String getQueryWithOutCC() {
+		return queryWithOutCC;
 	}
 
 	public void setNonEmpty(boolean suppressEmpty) {

@@ -37,6 +37,8 @@ import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorit
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.NoAllocationAlgorithmFoundException;
 import it.eng.spagobi.engines.whatif.parameters.MDXParametersUtilities;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.CalculatedField;
+import it.eng.spagobi.engines.whatif.template.Formula;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParser;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
@@ -293,6 +295,14 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 				logger.error("No allocatio algorithm found", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.no.found.error", getLocale(), e);
 			}
+		}
+
+		for (CalculatedField calculatedField : template.getCalculatedFields()) {
+			String calculatedFieldName = calculatedField.getName();
+			String calculatedFieldFormula = calculatedField.getCalculatedFieldFormula();
+			String parentMemberUniqueName = calculatedField.getParentMemberUniqueName();
+			Formula formula = calculatedField.getFormula();
+			this.getSpagoBIPivotModel().addCalculatedField(calculatedFieldName, calculatedFieldFormula, parentMemberUniqueName, formula);
 		}
 
 		standalone = template.isStandAlone();

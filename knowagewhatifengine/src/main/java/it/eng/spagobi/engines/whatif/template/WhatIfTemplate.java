@@ -49,6 +49,7 @@ public class WhatIfTemplate {
 	private Map<String, String> xmlaServerProperties;
 	private SpagoBICrossNavigationConfig crossNavigation;
 	List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
+	private final List<CalculatedField> calculatedFields = new ArrayList<>();
 
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -206,13 +207,20 @@ public class WhatIfTemplate {
 	public void setToolbarClickedButtons(List<String> toolbarClickedButtons) {
 		this.toolbarClickedButtons = toolbarClickedButtons;
 	}
-	
+
 	public boolean isPagination() {
 		return pagination;
 	}
 
 	public void setPagination(boolean pagination) {
 		this.pagination = pagination;
+	}
+
+	/**
+	 * @return the calculatedFields
+	 */
+	public List<CalculatedField> getCalculatedFields() {
+		return calculatedFields;
 	}
 
 }
