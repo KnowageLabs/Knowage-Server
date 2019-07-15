@@ -86,7 +86,7 @@ public class ExcelExporter {
 		try {
 			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
 			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
-		} catch (EMFUserError e) {
+		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
 		}
 
@@ -103,7 +103,7 @@ public class ExcelExporter {
 		try {
 			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
 			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
-		} catch (EMFUserError e) {
+		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
 		}
 
@@ -478,7 +478,7 @@ public class ExcelExporter {
 				JSONObject widget = widgets.getJSONObject(j);
 				String widgetType = widget.getString("type");
 
-				if ("table".equals(widgetType) || "chart".equals(widgetType)) {
+				if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
@@ -904,7 +904,7 @@ public class ExcelExporter {
 					newValue = paramDefaultValue.getDefaultValue();
 				}
 			}
-		} catch (EMFUserError e) {
+		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while retrieving dataset with id [" + datasetId + "]", e);
 		}
 		return newValue;
