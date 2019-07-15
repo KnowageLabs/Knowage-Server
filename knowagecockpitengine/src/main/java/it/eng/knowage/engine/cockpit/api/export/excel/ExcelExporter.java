@@ -475,7 +475,7 @@ public class ExcelExporter {
 				JSONObject widget = widgets.getJSONObject(j);
 				String widgetType = widget.getString("type");
 
-				if ("table".equals(widgetType) || "chart".equals(widgetType)) {
+				if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
