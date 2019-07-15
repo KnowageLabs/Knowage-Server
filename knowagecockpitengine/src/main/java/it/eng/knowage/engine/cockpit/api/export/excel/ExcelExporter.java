@@ -346,9 +346,9 @@ public class ExcelExporter {
 
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			ArrayList<String> arrayHeader = new ArrayList<String>();
+			HashMap<String,String> arrayHeader = new HashMap<String,String>();
 
-			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+			if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
 
 				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length()>0 ) {
 
@@ -356,9 +356,7 @@ public class ExcelExporter {
 					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 
 						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-						arrayHeader.add(column.getString("aliasToShow"));
-
-
+						arrayHeader.put(column.getString("name"),column.getString("aliasToShow"));
 
 					}
 				}
@@ -371,8 +369,10 @@ public class ExcelExporter {
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String columnName = column.getString("header");
-				if (widgetData.getString("type").equalsIgnoreCase("table")) {
-					columnName = arrayHeader.get(i);
+				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
+					if (arrayHeader.get(columnName)!=null) {
+						columnName = arrayHeader.get(columnName);
+					}
 				}
 
 				Cell cell = header.createCell(i);
