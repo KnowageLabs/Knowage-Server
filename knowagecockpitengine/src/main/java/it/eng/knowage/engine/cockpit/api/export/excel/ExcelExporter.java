@@ -525,6 +525,10 @@ public class ExcelExporter {
 					}
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 
+					if (datastoreObj!=null) {
+					logger.debug("datasetLabel: "+datasetLabel+" datastoreObj = " + datastoreObj.toString());
+					}
+
 					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
 					datastoreObj.put("sheetName", sheetName);
 					datastoreObj.put("widgetData",widget);
@@ -914,7 +918,7 @@ public class ExcelExporter {
 		JSONObject settings = widget.optJSONObject("settings");
 		if (settings != null) {
 			JSONObject summary = settings.optJSONObject("summary");
-			if (summary.optBoolean("enabled")) {
+			if (settings.has("summary") && summary.optBoolean("enabled")) {
 				JSONObject summaryRow = new JSONObject();
 
 				JSONArray measures = new JSONArray();
