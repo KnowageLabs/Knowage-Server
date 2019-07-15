@@ -72,7 +72,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
-			cockpitModule_properties){
+			cockpitModule_properties,
+			cockpitModule_template){
 		
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
@@ -81,6 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
+		$scope.activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g;
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
@@ -185,6 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		//Core wrapper function to prepare css and styles to be parsed
 		$scope.manageHtml = function(){
+			if($scope.ngModel.dataset.dsId) $scope.datasetLabel = cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId);
 			$scope.parseAggregations($scope.ngModel.cssToRender + $scope.ngModel.htmlToRender).then(function(resultHtml){
 				if($scope.ngModel.cssToRender){
 					$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
@@ -378,6 +381,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return $q(function(resolve, reject) {
 				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
 				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
+				resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
 			})
@@ -394,6 +398,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
+		$scope.activeSelectionsReplacer = function(match,column){
+			if(cockpitModule_template.configuration.filters[$scope.datasetLabel] && cockpitModule_template.configuration.filters[$scope.datasetLabel][column]){
+				 return cockpitModule_template.configuration.filters[$scope.datasetLabel][column];
+			}else return null;
+		}
+
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
 			var result = eval(p1);
 			if(min && result < min) result = min;

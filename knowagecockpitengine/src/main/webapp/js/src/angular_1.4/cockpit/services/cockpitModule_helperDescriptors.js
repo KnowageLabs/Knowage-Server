@@ -159,7 +159,21 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'flex':'flex-100',
 						'replacer':'kn-selection-value=\"***\"'}
 				]
+				},
+				{
+					'label':sbiModule_translate.load('kn.cockpit.html.tag10'),
+					'name': 'active-selection',
+					'description': sbiModule_translate.load('kn.cockpit.html.tag10.desc'),
+				 	'hidden': !datasetId ? true : false,
+				 	'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
+				 	'tag':"[kn-active-selection='%%column%%']",
+				 	'inputs': [
+				 		{	'name':'column',
+				 			'type': 'select',
+				 			'options': !datasetId || meta,
+				 			'flex':'flex-100'}]
 				}
+
 		]
 	}
 });
