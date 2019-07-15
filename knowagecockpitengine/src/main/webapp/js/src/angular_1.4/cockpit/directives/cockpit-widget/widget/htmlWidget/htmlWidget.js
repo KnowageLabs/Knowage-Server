@@ -82,7 +82,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
+		$scope.rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
+		$scope.limitRegex = /<[\s\w]+kn-repeat="[\w]*"[\s\w\"\=]+limit="([\d]+)"[\s\w]*>/g;
 		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
@@ -138,6 +140,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			else $scope.refreshWidget(null, 'init');
 		}
 		
+		$scope.getOptions = function(){
+			var obj = {};
+				obj["page"] = 0;
+				obj["itemPerPage"] = $scope.maxRow();
+				obj["type"] = 'html';
+			return obj;
+		}
+		
 		/**
 		 * Function to initialize the rendered html at the loading and after editing.
 		 * If there is a selected dataset the function calls the data rest service.
@@ -149,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 
-				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, $scope.ngModel, undefined).then(
+				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, $scope.maxRow(), undefined, undefined, $scope.ngModel, undefined).then(
 					function(data){
 						$scope.htmlDataset = data;
 						$scope.manageHtml();
@@ -159,6 +169,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else {
 				$scope.manageHtml();
 			}
+		}
+		
+		$scope.maxRow = function(){
+			var str = $scope.ngModel.cssToRender + $scope.ngModel.htmlToRender;
+			var tempMaxRow = 1;
+			var repeaters = str.replace($scope.limitRegex, function(match, p1){
+				if(p1>tempMaxRow) tempMaxRow = parseInt(p1)+1;
+			})
+			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
+				if(p2>tempMaxRow) tempMaxRow = parseInt(p2)+1;
+			});
+			return tempMaxRow;
 		}
 
 		//Core wrapper function to prepare css and styles to be parsed
