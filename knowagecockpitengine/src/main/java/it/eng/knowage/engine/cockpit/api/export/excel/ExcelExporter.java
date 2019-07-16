@@ -534,7 +534,18 @@ public class ExcelExporter {
 					datastoreObj.put("widgetData",widget);
 					JSONObject content = widget.optJSONObject("content");
 					String widgetName = null;
-					if (content != null) {
+					if (widget.has("style")) {
+						JSONObject style =	widget.optJSONObject("style");
+						if (style.has("title")) {
+							JSONObject title =	style.optJSONObject("title");
+							if (title.has("label")) {
+								widgetName = title.getString("label");
+							}
+						}
+
+					}
+					if (widgetName==null && content != null) {
+
 						widgetName = content.getString("name");
 					}
 					datastoreObj.put("widgetName", widgetName);

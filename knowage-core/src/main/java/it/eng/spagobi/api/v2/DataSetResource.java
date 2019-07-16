@@ -50,9 +50,9 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFUserError;
-import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -561,7 +561,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			timing.stop();
 			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
-		} catch (JSONException e) {
+		} catch (Exception e) {
+			logger.error("Error while getting Data for dataset "+label,e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
 	}
