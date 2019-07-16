@@ -1201,7 +1201,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		}
 
     		$scope.previewDS();
-    		$scope.showDrivers = $scope.drivers.length > 0 || $scope.dataset.pars.length > 0;
+    		$scope.showDrivers = $scope.drivers ? $scope.drivers.length > 0 : false || $scope.dataset.pars.length > 0;
     		$scope.dataset.executed = !$scope.showDrivers;
 
         	$scope.toggleDrivers = function(){

@@ -51,6 +51,8 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -65,6 +67,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -74,6 +77,8 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -605,7 +610,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{label}/preview")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataStorePreview(@PathParam("label") String label, String body) {
+	public String getDataStorePreview(@PathParam("label") String label, String body) throws SourceBeanException {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
 
@@ -648,14 +653,13 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONArray jsonMeasures = new JSONArray();
 				JSONArray jsonCategories = new JSONArray();
+				IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 
-				JSONObject jsonDataSets = new JSONObject(getDataSets(null, null, true, null, null, label, true, null, false));
-				JSONObject jsonDataSet = jsonDataSets.getJSONArray("item").getJSONObject(0);
-				JSONArray jsonFields = jsonDataSet.getJSONObject("metadata").getJSONArray("fieldsMeta");
-				for (int i = 0; i < jsonFields.length(); i++) {
-					JSONObject jsonField = jsonFields.getJSONObject(i);
+				IMetaData metadata = dataSet.getMetadata();
+				for (int i = 0; i < metadata.getFieldCount(); i++) {
+					IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
 					JSONObject json = new JSONObject();
-					String alias = jsonField.getString("alias");
+					String alias = fieldMetaData.getAlias();
 					json.put("id", alias);
 					json.put("alias", alias);
 					json.put("columnName", alias);
@@ -663,7 +667,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					json.put("orderColumn", alias);
 					json.put("funct", "NONE");
 
-					if ("ATTRIBUTE".equals(jsonField.getString("fieldType"))) {
+					if ("ATTRIBUTE".equals(fieldMetaData.getFieldType())) {
 						jsonCategories.put(json);
 					} else {
 						jsonMeasures.put(json);
@@ -675,28 +679,34 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonAggregations.put("categories", jsonCategories);
 				aggregations = jsonAggregations.toString();
 
-				JSONArray jsonParameters = jsonDataSet.getJSONArray("parameters");
 				JSONArray jsonPars = jsonBody.optJSONArray("pars");
-				if (jsonParameters != null) {
-					JSONObject json = new JSONObject();
-					for (int i = 0; i < jsonParameters.length(); i++) {
-						JSONObject jsonParameter = jsonParameters.getJSONObject(i);
-						String columnName = jsonParameter.getString("name");
-						json.put(columnName, jsonParameter.get("defaultValue"));
-						if (jsonPars != null) {
-							for (int j = 0; j < jsonPars.length(); j++) {
-								JSONObject jsonPar = jsonPars.getJSONObject(j);
-								if (columnName.equals(jsonPar.getString("name"))) {
-									if (jsonPar.opt("value") != null && jsonPar.opt("value") != "") {
-										json.put(columnName, jsonPar.get("value"));
-										break;
+				String params = dataSet.getParameters();
+				if (params != null && !params.equals("")) {
+					SourceBean source = SourceBean.fromXMLString(params);
+					if (source != null && source.getName().equals("PARAMETERSLIST")) {
+						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+						for (int i = 0; i < rows.size(); i++) {
+							SourceBean row = rows.get(i);
+							String name = (String) row.getAttribute("NAME");
+							String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
+							JSONObject jsonPar = new JSONObject();
+							jsonPar.put(name, defaultValue);
+							if (jsonPars != null) {
+								for (int j = 0; j < jsonPars.length(); j++) {
+									JSONObject jsonParam = jsonPars.getJSONObject(j);
+									if (name.equals(jsonParam.getString("name"))) {
+										if (jsonParam.optString("value") != "") {
+											jsonPar.put(name, jsonParam.optString("value"));
+											break;
+										}
 									}
 								}
 							}
+							parameters = jsonPar.toString();
 						}
 					}
-					parameters = json.toString();
 				}
+
 			}
 
 			timing.stop();
