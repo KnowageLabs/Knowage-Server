@@ -52,7 +52,6 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -610,7 +609,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{label}/preview")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataStorePreview(@PathParam("label") String label, String body) throws SourceBeanException {
+	public String getDataStorePreview(@PathParam("label") String label, String body) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
 
@@ -713,6 +712,9 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDataStore(label, parameters, null, likeSelections, -1, aggregations, null, start, limit, true);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} catch (Exception e) {
+			logger.error("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label, e);
 		}
 	}
 
