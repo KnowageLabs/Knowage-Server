@@ -37,6 +37,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
@@ -96,10 +97,8 @@ public class SimpleRestClient {
 	/**
 	 * Invokes a rest service in get and return response
 	 *
-	 * @param parameters
-	 *            the parameters of the request
-	 * @param serviceUrl
-	 *            the relative (refers always to core application context) path of the service
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
 	 * @param userId
 	 * @return
 	 * @throws Exception
@@ -111,10 +110,8 @@ public class SimpleRestClient {
 	/**
 	 * Invokes a rest service in post and return response
 	 *
-	 * @param parameters
-	 *            the parameters of the request
-	 * @param serviceUrl
-	 *            the relative (refers always to core application context) path of the service
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
 	 * @param userId
 	 * @param mediaType
 	 * @param data
@@ -217,22 +214,23 @@ public class SimpleRestClient {
 				logger.debug("Executing the dataset from the core so use relative path to service");
 				serviceUrl = serverUrl + serviceUrl;
 			}
-			logger.debug("Call service URL " + serviceUrl);
 		}
 
 		Client client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
 
+		logger.debug("Service URL to be invoked : " + serviceUrl);
 		WebTarget target = client.target(serviceUrl);
 
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
 			while (iter.hasNext()) {
 				String param = iter.next();
+				LogMF.debug(logger, "Adding parameter [{0}] : [{1}]", param, parameters.get(param));
 				target = target.queryParam(param, parameters.get(param));
-				logger.debug("Adding parameter " + param);
 			}
 		}
 
+		logger.debug("Media type : " + mediaType);
 		Builder request = target.request(mediaType);
 
 		logger.debug("adding headers");
