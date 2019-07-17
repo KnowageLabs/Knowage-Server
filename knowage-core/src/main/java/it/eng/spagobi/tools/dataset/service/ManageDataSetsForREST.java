@@ -261,7 +261,7 @@ public class ManageDataSetsForREST {
 				// recalculate metadata
 				logger.debug("Recalculating dataset's metadata: executing the dataset...");
 				HashMap parametersMap = new HashMap();
-				parametersMap = getDataSetParametersAsMap(true, json);
+				parametersMap = getDataSetParametersAsMap(json);
 
 				IEngUserProfile profile = userProfile;
 				ds.setPersisted(false);
@@ -927,12 +927,11 @@ public class ManageDataSetsForREST {
 		return ds;
 	}
 
-	private HashMap<String, String> getDataSetParametersAsMap(boolean forSave, JSONObject json) {
+	public HashMap<String, String> getDataSetParametersAsMap(JSONObject json) {
 		HashMap<String, String> parametersMap = null;
 
 		try {
 			parametersMap = new HashMap<>();
-			String dsType = json.getString(DataSetConstants.DS_TYPE_CD);
 			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
 			if (parsListJSON == null) {
 				return parametersMap;
@@ -967,9 +966,9 @@ public class ManageDataSetsForREST {
 
 				String value = "";
 				if (multivalue) {
-					value = getMultiValue(tempVal, type, dsType);
+					value = getMultiValue(tempVal, type);
 				} else {
-					value = getSingleValue(tempVal, type, dsType);
+					value = getSingleValue(tempVal, type);
 				}
 
 				logger.debug("name: " + name + " / value: " + value);
@@ -1231,7 +1230,7 @@ public class ManageDataSetsForREST {
 			}
 		}
 
-		HashMap<String, String> parametersMap = getDataSetParametersAsMap(false, json);
+		HashMap<String, String> parametersMap = getDataSetParametersAsMap(json);
 		String solrType = config.getString(SolrDataSetConstants.SOLR_TYPE);
 		Assert.assertNotNull(solrType, "Solr type cannot be null");
 		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap)
@@ -1246,7 +1245,7 @@ public class ManageDataSetsForREST {
 	 * @param type
 	 * @return
 	 */
-	static String getSingleValue(String value, String type, String dsType) {
+	static String getSingleValue(String value, String type) {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
@@ -1279,16 +1278,16 @@ public class ManageDataSetsForREST {
 		return toReturn;
 	}
 
-	private String getMultiValue(String value, String type, String dsType) {
+	private String getMultiValue(String value, String type) {
 		String toReturn = "";
 
 		String[] tempArrayValues = value.split(",");
 		for (int j = 0; j < tempArrayValues.length; j++) {
 			String tempValue = tempArrayValues[j];
 			if (j == 0) {
-				toReturn = getSingleValue(tempValue, type, dsType);
+				toReturn = getSingleValue(tempValue, type);
 			} else {
-				toReturn = toReturn + "," + getSingleValue(tempValue, type, dsType);
+				toReturn = toReturn + "," + getSingleValue(tempValue, type);
 			}
 		}
 
@@ -1462,7 +1461,7 @@ public class ManageDataSetsForREST {
 		}
 		HashMap<String, String> parametersMap = new HashMap<>();
 		if (parsJSON != null) {
-			parametersMap = getDataSetParametersAsMap(false, json);
+			parametersMap = getDataSetParametersAsMap(json);
 		}
 		IEngUserProfile profile = userProfile;
 

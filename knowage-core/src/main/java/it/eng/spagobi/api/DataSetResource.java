@@ -477,18 +477,16 @@ public class DataSetResource extends AbstractDataSetResource {
 			@QueryParam("DRIVERS") JSONObject driversJson, @QueryParam("PARAMETERS") JSONObject params) {
 
 		Map<String, Object> drivers = null;
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, String> parameters = new HashMap<>();
 
 		if (params != null) {
 			try {
 				JSONArray paramsJson = params.getJSONArray("parameters");
-				for (int i = 0; i < paramsJson.length(); i++) {
-					JSONObject parameter = paramsJson.getJSONObject(i);
-					Object value = parameter.get("value");
-					if (value instanceof String == false)
-						value = String.valueOf(value);
-					parameters.put(parameter.getString("name"), value);
-				}
+				JSONObject pars = new JSONObject();
+				pars.put(DataSetConstants.PARS, paramsJson);
+				ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
+				parameters = mdsr.getDataSetParametersAsMap(pars);
+
 			} catch (Exception e) {
 				logger.debug("Cannot read dataset parameters");
 				throw new SpagoBIRestServiceException(getLocale(), e);
