@@ -291,13 +291,20 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 					$scope.chartTemplate.VALUES.CATEGORY.column = $scope.categories[i].column;
 					$scope.chartTemplate.VALUES.CATEGORY.name = $scope.categories[i].name;
 					if($scope.chartTemplate.VALUES.CATEGORY.orderColumn==""){
-						if(tempDrillOrder)
-						$scope.chartTemplate.VALUES.CATEGORY.orderColumn = tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderColumn : $scope.categories[i].orderColumn;
+						if(tempDrillOrder){
+							$scope.chartTemplate.VALUES.CATEGORY.orderColumn = tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderColumn : $scope.categories[i].orderColumn;
+						} else {
+							$scope.chartTemplate.VALUES.CATEGORY.orderColumn = $scope.categories[i].orderColumn;
+						}
+
 					}
 
 					if($scope.chartTemplate.VALUES.CATEGORY.orderType==""){
-						if(tempDrillOrder)
-						$scope.chartTemplate.VALUES.CATEGORY.orderType =  tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderType : $scope.categories[i].orderType;
+						if(tempDrillOrder){
+							$scope.chartTemplate.VALUES.CATEGORY.orderType =  tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderType : $scope.categories[i].orderType;
+						} else {
+							$scope.chartTemplate.VALUES.CATEGORY.orderType = $scope.categories[i].orderType;
+						}
 					}
 					if($scope.chartTemplate.VALUES.CATEGORY.stacked==""){
 						$scope.chartTemplate.VALUES.CATEGORY.stacked = $scope.categories[i].stacked;
