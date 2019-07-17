@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
+package it.eng.spagobi.analiticalmodel.execution.bo;
 
-public class DefaultValue {
+public class LovValue {
 
 	private Object value;
 	private Object description;

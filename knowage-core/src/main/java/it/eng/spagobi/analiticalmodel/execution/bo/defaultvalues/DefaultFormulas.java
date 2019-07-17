@@ -22,6 +22,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
@@ -63,7 +64,7 @@ public class DefaultFormulas {
 				BIObjectParameter analyticalDocumentParameter,
 				ExecutionInstance executionInstance, IEngUserProfile profile) {
 			logger.debug("Formula " + this.getName() + ": IN");
-			DefaultValue defaultValue = null;
+			LovValue defaultValue = null;
 			try {
 				ILovDetail lovDetails = executionInstance.getLovDetail(analyticalDocumentParameter);
 				logger.debug("LOV info retrieved");
@@ -84,7 +85,7 @@ public class DefaultFormulas {
 				}
 				// getting first value
 				SourceBean row = (SourceBean) lovResult.get(0);
-				defaultValue = new DefaultValue();
+				defaultValue = new LovValue();
 				defaultValue.setValue(row.getAttribute(lovDetails.getValueColumnName()));
 				defaultValue.setDescription(row.getAttribute(lovDetails.getDescriptionColumnName()));
 				logger.debug("Default value found is " + defaultValue);
@@ -106,7 +107,7 @@ public class DefaultFormulas {
 				BIObjectParameter analyticalDocumentParameter,
 				ExecutionInstance executionInstance, IEngUserProfile profile) {
 			logger.debug("Formula " + this.getName() + ": IN");
-			DefaultValue defaultValue = null;
+			LovValue defaultValue = null;
 			try {
 				ILovDetail lovDetails = executionInstance.getLovDetail(analyticalDocumentParameter);
 				logger.debug("LOV info retrieved");
@@ -126,7 +127,7 @@ public class DefaultFormulas {
 				}
 				// getting last value
 				SourceBean row = (SourceBean) lovResult.get(lovResult.size() - 1);
-				defaultValue = new DefaultValue();
+				defaultValue = new LovValue();
 				defaultValue.setValue(row.getAttribute(lovDetails.getValueColumnName()));
 				defaultValue.setDescription(row.getAttribute(lovDetails.getDescriptionColumnName()));
 				logger.debug("Default value found is " + defaultValue);

@@ -79,7 +79,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -642,7 +642,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								stringResult += ",";
 							}
 						}
-						DefaultValue defValue = new DefaultValue();
+						LovValue defValue = new LovValue();
 						defValue.setValue(stringResult);
 						defValue.setDescription(stringResult);
 						parameterValueList.add(defValue);
@@ -652,7 +652,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
 							String itemDescr = descrList.size() > k ? descrList.get(k) : itemVal;
-							DefaultValue defValue = new DefaultValue();
+							LovValue defValue = new LovValue();
 							defValue.setValue(itemVal);
 							defValue.setDescription(itemDescr != null ? itemDescr : itemVal);
 							parameterValueList.add(defValue);
@@ -696,6 +696,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				// in every case fill default values!
 				parameterAsMap.put("driverDefaultValue", valueList);
 			}
+			
+			LovValue maxValue = objParameter.getMaxValue();
+			if (maxValue != null) {
+				parameterAsMap.put("driverMaxValue", maxValue.getValue().toString());
+			}
 
 			if (!showParameterLov) {
 				parameterAsMap.put("showOnPanel", "false");
@@ -710,7 +715,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Map docP = parametersArrayList.get(z);
 			DefaultValuesList defvalList = (DefaultValuesList) docP.get("parameterValue");
 			if (defvalList != null && defvalList.size() == 1) {
-				DefaultValue defval = defvalList.get(0);
+				LovValue defval = defvalList.get(0);
 				if (defval != null) {
 					Object val = defval.getValue();
 					if (val != null && val.equals("$")) {
@@ -1263,7 +1268,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException("Illegal format for Value List Date Type [" + valueDate + "+], unable to find symbol [#]");
 			}
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValue valueDef = new DefaultValue();
+			LovValue valueDef = new LovValue();
 			try {
 				Date d = format.parse(date[0]);
 				String dateServerFormat = serverDateFormat.format(d);
@@ -1280,7 +1285,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String valueDate = sessionParameterValue;
 			String[] date = valueDate.split("#");
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValue valueDef = new DefaultValue();
+			LovValue valueDef = new LovValue();
 			try {
 
 				String dateRange = date[0];
@@ -1324,7 +1329,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				for (int z = 0; z < values.size(); z++) {
 					String parValue = values.get(z);
 					String parDescription = descriptions.size() > z ? descriptions.get(z) : parValue;
-					DefaultValue valueDef = new DefaultValue();
+					LovValue valueDef = new LovValue();
 					valueDef.setValue(parValue);
 					valueDef.setDescription(parDescription);
 					valueList.add(valueDef);
@@ -1349,7 +1354,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					value = sessionParameterValue;
 				}
 
-				DefaultValue valueDef = new DefaultValue();
+				LovValue valueDef = new LovValue();
 				valueDef.setValue(value);
 				valueDef.setDescription(sessionParameterDescription);
 				valueList.add(valueDef);

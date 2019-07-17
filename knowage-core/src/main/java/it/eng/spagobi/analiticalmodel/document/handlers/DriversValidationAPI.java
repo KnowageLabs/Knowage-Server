@@ -12,7 +12,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
@@ -372,7 +372,7 @@ public class DriversValidationAPI {
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
-				DefaultValue defaultValue = defaultValues.getDefaultValue(value);
+				LovValue defaultValue = defaultValues.getDefaultValue(value);
 				if (defaultValue != null) {
 					logger.debug("Value [" + defaultValue + "] is a selected value.");
 					toReturn.add(defaultValue);
@@ -446,7 +446,7 @@ public class DriversValidationAPI {
 					parameterDescriptions.add(nonDefaultDescriptions.get(valuePosition));
 				} else {
 					// this means that the value IS a default value
-					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
+					LovValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
 					parameterDescriptions.add((defaultValue != null) ? defaultValue.getDescription() : "");
 				}
 			}

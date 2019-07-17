@@ -20,9 +20,10 @@ import org.json.JSONObject;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
+import it.eng.spagobi.analiticalmodel.execution.bo.minmaxvalue.MinMaxValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
@@ -112,6 +113,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	List<Integer> metaModelParameterIds;
 
 	DefaultValuesList defaultValues;
+	LovValue maxValue;
 	ArrayList<HashMap<String, Object>> admissibleValues;
 
 	// dependencies (dataDep & visualDep & lovDep) for document and business model
@@ -152,6 +154,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		loadAdmissibleValues(driver, dum);
 
 		loadDefaultValues(driver);
+		loadMaxValue(driver);
 		objParameterIds = new ArrayList<Integer>();
 	}
 
@@ -169,6 +172,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			loadAdmissibleValues(driver, dum);
 		}
 		loadDefaultValues(driver);
+		loadMaxValue(driver);
 		objParameterIds = new ArrayList<Integer>();
 	}
 
@@ -509,6 +513,27 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		logger.debug("OUT");
 	}
 
+	public void loadMaxValue(AbstractDriver driver) {
+		logger.debug("IN");
+		try {
+			MinMaxValuesRetriever retriever = new MinMaxValuesRetriever();
+			IEngUserProfile profile = UserProfileManager.getProfile();
+			maxValue = retriever.getMaxValueDum(driver, this.biResource, profile, this.locale, this.executionRole);
+
+			if (driver.getMaxValue() == null) {
+				// if parameter has no values set, but it has default values, those values are considered as values
+				maxValue = buildMaxValue();
+				if (maxValue != null) {
+					driver.setMaxValue(maxValue.getValue().toString());
+				}
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
+		}
+		logger.debug("OUT");
+	}
+
 	private DefaultValuesList buildDefaultValueList() {
 		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
@@ -520,7 +545,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			}
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
 			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
+			LovValue valueDef = new LovValue();
 
 			if (parType.equals("DATE")) {
 				try {
@@ -553,6 +578,55 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			}
 		} else {
 			return this.getDefaultValues();
+		}
+	}
+
+	/**
+	 * Parse LOV value.
+	 * @return
+	 * @author Marco Libanori
+	 */
+	private LovValue buildMaxValue() {
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+
+		if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
+			String valueDate = maxValue.getValue().toString();
+			String[] date = valueDate.split("#");
+			if (date.length < 2) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
+			}
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			LovValue ret = new LovValue();
+
+			if (parType.equals("DATE")) {
+				try {
+					Date d = format.parse(date[0]);
+					String dateServerFormat = serverDateFormat.format(d);
+					ret.setValue(dateServerFormat);
+					ret.setDescription(this.getMaxValue().getDescription());
+					return ret;
+				} catch (ParseException e) {
+					logger.error("Error while building default Value List Date Type", e);
+					return null;
+				}
+			} else {
+				try {
+					String dateRange = date[0];
+					String[] dateRangeArr = dateRange.split("_");
+					String range = dateRangeArr[dateRangeArr.length - 1];
+					dateRange = dateRange.replace("_" + range, "");
+					Date d = format.parse(dateRange);
+					String dateServerFormat = serverDateFormat.format(d);
+					ret.setValue(dateServerFormat + "_" + range);
+					ret.setDescription(this.getMaxValue().getDescription());
+					return ret;
+				} catch (ParseException e) {
+					logger.error("Error while building default Value List Date Type", e);
+					return null;
+				}
+			}
+		} else {
+			return maxValue;
 		}
 	}
 
@@ -807,6 +881,22 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void setDefaultValues(DefaultValuesList defaultValues) {
 		this.defaultValues = defaultValues;
+	}
+
+	/**
+	 * @return
+	 * @author Marco Libanori
+	 */
+	public LovValue getMaxValue() {
+		return maxValue;
+	}
+
+	/**
+	 * @param maxValue
+	 * @author Marco Libanori
+	 */
+	public void setMaxValue(LovValue maxValue) {
+		this.maxValue = maxValue;
 	}
 
 	public int getColspan() {

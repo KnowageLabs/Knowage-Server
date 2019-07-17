@@ -252,7 +252,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedParUse.defaultFormula = null;
 		$scope.selectedParUse.valueSelection = "man_in";
 		$scope.selectedParUse.maximizerEnabled = false;
-		$scope.selectedParUse.defaultrg="none";
+		$scope.selectedParUse.defaultrg = "none";
+		$scope.selectedParUse.maxrg = "none";
 
 	}
 	// function that handles changing of tabs in different cases
@@ -391,6 +392,10 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 		});
 	}
+	
+	$scope.canHaveMaxValue = function() {
+		return "DATE" == $scope.selectedDriver.type;
+	}
 
 	$scope.getLovDates = function(){ // service that gets list of lovs @GET
 		sbiModule_restServices.promiseGet("2.0", "lovs/get/all")
@@ -435,6 +440,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedParUse.associatedChecks = $scope.associatedChecks;
 		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : parseInt($scope.selectedParUse.idLov);
 		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : parseInt($scope.selectedParUse.idLovForDefault);
+		$scope.selectedParUse.idLovForMax = ($scope.selectedParUse.idLovForMax === null) ? -1 : parseInt($scope.selectedParUse.idLovForMax);
+		// If a change type with one that doesn't support max value
+		if (!$scope.canHaveMaxValue()) {
+			$scope.selectedParUse.maxrg = "none";
+		}
+		// Cleanup temp attributes (defaultFormula and/or idLovForDefault) for default
 		switch ($scope.selectedParUse.defaultrg) {
 		case "none":
 			$scope.selectedParUse.defaultFormula = null;
@@ -449,7 +460,17 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		default:
 			break;
 		}
+		// Cleanup temp attributes (idLovForMax) for max
+		switch ($scope.selectedParUse.maxrg) {
+		case "none":
+			$scope.selectedParUse.idLovForMax = -1;
+			break;
+		default:
+			break;
+		}
+		//
 		delete $scope.selectedParUse.defaultrg;
+		delete $scope.selectedParUse.maxrg;
 		delete $scope.selectedParUse.showMapDriver;
 	}
 
@@ -628,7 +649,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
-		 if($scope.dirtyForm){
+		$scope.selectedParUse.maxrg= null;
+		if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;
 				$scope.selectedParUse=angular.copy(item);
@@ -658,6 +680,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
+		$scope.selectedParUse.maxrg= null;
 		$scope.searchLovText = "";
 		$scope.selectedParUse=angular.copy(item);
 		$scope.selectedParUse.showMapDriver = showMapDriver;
@@ -683,14 +706,20 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	// this function properly checks radio buttons
 	$scope.setParUse = function () {
-	if($scope.selectedParUse.defaultFormula == null){
-		$scope.selectedParUse.defaultrg = "none";
-	}else{
-		$scope.selectedParUse.defaultrg = "pickup";
-	}
-	if($scope.selectedParUse.idLovForDefault != null){
-		$scope.selectedParUse.defaultrg = "lov";
-	}
+		if($scope.selectedParUse.defaultFormula == null){
+			$scope.selectedParUse.defaultrg = "none";
+		}else{
+			$scope.selectedParUse.defaultrg = "pickup";
+		}
+		if($scope.selectedParUse.idLovForDefault != null){
+			$scope.selectedParUse.defaultrg = "lov";
+		}
+
+		if($scope.selectedParUse.idLovForMax != null){
+			$scope.selectedParUse.maxrg = "lov";
+		} else {
+			$scope.selectedParUse.maxrg = "none";
+		}
 	}
 
 	/*

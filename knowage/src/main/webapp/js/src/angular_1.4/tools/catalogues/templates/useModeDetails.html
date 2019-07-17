@@ -212,8 +212,46 @@
 					    </div>
 				    </div>
 			    </div>
-		 	</md-content>
-		 </md-card>  
+				<label ng-if="canHaveMaxValue()">{{translate.load("sbi.generic.maxValue")}}</label>
+				<md-radio-group ng-if="canHaveMaxValue()" ng-model="selectedParUse.maxrg" layout="row">
+					<md-radio-button value="none">
+						{{translate.load("sbi.analytical.drivers.usemode.none")}}
+					</md-radio-button>
+					<md-radio-button value="lov" >
+						{{translate.load("sbi.analytical.drivers.usemode.uselov")}}
+					</md-radio-button>
+				</md-radio-group>
+				<div ng-if="canHaveMaxValue()" ng-show= "selectedParUse.maxrg == 'lov'">
+					<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="md-block" > 
+								<label>{{translate.load("sbi.analytical.drivers.usemode.lov")}}</label>
+								<md-select  aria-label="dropdown"
+									name ="dropdown" 
+									ng-required = "selectedParUse.maxrg== 'lov'"
+									ng-model="selectedParUse.idLovForMax"
+									md-on-close="clearLovSearch()">
+								
+								<md-select-header>
+								<md-input-container class="md-block">
+									<input type="search"
+										ng-model="searchLovText"
+										ng-keydown="$event.stopPropagation()"
+										placeholder="Search..">
+								</md-input-container>
+								</md-select-header>
+									<md-option ng-repeat="l in listDate  | filter:searchLovText"
+										value="{{l.id}}">{{l.label}}-{{l.name}}-{{l.description}}</md-option>
+								</md-select>
+								<div ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.idLovForDefault == null">
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+								</div>
+							</md-input-container>
+						</div>
+					</div>
+				</div>
+			</md-content>
+		</md-card>
 		 
 		 <md-card>
 		    <md-content layout-padding>

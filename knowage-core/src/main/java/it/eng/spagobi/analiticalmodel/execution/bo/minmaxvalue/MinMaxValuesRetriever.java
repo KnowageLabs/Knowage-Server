@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
+package it.eng.spagobi.analiticalmodel.execution.bo.minmaxvalue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,63 +44,59 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class DefaultValuesRetriever {
 
-	private static Logger logger = Logger.getLogger(DefaultValuesRetriever.class);
+public class MinMaxValuesRetriever {
 
-	public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter, ExecutionInstance executionInstance, IEngUserProfile profile) {
+	private static Logger logger = Logger.getLogger(MinMaxValuesRetriever.class);
+
+	public LovValue getMaxValue(BIObjectParameter analyticalDocumentParameter, ExecutionInstance executionInstance, IEngUserProfile profile) {
 		logger.debug("IN");
-		DefaultValuesList defaultValues = null;
+		LovValue retValue = null;
 		try {
-			ILovDetail lovForDefault = executionInstance.getLovDetailForDefault(analyticalDocumentParameter);
-			if (lovForDefault != null) {
-				logger.debug("A LOV for default values is defined : " + lovForDefault);
-				defaultValues = getDefaultValuesFromDefaultLov(executionInstance, profile, lovForDefault);
-			} else {
-				logger.debug("No LOV for default values defined");
-				String formulaForDefault = analyticalDocumentParameter.getParameter().getDefaultFormula();
-				if (formulaForDefault != null) {
-					IDefaultFormula defaultFormula = DefaultFormulas.get(formulaForDefault);
-					defaultValues = defaultFormula.getDefaultValues(analyticalDocumentParameter, executionInstance, profile);
-				}
+			ILovDetail lov = executionInstance.getLovDetailForMax(analyticalDocumentParameter);
+			if (lov != null) {
+				logger.debug("A LOV for max values is defined : " + lov);
+				retValue = getMaxValueFromMaxLov(executionInstance, profile, lov);
 			}
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get parameter's default values", e);
+			throw new SpagoBIRuntimeException("Impossible to get parameter's max values", e);
 		}
-		if (defaultValues == null) {
-			defaultValues = new DefaultValuesList();
+		if (retValue == null) {
+			retValue = new LovValue();
 		}
 		logger.debug("OUT");
-		return defaultValues;
+		return retValue;
 	}
 
-	protected DefaultValuesList getDefaultValuesFromDefaultLov(ExecutionInstance executionInstance, IEngUserProfile profile, ILovDetail lovForDefault)
-			throws Exception, SourceBeanException {
+	protected LovValue getMaxValueFromMaxLov(ExecutionInstance executionInstance, IEngUserProfile profile, ILovDetail lov) throws Exception, SourceBeanException {
 		logger.debug("IN");
-		DefaultValuesList defaultValues = new DefaultValuesList();
+		LovValue retValue = new LovValue();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResult(profile, lovForDefault, new ArrayList<ObjParuse>(), executionInstance, true);
+		String lovResult = executionCacheManager.getLovResult(profile, lov, new ArrayList<ObjParuse>(), executionInstance, true);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
+		int size = rows.size();
 		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + rows.size() + " values");
+		logger.debug("LOV contains " + size + " values");
+		if (size != 1) {
+			String msg = String.format("LOV for min and max value must provide exactly 1 value, %d founded", size);
+			throw new SpagoBIRuntimeException(msg);
+		}
 		Iterator it = rows.iterator();
-		String valueColumn = lovForDefault.getValueColumnName();
-		String descriptionColumn = lovForDefault.getDescriptionColumnName();
+		String valueColumn = lov.getValueColumnName();
+		String descriptionColumn = lov.getDescriptionColumnName();
 		while (it.hasNext()) {
 			SourceBean row = (SourceBean) it.next();
-			LovValue defaultValue = new LovValue();
-			defaultValue.setValue(row.getAttribute(valueColumn));
-			defaultValue.setDescription(row.getAttribute(descriptionColumn));
-			defaultValues.add(defaultValue);
+			retValue.setValue(row.getAttribute(valueColumn));
+			retValue.setDescription(row.getAttribute(descriptionColumn));
 		}
 		logger.debug("OUT");
-		return defaultValues;
+		return retValue;
 	}
 
-	public DefaultValuesList getDefaultQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance, IEngUserProfile userProfile) {
+	public LovValue getMaxQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance, IEngUserProfile userProfile) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = executionInstance.getLovDetail(biparam);
@@ -111,7 +107,7 @@ public class DefaultValuesRetriever {
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error retriving min/max value", e);
 		}
 
 		// get all the rows of the result
@@ -119,29 +115,22 @@ public class DefaultValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			e.printStackTrace();
+			logger.error("Error retriving min/max value", e);
 		}
 
-		DefaultValuesList defaultValuesList = new DefaultValuesList();
+		LovValue ret = new LovValue();
 		List<SourceBean> rows = lovResultHandler.getRows();
 
 		for (SourceBean row : rows) {
 			String rowValue = (String) row.getAttribute(columnName);
 
-			LovValue defaultValue = new LovValue();
-			defaultValue.setValue(rowValue);
-
-			defaultValuesList.add(defaultValue);
+			ret.setValue(rowValue);
 		}
 
-		return defaultValuesList;
+		return ret;
 	}
 
-	/*
-	 * GET DEFAULT VALUE FROM DOCUMENT_URL_MANAGER
-	 */
-
-	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile, Locale locale, String role) {
+	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile, Locale locale, String role) {
 		logger.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
@@ -149,57 +138,53 @@ public class DefaultValuesRetriever {
 		} else if (object instanceof MetaModel) {
 			dum = new BusinessModelRuntime(profile, locale);
 		}
-		DefaultValuesList defaultValues = null;
+		LovValue retValue = null;
 		try {
-			ILovDetail lovForDefault = dum.getLovDetailForDefault(driver);
-			if (lovForDefault != null) {
-				logger.debug("A LOV for default values is defined : " + lovForDefault);
-				defaultValues = getDefaultValuesFromDefaultLovDum(object, profile, lovForDefault, locale);
-			} else {
-				logger.debug("No LOV for default values defined");
-				String formulaForDefault = driver.getParameter().getDefaultFormula();
-				if (formulaForDefault != null) {
-					IDefaultFormulaDum defaultFormulaDum = DefaultFormulasDum.get(formulaForDefault);
-					defaultValues = defaultFormulaDum.getDefaultValues(driver, dum, profile, object, locale, role);
-				}
+			ILovDetail lov = dum.getLovDetailForMax(driver);
+			if (lov != null) {
+				logger.debug("A LOV for max values is defined : " + lov);
+				retValue = getMaxValueFromMaxLovDum(object, profile, lov, locale);
 			}
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get parameter's default values", e);
+			throw new SpagoBIRuntimeException("Impossible to get parameter's max values", e);
 		}
-		if (defaultValues == null) {
-			defaultValues = new DefaultValuesList();
+		if (retValue == null) {
+			retValue = new LovValue();
 		}
 		logger.debug("OUT");
-		return defaultValues;
+		return retValue;
 	}
 
-	protected DefaultValuesList getDefaultValuesFromDefaultLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lovForDefault, Locale locale)
+	protected LovValue getMaxValueFromMaxLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lov, Locale locale)
 			throws Exception, SourceBeanException {
 		logger.debug("IN");
-		DefaultValuesList defaultValues = new DefaultValuesList();
+		LovValue retValue = new LovValue();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResultDum(profile, lovForDefault, new ArrayList<ObjParuse>(), object, true, locale);
+		String lovResult = executionCacheManager.getLovResultDum(profile, lov, new ArrayList<ObjParuse>(), object, true, locale);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
+		int size = rows.size();
 		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + rows.size() + " values");
+		logger.debug("LOV contains " + size + " values");
+		if (size != 1) {
+			String msg = String.format("LOV for min and max value must provide exactly 1 value, %d founded", size);
+			throw new SpagoBIRuntimeException(msg);
+		}
 		Iterator it = rows.iterator();
-		String valueColumn = lovForDefault.getValueColumnName();
-		String descriptionColumn = lovForDefault.getDescriptionColumnName();
+		String valueColumn = lov.getValueColumnName();
+		String descriptionColumn = lov.getDescriptionColumnName();
 		while (it.hasNext()) {
 			SourceBean row = (SourceBean) it.next();
-			LovValue defaultValue = new LovValue();
-			defaultValue.setValue(row.getAttribute(valueColumn));
-			defaultValue.setDescription(row.getAttribute(descriptionColumn));
-			defaultValues.add(defaultValue);
+			retValue.setValue(row.getAttribute(valueColumn));
+			retValue.setDescription(row.getAttribute(descriptionColumn));
 		}
 		logger.debug("OUT");
-		return defaultValues;
+		return retValue;
 	}
 
-	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile,
+	public LovValue getMaxQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile,
 			IDrivableBIResource object, Locale locale, String role) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
@@ -222,19 +207,16 @@ public class DefaultValuesRetriever {
 			logger.error(e.getMessage());
 		}
 
-		DefaultValuesList defaultValuesList = new DefaultValuesList();
+		LovValue retValue = new LovValue();
 		if (lovResultHandler != null) {
 			List<SourceBean> rows = lovResultHandler.getRows();
 			for (SourceBean row : rows) {
 				String rowValue = (String) row.getAttribute(columnName);
-
-				LovValue defaultValue = new LovValue();
-				defaultValue.setValue(rowValue);
-
-				defaultValuesList.add(defaultValue);
+				
+				retValue.setValue(rowValue);
 			}
 		}
-		return defaultValuesList;
+		return retValue;
 	}
 
 }

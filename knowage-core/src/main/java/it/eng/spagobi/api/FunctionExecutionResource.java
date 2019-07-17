@@ -56,7 +56,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -306,7 +306,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 					for (int k = 0; k < valList.size(); k++) {
 						String itemVal = valList.get(k);
 
-						DefaultValue defValue = new DefaultValue();
+						LovValue defValue = new LovValue();
 						defValue.setValue(itemVal);
 						defValue.setDescription(itemVal);
 						parameterValueList.add(defValue);
@@ -621,7 +621,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 			String[] date = valueDate.split("#");
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
 			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
+			LovValue valueDef = new LovValue();
 			try {
 				Date d = format.parse(date[0]);
 				valueDef.setValue(d);

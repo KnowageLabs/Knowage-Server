@@ -99,6 +99,31 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		return lovProvDet;
 	}
 
+	/**
+	 * 
+	 * @param driver
+	 * @return
+	 * @author Marco Libanori
+	 */
+	public ILovDetail getLovDetailForMax(AbstractDriver driver) {
+		Parameter par = driver.getParameter();
+		ModalitiesValue lov = par.getModalityValueForMax();
+		if (lov == null) {
+			logger.debug("No LOV for max value defined");
+			return null;
+		}
+		logger.debug("A LOV for max value is defined : " + lov);
+		// build the ILovDetail object associated to the lov
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovProvDet = null;
+		try {
+			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for max value", e);
+		}
+		return lovProvDet;
+	}
+
 	public void refreshParametersValues(JSONObject jsonObject, boolean transientMode, IDrivableBIResource object) {
 		logger.debug("IN");
 		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");

@@ -53,7 +53,7 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -876,7 +876,7 @@ public class ExecutionInstance implements Serializable {
 					parameterDescriptions.add(nonDefaultDescriptions.get(valuePosition));
 				} else {
 					// this means that the value IS a default value
-					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
+					LovValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
 
 					parameterDescriptions.add((defaultValue != null) ? defaultValue.getDescription() : "");
 				}
@@ -944,7 +944,7 @@ public class ExecutionInstance implements Serializable {
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
-				DefaultValue defaultValue = defaultValues.getDefaultValue(value);
+				LovValue defaultValue = defaultValues.getDefaultValue(value);
 				if (defaultValue != null) {
 					logger.debug("Value [" + defaultValue + "] is a selected value.");
 					toReturn.add(defaultValue);
@@ -1210,6 +1210,31 @@ public class ExecutionInstance implements Serializable {
 			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for default values", e);
+		}
+		return lovProvDet;
+	}
+
+	/**
+	 * Get lov detail for max.
+	 * @param parameter
+	 * @return
+	 * @author Marco Libanori
+	 */
+	public ILovDetail getLovDetailForMax(BIObjectParameter parameter) {
+		Parameter par = parameter.getParameter();
+		ModalitiesValue lov = par.getModalityValueForMax();
+		if (lov == null) {
+			logger.debug("No LOV for max value defined");
+			return null;
+		}
+		logger.debug("A LOV for max value is defined : " + lov);
+		// build the ILovDetail object associated to the lov
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovProvDet = null;
+		try {
+			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for max value", e);
 		}
 		return lovProvDet;
 	}

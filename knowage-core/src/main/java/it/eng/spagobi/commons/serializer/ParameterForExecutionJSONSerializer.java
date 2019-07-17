@@ -24,7 +24,7 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
@@ -124,9 +124,9 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 
 			JSONArray defaultValues = new JSONArray();
 			DefaultValuesList defaults = parameter.getDefaultValues();
-			Iterator<DefaultValue> defaultsIt = defaults.iterator();
+			Iterator<LovValue> defaultsIt = defaults.iterator();
 			while (defaultsIt.hasNext()) {
-				DefaultValue aDefault = defaultsIt.next();
+				LovValue aDefault = defaultsIt.next();
 				JSONObject aDefaultJSON = new JSONObject();
 				aDefaultJSON.put("value", aDefault.getValue());
 				aDefaultJSON.put("description", aDefault.getDescription());

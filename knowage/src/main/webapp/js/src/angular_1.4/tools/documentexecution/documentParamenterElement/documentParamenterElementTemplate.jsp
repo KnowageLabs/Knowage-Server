@@ -81,7 +81,7 @@
 			</md-icon>
 		
 		</div>
-		<md-datepicker ng-model="parameter.parameterValue" style="margin-right:0;max-height:90px;" layout="row" layout-align="start center"></md-datepicker>
+		<md-datepicker ng-model="parameter.parameterValue" md-max-date="parameter.maxValue" style="margin-right:0;max-height:90px;" layout="row" layout-align="start center"></md-datepicker>
 	</div>		
 	
 	<!-- Date RANGE-->

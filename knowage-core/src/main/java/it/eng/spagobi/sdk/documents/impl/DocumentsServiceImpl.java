@@ -59,7 +59,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
@@ -231,7 +231,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 			values = new SDKDocumentParameterValue[defaultValues.size()];
 			for (int i = 0; i < defaultValues.size(); i++) {
-				DefaultValue defaultValue = defaultValues.get(i);
+				LovValue defaultValue = defaultValues.get(i);
 				String value = defaultValue.getValue() != null ? defaultValue.getValue().toString() : null;
 				String description = defaultValue.getDescription() != null ? defaultValue.getDescription().toString() : "";
 				logger.debug("Default value retrieved : value = [" + value + "], description = [" + description + "]");

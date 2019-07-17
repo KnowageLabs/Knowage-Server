@@ -30,6 +30,7 @@ public class ParameterUse implements Serializable {
 	Integer id; // in realtà questo è par_id nella tabella
 	Integer idLov;
 	Integer idLovForDefault;
+	Integer idLovForMax;
 	String name = "";
 	String label = "";
 	String description = "";
@@ -123,6 +124,14 @@ public class ParameterUse implements Serializable {
 
 	public void setIdLovForDefault(Integer idLovForDefault) {
 		this.idLovForDefault = idLovForDefault;
+	}
+
+	public Integer getIdLovForMax() {
+		return idLovForMax;
+	}
+
+	public void setIdLovForMax(Integer idLovForMax) {
+		this.idLovForMax = idLovForMax;
 	}
 
 	/**

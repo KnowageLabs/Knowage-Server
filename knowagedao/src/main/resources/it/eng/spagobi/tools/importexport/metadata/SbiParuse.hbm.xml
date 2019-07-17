@@ -16,6 +16,9 @@
         <many-to-one name="sbiLov" class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov">
             <column name="lov_id" not-null="false" />
         </many-to-one>
+        <many-to-one name="sbiLovForMax" class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov">
+            <column name="max_lov_id" not-null="false" />
+        </many-to-one>
         <many-to-one name="sbiLovForDefault" class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov">
             <column name="default_lov_id" not-null="false" />
         </many-to-one>

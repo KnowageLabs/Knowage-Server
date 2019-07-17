@@ -23,6 +23,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -204,13 +205,22 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 				parameter.setModalityValue(modVal);
 			}
 
-			if (hibParuse.getSbiLovForDefault() != null) {
-				ModalitiesValue lov = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(hibParuse.getSbiLovForDefault().getLovId());
+			SbiLov currLov = hibParuse.getSbiLovForDefault();
+			if (currLov != null) {
+				ModalitiesValue lov = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(currLov.getLovId());
 				parameter.setModalityValueForDefault(lov);
 				parameter.setDefaultFormula(null);
 			} else {
 				parameter.setModalityValueForDefault(null);
 				parameter.setDefaultFormula(hibParuse.getDefaultFormula());
+			}
+			
+			currLov = hibParuse.getSbiLovForMax();
+			if (hibParuse.getSbiLovForMax() != null) {
+				ModalitiesValue lov = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(currLov.getLovId());
+				parameter.setModalityValueForMax(lov);
+			} else {
+				parameter.setModalityValueForMax(null);
 			}
 
 			ParameterUseDAOHibImpl dao = new ParameterUseDAOHibImpl();
