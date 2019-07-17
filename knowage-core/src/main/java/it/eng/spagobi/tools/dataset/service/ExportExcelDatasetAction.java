@@ -43,6 +43,7 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -68,17 +69,16 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
 		JSONObject parametersAttribute = getAttributeAsJSONObject(PARAMETERS.toUpperCase());
 		JSONArray paramsJson = new JSONArray();
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, String> parameters = new HashMap<>();
 		try {
 			if (parametersAttribute != null)
 				paramsJson = parametersAttribute.getJSONArray(PARAMETERS);
-			for (int i = 0; i < paramsJson.length(); i++) {
-				JSONObject parameter = paramsJson.getJSONObject(i);
-				Object value = parameter.get("value");
-				if (value instanceof String == false)
-					value = String.valueOf(value);
-				parameters.put(parameter.getString("name"), value);
-			}
+
+			JSONObject pars = new JSONObject();
+			pars.put(DataSetConstants.PARS, paramsJson);
+			ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
+			parameters = mdsr.getDataSetParametersAsMap(pars);
+
 		} catch (Exception ex) {
 			logger.debug("Cannot get Dataset parameters");
 			throw new SpagoBIServiceException(this.getActionName(), "Impossible to transform parameters from json object to map", ex);
