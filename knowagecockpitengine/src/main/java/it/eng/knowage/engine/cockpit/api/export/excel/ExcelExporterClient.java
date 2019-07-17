@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -42,6 +43,7 @@ public class ExcelExporterClient extends SimpleRestClient {
 
 		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, body);
 		String resultString = resp.readEntity(String.class);
+		LogMF.debug(logger, "Response from core data service (resultString) is: {0}", resultString);
 		JSONObject result = new JSONObject(resultString);
 
 		logger.debug("OUT");

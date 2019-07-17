@@ -294,10 +294,24 @@ public class ExcelExporter {
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 
+			if (datastore!=null) {
+				logger.debug("datasetLabel: "+datasetLabel+" datastoreObj = " + datastore.toString());
+			}
+
 			datastore.put("widgetData",widget);
 			JSONObject content = widget.optJSONObject("content");
 			String widgetName = null;
-			if (content != null) {
+			if (widget.has("style")) {
+				JSONObject style =	widget.optJSONObject("style");
+				if (style.has("title")) {
+					JSONObject title =	style.optJSONObject("title");
+					if (title.has("label")) {
+						widgetName = title.getString("label");
+					}
+				}
+
+			}
+			if (widgetName==null && content != null) {
 				widgetName = content.getString("name");
 			}
 			datastore.put("widgetName", widgetName);
@@ -328,7 +342,7 @@ public class ExcelExporter {
 				String sheetName = "empty";
 				if (dataStore.has("widgetName") && dataStore.getString("widgetName")!=null && !dataStore.getString("widgetName").isEmpty()) {
 					if (dataStore.has("sheetInfo")) {
-					sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+						sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
 					}
 					else {
 						sheetName = widgetName;
@@ -345,6 +359,10 @@ public class ExcelExporter {
 			}
 
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
+
+			if (widgetData!=null)
+				logger.debug("widgetData: "+widgetData.toString());
+
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String,String> arrayHeader = new HashMap<String,String>();
 
@@ -352,18 +370,32 @@ public class ExcelExporter {
 
 				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length()>0 ) {
 
+					if (widgetContent.has("columnSelectedOfDataset"))
+						logger.debug("columnSelectedOfDataset: "+widgetContent.getJSONArray("columnSelectedOfDataset").toString());
 
 					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 
 						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-						arrayHeader.put(column.getString("name"),column.getString("aliasToShow"));
 
+						if (column.has("name")) {
+
+							arrayHeader.put(column.getString("name"),column.getString("aliasToShow"));
+
+						}
+						else {
+
+							if(column.has("aliasToShow")) {
+								arrayHeader.put(column.getString("alias"),column.getString("aliasToShow"));
+							}
+							else {
+
+								arrayHeader.put(column.getString("alias"),column.getString("alias"));
+							}
+						}
 					}
 				}
 
 			}
-
-
 
 			// Fill Header
 			for (int i = 0; i < columns.length(); i++) {
@@ -526,7 +558,7 @@ public class ExcelExporter {
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 
 					if (datastoreObj!=null) {
-					logger.debug("datasetLabel: "+datasetLabel+" datastoreObj = " + datastoreObj.toString());
+						logger.debug("datasetLabel: "+datasetLabel+" datastoreObj = " + datastoreObj.toString());
 					}
 
 					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
@@ -743,7 +775,7 @@ public class ExcelExporter {
 
 					JSONObject categoryOrMeasure = new JSONObject();
 					categoryOrMeasure.put("id", column.getString("alias"));
-					categoryOrMeasure.put("alias", aliasToShow);
+					categoryOrMeasure.put("alias", column.getString("alias"));
 
 					String formula = column.optString("formula");
 					String name = formula.isEmpty() ? column.optString("name") : formula;
@@ -824,11 +856,11 @@ public class ExcelExporter {
 							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]","");
 							valuesToChange = valuesToChange.replaceAll("\"", "");
 							if (!(newParameters.length()!=0 && newParameters.has(key) &&newParameters.getString(key).length()!=0))
-							newParameters.put(obj, valuesToChange);
+								newParameters.put(obj, valuesToChange);
 						}
 						else {
 
-								newParameters.put(obj, "");
+							newParameters.put(obj, "");
 
 
 						}
