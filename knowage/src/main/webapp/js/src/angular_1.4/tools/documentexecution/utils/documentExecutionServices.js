@@ -803,16 +803,17 @@
 		/*
 		 * Set max value for parameters.
 		 */
-		service.setMaxValueForParameters = function(params) {
+		serviceScope.setMaxValueForParameters = function(params) {
 			if(execProperties.parametersData.documentParameters.length > 0){
 
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
 					var parameter = execProperties.parametersData.documentParameters[i];
 
 					if(parameter.valueSelection.toLowerCase() == 'man_in') {
-						if(parameter.type=='DATE'){
+						var maxValue = params[parameter.urlName+'_max_value'];
+						if(maxValue && parameter.type=='DATE'){
 							parameter.maxValue = sbiModule_dateServices.getDateFromFormat(
-									params[filterStatus[i].urlName+'_max_value'] = filterStatus[i].driverMaxValue,
+									maxValue,
 									sbiModule_config.serverDateFormat);
 						}
 					}
