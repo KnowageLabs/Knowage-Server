@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -598,7 +599,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
+			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
 					options);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
@@ -615,6 +616,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			String aggregations = null;
 			String parameters = null;
+			Map<String, Object> driversRuntimeMap = null;
 			String likeSelections = null;
 			int start = -1;
 			int limit = -1;
@@ -706,10 +708,23 @@ public class DataSetResource extends AbstractDataSetResource {
 					}
 				}
 
+				JSONArray jsonDrivers = jsonBody.optJSONArray("drivers");
+				if (jsonDrivers != null && jsonDrivers.length() > 0) {
+					for (int j = 0; j < jsonDrivers.length(); j++) {
+						JSONObject jsonDriver = jsonDrivers.getJSONObject(j);
+						try {
+							driversRuntimeMap = JSONObjectDeserializator.getHashMapFromJSONObject(jsonDriver);
+						} catch (Exception e1) {
+							logger.error("Getting Drivers has encoutered error");
+							throw new SpagoBIRuntimeException(e1.getLocalizedMessage(), e1);
+						}
+					}
+				}
+
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, null, likeSelections, -1, aggregations, null, start, limit, true);
+			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {

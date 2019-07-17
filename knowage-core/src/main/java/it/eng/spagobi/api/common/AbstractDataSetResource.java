@@ -113,13 +113,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return idArray;
 	}
 
-	public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
-			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
-		return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime, null);
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
+				null);
 	}
 
-	public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
-			String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options) {
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
@@ -151,6 +152,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
 			Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
 			dataSet.setUserProfile(getUserProfile());
+			dataSet.setDrivers(drivers);
 
 			timing.stop();
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
@@ -314,7 +316,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
-		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct"));   // caso in cui ci siano facets complesse (coupled proj)
+		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct")); // caso in cui ci siano facets complesse (coupled
+																												// proj)
 	}
 
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
@@ -350,7 +353,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			String functionName = category.optString("funct");
-			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category)  || hasCountAggregation(functionName)) {
+			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category) || hasCountAggregation(functionName)) {
 				Projection projection = getProjection(dataSet, category, columnAliasToName);
 				groups.add(projection);
 			}
@@ -370,7 +373,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return groups;
 	}
 
-	private boolean hasCountAggregation(String functionName) {  // caso in cui arrivano facets semplici
+	private boolean hasCountAggregation(String functionName) { // caso in cui arrivano facets semplici
 		return AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT)
 				|| AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.COUNT_DISTINCT);
 	}
@@ -391,10 +394,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private boolean hasAggregationInCategory(JSONObject field) throws JSONException {
-			String functionName = field.optString("funct");
-			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
-				return true;
-			}
+		String functionName = field.optString("funct");
+		if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
+			return true;
+		}
 
 		return false;
 	}
@@ -601,10 +604,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	/**
 	 * @param profile
 	 * @param datasetsJSONArray
-	 * @param typeDocWizard     Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al
-	 *                          momento filtra la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un
-	 *                          riferimento alla dimensione spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista
-	 *                          dei dataset è una follia che andrebbe rifattorizzata al più presto.
+	 * @param typeDocWizard
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
+	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
+	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
+	 *            rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
