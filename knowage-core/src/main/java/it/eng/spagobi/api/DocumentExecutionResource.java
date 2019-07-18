@@ -698,7 +698,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 			
 			LovValue maxValue = objParameter.getMaxValue();
-			if (maxValue != null) {
+			if (maxValue != null && maxValue.getValue() != null) {
 				parameterAsMap.put("driverMaxValue", maxValue.getValue().toString());
 			}
 

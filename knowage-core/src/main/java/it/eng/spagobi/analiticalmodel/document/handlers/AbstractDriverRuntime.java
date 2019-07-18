@@ -588,41 +588,45 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	private LovValue buildMaxValue() {
 		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
-		if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
-			String valueDate = maxValue.getValue().toString();
-			String[] date = valueDate.split("#");
-			if (date.length < 2) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
-			}
-			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			LovValue ret = new LovValue();
-
-			if (parType.equals("DATE")) {
-				try {
-					Date d = format.parse(date[0]);
-					String dateServerFormat = serverDateFormat.format(d);
-					ret.setValue(dateServerFormat);
-					ret.setDescription(this.getMaxValue().getDescription());
-					return ret;
-				} catch (ParseException e) {
-					logger.error("Error while building default Value List Date Type", e);
-					return null;
+		if (maxValue.getValue() != null) {
+			if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
+				String valueDate = maxValue.getValue().toString();
+				String[] date = valueDate.split("#");
+				if (date.length < 2) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
+				}
+				SimpleDateFormat format = new SimpleDateFormat(date[1]);
+				LovValue ret = new LovValue();
+	
+				if (parType.equals("DATE")) {
+					try {
+						Date d = format.parse(date[0]);
+						String dateServerFormat = serverDateFormat.format(d);
+						ret.setValue(dateServerFormat);
+						ret.setDescription(this.getMaxValue().getDescription());
+						return ret;
+					} catch (ParseException e) {
+						logger.error("Error while building default Value List Date Type", e);
+						return null;
+					}
+				} else {
+					try {
+						String dateRange = date[0];
+						String[] dateRangeArr = dateRange.split("_");
+						String range = dateRangeArr[dateRangeArr.length - 1];
+						dateRange = dateRange.replace("_" + range, "");
+						Date d = format.parse(dateRange);
+						String dateServerFormat = serverDateFormat.format(d);
+						ret.setValue(dateServerFormat + "_" + range);
+						ret.setDescription(this.getMaxValue().getDescription());
+						return ret;
+					} catch (ParseException e) {
+						logger.error("Error while building default Value List Date Type", e);
+						return null;
+					}
 				}
 			} else {
-				try {
-					String dateRange = date[0];
-					String[] dateRangeArr = dateRange.split("_");
-					String range = dateRangeArr[dateRangeArr.length - 1];
-					dateRange = dateRange.replace("_" + range, "");
-					Date d = format.parse(dateRange);
-					String dateServerFormat = serverDateFormat.format(d);
-					ret.setValue(dateServerFormat + "_" + range);
-					ret.setDescription(this.getMaxValue().getDescription());
-					return ret;
-				} catch (ParseException e) {
-					logger.error("Error while building default Value List Date Type", e);
-					return null;
-				}
+				return maxValue;
 			}
 		} else {
 			return maxValue;
