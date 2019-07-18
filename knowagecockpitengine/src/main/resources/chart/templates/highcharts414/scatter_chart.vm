@@ -968,6 +968,9 @@
 							#set ($col =  $dataColumnsMapper.get($valueKey))
 							"$valueKey": "$row.get($col)",
 							#end
+							"$relatedSerie.name" :"$row.get($dataColumnsMapper.get($relatedSerieColName))",
+							"$relatedSerie.column" :"$row.get($dataColumnsMapper.get($relatedSerieColName))",
+
 							
 						},
 						
@@ -1284,7 +1287,7 @@
 			 
 			#foreach($element in $chart.VALUES.SERIE)
 			
-			  	var elname = '${element.column}';
+			  	var elname = '${element.name}';
 				if(elname ==sername){
 		
 					#if(!$element.TOOLTIP.tooltipExpression ||  $element.TOOLTIP.tooltipExpression=="")
