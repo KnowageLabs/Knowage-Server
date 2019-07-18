@@ -36,7 +36,7 @@ angular.module('olap_designer_toolbar', ['sbiModule','olap_template'])
 				});
 
 
-function olapDesignerToolbarController($scope, channelMessagingToolbar, $timeout, $window, $mdDialog, $http, $sce,
+function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config,sbiModule_user,OlapTemplateService) {
 
