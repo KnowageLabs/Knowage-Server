@@ -397,9 +397,59 @@ public class ExcelExporter {
 
 			}
 
+			// column.header matches with name or alias
 			// Fill Header
-			for (int i = 0; i < columns.length(); i++) {
-				JSONObject column = columns.getJSONObject(i);
+			JSONArray columnsOrdered = new JSONArray();
+			if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) && widgetContent.has("columnSelectedOfDataset")) {
+				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+
+					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+					boolean hidden = false;
+					if (column.has("style")) {
+						JSONObject style =	column.optJSONObject("style");
+						if (style.has("hiddenColumn")) {
+							if (style.getString("hiddenColumn").equals("true")) {
+								hidden = true;
+							}
+
+						}
+					}
+					if (!hidden) {
+
+						for (int j = 0; j < columns.length(); j++) {
+							JSONObject columnOld = columns.getJSONObject(j);
+							if (column.has("name")) {
+								if (columnOld.getString("header").equals(column.getString("name"))) {
+
+									columnsOrdered.put(columnOld);
+									break;
+								}
+								else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+									columnsOrdered.put(columnOld);
+									break;
+								}
+							}
+							else {
+								if (columnOld.getString("header").equals(column.getString("alias"))) {
+									columnsOrdered.put(columnOld);
+									break;
+								}
+								else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+									columnsOrdered.put(columnOld);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			else {
+				columnsOrdered = columns;
+			}
+
+
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject column = columnsOrdered.getJSONObject(i);
 				String columnName = column.getString("header");
 				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
 					if (arrayHeader.get(columnName)!=null) {
@@ -427,8 +477,8 @@ public class ExcelExporter {
 				else
 					row = sheet.createRow(r + 2);
 
-				for (int c = 0; c < columns.length(); c++) {
-					JSONObject column = columns.getJSONObject(c);
+				for (int c = 0; c < columnsOrdered.length(); c++) {
+					JSONObject column = columnsOrdered.getJSONObject(c);
 					String type = column.getString("type");
 					String  colIndex = column.getString("name"); // column_1, column_2, column_3...
 
