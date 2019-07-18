@@ -459,12 +459,11 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Integer lovIdInt = Integer.valueOf(lovId);
-			// String hql = "from SbiParuse s where s.sbiLov.lovId=" + lovIdInt;
-			String hql = "from SbiParuse s where s.sbiLov.lovId=?";
+			int lovIdInt = Integer.parseInt(lovId);
+			String hql = "from SbiParuse s where s.sbiLov.lovId = :lovIdInt or s.sbiLovForDefault.lovId = :lovIdInt or s.sbiLovForMax.lovId = :lovIdInt";
 
 			Query hibQuery = aSession.createQuery(hql);
-			hibQuery.setInteger(0, lovIdInt.intValue());
+			hibQuery.setInteger("lovIdInt", lovIdInt);
 			List hibList = hibQuery.list();
 
 			if (hibList.size() > 0) {
