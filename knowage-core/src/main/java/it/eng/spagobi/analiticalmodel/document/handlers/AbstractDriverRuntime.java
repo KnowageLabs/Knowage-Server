@@ -521,9 +521,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			maxValue = retriever.getMaxValueDum(driver, this.biResource, profile, this.locale, this.executionRole);
 
 			if (driver.getMaxValue() == null) {
-				// if parameter has no values set, but it has default values, those values are considered as values
 				maxValue = buildMaxValue();
-				if (maxValue != null) {
+				if (maxValue != null && maxValue.getValue() != null) {
 					driver.setMaxValue(maxValue.getValue().toString());
 				}
 			}
