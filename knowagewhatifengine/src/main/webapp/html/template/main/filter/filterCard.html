@@ -17,11 +17,10 @@
 		</div>
 	
 	 	<div layout="row" class="bottom">
-			<div class="name-area"  title="{{(filterSelected |limitTo:numVisibleFilters:index)[$index].visible ? (filterSelected |limitTo:numVisibleFilters:index)[$index].caption : 'Filter not selected'}}">
-				<span class="no-wrap">
-					{{(filterSelected |limitTo:numVisibleFilters:index)[$index].visible ? cutName((filterSelected |limitTo:numVisibleFilters:index)[$index].caption, -1, false) : '...'}}
-				</span>
+			<div class="name-area"  layout="row" title="{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}">
+				<div class="name-area" flex>{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}</div>
 			</div>
+			
 			<div class="button-area">
 				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
 					<md-icon md-font-icon="fa fa-filter"></md-icon>

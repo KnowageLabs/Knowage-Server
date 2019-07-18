@@ -9,10 +9,17 @@
 			<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" 
 					ng-click="hideAsyncTree(item)" class="dialog-button-padding"> 
 			</md-icon>  
-			<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
+			<span ng-click="selectFilter(item)" ng-show="activeaxis == -1 && olapMode">
 				{{item.name}}
 				<md-icon md-font-icon="fa fa-check-circle-o" class="icon-color-green" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
 				</md-icon>
+			</span>
+			<span  ng-show="activeaxis == -1 && !olapMode">
+				<md-checkbox ng-model="item.isSlicer" ">
+				<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+					{{item.name}}
+				</span>	
+				</md-checkbox>
 			</span>
 			<span ng-click="" ng-show="activeaxis >= 0">
 				<md-checkbox ng-model="item.visible">

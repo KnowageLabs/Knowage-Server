@@ -597,7 +597,7 @@ md-dialog.fullscreen-dialog {
 /*New filter card*/
 .new-filter-card{
 	min-width:160px;
-	width:12%;
+	max-width:240px;
 	border-radius:10px;
 	margin: 5px; 
 	height: 70px;
@@ -645,6 +645,7 @@ md-dialog.fullscreen-dialog {
 	line-height: 2;
 	color:white;
 	text-align: center;
+	
 }
 
 @-moz-document url-prefix() { 
@@ -652,6 +653,7 @@ md-dialog.fullscreen-dialog {
 		line-height: 1.5;
 		color:white;
 		text-align: center;
+		
 	}
 }
 .new-filter-card .bottom{
@@ -660,6 +662,7 @@ md-dialog.fullscreen-dialog {
 	border: 1px solid; 
 	border-top:0px;
 	background-color:#ffffff;
+	
 }
 
 .new-filter-card .bottom .name-area{
@@ -667,6 +670,13 @@ md-dialog.fullscreen-dialog {
 	overflow:hidden;
 	line-height: 2;
 	text-align: center;
+	
+	
+}
+.new-filter-card .bottom .name-area div {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 12;
 }
 
 

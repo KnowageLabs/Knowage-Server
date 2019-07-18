@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function(){
-	angular.module('olap.services').service('hierarchyTreeService',function(treeIteratorService){
+	angular.module('olap.services').service('hierarchyTreeService',function(treeIteratorService,FiltersService){
 
 
 		function visibleMembersVisitor () {
@@ -32,6 +32,15 @@
 				}
 		}
 
+		function slicerMembersVisitor () {
+			this.slicerMembers = [];
+			this.visit = function(element){
+				if(element.isSlicer === true){
+					this.slicerMembers.push(element)
+				}
+			}
+		}
+
 		function visibilityManagerVisitor(visible){
 			this.visible = visible;
 
@@ -40,6 +49,45 @@
 				element.visible = this.visible;
 
 			}
+		}
+
+		function slicerSetterVisitor(selectedHierarchyUniqueName){
+			this.visit = function(element){
+				element.isSlicer = FiltersService.isSlicer(selectedHierarchyUniqueName,element.uniqueName)
+			}
+		}
+
+		var setIsSlicer = function(tree,selectedHierarchyUniqueName){
+
+			var visitor = new slicerSetterVisitor(selectedHierarchyUniqueName)
+
+			treeIteratorService
+			.accept(visitor)
+			.iterate(tree,'children')
+
+		}
+
+		var getSlicerMembers = function(tree){
+
+			var visitor = new slicerMembersVisitor()
+
+			var treeCopy = angular.copy(tree);
+			treeIteratorService
+			.accept(visitor)
+			.iterate(treeCopy,'children')
+
+
+			return visitor.slicerMembers;
+		}
+
+		var getSlicerMemberUniqueNames = function(tree){
+			var  members = getSlicerMembers(tree)
+			var slicerMemberUniqueNames = [];
+			for(var i in members){
+				slicerMemberUniqueNames.push(members[i].uniqueName)
+			}
+
+			return slicerMemberUniqueNames;
 		}
 
 		var getVisibleMembers = function(tree){
@@ -67,7 +115,11 @@
 
 
 		return {
+
 			getVisibleMembers:getVisibleMembers,
+			getSlicerMemberUniqueNames:getSlicerMemberUniqueNames,
+			getSlicerMembers : getSlicerMembers,
+			setIsSlicer:setIsSlicer,
 			setVisibilityForAll:setVisibilityForAll,
 			isAnyVisible:isAnyVisible
 
