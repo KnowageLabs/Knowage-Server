@@ -40,7 +40,7 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n'
+myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval'
   				, function(
   						$http,
   						$mdDialog,
@@ -48,7 +48,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
   						sbiModule_restServices,
   						sbiModule_messaging,
   						sbiModule_translate,
-  						sbiModule_i18n
+  						sbiModule_i18n,
+  						$interval
   						) {
     return {
         restrict: 'E',
@@ -111,7 +112,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         	       var parentEl = angular.element(document.body);
         	       $mdDialog.show({
         	         parent: parentEl,
-        	         templateUrl: +"/angular_1.4/menu/templates/languageDialog.html",
+        	         templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/menu/templates/languageDialog.html',
         	         locals: {
         	           languages: $scope.languages
         	         }
@@ -284,14 +285,33 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				$scope.showAccessibilityDialog();
 			}
 			
+			$interval(function() {
+				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+					$scope.downloadsList = [{
+					    "filename": "Dataset 01",
+					    "startDate": "2019-07-18T16:59:20",
+					    "id": "123e4567-e89b-12d3-a456-556642440000"
+					  },
+					  {
+					    "filename": "Dataset 02",
+					    "startDate": "2019-07-18T16:59:20",
+					    "id": "123e4567-e89b-42d3-a456-556642440000"
+					  }
+					];
+				},function(error){})
+			}, 10000);
+			
+			
 			$scope.downloads = function(){
 				$scope.toggleMenu();
 				var parentEl = angular.element(document.body);
 				$mdDialog.show({
 					parent: parentEl,
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
-					controller: downloadsDialogController
+					controller: downloadsDialogController,
+					scope: $scope
 				});
+			
 
 				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
 	        	    scope.translate = sbiModule_translate; 
@@ -302,31 +322,19 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 	        	    scope.deleteDownload = function(index){
 	        	    	scope.rowData.splice(index,1);
 	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
-	        	    }
+	        	    } 
 	        	    
-					scope.rowData = [
-						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
-						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
-						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
-						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
-						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
-//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
-//						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
-//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
-//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},
-//						{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
-//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
-//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"},{"name":"test1","ref":"document name","startDate":"16/10/2019","status":"STARTED"},
-//						{"name":"test2","ref":"document name","startDate":"16/10/2019","status":"READY"},
-//						{"name":"test3","ref":"document name","startDate":"16/10/2019","status":"PREPARING"}
-					];
+	        	    scope.$watch('downloadsList', function(newValue,oldValue){
+						if(newValue && scope.downloadGridOptions.api) {
+							scope.downloadGridOptions.api.setRowData(newValue);
+						}
+					})
 					
-					
-					var columnDefs = [
-					    {headerName: 'File Name', field: 'name'},
-					    {headerName: 'Referral', field: 'ref'},
-					    {headerName: 'Start Date', field: 'startDate',width: 150,suppressSizeToFit:true},
-					    {headerName: 'Status', field: 'status', cellRenderer: statusRenderer, tooltipField:'status'},
+					var columnDefs =[
+					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename'},
+					    //{headerName: 'Referral', field: 'ref'},
+					    {headerName: scope.translate.load('sbi.generic.from'), field: 'startDate', cellRenderer: dateRenderer},
+					    //{headerName: 'Status', field: 'status', cellRenderer: statusRenderer, tooltipField:'status'},
 					    {headerName: '', field: 'download', cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 							suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
 					];
@@ -334,9 +342,12 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					    return data.pars ? true : false;
 					}
 					
+					function dateRenderer(params){
+						return moment(params.value).locale(sbiModule_config.curr_language).format('llll');
+					}
+					
 					function buttonRenderer(params) {
-						var download = params.data.status == 'READY' ? '<md-button class="md-icon-button" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' : '';
-						return download + '<md-button class="md-icon-button" style="margin-top:4px;" ng-click="deleteDownload('+params.rowIndex+')"><md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon></md-button>';
+						return '<md-button class="md-icon-button" ng-click="downloadContent(\''+ params.data.id +'\')" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' ;
 					}
 					
 					function statusRenderer(params){
@@ -375,7 +386,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 						        filter: true
 						    },
 						    columnDefs: columnDefs,
-						    rowData: scope.rowData,
+						    rowData: scope.downloadsList || [],
 //						    getRowHeight: function (params) {
 //						        return isFullWidth(params.data) ? 100 : 25;
 //						    },
