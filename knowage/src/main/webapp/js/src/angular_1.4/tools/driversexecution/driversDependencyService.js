@@ -167,7 +167,8 @@
 										condition = visualDependency.operation=='contains' && compareValueStr==dateToSubmit1;
 									}
 								}else{
-									condition = visualDependency.operation=='equal' && compareValueStr==newValueStr;
+									condition = (visualDependency.operation=='contains') ?
+											(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
 								}
 							}
 							if(condition){

@@ -371,7 +371,7 @@ angular
                  var selectedDriverName = selectedDriver.label;
                  $scope.selectedDriver = $filter('filter')(driversService.rederedDrivers,{label:selectedDriverName})[0];
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
-                 $scope.availableOperators = ['equal','greater', 'less', 'contains','notcontains'];
+                 $scope.availableOperators = ['contains','not contains'];
                  driversService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.visusalDependencyObjects.length;i++){
@@ -468,7 +468,7 @@ angular
      				$scope.selectedDataCondition.persist[$scope.selectedDataCondition.useModeId] = true;
      			}
 
-     			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','notcontains','starts with','ends with'];
+     			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','not contains','starts with','ends with'];
      			driversService.selectedDataCondition = driversService.dataDependencyObjects[ $scope.selectedDriver.id][selectedDataCondition];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
