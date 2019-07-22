@@ -37,15 +37,21 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 	}
 	
 	$scope.$watch('newModel.dataset.dsId',function(newValue,oldValue){
-		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
-		var dsIndex;
-		for(var d in $scope.availableDatasets){
-			if($scope.availableDatasets[d].id.dsId == newValue) dsIndex = d;
+		if(newValue){
+			$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
+			var dsIndex;
+			for(var d in $scope.availableDatasets){
+				if($scope.availableDatasets[d].id.dsId == newValue) dsIndex = d;
+			}
+			if(!newValue || typeof dsIndex != 'undefined'){
+				$scope.dataset = $scope.availableDatasets[dsIndex];
+				$scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;			
+			}
+		}else{
+			if($scope.newModel.content && $scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = [];
 		}
-		if(!newValue || typeof dsIndex != 'undefined'){
-			$scope.dataset = $scope.availableDatasets[dsIndex];
-			$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets);			
-		}
+		$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets);
+		
 	})
 	
 	$scope.insertCode = function(tag){

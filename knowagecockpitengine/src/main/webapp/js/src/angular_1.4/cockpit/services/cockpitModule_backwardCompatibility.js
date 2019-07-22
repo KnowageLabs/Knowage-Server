@@ -72,6 +72,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
+			//to version 6.4
+			if(!self.compareVersion("6.4.3",model.knowageVersion)){
+				if(model.style && model.style.title && model.style.title.label){
+					model.content.name = model.style.title.label;
+				}else{
+					model.content.name = 'widget_' + model.type + '_' + model.id;
+				}
+			}
 			//to version 7.0
 			if(!self.compareVersion("7.0.0",model.knowageVersion)){
 				if(model.type=='table'){

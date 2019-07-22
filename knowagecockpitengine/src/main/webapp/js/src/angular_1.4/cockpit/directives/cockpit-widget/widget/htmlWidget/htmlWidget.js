@@ -157,8 +157,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.showWidgetSpinner();
 			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId && $scope.ngModel.htmlToRender.search($scope.noAggregationsExistRegex) != -1){
 				sbiModule_restServices.restToRootProject();
-				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
-				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 
 				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, $scope.maxRow(), undefined, undefined, $scope.ngModel, undefined).then(
 					function(data){
