@@ -712,10 +712,14 @@ public class ExcelExporter {
 								valuesToChange = valuesToChange.replaceAll("\"", "\'");
 								newParameters.put(obj, valuesToChange);
 							}
+
 							else {
 								newParameters.put(obj, "");
 							}
 
+						}
+						else if ((val!=null && val.length()>1)&& (!val.contains("$P{"))) {
+							newParameters.put(obj, val);
 						}
 
 					}
@@ -914,6 +918,9 @@ public class ExcelExporter {
 
 
 						}
+					}
+					else if ((val!=null && val.length()>1)&& (!val.contains("$P{"))) {          // parameter already set in data configuration
+						newParameters.put(obj, val);
 					}
 
 				}
