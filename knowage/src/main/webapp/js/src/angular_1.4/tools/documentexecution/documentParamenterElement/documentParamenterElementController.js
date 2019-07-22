@@ -568,12 +568,32 @@
 						    }
 						}
 
+						function getColumnsDefs(fields){
+							var temp = [];
+							var first=false;
+							for(var k in fields){
+								if(fields[k]!='recNo' && fields[k]!='recCk'){
+									var tempCol = {'headerName': fields[k].header, 'field':fields[k].name }
+									if(!first) {
+										tempCol.headerCheckboxSelection = paramDialogCtrl.tempParameter.multivalue;
+										tempCol.checkboxSelection = paramDialogCtrl.tempParameter.multivalue;
+										first = true;
+									}
+									temp.push(tempCol);
+								}
+							}
+							return temp;
+						}
+
 						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
 						  .then(function(response) {
 								if(response.data.errors && response.data.errors[0]){
 									sbiModule_messaging.showWarningMessage(response.data.errors[0].message, 'Warning');
 								}
 								else if(response.data.status=="OK"){
+									
+									paramDialogCtrl.lookoutGridOptions.api.setColumnDefs(getColumnsDefs(response.data.result.metaData.fields));
+									
 									paramDialogCtrl.tableData = response.data.result.root;
 									paramDialogCtrl.lookoutGridOptions.api.setRowData(response.data.result.root);
 									if(parameter.parameterValue && parameter.parameterValue.length>0){
