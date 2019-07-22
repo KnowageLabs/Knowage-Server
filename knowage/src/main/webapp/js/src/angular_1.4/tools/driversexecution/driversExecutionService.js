@@ -125,7 +125,7 @@
 					childItem.checked = false;
 
 					if(!childItem.leaf) {
-						driversExecutionService.resetParameterInnerLovData(childItem.children);
+						executionService.resetParameterInnerLovData(childItem.children);
 					}
 				}
 			}
@@ -205,7 +205,7 @@
 					if(isParameterSelectionTypeTree(parameter)) {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
-							driversExecutionService.resetParameterInnerLovData(parameter.children);
+							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
 							parameter.parameterValue = '';
 						}
