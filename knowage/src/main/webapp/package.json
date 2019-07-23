@@ -52,6 +52,7 @@
     "moment": "2.22.2",
     "ngdraggable": "0.1.10",
     "pleaserotate.js": "0.1.2",
+    "toastify-js": "^1.6.1",
     "xregexp": "4.2.0"
   },
   "author": "knowage labs <knowage@eng.it>",

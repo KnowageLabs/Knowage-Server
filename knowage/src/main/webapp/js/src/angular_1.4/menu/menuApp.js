@@ -285,21 +285,14 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				$scope.showAccessibilityDialog();
 			}
 			
+			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+				$scope.downloadsList = result.data;
+			})
 			$interval(function() {
 				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
-					$scope.downloadsList = [{
-					    "filename": "Dataset 01",
-					    "startDate": "2019-07-18T16:59:20",
-					    "id": "123e4567-e89b-12d3-a456-556642440000"
-					  },
-					  {
-					    "filename": "Dataset 02",
-					    "startDate": "2019-07-18T16:59:20",
-					    "id": "123e4567-e89b-42d3-a456-556642440000"
-					  }
-					];
+					$scope.downloadsList = result.data;
 				},function(error){})
-			}, 10000);
+			}, 20000);
 			
 			
 			$scope.downloads = function(){
@@ -308,8 +301,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				$mdDialog.show({
 					parent: parentEl,
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
-					controller: downloadsDialogController,
-					scope: $scope
+					controller: downloadsDialogController
 				});
 			
 
@@ -318,6 +310,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 	        	    scope.closeDialog = function(){
 	        	    	$mdDialog.cancel();
 	        	    }
+	        	    
 	        	    
 	        	    scope.deleteDownload = function(index){
 	        	    	scope.rowData.splice(index,1);
@@ -331,15 +324,17 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					})
 					
 					var columnDefs =[
-					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename'},
-					    //{headerName: 'Referral', field: 'ref'},
-					    {headerName: scope.translate.load('sbi.generic.from'), field: 'startDate', cellRenderer: dateRenderer},
-					    //{headerName: 'Status', field: 'status', cellRenderer: statusRenderer, tooltipField:'status'},
+					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename', cellClass: isNewDownload},
+					    {headerName: "Creation Date", field: 'startDate', cellRenderer: dateRenderer, sort: 'desc'},
 					    {headerName: '', field: 'download', cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 							suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
 					];
 					function isFullWidth(data) {
 					    return data.pars ? true : false;
+					}
+					
+					function isNewDownload(params){
+						return !params.data.alreadyDownloaded && 'newDownload' ;
 					}
 					
 					function dateRenderer(params){
@@ -350,15 +345,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 						return '<md-button class="md-icon-button" ng-click="downloadContent(\''+ params.data.id +'\')" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' ;
 					}
 					
-					function statusRenderer(params){
-						var percentage = 0;
-						if(params.value == 'STARTED') percentage = 25;
-						if(params.value == 'EXECUTED') percentage = 50;
-						if(params.value == 'PREPARING') percentage = 75;
-						if(params.value == 'READY') percentage = 100;
-						return '<md-progress-linear md-mode="determinate" style="padding-top: 20px !important" value="'+percentage+'">'
-							+'<md-tooltip md-delay="500">'+params.value+'</md-tooltip>'
-							+'</md-progress-linear>';
+					scope.downloadContent = function(id){
+						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
+						var link = document.createElement("a");
+						link.setAttribute("href", encodedUri);
+						link.setAttribute("download", "my_data.csv");
+						document.body.appendChild(link); // Required for FF
+						link.click();
 					}
 					
 					function FullWidthCellRenderer() {}
@@ -386,12 +379,15 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 						        filter: true
 						    },
 						    columnDefs: columnDefs,
-						    rowData: scope.downloadsList || [],
+						    rowData: scope.downloadList || [],
 //						    getRowHeight: function (params) {
 //						        return isFullWidth(params.data) ? 100 : 25;
 //						    },
 						    onGridReady: function (params) {
 						        params.api.sizeColumnsToFit();
+						        $http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
+				    				scope.downloadsList = result.data;
+				    			})
 						    },
 						    onGridSizeChanged: function(params){
 						    	params.api.sizeColumnsToFit();

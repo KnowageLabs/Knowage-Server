@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css">
+    	<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
@@ -42,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES 
 			const 	MAX_ROWS_CLIENT_PAGINATION = 5000;
+			const 	MAX_ROWS_EXCEL_EXPORT = 20000;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
 			const 	KNOWAGE_SERVICESURL = '/restful-services';
@@ -60,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  			document.getElementById('utility-bar').classList.remove("hidden");
 	  			document.getElementById('myGrid').classList.add("has-utility-bar");
 	  			for(var e in options['exports']){
-	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
+	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
 	  			}
 	  		}
 	    	
@@ -295,6 +297,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					backEndPagination.totalRows = data.results;
+					if(data.results > MAX_ROWS_EXCEL_EXPORT){
+						if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
+					}
 					if(options.backEndPagination){
 						gridOptions.api.setRowData(data.rows);
 						backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
@@ -330,24 +335,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      				parameters: parameters
    				};       			
 				if(format == 'CSV') {
-					if(DATASET.isIterable) {						
-		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/1.0/datasets/'+DATASET.id.dsId+'/export'+'?PARAMETERS='+JSON.stringify(pars);		       			
-		       		}else{		       				   				
-		   				var requestParams = '?fileName=' + DATASET.configuration.fileName + '&type=' + DATASET.configuration.fileType.toLowerCase();
-		       			var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/download/file' + requestParams;		       				       		
-		       		}
+					
+					Toastify({
+						  text: "The download has started in background. You will find the result file in your download page.",
+						  duration: 10000,
+						  close: true,
+						  gravity: "top",
+						  position: 'right',
+						  backgroundColor: "#9DB3C6",
+						  className: 'kn-infoToast',
+						  stopOnFocus: true
+						}).showToast();
+					
+		       		var concatParams = '';
+		       		var concatDrivers = '';
+		       		if(parameters && parameters.length > 0) 	concatParams = '?PARAMETERS=' + JSON.stringify(parameters);
+		       		if(drivers && drivers.length > 0) 	concatDrivers = '?DRIVERS=' + JSON.stringify(drivers);
+		       		
+		       		window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/csv' + concatParams + concatDrivers, {
+		       		  method: "POST"
+		       		}).then(function(result){})
 					
 	       		}else if (format == 'XLSX') {
 		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id.dsId
 		       				+'&PARAMETERS='+JSON.stringify(pars);		       		
 		       	}
-				url = encodeURI(url);
-		       	window.location.href = url;
+				//url = encodeURI(url);
+		       	//window.location.href = url;
 		    }			
 			  
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
 	
 	  </script>
+	  <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>
     </body>
 </html>

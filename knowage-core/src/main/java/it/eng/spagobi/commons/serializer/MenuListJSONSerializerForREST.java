@@ -639,7 +639,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		
 		//if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
 			JSONObject news = new JSONObject();
-			news.put(ICON_CLS, "inbox");
+			news.put(ICON_CLS, "email");
 			news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
 			news.put(ICON_ALIGN, "top");
 			news.put(SCALE, "large");

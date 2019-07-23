@@ -652,7 +652,13 @@ md-list-item.license-item::before{
   width:60%;
   md-dialog-content {
     min-height:300px;
-    height:60%
+    height:60%;
+    .ag-cell {
+      &.newDownload {
+        border-left: 6px solid $fabPrimaryColor;
+        padding-left: 15px;
+      }
+    }
   }
   .noDownload {
     width: 100%;
