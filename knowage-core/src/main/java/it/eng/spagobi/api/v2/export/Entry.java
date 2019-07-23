@@ -9,15 +9,17 @@ import java.util.Date;
  */
 public class Entry {
 
+	private boolean alreadyDownloaded = false;
 	private String filename;
-	private Date startDate;
 	private String id;
+	private Date startDate;
 
-	public Entry(String filename, Date startDate, String id) {
+	public Entry(String filename, Date startDate, String id, boolean alreadyDownloaded) {
 		super();
 		this.filename = filename;
 		this.startDate = startDate;
 		this.id = id;
+		this.alreadyDownloaded = alreadyDownloaded;
 	}
 
 	public String getFilename() {
@@ -30,6 +32,14 @@ public class Entry {
 
 	public Date getStartDate() {
 		return startDate;
+	}
+
+	public boolean isAlreadyDownloaded() {
+		return alreadyDownloaded;
+	}
+
+	public void setAlreadyDownloaded(boolean alreadyDownloaded) {
+		this.alreadyDownloaded = alreadyDownloaded;
 	}
 
 	public void setFilename(String filename) {

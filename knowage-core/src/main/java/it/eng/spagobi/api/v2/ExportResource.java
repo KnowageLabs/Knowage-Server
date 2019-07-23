@@ -28,9 +28,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -155,7 +157,10 @@ public class ExportResource {
 			try {
 				ExportMetadata metadata = ExportMetadata.readFromJsonFile(t);
 
-				return new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString());
+				java.nio.file.Path downloadPlaceholderPath = t.getParent().resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
+				boolean isAlreadyDownloaded = Files.isRegularFile(downloadPlaceholderPath);
+
+				return new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString(), isAlreadyDownloaded);
 			} catch (IOException e) {
 				logger.error("Error mapping %s to an entry for REST output", e);
 				throw new IllegalArgumentException("Error creating REST response", e);
@@ -180,7 +185,7 @@ public class ExportResource {
 	@GET
 	@Path("/dataset")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Entry> dataset() throws IOException {
+	public List<Entry> dataset(@DefaultValue("false") @QueryParam("showAll") boolean showAll) throws IOException {
 
 		logger.debug("IN");
 
@@ -191,8 +196,13 @@ public class ExportResource {
 		List ret = Collections.emptyList();
 		if (Files.isDirectory(perUserExportResourcePath)) {
 
-			ret = Files.list(perUserExportResourcePath).filter(byDirectoryType).filter(byNotAlreadyDownloaded).filter(byMetadataPresent).filter(byDataPresent)
-					.map(toMetadataFileInDirectory).map(toEntryForREST).collect(toList());
+			Stream<java.nio.file.Path> stream = Files.list(perUserExportResourcePath).filter(byDirectoryType);
+
+			if (!showAll) {
+				stream = stream.filter(byNotAlreadyDownloaded);
+			}
+
+			ret = stream.filter(byMetadataPresent).filter(byDataPresent).map(toMetadataFileInDirectory).map(toEntryForREST).collect(toList());
 		}
 
 		logger.debug("OUT");
@@ -307,8 +317,6 @@ public class ExportResource {
 
 			ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataFile);
 
-			response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + metadata.getFileName() + "\";");
-
 			// Create a placeholder to indicate the file is downloaded
 			try {
 				Files.createFile(exportPathBuilder.getPerJobIdDownloadedPlaceholderFile(resoursePath, userProfile, id));
@@ -316,7 +324,8 @@ public class ExportResource {
 				// Yes, it's mute!
 			}
 
-			ret = Response.ok(dataFile.toFile()).type(metadata.getMimeType()).build();
+			ret = Response.ok(dataFile.toFile()).header("Content-Disposition", "attachment" + "; filename=\"" + metadata.getFileName() + "\";")
+					.type(metadata.getMimeType()).build();
 		}
 
 		logger.debug("OUT");

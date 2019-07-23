@@ -35,9 +35,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 public class ExcelExportJob extends AbstractExportJob {
 
@@ -57,14 +58,13 @@ public class ExcelExportJob extends AbstractExportJob {
 		try {
 
 			IDataSet dataSet = getDataSet();
-			IDataStore dataStore = dataSet.getDataStore();
 
 			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
 			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			// create WB
 			XSSFWorkbook wb = new XSSFWorkbook();
-			XSSFSheet sheet = wb.createSheet("datastore");
+			XSSFSheet sheet = wb.createSheet("dataset");
 			CreationHelper createHelper = wb.getCreationHelper();
 
 			// STYLE CELL
@@ -114,77 +114,71 @@ public class ExcelExportJob extends AbstractExportJob {
 			decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
 			decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
 
-			if (dataStore != null) {
-				// CREATE HEADER SHEET
-				XSSFRow header = sheet.createRow((short) 0); // first row
-				if (dataStore.getMetaData() != null && dataStore.getMetaData().getFieldCount() > 0) {
-					for (int i = 0; i <= dataStore.getMetaData().getFieldCount() - 1; i++) {
-						XSSFCell cell = header.createCell(i);
-						cell.setCellValue(dataStore.getMetaData().getFieldAlias(i));
-						cell.setCellStyle(borderStyleHeader);
-					}
+			// CREATE HEADER SHEET
+			IMetaData dataSetMetadata = dataSet.getMetadata();
+			XSSFRow header = sheet.createRow((short) 0); // first row
+			if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
+				for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
+					XSSFCell cell = header.createCell(i);
+					cell.setCellValue(dataSetMetadata.getFieldAlias(i));
+					cell.setCellStyle(borderStyleHeader);
 				}
-				// FILL CELL RECORD
-				if (dataStore.getRecordsCount() > 0) {
-					for (int i = 0; i <= dataStore.getRecordsCount() - 1; i++) {
-						XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
-						if (dataStore.getRecordAt(i) != null && dataStore.getRecordAt(i).getFields() != null
-								&& dataStore.getRecordAt(i).getFields().size() > 0) {
-							for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
-								Class<?> clazz = dataStore.getMetaData().getFieldType(k);
-								Object value = dataStore.getRecordAt(i).getFieldAt(k).getValue();
-								XSSFCell cell = row.createCell(k);
+			}
+			// FILL CELL RECORD
 
-								try {
-									if (value != null) {
+			DataIterator iterator = dataSet.iterator();
+			int i = 0;
+			while (iterator.hasNext()) {
+				IRecord dataSetRecord = iterator.next();
 
-										if (Timestamp.class.isAssignableFrom(clazz)) {
-											String formatedTimestamp = timeStampFormat.format(value);
-											Date ts = timeStampFormat.parse(formatedTimestamp);
-											cell.setCellValue(ts);
-											cell.setCellStyle(tsCellStyle);
-										} else if (Date.class.isAssignableFrom(clazz)) {
-											String formatedDate = dateFormat.format(value);
-											Date date = dateFormat.parse(formatedDate);
-											cell.setCellValue(date);
-											cell.setCellStyle(dateCellStyle);
-										} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
-												|| Double.class.isAssignableFrom(clazz) || Float.class.isAssignableFrom(clazz)
-												|| BigDecimal.class.isAssignableFrom(clazz)) {
-											// Format Numbers
-											if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
-												cell.setCellValue(Double.parseDouble(value.toString()));
-												cell.setCellStyle(intCellStyle);
-											} else {
-												cell.setCellValue(Double.parseDouble(value.toString()));
-												cell.setCellStyle(decimalCellStyle);
-											}
+				XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
 
-										} else {
-											cell.setCellValue(value.toString());
-											cell.setCellStyle(borderStyleRow);
-										}
+				for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
+					Class<?> clazz = dataSetMetadata.getFieldType(k);
+					Object value = dataSetRecord.getFieldAt(k).getValue();
+					XSSFCell cell = row.createCell(k);
 
-									} else {
-										cell.setCellStyle(borderStyleRow);
-									}
-								} catch (ParseException e) {
-									logger.error("write output stream error " + e.getMessage());
-									throw new IllegalStateException("Error generating Excel export file");
-									// TODO : new SpagoBIServiceException(this.getActionName(), "Impossible to parse Date/DateTime value", e);
+					try {
+						if (value != null) {
+
+							if (Timestamp.class.isAssignableFrom(clazz)) {
+								String formatedTimestamp = timeStampFormat.format(value);
+								Date ts = timeStampFormat.parse(formatedTimestamp);
+								cell.setCellValue(ts);
+								cell.setCellStyle(tsCellStyle);
+							} else if (Date.class.isAssignableFrom(clazz)) {
+								String formatedDate = dateFormat.format(value);
+								Date date = dateFormat.parse(formatedDate);
+								cell.setCellValue(date);
+								cell.setCellStyle(dateCellStyle);
+							} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
+									|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
+								// Format Numbers
+								if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
+									cell.setCellValue(Double.parseDouble(value.toString()));
+									cell.setCellStyle(intCellStyle);
+								} else {
+									cell.setCellValue(Double.parseDouble(value.toString()));
+									cell.setCellStyle(decimalCellStyle);
 								}
 
+							} else {
+								cell.setCellValue(value.toString());
+								cell.setCellStyle(borderStyleRow);
 							}
-						}
-					}
-				}
-			} else {
-				MessageBuilder msgBuild = new MessageBuilder();
 
-				XSSFRow header = sheet.createRow((short) 0); // first row
-				XSSFCell cell = header.createCell(1);
-				cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", getLocale()));
-				cell.setCellStyle(borderStyleHeader);
+						} else {
+							cell.setCellStyle(borderStyleRow);
+						}
+					} catch (ParseException e) {
+						logger.error("write output stream error " + e.getMessage());
+						throw new IllegalStateException("Error generating Excel export file");
+						// TODO : new SpagoBIServiceException(this.getActionName(), "Impossible to parse Date/DateTime value", e);
+					}
+
+				}
+
+				i++;
 			}
 
 			wb.write(exportFileOS);
@@ -201,7 +195,7 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 		}
 
-		logger.debug("End CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
+		logger.debug("End Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
 	}
 
