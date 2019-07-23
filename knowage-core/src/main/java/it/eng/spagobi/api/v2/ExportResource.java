@@ -265,7 +265,7 @@ public class ExportResource {
 
 	@GET
 	@Path("/dataset/{id}")
-	public Response get(@QueryParam("id") UUID id) throws IOException {
+	public Response get(@PathParam("id") UUID id) throws IOException {
 
 		logger.debug("IN");
 
@@ -273,7 +273,7 @@ public class ExportResource {
 		String resoursePath = SpagoBIUtilities.getResourcePath();
 		java.nio.file.Path exportedFile = ExportPathBuilder.getInstance().getPerJobIdFile(resoursePath, userProfile, id);
 
-		response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + exportedFile + "\";");
+		response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + exportedFile.getFileName().toString() + "\";");
 		// TODO : response.setContentType("application/vnd.ms-excel");
 
 		logger.debug("OUT");
