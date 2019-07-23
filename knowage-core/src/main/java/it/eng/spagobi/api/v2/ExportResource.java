@@ -40,6 +40,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -293,6 +294,8 @@ public class ExportResource {
 
 		logger.debug("IN");
 
+		Response ret = Response.status(Status.NOT_FOUND).build();
+
 		ExportPathBuilder exportPathBuilder = ExportPathBuilder.getInstance();
 
 		UserProfile userProfile = UserProfileManager.getProfile();
@@ -305,15 +308,20 @@ public class ExportResource {
 			ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataFile);
 
 			response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + metadata.getFileName() + "\";");
-			response.setContentType(metadata.getMimeType());
 
 			// Create a placeholder to indicate the file is downloaded
-			Files.createFile(exportPathBuilder.getPerJobIdDownloadedPlaceholderFile(resoursePath, userProfile, id));
+			try {
+				Files.createFile(exportPathBuilder.getPerJobIdDownloadedPlaceholderFile(resoursePath, userProfile, id));
+			} catch (Exception e) {
+				// Yes, it's mute!
+			}
+
+			ret = Response.ok(dataFile.toFile()).type(metadata.getMimeType()).build();
 		}
 
 		logger.debug("OUT");
 
-		return Response.ok(dataFile.toFile()).build();
+		return ret;
 	}
 
 	/**
