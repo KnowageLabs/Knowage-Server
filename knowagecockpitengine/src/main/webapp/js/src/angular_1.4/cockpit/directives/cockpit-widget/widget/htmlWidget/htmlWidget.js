@@ -256,7 +256,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var a in aggregationsReg){
 						var aggregationReg = $scope.aggregationRegex.exec(aggregationsReg[a]);
 						for(var m in tempDataset.metadata.fieldsMeta){
-							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
+							if(aggregationReg && aggregationReg[1] && tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
 								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
 								tempDataset.metadata.fieldsMeta[m].fieldType = 'MEASURE';
 								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
