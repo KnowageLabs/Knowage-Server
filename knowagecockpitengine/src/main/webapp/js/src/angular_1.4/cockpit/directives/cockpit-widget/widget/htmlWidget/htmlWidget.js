@@ -165,7 +165,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					},function(error){
 						$scope.hideWidgetSpinner();
 					});
-			}else {
+			}else if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+				$scope.refreshWidget();
+			}else{
 				$scope.manageHtml();
 			}
 		}
@@ -184,6 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		//Core wrapper function to prepare css and styles to be parsed
 		$scope.manageHtml = function(){
+			if($scope.datasetLabel) delete $scope.datasetLabel;
 			if($scope.ngModel.dataset.dsId) $scope.datasetLabel = cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId);
 			$scope.parseAggregations($scope.ngModel.cssToRender + $scope.ngModel.htmlToRender).then(function(resultHtml){
 				if($scope.ngModel.cssToRender){
@@ -381,9 +384,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.checkPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
-				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
+				var resultHtml = rawHtml;
+				if($scope.datasetLabel) {
+					resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
+					resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
+				}
 				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
-				resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
 			})
