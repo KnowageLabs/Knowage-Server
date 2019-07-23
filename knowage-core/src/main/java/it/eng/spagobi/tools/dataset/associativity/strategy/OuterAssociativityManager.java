@@ -110,8 +110,6 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
 			Iterator<EdgeGroup> iterator = container.getGroups().iterator();
 			while (iterator.hasNext()) {
-
-
 				Monitor monWhile = MonitorFactory.start("Knowage.OuterAssociativityManager.calculateDatasets:edgeGroupIterationResolved");
 
 				try {
@@ -129,7 +127,21 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 						result.clearValues(group);
 
 						Map<String, String> parameters = container.getParameters();
-						container.getDataSet().setParamsMap(new HashMap(parameters));
+						HashMap<String, String> parametersToPut = new HashMap(parameters);
+
+						for (Map.Entry<String, String> entry : parametersToPut.entrySet()) {   //TODO: check if it is more correct watching values only and not keys
+
+							if (container.getDataSet().getParamsMap().containsKey(entry.getKey())) {
+
+								if (container.getDataSet().getParamsMap().get(entry.getKey())!=null && !((String)container.getDataSet().getParamsMap().get(entry.getKey())).isEmpty()) {
+									parametersToPut.put(entry.getKey(), (String)container.getDataSet().getParamsMap().get(entry.getKey()));
+								}
+
+							}
+
+						}
+
+						container.getDataSet().setParamsMap(parametersToPut);
 						Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 
 						logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
@@ -242,4 +254,5 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	private void resolve(String dataset) {
 		associativeDatasetContainers.get(dataset).resolve();
 	}
+
 }

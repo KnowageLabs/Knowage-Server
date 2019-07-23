@@ -774,7 +774,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
 					} else {
 						ValuesLstDecoded.put(value);
-						URLDecoder.decode(value, "UTF-8"); // uses the original value for list and %
+						URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, ValuesLstDecoded);

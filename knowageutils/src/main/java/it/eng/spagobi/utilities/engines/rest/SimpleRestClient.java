@@ -180,6 +180,8 @@ public class SimpleRestClient {
 			throws Exception {
 		logger.debug("IN");
 
+		logger.debug("parameters: ["+parameters+"], serviceUrl: ["+serviceUrl+"], userId: ["+userId+"],type: ["+type+"], mediaType: ["+mediaType+"], data: ["+data+"]" );
+
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
