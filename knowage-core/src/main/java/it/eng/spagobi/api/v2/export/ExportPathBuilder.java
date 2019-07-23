@@ -17,11 +17,8 @@
  */
 package it.eng.spagobi.api.v2.export;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 
@@ -32,6 +29,13 @@ import it.eng.spagobi.commons.bo.UserProfile;
  *
  */
 public class ExportPathBuilder {
+	public static final String METADATA_FILENAME = "metadata";
+	public static final String DATA_FILENAME = "data";
+	/**
+	 * Filename of the placeholder to put in a directory to indicate the file is already downloaded.
+	 */
+	public static final String DOWNLOADED_PLACEHOLDER_FILENAME = "downloaded";
+
 	private static final ExportPathBuilder INSTANCE = new ExportPathBuilder();
 
 	private ExportPathBuilder() {
@@ -54,17 +58,16 @@ public class ExportPathBuilder {
 		return getPerUserExportResourcePath(resourcePathAsStr, userProfile).resolve(id.toString());
 	}
 
-	public java.nio.file.Path getPerJobIdFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) throws IOException {
-		final java.nio.file.Path perIdPath = getPerJobExportPath(resourcePathAsStr, userProfile, id);
-		java.nio.file.Path perIdFilePath = Files.list(perIdPath).findFirst().orElseThrow(new Supplier<IllegalStateException>() {
-
-			@Override
-			public IllegalStateException get() {
-				String msg = String.format("Path %s must contains only one file", perIdPath);
-				return new IllegalStateException(msg);
-			}
-		});
-
-		return perIdFilePath;
+	public java.nio.file.Path getPerJobIdDataFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) {
+		return getPerJobExportPath(resourcePathAsStr, userProfile, id).resolve(DATA_FILENAME);
 	}
+
+	public java.nio.file.Path getPerJobIdMetadataFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) {
+		return getPerJobExportPath(resourcePathAsStr, userProfile, id).resolve(METADATA_FILENAME);
+	}
+
+	public java.nio.file.Path getPerJobIdDownloadedPlaceholderFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) {
+		return getPerJobExportPath(resourcePathAsStr, userProfile, id).resolve(DOWNLOADED_PLACEHOLDER_FILENAME);
+	}
+
 }

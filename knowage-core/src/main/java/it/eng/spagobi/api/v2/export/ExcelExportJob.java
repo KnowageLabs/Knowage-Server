@@ -20,14 +20,10 @@ package it.eng.spagobi.api.v2.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -36,49 +32,35 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 public class ExcelExportJob extends AbstractExportJob {
 
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
+
 	private static final Logger logger = Logger.getLogger(ExcelExportJob.class);
 
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
-	private static final String DATE_FORMAT = "dd/MM/yyyy";
-
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
+		super.execute(context);
 
-		Integer dataSetId = getDataSetId(mergedJobDataMap);
-		Map<String, Object> drivers = getDriversData(mergedJobDataMap);
-		UUID id = getJobId(mergedJobDataMap);
-		Locale locale = getLocale(mergedJobDataMap);
-		Map<String, String> parameters = getParametersData(mergedJobDataMap);
-		String resourcePathAsStr = getResourcePathString(mergedJobDataMap);
-		UserProfile userProfile = getUserProfile(mergedJobDataMap);
+		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
-		logger.debug("Start Excel export for dataSetId " + dataSetId + " with id " + id + " by user " + userProfile.getUserId());
-
-		java.nio.file.Path resourcePath = ExportPathBuilder.getInstance().getPerJobExportPath(resourcePathAsStr, userProfile, id);
-
-		OutputStream exportFileOS = null;
+		OutputStream exportFileOS = getDataOutputStream();
 		try {
 
-			Files.createDirectories(resourcePath);
-
-			IDataSet dataSet = getDataSet(dataSetId, drivers, parameters, userProfile);
+			IDataSet dataSet = getDataSet();
 			IDataStore dataStore = dataSet.getDataStore();
 
-			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, locale);
-			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, locale);
+			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
+			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			// create WB
 			XSSFWorkbook wb = new XSSFWorkbook();
@@ -201,16 +183,13 @@ public class ExcelExportJob extends AbstractExportJob {
 
 				XSSFRow header = sheet.createRow((short) 0); // first row
 				XSSFCell cell = header.createCell(1);
-				cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", locale));
+				cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", getLocale()));
 				cell.setCellStyle(borderStyleHeader);
 			}
 
-			java.nio.file.Path exportFile = resourcePath.resolve(dataSet.getName() + ".xlsx");
-
-			exportFileOS = Files.newOutputStream(exportFile);
 			wb.write(exportFileOS);
 		} catch (IOException e) {
-			String msg = String.format("Error during create of directory \"%s\"!", resourcePath);
+			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
 			logger.error(msg, e);
 			throw new JobExecutionException(e);
 		} finally {
@@ -222,8 +201,18 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 		}
 
-		logger.debug("End CSV export for dataSetId " + dataSetId + " with id " + id + " by user " + userProfile.getUserId());
+		logger.debug("End CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
+	}
+
+	@Override
+	protected String extension() {
+		return "xlsx";
+	}
+
+	@Override
+	protected String mime() {
+		return "application/vnd.ms-excel";
 	}
 
 }

@@ -50,8 +50,10 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.api.v2.export.ExportJobBuilder;
+import it.eng.spagobi.api.v2.export.ExportMetadata;
 import it.eng.spagobi.api.v2.export.ExportPathBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -89,20 +91,41 @@ public class ExportResource {
 	};
 
 	/**
+	 * Filter a {@link Path} and select only directory.
+	 *
+	 * TODO : Refactoring when Java 8 will be introduced
+	 */
+	private static final Predicate<java.nio.file.Path> byNotAlreadyDownloaded = new Predicate<java.nio.file.Path>() {
+
+		@Override
+		public boolean test(java.nio.file.Path t) {
+			return !Files.isRegularFile(t.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME));
+		}
+	};
+
+	/**
 	 * Filter a {@link Path} and select only directory with 1 file in it.
 	 *
 	 * TODO : Refactoring when Java 8 will be introduced
 	 */
-	private static final Predicate<java.nio.file.Path> byFilesCountEquals1 = new Predicate<java.nio.file.Path>() {
+	private static final Predicate<java.nio.file.Path> byDataPresent = new Predicate<java.nio.file.Path>() {
 
 		@Override
 		public boolean test(java.nio.file.Path t) {
-			try {
-				return Files.list(t).count() == 1;
-			} catch (IOException e) {
-				logger.error("Error during listing of directory %s", e);
-				throw new IllegalArgumentException("Error during listing of export directory", e);
-			}
+			return Files.isRegularFile(t.resolve(ExportPathBuilder.DATA_FILENAME));
+		}
+	};
+
+	/**
+	 * Filter a {@link Path} and select only directory with 1 file in it.
+	 *
+	 * TODO : Refactoring when Java 8 will be introduced
+	 */
+	private static final Predicate<java.nio.file.Path> byMetadataPresent = new Predicate<java.nio.file.Path>() {
+
+		@Override
+		public boolean test(java.nio.file.Path t) {
+			return Files.isRegularFile(t.resolve(ExportPathBuilder.METADATA_FILENAME));
 		}
 	};
 
@@ -111,16 +134,11 @@ public class ExportResource {
 	 *
 	 * TODO : Refactoring when Java 8 will be introduced
 	 */
-	private static final Function<java.nio.file.Path, java.nio.file.Path> toFileInDirectory = new Function<java.nio.file.Path, java.nio.file.Path>() {
+	private static final Function<java.nio.file.Path, java.nio.file.Path> toMetadataFileInDirectory = new Function<java.nio.file.Path, java.nio.file.Path>() {
 
 		@Override
 		public java.nio.file.Path apply(java.nio.file.Path t) {
-			try {
-				return Files.list(t).findFirst().get();
-			} catch (IOException e) {
-				logger.error("Error during listing of directory %s", e);
-				throw new IllegalArgumentException("Error during listing of export directory", e);
-			}
+			return t.resolve(ExportPathBuilder.METADATA_FILENAME);
 		}
 	};
 
@@ -134,7 +152,9 @@ public class ExportResource {
 		@Override
 		public Entry apply(java.nio.file.Path t) {
 			try {
-				return new Entry(t.toFile());
+				ExportMetadata metadata = ExportMetadata.readFromJsonFile(t);
+
+				return new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString());
 			} catch (IOException e) {
 				logger.error("Error mapping %s to an entry for REST output", e);
 				throw new IllegalArgumentException("Error creating REST response", e);
@@ -167,8 +187,12 @@ public class ExportResource {
 		String resoursePath = SpagoBIUtilities.getResourcePath();
 		java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
 
-		List ret = Files.list(perUserExportResourcePath).filter(byDirectoryType).filter(byFilesCountEquals1).map(toFileInDirectory).map(toEntryForREST)
-				.collect(toList());
+		List ret = Collections.emptyList();
+		if (Files.isDirectory(perUserExportResourcePath)) {
+
+			ret = Files.list(perUserExportResourcePath).filter(byDirectoryType).filter(byNotAlreadyDownloaded).filter(byMetadataPresent).filter(byDataPresent)
+					.map(toMetadataFileInDirectory).map(toEntryForREST).collect(toList());
+		}
 
 		logger.debug("OUT");
 
@@ -269,16 +293,27 @@ public class ExportResource {
 
 		logger.debug("IN");
 
+		ExportPathBuilder exportPathBuilder = ExportPathBuilder.getInstance();
+
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String resoursePath = SpagoBIUtilities.getResourcePath();
-		java.nio.file.Path exportedFile = ExportPathBuilder.getInstance().getPerJobIdFile(resoursePath, userProfile, id);
+		java.nio.file.Path dataFile = exportPathBuilder.getPerJobIdDataFile(resoursePath, userProfile, id);
 
-		response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + exportedFile.getFileName().toString() + "\";");
-		// TODO : response.setContentType("application/vnd.ms-excel");
+		if (Files.isRegularFile(dataFile)) {
+			java.nio.file.Path metadataFile = exportPathBuilder.getPerJobIdMetadataFile(resoursePath, userProfile, id);
+
+			ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataFile);
+
+			response.setHeader("Content-Disposition", "attachment" + "; filename=\"" + metadata.getFileName() + "\";");
+			response.setContentType(metadata.getMimeType());
+
+			// Create a placeholder to indicate the file is downloaded
+			Files.createFile(exportPathBuilder.getPerJobIdDownloadedPlaceholderFile(resoursePath, userProfile, id));
+		}
 
 		logger.debug("OUT");
 
-		return Response.ok(exportedFile.toFile()).build();
+		return Response.ok(dataFile.toFile()).build();
 	}
 
 	/**

@@ -17,12 +17,21 @@
  */
 package it.eng.spagobi.api.v2.export;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -30,6 +39,8 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
 abstract class AbstractExportJob implements Job {
+
+	private static final Logger logger = Logger.getLogger(AbstractExportJob.class);
 
 	public static final String MAP_KEY_DATA_SET_ID = "dataSetId";
 
@@ -45,7 +56,109 @@ abstract class AbstractExportJob implements Job {
 
 	public static final String MAP_KEY_USER_PROFILE = "userProfile";
 
-	protected final IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile) {
+	private Path dataFile = null;
+	private OutputStream dataOutputStream = null;
+	private IDataSet dataSet = null;
+	private Integer dataSetId = null;
+	private Map<String, Object> drivers = null;
+	private UUID id = null;
+	private Locale locale = null;
+	private Map<String, String> parameters = null;
+	java.nio.file.Path resourcePath = null;
+	private String resourcePathAsStr = null;
+	private UserProfile userProfile = null;
+
+	/**
+	 * Internal cleanup in case of error.
+	 */
+	private void deleteJobDirectory() {
+		try {
+			FileUtils.deleteDirectory(resourcePath.toFile());
+		} catch (IOException e) {
+			// Yes, it's mute!
+		}
+	}
+
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
+
+		dataSetId = getDataSetId(mergedJobDataMap);
+		drivers = getDriversData(mergedJobDataMap);
+		id = getJobId(mergedJobDataMap);
+		locale = getLocale(mergedJobDataMap);
+		parameters = getParametersData(mergedJobDataMap);
+		resourcePathAsStr = getResourcePathString(mergedJobDataMap);
+		userProfile = getUserProfile(mergedJobDataMap);
+
+		dataSet = getDataSet(dataSetId, drivers, parameters, userProfile);
+
+		resourcePath = ExportPathBuilder.getInstance().getPerJobExportPath(resourcePathAsStr, userProfile, id);
+
+		try {
+			Files.createDirectories(resourcePath);
+		} catch (IOException e) {
+			String msg = String.format("Error creating directory \"%s\"!", resourcePath);
+			logger.error(msg, e);
+			throw new JobExecutionException(e);
+		}
+
+		dataFile = ExportPathBuilder.getInstance().getPerJobIdDataFile(resourcePathAsStr, userProfile, id);
+
+		try {
+			dataOutputStream = Files.newOutputStream(dataFile);
+		} catch (IOException e) {
+
+			deleteJobDirectory();
+
+			String msg = String.format("Error creating file \"%s\"!", dataFile);
+			logger.error(msg, e);
+			throw new JobExecutionException(e);
+		}
+
+		java.nio.file.Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
+
+		try {
+			String dataSetName = dataSet.getName();
+
+			ExportMetadata exportMetadata = new ExportMetadata();
+			exportMetadata.setId(id);
+			exportMetadata.setDataSetName(dataSetName);
+			exportMetadata.setFileName(dataSetName + "." + extension());
+			exportMetadata.setMimeType(mime());
+			exportMetadata.setStartDate(Calendar.getInstance(getLocale()).getTime());
+
+			ExportMetadata.writeToJsonFile(exportMetadata, metadataFile);
+
+		} catch (Exception e) {
+
+			deleteJobDirectory();
+
+			String msg = String.format("Error creating file \"%s\"!", metadataFile);
+			logger.error(msg, e);
+			throw new JobExecutionException(e);
+		}
+
+	}
+
+	/**
+	 * @return The MIME type of generated file.
+	 */
+	protected abstract String extension();
+
+	public Path getDataFile() {
+		return dataFile;
+	}
+
+	protected OutputStream getDataOutputStream() {
+		return dataOutputStream;
+	}
+
+	protected final IDataSet getDataSet() {
+		return dataSet;
+	}
+
+	private final IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile) {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
@@ -57,32 +170,65 @@ abstract class AbstractExportJob implements Job {
 		return dataSet;
 	}
 
+	protected Integer getDataSetId() {
+		return dataSetId;
+	}
+
 	protected final Integer getDataSetId(JobDataMap mergedJobDataMap) {
 		return (Integer) mergedJobDataMap.get(MAP_KEY_DATA_SET_ID);
 	}
 
-	protected final Locale getLocale(JobDataMap mergedJobDataMap) {
-		return (Locale) mergedJobDataMap.get(MAP_KEY_LOCALE);
+	protected Map<String, Object> getDrivers() {
+		return drivers;
 	}
 
 	protected final Map<String, Object> getDriversData(JobDataMap mergedJobDataMap) {
 		return (Map<String, Object>) mergedJobDataMap.get(MAP_KEY_DRIVERS);
 	}
 
+	protected UUID getId() {
+		return id;
+	}
+
 	protected final UUID getJobId(JobDataMap mergedJobDataMap) {
 		return (UUID) mergedJobDataMap.get(MAP_KEY_ID);
+	}
+
+	protected Locale getLocale() {
+		return locale;
+	}
+
+	protected final Locale getLocale(JobDataMap mergedJobDataMap) {
+		return (Locale) mergedJobDataMap.get(MAP_KEY_LOCALE);
+	}
+
+	protected Map<String, String> getParameters() {
+		return parameters;
 	}
 
 	protected final Map<String, String> getParametersData(JobDataMap mergedJobDataMap) {
 		return (Map<String, String>) mergedJobDataMap.get(MAP_KEY_PARAMETERS);
 	}
 
+	protected String getResourcePathAsStr() {
+		return resourcePathAsStr;
+	}
+
 	protected final String getResourcePathString(JobDataMap mergedJobDataMap) {
 		return (String) mergedJobDataMap.get(MAP_KEY_RESOURCE_PATH);
+	}
+
+	protected UserProfile getUserProfile() {
+		return userProfile;
 	}
 
 	protected final UserProfile getUserProfile(JobDataMap mergedJobDataMap) {
 		return (UserProfile) mergedJobDataMap.get(MAP_KEY_USER_PROFILE);
 	}
+
+	/**
+	 * @return The MIME type of generated file.
+	 */
+	protected abstract String mime();
 
 }

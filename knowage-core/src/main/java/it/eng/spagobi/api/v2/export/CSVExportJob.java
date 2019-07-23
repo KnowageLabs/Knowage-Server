@@ -19,18 +19,13 @@ package it.eng.spagobi.api.v2.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Map;
-import java.util.UUID;
 
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -46,33 +41,20 @@ public class CSVExportJob extends AbstractExportJob {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
+		super.execute(context);
 
-		Integer dataSetId = getDataSetId(mergedJobDataMap);
-		Map<String, Object> drivers = getDriversData(mergedJobDataMap);
-		UUID id = getJobId(mergedJobDataMap);
-		Map<String, String> parameters = getParametersData(mergedJobDataMap);
-		String resourcePathAsStr = getResourcePathString(mergedJobDataMap);
-		UserProfile userProfile = getUserProfile(mergedJobDataMap);
+		logger.debug("Start CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
-		logger.debug("Start CSV export for dataSetId " + dataSetId + " with id " + id + " by user " + userProfile.getUserId());
-
-		java.nio.file.Path resourcePath = ExportPathBuilder.getInstance().getPerJobExportPath(resourcePathAsStr, userProfile, id);
-
-		// The random id in the path let create a new directory every time
+		OutputStream exportFileOS = getDataOutputStream();
 		try {
-			Files.createDirectories(resourcePath);
-			IDataSet dataSet = getDataSet(dataSetId, drivers, parameters, userProfile);
+			IDataSet dataSet = getDataSet();
 
 			DataIterator iterator = null;
-			OutputStream exportFileOS = null;
 			try {
 				logger.debug("Starting iteration to transfer data");
 				iterator = dataSet.iterator();
 
 				StreamingOutput stream = new CsvStreamingOutput(iterator);
-				java.nio.file.Path exportFile = resourcePath.resolve(dataSet.getName() + ".csv");
-				exportFileOS = Files.newOutputStream(exportFile);
 				stream.write(exportFileOS);
 			} catch (Exception e) {
 				if (iterator != null) {
@@ -85,13 +67,23 @@ public class CSVExportJob extends AbstractExportJob {
 				}
 			}
 		} catch (IOException e) {
-			String msg = String.format("Error during create of directory \"%s\"!", resourcePath);
+			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
 			logger.error(msg, e);
 			throw new JobExecutionException(e);
 		}
 
-		logger.debug("End CSV export for dataSetId " + dataSetId + " with id " + id + " by user " + userProfile.getUserId());
+		logger.debug("End CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
+	}
+
+	@Override
+	protected String extension() {
+		return "csv";
+	}
+
+	@Override
+	protected String mime() {
+		return "text/csv";
 	}
 
 }

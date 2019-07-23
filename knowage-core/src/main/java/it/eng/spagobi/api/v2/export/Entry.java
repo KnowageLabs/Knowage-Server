@@ -1,9 +1,5 @@
 package it.eng.spagobi.api.v2.export;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 
 /**
@@ -16,13 +12,6 @@ public class Entry {
 	private String filename;
 	private Date startDate;
 	private String id;
-
-	public Entry(File file) throws IOException {
-		this.filename = file.getName();
-		this.id = file.toPath().getParent().getFileName().toString();
-		BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-		this.startDate = new Date(attr.creationTime().toMillis());
-	}
 
 	public Entry(String filename, Date startDate, String id) {
 		super();
