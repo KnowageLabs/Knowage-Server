@@ -1134,9 +1134,6 @@
 				#else 
 				max:$yAxis.max,
 				#end
-				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
-					max:$yAxis.max,
-				#end
 	        #end
 	        
 			#if( $chartType == "radar")
