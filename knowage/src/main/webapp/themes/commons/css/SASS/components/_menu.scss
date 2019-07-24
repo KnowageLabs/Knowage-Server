@@ -38,10 +38,31 @@
 			}
 		}
 		.menuKnowage {
+      color: black;
+      float: left;
+      opacity: .6;
+      &:hover {
+        opacity: 1;
+      }
 			&>i {
 				color: $baseColor;
 			}
 		}
+    .menuBadge {
+      background-color: $fabPrimaryColor;
+      color: white;
+      position: absolute;
+      right: 0px;
+      z-index: 10;
+      text-align: center;
+      top: 5px;
+      padding: 2px 5px;
+      font-size: $mediumFontSize;
+      height: auto;
+      width: auto;
+      min-width: 20px;
+      border-radius: 50px;
+    }
 	}
 }
 .landingPageEndUser, .landingPageAdmin {
@@ -547,14 +568,6 @@
 }
 .sidebar-fixed-right .icon-material-sidebar-arrow:before {
   content: "\e614";
-}
-.menuKnowage{
-	color: black;
-	float: left;
-	opacity: .6;
-  &:hover {
-    opacity: 1;
-  }
 }
 
 .icoFlag{
