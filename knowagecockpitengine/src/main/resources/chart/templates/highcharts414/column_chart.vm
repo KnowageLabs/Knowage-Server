@@ -1127,6 +1127,13 @@
 			
 			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
 				#set ($max = $yAxis.max)
+				#if($min)
+				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+					max:$yAxis.max,
+				#end
+				#else 
+				max:$yAxis.max,
+				#end
 				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
 					max:$yAxis.max,
 				#end
