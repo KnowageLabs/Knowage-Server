@@ -1241,35 +1241,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     margin-left: auto;
 }
 
-.iconBarAdmin {
-	margin-right: 0;
-	margin-left: 0;
-    display: inline-block;
-    float: none;
-    width: 100%;
-    list-style-type: none;
-    padding: 0;
-}
-
-.iconBarAdmin li{
-	height:50px;
-	text-align:center;
-}
-
-.iconBarAdmin li > a{
-	width: 100%;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	display: inline-block;
-	color:#bdbdbd;
-}
-
-.iconBarAdmin li > a:hover,
-.iconBarAdmin li > a:active,
-.iconBarAdmin li > a:focus{
-	background-color: #243C51;
-}
-
 md-list-item.license-item::before{
 	min-height: 0px !important;
 }
