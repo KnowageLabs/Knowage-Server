@@ -155,7 +155,7 @@ public class ExportJobBuilder {
 
 		job.setDescription(jobDescription);
 		job.setJobDataMap(jobDataMap);
-		job.setDurability(true);
+		job.setDurability(false);
 
 		return job;
 	}
