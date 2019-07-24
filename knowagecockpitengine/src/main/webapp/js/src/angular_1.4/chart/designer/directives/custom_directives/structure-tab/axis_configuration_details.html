@@ -88,7 +88,7 @@ selectedChartType == 'radar' || selectedChartType == 'scatter') && disableHtmlEl
 
 <md-input-container class="md-block" ng-if="selectedChartType !='radar'">
 	 <label>{{translate.load("sbi.chartengine.axisstylepopup.axis.align")}}</label>
-		 <md-select ng-model="axisForDisplay.styleValue.align" name="categoriesAxis_aligment"> <md-option
+		 <md-select ng-model="axisForDisplay.STYLEVALUE.align" name="categoriesAxis_aligment"> <md-option
 		ng-repeat="option in textAlignment" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -96,23 +96,23 @@ selectedChartType == 'radar' || selectedChartType == 'scatter') && disableHtmlEl
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.color")}}</label>
 	 <color-picker
 		options="colorPickerOptionsCockpit"
-		ng-model="axisForDisplay.styleValue.color" name="categoriesAxis_color"></color-picker> </md-input-container>
+		ng-model="axisForDisplay.STYLEVALUE.color" name="categoriesAxis_color"></color-picker> </md-input-container>
 	
 <md-input-container class="md-block">
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
-		 <md-select ng-model="axisForDisplay.styleValue.fontFamily" name="categoriesAxis_ffamily"> <md-option
+		 <md-select ng-model="axisForDisplay.STYLEVALUE.fontFamily" name="categoriesAxis_ffamily"> <md-option
 		ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 	
 <md-input-container class="md-block">
 	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontweight")}}</label>
-		 <md-select ng-model="axisForDisplay.styleValue.fontWeight" name="categoriesAxis_fweight"> <md-option
+		 <md-select ng-model="axisForDisplay.STYLEVALUE.fontWeight" name="categoriesAxis_fweight"> <md-option
 		ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
 <md-input-container class="md-block">
 	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontsize")}}</label>
-		 <md-select ng-model="axisForDisplay.styleValue.fontSize" name="categoriesAxis_fsize"> <md-option
+		 <md-select ng-model="axisForDisplay.STYLEVALUE.fontSize" name="categoriesAxis_fsize"> <md-option
 		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>		
 

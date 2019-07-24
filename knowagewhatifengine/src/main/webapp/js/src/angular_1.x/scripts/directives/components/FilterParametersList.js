@@ -22,7 +22,7 @@
 	var contextBasePath = currentScriptPath + '../../../../../';
 
 angular.module('filters_parameters_list',['sbiModule'])
-   
+
 	.directive('filterParametersList', function (sbiModule_config) {
 		 return {
 		      restrict: 'E',
@@ -37,35 +37,29 @@ angular.module('filters_parameters_list',['sbiModule'])
 		    	  selectedAttribute: "=",
 		    	  driversList:"=?",
 		    	  attributeList:"=?",
-		    	  selectItemAction:"&"	  
-		      }	  
+		    	  selectItemAction:"&"
+		      }
 		  };
 	});
 
    function filterParametersController($scope){
-	   
+
 	$scope.removed=false;
-	   
+
 	   $scope.clickItem=function(item){
 		  if($scope.removed){
 		  $scope.bindMode=false;
 		  }
-		   //$scope.selectedAttribute= item;
-//			if($scope.bindMode){
-//				console.log("bindHere");
-//				item.replace=$scope.selectedFilter.name;
-//				item.bindObj=$scope.selectedFilter;
-//			}
-			  
+
 		}
-	   
+
 	   $scope.parametersSpeedMenu = [ {
 			label : 'remove binding',
 			icon : 'fa fa-minus-circle',
 			action : function(item) {
 				if(item.bindObj){
 				//console.log(item.bindObj.tree);
-				if(item.bindObj.tree){	
+				if(item.bindObj.tree){
 				item.bindObj.tree[0].children=[];
 				item.bindObj.tree[0].expanded=false;
 				item.bindObj.tree[0].collapsed= false;
@@ -73,11 +67,9 @@ angular.module('filters_parameters_list',['sbiModule'])
 				}
 				$scope.bindMode=false;
 				$scope.removed=true;
-				//$scope.filterSelected[$scope.filterAxisPosition].caption = " ... ";
 				}
 				item.replace='';
 				item.bindObj=null;
-				//$scope.selectedAttribute=undefined;
 			}
 		} ];
    }

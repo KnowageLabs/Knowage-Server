@@ -78,6 +78,7 @@ public class Parameter implements Serializable {
 
 	private ModalitiesValue modalityValue = null;
 	private ModalitiesValue modalityValueForDefault = null;
+	private ModalitiesValue modalityValueForMax = null;
 
 	private String defaultFormula = "";
 
@@ -342,6 +343,14 @@ public class Parameter implements Serializable {
 
 	public void setModalityValueForDefault(ModalitiesValue modalityValueForDefault) {
 		this.modalityValueForDefault = modalityValueForDefault;
+	}
+
+	public ModalitiesValue getModalityValueForMax() {
+		return modalityValueForMax;
+	}
+
+	public void setModalityValueForMax(ModalitiesValue modalityValueForMax) {
+		this.modalityValueForMax = modalityValueForMax;
 	}
 
 	public String getDefaultFormula() {

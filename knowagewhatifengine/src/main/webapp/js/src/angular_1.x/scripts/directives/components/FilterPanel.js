@@ -97,7 +97,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 })
 
 
-function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService,hierarchyTreeService) {
+function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService,hierarchyTreeService,FiltersService) {
 
 
 	var visibleSelectedTracker = [];
@@ -107,7 +107,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var oldSelectedFilter="";
 	var hlght = false;
 	var selectedFlag = false;
-
+	$scope.hierarchyTreeService = hierarchyTreeService;
+	$scope.FiltersService = FiltersService;
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
 
 
@@ -121,15 +122,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	});
 
-//	$scope.$watch(function(){
-//		if(document.getElementById("leftaxis")){
-//			var size = document.getElementById("leftaxis").offsetHeight;
-//		}
-//		return size;
-//		},function(){
-//			//$scope.axisSizeSetup();
-//			checkShift();
-//	})
+
 
 	// for designer parameters binding
 	$scope.adParams=[];
@@ -198,6 +191,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.filterAxisPosition = index;
 		$scope.activeaxis = filter.axis;
 		filterFather = filter.selectedHierarchyUniqueName;
+		$scope.selectedHierarchyUniqueName = filter.selectedHierarchyUniqueName;
 		h = filter.uniqueName;
 
 		$scope.selectedAttribute= undefined;
@@ -347,8 +341,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		(encoded,"",toSend)
 		.then(function(response) {
 				//$scope.handleResponse(response)
+			if(axis == -1){
+				$scope.hierarchyTreeService.setIsSlicer(response.data,hierarchy)
+			}
+
 			  if(node!=null){
 				  var shouldSearchVisible = true;
+
 				  expandAsyncTree($scope.data,response.data, id);
 
 				  for(var j = 0; j< visibleSelectedTracker.length;j++){
@@ -370,49 +369,30 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.selectFilter = function(item){
 		console.log(item);
 
-		if( $scope.olapMode){
+
 
 		   if(!$scope.bindMode && $scope.selectedAttribute){
 			$scope.bindMode=true;
-			//$scope.lastSelectedFilter=item;
-			console.log($scope.selectedAttribute);
-			console.log($scope.data);
-			if($scope.selectedAttribute){
-		    $scope.selectedAttribute.bindObj= item;
+			  $scope.selectedAttribute.bindObj= item;
 			var sliceArray= item.uniqueName.split(".");
 			$scope.selectedAttribute.replace =sliceArray[0];
 			$scope.filterSelected[$scope.filterAxisPosition].dimension= sliceArray[0];
 			$scope.filterSelected[$scope.filterAxisPosition].replaceItem= item.name;
 
-			}
+
 			var index= item.uniqueName.indexOf("["+item.name+"]");
 			var fatherUniqueName=item.uniqueName.substring(0,index-1);
-			//console.log(fatherUniqueName);
-			if($scope.selectedAttribute){
+
 			replaceChildrenWithParameter($scope.data[0],item.uniqueName,$scope.selectedAttribute);
 			$scope.selectedAttribute.bindObj.tree=$scope.data;
-			}
-
-
-
-
 
 		selectedFlag = true;
 		oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
-	//	if($scope.selectedAttribute){
-			$scope.filterSelected[$scope.filterAxisPosition].caption = item.name+ " -> ${"+$scope.selectedAttribute.label+"}";
-	//	}else{
-    //		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
-	//	}
+
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
 
-		//$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute= $scope.selectedAttribute;
-		//$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute=angular.copy($scope.selectedAttribute);
-		//$scope.filterSelected[$scope.filterAxisPosition].dataTree=angular.copy($scope.data);
-
-		console.log($scope.filterSelected[$scope.filterAxisPosition]);
 		   }else{
 			   if(!$scope.bindMode){
 			   selectedFlag = true;
@@ -426,16 +406,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			   }
 		   }
 
-		}else {
 
-			selectedFlag = true;
-			oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
-			h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
-			m = item.uniqueName;
-			$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
-			$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
-
-		}
 
 
 	};
@@ -508,6 +479,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	$scope.filterDialogSave = function(){
 		if($scope.activeaxis == -1){
+			if($scope.olapMode){
+				$scope.FiltersService.setSlicers(filterFather,[$scope.filterSelected[$scope.filterAxisPosition]])
+			}else{
+				$scope.FiltersService.setSlicers(filterFather,$scope.hierarchyTreeService.getSlicerMembers($scope.data))
+
+			}
 			if($scope.selectedAttribute){
 				var bind= {};
 				bind.filter=angular.copy($scope.filterSelected[$scope.filterAxisPosition]);
@@ -538,15 +515,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	//Save action called from filters axis=-1
 	filterSlice = function(){
+
 		var toSend = {
 			'hierarchy':filterFather,
-			'member':m,
+			'members':$scope.FiltersService.getSlicerUniqueNames(filterFather),
 			'multi':false
 		};
 
 		console.log(toSend);
 
-		if(filterFather != undefined && m!= undefined){
+		if(filterFather != undefined && toSend.members!= undefined){
 			var encoded = encodeURI('1.0/hierarchy/slice?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 			sbiModule_restServices.promisePost
 			(encoded,"",toSend)

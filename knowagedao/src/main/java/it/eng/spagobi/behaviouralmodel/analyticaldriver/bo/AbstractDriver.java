@@ -61,7 +61,7 @@ public abstract class AbstractDriver {
 	private List parameterValues = null;
 
 	private List parameterValuesDescription = null;
-
+	
 	/* transient flag. set to true for parameters buil on the fly */
 	private boolean transientParmeters = false;
 
@@ -79,6 +79,11 @@ public abstract class AbstractDriver {
 	/* REQ_FL NUMBER Y Parameter required flag. */
 	private Integer required = null;
 
+	/**
+	 * Contains maximum value for the driver.
+	 */
+	private Object maxValue = null;
+
 	/* MOD_FL NUMBER Y Parameter modifiable flag. */
 	private Integer modifiable = null;
 
@@ -89,7 +94,15 @@ public abstract class AbstractDriver {
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */
 	private Integer multivalue = null;
-
+	
+	public Object getMaxValue() {
+		return maxValue;
+	}
+	
+	public void setMaxValue(Object maxValue) {
+		this.maxValue = maxValue;
+	}
+	
 	public Integer getModifiable() {
 		return modifiable;
 	}

@@ -27,11 +27,11 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
 olapMod.controller("olapController", [ "$scope", '$rootScope',"$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav', 'sbiModule_config',
 		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',
-		'olapSharedSettings', 'indexChangingService', olapFunction ]);
+		'olapSharedSettings', 'indexChangingService','FiltersService', olapFunction ]);
 
 function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce,
 		$mdToast, $mdSidenav, sbiModule_config, sbiModule_messaging, sbiModule_restServices,
-		sbiModule_translate,sbiModule_docInfo, olapSharedSettings, indexChangingService) {
+		sbiModule_translate,sbiModule_docInfo, olapSharedSettings, indexChangingService,FiltersService) {
 
 	//VARIABLES
 	var firstLoad = true;
@@ -290,6 +290,8 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 			}
 
 		}
+
+		FiltersService.setFilters(filters);
 	}
 
 

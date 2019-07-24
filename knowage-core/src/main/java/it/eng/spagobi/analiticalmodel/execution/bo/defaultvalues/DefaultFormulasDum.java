@@ -11,6 +11,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.handlers.AbstractBIResourceRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
@@ -54,7 +55,7 @@ public class DefaultFormulasDum {
 		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
 				IDrivableBIResource object, Locale locale, String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
-			DefaultValue defaultValue = null;
+			LovValue defaultValue = null;
 			try {
 				ILovDetail lovDetails = dum.getLovDetail(analyticalDocumentParameter);
 				logger.debug("LOV info retrieved");
@@ -72,7 +73,7 @@ public class DefaultFormulasDum {
 				}
 				// getting first value
 				SourceBean row = (SourceBean) lovResult.get(0);
-				defaultValue = new DefaultValue();
+				defaultValue = new LovValue();
 				defaultValue.setValue(row.getAttribute(lovDetails.getValueColumnName()));
 				defaultValue.setDescription(row.getAttribute(lovDetails.getDescriptionColumnName()));
 				logger.debug("Default value found is " + defaultValue);
@@ -97,7 +98,7 @@ public class DefaultFormulasDum {
 		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
 				IDrivableBIResource object, Locale locale, String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
-			DefaultValue defaultValue = null;
+			LovValue defaultValue = null;
 			try {
 				ILovDetail lovDetails = dum.getLovDetail(analyticalDocumentParameter);
 				logger.debug("LOV info retrieved");
@@ -115,7 +116,7 @@ public class DefaultFormulasDum {
 				}
 				// getting last value
 				SourceBean row = (SourceBean) lovResult.get(lovResult.size() - 1);
-				defaultValue = new DefaultValue();
+				defaultValue = new LovValue();
 				defaultValue.setValue(row.getAttribute(lovDetails.getValueColumnName()));
 				defaultValue.setDescription(row.getAttribute(lovDetails.getDescriptionColumnName()));
 				logger.debug("Default value found is " + defaultValue);

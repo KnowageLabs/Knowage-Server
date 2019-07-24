@@ -659,7 +659,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						}
 					}
 
-					if(!$scope.chartTemplate.VALUES.CATEGORY.drillOrder){
+					if( ($scope.chartTemplate.type == 'BAR' || $scope.chartTemplate.type == 'LINE') && !$scope.chartTemplate.VALUES.CATEGORY.drillOrder){
 						$scope.chartTemplate.VALUES.CATEGORY.drillOrder={}
 
 						for (var j = 0; j <  $scope.categories.length; j++) {

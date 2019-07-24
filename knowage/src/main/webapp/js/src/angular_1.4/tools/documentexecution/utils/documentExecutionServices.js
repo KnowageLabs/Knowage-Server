@@ -700,7 +700,7 @@
 			var fillObj = {};
 			var hasDefVal = false;
 			for(var i=0; i<filterStatus.length; i++){
-				if(filterStatus[i].parameterValue && filterStatus[i].parameterValue.length>0){
+				if(filterStatus[i].parameterValue && filterStatus[i].parameterValue.length>0) {
 					var arrDefToFill = [];
 					var arrDefToFillDescription = []; //TREE
 					//var fillObj = {};
@@ -736,12 +736,18 @@
 					}
 					//serviceScope.fillParametersPanel(fillObj);
 				}
+				
+				if (filterStatus[i].driverMaxValue) {
+					fillObj[filterStatus[i].urlName+'_max_value'] = filterStatus[i].driverMaxValue
+				}
 			}
+			
 			if(hasDefVal){
 				serviceScope.fillParametersPanel(fillObj);
-
-
 			}
+			
+			serviceScope.setMaxValueForParameters(fillObj);
+			
 		};
 
 		serviceScope.createNewViewpoint = function() {
@@ -792,6 +798,27 @@
 				templateUrl : sbiModule_config.dynamicResourcesBasePath
 				+ '/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
+		};
+		
+		/*
+		 * Set max value for parameters.
+		 */
+		serviceScope.setMaxValueForParameters = function(params) {
+			if(execProperties.parametersData.documentParameters.length > 0){
+
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+					var parameter = execProperties.parametersData.documentParameters[i];
+
+					if(parameter.valueSelection.toLowerCase() == 'man_in') {
+						var maxValue = params[parameter.urlName+'_max_value'];
+						if(maxValue && parameter.type=='DATE'){
+							parameter.maxValue = sbiModule_dateServices.getDateFromFormat(
+									maxValue,
+									sbiModule_config.serverDateFormat);
+						}
+					}
+				}
+			}
 		};
 
 		this.buildParameterForFirstExecution=function(navParam,menuParam){

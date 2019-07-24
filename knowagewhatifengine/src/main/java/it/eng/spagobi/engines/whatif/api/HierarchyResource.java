@@ -41,7 +41,6 @@ import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property.StandardMemberProperty;
 import org.pivot4j.PivotModel;
-import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.transform.SwapAxes;
 
@@ -51,6 +50,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
+import it.eng.spagobi.engines.whatif.model.transform.slicer.SlicerManager;
 import it.eng.spagobi.engines.whatif.version.SbiVersion;
 import it.eng.spagobi.engines.whatif.version.VersionDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -73,45 +73,31 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	// @Produces("text/html; charset=UTF-8")
 	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req) {
 
-		String hierarchyName = null;
-		String memberName = null;
-		boolean multiSelection = false;
-
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
-		Hierarchy hierarchy = null;
-		Member member = null;
+		String hierarchyUniqueName = null;
+		List<String> memberUniqueNames = new ArrayList<>();
+		String memberUniqueName;
+		SlicerManager slicerManager = new SlicerManager(getWhatIfEngineInstance().getSpagoBIPivotModel());
 
 		try {
 			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
-			hierarchyName = paramsObj.getString("hierarchy");
-			memberName = paramsObj.getString("member");
-			multiSelection = paramsObj.getBoolean("multi");
+			hierarchyUniqueName = paramsObj.getString("hierarchy");
+			// memberUniqueName = paramsObj.optString("member");
+			// memberUniqueNames.add(memberUniqueName);
+			JSONArray jSONArray = paramsObj.optJSONArray("members");
+			memberUniqueNames = new ArrayList<>();
+			for (int i = 0; i < jSONArray.length(); i++) {
+				memberUniqueNames.add(jSONArray.getString(i));
+			}
+
 		} catch (Exception e) {
 			logger.error("Error reading body", e);
 		}
 
-		ChangeSlicer ph = model.getTransform(ChangeSlicer.class);
+		slicerManager.clearSlicers(hierarchyUniqueName);
+		slicerManager.setSlicers(hierarchyUniqueName, memberUniqueNames);
 
-		try {
-			hierarchy = CubeUtilities.getHierarchy(model.getCube(), hierarchyName);
-			member = CubeUtilities.getMember(hierarchy, memberName);
-		} catch (OlapException e) {
-			logger.debug("Error getting the member " + memberName + " from the hierarchy " + hierarchyName, e);
-			throw new SpagoBIEngineRuntimeException("Error getting the member " + memberName + " from the hierarchy " + hierarchyName, e);
-		}
-
-		List<org.olap4j.metadata.Member> slicers = ph.getSlicer(hierarchy);
-
-		if (!multiSelection) {
-			slicers.clear();
-		}
-
-		slicers.add(member);
-		ph.setSlicer(hierarchy, slicers);
-
-		return renderModel(model);
+		return renderModel(getWhatIfEngineInstance().getPivotModel());
 	}
 
 	@POST

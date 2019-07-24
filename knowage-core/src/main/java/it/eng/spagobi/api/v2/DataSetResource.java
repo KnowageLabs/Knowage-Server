@@ -46,11 +46,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -65,6 +67,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -74,6 +77,8 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -594,7 +599,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
+			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
 					options);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
@@ -611,6 +616,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			String aggregations = null;
 			String parameters = null;
+			Map<String, Object> driversRuntimeMap = null;
 			String likeSelections = null;
 			int start = -1;
 			int limit = -1;
@@ -648,14 +654,13 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONArray jsonMeasures = new JSONArray();
 				JSONArray jsonCategories = new JSONArray();
+				IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 
-				JSONObject jsonDataSets = new JSONObject(getDataSets(null, null, true, null, null, label, true, null, false));
-				JSONObject jsonDataSet = jsonDataSets.getJSONArray("item").getJSONObject(0);
-				JSONArray jsonFields = jsonDataSet.getJSONObject("metadata").getJSONArray("fieldsMeta");
-				for (int i = 0; i < jsonFields.length(); i++) {
-					JSONObject jsonField = jsonFields.getJSONObject(i);
+				IMetaData metadata = dataSet.getMetadata();
+				for (int i = 0; i < metadata.getFieldCount(); i++) {
+					IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
 					JSONObject json = new JSONObject();
-					String alias = jsonField.getString("alias");
+					String alias = fieldMetaData.getAlias();
 					json.put("id", alias);
 					json.put("alias", alias);
 					json.put("columnName", alias);
@@ -663,7 +668,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					json.put("orderColumn", alias);
 					json.put("funct", "NONE");
 
-					if ("ATTRIBUTE".equals(jsonField.getString("fieldType"))) {
+					if ("ATTRIBUTE".equals(fieldMetaData.getFieldType())) {
 						jsonCategories.put(json);
 					} else {
 						jsonMeasures.put(json);
@@ -675,34 +680,56 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonAggregations.put("categories", jsonCategories);
 				aggregations = jsonAggregations.toString();
 
-				JSONArray jsonParameters = jsonDataSet.getJSONArray("parameters");
 				JSONArray jsonPars = jsonBody.optJSONArray("pars");
-				if (jsonParameters != null) {
-					JSONObject json = new JSONObject();
-					for (int i = 0; i < jsonParameters.length(); i++) {
-						JSONObject jsonParameter = jsonParameters.getJSONObject(i);
-						String columnName = jsonParameter.getString("name");
-						json.put(columnName, jsonParameter.get("defaultValue"));
-						if (jsonPars != null) {
-							for (int j = 0; j < jsonPars.length(); j++) {
-								JSONObject jsonPar = jsonPars.getJSONObject(j);
-								if (columnName.equals(jsonPar.getString("name"))) {
-									if (jsonPar.opt("value") != null && jsonPar.opt("value") != "") {
-										json.put(columnName, jsonPar.get("value"));
-										break;
+				String params = dataSet.getParameters();
+				if (params != null && !params.equals("")) {
+					SourceBean source = SourceBean.fromXMLString(params);
+					if (source != null && source.getName().equals("PARAMETERSLIST")) {
+						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+						for (int i = 0; i < rows.size(); i++) {
+							SourceBean row = rows.get(i);
+							String name = (String) row.getAttribute("NAME");
+							String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
+							JSONObject jsonPar = new JSONObject();
+							jsonPar.put(name, defaultValue);
+							if (jsonPars != null) {
+								for (int j = 0; j < jsonPars.length(); j++) {
+									JSONObject jsonParam = jsonPars.getJSONObject(j);
+									if (name.equals(jsonParam.getString("name"))) {
+										if (jsonParam.optString("value") != "") {
+											jsonPar.put(name, jsonParam.optString("value"));
+											break;
+										}
 									}
 								}
 							}
+							parameters = jsonPar.toString();
 						}
 					}
-					parameters = json.toString();
 				}
+
+				JSONArray jsonDrivers = jsonBody.optJSONArray("drivers");
+				if (jsonDrivers != null && jsonDrivers.length() > 0) {
+					for (int j = 0; j < jsonDrivers.length(); j++) {
+						JSONObject jsonDriver = jsonDrivers.getJSONObject(j);
+						try {
+							driversRuntimeMap = JSONObjectDeserializator.getHashMapFromJSONObject(jsonDriver);
+						} catch (Exception e1) {
+							logger.error("Getting Drivers has encoutered error");
+							throw new SpagoBIRuntimeException(e1.getLocalizedMessage(), e1);
+						}
+					}
+				}
+
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, null, likeSelections, -1, aggregations, null, start, limit, true);
+			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} catch (Exception e) {
+			logger.error("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label, e);
 		}
 	}
 

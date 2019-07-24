@@ -39,10 +39,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=true&ids=" + dsIds.join())
 				.then(function(response){
 					for(var i in response.data.item){
-						var dataset = response.data.item[i];
-						ds.datasetList.push(dataset);
-						ds.datasetMapById[dataset.id.dsId] = dataset;
-						ds.datasetMapByLabel[dataset.label] = dataset;
+						if(typeof response.data.item[i] == 'object'){
+							var dataset = response.data.item[i];
+							ds.datasetList.push(dataset);
+							ds.datasetMapById[dataset.id.dsId] = dataset;
+							ds.datasetMapByLabel[dataset.label] = dataset;
+						}
 					}
 
 					ds.initNearRealTimeValues(ds.datasetList);

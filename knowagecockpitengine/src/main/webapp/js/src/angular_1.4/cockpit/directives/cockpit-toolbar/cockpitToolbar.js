@@ -125,12 +125,13 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 		    				  id:(new Date()).getTime(),
 		    				  sizeX	:6,
 		    				  sizeY:6,
-		    				  content:{name:"new "+type+" Widget"},
+		    				  //content:{name:"new "+type+" Widget"},
 		    				  type:type,
 		    				  isNew : true,
 		    				  updateble : true,
 		    				  cliccable : true
 		    		  }
+		    		  tmpWidget.content = {name:'widget_'+ type + '_' + tmpWidget.id};
 		    		  if(cockpitModule_widgetConfigurator[type].initialDimension !=undefined){
 		    			  if(cockpitModule_widgetConfigurator[type].initialDimension.width != undefined){
 			    			  tmpWidget.sizeX = cockpitModule_widgetConfigurator[type].initialDimension.width;

@@ -72,7 +72,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
-			cockpitModule_properties){
+			cockpitModule_properties,
+			cockpitModule_template){
 		
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
@@ -81,11 +82,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
-		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
-		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
-		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
-		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
-		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
+		$scope.activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g;
+		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
+		$scope.rowsRegex   = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
+		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
+		$scope.limitRegex = /<[\s\w]+kn-repeat="[\w]*"[\s\w\"\=]+limit="([\d]+)"[\s\w]*>/g;
+		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
+		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
+		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}\])/g;
 		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
@@ -137,6 +141,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			else $scope.refreshWidget(null, 'init');
 		}
 		
+		$scope.getOptions = function(){
+			var obj = {};
+				obj["page"] = 0;
+				obj["itemPerPage"] = $scope.maxRow();
+				obj["type"] = 'html';
+			return obj;
+		}
+		
 		/**
 		 * Function to initialize the rendered html at the loading and after editing.
 		 * If there is a selected dataset the function calls the data rest service.
@@ -145,23 +157,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.showWidgetSpinner();
 			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId && $scope.ngModel.htmlToRender.search($scope.noAggregationsExistRegex) != -1){
 				sbiModule_restServices.restToRootProject();
-				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
-				$scope.ngModel.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 
-				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, $scope.ngModel, undefined).then(
+				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, $scope.maxRow(), undefined, undefined, $scope.ngModel, undefined).then(
 					function(data){
 						$scope.htmlDataset = data;
 						$scope.manageHtml();
 					},function(error){
 						$scope.hideWidgetSpinner();
 					});
-			}else {
+			}else if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+				$scope.refreshWidget();
+			}else{
 				$scope.manageHtml();
 			}
+		}
+		
+		$scope.maxRow = function(){
+			var str = $scope.ngModel.cssToRender + $scope.ngModel.htmlToRender;
+			var tempMaxRow = 1;
+			var repeaters = str.replace($scope.limitRegex, function(match, p1){
+				if(p1>tempMaxRow) tempMaxRow = parseInt(p1)+1;
+			})
+			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
+				if(p2>tempMaxRow) tempMaxRow = parseInt(p2)+1;
+			});
+			return tempMaxRow;
 		}
 
 		//Core wrapper function to prepare css and styles to be parsed
 		$scope.manageHtml = function(){
+			if($scope.datasetLabel) delete $scope.datasetLabel;
+			if($scope.ngModel.dataset.dsId) $scope.datasetLabel = cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId);
 			$scope.parseAggregations($scope.ngModel.cssToRender + $scope.ngModel.htmlToRender).then(function(resultHtml){
 				if($scope.ngModel.cssToRender){
 					$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
@@ -230,7 +256,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var a in aggregationsReg){
 						var aggregationReg = $scope.aggregationRegex.exec(aggregationsReg[a]);
 						for(var m in tempDataset.metadata.fieldsMeta){
-							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
+							if(aggregationReg && aggregationReg[1] && tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
 								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
 								tempDataset.metadata.fieldsMeta[m].fieldType = 'MEASURE';
 								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
@@ -358,7 +384,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.checkPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
-				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
+				var resultHtml = rawHtml;
+				if($scope.datasetLabel) {
+					resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
+					resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
+				}
 				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
@@ -376,6 +406,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
+		$scope.activeSelectionsReplacer = function(match,column){
+			if(cockpitModule_template.configuration.filters[$scope.datasetLabel] && cockpitModule_template.configuration.filters[$scope.datasetLabel][column]){
+				return cockpitModule_template.configuration.filters[$scope.datasetLabel][column];
+			}else return null;
+		}
+		
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
 			var result = eval(p1);
 			if(min && result < min) result = min;

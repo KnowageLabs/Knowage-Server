@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.dataset.FederatedDataSet;
@@ -445,6 +444,7 @@ public class DataSetFactory {
 		} catch (SpagoBIRuntimeException ex) {
 			throw ex;
 		} catch (Exception e) {
+			logger.error("Error while defining dataset configuration.", e);
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 		}
 
@@ -1123,25 +1123,32 @@ public class DataSetFactory {
 		return res;
 	}
 
-	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf, List<DataSetParameterItem> parameters) throws JSONException {
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
-		if (parameters != null) {
-			for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
-				DataSetParameterItem dataSetParameterItem = (DataSetParameterItem) iterator.next();
-				parametersMap.put(dataSetParameterItem.getDefaultValue(), dataSetParameterItem.getName());
+	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf, List<DataSetParameterItem> parameters) {
+		SolrDataSet res = null;
+		try {
+			HashMap<String, String> parametersMap = new HashMap<String, String>();
+			if (parameters != null) {
+				for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
+					DataSetParameterItem dataSetParameterItem = (DataSetParameterItem) iterator.next();
+					parametersMap.put(dataSetParameterItem.getDefaultValue(), dataSetParameterItem.getName());
+				}
 			}
-		}
 
-		String solrType = jsonConf.getString(SolrDataSetConstants.SOLR_TYPE);
-		Assert.assertNotNull(solrType, "Solr type cannot be null");
-		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(jsonConf, parametersMap)
-				: new FacetSolrDataSet(jsonConf, parametersMap);
-		res.setDsType(DataSetConstants.DS_SOLR_NAME);
+			String solrType = jsonConf.getString(SolrDataSetConstants.SOLR_TYPE);
+			Assert.assertNotNull(solrType, "Solr type cannot be null");
+			res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(jsonConf, parametersMap)
+					: new FacetSolrDataSet(jsonConf, parametersMap);
+			res.setDsType(DataSetConstants.DS_SOLR_NAME);
 
-		if (!jsonConf.has(SolrDataSetConstants.SOLR_FIELDS)) {
-			JSONArray solrFields = res.getSolrFields();
-			jsonConf.put(SolrDataSetConstants.SOLR_FIELDS, solrFields);
-			res.setConfiguration(jsonConf.toString());
+			if (!jsonConf.has(SolrDataSetConstants.SOLR_FIELDS)) {
+				JSONArray solrFields = res.getSolrFields();
+				jsonConf.put(SolrDataSetConstants.SOLR_FIELDS, solrFields);
+				res.setConfiguration(jsonConf.toString());
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in managing Solar Dataset ", e);
+			throw new SpagoBIRuntimeException("Error in managing Solar Dataset", e);
 		}
 
 		return res;

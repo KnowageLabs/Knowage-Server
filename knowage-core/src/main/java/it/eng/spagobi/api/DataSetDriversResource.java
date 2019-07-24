@@ -43,6 +43,7 @@ import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -276,7 +277,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 								stringResult += ",";
 							}
 						}
-						it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue defValue = new it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue();
+						LovValue defValue = new LovValue();
 						defValue.setValue(stringResult);
 						defValue.setDescription(stringResult);
 						parameterValueList.add(defValue);
@@ -286,7 +287,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
 							String itemDescr = descrList.size() > k ? descrList.get(k) : itemVal;
-							it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue defValue = new it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue();
+							LovValue defValue = new LovValue();
 							defValue.setValue(itemVal);
 							defValue.setDescription(itemDescr != null ? itemDescr : itemVal);
 							parameterValueList.add(defValue);
@@ -344,7 +345,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 			Map docP = parametersArrayList.get(z);
 			DefaultValuesList defvalList = (DefaultValuesList) docP.get("parameterValue");
 			if (defvalList != null && defvalList.size() == 1) {
-				it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue defval = defvalList.get(0);
+				LovValue defval = defvalList.get(0);
 				if (defval != null) {
 					Object val = defval.getValue();
 					if (val != null && val.equals("$")) {

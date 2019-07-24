@@ -43,3 +43,4 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/indexChangingService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/treeIteratorService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/hierarchyTreeService.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/FiltersService.js"></script>

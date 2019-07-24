@@ -191,7 +191,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		IModelAccessModality accessModality = this.getStatement().getDataSource().getModelAccessModality();
 		it.eng.qbe.query.Query query = accessModality.getFilteredStatement(this.getStatement().getQuery(), this.getStatement().getDataSource(),
 				this.getUserProfileAttributes());
+		Map params = this.getStatement().getParameters();
 		IStatement filteredStatement = this.getStatement().getDataSource().createStatement(query);
+		filteredStatement.setParameters(params);
 		filteredStatement.setProfileAttributes(this.getStatement().getProfileAttributes());
 		logger.debug("OUT");
 		return filteredStatement;

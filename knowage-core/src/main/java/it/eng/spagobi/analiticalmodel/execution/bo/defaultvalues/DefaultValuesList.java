@@ -23,7 +23,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class DefaultValuesList extends ArrayList<DefaultValue> {
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
+
+public class DefaultValuesList extends ArrayList<LovValue> {
 
 	private static Logger logger = Logger.getLogger(DefaultValuesList.class);
 
@@ -33,10 +35,10 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 	 */
 	@Override
 	public boolean contains(Object value) {
-		Iterator<DefaultValue> it = this.iterator();
+		Iterator<LovValue> it = this.iterator();
 		while (it.hasNext()) {
-			DefaultValue defaultValue = it.next();
-			if (defaultValue.toString().equalsIgnoreCase("DefaultValue [value=, description=]") || defaultValue.getValue().equals(value)) {
+			LovValue defaultValue = it.next();
+			if (defaultValue.toString().equalsIgnoreCase("LovValue [value=, description=]") || defaultValue.getValue().equals(value)) {
 				logger.debug("Value [" + value + "] is a default value");
 				return true;
 			}
@@ -48,12 +50,12 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 	 * Returns the default value object with value property equal to the value specified in input, or null if this object is not found
 	 *
 	 * @param value The value to look for: it is compared with default values' value property
-	 * @return The DefaultValue object with value specified in input, or null if this object is not found
+	 * @return The LovValue object with value specified in input, or null if this object is not found
 	 */
-	public DefaultValue getDefaultValue(Object value) {
-		Iterator<DefaultValue> it = this.iterator();
+	public LovValue getDefaultValue(Object value) {
+		Iterator<LovValue> it = this.iterator();
 		while (it.hasNext()) {
-			DefaultValue defaultValue = it.next();
+			LovValue defaultValue = it.next();
 			if (defaultValue.getValue().equals(value)) {
 				logger.debug("Value [" + value + "] found in this default values' list");
 				return defaultValue;
@@ -65,9 +67,9 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 
 	public List getValuesAsList() {
 		List toReturn = new ArrayList();
-		Iterator<DefaultValue> it = this.iterator();
+		Iterator<LovValue> it = this.iterator();
 		while (it.hasNext()) {
-			DefaultValue defaultValue = it.next();
+			LovValue defaultValue = it.next();
 			toReturn.add(defaultValue.getValue().toString());
 		}
 		return toReturn;
@@ -75,9 +77,9 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 
 	public List getDescriptionsAsList() {
 		List toReturn = new ArrayList();
-		Iterator<DefaultValue> it = this.iterator();
+		Iterator<LovValue> it = this.iterator();
 		while (it.hasNext()) {
-			DefaultValue defaultValue = it.next();
+			LovValue defaultValue = it.next();
 			toReturn.add(defaultValue.getDescription().toString());
 		}
 		return toReturn;

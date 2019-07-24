@@ -71,7 +71,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header){
-						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
+						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
+								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType,
+								"headerTooltip": $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if(crossEnabled && $scope.ngModel.cross.cross.crossType == 'singleColumn' && $scope.ngModel.cross.cross.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow) {

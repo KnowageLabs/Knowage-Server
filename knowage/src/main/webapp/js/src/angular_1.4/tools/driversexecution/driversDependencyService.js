@@ -1,6 +1,6 @@
 (function() {
 	var driversExecutionModule = angular.module('driversExecutionModule');
-		driversExecutionModule.service('driversDependencyService', ['driversExecutionService', function(driversExecutionService){
+		driversExecutionModule.service('driversDependencyService', ['driversExecutionService', 'sbiModule_restServices', function(driversExecutionService, sbiModule_restServices){
 			var dependencyService = {};
 			dependencyService.parametersWithVisualDependency = [];
 			dependencyService.parametersWithDataDependency = [];
@@ -151,8 +151,7 @@
 											break;
 										}
 									}
-								}
-								else { //not contains
+								} else { //not contains
 									condition=true;
 									for(var l=0; l<newValueStr.length; l++){
 										if(compareValueStr==newValueStr[l]){
@@ -168,7 +167,8 @@
 										condition = visualDependency.operation=='contains' && compareValueStr==dateToSubmit1;
 									}
 								}else{
-									condition = visualDependency.operation=='equal' && compareValueStr==newValueStr;
+									condition = (visualDependency.operation=='contains') ?
+											(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
 								}
 							}
 							if(condition){
@@ -305,14 +305,14 @@
 				}
 			};
 			var prepareParameterForNewValues = function(execProperties,data){
-				for(var i=0; z<execProperties.parametersData.documentParameters.length;z++){
+				for(var i=0; i<execProperties.parametersData.documentParameters.length;i++){
 					if(execProperties.parametersData.documentParameters[i].urlName==data.idParam){
 
 						driversExecutionService.emptyParameter(execProperties.parametersData.documentParameters[i]);
 
 						if(execProperties.parametersData.documentParameters[i].defaultValues &&
 								execProperties.parametersData.documentParameters[i].defaultValues.length>0){
-							for(var j=0;y<execProperties.parametersData.documentParameters[i].defaultValues.length;j++){
+							for(var j=0;j<execProperties.parametersData.documentParameters[i].defaultValues.length;j++){
 								execProperties.parametersData.documentParameters[i].defaultValues[j].isEnabled=false;
 							}
 						}

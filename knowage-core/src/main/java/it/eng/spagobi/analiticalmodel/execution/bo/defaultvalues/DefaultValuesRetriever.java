@@ -34,6 +34,7 @@ import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -90,7 +91,7 @@ public class DefaultValuesRetriever {
 		String descriptionColumn = lovForDefault.getDescriptionColumnName();
 		while (it.hasNext()) {
 			SourceBean row = (SourceBean) it.next();
-			DefaultValue defaultValue = new DefaultValue();
+			LovValue defaultValue = new LovValue();
 			defaultValue.setValue(row.getAttribute(valueColumn));
 			defaultValue.setDescription(row.getAttribute(descriptionColumn));
 			defaultValues.add(defaultValue);
@@ -127,7 +128,7 @@ public class DefaultValuesRetriever {
 		for (SourceBean row : rows) {
 			String rowValue = (String) row.getAttribute(columnName);
 
-			DefaultValue defaultValue = new DefaultValue();
+			LovValue defaultValue = new LovValue();
 			defaultValue.setValue(rowValue);
 
 			defaultValuesList.add(defaultValue);
@@ -189,7 +190,7 @@ public class DefaultValuesRetriever {
 		String descriptionColumn = lovForDefault.getDescriptionColumnName();
 		while (it.hasNext()) {
 			SourceBean row = (SourceBean) it.next();
-			DefaultValue defaultValue = new DefaultValue();
+			LovValue defaultValue = new LovValue();
 			defaultValue.setValue(row.getAttribute(valueColumn));
 			defaultValue.setDescription(row.getAttribute(descriptionColumn));
 			defaultValues.add(defaultValue);
@@ -227,7 +228,7 @@ public class DefaultValuesRetriever {
 			for (SourceBean row : rows) {
 				String rowValue = (String) row.getAttribute(columnName);
 
-				DefaultValue defaultValue = new DefaultValue();
+				LovValue defaultValue = new LovValue();
 				defaultValue.setValue(rowValue);
 
 				defaultValuesList.add(defaultValue);

@@ -31,7 +31,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'name': 'column',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag1.desc'),
 				'hidden': !datasetId ? true : false,
-				'hiddenMessage': 'No dataset selected',
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
 				'inputs': [
 					{	'name':'column',
 						'type': 'select',
@@ -77,7 +77,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'name': 'repeater',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag3.desc'),
 				'hidden': !datasetId ? true : false,
-				'hiddenMessage': 'No dataset selected',
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
 				'inputs': [
 					{	'name':'limit',
 						'type': 'number',
@@ -90,7 +90,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'name': 'repeatIndex',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
 				'hidden': !datasetId ? true : false,
-				'hiddenMessage': 'No dataset selected',
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
 				'tag':'[kn-repeat-index]'
 				},
 			{
@@ -144,7 +144,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'name': 'selection',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag7.desc'),
 				'hidden': !datasetId ? true : false,
-				'hiddenMessage': 'No dataset selected',
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
 				'tag':'<div kn-selection-column="%%selectioncolumn%%" %%selectionvalue%%></div>',
 				'inputs': [
 					{	'name':'selectioncolumn',
@@ -162,7 +162,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'name': 'preview',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag9.desc'),
 				'hidden': !availableDatasets ? true : false,
-				'hiddenMessage': 'No dataset available',
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodatasetavailable'),
 				'tag':'<div kn-preview%%dataset%%></div>',
 				'inputs': [
 					{	'name':'dataset',
@@ -170,6 +170,19 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'flex':'flex',
 						'replacer':'=\"***\"',
 						'options': availableDatasets}]
+				},
+			{
+				'label':sbiModule_translate.load('kn.cockpit.html.tag10'),
+				'name': 'active-selection',
+				'description': sbiModule_translate.load('kn.cockpit.html.tag10.desc'),
+				'hidden': !datasetId ? true : false,
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
+				'tag':"[kn-active-selection='%%column%%']",
+				'inputs': [
+					{	'name':'column',
+						'type': 'select',
+						'options': !datasetId || meta,
+						'flex':'flex-100'}]
 				}
 		]
 	}
