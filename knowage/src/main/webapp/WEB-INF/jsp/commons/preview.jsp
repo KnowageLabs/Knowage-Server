@@ -45,11 +45,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			const 	MAX_ROWS_CLIENT_PAGINATION = 5000;
 			const 	MAX_ROWS_EXCEL_EXPORT = 20000;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
+			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
 			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
 			const 	KNOWAGE_SERVICESURL = '/restful-services';
 			var 	FIELDS;
 			var		DATASET;
-			var 	backEndPagination = {page: 1};
+			var 	backEndPagination = {page: 1, itemsPerPage: DEFAULT_MAX_ITEMS_PER_PAGE};
 			var 	filters = [];
 	  
 			//Getting the url parameters
@@ -93,13 +94,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
 			    enableColResize: true,
-	            paginationAutoPageSize: true,
+	            //paginationAutoPageSize: true,
 	            headerHeight: 48,
 	            onSortChanged: changeSorting,
 	            defaultColDef: {
 	                filter: customFilter
 	            },
 	        };
+		  	
+			options.backEndPagination = true;
 		  	
 		  	//Defining custom column filter
 		  	function customFilter(){}
@@ -222,11 +225,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            '	<span ref="lbFirstRowOnPage">'+((backEndPagination.page-1)*backEndPagination.itemsPerPage+1)+'</span> to <span ref="lbLastRowOnPage">'+maxPageNumber()+'</span> of <span ref="lbRecordCount">'+backEndPagination.totalRows+'</span>'+
 			            '</span>'+
 			            '<span class="ag-paging-page-summary-panel">'+
-			            (!options.backEndPagination && '	<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>')+
+			            '<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
 			            '   <button type="button" class="ag-paging-button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
 			            '   page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
 			            '   <button type="button" class="ag-paging-button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
-			            (!options.backEndPagination && '   <button type="button" class="ag-paging-button" ref="btLast" '+disableLast()+' onclick="last()">Last</button>')+
+			            '   <button type="button" class="ag-paging-button" ref="btLast" '+disableLast()+' onclick="last()">Last</button>'+
 			            '</span>';
 		  	}
 		  	
@@ -276,7 +279,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!init) gridOptions.api.showLoadingOverlay();
 				if(options.backEndPagination){
 					fetchParams.body.start = (backEndPagination.page-1) * backEndPagination.itemsPerPage;
-					fetchParams.body.limit = backEndPagination.page * backEndPagination.itemsPerPage;
+					fetchParams.body.limit = backEndPagination.itemsPerPage;
 					if(filters.length > 0) fetchParams.body.filters = filters;
 					if(backEndPagination.sorting) fetchParams.body.sorting = backEndPagination.sorting;
 				}
@@ -300,13 +303,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(data.results > MAX_ROWS_EXCEL_EXPORT){
 						if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
 					}
+					gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
 					if(options.backEndPagination){
 						gridOptions.api.setRowData(data.rows);
-						backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+						//backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
 						backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
 						document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
 					}else{
-						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
+						
 						gridOptions.api.setRowData(data.rows);
 						if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
 							gridOptions.pagination = false;
