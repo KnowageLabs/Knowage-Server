@@ -1,6 +1,6 @@
 <div>
    <div class="sidebar-overlay" data-ng-click="toggleMenu()" data-ng-class="{'active' : openAside}"></div>
-   <aside id="sidebar" class="sidebar  sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
+   <aside id="sidebar" class="sidebar sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
       <div class="sidebar-header header-cover" >
          <a data-toggle="dropdown" class="sidebar-brand" role="link" href="#settings-dropdown" aria-expanded="false"><i aria-hidden="true" class="sidebar-icon material-icons md-32">account_circle</i> {{userName}} <b class="caret"></b> </a> 
       </div>
@@ -18,7 +18,7 @@
 	         	<a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> 
 	         		<i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i>
 	         	</a>
-	         	<span ng-if="link.iconCls == 'inbox' && unreadNewsNumber" class="newsBadge">{{unreadNewsNumber}}</span>
+	         	<span ng-if="link.iconCls == 'email' && unreadNewsNumber" class="newsBadge">{{unreadNewsNumber}}</span>
 	          </li>
 	          <li class="col-md-3 col-xs-6">
 	         	<a href="#" title="{{link.tooltip}}" data-ng-click="downloads()"> 

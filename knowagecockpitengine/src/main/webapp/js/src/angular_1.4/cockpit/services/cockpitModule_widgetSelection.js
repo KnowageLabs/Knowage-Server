@@ -633,13 +633,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					for(var i2=0;i2<cockpitModule_template.sheets[i1].widgets.length;i2++){
 
 						if (cockpitModule_template.sheets[i1].widgets[i2].id == idWidget) {
+							var filters = cockpitModule_template.sheets[i1].widgets[i2].filters ? cockpitModule_template.sheets[i1].widgets[i2].filters : cockpitModule_template.sheets[i1].widgets[i2].content.filters
+							if (filters.length != 0) {
 
-							if (cockpitModule_template.sheets[i1].widgets[i2].filters.length != 0) {
-
-								for (var i3 = 0; i3 < cockpitModule_template.sheets[i1].widgets[i2].filters.length; i3++) {
+								for (var i3 = 0; i3 < filters.length; i3++) {
 
 
-									var filterElement = cockpitModule_template.sheets[i1].widgets[i2].filters[i3];
+									var filterElement = filters[i3];
 
 
 
