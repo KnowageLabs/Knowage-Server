@@ -227,7 +227,7 @@ public class ExportResource {
 			JobDetail exportJob = ExportJobBuilder.fromDataSetIdAndUserProfile(dataSetId, userProfile).withTypeOfXls().withDrivers(drivers)
 					.withParameters(params).withLocale(locale).build();
 
-			scheduler.addJob(exportJob, false);
+			scheduler.addJob(exportJob, true);
 			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
 
 			ret = Response.ok().entity(exportJob.getName()).build();
