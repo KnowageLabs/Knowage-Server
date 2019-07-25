@@ -245,7 +245,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	CustomErrorOverlay.prototype.init = function(params) {
 		  	    this.eGui = document.createElement('div');
 		  	    var errorMessage = '<i class="far fa-frown"> No Rows Available </i>'
-		  	    if(errors.length > 0) errorMessage = '<i class="far fa-frown"> WARNING: '+ errors +' </i>';
+		  	    if(errors && errors.length > 0) errorMessage = '<i class="far fa-frown"> WARNING: '+ errors +' </i>';
 		  	    this.eGui.innerHTML = '<div class="ag-overlay-loading-center">' + errorMessage + '</div>';
 		  	};
 
