@@ -97,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            //paginationAutoPageSize: true,
 	            headerHeight: 48,
 	            onSortChanged: changeSorting,
+	            noRowsOverlayComponent: CustomErrorOverlay,
 	            defaultColDef: {
 	                filter: customFilter
 	            },
@@ -233,6 +234,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            '</span>';
 		  	}
 		  	
+		  	function CustomErrorOverlay () {}
+
+		  	var errors;
+		  	CustomErrorOverlay.prototype.init = function(params) {
+		  	    this.eGui = document.createElement('div');
+		  	    var errorMessage = '<i class="far fa-frown"> No Rows Available </i>'
+		  	    if(errors.length > 0) errorMessage = '<i class="far fa-frown"> WARNING: '+ errors +' </i>';
+		  	    this.eGui.innerHTML = '<div class="ag-overlay-loading-center">' + errorMessage + '</div>';
+		  	};
+
+		  	CustomErrorOverlay.prototype.getGui = function() {
+		  	    return this.eGui;
+		  	};
+		  	
 		  	function maxPageNumber(){
 				if(backEndPagination.page*backEndPagination.itemsPerPage < backEndPagination.totalRows) return backEndPagination.page*backEndPagination.itemsPerPage;
 				else return backEndPagination.totalRows;
@@ -299,28 +314,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)
 				.then(function(response) {return response.json()})
 				.then(function(data){
-					backEndPagination.totalRows = data.results;
-					if(data.results > MAX_ROWS_EXCEL_EXPORT){
-						if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
-					}
-					gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
-					if(options.backEndPagination){
-						gridOptions.api.setRowData(data.rows);
-						//backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
-						backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
-						document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+					if(data.errors){
+						errors = data.errors[0].message;
+						gridOptions.api.showNoRowsOverlay();
 					}else{
-						
-						gridOptions.api.setRowData(data.rows);
-						if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
-							gridOptions.pagination = false;
-							options.backEndPagination = true;
-							backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+						backEndPagination.totalRows = data.results;
+						if(data.results > MAX_ROWS_EXCEL_EXPORT){
+							if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
+						}
+						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
+						if(options.backEndPagination){
+							gridOptions.api.setRowData(data.rows);
+							//backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
 							backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
 							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+						}else{
+							
+							gridOptions.api.setRowData(data.rows);
+							if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
+								gridOptions.pagination = false;
+								options.backEndPagination = true;
+								backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
+								backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
+								document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
+							}
 						}
+						gridOptions.api.hideOverlay();
 					}
-					gridOptions.api.hideOverlay();
+					
 				})
 			}
 
