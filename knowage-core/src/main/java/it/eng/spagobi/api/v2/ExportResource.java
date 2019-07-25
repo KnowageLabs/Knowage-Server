@@ -165,7 +165,7 @@ public class ExportResource {
 	@Path("/dataset/{dataSetId}/csv")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONObject driversJson,
-			@QueryParam("PARAMETERS") JSONObject paramsJson) {
+			@QueryParam("PARAMETERS") JSONArray paramsJson) {
 
 		logger.debug("IN");
 
@@ -211,7 +211,7 @@ public class ExportResource {
 	@Path("/dataset/{dataSetId}/xls")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONObject driversJson,
-			@QueryParam("PARAMETERS") JSONObject paramsJson) {
+			@QueryParam("PARAMETERS") JSONArray paramsJson) {
 
 		logger.debug("IN");
 
@@ -304,13 +304,12 @@ public class ExportResource {
 	 *
 	 * @param paramsJson JSON data of drivers
 	 */
-	private Map<String, String> manageDataSetParameters(JSONObject paramsJson) {
+	private Map<String, String> manageDataSetParameters(JSONArray paramsJsonArray) {
 
 		Map<String, String> ret = new HashMap<>();
 
-		if (paramsJson != null) {
+		if (paramsJsonArray != null) {
 			try {
-				JSONArray paramsJsonArray = paramsJson.getJSONArray("parameters");
 				JSONObject pars = new JSONObject();
 				pars.put(DataSetConstants.PARS, paramsJsonArray);
 				ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
