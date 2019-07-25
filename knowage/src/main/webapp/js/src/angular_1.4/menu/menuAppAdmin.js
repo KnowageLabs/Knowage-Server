@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule']);
+agGrid.initialiseAgGridWithAngular1(angular);
+var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule', 'agGrid']);
 
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
@@ -35,7 +35,7 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval) {
     return {
 
         restrict: 'E',
@@ -528,6 +528,126 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				console.log("IN ACCESSIBILITY SETTINGS");
 				$scope.toggleMenu();
 				$scope.showAccessibilityDialog();
+			}
+			
+			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+				$scope.downloadsList = result.data;
+			})
+			$interval(function() {
+				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+					$scope.downloadsList = result.data;
+				},function(error){})
+			}, 20000);
+			
+			
+			$scope.downloads = function(){
+				$scope.toggleMenu();
+				var parentEl = angular.element(document.body);
+				$mdDialog.show({
+					parent: parentEl,
+					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
+					controller: downloadsDialogController
+				});
+			
+
+				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
+	        	    scope.translate = sbiModule_translate; 
+	        	    scope.closeDialog = function(){
+	        	    	$mdDialog.cancel();
+	        	    }
+	        	    
+	        	    
+	        	    scope.deleteDownload = function(index){
+	        	    	scope.rowData.splice(index,1);
+	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
+	        	    } 
+	        	    
+	        	    scope.$watch('downloadsList', function(newValue,oldValue){
+						if(newValue && scope.downloadGridOptions.api) {
+							scope.downloadGridOptions.api.setRowData(newValue);
+						}
+					})
+					
+					var columnDefs =[
+					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename', cellClass: isNewDownload},
+					    {headerName: "Creation Date", field: 'startDate', cellRenderer: dateRenderer, sort: 'desc'},
+					    {headerName: '', field: 'download', cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
+							suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true, tooltip: false, "suppressMovable":true}
+					];
+					function isFullWidth(data) {
+					    return data.pars ? true : false;
+					}
+					
+					function isNewDownload(params){
+						return !params.data.alreadyDownloaded && 'newDownload' ;
+					}
+					
+					function dateRenderer(params){
+						return moment(params.value).locale(sbiModule_config.curr_language).format('llll');
+					}
+					
+					function buttonRenderer(params) {
+						return '<md-button class="md-icon-button" ng-click="downloadContent(\''+ params.data.id +'\')" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' ;
+					}
+					
+					scope.downloadContent = function(id){
+						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
+						var link = document.createElement("a");
+						link.setAttribute("href", encodedUri);
+						link.setAttribute("download", "my_data.csv");
+						document.body.appendChild(link); // Required for FF
+						link.click();
+					}
+					
+					function FullWidthCellRenderer() {}
+	
+					FullWidthCellRenderer.prototype.init = function(params) {
+					    // trick to convert string of html into dom object
+					    var eTemp = document.createElement('div');
+					    eTemp.innerHTML = this.getTemplate(params);
+					    this.eGui = eTemp.firstElementChild;
+					};
+	
+					FullWidthCellRenderer.prototype.getTemplate = function(params) {
+					    //var data = params.node.data;
+					    return '<div class="full-width-panel" style="padding:8px">ciao</div>';
+					};
+	
+					FullWidthCellRenderer.prototype.getGui = function() {
+					    return this.eGui;
+					};
+					scope.downloadGridOptions = {
+							angularCompileRows: true,
+							//domLayout:'autoHeight',
+						    defaultColDef: {
+						        sortable: true,
+						        filter: true
+						    },
+						    columnDefs: columnDefs,
+						    rowData: scope.downloadList || [],
+//						    getRowHeight: function (params) {
+//						        return isFullWidth(params.data) ? 100 : 25;
+//						    },
+						    onGridReady: function (params) {
+						        params.api.sizeColumnsToFit();
+						        $http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
+				    				scope.downloadsList = result.data;
+				    			})
+						    },
+						    onGridSizeChanged: function(params){
+						    	params.api.sizeColumnsToFit();
+						    },
+						    components: {
+						        fullWidthCellRenderer: FullWidthCellRenderer
+						    },
+						    pagination: false,
+						    isFullWidthCell: function (rowNode) {
+						        return isFullWidth(rowNode.data);
+						    },
+						    fullWidthCellRenderer: 'fullWidthCellRenderer'
+						};
+				}
+				
 			}
 
 			$scope.showAccessibilityDialog= function(){

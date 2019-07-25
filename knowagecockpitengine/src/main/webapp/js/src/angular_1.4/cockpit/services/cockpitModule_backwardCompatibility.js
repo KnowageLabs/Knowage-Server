@@ -53,8 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",template.knowageVersion)){
 				if(template.configuration && typeof(template.configuration.showScreenshot)=='undefined') template.configuration.showScreenshot = true;
+				template.knowageVersion = currentVersion;
 			}
-			template.knowageVersion = currentVersion;
 			return template;
 		}
 		

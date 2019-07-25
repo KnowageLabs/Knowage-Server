@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 									if (previewDataset.pars.length > 0) {
 										for(var i = 0; i < previewDataset.pars.length; i++) {
-											var value = parameters[i][previewDataset.pars[i].name];
+											var value = parameters[0][previewDataset.pars[i].name];
 											previewDataset.pars[i].value = value;
 										}
 										config.parameters = previewDataset.pars;

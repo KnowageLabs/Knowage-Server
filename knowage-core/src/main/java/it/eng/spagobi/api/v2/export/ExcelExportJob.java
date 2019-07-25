@@ -129,63 +129,72 @@ public class ExcelExportJob extends AbstractExportJob {
 			DataIterator iterator = dataSet.iterator();
 			int i = 0;
 			while (iterator.hasNext()) {
-				IRecord dataSetRecord = iterator.next();
+				try {
+					IRecord dataSetRecord = iterator.next();
 
-				XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
+					XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
 
-				for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
-					Class<?> clazz = dataSetMetadata.getFieldType(k);
-					Object value = dataSetRecord.getFieldAt(k).getValue();
-					XSSFCell cell = row.createCell(k);
+					for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
+						Class<?> clazz = dataSetMetadata.getFieldType(k);
+						Object value = dataSetRecord.getFieldAt(k).getValue();
+						XSSFCell cell = row.createCell(k);
 
-					try {
-						if (value != null) {
+						try {
+							if (value != null) {
 
-							if (Timestamp.class.isAssignableFrom(clazz)) {
-								String formatedTimestamp = timeStampFormat.format(value);
-								Date ts = timeStampFormat.parse(formatedTimestamp);
-								cell.setCellValue(ts);
-								cell.setCellStyle(tsCellStyle);
-							} else if (Date.class.isAssignableFrom(clazz)) {
-								String formatedDate = dateFormat.format(value);
-								Date date = dateFormat.parse(formatedDate);
-								cell.setCellValue(date);
-								cell.setCellStyle(dateCellStyle);
-							} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
-									|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
-								// Format Numbers
-								if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
-									cell.setCellValue(Double.parseDouble(value.toString()));
-									cell.setCellStyle(intCellStyle);
+								if (Timestamp.class.isAssignableFrom(clazz)) {
+									String formatedTimestamp = timeStampFormat.format(value);
+									Date ts = timeStampFormat.parse(formatedTimestamp);
+									cell.setCellValue(ts);
+									cell.setCellStyle(tsCellStyle);
+								} else if (Date.class.isAssignableFrom(clazz)) {
+									String formatedDate = dateFormat.format(value);
+									Date date = dateFormat.parse(formatedDate);
+									cell.setCellValue(date);
+									cell.setCellStyle(dateCellStyle);
+								} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
+										|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
+									// Format Numbers
+									if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
+										cell.setCellValue(Double.parseDouble(value.toString()));
+										cell.setCellStyle(intCellStyle);
+									} else {
+										cell.setCellValue(Double.parseDouble(value.toString()));
+										cell.setCellStyle(decimalCellStyle);
+									}
+
 								} else {
-									cell.setCellValue(Double.parseDouble(value.toString()));
-									cell.setCellStyle(decimalCellStyle);
+									cell.setCellValue(value.toString());
+									cell.setCellStyle(borderStyleRow);
 								}
 
 							} else {
-								cell.setCellValue(value.toString());
 								cell.setCellStyle(borderStyleRow);
 							}
-
-						} else {
-							cell.setCellStyle(borderStyleRow);
+						} catch (ParseException e) {
+							String msg = "Error parsing values";
+							logger.error(msg, e);
+							throw new IllegalStateException(msg, e);
 						}
-					} catch (ParseException e) {
-						logger.error("write output stream error " + e.getMessage());
-						throw new IllegalStateException("Error generating Excel export file");
-						// TODO : new SpagoBIServiceException(this.getActionName(), "Impossible to parse Date/DateTime value", e);
+
 					}
 
+				} catch (Exception e) {
+					String msg = "Error generating Excel file";
+					logger.error(msg, e);
+					throw new IllegalStateException(msg, e);
+				} finally {
+					i++;
 				}
-
-				i++;
 			}
 
 			wb.write(exportFileOS);
-		} catch (IOException e) {
+			exportFileOS.flush();
+			exportFileOS.close();
+		} catch (Exception e) {
 			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
 			logger.error(msg, e);
-			throw new JobExecutionException(e);
+			throw new JobExecutionException(msg, e);
 		} finally {
 			if (exportFileOS != null) {
 				try {

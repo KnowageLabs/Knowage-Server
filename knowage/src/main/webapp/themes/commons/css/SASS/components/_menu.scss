@@ -578,7 +578,7 @@
   background-repeat: no-repeat;
 }
 
-.iconBar {
+.iconBar, .iconBarAdmin {
   margin-right: 0;
   display: inline-block;
   float: none;
@@ -633,29 +633,6 @@
     margin-left: auto;
 }
 
-.iconBarAdmin {
-	margin-right: 0;
-	margin-left: 0;
-  display: inline-block;
-  float: none;
-  width: 100%;
-  list-style-type: none;
-  padding: 0;
-  li {
-    height:50px;
-    text-align:center;
-    &>a {
-      width: 100%;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      display: inline-block;
-      color:$ternaryColor;
-      &:hover, &:active, &:focus {
-        background-color: darken($baseColor,10%);
-      }
-    }
-  }
-}
 
 md-list-item.license-item::before{
 	min-height: 0px !important;
