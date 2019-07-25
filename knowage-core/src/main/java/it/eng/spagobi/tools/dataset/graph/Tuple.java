@@ -110,8 +110,16 @@ public final class Tuple {
 		if (values == null) {
 			if (other.values != null)
 				return false;
-		} else if (!values.equals(other.values))
-			return false;
+		} else {
+			if (other.values == null)
+				return false;
+			if(values.size() != other.values.size())
+				return false;
+			for (int i = 0; i < values.size(); i++) {
+				if(!values.get(i).equals(other.values.get(i)))
+					return false;
+			}
+		}
 		return true;
 	}
 
