@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -162,6 +163,18 @@ abstract class AbstractExportJob implements Job {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+
+		logger.debug("Dump drivers:");
+		for (Entry<String, Object> entry : drivers.entrySet()) {
+			String msg = String.format("\t%s: %s", entry.getKey(), entry.getValue());
+			logger.debug(msg);
+		}
+
+		logger.debug("Dump parameters:");
+		for (java.util.Map.Entry<String, String> entry : parameters.entrySet()) {
+			String msg = String.format("\t%s: %s", entry.getKey(), entry.getValue());
+			logger.debug(msg);
+		}
 
 		dataSet.setDrivers(drivers);
 		dataSet.setParamsMap(parameters);
