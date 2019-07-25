@@ -682,15 +682,17 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONArray jsonPars = jsonBody.optJSONArray("pars");
 				String params = dataSet.getParameters();
+				JSONObject jsonPar = new JSONObject();
 				if (params != null && !params.equals("")) {
 					SourceBean source = SourceBean.fromXMLString(params);
 					if (source != null && source.getName().equals("PARAMETERSLIST")) {
 						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+
 						for (int i = 0; i < rows.size(); i++) {
 							SourceBean row = rows.get(i);
 							String name = (String) row.getAttribute("NAME");
 							String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
-							JSONObject jsonPar = new JSONObject();
+
 							jsonPar.put(name, defaultValue);
 							if (jsonPars != null) {
 								for (int j = 0; j < jsonPars.length(); j++) {
