@@ -1,16 +1,16 @@
 package it.eng.spagobi.tools.dataset.graph;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.utilities.assertion.Assert;
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public final class Tuple {
 
@@ -22,11 +22,11 @@ public final class Tuple {
 	private final List<Object> values;
 
 	public Tuple() {
-		values = new ArrayList<>();
+		values = new ArrayList<Object>();
 	}
 
 	public Tuple(int n) {
-		values = new ArrayList<>(n);
+		values = new ArrayList<Object>(n);
 	}
 
 	public Tuple(List<?> values) {
@@ -35,7 +35,7 @@ public final class Tuple {
 
 	@JsonCreator
 	public Tuple(String values) {
-		this(Arrays.asList(StringUtils.split(values, VALUE_DELIMITER)));
+		this(values == null ? new ArrayList<String>() : Arrays.asList(values.split(VALUE_DELIMITER)));
 	}
 
 	public void add(Object value) {
@@ -110,16 +110,8 @@ public final class Tuple {
 		if (values == null) {
 			if (other.values != null)
 				return false;
-		} else {
-			if (other.values == null)
-				return false;
-			if(values.size() != other.values.size())
-				return false;
-			for (int i = 0; i < values.size(); i++) {
-				if(!values.get(i).equals(other.values.get(i)))
-					return false;
-			}
-		}
+		} else if (!values.equals(other.values))
+			return false;
 		return true;
 	}
 

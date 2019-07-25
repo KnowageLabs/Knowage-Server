@@ -101,8 +101,9 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				container.addFilter(filterInDataset);
 			}
 		}
-		container.addFilter(filter);
-
+		if (container != null && filter!=null) {
+			container.addFilter(filter);
+		}
 		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
 		Iterator<EdgeGroup> iterator = container.getGroups().iterator();
 		while (iterator.hasNext()) {
