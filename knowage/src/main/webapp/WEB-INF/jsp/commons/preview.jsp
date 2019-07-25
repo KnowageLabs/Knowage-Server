@@ -359,34 +359,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			var pars = {
      				parameters: parameters
    				};       			
+       			Toastify({
+					  text: "The download has started in background. You will find the result file in your download page.",
+					  duration: 10000,
+					  close: true,
+					  gravity: "top",
+					  position: 'right',
+					  backgroundColor: "#9DB3C6",
+					  className: 'kn-infoToast',
+					  stopOnFocus: true
+					}).showToast();
+				
+	       		var concatParams = '';
+	       		var concatDrivers = '';
+	       		if(parameters && parameters.length > 0) 	concatParams = '?PARAMETERS=' + encodeURIComponent(JSON.stringify(parameters));
+	       		if(drivers && drivers.length > 0) 	concatDrivers = '?DRIVERS=' + encodeURIComponent(JSON.stringify(drivers));
+	       		
 				if(format == 'CSV') {
-					
-					Toastify({
-						  text: "The download has started in background. You will find the result file in your download page.",
-						  duration: 10000,
-						  close: true,
-						  gravity: "top",
-						  position: 'right',
-						  backgroundColor: "#9DB3C6",
-						  className: 'kn-infoToast',
-						  stopOnFocus: true
-						}).showToast();
-					
-		       		var concatParams = '';
-		       		var concatDrivers = '';
-		       		if(parameters && parameters.length > 0) 	concatParams = '?PARAMETERS=' + JSON.stringify(parameters);
-		       		if(drivers && drivers.length > 0) 	concatDrivers = '?DRIVERS=' + JSON.stringify(drivers);
-		       		
-		       		window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/csv' + concatParams + concatDrivers, {
+					var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/csv' + concatParams + concatDrivers;
+	       		}else if (format == 'XLSX') {
+		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/xls' + concatParams + concatDrivers;       		
+		       	}
+				window.fetch(url, {
 		       		  method: "POST"
 		       		}).then(function(result){})
-					
-	       		}else if (format == 'XLSX') {
-		       		var url= KNOWAGE_BASEURL + '/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+DATASET.id.dsId
-		       				+'&PARAMETERS='+JSON.stringify(pars);		       		
-		       	}
-				//url = encodeURI(url);
-		       	//window.location.href = url;
 		    }			
 			  
 			var eGridDiv = document.querySelector('#myGrid');
