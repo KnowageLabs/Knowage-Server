@@ -594,7 +594,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
 						var link = document.createElement("a");
 						link.setAttribute("href", encodedUri);
-						link.setAttribute("download", "my_data.csv");
+						//link.setAttribute("download", "my_data.csv");
 						document.body.appendChild(link); // Required for FF
 						link.click();
 					}
