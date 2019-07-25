@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						template: '<md-dialog style="height:80%;width:80%">'+
 						'   <md-toolbar><div class="md-toolbar-tools"><h2>Dataset Preview: &nbsp; {{datasetLabel}}</h2></div></md-toolbar>'+
 						'   <md-dialog-content flex>'+
-						'       <iframe ng-if="previewUrl" src="{{previewUrl}}" style="width:100%;height:100%;border:0;"></iframe>'+
+						'       <iframe ng-if="previewUrl" ng-src="{{previewUrl}}" style="width:100%;height:100%;border:0;"></iframe>'+
 						'   </md-dialog-content>'+
 						'   <md-dialog-actions layout="row">'+
 						'       <span flex></span>'+
