@@ -369,26 +369,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  text: "The download has started in background. You will find the result file in your download page.",
 					  duration: 10000,
 					  close: true,
-					  gravity: "top",
-					  position: 'right',
-					  backgroundColor: "#9DB3C6",
 					  className: 'kn-infoToast',
 					  stopOnFocus: true
 					}).showToast();
 				
 	       		var concatParams = '';
 	       		var concatDrivers = '';
-	       		if(parameters && parameters.length > 0) 	concatParams = '?PARAMETERS=' + encodeURIComponent(JSON.stringify(parameters));
-	       		if(drivers && drivers.length > 0) 	concatDrivers = '?DRIVERS=' + encodeURIComponent(JSON.stringify(drivers));
+	       		if(parameters && parameters.length > 0) concatParams = '?PARAMETERS=' + encodeURIComponent(JSON.stringify(parameters));
+	       		if(drivers && drivers.length > 0) concatDrivers = '?DRIVERS=' + encodeURIComponent(JSON.stringify(drivers));
 	       		
 				if(format == 'CSV') {
-					var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/csv' + concatParams + concatDrivers;
+					var exportFormat = '/csv';
 	       		}else if (format == 'XLSX') {
-		       		var url = KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + '/xls' + concatParams + concatDrivers;       		
+	       			var exportFormat = '/xls';      		
 		       	}
-				window.fetch(url, {
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat + concatParams + concatDrivers, {
 		       		  method: "POST"
-		       		}).then(function(result){})
+		       		}).then(function(result){
+		       			if(result.errors){
+		       				Toastify({
+		  					  text: result.errors[0].message,
+		  					  duration: 10000,
+		  					  close: true,
+		  					  className: 'kn-warningToast',
+		  					  stopOnFocus: true
+		  					}).showToast();
+		       			}
+		       		})
 		    }			
 			  
 			var eGridDiv = document.querySelector('#myGrid');

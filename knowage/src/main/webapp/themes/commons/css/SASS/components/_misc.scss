@@ -1058,9 +1058,16 @@ color-picker {
   }
 }
 
-.kn-infoToast {
+.kn-infoToast, .kn-warningToast {
   font-family: 'Roboto', 'Arial', 'Sanf-serif';
   font-size: .8rem;
+}
+
+.kn-infoToast {
+  background: $secondaryColor;
+}
+.kn-warningToast {
+  background: $negativeColor;
 }
 
 .kn-grid-container {
