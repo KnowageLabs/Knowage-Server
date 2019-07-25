@@ -59,14 +59,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		var parameters = url.searchParams.getAll("parameters");
 	  		var drivers = url.searchParams.getAll("drivers");
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
-	  		if(options && options['exports']) {
-	  			document.getElementById('utility-bar').classList.remove("hidden");
-	  			document.getElementById('myGrid').classList.add("has-utility-bar");
-	  			for(var e in options['exports']){
-	  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
-	  			}
+	  		
+	  		var exporterBarShown = false;	  		
+	  		function showExportersBar(){
+	  			if(options && options['exports'] && !exporterBarShown) {
+		  			document.getElementById('utility-bar').classList.remove("hidden");
+		  			document.getElementById('myGrid').classList.add("has-utility-bar");
+		  			for(var e in options['exports']){
+		  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
+		  			}
+		  			exporterBarShown = true;
+		  		}
 	  		}
-	    	
+	  		
 	  		//Utility methods
 	  		function isEmpty(obj) {
 	  		    for(var key in obj) {
@@ -314,6 +319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)
 				.then(function(response) {return response.json()})
 				.then(function(data){
+					showExportersBar();
 					if(data.errors){
 						errors = data.errors[0].message;
 						gridOptions.api.showNoRowsOverlay();
