@@ -568,12 +568,14 @@
 					//define the final data version
 					var exportersJSON = [];
 					for (e in exportationHandlers){
-						var exp = exportationHandlers[e];
-						var expJSON = {};
-						dee.setExporterDescription(exp.name, expJSON);
-						dee.setExporterIconClass(exp.name, expJSON);
-						dee.setExporterFunc(exp.name, exp.engineType, exp.engineDriver, expJSON);
-						exportersJSON.push(expJSON);
+						if(e!='includes'){ //IE fix
+							var exp = exportationHandlers[e];
+							var expJSON = {};
+							dee.setExporterDescription(exp.name, expJSON);
+							dee.setExporterIconClass(exp.name, expJSON);
+							dee.setExporterFunc(exp.name, exp.engineType, exp.engineDriver, expJSON);
+							exportersJSON.push(expJSON);
+						}
 					}
 					resolve(exportersJSON);
 				},function(e){
