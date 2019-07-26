@@ -2992,7 +2992,16 @@
 			height: 100%;
 		}
 	}
-
+	.gridster {
+		.viewModeMenu, .editModeMenu  {
+			&.expandedWidget {
+				.showActionButtonHandler, .viewModeMenu, .editModeMenu {
+        			left: 8px;
+        			right: unset;
+        		}
+			}
+		}
+	}
 }
 
 @supports (-ms-ime-align: auto) {

@@ -698,6 +698,14 @@ function cockpitWidgetControllerFunction(
 			if(previewSettings.parameters[p].bindType == 'selection'){
 				if(cockpitModule_template.configuration.filters && cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset]) {
 					previewSettings.parameters[p].value = cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset][previewSettings.parameters[p].column];
+				}else{
+					for(var k in cockpitModule_template.configuration.aggregations){
+						if(cockpitModule_template.configuration.aggregations[k].selection && 
+								cockpitModule_template.configuration.aggregations[k].selection[previewSettings.parameters[p].dataset+'.'+previewSettings.parameters[p].column]){
+							var tempValue = cockpitModule_template.configuration.aggregations[k].selection[previewSettings.parameters[p].dataset+'.'+previewSettings.parameters[p].column];
+							previewSettings.parameters[p].value = tempValue.length > 1 ? tempValue : tempValue[0];
+						}
+					}
 				}
 			}
 		}
