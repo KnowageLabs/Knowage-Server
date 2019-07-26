@@ -90,6 +90,7 @@
 
 			var filterForWorkspace = function(){
 				setPathByType($scope.currentDatasetsTab);
+				$scope.$parent.searching = true;
 				$timeout(function () {
 
 					if(tagsHandlerService.getFilteredTagIds($scope.tagsArray).length == 0){
@@ -97,6 +98,7 @@
 					}else{
 						filterExistingDatasets($scope.currentDatasetsTab) 
 					}
+					$scope.$parent.searching = false;
 				}, 1000);
 			}
 
