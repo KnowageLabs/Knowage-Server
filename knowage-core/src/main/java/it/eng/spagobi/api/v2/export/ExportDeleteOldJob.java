@@ -80,8 +80,9 @@ public class ExportDeleteOldJob implements Job {
 			LOCK.lock();
 			logger.debug("Acquired!");
 
+			DirectoryStream<Path> downloadedExportStream = null;
 			try {
-				DirectoryStream<Path> downloadedExportStream = Files.newDirectoryStream(perUserExportPath, new DirectoryStream.Filter<Path>() {
+				downloadedExportStream = Files.newDirectoryStream(perUserExportPath, new DirectoryStream.Filter<Path>() {
 
 					@Override
 					public boolean accept(Path entry) throws IOException {
@@ -130,6 +131,14 @@ public class ExportDeleteOldJob implements Job {
 				String msg = String.format("Error deleting old exported file in directory %s", perUserExportPath);
 				logger.error(msg, e);
 				throw new JobExecutionException(msg, e);
+			} finally {
+				if (downloadedExportStream != null) {
+					try {
+						downloadedExportStream.close();
+					} catch (IOException e) {
+						// Yes, it's mute!
+					}
+				}
 			}
 
 		} finally {
