@@ -21,36 +21,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices', 
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
 				
-				this.previewDataset = function(datasetLabel, parameters) {
-					var iframeSrcUrl = sbiModule_config.contextName + "/restful-services/2.0/datasets/preview";
-					
-					var config = {
-						datasetLabel: datasetLabel
-					};
-					
-					if (parameters == null || parameters == undefined) {
-						showExporters(config);
-						iframeSrcUrl += '?' + $httpParamSerializer(config);
-						openPreviewDialog(iframeSrcUrl, datasetLabel);
-					} else {
-						sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
-								.then(function(response){
-									var previewDataset = response.data[0];
-									
-									if (previewDataset.pars.length > 0) {
-										for(var i = 0; i < previewDataset.pars.length; i++) {
-											var value = parameters[0][previewDataset.pars[i].name];
-											previewDataset.pars[i].value = value;
+				this.previewDataset = function(datasetLabel, parameters, directDownload) {
+					if(!directDownload){
+						var iframeSrcUrl = sbiModule_config.contextName + "/restful-services/2.0/datasets/preview";
+						
+						var config = {
+							datasetLabel: datasetLabel
+						};
+						
+						if (parameters == null || parameters == undefined) {
+							showExporters(config);
+							iframeSrcUrl += '?' + $httpParamSerializer(config);
+							openPreviewDialog(iframeSrcUrl, datasetLabel);
+						} else {
+							sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
+									.then(function(response){
+										var previewDataset = response.data[0];
+										
+										if (previewDataset.pars.length > 0) {
+											for(var i = 0; i < previewDataset.pars.length; i++) {
+												var value = parameters[0][previewDataset.pars[i].name];
+												previewDataset.pars[i].value = value;
+											}
+											config.parameters = previewDataset.pars;
+											showExporters(config);
+											iframeSrcUrl += '?' + $httpParamSerializer(config);
 										}
-										config.parameters = previewDataset.pars;
-										showExporters(config);
-										iframeSrcUrl += '?' + $httpParamSerializer(config);
-									}
-									openPreviewDialog(iframeSrcUrl, datasetLabel);
-								});
-					}					
-					
+										openPreviewDialog(iframeSrcUrl, datasetLabel);
+									});
+						}	
+					}else{
+						sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
+						.then(function(response){
+							var previewDataset = response.data[0];
+							if (parameters == null || parameters == undefined) {
+								sbiModule_restServices.promisePost('/2.0/export/dataset'/+ previewDataset.id.dsId + '/csv')
+								.then(function(response){})
+							}else{
+								for(var i = 0; i < previewDataset.pars.length; i++) {
+									var value = parameters[0][previewDataset.pars[i].name];
+									previewDataset.pars[i].value = value;
+								}
+								sbiModule_restServices.promisePost('/2.0/export/dataset'/+ previewDataset.id.dsId + '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars)))
+										.then(function(response){})
+							}
+						})
+					}
+						
 				}
+						
 				
 				var openPreviewDialog = function(iframeSrcUrl, datasetLabel) {
 					$mdDialog.show({

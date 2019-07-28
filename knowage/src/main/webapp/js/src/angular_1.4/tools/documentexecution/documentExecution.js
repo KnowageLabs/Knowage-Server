@@ -656,8 +656,8 @@
             return false;
 		};
 
-		$scope.previewDataset = function(datasetLabel, parameters) {
-			datasetPreview_service.previewDataset(datasetLabel, parameters);
+		$scope.previewDataset = function(datasetLabel, parameters, directDownload) {
+			datasetPreview_service.previewDataset(datasetLabel, parameters, directDownload);
 		}
 
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, otherOutputParameters){
@@ -739,7 +739,7 @@ var execExternalCrossNavigation=function(outputParameters,inputParameters,target
 	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 };
 
-var execPreviewDataset = function(datasetLabel, parameters) {
+var execPreviewDataset = function(datasetLabel, parameters, directDownload) {
 	var parent = angular.element(frameElement).scope().$parent;
 	while(parent != undefined){
 		if(parent.previewDataset != undefined){
