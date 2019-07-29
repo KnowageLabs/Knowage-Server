@@ -366,6 +366,16 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					 			}
 					 			if(tempIds.length == sheet.widgets.length){
 					 				$timeout(function(){
+					 					if(window.document.documentMode) { //if is IE11 and using higcharts
+								 			for(var w in sheet.widgets){
+							 					if(sheet.widgets[w].type == 'chart'){
+							 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
+							 						if(d3Charts.indexOf(chartType)==-1){
+							 							replaceWithCanvg(sheet.widgets[w]);
+							 						}
+							 					}
+						 					}
+						 				}
 					 					getPage(sheet);
 					 					$scope.sheetWatcher();    
 					 				},3000)        

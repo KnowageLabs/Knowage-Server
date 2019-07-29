@@ -1129,11 +1129,14 @@ filter-by-tags {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .hide-for-canvas{
-    display: none;
-  }
   .canvas-for-highcharts{
     display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 9;
     &.show-for-canvas {
       display: block;
     }
