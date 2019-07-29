@@ -141,7 +141,7 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
 <script type="text/javascript">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
-        document.write('<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/rgb-color/rgb-color.min.js"><\/script>');
+        document.write('<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');
 </script>
 
 <!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
