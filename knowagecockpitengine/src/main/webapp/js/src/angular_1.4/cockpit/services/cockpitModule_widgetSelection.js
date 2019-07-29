@@ -893,22 +893,26 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			var oldDsLabels = Object.keys(cockpitModule_template.configuration.filters);
 			var newDsLabels = Object.keys(tmpFilters);
 			var removedDsLabels = oldDsLabels.filter(function(x) {return newDsLabels.indexOf(x) < 0;});
-			for(i in removedDsLabels){
-				var removedDsLabel = removedDsLabels[i];
-				var removedColNames = Object.keys(cockpitModule_template.configuration.filters[removedDsLabel]);
-				for(j in removedColNames){
-					ws.removeTimestampedSelection(removedDsLabel, removedColNames[j]);
+			for(var i in removedDsLabels){
+				if(i != 'includes'){
+					var removedDsLabel = removedDsLabels[i];
+					var removedColNames = Object.keys(cockpitModule_template.configuration.filters[removedDsLabel]);
+					for(j in removedColNames){
+						ws.removeTimestampedSelection(removedDsLabel, removedColNames[j]);
+					}
 				}
 			}
 			var dsLabels = oldDsLabels.filter(function(x) {return newDsLabels.indexOf(x) >= 0;});
-			for(i in dsLabels){
-				var dsLabel = dsLabels[i];
-				var removedColNames =
-					Object.keys(cockpitModule_template.configuration.filters[dsLabel]).filter(function(x) {
-						return Object.keys(tmpFilters[dsLabel]).indexOf(x) < 0;
-					});
-				for(j in removedColNames){
-					ws.removeTimestampedSelection(dsLabel, removedColNames[j]);
+			for(var i in dsLabels){
+				if(i != 'includes'){
+					var dsLabel = dsLabels[i];
+					var removedColNames =
+						Object.keys(cockpitModule_template.configuration.filters[dsLabel]).filter(function(x) {
+							return Object.keys(tmpFilters[dsLabel]).indexOf(x) < 0;
+						});
+					for(j in removedColNames){
+						ws.removeTimestampedSelection(dsLabel, removedColNames[j]);
+					}
 				}
 			}
 
