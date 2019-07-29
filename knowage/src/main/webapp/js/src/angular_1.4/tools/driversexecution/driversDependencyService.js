@@ -323,9 +323,9 @@
 
 			dependencyService.updateLovValues = function(value,execProperties){
 
-				if(dependencyService.driversDependencyService[value.urlName]){
-					for(var k=0; k<dependencyService.driversDependencyService[value.urlName].length; k++){
-						var dataDependenciesElementMap = dependencyService.driversDependencyService[value.urlName][k];
+				if(dependencyService.lovCorrelationMap[value.urlName]){
+					for(var k=0; k<dependencyService.lovCorrelationMap[value.urlName].length; k++){
+						var dataDependenciesElementMap = dependencyService.lovCorrelationMap[value.urlName][k];
 						var objPost = createDependencyUpdatingObject(execProperties,dataDependenciesElementMap);
 
 						sbiModule_restServices.promisePost("1.0/documentExeParameters",	"getParameters", objPost)
@@ -335,11 +335,11 @@
 										if(execProperties.parametersData.documentParameters[z].urlName==response.data.idParam){
 											execProperties.parametersData.documentParameters[z].defaultValues = [];
 											//BUILD DEAFULT VALUE
-											var defaultValueArrCache = setDefaultValues(execProperties,response);
+											var defaultValueArrCache = setDefaultValues(execProperties.parametersData.documentParameters[z],response);
 											var parameterValue = execProperties.parametersData.documentParameters[z].parameterValue;
 											//Remove parameter value if not present in default value (clean operation)
 											//MULTIVALUE
-											if(angular.isArray(parameterValues)) {
+											if(angular.isArray(parameterValue)) {
 												var paramValueArrCache= [];
 												angular.copy(parameterValue,paramValueArrCache);
 												for(var u = 0; u < paramValueArrCache.length; u++){
@@ -398,7 +398,7 @@
 										errorMes = response.data.RemoteException.message;
 									}
 									//documentExecuteServices.showToast('Error LOV " '+ lovParamName +' " : ' + errorMes);
-									var idRowParameter = driversDependencyService.getRowIdfromUrlName(lovParamName);
+									var idRowParameter = driversDependencyService.getArrayIndexByDriverUrlName(lovParamName, execProperties.parametersData.documentParameters);
 									execProperties.parametersData.documentParameters[idRowParameter].lovNotDefine=true;
 									execProperties.parametersData.documentParameters[idRowParameter].defaultValues = [];
 									execProperties.parametersData.documentParameters[idRowParameter].parameterValue = [];
@@ -408,11 +408,11 @@
 				}
 			}
 
-			var setDefaultValues = function(execProperties,response){
+			var setDefaultValues = function(parameter,response){
 				var defaultValueArrCache = [];
 				for(var k=0; k<response.data.result.root.length; k++){
 					response.data.result.root[k].isEnabled = true;
-					execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
+					parameter.defaultValues.push(response.data.result.root[k]);
 					defaultValueArrCache.push(response.data.result.root[k].value);
 				}
 				return defaultValueArrCache;
