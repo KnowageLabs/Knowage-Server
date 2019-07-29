@@ -45,34 +45,38 @@ function documentBrowserFunction($window,
 		{"headerName":$scope.translate.load('kn.documentbrowser.name'),"field":"name"},
 		{"headerName":$scope.translate.load('kn.documentbrowser.author'),"field":"creationUser"},
 		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},
-			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}];
+			sortable:false,filter:false,width: 50,suppressSizeToFit:true,suppressMovable:true}];
 
 		if(eval(sbiModule_user.isAdminUser) || eval(sbiModule_user.isSuperAdmin) || eval(sbiModule_user.isTechnicalUser) || eval(sbiModule_user.isTesterUser)) {
 			$scope.columns.splice(2, 0, {"headerName":$scope.translate.load('kn.documentbrowser.label'),"field":"viewLabel"});
 			$scope.columns.splice(4, 0, {"headerName":$scope.translate.load('kn.documentbrowser.status'),"field":"stateCodeStr",cellRenderer: statusRenderer,width: 200,suppressSizeToFit:true});
 			$scope.columns.splice(5, 0, {"headerName":$scope.translate.load('kn.documentbrowser.visible'),"field":"visible",cellRenderer: visibilityRenderer,"cellStyle":{"display":"inline-flex","justify-content":"center"},
-				suppressFilter:true,width: 100,suppressSizeToFit:true,suppressMovable:true});
+				filter:false,width: 100,suppressSizeToFit:true,suppressMovable:true});
 		}
 
 
 	$scope.documentBrowserGrid = {
 			angularCompileRows: true,
 	        enableColResize: false,
-	        enableFilter: true,
-	        enableSorting: true,
 	        pagination: true,
 	        paginationAutoPageSize: true,
 	        onGridSizeChanged: resizeColumns,
-	        onRowClicked: onSelectionChanged
+	        onRowClicked: onSelectionChanged,
+	        defaultColDef: {
+	        	sortable: true,
+	        	filter: true
+	        }
 	};
 
 	$scope.searchResultGrid = {
 			angularCompileRows: true,
 			enableColResize: false,
-	        enableFilter: false,
 	        pagination: true,
 	        paginationAutoPageSize: true,
 	        onRowClicked: onSelectionChanged,
+	        defaultColDef: {
+	        	filter: true
+	        },
 	        columnDefs : $scope.columns
 	}
 

@@ -79,7 +79,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(crossEnabled && $scope.ngModel.cross.cross.crossType == 'singleColumn' && $scope.ngModel.cross.cross.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow) {
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
-							tempCol.tooltip = crossNavigationTooltip;
+							tempCol.tooltipValueGetter = function(params) {
+								return $scope.translate.load('sbi.cockpit.table.cross.tooltip'); 
+							};
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
@@ -123,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
-					suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true, tooltip: false, headerComponentParams : {template: headerTemplate()}});
+					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, headerComponentParams : {template: headerTemplate()}});
 			}
 			return columns
 		}
@@ -134,9 +136,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		function crossNavigationTooltip() {
-			return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
-		}
+//		function crossNavigationTooltip() {
+//			return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
+//		}
 		
 		function headerTemplate() { 
 			var cellClasses = 'cellContainer ';
@@ -326,11 +328,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				onGridSizeChanged: resizeColumns,
 				onGridReady: resizeColumns,
 				onSortChanged: changeSorting,
-				enableSorting: true,
 				pagination : true,
 				onCellClicked: onCellClicked,
 				defaultColDef: {
 					resizable: cockpitModule_properties.EDIT_MODE,
+					sortable: true
 				},
 				onColumnResized: columnResized,
 				getRowHeight: function(params){
