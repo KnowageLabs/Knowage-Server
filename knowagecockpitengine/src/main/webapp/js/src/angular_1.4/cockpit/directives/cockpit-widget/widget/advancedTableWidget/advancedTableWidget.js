@@ -136,10 +136,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-//		function crossNavigationTooltip() {
-//			return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
-//		}
-		
 		function headerTemplate() { 
 			var cellClasses = 'cellContainer ';
 			var headerStyle = {};

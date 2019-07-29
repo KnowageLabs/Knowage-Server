@@ -305,9 +305,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 		var element = document.querySelector('#w'+widget.id+' .placedWidget');
 				 		var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
 						xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
-						canvg(document.getElementById('canvas_'+widget.id), xml, {renderCallback:function(){
-							document.getElementById('canvas_'+widget.id).toBlob(function(blob) {});
-						}});
+						canvg(document.getElementById('canvas_'+widget.id), xml);
 				 	}
 				 
 				 	function getPage(sheet){

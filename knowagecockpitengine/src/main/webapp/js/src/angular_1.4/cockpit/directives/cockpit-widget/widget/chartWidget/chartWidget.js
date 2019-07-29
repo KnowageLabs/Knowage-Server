@@ -237,6 +237,10 @@ function cockpitChartWidgetControllerFunction(
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 
 	$scope.user = sbiModule_user;
+	
+	$scope.IEChartToFix = function(){
+		return $scope.isIE && $scope.enterpriseEdition && $scope.d3Charts.indexOf($scope.chartType)==-1;
+	}
 
 	$scope.$on('changeChart', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content)

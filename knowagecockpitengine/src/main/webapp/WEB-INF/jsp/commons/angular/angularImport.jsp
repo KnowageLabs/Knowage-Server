@@ -51,7 +51,6 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/promise-polyfill/promise-polyfill.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/map-polyfill/map-polyfill.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/append-polyfill/append-polyfill.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/includes-polyfill/includes-polyfill.js")%>"></script>
 
 
 <!-- angular-material-->
@@ -140,6 +139,10 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
 
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
+<script type="text/javascript">
+    if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
+        document.write('<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/rgb-color/rgb-color.min.js"><\/script>');
+</script>
 
 <!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
  
