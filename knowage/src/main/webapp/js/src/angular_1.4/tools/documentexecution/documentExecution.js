@@ -747,7 +747,7 @@ var execPreviewDataset = function(datasetLabel, parameters, directDownload) {
 		}
 		parent = parent.$parent;
 	}
-	parent.previewDataset(datasetLabel, parameters);
+	parent.previewDataset(datasetLabel, parameters, directDownload);
 }
 
 var execShowHelpOnLine=function(data){

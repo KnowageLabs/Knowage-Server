@@ -55,14 +55,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						.then(function(response){
 							var previewDataset = response.data[0];
 							if (parameters == null || parameters == undefined) {
-								sbiModule_restServices.promisePost('/2.0/export/dataset'/+ previewDataset.id.dsId + '/csv')
+								sbiModule_restServices.promisePost('2.0/export/dataset/'+ previewDataset.id.toString() + '/csv')
 								.then(function(response){})
 							}else{
 								for(var i = 0; i < previewDataset.pars.length; i++) {
 									var value = parameters[0][previewDataset.pars[i].name];
 									previewDataset.pars[i].value = value;
 								}
-								sbiModule_restServices.promisePost('/2.0/export/dataset'/+ previewDataset.id.dsId + '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars)))
+								sbiModule_restServices.promisePost('2.0/export/dataset/'+ previewDataset.id.toString() + '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars)))
 										.then(function(response){})
 							}
 						})
