@@ -280,13 +280,13 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			logger.debug("Selections list: " + selectionsFilters);
 
-			Map<String,String> datasetSelectionParameters = selectionsFilters.get(0).getDataset().getParamsMap();
+			Map<String,String> datasetSelectionParameters = selectionsFilters.get(selectionsFilters.size()-1).getDataset().getParamsMap();
 
 			if (datasetSelectionParameters==null || datasetSelectionParameters.isEmpty()) {
 
-				datasetSelectionParameters =  datasetParameters.get(selectionsFilters.get(0).getDataset().getLabel());
+				datasetSelectionParameters =  datasetParameters.get(selectionsFilters.get(selectionsFilters.size()-1).getDataset().getLabel());
 			}
-			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(0).getDataset(), true, datasetSelectionParameters, filtersList, selectionsFilters,userprofile);
+			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size()-1).getDataset(), true, datasetSelectionParameters, filtersList, selectionsFilters,userprofile);
 
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
