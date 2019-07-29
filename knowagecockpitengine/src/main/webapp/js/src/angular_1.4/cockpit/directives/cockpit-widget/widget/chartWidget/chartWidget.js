@@ -205,6 +205,7 @@ function cockpitChartWidgetControllerFunction(
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
+	$scope.cockpitModule_properties = cockpitModule_properties;
 	//variable that contains last data of realtime dataset
 	$scope.realTimeDatasetData;
 	//variable that contains last data of realtime dataset not filtered by selections

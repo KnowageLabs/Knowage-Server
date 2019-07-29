@@ -42,7 +42,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_user,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -299,16 +299,16 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				          
 				 function getScreenshot(sheet){
 				 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
-//				 $scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
-//				 var d3Charts = ["wordcloud","parallel","sunburst","chord"];
-//				 	function replaceWithCanvg(widget){
-//				 		var element = document.querySelector('#w'+widget.id+' .placedWidget');
-//				 		var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
-//						xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
-//						canvg(document.getElementById('canvas_'+widget.id), xml, {renderCallback:function(){
-//							document.getElementById('canvas_'+widget.id).toBlob(function(blob) {});
-//						}});
-//				 	}
+				 $scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
+				 var d3Charts = ["wordcloud","parallel","sunburst","chord"];
+				 	function replaceWithCanvg(widget){
+				 		var element = document.querySelector('#w'+widget.id+' .placedWidget');
+				 		var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
+						xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
+						canvg(document.getElementById('canvas_'+widget.id), xml, {renderCallback:function(){
+							document.getElementById('canvas_'+widget.id).toBlob(function(blob) {});
+						}});
+				 	}
 				 
 				 	function getPage(sheet){
 				 		var heightToUse;
@@ -347,16 +347,16 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 	}
 				 	
 					 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
-//					 		for(var w in sheet.widgets){
-//				 				if(window.document.documentMode) { //if is IE11 and using higcharts
-//				 					if(sheet.widgets[w].type == 'chart'){
-//				 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
-//				 						if(d3Charts.indexOf(chartType)==-1){
-//				 							replaceWithCanvg(sheet.widgets[w]);
-//				 						}
-//				 					}
-//				 				}
-//				 			}
+					 		if(window.document.documentMode) { //if is IE11 and using higcharts
+						 			for(var w in sheet.widgets){
+					 					if(sheet.widgets[w].type == 'chart'){
+					 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
+					 						if(d3Charts.indexOf(chartType)==-1){
+					 							replaceWithCanvg(sheet.widgets[w]);
+					 						}
+					 					}
+				 					}
+				 				}
 					 		$timeout(function(){
 					 			getPage(sheet);
 					 		},1000)    

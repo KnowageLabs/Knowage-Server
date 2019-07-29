@@ -7,6 +7,7 @@ dataset-label='ngModel.content.datasetLabel'
 updateble='ngModel.updateble' 
 drillable='ngModel.drillable' 
 on-click-series='reloadWidgetsByChartEvent' 
-layout-column flex>
+layout-column flex
+ng-class="{'hide-for-canvas':cockpitModule_properties.LOADING_SCREENSHOT}">
 </chart-renderer>
-<canvas class="canvas-for-highcharts" ng-if='isIE && enterpriseEdition && d3Charts.indexOf(chartType)==-1' id="canvas_{{ngModel.id}}"></canvas>
+<canvas class="canvas-for-highcharts" ng-class="{'show-for-canvas': cockpitModule_properties.LOADING_SCREENSHOT}" ng-if='isIE && enterpriseEdition && d3Charts.indexOf(chartType)==-1' id="canvas_{{ngModel.id}}"></canvas>
