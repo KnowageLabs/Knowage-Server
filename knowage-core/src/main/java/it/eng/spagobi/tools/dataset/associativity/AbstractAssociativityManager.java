@@ -124,7 +124,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		selections = config.getSelections();
 		String datasetFilter = null;
 		for (SimpleFilter fil : filters) {
-		     datasetFilter = fil.getDataset().getName();
+		     datasetFilter = fil.getDataset().getLabel();
 
 		     if (datasetFilters.get(datasetFilter)!=null) {
 		    	 List<SimpleFilter> listaTemp = datasetFilters.get(datasetFilter);
