@@ -1,5 +1,5 @@
 /*
-* Knowage, Open Source Business Intelligence suite
+ * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
  * Knowage is free software: you can redistribute it and/or modify
@@ -271,7 +271,7 @@ public class DatasetManagementAPI {
 
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-			throws JSONException {
+					throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -708,7 +708,7 @@ public class DatasetManagementAPI {
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
 		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-				+ "] by user [" + userProfile.getUserId() + "].");
+		+ "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");
@@ -763,8 +763,13 @@ public class DatasetManagementAPI {
 			logger.debug("MIN/MAX filter found");
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
-
-			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
+			IDataStore dataStore = null;
+			if (dataSet.getEvaluationStrategy(isNearRealtime).equals(DatasetEvaluationStrategyType.CACHED )) {
+				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1);
+			}
+			else {
+				dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
+			}
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);

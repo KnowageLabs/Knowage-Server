@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -40,6 +41,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -52,20 +54,33 @@ import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SingleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
+import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
+import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
@@ -79,7 +94,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAssociativeSelections(String body) {
 		logger.debug("IN");
-
+		UserProfile userprofile = getUserProfile();
 		Monitor start = MonitorFactory.start("Knowage.AssociativeSelectionsResource.getAssociativeSelections:total");
 
 		String associationGroupString = null;
@@ -186,7 +201,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 
 			DataSetResource dataRes = new DataSetResource();
-			List<SimpleFilter> filtersList = new ArrayList();
+			List<SimpleFilter> filtersList = new ArrayList<SimpleFilter>();
 			IDataSet dataSetInFilter = null;
 			if (filtersString != null && !filtersString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(filtersString);
@@ -265,6 +280,14 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			logger.debug("Selections list: " + selectionsFilters);
 
+			Map<String,String> datasetSelectionParameters = selectionsFilters.get(0).getDataset().getParamsMap();
+
+			if (datasetSelectionParameters==null) {
+				datasetSelectionParameters = new HashMap<String, String>();
+			}
+			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(0).getDataset(), true, datasetSelectionParameters, filtersList, selectionsFilters,userprofile);
+
+
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
 			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, selectionsFilters,filtersList, nearRealtimeDatasets,
 					datasetParameters, documents);
@@ -330,5 +353,115 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			}
 		}
 	}
+	// FIXME
+		public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
+				List<SimpleFilter> likeFilters,UserProfile userprofile) throws JSONException {
+
+			logger.debug("IN");
+
+			List<SimpleFilter> newFilters = new ArrayList<>(filters);
+
+			List<Integer> minMaxFilterIndexes = new ArrayList<>();
+			List<Projection> minMaxProjections = new ArrayList<>();
+
+			List<Filter> noMinMaxFilters = new ArrayList<>();
+
+			for (int i = 0; i < filters.size(); i++) {
+				Filter filter = filters.get(i);
+				if (filter instanceof SimpleFilter) {
+					SimpleFilter simpleFilter = (SimpleFilter) filter;
+					SimpleFilterOperator operator = simpleFilter.getOperator();
+
+					if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
+						logger.debug("Min filter found at index [" + i + "]");
+						minMaxFilterIndexes.add(i);
+
+						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+						Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
+						minMaxProjections.add(projection);
+					} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+						logger.debug("Max filter found at index [" + i + "]");
+						minMaxFilterIndexes.add(i);
+
+						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+						Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
+						minMaxProjections.add(projection);
+					} else {
+						noMinMaxFilters.add(filter);
+					}
+				} else {
+					noMinMaxFilters.add(filter);
+				}
+			}
+
+			if (minMaxFilterIndexes.size() > 0) {
+				logger.debug("MIN/MAX filter found");
+
+				Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
+
+				IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1,   userprofile);
+				if (dataStore == null) {
+					String errorMessage = "Error in getting min and max filters values";
+					logger.error(errorMessage);
+					throw new SpagoBIRuntimeException(errorMessage);
+				}
+
+				logger.debug("MIN/MAX filter values calculated");
+
+				for (int i = 0; i < minMaxProjections.size(); i++) {
+					Projection projection = minMaxProjections.get(i);
+					String alias = projection.getAlias();
+					String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
+
+					int index = minMaxFilterIndexes.get(i);
+
+					List values = dataStore.getFieldValues(i);
+					if (values == null) {
+						logger.error(errorMessage);
+						throw new SpagoBIRuntimeException(errorMessage);
+					} else {
+						Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+						if (values.isEmpty()) {
+							logger.warn(errorMessage + ", put NULL");
+							newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+						} else {
+							Object value = values.get(0);
+							logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
+							newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
+						}
+					}
+				}
+			}
+
+			logger.debug("OUT");
+			return newFilters;
+		}
+
+		private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+				Filter filter, int maxRowCount,UserProfile userprofile) throws JSONException {
+			dataSet.setParametersMap(parametersValues);
+			dataSet.resolveParameters();
+
+			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);
+			return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
+		}
+
+		public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
+			Filter where = null;
+			if (filters.size() > 0) {
+				if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
+					where = filters.get(0);
+				} else {
+					AndFilter andFilter = new AndFilter(filters);
+					if (likeFilters.size() > 0) {
+						andFilter.and(new OrFilter(likeFilters));
+					}
+					where = andFilter;
+				}
+			} else if (likeFilters.size() > 0) {
+				where = new OrFilter(likeFilters);
+			}
+			return where;
+		}
 
 }
