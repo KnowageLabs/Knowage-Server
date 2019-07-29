@@ -282,8 +282,9 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			Map<String,String> datasetSelectionParameters = selectionsFilters.get(0).getDataset().getParamsMap();
 
-			if (datasetSelectionParameters==null) {
-				datasetSelectionParameters = new HashMap<String, String>();
+			if (datasetSelectionParameters==null || datasetSelectionParameters.isEmpty()) {
+
+				datasetSelectionParameters =  datasetParameters.get(selectionsFilters.get(0).getDataset().getName());
 			}
 			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(0).getDataset(), true, datasetSelectionParameters, filtersList, selectionsFilters,userprofile);
 
