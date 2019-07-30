@@ -355,114 +355,121 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		}
 	}
 	// FIXME
-		public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
-				List<SimpleFilter> likeFilters,UserProfile userprofile) throws JSONException {
+	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
+			List<SimpleFilter> likeFilters,UserProfile userprofile) throws JSONException {
 
-			logger.debug("IN");
+		logger.debug("IN");
 
-			List<SimpleFilter> newFilters = new ArrayList<>(filters);
+		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 
-			List<Integer> minMaxFilterIndexes = new ArrayList<>();
-			List<Projection> minMaxProjections = new ArrayList<>();
+		List<Integer> minMaxFilterIndexes = new ArrayList<>();
+		List<Projection> minMaxProjections = new ArrayList<>();
 
-			List<Filter> noMinMaxFilters = new ArrayList<>();
+		List<Filter> noMinMaxFilters = new ArrayList<>();
 
-			for (int i = 0; i < filters.size(); i++) {
-				Filter filter = filters.get(i);
-				if (filter instanceof SimpleFilter) {
-					SimpleFilter simpleFilter = (SimpleFilter) filter;
-					SimpleFilterOperator operator = simpleFilter.getOperator();
+		for (int i = 0; i < filters.size(); i++) {
+			Filter filter = filters.get(i);
+			if (filter instanceof SimpleFilter) {
+				SimpleFilter simpleFilter = (SimpleFilter) filter;
+				SimpleFilterOperator operator = simpleFilter.getOperator();
 
-					if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
+				if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
+
+					if (dataSet.getLabel().equals(((SimpleFilter) filter).getDataset().getLabel())) {
 						logger.debug("Min filter found at index [" + i + "]");
 						minMaxFilterIndexes.add(i);
 
 						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
 						Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
 						minMaxProjections.add(projection);
-					} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+					}
+
+				} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+
+					if (dataSet.getLabel().equals(((SimpleFilter) filter).getDataset().getLabel())) {
 						logger.debug("Max filter found at index [" + i + "]");
 						minMaxFilterIndexes.add(i);
 
 						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
 						Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
 						minMaxProjections.add(projection);
-					} else {
-						noMinMaxFilters.add(filter);
 					}
 				} else {
 					noMinMaxFilters.add(filter);
 				}
+			} else {
+				noMinMaxFilters.add(filter);
+			}
+		}
+
+		if (minMaxFilterIndexes.size() > 0) {
+			logger.debug("MIN/MAX filter found");
+
+			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
+
+			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1,   userprofile);
+			if (dataStore == null) {
+				String errorMessage = "Error in getting min and max filters values";
+				logger.error(errorMessage);
+				throw new SpagoBIRuntimeException(errorMessage);
 			}
 
-			if (minMaxFilterIndexes.size() > 0) {
-				logger.debug("MIN/MAX filter found");
+			logger.debug("MIN/MAX filter values calculated");
 
-				Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
+			for (int i = 0; i < minMaxProjections.size(); i++) {
+				Projection projection = minMaxProjections.get(i);
+				String alias = projection.getAlias();
+				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
 
-				IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1,   userprofile);
-				if (dataStore == null) {
-					String errorMessage = "Error in getting min and max filters values";
+				int index = minMaxFilterIndexes.get(i);
+
+				List values = dataStore.getFieldValues(i);
+				if (values == null) {
 					logger.error(errorMessage);
 					throw new SpagoBIRuntimeException(errorMessage);
-				}
-
-				logger.debug("MIN/MAX filter values calculated");
-
-				for (int i = 0; i < minMaxProjections.size(); i++) {
-					Projection projection = minMaxProjections.get(i);
-					String alias = projection.getAlias();
-					String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
-
-					int index = minMaxFilterIndexes.get(i);
-
-					List values = dataStore.getFieldValues(i);
-					if (values == null) {
-						logger.error(errorMessage);
-						throw new SpagoBIRuntimeException(errorMessage);
-					} else {
-						Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
-						if (values.isEmpty()) {
-							logger.warn(errorMessage + ", put NULL");
-							newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
-						} else {
-							Object value = values.get(0);
-							logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
-							newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
-						}
-					}
-				}
-			}
-
-			logger.debug("OUT");
-			return newFilters;
-		}
-
-		private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
-				Filter filter, int maxRowCount,UserProfile userprofile) throws JSONException {
-			dataSet.setParametersMap(parametersValues);
-			dataSet.resolveParameters();
-
-			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);
-			return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
-		}
-
-		public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
-			Filter where = null;
-			if (filters.size() > 0) {
-				if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
-					where = filters.get(0);
 				} else {
-					AndFilter andFilter = new AndFilter(filters);
-					if (likeFilters.size() > 0) {
-						andFilter.and(new OrFilter(likeFilters));
+					Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+					if (values.isEmpty()) {
+						logger.warn(errorMessage + ", put NULL");
+						newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+					} else {
+						Object value = values.get(0);
+						logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
+						newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
 					}
-					where = andFilter;
 				}
-			} else if (likeFilters.size() > 0) {
-				where = new OrFilter(likeFilters);
 			}
-			return where;
 		}
+
+		logger.debug("OUT");
+		return newFilters;
+	}
+
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+			Filter filter, int maxRowCount,UserProfile userprofile) throws JSONException {
+		dataSet.setParametersMap(parametersValues);
+		dataSet.resolveParameters();
+
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);
+		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
+	}
+
+	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
+		Filter where = null;
+		if (filters.size() > 0) {
+			if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
+				where = filters.get(0);
+			} else {
+				AndFilter andFilter = new AndFilter(filters);
+				if (likeFilters.size() > 0) {
+					andFilter.and(new OrFilter(likeFilters));
+				}
+				where = andFilter;
+			}
+		} else if (likeFilters.size() > 0) {
+			where = new OrFilter(likeFilters);
+		}
+		return where;
+	}
 
 }

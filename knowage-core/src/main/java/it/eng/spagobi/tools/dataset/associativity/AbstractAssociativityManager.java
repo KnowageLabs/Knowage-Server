@@ -64,6 +64,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected Set<String> documentsAndExcludedDatasets;
 	protected List<SimpleFilter> selections;
 	protected List<SimpleFilter> filters;
+	protected Map<String, Map<String, String>> datasetParameters = new HashMap<>();
 
 	protected AssociativeLogicResult result = new AssociativeLogicResult();
 
@@ -123,6 +124,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		filters = config.getFilters();
 		selections = config.getSelections();
 		String datasetFilter = null;
+		datasetParameters = config.getDatasetParameters();
 		for (SimpleFilter fil : filters) {
 		     datasetFilter = fil.getDataset().getLabel();
 
