@@ -261,19 +261,20 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 	
 	$scope.exportPdf = function(){
 		
-		$mdDialog.show({
-			controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
-				$scope.translate = sbiModule_translate;
-				$scope.cockpitModule_properties = cockpitModule_properties;
-				$scope.cockpitModule_template = cockpitModule_template;
-			 },
-			 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
-			 parent: angular.element(document.body),
-			 hasBackdrop: false,
-			 clickOutsideToClose:false
-			 })
-		
 		return $q(function(resolve, reject) {
+			
+			$mdDialog.show({
+				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
+					$scope.translate = sbiModule_translate;
+					$scope.cockpitModule_properties = cockpitModule_properties;
+					$scope.cockpitModule_template = cockpitModule_template;
+				 },
+				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
+				 parent: angular.element(document.body),
+				 hasBackdrop: false,
+				 clickOutsideToClose:false
+				 })
+			
 			cockpitModule_properties.LOADING_SCREENSHOT = true;
 				 
 				 function closeOrContinue(sheet){
@@ -307,6 +308,20 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
 						canvg(document.getElementById('canvas_'+widget.id), xml);
 				 	}
+				 	
+				 	function replaceIframe(widget){
+				 		var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
+				 		html2canvas(element,{
+				 			allowTaint: true,
+				 			useCORS: true,
+				 			foreignObjectRendering: true,
+				 			width: element.clientWidth,
+				 			height: element.scrollHeight
+				 		}).then(function(canvas){
+				 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
+				 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
+				 		})
+				 	}
 				 
 				 	function getPage(sheet){
 				 		var heightToUse;
@@ -326,6 +341,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 			 				html2canvas(element,{
 					 			allowTaint: true,
 					 			useCORS: true,
+					 			foreignObjectRendering: true,
 					 			width: element.clientWidth,
 					 			height: element.scrollHeight,
 					 			scale : 1.5
@@ -355,6 +371,11 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					 					}
 				 					}
 				 				}
+					 		for(var w in sheet.widgets){
+					 			if(sheet.widgets[w].type == 'document'){
+					 				replaceIframe(sheet.widgets[w]);
+					 			}
+					 		}
 					 		$timeout(function(){
 					 			getPage(sheet);
 					 		},1000)    
