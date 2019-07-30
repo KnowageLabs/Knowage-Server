@@ -100,7 +100,19 @@
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
 								return null;
 							}
-						}else{
+						}else if (geoFieldConfig.properties.coordType == 'wkt'){
+							//test formato WKT
+						      feature = new ol.format.WKT().readFeature(geoFieldValue, {
+						        dataProjection: 'EPSG:4326',
+						        featureProjection: 'EPSG:3857'
+						      });
+
+						      feature.set("parentLayer",  config.layerID);
+//						      feature.set("isSimpleMarker", isSimpleMarker);
+//						      feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+							  featuresSource.addFeature(feature);
+
+						}else if (geoFieldConfig.properties.coordType == 'string'){
 							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
 								console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.stringInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);

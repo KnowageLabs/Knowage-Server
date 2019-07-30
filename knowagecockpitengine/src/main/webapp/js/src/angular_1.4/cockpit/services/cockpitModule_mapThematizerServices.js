@@ -57,9 +57,6 @@
 					style = mts.getChoroplethStyles(value, parentLayer, null);
 					thematized = true;
 				}
-//			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
-//				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
-//				thematized = true;
 			}
 
 			if (!localFeature.get('isSimpleMarker')){
@@ -76,7 +73,6 @@
 			else if (!thematized){
 				style = mts.getOnlyMarkerStyles(value, props, configMarker);
 				useCache = true;
-//			useCache = false;
 			}
 
 			if (useCache && !styleCache[parentLayer]) {
@@ -208,7 +204,8 @@
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
-					color: (borderColor) ? borderColor : color,
+//					color: (borderColor) ? borderColor : color,
+					color: color,
 					width: 1
 				}),
 				fill: new ol.style.Fill({
