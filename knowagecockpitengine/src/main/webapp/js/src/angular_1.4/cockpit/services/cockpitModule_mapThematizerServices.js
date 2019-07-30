@@ -206,7 +206,7 @@
 				stroke: new ol.style.Stroke({
 //					color: (borderColor) ? borderColor : color,
 					color: color,
-					width: 1
+					width: 2
 				}),
 				fill: new ol.style.Fill({
 					color: color
