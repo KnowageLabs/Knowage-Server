@@ -12,6 +12,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.showme = false; // flag for showing right side
     $scope.dirtyForm = false; // flag to check for modification
+    $scope.passwordRequired = true;
     $scope.translate = sbiModule_translate;
     $scope.selectedUser = {}; // main item
     $scope.usersList = []; // array that hold list of users
@@ -248,7 +249,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
-            	$scope.showme = true;
+                $scope.showme = true;
                 $scope.dirtyForm = false;
                 $scope.selectedUser = angular.copy(item);
                 $scope.setRoles();
@@ -272,6 +273,8 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.selectedUser.confirm = $scope.selectedUser.password;
 
         }
+
+        $scope.passwordRequired = false;
     }
 
     $scope.cancel = function () { // on cancel button
@@ -293,6 +296,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.selectedUser = {};
                 $scope.showme = true;
                 $scope.role = [];
+                $scope.passwordRequired = true;
                 $scope.setAttributes();
 
 
@@ -306,6 +310,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.selectedUser = {};
 	            $scope.showme = true;
 	            $scope.role = [];
+                $scope.passwordRequired = true;
 	            $scope.setAttributes();
         }
 

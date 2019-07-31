@@ -117,7 +117,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.pwd")}}</label>
 					<input data-ng-model="selectedUser.password" type="password"
 						name="password" 
-						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> required <%}%>
+						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
 						ng-maxlength="100" ng-change="setDirty()">
 
 					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
@@ -133,7 +133,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.confPwd")}}</label>
 					<input ng-model="selectedUser.confirm" type="password"
 						name="confirm_password" 
-						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> required <%}%>
+						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
 						ng-maxlength="100" ng-change="setDirty()"
 						nx-equal-ex="selectedUser.password">
 					
