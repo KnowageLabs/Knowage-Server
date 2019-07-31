@@ -271,7 +271,7 @@ function mapWidgetEditControllerFunction(
 	    })
 //	    $scope.hideWidgetSpinner();
 	    $scope.widgetSpinner = false;
-  		$scope.safeApply();
+//  		$scope.safeApply();
   	}
 //  	$scope.colorPickerOptions = {format:'hex'};
   	$scope.colorPickerOptions = {format:'rgb'};

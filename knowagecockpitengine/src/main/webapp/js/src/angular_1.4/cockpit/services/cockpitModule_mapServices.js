@@ -102,6 +102,7 @@
 							}
 						}else if (geoFieldConfig.properties.coordType == 'wkt'){
 							//test formato WKT
+
 						      feature = new ol.format.WKT().readFeature(geoFieldValue, {
 						        dataProjection: 'EPSG:4326',
 						        featureProjection: 'EPSG:3857'
@@ -109,7 +110,8 @@
 
 						      feature.set("parentLayer",  config.layerID);
 //						      feature.set("isSimpleMarker", isSimpleMarker);
-//						      feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+						      feature.set("isWKT", true);
+						      feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
 							  featuresSource.addFeature(feature);
 
 						}else if (geoFieldConfig.properties.coordType == 'string'){
@@ -120,26 +122,26 @@
 							}
 							isSimpleMarker = true;
 						    geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
-						}
 
-						if (!isComplexFeature){
-							//set ol objects
-							feature = new ol.Feature(geometry)
+						    if (!isComplexFeature){
+								//set ol objects
+								feature = new ol.Feature(geometry);
 
-							if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-							//get config for thematize
-							if (selectedMeasure){
-								if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
-									cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+								if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+								//get config for thematize
+								if (selectedMeasure){
+									if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+										cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+									}
 								}
-							}
-					        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+						        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 
-					       //at least add the layer owner
-					        feature.set("parentLayer",  config.layerID);
-					        feature.set("isSimpleMarker", isSimpleMarker);
-					        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-					        featuresSource.addFeature(feature);
+						       //at least add the layer owner
+						        feature.set("parentLayer",  config.layerID);
+						        feature.set("isSimpleMarker", isSimpleMarker);
+						        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+						        featuresSource.addFeature(feature);
+							}
 						}
 					}
 
@@ -312,12 +314,18 @@
 		    			source = l.getSource();
 
 		    		if (source.getFeatures().length>0){
-		    			if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
-		    				coord = source.getFeatures()[0].getGeometry().getCoordinates();
-						else if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'MULTIPOLYGON')
-							coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
-						else
-							coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0];
+		    			if (source.getFeatures()[0].get("isWKT")){
+		    				coord = source.getFeatures()[0].getGeometry().getCoordinates()[0];
+
+		    			} else {
+		    				//string && json
+			    			if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
+			    				coord = source.getFeatures()[0].getGeometry().getCoordinates();
+							else if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'MULTIPOLYGON')
+								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
+							else
+								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0];
+		    			}
 		    		}
 			    	if(source.getFeatures().length>35){
 		    			zoom = 4;
