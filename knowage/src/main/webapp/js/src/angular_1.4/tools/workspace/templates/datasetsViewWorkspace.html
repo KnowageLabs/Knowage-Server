@@ -169,21 +169,21 @@
 			  	</div>
 		</md-toolbar>
 
-	<md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  flex md-is-locked-open="$mdMedia('gt-md')">
-	<div layout="column" layout-align="space-around center"><h4 ><em>{{::translate.load("sbi.execution.parametersselection.export.message")}}</em></h4></div>
-		<div layout=column>
-			<div flex=80 >
-		      <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
-		      	     <render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
-		      
-		    </div>
-		    <div flex=10>
-				<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="exportDatasetWithDrivers(selectedDataset)">
-					{{::translate.load("sbi.execution.parametersselection.exportbutton.message")}}
-				</md-button>	
+	<div  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  flex md-is-locked-open="$mdMedia('gt-md')" style="width:100%">
+		<md-content>
+			<div layout="row">
+				<div class="kn-info" flex="80" layout-align="center center">{{::translate.load("sbi.execution.parametersselection.export.message")}}</div>
 			</div>
-		</div>
-	</md-sidenav>
+			
+			<document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" ></document-paramenter-element>
+     	     <render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
+     	     <div layout="row">
+	     	     <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="exportDatasetWithDrivers(selectedDataset)">
+					{{::translate.load("sbi.execution.parametersselection.exportbutton.message")}}
+				</md-button>
+			</div>
+		</md-content>
+	</div>
 	</div>
       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDs" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
 		<md-toolbar class="ternaryToolbar">
