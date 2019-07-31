@@ -98,11 +98,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.filtersTableColumns=[
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.dataset"),"name":"dataset"},
-			//{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colName"},
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colAlias"},
-			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"filterOperator"},
-			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val"),"name":"filterVal1"},
-			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val"),"name":"filterVal2"}
+			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.operator"),"name":"filterOperator"},
+			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val")+'1',"name":"filterVal1"},
+			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val")+'2',"name":"filterVal2"}
 			];
 
 		$scope.isObjectEmpty = function(obj){
@@ -170,6 +169,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(f.column != undefined){
 						f.colName = f.column;
 						f.colAlias = f.column;
+					}else {
+						f.colName = f.colName || f.columnName;
+						f.colAlias = f.colAlias || f.columnName;
 					}
 				}
 			}
