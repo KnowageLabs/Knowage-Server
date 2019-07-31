@@ -319,6 +319,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 			height: element.scrollHeight
 				 		}).then(function(canvas){
 				 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
+				 			canvas.style.height = "100%";
 				 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
 				 		})
 				 	}
