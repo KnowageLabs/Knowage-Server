@@ -137,7 +137,7 @@
 		};
 
 		$scope.returnToDocument = function() {
-			if($scope.execProperties.documentUrl) {
+			if($scope.execProperties.hasOwnProperty('documentUrl')) {
 				$scope.execProperties.currentView.status = 'DOCUMENT';
 			} else {
 				$scope.execProperties.currentView.status = 'BUSINESSMODEL';
