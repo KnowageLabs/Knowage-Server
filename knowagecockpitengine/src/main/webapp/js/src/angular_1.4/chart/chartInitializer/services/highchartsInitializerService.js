@@ -536,16 +536,20 @@ angular.module('chartInitializer')
 					        }
 						}
 						chart.options.drilledCategories.push(series.category);
-
 						var xAxisTitle={
-							text:series.category
-			            };
+								text:""
+				        };
+
+						if(chart.xAxis[0].options.title.text!=""){
+							 xAxisTitle.text = series.category;
+						}
+
+
 			            var yAxisTitle={
 			            		text:series.serieName
 			            };
-			            if(chart.xAxis[0].userOptions.title.customTitle==false){
-			            	chart.xAxis[0].setTitle(xAxisTitle);
-			            }
+			            chart.xAxis[0].setTitle(xAxisTitle);
+
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 			            	chart.yAxis[0].setTitle(yAxisTitle);
 			            }
@@ -575,14 +579,18 @@ angular.module('chartInitializer')
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
-		chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
+
         //  chart.redraw();
+
 		var xAxisTitle={
-            	text:axisTitle
-		};
-		if(chart.xAxis[0].userOptions.title.customTitle==false){
-        	chart.xAxis[0].setTitle(xAxisTitle);
+				text:""
+        };
+
+		if(chart.xAxis[0].options.title.text!=""){
+			 xAxisTitle.text = axisTitle;
 		}
+
+		chart.xAxis[0].setTitle(xAxisTitle);
 		var yAxisTitle={
 				text: ' '
 		};
@@ -596,13 +604,18 @@ angular.module('chartInitializer')
 	        	   delete chart.drilledSerie
 	           }
 	           chart.redraw()
+	           if(chart.drillUpButton) {
+	        	   chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
+	        	   chart.drillUpButton.fill = "white"
+	           }
+
 	        }, 0);
 		}
 
        if(chart.drilldownLevels.length==0 && chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
     	   chart.yAxis[0].setTitle(yAxisTitle);
        }
-
+       chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
     	// TODO: commented by: danristo (EXT -> ANGULAR)
 		//Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
        highchartsDrilldownHelper.drillup(chart.breadcrumb);
