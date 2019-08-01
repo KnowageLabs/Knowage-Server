@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	//Defining ag-grid options
 		  	var gridOptions = {
 			    enableSorting: true,
-			    enableFilter: true,
+			    enableFilter: false,
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
 			    enableColResize: true,
