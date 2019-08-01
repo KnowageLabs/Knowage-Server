@@ -298,7 +298,7 @@ public class ExportResource {
 	 */
 	private Map<String, Object> manageDataSetDrivers(JSONArray driversJson) {
 
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new HashMap<String, Object>();
 
 		try {
 			if (driversJson != null) {
