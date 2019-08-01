@@ -175,7 +175,7 @@ public class ExportResource {
 	@POST
 	@Path("/dataset/{dataSetId}/csv")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONObject driversJson,
+	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONArray driversJson,
 			@QueryParam("PARAMETERS") JSONArray paramsJson) {
 
 		logger.debug("IN");
@@ -221,7 +221,7 @@ public class ExportResource {
 	@POST
 	@Path("/dataset/{dataSetId}/xls")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONObject driversJson,
+	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONArray driversJson,
 			@QueryParam("PARAMETERS") JSONArray paramsJson) {
 
 		logger.debug("IN");
@@ -296,12 +296,19 @@ public class ExportResource {
 	 *
 	 * @param driversJson JSON data of drivers
 	 */
-	private Map<String, Object> manageDataSetDrivers(JSONObject driversJson) {
+	private Map<String, Object> manageDataSetDrivers(JSONArray driversJson) {
 
-		Map<String, Object> ret = null;
+		Map<String, Object> ret = new HashMap<>();
 
 		try {
-			ret = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
+			if (driversJson != null) {
+				int length = driversJson.length();
+				for (int i = 0; i < length; i++) {
+					JSONObject jsonObject = driversJson.getJSONObject(i);
+					HashMap<String, Object> hashMapFromJSONObject = JSONObjectDeserializator.getHashMapFromJSONObject(jsonObject);
+					ret.putAll(hashMapFromJSONObject);
+				}
+			}
 		} catch (Exception e) {
 			logger.debug("Cannot read dataset drivers");
 			throw new IllegalStateException("Cannot read drivers");
