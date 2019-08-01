@@ -36,6 +36,8 @@ import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
@@ -91,6 +93,8 @@ abstract class AbstractExportJob implements Job {
 		parameters = getParametersData(mergedJobDataMap);
 		resourcePathAsStr = getResourcePathString(mergedJobDataMap);
 		userProfile = getUserProfile(mergedJobDataMap);
+
+		initializeTenant();
 
 		dataSet = getDataSet(dataSetId, drivers, parameters, userProfile);
 
@@ -237,6 +241,15 @@ abstract class AbstractExportJob implements Job {
 
 	protected final UserProfile getUserProfile(JobDataMap mergedJobDataMap) {
 		return (UserProfile) mergedJobDataMap.get(MAP_KEY_USER_PROFILE);
+	}
+
+	/**
+	 * Set tenant in the job thread.
+	 */
+	private void initializeTenant() {
+		String organization = userProfile.getOrganization();
+		Tenant tenant = new Tenant(organization);
+		TenantManager.setTenant(tenant);
 	}
 
 	/**
