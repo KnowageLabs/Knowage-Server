@@ -527,8 +527,9 @@ angular.module('chartInitializer')
 		                    }, 0);
 						}
 
-
+						chart.firstXaxisTitle;
 						if(chart.options.drilledCategories.length==0){
+							chart.firstXaxisTitle = chart.xAxis[0].options.title.text;
 							 if(series.firstLevelCategory){
 								 chart.options.drilledCategories.push(series.firstLevelCategory);
 					        } else {
@@ -580,14 +581,16 @@ angular.module('chartInitializer')
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
 
-        //  chart.redraw();
-
-		var xAxisTitle={
+        var xAxisTitle={
 				text:""
         };
 
 		if(chart.xAxis[0].options.title.text!=""){
 			 xAxisTitle.text = axisTitle;
+		}
+
+		if(chart.firstXaxisTitle && chart.options.drilledCategories.length==1){
+			xAxisTitle.text = chart.firstXaxisTitle
 		}
 
 		chart.xAxis[0].setTitle(xAxisTitle);
