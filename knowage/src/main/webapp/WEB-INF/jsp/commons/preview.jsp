@@ -305,13 +305,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(!isEmpty(parameters)){
 					for (var i = 0; i < parameters.length; i++) {
-						parameters[i] = JSON.parse(parameters[i]);
+						if(typeof parameters[i] == 'string') parameters[i] = JSON.parse(parameters[i]);
 					}
 					fetchParams.body.pars = parameters;
 				}
 				if(!isEmpty(drivers)){
 					for (var i = 0; i < drivers.length; i++) {
-						drivers[i] = JSON.parse(drivers[i]);
+						if(typeof drivers[i] == 'string') drivers[i] = JSON.parse(drivers[i]);
 					}
 					fetchParams.body.drivers = drivers;
 				}
