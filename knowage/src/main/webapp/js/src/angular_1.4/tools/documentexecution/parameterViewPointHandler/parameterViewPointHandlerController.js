@@ -16,7 +16,7 @@
 
 
 	var documentParamenterViewPointCtrl = function($scope, sbiModule_config, sbiModule_translate, $mdDialog,
-			sbiModule_restServices, sbiModule_messaging, driversExecutionService, driversDependencyService) {
+			sbiModule_restServices, sbiModule_dateServices, sbiModule_messaging, driversExecutionService, driversDependencyService) {
 
 		$scope.driversExecutionService = driversExecutionService;
 		$scope.execProperties = $scope.execproperties;
