@@ -56,7 +56,7 @@ public class MapCatalogueMock {
 
 		File file = new File(ConfigSingleton.getRootPath() + "/maps/genova/" + mapName + ".svg");
 		try {
-			return file.toURL().toString();
+			return file.toURI().toURL().toString();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			return null;

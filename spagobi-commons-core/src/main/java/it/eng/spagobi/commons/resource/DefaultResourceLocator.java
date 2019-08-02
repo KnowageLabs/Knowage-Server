@@ -76,7 +76,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 			//System.err.println("Boundle NON trovato");
 			File file = new File(fileRelativePath);
 			try {
-				fileURL =  file.toURL();
+				fileURL =  file.toURI().toURL();
 			} catch (MalformedURLException e) {
 				throw new SpagoBIPluginException("Impossible to resolve resource [" + fileRelativePath + "] to a valid URL", e);
 			}
