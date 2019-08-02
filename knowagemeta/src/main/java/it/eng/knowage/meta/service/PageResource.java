@@ -33,6 +33,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.json.JSONObject;
 
@@ -179,7 +183,10 @@ public class PageResource {
 				Model model = serializer.deserialize(is);
 				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
-				createCrossReferenceAdapter();
+
+				ECrossReferenceAdapter crossReferenceAdapter = new ECrossReferenceAdapter();
+				addCrossReferenceAdapterToResource(model, crossReferenceAdapter);
+				addCrossReferenceAdapterToSession(crossReferenceAdapter);
 				String datasourceId = request.getParameter("datasourceId");
 				if (datasourceId != null && !datasourceId.equals("")) {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(Integer.valueOf(datasourceId));
@@ -209,6 +216,19 @@ public class PageResource {
 			DbTypeThreadLocal.unset();
 			logger.debug("OUT");
 		}
+	}
+
+	/**
+	 * @param model
+	 * @param crossReferenceAdapter
+	 */
+	private void addCrossReferenceAdapterToResource(Model model, ECrossReferenceAdapter crossReferenceAdapter) {
+		ResourceSet resourceSet = new ResourceSetImpl();
+		URI uri = URI.createURI(MetaService.KNOWAGE_MODEL_URI + model.getName());
+		Resource resource = resourceSet.createResource(uri);
+		resource.getContents().add(model);
+
+		resource.getResourceSet().eAdapters().add(crossReferenceAdapter);
 	}
 
 	public void checkBackwardCompatibility(Model model) {
@@ -309,8 +329,8 @@ public class PageResource {
 		}
 	}
 
-	private void createCrossReferenceAdapter() {
-		request.getSession().setAttribute(MetaService.EMF_MODEL_CROSS_REFERENCE, new ECrossReferenceAdapter());
+	private void addCrossReferenceAdapterToSession(ECrossReferenceAdapter crossReferenceAdapter) {
+		request.getSession().setAttribute(MetaService.EMF_MODEL_CROSS_REFERENCE, crossReferenceAdapter);
 	}
 
 }
