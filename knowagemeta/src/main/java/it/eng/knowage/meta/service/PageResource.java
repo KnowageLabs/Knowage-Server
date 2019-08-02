@@ -33,6 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.json.JSONObject;
 
 import it.eng.knowage.meta.model.Model;
@@ -178,7 +179,7 @@ public class PageResource {
 				Model model = serializer.deserialize(is);
 				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
-
+				createCrossReferenceAdapter();
 				String datasourceId = request.getParameter("datasourceId");
 				if (datasourceId != null && !datasourceId.equals("")) {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(Integer.valueOf(datasourceId));
@@ -306,6 +307,10 @@ public class PageResource {
 				}
 			}
 		}
+	}
+
+	private void createCrossReferenceAdapter() {
+		request.getSession().setAttribute(MetaService.EMF_MODEL_CROSS_REFERENCE, new ECrossReferenceAdapter());
 	}
 
 }
