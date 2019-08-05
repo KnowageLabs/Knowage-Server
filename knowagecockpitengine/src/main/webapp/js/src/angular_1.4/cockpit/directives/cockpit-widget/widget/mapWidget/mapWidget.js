@@ -244,12 +244,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.map.renderSync();
         }
 
-	    $scope.optionsSidenavOpened = false;
 		$scope.toggleSidenav = function(){
-			$scope.optionsSidenavOpened = !$scope.optionsSidenavOpened;
-			$timeout(function() {
-				$scope.map.updateSize();
-			}, 600);
+			$mdSidenav("optionSidenav").toggle();
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
