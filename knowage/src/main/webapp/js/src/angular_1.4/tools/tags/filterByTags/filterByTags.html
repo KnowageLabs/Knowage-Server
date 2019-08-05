@@ -3,10 +3,10 @@
 		<span class="kn-chip noSelect" ng-repeat="tag in tagsArray | limitTo:tagsVisible track by $index" ng-click="toggleTag(tag)" ng-class="{'tagSelected':tag.isSelected}">
 			{{tag.name}}
 		</span>
-		<span ng-if="tagsVisible != 100"> ... </span>
+		<span ng-if="tagsArray.length > tagsVisible"> ... </span>
 	</div>
 	<md-button class="md-icon-button" ng-click="toggleAllTags()">
-		<md-icon ng-if="tagsVisible == 100" md-font-icon="fa fa-chevron-up" ></md-icon>
-		<md-icon ng-if="tagsVisible != 100" md-font-icon="fa fa-chevron-down" ></md-icon>
+		<md-icon ng-if="tagsArray.length > tagsVisible && tagsVisible == 100" md-font-icon="fa fa-chevron-up" ></md-icon>
+		<md-icon ng-if="tagsArray.length > tagsVisible && tagsVisible != 100" md-font-icon="fa fa-chevron-down" ></md-icon>
 	</md-button>
 </div>

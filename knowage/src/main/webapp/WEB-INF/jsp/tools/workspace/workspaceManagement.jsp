@@ -111,14 +111,6 @@ div#autoTags span.combodiv_span {
  .lower{
  padding:5px;
  }
- i  {
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 2px;
-  height: 15px;
-  width: 15px;
-}
 .tagsUp {
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
