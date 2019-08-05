@@ -322,7 +322,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.advancedTableGrid = {
 				angularCompileRows: true,
 				onGridSizeChanged: resizeColumns,
-				onGridReady: resizeColumns,
+				onGridReady: readyResizeColumns,
 				onSortChanged: changeSorting,
 				pagination : true,
 				onCellClicked: onCellClicked,
@@ -371,6 +371,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
+		}
+		
+		var resizeTimer = false;
+		function readyResizeColumns(){
+			$scope.advancedTableGrid.api.sizeColumnsToFit();
+			if(resizeTimer) clearTimeout(resizeTimer);
+			else if($scope.advancedTableGrid.api) resizeTimer = setTimeout(function(){ $scope.advancedTableGrid.api.sizeColumnsToFit(); }, 5000);
 		}
 		
 		function resizeColumns(){
