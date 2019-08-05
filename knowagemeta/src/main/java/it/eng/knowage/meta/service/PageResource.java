@@ -183,10 +183,8 @@ public class PageResource {
 				Model model = serializer.deserialize(is);
 				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
+				model.eAdapters().add(new ECrossReferenceAdapter());
 
-				ECrossReferenceAdapter crossReferenceAdapter = new ECrossReferenceAdapter();
-				addCrossReferenceAdapterToResource(model, crossReferenceAdapter);
-				addCrossReferenceAdapterToSession(crossReferenceAdapter);
 				String datasourceId = request.getParameter("datasourceId");
 				if (datasourceId != null && !datasourceId.equals("")) {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(Integer.valueOf(datasourceId));
@@ -224,7 +222,7 @@ public class PageResource {
 	 */
 	private void addCrossReferenceAdapterToResource(Model model, ECrossReferenceAdapter crossReferenceAdapter) {
 		ResourceSet resourceSet = new ResourceSetImpl();
-		URI uri = URI.createURI(MetaService.KNOWAGE_MODEL_URI + model.getName());
+		URI uri = URI.createURI(MetaService.KNOWAGE_MODEL_URI);
 		Resource resource = resourceSet.createResource(uri);
 		resource.getContents().add(model);
 
@@ -327,10 +325,6 @@ public class PageResource {
 				}
 			}
 		}
-	}
-
-	private void addCrossReferenceAdapterToSession(ECrossReferenceAdapter crossReferenceAdapter) {
-		request.getSession().setAttribute(MetaService.EMF_MODEL_CROSS_REFERENCE, crossReferenceAdapter);
 	}
 
 }

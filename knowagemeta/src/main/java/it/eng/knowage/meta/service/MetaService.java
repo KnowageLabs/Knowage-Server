@@ -251,6 +251,15 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	}
 
+	private void addCrossReferenceAdapterToResource(Model model, ECrossReferenceAdapter crossReferenceAdapter) {
+		ResourceSet resourceSet = new ResourceSetImpl();
+		URI uri = URI.createURI(MetaService.KNOWAGE_MODEL_URI);
+		Resource resource = resourceSet.createResource(uri);
+		resource.getContents().add(model);
+
+		resource.getResourceSet().eAdapters().add(crossReferenceAdapter);
+	}
+
 	@POST
 	@Path("/generateModel")
 	public Response generateModel(@Context HttpServletRequest req) {
@@ -265,7 +274,6 @@ public class MetaService extends AbstractSpagoBIResource {
 			Integer modelId = jsonData.getInt("id");
 
 			applyDiff(jsonRoot, model);
-
 			ByteArrayOutputStream filee = new ByteArrayOutputStream();
 			serializer.serialize(model, filee);
 
@@ -950,7 +958,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
+		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) model.eAdapters().get(0); // req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 
 		String modelName = model.getName();
@@ -1003,7 +1011,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
-		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
+		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) model.eAdapters().get(0); // req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 		physicalModelInitializer.setRootModel(model);
 		PhysicalModel originalPM = model.getPhysicalModels().get(0);
