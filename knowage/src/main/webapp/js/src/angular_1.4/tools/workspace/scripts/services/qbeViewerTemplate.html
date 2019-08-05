@@ -50,7 +50,7 @@
 						</md-button>					  	
 				  	</div>
 				</md-toolbar>
-				<div flex > 
+				<div flex style="overflow:auto"> 
 				    <render-parameters driverable-object = "selectedDataSet" param = "param" ng-repeat="param in selectedDataSet.pars" ></render-parameters> 
 					<form name = "driversForm" >
 				    	<document-paramenter-element execProperties="driverableObject"  parameter="parameter" ng-repeat="parameter in drivers"  ng-show="parameter.visible" layout="row" layout-align="start" />
