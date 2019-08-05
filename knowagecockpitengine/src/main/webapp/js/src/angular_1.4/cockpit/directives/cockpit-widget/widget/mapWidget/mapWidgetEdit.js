@@ -45,13 +45,13 @@ function mapWidgetEditControllerFunction(
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
   	}
 
-  	$scope.setTargetLayer = function(layer){
-  		for(var t in $scope.newModel.content.layers){
-  			if($scope.newModel.content.layers[t].targetDefault && $scope.newModel.content.layers[t].dsId != layer.dsId){
-  				$scope.newModel.content.layers[t].targetDefault = false;
-  			}
-  		}
-  	}
+	$scope.setTargetLayer = function(layer){
+		for(var t in $scope.newModel.content.layers){
+			if($scope.newModel.content.layers[t].targetDefault && $scope.newModel.content.layers[t].dsId != layer.dsId){
+				$scope.newModel.content.layers[t].targetDefault = false;
+			}
+		}
+	}
 
   	$scope.setMarkersVisualizationType = function(layer,type){
   		layer.visualizationType = type;

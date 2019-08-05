@@ -230,6 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		if (previousLayer) 	$scope.map.removeLayer(previousLayer); //ol obj
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
+
 	    	$scope.getLayers();
 
 	    	if (isNew) $scope.createMap();
@@ -322,7 +323,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
-		    	var layerDef =  $scope.ngModel.content.layers[l];
+				var currLayer = $scope.ngModel.content.layers[l];
+				var layerDef =  currLayer;
 		    	var layerID = $scope.ngModel.id + "|" + layerDef.name;
 		    	$scope.configs[layerID] = layerDef;
 	    		if (layerDef.type === 'DATASET'){
@@ -340,7 +342,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.initializeTemplate = function (){
-	    	 return $q(function(resolve, reject) {
+	    	return $q(function(resolve, reject) {
 	    		if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
 	 	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
 	 	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
@@ -450,6 +452,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 			}
+
+			// Setting default visibility
+			layer.setVisible(layerDef.defaultVisible);
 
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
@@ -685,6 +690,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				$scope.widgetIsInit=true;
     				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
     			},1500);
+
 	    	});
 	    }
 

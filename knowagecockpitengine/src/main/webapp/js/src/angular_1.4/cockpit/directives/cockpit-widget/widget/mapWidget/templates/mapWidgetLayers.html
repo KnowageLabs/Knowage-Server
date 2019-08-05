@@ -18,7 +18,13 @@
 		<table class="kn-table" ng-if="newModel.content.layers.length > 0">
 			<thead>
 				<tr>
-					<th ng-if="newModel.content.layers.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th></th>
+					<th ng-if="newModel.content.layers.length > 1"></th>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Label</th>
+					<th>Target</th>
+					<th>Default visible</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -41,8 +47,10 @@
 				            <input ng-model="layer.alias">
 		          		</md-input-container></td>
 					<td>
-						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)">
-					  </md-switch>
+						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)"/>
+					</td>
+					<td>
+						<md-switch ng-model="layer.defaultVisible" aria-label="default visible"/>
 					</td>
 					<td class="colorPickerTd" style="text-align:right;">
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
