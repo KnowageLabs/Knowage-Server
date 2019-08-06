@@ -187,6 +187,10 @@
 			    color: white;
 			    border-radius:2px;
 			    z-index: 99;
+			    transition: right .3s linear;
+			    &.sideNavOpened {
+			    	right: 327px;
+			    }
 			    &:hover {
 			    	background-color: darken(#6690B9,15%);
 			    }
