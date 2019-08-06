@@ -359,7 +359,7 @@
 											// this should be done only if parameterValue is not already set!
 											if(parameterValue == undefined || parameterValue.length == 0	){
 
-												if(response.data.result.root.length==1 &&
+												if(response.data.result.root != undefined && response.data.result.root.length==1 &&
 														execProperties.parametersData.documentParameters[z].mandatory &&
 														(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
 																execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
@@ -410,10 +410,12 @@
 
 			var setDefaultValues = function(parameter,response){
 				var defaultValueArrCache = [];
-				for(var k=0; k<response.data.result.root.length; k++){
-					response.data.result.root[k].isEnabled = true;
-					parameter.defaultValues.push(response.data.result.root[k]);
-					defaultValueArrCache.push(response.data.result.root[k].value);
+				if(response.data.result.root != undefined) {
+					for(var k=0; k<response.data.result.root.length; k++){
+						response.data.result.root[k].isEnabled = true;
+						parameter.defaultValues.push(response.data.result.root[k]);
+						defaultValueArrCache.push(response.data.result.root[k].value);
+					}
 				}
 				return defaultValueArrCache;
 			}
