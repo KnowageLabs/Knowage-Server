@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						
-						tempCol.cellStyle = getCellStyle;
+						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 						
 						tempCol.fieldType = cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type || ($scope.ngModel.content.columnSelectedOfDataset[c].fieldType == 'ATTRIBUTE'? 'java.lang.String': 'java.lang.Float')].label;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
@@ -160,8 +160,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
 				for(var k in params.colDef.ranges){
 					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-						tempStyle['background-color'] = params.colDef.ranges[k]['background-color'] || '';
-						tempStyle['color'] = params.colDef.ranges[k]['color'] || '';
+						tempStyle['background-color'] = params.colDef.ranges[k]['background-color'] || (tempStyle['background-color'] || '');
+						tempStyle['color'] = params.colDef.ranges[k]['color'] || (tempStyle['color'] || '');
                         if (params.colDef.ranges[k].operator == '==') break;
                     }
 				}
@@ -201,7 +201,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
 						if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-							tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>'
+							if(params.colDef.ranges[k]['background-color']) params.eParentOfValue.style.backgroundColor = params.colDef.ranges[k]['background-color'];
+							if(params.colDef.ranges[k]['color']) params.eParentOfValue.style.color = params.colDef.ranges[k]['color'];
+							tempValue += '<i class="'+params.colDef.ranges[k].icon+'"></i>';
 	                        if (params.colDef.ranges[k].operator == '==') break;
 	                    }
 					}
