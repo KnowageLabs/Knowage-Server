@@ -1228,7 +1228,7 @@
 		};
 
 		this.toggleParametersPanel = function(open) {
-			
+
 			function toggleNewPanel(opened){
 				if(document.getElementById("parametersPanelSideNav-e")){
 					if(opened==undefined) $mdSidenav('parametersPanelSideNav-e').toggle();
@@ -1236,7 +1236,7 @@
 					if(opened == false) $mdSidenav('parametersPanelSideNav-e').close();
 				}
 			}
-			
+
 			$timeout(function(){
 				if(open==undefined){
 					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
@@ -1516,13 +1516,13 @@
 										//BUILD DEAFULT VALUE
 										var defaultValueArrCache = [];
 
-
-										for(var k=0; k<response.data.result.root.length; k++){
-											response.data.result.root[k].isEnabled = true;
-											execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
-											defaultValueArrCache.push(response.data.result.root[k].value);
+										if(response.data.result.root != undefined) {
+											for(var k=0; k<response.data.result.root.length; k++){
+												response.data.result.root[k].isEnabled = true;
+												execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
+												defaultValueArrCache.push(response.data.result.root[k].value);
+											}
 										}
-
 
 										//Remove parameter value if not present in default value (clean operation)
 										//MULTIVALUE
@@ -1551,7 +1551,7 @@
 										if(execProperties.parametersData.documentParameters[z].parameterValue == undefined ||
 												execProperties.parametersData.documentParameters[z].parameterValue.length == 0	){
 
-											if(response.data.result.root.length==1 &&
+											if(response.data.result.root != undefined && response.data.result.root.length==1 &&
 													execProperties.parametersData.documentParameters[z].mandatory &&
 													(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
 															execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
