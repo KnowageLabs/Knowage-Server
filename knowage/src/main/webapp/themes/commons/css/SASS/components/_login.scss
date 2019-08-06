@@ -92,32 +92,36 @@
 	    box-sizing: border-box;
 	}
 
-	.form-signin #inputEmail,
-	.form-signin #inputPassword {
-	    direction: ltr;
-	    height: 44px;
-	    font-size: 16px;
-	}
-
-	.form-signin input[type=email],
-	.form-signin input[type=password],
-	.form-signin input[type=text],
-	.form-signin button {
-	    width: 100%;
-	    display: block;
-	    margin-bottom: 10px;
-	    z-index: 1;
-	    position: relative;
-	    -moz-box-sizing: border-box;
-	    -webkit-box-sizing: border-box;
-	    box-sizing: border-box;
-	}
-
-	.form-signin .form-control:focus {
-	    border-color: lighten($baseColor,15%);
-	    outline: 0;
-	    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
-	    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+	.form-signin {
+		.captcha {
+			height: 100px;
+		    background-repeat: no-repeat;
+		    background-size: cover;
+		    border-top: 1px solid #ccc;
+		    border-right: 1px solid #ccc;
+		    border-left: 1px solid #ccc;
+		}
+		#inputEmail, #inputPassword{
+			direction: ltr;
+	    	height: 44px;
+	    	font-size: 16px;
+		}
+		input[type=email], input[type=password], input[type=text], button {
+			width: 100%;
+		    display: block;
+		    margin-bottom: 10px;
+		    z-index: 1;
+		    position: relative;
+		    -moz-box-sizing: border-box;
+		    -webkit-box-sizing: border-box;
+		    box-sizing: border-box;
+		}
+		.form-control:focus {
+		    border-color: lighten($baseColor,15%);
+		    outline: 0;
+		    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+		    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+		}
 	}
 
 	.btn.btn-signin {

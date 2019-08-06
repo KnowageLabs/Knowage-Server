@@ -36,68 +36,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Knowage">
     <title>Knowage - Signup</title>
-    
-    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
+    <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
+		   <!-- Bootstrap -->
+		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/css/customStyle.css",currTheme)%>' type='text/css' />
     
     <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
   </head>
 
   <body class="kn-login" ng-app="signUp" ng-controller="signUpCtrl" ng-cloak>
-  
-  
-  	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">
-      
-      <md-card flex=50 flex-xs=100>
-      <form name="signUpForm">
-        <md-card-content layout="column" layout-align="start center">
-        	<img class="headerLogoImg" src="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/wapp/logo.png")%>">
-        	<h3>SignUp</h3>
-        	<div layout="row" layout-wrap>
-        		<md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Name</label>
-			        <input ng-model="newUser.name" name="name" type="text" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Surname</label>
-			        <input ng-model="newUser.surname" name="surname" type="text" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Username</label>
-			        <input ng-model="newUser.username" name="username" type="text" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Email address</label>
-			        <input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Password</label>
-			        <input ng-model="newUser.password" name="password" type="password" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Confirm Password</label>
-			        <input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required>
-			      </md-input-container>
-			      <div flex=50 flex-xs=100>
-			      	<div id="sticky" style="background-image:url('<%=urlBuilder.getResourceLink(request, "stickyImg")%>')">
-			      	</div>
-			      	</div>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Insert captcha</label>
-			        <input ng-model="newUser.captcha" name="captcha" type="text" required>
-			      </md-input-container>
-			
-        	</div>
-          
-        </md-card-content>
-        
-        <md-card-actions layout="column" layout-align="center">
-          <md-button class="md-primary md-raised" ng-click="register()" type="submit">Register</md-button>
-          <md-button class="md-primary md-raised goTologin" ng-click="goToLogin()">Login</md-button>
-        </md-card-actions>
-         </form>
-      </md-card>
-     
+ 	<div class="container-fluid" style="height:100%;">
+  		<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
+  			<img id="profile-img" class="col-xs-8" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
+        	<h3><%=msgBuilder.getMessage("signup")%></h3>
+  			<div class="col-xs-8">
+      			<form name="signUpForm" class="form-signin">
+		        	<input type="text" id="name" name="name" class="form-control" ng-model="newUser.name" placeholder="<%=msgBuilder.getMessage("signup.form.name")%>" required autofocus>
+		        	<input type="text" id="surname" name="surname" class="form-control" ng-model="newUser.surname" placeholder="<%=msgBuilder.getMessage("signup.form.surname")%>" required>
+		        	<input type="text" id="username" name="username" class="form-control" ng-model="newUser.username" placeholder="<%=msgBuilder.getMessage("signup.form.username")%>" required>
+		        	<input type="email" id="email" name="email" class="form-control" ng-model="newUser.email" placeholder="<%=msgBuilder.getMessage("signup.form.email")%>" required>
+		        	<input type="password" id="password" name="password" class="form-control" ng-model="newUser.password" placeholder="<%=msgBuilder.getMessage("signup.form.password")%>" required>
+		        	<input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="newUser.confirmPassword" placeholder="<%=msgBuilder.getMessage("signup.form.confirmpassword")%>" required>
+					<div id="sticky" class="captcha" style="background-image:url('<%=urlBuilder.getResourceLink(request, "stickyImg")%>')"></div>
+					<input type="text" id="captcha" name="captcha" class="form-control" ng-model="newUser.captcha" placeholder="<%=msgBuilder.getMessage("signup.form.captcha")%>" required>
+	
+	          		<button class="btn btn-lg btn-primary btn-block btn-signin" ng-click="register()" type="submit"><%=msgBuilder.getMessage("signup.form.register")%></button>
+           		</form>
+          			<button class="btn btn-lg btn-primary btn-block btn-signup" ng-click="goToLogin()"><%=msgBuilder.getMessage("login")%></button>
+          	</div>
+         </div>
      </div>
+        
   
 	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
 	
