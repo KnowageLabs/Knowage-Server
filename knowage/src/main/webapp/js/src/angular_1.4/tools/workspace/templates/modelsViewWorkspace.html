@@ -10,7 +10,7 @@
 				   		
 				   		 <md-content layout-fill>
 				   		 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
-						 		<div ag-grid="businessModelGridOptions" class="ag-theme-balham ag-theme-knowage" style="width:100%;" ></div>
+						 		<div ag-grid="businessModelGridOptions" class="ag-theme-balham ag-theme-knowage ag-full-dimensions" style="width:100%;height:100%;" ></div>
 						 	</md-card>
 						 	<federation-view class="kn-documentBrowser" flex  style='overflow: auto;' ng-model="businessModels"
 									selected-federation=selectedModel
@@ -31,7 +31,7 @@
 					         
 				         	<md-content layout-fill>
 							 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
-						 			<div ag-grid="federationsGridOptions" class="ag-theme-balham ag-theme-knowage" style="width:100%;"></div>
+						 			<div ag-grid="federationsGridOptions" class="ag-theme-balham ag-theme-knowage ag-full-dimensions"></div>
 						 		</md-card>
 							 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
 									show-grid-view="showGridView"
