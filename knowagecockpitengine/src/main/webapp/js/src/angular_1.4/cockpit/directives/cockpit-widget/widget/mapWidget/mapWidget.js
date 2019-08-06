@@ -450,6 +450,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			// Setting default visibility
+			if (!layerDef.hasOwnProperty("defaultVisible")) {
+				// Default visibility for layers that don't specify one
+				layerDef.defaultVisible = true;
+			}
 			layer.setVisible(layerDef.defaultVisible);
 
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
