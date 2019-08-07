@@ -17,13 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -31,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy;
@@ -77,15 +74,10 @@ public class SolrDataSet extends RESTDataSet {
 
 	@Override
 	public void initConf(JSONObject jsonConf, boolean resolveParams) {
-		try {
-			initSolrConfiguration(jsonConf, resolveParams);
-			initDataProxy(jsonConf, resolveParams);
-			initDataReader(jsonConf, resolveParams);
 
-		} catch (Exception e) {
-			logger.error("Unable to init Conf", e);
-			throw new ConfigurationException("Unable to init Conf", e);
-		}
+		initSolrConfiguration(jsonConf, resolveParams);
+		initDataProxy(jsonConf, resolveParams);
+		initDataReader(jsonConf, resolveParams);
 
 	}
 
@@ -127,37 +119,28 @@ public class SolrDataSet extends RESTDataSet {
 	}
 
 	protected void initDataReader(JSONObject jsonConf, boolean resolveParams) {
-		try {
-			logger.debug("Reading Solr dataset documents");
-			setDataReader(new SolrDataReader("$.response.docs.[*]", getJsonPathAttributes()));
-		} catch (Exception e) {
-			logger.error("Unable to init DataReader", e);
-			throw new ConfigurationException("Unable to init DataReader", e);
-		}
+
+		logger.debug("Reading Solr dataset documents");
+		setDataReader(new SolrDataReader("$.response.docs.[*]", getJsonPathAttributes()));
 
 	}
 
 	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes() {
+
+		JSONArray solrFields = getSolrFields();
+
+		String config = getConfiguration();
 		try {
-			JSONArray solrFields = getSolrFields();
-
-			String config = getConfiguration();
-			try {
-				JSONObject jsonConfig = new JSONObject(config);
-				jsonConfig.put("solrFields", solrFields.toString());
-				setConfiguration(jsonConfig.toString());
-			} catch (JSONException e) {
-				throw new ConfigurationException("Unable to update Solr fields", e);
-			}
-			solrConfiguration.setSolrFields(solrFields.toString());
-
-			Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
-			return getJsonPathAttributes(solrFieldTypes);
-
-		} catch (Exception e) {
-			logger.error("Unable to get JsonPathAttributes", e);
-			throw new ConfigurationException("Unable to get JsonPathAttributes", e);
+			JSONObject jsonConfig = new JSONObject(config);
+			jsonConfig.put("solrFields", solrFields.toString());
+			setConfiguration(jsonConfig.toString());
+		} catch (JSONException e) {
+			throw new ConfigurationException("Unable to update Solr fields", e);
 		}
+		solrConfiguration.setSolrFields(solrFields.toString());
+
+		Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
+		return getJsonPathAttributes(solrFieldTypes);
 
 	}
 
@@ -183,26 +166,30 @@ public class SolrDataSet extends RESTDataSet {
 		return jsonPathAttributes;
 	}
 
-	public JSONArray getSolrFields() throws JSONException, HttpException, HMACSecurityException, IOException {
+	public JSONArray getSolrFields() {
 		RESTDataProxy dataProxy = getDataProxy();
 		JSONArray solrFields = new JSONArray();
 		String configurationSolrFields = null;
 
 		configurationSolrFields = solrConfiguration.getSolrFields();
-		if (configurationSolrFields != null) {
-			solrFields = new JSONArray(configurationSolrFields);
-		}
-		if (solrFields.length() == 0) {
-			RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
-					solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json", dataProxy.getRequestHeaders(), null, null);
-			logger.debug(response.getStatusCode());
-			Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
+		try {
+			if (configurationSolrFields != null) {
+				solrFields = new JSONArray(configurationSolrFields);
+			}
+			if (solrFields.length() == 0) {
+				RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
+						solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json", dataProxy.getRequestHeaders(), null, null);
+				logger.debug(response.getStatusCode());
+				Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
 
-			String responseBody = response.getResponseBody();
-			logger.debug(responseBody);
-			Assert.assertNotNull(responseBody, "Response body is null");
+				String responseBody = response.getResponseBody();
+				logger.debug(responseBody);
+				Assert.assertNotNull(responseBody, "Response body is null");
 
-			solrFields = new JSONObject(responseBody).getJSONArray("fields");
+				solrFields = new JSONObject(responseBody).getJSONArray("fields");
+			}
+		} catch (Exception e) {
+			logger.error("Unable to read Solr fields", e);
 		}
 
 		return solrFields;
