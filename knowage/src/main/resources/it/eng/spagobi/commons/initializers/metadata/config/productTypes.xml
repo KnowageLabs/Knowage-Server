@@ -11,7 +11,6 @@
 		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowagedataminingengine" />
 		<ENGINE label="knowagetalendengine" />
-		<ENGINE label="knowagenetworkengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
 		<ENGINE label="knowageofficeengine" />	

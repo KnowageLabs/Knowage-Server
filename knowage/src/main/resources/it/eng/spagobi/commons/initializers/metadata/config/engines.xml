@@ -65,11 +65,6 @@
 		mainUrl="/knowagecockpitengine/api/1.0/chart/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="true"
 		useDataSource="false" encrypt="0" />
-	<ENGINE label="knowagenetworkengine" name="Network Analysis Engine"
-		descr="Network Analysis Engine" mainUrl="/knowagenetworkengine/servlet/AdapterHTTP"
-		driverNm="it.eng.spagobi.engines.drivers.network.NetworkDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="NETWORK" useDataSet="true"
-		useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagecockpitengine" name="Cockpit Engine" descr="Cockpit Engine"
 		mainUrl="/knowagecockpitengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.cockpit.CockpitDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DOCUMENT_COMPOSITE"

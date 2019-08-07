@@ -22,9 +22,6 @@
 	<EXPORTER domain="CSV" engine="knowageqbeengine" defaultValue="false" />
 	<EXPORTER domain="JPG" engine="knowagechartengine" defaultValue="true" />
 	<EXPORTER domain="PDF" engine="knowagechartengine" defaultValue="false" />		
-	<EXPORTER domain="PNG" engine="knowagenetworkengine" defaultValue="true" />
-	<EXPORTER domain="PDF" engine="knowagenetworkengine" defaultValue="false" />
-	<EXPORTER domain="GRAPHML" engine="knowagenetworkengine" defaultValue="false" />
 	<EXPORTER domain="XLS" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="XLSX" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagecockpitengine" defaultValue="true" />
