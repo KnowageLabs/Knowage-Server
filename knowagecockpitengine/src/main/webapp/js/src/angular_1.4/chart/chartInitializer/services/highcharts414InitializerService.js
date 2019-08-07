@@ -577,7 +577,6 @@ angular.module('chartInitializer')
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
-		chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
 
         //  chart.redraw();
 		var xAxisTitle={
@@ -604,6 +603,10 @@ angular.module('chartInitializer')
 	        	   delete chart.drilledSerie
 	           }
 	           chart.redraw()
+			if(chart.drillUpButton) {
+	        	   chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
+	        	   chart.drillUpButton.fill = "white"
+	           }
 	        }, 0);
 		}
 
@@ -611,8 +614,7 @@ angular.module('chartInitializer')
     	   chart.yAxis[0].setTitle(yAxisTitle);
        }
 
-    	// TODO: commented by: danristo (EXT -> ANGULAR)
-		//Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
+    	    chart.drillUpButton.textSetter("← Back to: <b>"+backText+"</b>");
        highchartsDrilldownHelper.drillup(chart.breadcrumb);
 
 	}
