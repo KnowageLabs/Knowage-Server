@@ -530,6 +530,7 @@ angular.module('chartInitializer')
 							}
 							chart.firstXaxisTitle;
 							if(chart.options.drilledCategories.length==0){
+								chart.firstXaxisTitle = chart.xAxis[0].options.title.text;
 								if(series.firstLevelCategory){
 									chart.options.drilledCategories.push(series.firstLevelCategory);
 						        } else {
