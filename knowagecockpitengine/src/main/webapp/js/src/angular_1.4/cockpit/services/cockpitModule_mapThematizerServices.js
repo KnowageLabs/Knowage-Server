@@ -18,6 +18,11 @@
 
 
 		var styleCache = {};
+
+		mts.getStyleCache = function() {
+			return angular.copy(styleCache);
+		}
+
 	    mts.layerStyle = function(feature, resolution){
 	    	var featureType = feature.getGeometry().getType();
 
@@ -272,7 +277,7 @@
 				    crossOrigin: 'anonymous',
 				    color: color,
 				    opacity: alpha,
-				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.png'
+				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.svg'
 					}))
 		          });
 				break;

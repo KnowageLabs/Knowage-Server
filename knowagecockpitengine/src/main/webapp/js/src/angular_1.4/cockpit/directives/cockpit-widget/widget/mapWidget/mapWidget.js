@@ -245,7 +245,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
 
 		$scope.toggleSidenav = function(){
-			$mdSidenav("optionSidenav").toggle();
+			var optionSidenav = $mdSidenav("optionSidenav");
+			optionSidenav.toggle();
+			$scope.sideNavOpened = optionSidenav.isOpen();
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
@@ -460,6 +462,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 			$scope.values[layerDef.name] = data; //add values to internal object
 			cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
+
 	    }
 
 
@@ -853,6 +856,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }
+
+		$scope.getLayerDefByName = function(n) {
+			var allLayersDef = $scope.ngModel.content.layers;
+			var ret = undefined;
+			for (l in allLayersDef) {
+				var currLayerDef = allLayersDef[l];
+				if (currLayerDef.name == n) {
+					ret = currLayerDef;
+					break;
+				}
+			}
+			return ret;
+		}
+
+		$scope.getLayerMarkerConf = function(n){
+			var l = $scope.getLayerDefByName(n);
+			if (!l || !l.markerConf) return;
+			return l.markerConf;
+		}
+
+		$scope.hasLayerMarkerConf = function(n){
+			return $scope.getLayerMarkerConf(n) != undefined;
+		}
+
+		$scope.getLayerIconClassName = function(n) {
+			var layerDef = $scope.getLayerMarkerConf(n);
+			return (layerDef.icon && layerDef.icon.className) || "";
+		}
+
+		$scope.getLayerMarkerColor = function(n) {
+			var layerDef = $scope.getLayerMarkerConf(n);
+			return (layerDef.style && layerDef.style.color) || "";
+		}
+
+		$scope.getLayerMarkerImgSrc = function(n) {
+			var layerDef = $scope.getLayerMarkerConf(n);
+			return layerDef.url || "";
+		}
+
+		$scope.getLayerDefaultMarkerImgSrc = function(n) {
+			var layerID = $scope.ngModel.id + "|" + n;
+			var style = cockpitModule_mapThematizerServices.getStyleCache()[layerID];
+			return (style && style.getImage().iconImage_.src_) || "";
+		}
+
+		$scope.getLayerDefaultMarkerColor = function(n) {
+			var layerID = $scope.ngModel.id + "|" + n;
+			var style = cockpitModule_mapThematizerServices.getStyleCache()[layerID];
+			var colorArray = (style && style.getImage().color_) || [0,0,0,0];
+			return "rgba(" + colorArray[0] + ", " + colorArray[1] + ", " + colorArray[2] + ", " + colorArray[3] + ")";
+		}
 
 	    //functions calls
 		$scope.getLayers();
