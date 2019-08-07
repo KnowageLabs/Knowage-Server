@@ -78,7 +78,9 @@
 		//if(!$scope.i18n.isLoaded()){
 		//	$scope.i18n.loadI18nMap();
 		//}
-
+		$scope.getSelectedDocumentDate =function(string){
+			return moment(string).locale(sbiModule_config.curr_language).format('LLL');
+		}
 
 		$scope.loadAllMyAnalysisDocuments = function() {
 

@@ -40,12 +40,12 @@
 		}
 	};
 
-	function knTableController($scope){
+	function knTableController($scope,sbiModule_config){
 		$scope.sortingColumn = $scope.columns[0].name;
 		$scope.sortingDirection = false;
 		
 		$scope.setDate = function(string){
-			return new Date(string);
+			return moment(string).locale(sbiModule_config.curr_language).format('LLL');
 		}
 		$scope.setColumnSorting = function(column){
 			$scope.sortingDirection = column.name == $scope.sortingColumn ? !$scope.sortingDirection : false;

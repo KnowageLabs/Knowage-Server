@@ -12,7 +12,7 @@
             <tr ng-repeat-start="row in model | filter:searchModel | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" ng-class="{'selected':selectedItem == row}">
                 <td ng-repeat="column in columns">
                     <span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
-                    <span ng-if="column.type=='date'">{{setDate(row[column.name]) | date:'medium' }}</span>
+                    <span ng-if="column.type=='date'">{{setDate(row[column.name])}}</span>
                     <md-input-container ng-if="column.type=='input'">
                         <input type="text" ng-model="row[column.name]" ng-if="!column.input.type || column.input.type == 'text'" />
                         <md-select ng-if="column.input.type=='select'" ng-model="row[column.name]">
