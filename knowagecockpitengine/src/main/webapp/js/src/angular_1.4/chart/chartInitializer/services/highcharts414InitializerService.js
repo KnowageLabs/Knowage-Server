@@ -528,25 +528,26 @@ angular.module('chartInitializer')
 									min: result.min,
 								});
 							}
-
+							chart.firstXaxisTitle;
 							if(chart.options.drilledCategories.length==0){
-								 if(series.firstLevelCategory){
-									 chart.options.drilledCategories.push(series.firstLevelCategory);
+								if(series.firstLevelCategory){
+									chart.options.drilledCategories.push(series.firstLevelCategory);
 						        } else {
 						          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
 						        }
-							}
-							chart.options.drilledCategories.push(series.category);
+						}
+						chart.options.drilledCategories.push(series.category);
 
-							var xAxisTitle={
-								text:series.category
-						    };
+						var xAxisTitle={
+							text:""
+						};
+						if(chart.xAxis[0].options.title.text!=""){
+							xAxisTitle.text = series.category;
+						}
 						    var yAxisTitle={
 						    		text:series.serieName
 						    };
-						    if(chart.xAxis[0].userOptions.title.customTitle==false){
-						    	chart.xAxis[0].setTitle(xAxisTitle);
-						    }
+						   chart.xAxis[0].setTitle(xAxisTitle);
 						    if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 						    	chart.yAxis[0].setTitle(yAxisTitle);
 						    }
@@ -579,13 +580,18 @@ angular.module('chartInitializer')
 
         //  chart.redraw();
 		var xAxisTitle={
-            	text:axisTitle
+            	text:""
 		};
-		if(chart.xAxis[0].userOptions.title.customTitle==false){
-        	chart.xAxis[0].setTitle(xAxisTitle);
+		if(chart.xAxis[0].options.title.text!=""){
+			 xAxisTitle.text = axisTitle;
 		}
+		if(chart.firstXaxisTitle && chart.options.drilledCategories.length==1){
+			xAxisTitle.text = chart.firstXaxisTitle
+		}
+		
+		chart.xAxis[0].setTitle(xAxisTitle);
 		var yAxisTitle={
-				text: ' '
+				text:""
 		};
 		if(chart.userOptions.chart.type!="pie"  && !chart.userOptions.plotOptions.column.stacking){
 			setTimeout(function () {
