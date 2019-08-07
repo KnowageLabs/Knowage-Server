@@ -109,7 +109,6 @@
 		<module>../knowagedataminingengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
-		<module>../knowagenetworkengine</module>
 		<module>../knowageqbeengine</module>
 		<module>../knowagesvgviewerengine</module>
 		<module>../knowagetalendenginclientapi</module>
