@@ -303,6 +303,17 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
+	
+	$scope.hasButtons = function(){
+		var childs = document.querySelector("#w"+$scope.ngModel.id+" #viewModeMenu").childNodes;
+		for(var i in childs){
+			if(childs[i].nodeName && childs[i].nodeName != '#text' && childs[i].nodeName != '#comment'){
+				return true;
+				break;
+			}
+		}
+		return false;
+	}
 
 	if($scope.ngModel.style && $scope.ngModel.style.title && $scope.ngModel.style.title.label){
 		$scope.ngModel.content.name = $scope.ngModel.style.title.label;

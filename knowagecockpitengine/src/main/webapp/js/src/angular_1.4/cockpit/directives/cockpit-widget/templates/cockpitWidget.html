@@ -115,9 +115,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</div>
 	
-	<div id="viewModeMenu" layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE && ngModel.type!='selector' && ngModel.type!='selection' ) || widExp" layout-align="end center">
-			
-			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
+	<div id="viewModeMenu" layout="column" class="viewModeMenu" ng-show="hasButtons()" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE && ngModel.type!='selector' && ngModel.type!='selection') || widExp" layout-align="end center">
+			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch" ng-click="resetSearch();$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
 				<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
 				<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
@@ -139,12 +138,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-eraser"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button " ng-if="ngModel.type == 'table' && !cockpitModule_properties.EDIT_MODE && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
+			<md-button class="md-icon-button " ng-if="ngModel.type == 'table' && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-search"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="ngModel.type == 'chart' && !cockpitModule_properties.EDIT_MODE">
+			<md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="ngModel.type == 'chart'">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 			</md-button>
