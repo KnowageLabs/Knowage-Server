@@ -18,11 +18,6 @@
 
 
 		var styleCache = {};
-
-		mts.getStyleCache = function() {
-			return angular.copy(styleCache);
-		}
-
 	    mts.layerStyle = function(feature, resolution){
 	    	var featureType = feature.getGeometry().getType();
 

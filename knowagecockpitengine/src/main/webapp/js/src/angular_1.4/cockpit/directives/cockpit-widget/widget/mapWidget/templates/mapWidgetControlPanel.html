@@ -7,16 +7,19 @@
     </md-toolbar>
 
 	<div ng-repeat="layer in ngModel.content.layers">
+<!-- 		<div style="font-size: 6px;"> -->
+<!-- 			{{ layer }} -->
+<!-- 		</div> -->
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
 				<md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
 				<span flex class="truncated"><md-tooltip md-delay="500">{{layer.alias}}</md-tooltip>{{layer.alias}}</span>
-				<md-icon ng-if="layer.markerConf.type == 'icon'"    md-font-icon="{{ getLayerIconClassName(layer.name) }}" style="color: {{ getLayerMarkerColor(layer.name) }}"></md-icon>
-				<div ng-if="layer.markerConf.type == 'url'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
-					<img src="{{ getLayerMarkerImgSrc(layer.name) }}" style="max-width: 50%;max-height: 50%;"></img>
+				<md-icon ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'icon'" md-font-icon="{{ layer.markerConf.icon.className }}" style="color: {{ layer.markerConf.style.color }}"></md-icon>
+				<div ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'url'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
+					<img src="{{ layer.markerConf.url }}" style="max-width: 50%;max-height: 50%;"></img>
 				</div>
-				<div ng-if="layer.markerConf.type == 'default'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
+				<div ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'default'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						version="1.1"
@@ -25,10 +28,23 @@
 						height="12">
 						<circle
 							r="5.1254177"
-							style="opacity:1;fill:{{ getLayerDefaultMarkerColor(layer.name) }};fill-opacity:1;stroke:#000000;stroke-width:1.74916482;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+							style="opacity:1;fill:{{ layer.markerConf.style.color }};fill-opacity:1;stroke:#000000;stroke-width:1.74916482;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
 							id="path826"
 							cx="5.9999995"
 							cy="6" />
+					</svg>
+				</div>
+				<div ng-if="layer.visualizationType == 'choropleth'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
+					<svg xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="12"
+						height="12">
+						<defs>
+							<linearGradient id="default_gradient">
+							<stop style="stop-color:{{ layer.analysisConf.fromColor }};stop-opacity:1" offset="0" />
+							<stop style="stop-color:{{ layer.analysisConf.toColor   }};stop-opacity:1" offset="1" />
+							</linearGradient>
+						</defs>
+						<rect style="opacity:1;fill:url(#default_gradient);fill-opacity:1.0;" width="12" height="12" x="0" y="0" />
 					</svg>
 				</div>
 				<md-icon md-font-icon="fa fa-chevron-down" ng-if="!layer.expandedNav"></md-icon>
