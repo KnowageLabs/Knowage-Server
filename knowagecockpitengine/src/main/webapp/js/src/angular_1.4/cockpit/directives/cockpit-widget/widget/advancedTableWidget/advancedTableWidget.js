@@ -75,7 +75,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType,
 								"headerTooltip": $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
-						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
+						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) {
+							tempCol.tooltipValueGetter = TooltipValue;
+						}
 						if(crossEnabled && $scope.ngModel.cross.cross.crossType == 'singleColumn' && $scope.ngModel.cross.cross.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow) {
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
@@ -255,6 +257,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		SummaryRowRenderer.prototype.getGui = function() {
 		    return this.eGui;
 		};
+		
+		function TooltipValue(params) {
+			if(params.colDef.style && params.colDef.style.tooltip) {
+				var tempValue = params.valueFormatted || params.value;
+				if(typeof params.colDef.style.tooltip.precision != 'undefined'){
+					tempValue = $filter('number')(params.value, params.colDef.style.tooltip.precision);
+				}
+				return (params.colDef.style.tooltip.prefix || '') + tempValue + (params.colDef.style.tooltip.suffix || '');
+			}
+			return params.valueFormatted || params.value;
+		}
 		
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');

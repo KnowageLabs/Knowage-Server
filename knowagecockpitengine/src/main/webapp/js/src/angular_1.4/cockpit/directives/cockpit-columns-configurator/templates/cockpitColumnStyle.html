@@ -37,9 +37,9 @@
 						<!--  md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 							{{::translate.load('sbi.cockpit.table.hide')}}
 						</md-switch-->
-						<md-switch ng-model="selectedColumn.hideTooltip" aria-label="Hide tooltip" flex>
+						<!-- md-switch ng-model="selectedColumn.hideTooltip" aria-label="Hide tooltip" flex>
 							{{::translate.load('sbi.cockpit.table.hidetooltip')}}
-						</md-switch>
+						</md-switch-->
 					 </div>
 			       
 			       <div ng-if="selectedColumn.fieldType=='MEASURE'">
@@ -246,6 +246,31 @@
 	
 							</md-card-content>
 						</md-card>
+						
+						<md-card>
+							<md-toolbar class="ternaryToolbar" >
+								<div class="md-toolbar-tools" layout="row">
+									<md-switch ng-model="selectedColumn.hideTooltip">{{::translate.load('sbi.cockpit.table.hidetooltip')}}</md-switch>
+								</div>
+							</md-toolbar>
+							<md-card-content layout="column">
+								<div layout="row" layout-align="start center">
+									<md-input-container flex class="md-block" class="small counter">
+										<label> {{::translate.load('sbi.cockpit.style.prefix')}}</label>
+										<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.tooltip.prefix"> 
+									</md-input-container>
+									<md-input-container flex class="md-block" class="small counter">
+										<label>{{::translate.load('sbi.cockpit.style.suffix')}}</label>
+										<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.tooltip.suffix"> 
+									</md-input-container>
+									<md-input-container flex class="md-block" class="small counter" ng-if="hasPrecision(selectedColumn)">
+										<label>{{::translate.load('sbi.cockpit.style.precision')}}</label>
+										<input class="input_class" type="number" ng-model="selectedColumn.style.tooltip.precision" min="0"> 
+									</md-input-container>
+								</div>
+							</md-card-content>
+						</md-card>
+						
 			      </div>
 	    		</div>
 	    		<ng-include src="getTemplateUrl('tableWidgetAddIconDialog')" flex="20" ng-if="tempVar"></ng-include>
