@@ -74,8 +74,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
-					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].alias === fields[f].header){
-						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name};
+					var tempName = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
+					if(typeof fields[f] == 'object' && tempName === fields[f].header){
+						var tempCol = {"headerName":tempName,"field":fields[f].name};
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) tempCol.tooltipField = fields[f].name;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
