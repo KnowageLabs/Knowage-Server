@@ -169,8 +169,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 				if (summaryRow != null && !summaryRow.isEmpty()) {
 					JSONObject summaryRowObject = new JSONObject(summaryRow);
-					JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(measuresObject);
-					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+					JSONArray summaryArray = summaryRowObject.getJSONArray("measures");
+					JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(summaryArray);
+					summaryRowProjections.addAll(getProjectionsSummary(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 				}
 			}
 
@@ -271,6 +272,26 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projections;
 	}
 
+	protected List<Projection> getProjectionsSummary(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+			throws JSONException {
+		ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
+
+		for (int i = 0; i < categories.length(); i++) {
+			JSONObject category = categories.getJSONObject(i);
+			addProjection(dataSet, projections, category, columnAliasToName);
+
+		}
+
+		for (int i = 0; i < measures.length(); i++) {
+			JSONObject measure = measures.getJSONObject(i);
+			addProjection(dataSet, projections, measure, columnAliasToName);
+
+
+		}
+
+		return projections;
+	}
+
 	private Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
 			throws JSONException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
@@ -284,6 +305,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
+		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag")) function =  AggregationFunctions.get("NONE");
 		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
 		return projection;
 	}
@@ -309,7 +331,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				"Column alias [" + columnAlias + "] not found in dataset metadata");
 		return columnAlias;
 	}
-
+	private Projection getProjectionWithFunctSummary(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName,String oldColumnName, String functName)
+			throws JSONException {
+		String columnName = getColumnName(jsonObject, columnAliasToName);
+		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
+		IAggregationFunction function = AggregationFunctions.get(functName);
+		Projection projection = new Projection(function, dataSet, oldColumnName, columnAlias);
+		projection.setName(columnName);
+		return projection;
+	}
 	protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> groups = new ArrayList<Projection>(0);

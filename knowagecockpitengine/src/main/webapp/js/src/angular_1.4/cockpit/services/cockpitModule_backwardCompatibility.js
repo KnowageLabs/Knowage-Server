@@ -74,7 +74,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			
+			if(!self.compareVersion("6.4.3",model.knowageVersion)){
+				if(model.type=='table'|| model.type=='advanced-table'){
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(k in model.content.columnSelectedOfDataset){
+							if (model.content.columnSelectedOfDataset[k].isCalculated) model.content.columnSelectedOfDataset[k].datasetOrTableFlag = true;							
+						}
+					}
+				}
+			}
 			model.knowageVersion = currentVersion;
 			return model;
 		}

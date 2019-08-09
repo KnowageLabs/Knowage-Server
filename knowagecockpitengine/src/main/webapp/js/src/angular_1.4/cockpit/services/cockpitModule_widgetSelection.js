@@ -44,7 +44,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var col = columns[i];
 				var obj = {};
 				obj["id"] = col.alias;
-				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
+				obj["alias"] = ((ngModel.type == "table" || ngModel.type == "advanced-table") ? col.aliasToShow : col.alias);
 
 				if(col.isCalculated == true){
 					obj["columnName"] = col.formula;
@@ -120,6 +120,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}else if (col.fieldType=="MEASURE"){
 					//it is measure
 					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
+					if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag;
 					obj["orderColumn"] = col.name;
 					measures.push(obj);
 				}

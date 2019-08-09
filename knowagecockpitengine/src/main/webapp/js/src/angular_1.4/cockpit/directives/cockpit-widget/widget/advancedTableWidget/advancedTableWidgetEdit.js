@@ -49,7 +49,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
     		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
     		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
-    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}];
+    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 200,suppressSizeToFit:true, tooltip: false}];
 	
 	$scope.columnsGrid = {
 			angularCompileRows: true,
@@ -96,7 +96,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	
 	function aggregationRenderer(params) {
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
-		return params.data.fieldType == "MEASURE" ? aggregation : '';
+		return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
 	}
 	
 	function buttonRenderer(params){
@@ -198,6 +198,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 			$scope.model.dataset= {};
 			angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 		}
+		
 		$scope.saveColumnConfiguration=function(){
 			model = $scope.model;
 
@@ -222,6 +223,51 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		}
 	}
 	
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+				.content(text)
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(3000)
+				.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	}
+	$scope.checkAggregation = function(){
+		var measures =0;
+		var noneAggr =0;
+		for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
+			var column = $scope.newModel.content.columnSelectedOfDataset[i];
+			if(column.fieldType == 'MEASURE'){
+				measures++;
+				if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
+					noneAggr++;
+				}
+			}
+		}
+		if(noneAggr!=0){
+			if(noneAggr != measures){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	$scope.checkAliases = function(){
+		var columns = $scope.newModel.content.columnSelectedOfDataset;
+		for(var i = 0; i < columns.length - 1; i++){
+			for(var j = i + 1; j < columns.length; j++){
+				if(columns[i].aliasToShow == columns[j].aliasToShow){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	$scope.deleteColumn = function(rowName,event) {
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
 			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
@@ -241,6 +287,22 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	})
 	
 	$scope.saveConfiguration=function(){
+		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined ){
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
+			return;
+		}
+		if($scope.newModel.content.columnSelectedOfDataset == undefined || $scope.newModel.content.columnSelectedOfDataset.length==0){
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
+			return;
+		}
+		if(!$scope.checkAggregation()){
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
+			return;
+		}
+		if(!$scope.checkAliases()){
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+			return;
+		}
 		 mdPanelRef.close();
 		 angular.copy($scope.newModel,model);
 		 $scope.$destroy();

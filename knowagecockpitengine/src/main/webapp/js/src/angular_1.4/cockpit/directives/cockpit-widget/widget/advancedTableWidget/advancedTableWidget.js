@@ -171,7 +171,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || "";;
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || "";
 		    if(cellRenderer(params)){
-		    	this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
+		    	if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
+		    	else this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
 		    }
 		};
 

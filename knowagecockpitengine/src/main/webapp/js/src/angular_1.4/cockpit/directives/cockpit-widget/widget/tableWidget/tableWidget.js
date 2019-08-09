@@ -863,7 +863,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var column = $scope.model.content.columnSelectedOfDataset[i];
 				if(column.fieldType == 'MEASURE'){
 					measures++;
-					if(column.aggregationSelected == 'NONE'){
+					if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
 						noneAggr++;
 					}
 				}

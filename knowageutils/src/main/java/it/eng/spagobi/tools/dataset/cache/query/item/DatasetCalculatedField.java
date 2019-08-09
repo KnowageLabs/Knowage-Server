@@ -6,7 +6,8 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 
-public class Projection extends AbstractSelectionField {
+public class DatasetCalculatedField extends AbstractCalculatedField {
+
 	private IAggregationFunction aggregationFunction;
 	private IDataSet dataSet;
 	private String name;
@@ -14,15 +15,15 @@ public class Projection extends AbstractSelectionField {
 	@SuppressWarnings("rawtypes")
 	private Class type;
 
-	public Projection(IDataSet dataSet, String columnName) {
+	public DatasetCalculatedField(IDataSet dataSet, String columnName) {
 		this(null, dataSet, columnName, null);
 	}
 
-	public Projection(IDataSet dataSet, String columnName, String alias) {
+	public DatasetCalculatedField(IDataSet dataSet, String columnName, String alias) {
 		this(null, dataSet, columnName, alias);
 	}
 
-	public Projection(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName) {
+	public DatasetCalculatedField(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName) {
 		this(aggregationFunction, dataSet, columnName, null);
 	}
 
@@ -34,7 +35,7 @@ public class Projection extends AbstractSelectionField {
 		this.alias = alias;
 	}
 
-	public Projection(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName, String alias) {
+	public DatasetCalculatedField(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName, String alias) {
 		this.aggregationFunction = aggregationFunction;
 
 		this.dataSet = dataSet;
