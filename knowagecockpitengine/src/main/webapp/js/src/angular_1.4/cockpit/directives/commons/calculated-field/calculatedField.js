@@ -30,6 +30,7 @@ angular.module('cockpitModule').directive('calculatedField',function(){
 });
 
 function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
+
 	$scope.translate = sbiModule_translate;
 	if($scope.selectedItem){$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]}
 	$scope.addNewCalculatedField = function(){
@@ -43,16 +44,22 @@ function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockp
 			escapeToClose :true,
 			preserveScope: true,
 			autoWrap:false,
-			locals: {promise: deferred,model:$scope.ngModel, actualItem : $scope.currentRow},
+            locals: {
+                promise: deferred,
+                model:$scope.ngModel, 
+                actualItem : $scope.currentRow
+                },
 			//fullscreen: true,
 			controller: calculatedFieldDialogController
 		}).then(function() {
 			deferred.promise.then(function(result){
 				if($scope.currentRow != undefined){
 					$scope.currentRow.aliasToShow = result.alias;
-					$scope.currentRow.formula = result.formula;
-					$scope.currentRow.formulaArray = result.formulaArray;
-					$scope.currentRow.alias = result.alias;
+                    $scope.currentRow.formula = result.formula;
+                    $scope.currentRow.formulaArray = result.formulaArray;
+                    $scope.currentRow.aggregationSelected = result.aggregationSelected;
+                    $scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
+                    $scope.currentRow.alias = result.alias;
 				}else{
 					$scope.ngModel.content.columnSelectedOfDataset.push(result);
 
@@ -78,8 +85,23 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 
 	$scope.column = {};
 	$scope.measuresList = [];
+    $scope.datasetColumnsList = [];
 	$scope.operators = ['+','-','*','/'];
 	$scope.brackets = ['(',')'];
+
+    for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
+        var obj = $scope.localDataset.metadata.fieldsMeta[i];
+        if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+            $scope.datasetColumnsList.push(obj);
+        }
+    }
+    
+    for(var i in $scope.model.content.columnSelectedOfDataset){
+        var obj = $scope.model.content.columnSelectedOfDataset[i];
+        if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+            $scope.measuresList.push(obj);
+        }
+    }
 
 
 	$scope.checkInput=function(event){
@@ -124,14 +146,6 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 			event.preventDefault();
 		}
 	}
-
-	for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
-		var obj = $scope.localDataset.metadata.fieldsMeta[i];
-		if(obj.fieldType == 'MEASURE'){
-			$scope.measuresList.push(obj);
-		}
-	}
-
 
 	$scope.reloadValue = function(){
 		$scope.formulaElement = angular.copy(actualItem.formulaArray);

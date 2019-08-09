@@ -91,7 +91,8 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	
 	function aggregationRenderer(params) {
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
-		return params.data.fieldType == "MEASURE" ? aggregation : '';
+        return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
+
 	}
 	
 	function buttonRenderer(params){

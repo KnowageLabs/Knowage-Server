@@ -246,7 +246,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontSize = (params.style && params.style['font-size']) || (params.colDef.style && params.colDef.style['font-size']) || "";
 		    this.eGui.style.fontWeight = (params.style && params.style['font-weight']) || (params.colDef.style && params.colDef.style['font-weight']) || "";
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || (params.colDef.style && params.colDef.style['font-style']) || "";
-		    this.eGui.innerHTML = '';
+            if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
+            else this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
 		    if(params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
 		    if(params.valueFormatted || params.value){
 		    	if(((!params.style || !params.style['pinnedOnly']) && params.title)) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
