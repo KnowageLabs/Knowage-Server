@@ -240,7 +240,7 @@
 				$scope.tempAliasValue = row;
 			},			
 			canSee : function(row){
-				return angular.equals(row.fieldType, "MEASURE");
+				return (angular.equals(row.fieldType, "MEASURE") && !row.isCalculated);
 			},
 			typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
 			columnList : ($scope.local && $scope.local.metadata) ? $scope.local.metadata.fieldsMeta : [] ,
@@ -316,7 +316,7 @@
 				escapeToClose :true,
 				preserveScope: true,
 				autoWrap:false,
-				locals: {items: deferred,model:$scope.model, getMetadata : $scope.getMetadata, actualItem : currentRow},
+				locals: {promise: deferred,model:$scope.model, getMetadata : $scope.getMetadata, actualItem : currentRow},
 				fullscreen: true,
 				controller: controllerCockpitCalculatedFieldController
 			}).then(function(answer) {
@@ -325,6 +325,8 @@
 						currentRow.aliasToShow = result.alias;
 						currentRow.formula = result.formula;
 						currentRow.formulaArray = result.formulaArray;
+						currentRow.aggregationSelected = result.aggregationSelected;
+						currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
 						currentRow.alias = result.alias;
 					}else{
 						$scope.model.content.columnSelectedOfDataset.push(result);
@@ -359,7 +361,7 @@
 
 function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
-	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.model = model;
 	$scope.columnSelected = [];
 	$scope.localDataset = {};
@@ -379,8 +381,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 
 		for(var i=0;i<$scope.columnSelected.length;i++){
 			var obj = $scope.columnSelected[i];
-			obj.aggregationSelected = 'SUM';
-			obj["funcSummary"] = "SUM";
+			obj.aggregationSelected = 'NONE';
 			obj.typeSelected = $scope.columnSelected[i].type;
 			obj.label = $scope.columnSelected[i].alias;
 			obj.aliasToShow = $scope.columnSelected[i].alias;
@@ -552,12 +553,13 @@ function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items
 	}
 }
 
-function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$mdDialog,items,model,getMetadata,actualItem,cockpitModule_datasetServices,$mdToast){
+function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$mdDialog,promise,model,getMetadata,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	$scope.model = model;
 	$scope.localDataset = {};
 	$scope.formula = "";
 	$scope.formulaElement = [];
+	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 
 	if($scope.model.dataset.dsId != undefined){
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
@@ -565,9 +567,23 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 
 	$scope.column = {};
 	$scope.measuresList = [];
+	$scope.datasetColumnsList = [];
 	$scope.operators = ['+','-','*','/'];
 	$scope.brackets = ['(',')'];
 
+	for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
+		var obj = $scope.localDataset.metadata.fieldsMeta[i];
+		if(obj.fieldType == 'MEASURE'){
+			$scope.datasetColumnsList.push(obj);
+		}
+	}
+	
+	for(var i in $scope.model.content.columnSelectedOfDataset){
+		var obj = $scope.model.content.columnSelectedOfDataset[i];
+		if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+			$scope.measuresList.push(obj);
+		}
+	}
 
 	$scope.checkInput=function(event){
 		console.log(event);
@@ -614,19 +630,12 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 
 	}
 
-	//load all columns SELECTED of type measure
-
-	for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
-		var obj = $scope.localDataset.metadata.fieldsMeta[i];
-		if(obj.fieldType == 'MEASURE'){
-			$scope.measuresList.push(obj);
-		}
-	}
-
 
 	$scope.reloadValue = function(){
 		$scope.formulaElement = angular.copy(actualItem.formulaArray);
 		$scope.column.alias = angular.copy(actualItem.aliasToShow);
+		$scope.column.aggregationSelected = actualItem.aggregationSelected && angular.copy(actualItem.aggregationSelected);
+		$scope.column.datasetOrTableFlag = actualItem.datasetOrTableFlag ? angular.copy(actualItem.datasetOrTableFlag) : false;
 		$scope.redrawFormula();
 	}
 
@@ -638,6 +647,10 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 				return;
 			}
 		}
+		else{
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.errorformula0'));
+			return;
+		}
 		if(!$scope.checkBrackets()){
 			$scope.showAction($scope.translate.load('sbi.cockpit.table.errorformula5'));
 			return;
@@ -646,17 +659,24 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		$scope.result.alias = $scope.column.alias != undefined ? $scope.column.alias : "NewCalculatedField";
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
-		$scope.result.aggregationSelected = 'SUM';
-		$scope.result["funcSummary"] = "SUM";
+		$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
+		$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
 		$scope.result.isCalculated = true;
 		$scope.result.type = "java.lang.Integer";
-		items.resolve($scope.result);
+		promise.resolve($scope.result);
 		$mdDialog.hide();
 	}
+	
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
+	}
+	
+	$scope.resetFormula = function(){
+		$scope.formula = '';
+		$scope.formulaElement = [];
+		$scope.column.aggregationSelected = $scope.column.datasetOrTableFlag ? 'SUM' : 'NONE';
 	}
 
 	$scope.checkBrackets = function(){
@@ -723,7 +743,14 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		obj.type = 'measure';
 		obj.value = meas.alias;
 		$scope.formulaElement.push(obj);
-		$scope.formula = $scope.formula +' "'+meas.alias+'"';
+		if(!$scope.column.datasetOrTableFlag){
+			if ($scope.formula == "") {
+			$scope.formula = meas.aggregationSelected+'("'+meas.alias+'")';
+			}
+			else 	$scope.formula = $scope.formula +' '+meas.aggregationSelected+'("'+meas.alias+'")';
+			obj.aggregation = meas.aggregationSelected;
+		}
+		else $scope.formula = $scope.formula +' "'+meas.alias+'"';
 	}
 	$scope.deleteLast = function(){
 		if($scope.formulaElement.length>0){
@@ -731,6 +758,16 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 			$scope.redrawFormula();
 		}
 	}
+	
+	$scope.checkAggregation = function(obj){
+		for(var i in $scope.measuresList){
+			if($scope.measuresList[i].alias == obj.value) {
+				obj.aggregation = $scope.measuresList[i].aggregationSelected;
+				return $scope.measuresList[i].aggregationSelected;
+			}
+		}
+	}
+	
 	$scope.redrawFormula = function(){
 		$scope.formula = "";
 		for(var i=0;i<$scope.formulaElement.length;i++){
@@ -738,7 +775,13 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 			if(obj.type=="number"){
 				$scope.formula = $scope.formula +""+obj.value+"";
 			}else if(obj.type=="measure"){
-				$scope.formula = $scope.formula +'"'+obj.value+'"';
+				if(!$scope.column.datasetOrTableFlag && obj.aggregation) {				
+					if ($scope.formula == "") {
+					$scope.formula = $scope.checkAggregation(obj) +'("'+obj.value+'")';
+					}
+					else 	$scope.formula = $scope.formula +' '+ $scope.checkAggregation(obj) +'("'+obj.value+'")';
+				}
+				else $scope.formula = $scope.formula +'"'+obj.value+'"';
 			}else{
 				$scope.formula = $scope.formula +" "+obj.value+" ";
 			}
