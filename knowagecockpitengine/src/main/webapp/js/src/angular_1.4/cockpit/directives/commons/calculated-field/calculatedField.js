@@ -151,6 +151,8 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	$scope.reloadValue = function(){
 		$scope.formulaElement = angular.copy(actualItem.formulaArray);
 		$scope.column.alias = angular.copy(actualItem.aliasToShow);
+		$scope.column.aggregationSelected = actualItem.aggregationSelected && angular.copy(actualItem.aggregationSelected);
+		$scope.column.datasetOrTableFlag = actualItem.datasetOrTableFlag ? angular.copy(actualItem.datasetOrTableFlag) : false;
 		$scope.redrawFormula();
 	}
 	
@@ -171,16 +173,21 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 				return;
 			}
 		}
+		else{
+			$scope.showAction($scope.translate.load('sbi.cockpit.table.errorformula0'));
+			return;
+		}
 		if(!$scope.checkBrackets()){
 			$scope.showAction($scope.translate.load('sbi.cockpit.table.errorformula5'));
 			return;
-		}
+		}	
+		
 		$scope.result = {};
 		$scope.result.alias = $scope.column.alias != undefined ? $scope.column.alias : "NewCalculatedField";
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
-		$scope.result.aggregationSelected = 'SUM';
-		$scope.result["funcSummary"] = "SUM";
+		$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
+		$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
 		$scope.result.isCalculated = true;

@@ -1017,7 +1017,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					obj["id"] = col.name || col.alias;
 					obj["alias"] = col.aliasToShow || col.alias;
 					obj["funct"] = col.aggregationSelected;
-					if(ngModel.type == "table" || ngModel.type == "advanced-table"){
+					if(ngModel.type == "table"){
 						if(col.isCalculated) obj["columnName"] = col.formula;
 						else obj["columnName"] = col.name;
 					}else obj["columnName"] = col.alias;
