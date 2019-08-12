@@ -31,6 +31,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -141,9 +142,13 @@ public class LayerCRUD {
 		return prop.toString();
 	}
 
+	/**
+	 * @deprecated Replaced by {@link #getDownload(int, String)}; this method contains a wrong management of parameters.
+	 */
 	@GET
 	@Path("/getDownload")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Deprecated
 	public String getDownload(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
@@ -167,6 +172,17 @@ public class LayerCRUD {
 		}
 
 		logger.debug("Deleting the layer");
+		return getData(layerId, typeWFS);
+	}
+
+	@GET
+	@Path("/{layerId}/download/{typeWFS}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS) throws JSONException {
+		return getData(layerId, typeWFS);
+	}
+
+	private String getData(int layerId, String typeWFS) {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		JSONObject content = dao.getContentforDownload(layerId, typeWFS);
 		return "" + content + "";

@@ -8,13 +8,32 @@
 	    </md-toolbar>
 	    <md-content flex layout="column">
 			<md-tabs flex md-border-bottom>
-		      
+
 				<md-tab label="Layers">
-					<md-content class="noPadding" layout="row" layout-fill>
+					<md-content class="noPadding" layout="column">
+						
 						<ng-include src="getTemplateUrl('mapWidgetLayers')" flex></ng-include>
-				    </md-content>
-		        </md-tab>
-		        
+						
+						<md-card class="cockpit-map-widget-edit">
+							<md-toolbar class="secondaryToolbar"> 
+								<div class="md-toolbar-tools">
+									<h2>Background layers</h2>
+									<span flex></span>
+								</div>
+							</md-toolbar>
+							<md-card-content>
+								<md-input-container>
+									<label>Layer</label>
+									<md-select ng-model="newModel.content.backgroundLayerId">
+										<md-option value=""></md-option>
+										<md-option ng-repeat="layer in availableBackgroundLayers  | orderBy:'value' " ng-value="layer.key">{{ layer.value }}</md-option>
+									</md-select>
+								</md-input-container>
+							</md-card-content>
+						</md-card>
+					</md-content>
+				</md-tab>
+
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	<cockpit-style-configurator widget ng-model="newModel.style">
 		        		<cockpit-style-custom-widget-configurator label="'Padding'">

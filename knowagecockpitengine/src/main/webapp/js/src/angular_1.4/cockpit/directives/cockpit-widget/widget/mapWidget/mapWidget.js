@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_translate,
 			sbiModule_messaging,
 			sbiModule_restServices,
+			sbiModule_config,
 			cockpitModule_mapServices,
 			cockpitModule_mapThematizerServices,
 			cockpitModule_datasetServices,
@@ -231,6 +232,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
 
+			// get background layer
+			$scope.manageBackgroundLayer();
+
 	    	$scope.getLayers();
 
 	    	if (isNew) $scope.createMap();
@@ -280,7 +284,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			tmpLayer.isCluster = false;
     			tmpLayer.isHeatmap = false;
     		}
-    		$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
+			$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
 
 	    }
 
@@ -426,7 +430,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//add decoration to layer element
 			layer.name = layerDef.name;
 			layer.dsId = layerDef.dsId;
-			layer.setZIndex(layerDef.order*1000);
+			layer.setZIndex(
+					/* a little offset to get space for background */
+					10 + /* then */ layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
@@ -626,6 +632,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 	    		function(allDatasetRecords){
+
 	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
 	    			$scope.hideWidgetSpinner();
 			},function(error){
@@ -638,15 +645,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
     	}
 
-	    $scope.createMap = function (){
-	    	$scope.initializeTemplate().then(function(){
-	    		//create the base layer
-	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
+		$scope.createMap = function (){
+			$scope.initializeTemplate().then(function(){
 
-	            if (!$scope.popupContainer){
-	            	$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
-	            	$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
-	            }
+				//create the base layer
+				$scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
+
+				if (!$scope.popupContainer){
+					$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
+					$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
+				}
 
 	            //create overlayers (popup..)
 	            var overlay = new ol.Overlay({
@@ -674,6 +682,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    		});
 	    		console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
+
+				// get background layer
+				$scope.manageBackgroundLayer();
 
 	    		//just for refresh
 	    		if (!$scope.map.getSize()){
@@ -856,6 +867,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }
+
+		var BACKGROUND_LAYER_NAME = "backgroundLayer";
+
+		function getBackgroundLayer() {
+			var ret = undefined;
+			$scope.map.getLayers().forEach(function(el) {
+					if (el.get("name") === BACKGROUND_LAYER_NAME) {
+						ret = el;
+					}
+				}
+			);
+			return ret;
+		}
+
+		$scope.manageBackgroundLayer = function() {
+
+			var currBackgroundLayer = getBackgroundLayer();
+			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+
+			if (backgroundLayerId) {
+				var url = sbiModule_config.externalBasePath + "/restful-services/layers/" + backgroundLayerId + "/download/geojson";
+
+				if (currBackgroundLayer) {
+					$scope.map.removeLayer(currBackgroundLayer);
+				}
+
+				var layer = new ol.layer.Vector({
+					source: new ol.source.Vector({
+						url: url,
+						format: new ol.format.GeoJSON()
+					}),
+					name: BACKGROUND_LAYER_NAME
+				});
+				layer.setZIndex(/* see other setZIndex() call */ 9);
+
+				$scope.map.addLayer(layer);
+
+			} else {
+				if (currBackgroundLayer) {
+					$scope.map.removeLayer(el);
+				}
+			}
+
+		}
 
 	    //functions calls
 		$scope.getLayers();
