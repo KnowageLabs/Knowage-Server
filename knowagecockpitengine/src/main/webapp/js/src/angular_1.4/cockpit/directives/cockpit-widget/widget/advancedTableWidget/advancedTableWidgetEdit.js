@@ -352,23 +352,6 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
   		finishEdit.reject();
   	}
 
-    $scope.checkAggregation = function(){
-        var measures = 0;
-        var noneAggr = 0;
-        for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
-            var column = $scope.newModel.content.columnSelectedOfDataset[i];
-            if(column.fieldType == 'MEASURE'){
-                measures++;
-                if(column.aggregationSelected == 'NONE'){
-                    noneAggr++;
-                }
-            }
-        }
-        if(noneAggr != 0 && noneAggr != measures){
-            return false;
-        }
-        return true;
-    }
 
     $scope.checkAliases = function(){
         var columns = $scope.newModel.content.columnSelectedOfDataset;
