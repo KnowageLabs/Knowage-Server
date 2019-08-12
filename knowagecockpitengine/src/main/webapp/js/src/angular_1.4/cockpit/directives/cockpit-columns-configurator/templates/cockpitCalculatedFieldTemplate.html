@@ -1,5 +1,5 @@
 <div layout-fill class="overlayGray" layout="row" layout-align="center center">
-	<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
+	<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80 calculatedField">
 	    <md-toolbar class="secondaryToolbar" layout="row">
 			<h1 flex class="md-toolbar-tools">{{::translate.load('sbi.cockpit.table.column.calcfield')}}</h1>
 		</md-toolbar>
@@ -13,18 +13,18 @@
 				    </md-toolbar>
 					<h3 ng-if="measuresList.length==0">{{::translate.load('sbi.cockpit.table.nomeasure')}}</h3>
 					
-					<md-list style="overflow: auto;height:calc(100% - 32px)" ng-if="!column.datasetOrTableFlag" class="noPadding">
-			   		   	<md-list-item ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
-			   		   		{{meas.alias}} ({{meas.aggregationSelected}})
-                            <md-divider></md-divider>
-                       	</md-list-item>
-                    </md-list>
-                          
-                    <md-list style="overflow: auto;height:calc(100% - 32px)" class="noPadding" ng-if="column.datasetOrTableFlag">
-                   		<md-list-item ng-repeat="column in datasetColumnsList" ng-click="addMeasures(column)">
-                        	{{column.alias}}
-							<md-divider></md-divider>
-   		   				</md-list-item>
+					<md-list style="overflow: auto;height:calc(100% - 32px)" class="noPadding md-dense" ng-if="!column.datasetOrTableFlag">
+			   		   	<md-list-item class="md-2-line" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
+			   		   		<div class="md-list-item-text"><h3>{{meas.aliasToShow}}</h3>
+			   		   		<p>{{meas.alias}} ({{meas.aggregationSelected}})</p></div>			   		   		 
+		   		   			<md-divider></md-divider>
+		   		   		</md-list-item>
+		   		   	</md-list>
+		   		   	<md-list style="overflow: auto;height:calc(100% - 32px)" class="noPadding" ng-if="column.datasetOrTableFlag">
+			   		   	<md-list-item ng-repeat="column in datasetColumnsList" ng-click="addMeasures(column)">
+			   		   		{{column.alias}}
+		   		   			<md-divider></md-divider>
+		   		   		</md-list-item>
 		   		   	</md-list>
 				</div>
 			
@@ -43,7 +43,7 @@
                          </md-select>
                    	</md-input-container>        
 
-                   	<md-switch ng-model="column.datasetOrTableFlag" aria-label="Enabled Dataset calculated fields">
+                   	<md-switch ng-model="column.datasetOrTableFlag" aria-label="Enabled Dataset calculated fields" ng-change="resetFormula()">
                          	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag')}}
                           	<md-tooltip md-delay=500>
                            	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag.hint')}}

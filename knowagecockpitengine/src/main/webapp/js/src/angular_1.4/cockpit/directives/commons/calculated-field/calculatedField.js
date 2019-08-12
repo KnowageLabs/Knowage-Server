@@ -72,8 +72,9 @@ function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockp
 	}
 }
 
-function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,promise,model,actualItem,cockpitModule_datasetServices,$mdToast){
+function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,promise,model,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
+	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.model = model;
 	$scope.localDataset = {};
 	$scope.formula = "";
@@ -152,6 +153,15 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		$scope.column.alias = angular.copy(actualItem.aliasToShow);
 		$scope.redrawFormula();
 	}
+	
+	$scope.checkAggregation = function(obj){
+		for(var i in $scope.measuresList){
+			if($scope.measuresList[i].alias == obj.value) {
+				obj.aggregation = $scope.measuresList[i].aggregationSelected;
+				return $scope.measuresList[i].aggregationSelected;
+			}
+		}
+	}
 
 	$scope.saveColumnConfiguration=function(){
 		if($scope.formulaElement.length>0){
@@ -180,6 +190,12 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	}
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
+	}
+	
+	$scope.resetFormula = function(){
+		$scope.formula = '';
+		$scope.formulaElement = [];
+		$scope.column.aggregationSelected = $scope.column.datasetOrTableFlag ? 'SUM' : 'NONE';
 	}
 
 	$scope.checkBrackets = function(){
@@ -246,7 +262,15 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		obj.type = 'measure';
 		obj.value = meas.alias;
 		$scope.formulaElement.push(obj);
-		$scope.formula = $scope.formula +' "'+meas.alias+'"';
+		if(!$scope.column.datasetOrTableFlag){
+			if ($scope.formula == "") {
+				$scope.formula = meas.aggregationSelected+'("'+meas.alias+'")';
+			}
+			else 
+			$scope.formula = $scope.formula +' '+meas.aggregationSelected+'("'+meas.alias+'")';
+			obj.aggregation = meas.aggregationSelected;
+		}
+		else $scope.formula = $scope.formula +' "'+meas.alias+'"';
 	}
 	$scope.deleteLast = function(){
 		if($scope.formulaElement.length>0){
@@ -261,7 +285,15 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 			if(obj.type=="number"){
 				$scope.formula = $scope.formula +""+obj.value+"";
 			}else if(obj.type=="measure"){
-				$scope.formula = $scope.formula +'"'+obj.value+'"';
+				if(!$scope.column.datasetOrTableFlag && obj.aggregation) {
+					if ($scope.formula == "") {
+					   	$scope.formula = $scope.checkAggregation(obj) +'("'+obj.value+'")';
+					}
+					else {
+						$scope.formula = $scope.formula +' '+ $scope.checkAggregation(obj) +'("'+obj.value+'")';
+					}
+				}
+				else $scope.formula = $scope.formula +'"'+obj.value+'"';
 			}else{
 				$scope.formula = $scope.formula +" "+obj.value+" ";
 			}

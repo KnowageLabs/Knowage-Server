@@ -1012,16 +1012,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i=0;i<columns.length;i++){
 				var col = columns[i];
 
-                if(col.fieldType!="ATTRIBUTE" && !(col.style && col.style.hideSummary)){
-                    var obj = {};
-                    obj["id"] = col.name;
-                    obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
-                    obj["funct"] = col.funcSummary == undefined? "" : col.aggregationSelected;
-                    obj["columnName"] = ngModel.type == "table" ? col.name : col.alias;
-                    if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag;
-                    measures.push(obj);
-                }
+				if(col.fieldType!="ATTRIBUTE" && !(col.style && col.style.hideSummary)){
+					var obj = {};
+					obj["id"] = col.name || col.alias;
+					obj["alias"] = col.aliasToShow || col.alias;
+					obj["funct"] = col.aggregationSelected;
+					if(ngModel.type == "table" || ngModel.type == "advanced-table"){
+						if(col.isCalculated) obj["columnName"] = col.formula;
+						else obj["columnName"] = col.name;
+					}else obj["columnName"] = col.alias;
+					if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
 
+					measures.push(obj);
+				}
 			}
 		}
 		var result = {};

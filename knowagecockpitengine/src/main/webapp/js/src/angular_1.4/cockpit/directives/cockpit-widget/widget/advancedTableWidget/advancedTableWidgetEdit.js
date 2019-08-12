@@ -256,6 +256,51 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		}
 	}
 	
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+				.content(text)
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(3000)
+				.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	}
+	$scope.checkAggregation = function(){
+		var measures =0;
+		var noneAggr =0;
+		for(var i=0;i<$scope.newModel.content.columnSelectedOfDataset.length;i++){
+			var column = $scope.newModel.content.columnSelectedOfDataset[i];
+			if(column.fieldType == 'MEASURE'){
+				measures++;
+				if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
+					noneAggr++;
+				}
+			}
+		}
+		if(noneAggr!=0){
+			if(noneAggr != measures){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	$scope.checkAliases = function(){
+		var columns = $scope.newModel.content.columnSelectedOfDataset;
+		for(var i = 0; i < columns.length - 1; i++){
+			for(var j = i + 1; j < columns.length; j++){
+				if(columns[i].aliasToShow == columns[j].aliasToShow){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	$scope.deleteColumn = function(rowName,event) {
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
 			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
