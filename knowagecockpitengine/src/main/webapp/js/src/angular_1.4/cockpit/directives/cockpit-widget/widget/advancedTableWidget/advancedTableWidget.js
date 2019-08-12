@@ -248,16 +248,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || (params.colDef.style && params.colDef.style['font-style']) || "";
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
-            	if(cellRenderer(params)) {
-            		if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
-            		else this.eGui.innerHTML = params.title ? '<b style="margin-right: 4px;">'+params.title+'</b>'+ cellRenderer(params) : cellRenderer(params);
+            	if(params.title && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+            	if((!params.style || !params.style['pinnedOnly']) && params.title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+            	else {
+            		 if(params.valueFormatted || params.value){
+            			 this.eGui.innerHTML += params.valueFormatted || params.value;
+            		 }
             	}
             }
-		    if(params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
-		    if(params.valueFormatted || params.value){
-		    	if((!params.style || !params.style['pinnedOnly']) && params.title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
-			    this.eGui.innerHTML += params.valueFormatted || params.value;
-		    }
 		};
 
 		SummaryRowRenderer.prototype.getGui = function() {
