@@ -262,6 +262,25 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return dataSet instanceof SolrDataSet;
 	}
 
+	protected List<Projection> getProjectionsSummary(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+			throws JSONException {
+		ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
+
+		for (int i = 0; i < categories.length(); i++) {
+			JSONObject category = categories.getJSONObject(i);
+			addProjection(dataSet, projections, category, columnAliasToName);
+
+		}
+
+		for (int i = 0; i < measures.length(); i++) {
+			JSONObject measure = measures.getJSONObject(i);
+			addProjection(dataSet, projections, measure, columnAliasToName);
+
+
+		}
+
+		return projections;
+	}
 	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> projections = new ArrayList<>(categories.length() + measures.length());
@@ -306,6 +325,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
 		Projection projection;
+		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag")) function =  AggregationFunctions.get("NONE");
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
 			projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
@@ -319,6 +339,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct")); // caso in cui ci siano facets complesse (coupled
 																												// proj)
 	}
+
+
+
 
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		if (jsonObject.isNull("id") && jsonObject.isNull("columnName")) {
