@@ -279,6 +279,9 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 				if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
 					noneAggr++;
 				}
+				if (typeof column.datasetOrTableFlag == 'undefined' && column.aggregationSelected == 'NONE') {
+					noneAggr++;
+				}
 			}
 		}
 		if(noneAggr!=0){
