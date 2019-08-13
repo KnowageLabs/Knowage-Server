@@ -14,7 +14,7 @@ addons:
     token: ${SONAR_TOKEN}
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 script:
   - mvn -f knowage-ce-parent/pom.xml clean compile
