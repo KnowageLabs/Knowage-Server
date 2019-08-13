@@ -97,31 +97,73 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		}
 	}
 
-	class Node{
-		constructor(type){
-			this.type = type;
-		    this.childNodes = []
-		}
-	}
 
-	class Operand extends Node{
-		constructor(type,value){
-			super(type)
-		    this.value = value;
-		}
-	}
-	class Const extends Node{
-		constructor(type,filter){
-			super(type)
-		    this.value = "$F{"+filter.filterId+"}";
-		    this.details = {
-		    		leftOperandAlias: filter.leftOperandAlias,
-		    		operator : filter.operator,
-		    		entity : filter.entity,
-		    		rightOperandValue : filter.rightOperandValue.join(", ")
-		    }
-		}
-	}
+	//Polyfill for non IE11 compliant code - To replace with readable ie11 compliant code
+	
+	function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+	function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+	function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+	function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+	function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Node = function Node(type) {
+	  _classCallCheck(this, Node);
+
+	  this.type = type;
+	  this.childNodes = [];
+	};
+
+	var Operand =
+	/*#__PURE__*/
+	function (_Node) {
+	  _inherits(Operand, _Node);
+
+	  function Operand(type, value) {
+	    var _this;
+
+	    _classCallCheck(this, Operand);
+
+	    _this = _possibleConstructorReturn(this, _getPrototypeOf(Operand).call(this, type));
+	    _this.value = value;
+	    return _this;
+	  }
+
+	  return Operand;
+	}(Node);
+
+	var Const =
+	/*#__PURE__*/
+	function (_Node2) {
+	  _inherits(Const, _Node2);
+
+	  function Const(type, filter) {
+	    var _this2;
+
+	    _classCallCheck(this, Const);
+
+	    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Const).call(this, type));
+	    _this2.value = "$F{" + filter.filterId + "}";
+	    _this2.details = {
+	      leftOperandAlias: filter.leftOperandAlias,
+	      operator: filter.operator,
+	      entity: filter.entity,
+	      rightOperandValue: filter.rightOperandValue.join(", ")
+	    };
+	    return _this2;
+	  }
+
+	  return Const;
+	}(Node);
+	
+	// End of polyfill
 
 	this.generateExpressions = function (filters){
 		var obj ={};

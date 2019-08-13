@@ -24,7 +24,7 @@
 		</md-toolbar>
 		<div layout="row" flex >
 			<md-content layout="column" flex ng-show="currentView.status == 'BUSINESSMODEL'">
-				<iframe ng-if="driverableObject.executed" flex=100 class="noBorder" ng-src="{{documentViewerUrl}}" id="documentViewerIframe">				
+				<iframe ng-if="driverableObject.executed" flex=100 class="noBorder" layout-fill ng-src="{{documentViewerUrl}}" id="documentViewerIframe" >				
 				</iframe>
 			</md-content>
 			<div flex layout ng-if="currentView.status == 'PARAMETERS'">
