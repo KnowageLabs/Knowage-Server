@@ -565,6 +565,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 	}
 
 	$scope.column = {};
+	$scope.column.datasetOrTableFlag = false;
 	$scope.measuresList = [];
 	$scope.datasetColumnsList = [];
 	$scope.operators = ['+','-','*','/'];
