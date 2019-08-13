@@ -866,6 +866,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
 						noneAggr++;
 					}
+					if(typeof column.datasetOrTableFlag == 'undefined' && column.aggregationSelected == 'NONE'){
+						noneAggr++;
+					}
 				}
 			}
 			if(noneAggr!=0){
