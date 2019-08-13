@@ -359,7 +359,7 @@
 
 
 
-function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,$mdToast,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
+function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.model = model;
@@ -372,57 +372,12 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	}
 	
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-				.content(text)
-				.action('OK')
-				.highlightAction(false)
-				.hideDelay(3000)
-				.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
-	}
-	
-	$scope.checkAggregation = function(){
-		var measures =0;
-		var noneAggr =0;
-		for(var i=0;i<$scope.model.content.columnSelectedOfDataset.length;i++){
-			var column = $scope.model.content.columnSelectedOfDataset[i];
-			if(column.fieldType == 'MEASURE'){
-				measures++;
-				if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
-					noneAggr++;
-				}
-				if (typeof column.datasetOrTableFlag == 'undefined' && column.aggregationSelected == 'NONE') {
-					noneAggr++;
-				}
-			}
-		}
-		if(noneAggr!=0){
-			if(noneAggr != measures){
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	$scope.saveColumnConfiguration=function(){
 		model = $scope.model;
 
 		if(model.content.columnSelectedOfDataset == undefined){
 			model.content.columnSelectedOfDataset = [];
-			$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
-			return;
 		}
-		 if(!$scope.checkAggregation()){
-		    $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
-		    return;
-		}
-
-
 		for(var i=0;i<$scope.columnSelected.length;i++){
 			var obj = $scope.columnSelected[i];
 			obj.aggregationSelected = 'NONE';
