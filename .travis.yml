@@ -17,7 +17,7 @@ jdk:
   - openjdk8
 
 script:
-  - travis_wait 30 mvn -f knowage-ce-parent/pom.xml clean compile
+  - travis_wait 30 mvn -q -f knowage-ce-parent/pom.xml clean compile
 
 after_success:
   - mvn -f cas/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
