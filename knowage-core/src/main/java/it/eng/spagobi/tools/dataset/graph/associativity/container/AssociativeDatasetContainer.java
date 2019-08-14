@@ -18,10 +18,27 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.item.*;
+import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
@@ -31,12 +48,6 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import javax.naming.NamingException;
-import java.sql.SQLException;
-import java.util.*;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -179,7 +190,21 @@ abstract class AssociativeDatasetContainer implements IAssociativeDatasetContain
 	protected abstract String encapsulateColumnName(String columnName);
 
 	protected SelectQuery getSelectQuery(List<String> columnNames) {
-		Map<String, String> clonedParams = new HashMap<>(parameters);
+		Map<String, String> clonedParams = new HashMap<>();
+
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {   //TODO: check if it is more correct watching values only and not keys
+
+			if (dataSet.getParamsMap().containsKey(entry.getKey())) {
+
+				if (dataSet.getParamsMap().get(entry.getKey())!=null && !((String)dataSet.getParamsMap().get(entry.getKey())).isEmpty()) {
+					clonedParams.put(entry.getKey(), (String)dataSet.getParamsMap().get(entry.getKey()));
+				}
+
+			}
+
+		}
+
+
 		String tableName = getTableName();
 		dataSet.setParamsMap(clonedParams);
 		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName);

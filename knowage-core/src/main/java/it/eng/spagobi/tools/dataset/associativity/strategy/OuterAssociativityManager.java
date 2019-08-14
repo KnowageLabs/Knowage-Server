@@ -129,19 +129,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 						Map<String, String> parameters = container.getParameters();
 						HashMap<String, String> parametersToPut = new HashMap(parameters);
 
-						for (Map.Entry<String, String> entry : parametersToPut.entrySet()) {   //TODO: check if it is more correct watching values only and not keys
+					//	checkParametersStringMap(parametersToPut,container);
 
-							if (container.getDataSet().getParamsMap().containsKey(entry.getKey())) {
-
-								if (container.getDataSet().getParamsMap().get(entry.getKey())!=null && !((String)container.getDataSet().getParamsMap().get(entry.getKey())).isEmpty()) {
-									parametersToPut.put(entry.getKey(), (String)container.getDataSet().getParamsMap().get(entry.getKey()));
-								}
-
-							}
-
-						}
-
-						container.getDataSet().setParamsMap(parametersToPut);
 						Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 
 						logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
@@ -232,6 +221,22 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			mon.stop();
 		}
 	}
+
+	private  void checkParametersStringMap(Map<String, String> parametersToPut,IAssociativeDatasetContainer container) {
+
+		for (Map.Entry<String, String> entry : parametersToPut.entrySet()) {   //TODO: check if it is more correct watching values only and not keys
+
+			if (container.getDataSet().getParamsMap().containsKey(entry.getKey())) {
+
+				if (container.getDataSet().getParamsMap().get(entry.getKey())!=null && !((String)container.getDataSet().getParamsMap().get(entry.getKey())).isEmpty()) {
+					parametersToPut.put(entry.getKey(), (String)container.getDataSet().getParamsMap().get(entry.getKey()));
+				}
+
+			}
+
+		}
+	}
+
 
 	private Set<EdgeGroup> getUnresolvedGroups(Set<String> totalChildren) {
 		Set<EdgeGroup> groups = new HashSet<>();
