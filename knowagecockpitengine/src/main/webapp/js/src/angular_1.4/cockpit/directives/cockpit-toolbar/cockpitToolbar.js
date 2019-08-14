@@ -16,11 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v0.0.1
- *
- */
 (function() {
 
 angular.module('cockpitModule')
@@ -254,7 +249,17 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 	
 	var handler = {};
 	handler.handleMessage = function(message){
-		if(message == 'pdfExport') $scope.exportPdf();
+		if(message == 'pdfExport') $scope.exportPdf().then(function(){},
+				function(error){
+					$mdDialog.show(
+				      $mdDialog.alert()
+				        .parent(angular.element(document.body))
+				        .clickOutsideToClose(true)
+				        .title('Error during export')
+				        .textContent(error)
+				        .ok('Close')
+				    );
+		});
 	}
 
 	windowCommunicationService.addMessageHandler(handler);
@@ -262,6 +267,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 	$scope.exportPdf = function(){
 		
 		return $q(function(resolve, reject) {
+			var isIE11 = window.document.documentMode;
 			
 			$mdDialog.show({
 				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
@@ -276,6 +282,17 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 })
 			
 			cockpitModule_properties.LOADING_SCREENSHOT = true;
+			
+			var abortTimeout;
+			function resetTimeout(){
+				if(abortTimeout) clearTimeout(abortTimeout);
+				setTimeout(function(){
+					$mdDialog.hide();
+	 				cockpitModule_properties.LOADING_SCREENSHOT = false;
+	 				reject($scope.translate.load('kn.error.timeout'));
+				},30000);
+			}
+				
 				 
 				 function closeOrContinue(sheet){
 					if(sheet.index + 1 == cockpitModule_template.sheets.length) {
@@ -302,6 +319,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 $scope.sheetsWidgets = cockpitModule_properties.INITIALIZED_WIDGETS;
 				 $scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
 				 var d3Charts = ["wordcloud","parallel","sunburst","chord"];
+				 
 				 	function replaceWithCanvg(widget){
 				 		var element = document.querySelector('#w'+widget.id+' .placedWidget');
 				 		var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
@@ -321,48 +339,55 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
 				 			canvas.style.height = "100%";
 				 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
+				 		},function(error){
+				 			reject(error);
 				 		})
 				 	}
 				 
 				 	function getPage(sheet){
-				 		var heightToUse;
-				 		var exportSheetBar = false;
-				 		var element = document.getElementById('kn-cockpit');
-				 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
-				 		
-				 		if(element.scrollHeight < gridsterElement.scrollHeight){
-				 			element = gridsterElement;
-				 			heightToUse = gridsterElement.scrollHeight + 32;
-				 			exportSheetBar = true;
+				 		try{
+					 		var heightToUse;
+					 		var exportSheetBar = false;
+					 		var element = document.getElementById('kn-cockpit');
+					 		var gridsterElement = document.querySelector('#gridsterSheet-'+sheet.index+' #gridsterContainer');
+					 		
+					 		if(element.scrollHeight < gridsterElement.scrollHeight){
+					 			element = gridsterElement;
+					 			heightToUse = gridsterElement.scrollHeight + 32;
+					 			exportSheetBar = true;
+					 		}
+					 		else heightToUse = element.scrollHeight;
+				 			
+				 			if(sheet.index != 0) doc.addPage([element.clientWidth,heightToUse],heightToUse>element.clientWidth? 'p':'l');
+				 			$timeout(function(){
+				 				html2canvas(element,{
+						 			allowTaint: true,
+						 			useCORS: true,
+						 			//foreignObjectRendering: true,
+						 			width: element.clientWidth,
+						 			height: element.scrollHeight,
+						 			scale : 1.5
+						 		}).then(function(canvas) {
+						 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
+						 			if(exportSheetBar){
+						 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
+						 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
+						 					closeOrContinue(sheet);
+						 				})
+						 			}else{
+						 				closeOrContinue(sheet);
+						 			}
+						 		},function(error){
+						 			reject(error);
+						 		});
+				 			},300);
+				 		}catch(error){
+				 			reject(error);
 				 		}
-				 		else heightToUse = element.scrollHeight;
-			 			
-			 			if(sheet.index != 0) doc.addPage([element.clientWidth,heightToUse],heightToUse>element.clientWidth? 'p':'l');
-			 			$timeout(function(){
-			 				html2canvas(element,{
-					 			allowTaint: true,
-					 			useCORS: true,
-					 			foreignObjectRendering: true,
-					 			width: element.clientWidth,
-					 			height: element.scrollHeight,
-					 			scale : 1.5
-					 		}).then(function(canvas) {
-					 			doc.addImage(canvas, 'PNG', 0, 0, element.clientWidth/2.835, element.scrollHeight/2.835);
-					 			if(exportSheetBar){
-					 				html2canvas(document.querySelector('#sheetTabs md-tabs-wrapper'),{width: element.clientWidth,height: 32}).then(function(sheetCanvas){
-					 					doc.addImage(sheetCanvas, 'PNG', 0, element.scrollHeight/2.835, element.clientWidth/2.835, 11.287);
-					 					closeOrContinue(sheet);
-					 				})
-					 			}else{
-					 				closeOrContinue(sheet);
-					 			}
-					 		});
-			 			},300);
-
 				 	}
 				 	
 					 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
-					 		if(window.document.documentMode) { //if is IE11 and using higcharts
+					 		if(isIE11) { //if is IE11 and using higcharts
 						 			for(var w in sheet.widgets){
 					 					if(sheet.widgets[w].type == 'chart'){
 					 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
@@ -379,29 +404,33 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					 		}
 					 		$timeout(function(){
 					 			getPage(sheet);
-					 		},1000)    
+					 		},isIE11 ? 1000 : 100)    
 					 	}else{
 					 		$scope.sheetWatcher = $scope.$watchCollection('sheetsWidgets',function(newValue,oldValue){
-					 			var tempIds = [];
-					 			for(var w in sheet.widgets){
-					 				if(newValue.indexOf(sheet.widgets[w].id) != -1) tempIds.push(sheet.widgets[w].id);
-					 			}
-					 			if(tempIds.length == sheet.widgets.length){
-					 				$timeout(function(){
-					 					if(window.document.documentMode) { //if is IE11 and using higcharts
-								 			for(var w in sheet.widgets){
-							 					if(sheet.widgets[w].type == 'chart'){
+					 			resetTimeout();
+					 				var tempIds = [];
+						 			for(var w in sheet.widgets){
+						 				if(newValue.indexOf(sheet.widgets[w].id) != -1) tempIds.push(sheet.widgets[w].id);
+						 			}
+						 			if(tempIds.length == sheet.widgets.length){
+						 				for(var w in sheet.widgets){
+								 			if(sheet.widgets[w].type == 'document'){
+								 				replaceIframe(sheet.widgets[w]);
+								 			}
+								 			if(isIE11){
+								 				if(sheet.widgets[w].type == 'chart'){
 							 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
 							 						if(d3Charts.indexOf(chartType)==-1){
 							 							replaceWithCanvg(sheet.widgets[w]);
 							 						}
 							 					}
-						 					}
-						 				}
-					 					getPage(sheet);
-					 					$scope.sheetWatcher();    
-					 				},3000)        
-					 			}
+								 			}
+								 		}
+						 				$timeout(function(){
+						 					getPage(sheet);
+						 					$scope.sheetWatcher();    
+						 				},isIE11 ? 3000 : 1000)        
+						 			}
 					 		})    
 					 	}
 			 		}
