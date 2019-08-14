@@ -37,6 +37,7 @@ function mapWidgetEditControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
@@ -481,4 +482,30 @@ function mapWidgetEditControllerFunction(
   		finishEdit.reject();
   	}
 
+	function loadAvailableLayers() {
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.get(".", "layers")
+			.then(function(response) {
+				var root = response.data.root;
+
+				root.forEach(function(el) {
+						// Currently, only geojson is supported
+						if (el.type == 'File') {
+							$scope.availableBackgroundLayers
+								.push({
+										key: el.layerId,
+										value: el.name+"-"+el.label
+									}
+								);
+						}
+					}
+				);
+
+			}, function(response) {
+				console.log("Error loading available background layers");
+			});
+
+	}
+
+	loadAvailableLayers();
 }
