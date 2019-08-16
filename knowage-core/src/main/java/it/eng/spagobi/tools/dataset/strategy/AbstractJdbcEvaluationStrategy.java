@@ -19,6 +19,10 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -28,47 +32,48 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-
-import java.util.List;
 
 abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(AbstractJdbcEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(AbstractJdbcEvaluationStrategy.class);
 
-    public AbstractJdbcEvaluationStrategy(IDataSet dataSet) {
-        super(dataSet);
-    }
+	public AbstractJdbcEvaluationStrategy(IDataSet dataSet) {
+		super(dataSet);
+	}
 
-    @Override
-    protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-        logger.debug("IN");
+	@Override
+	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+		logger.debug("IN");
 
-        IDataStore pagedDataStore;
+		IDataStore pagedDataStore;
 
-        try {
-            SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(getTableName()).where(filter).groupBy(groups).orderBy(sortings);
-            pagedDataStore = getDataSource().executeStatement(selectQuery, offset, fetchSize, maxRowCount);
-            pagedDataStore.setCacheDate(getDate());
-        } catch (DataBaseException e) {
-            throw new RuntimeException(e);
-        } finally {
-            logger.debug("OUT");
-        }
-        return pagedDataStore;
-    }
+		try {
+			SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(getTableName()).where(filter).groupBy(groups)
+					.orderBy(sortings);
+			pagedDataStore = getDataSource().executeStatement(selectQuery, offset, fetchSize, maxRowCount, true);
+			pagedDataStore.setCacheDate(getDate());
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return pagedDataStore;
+	}
 
-    @Override
-    protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
-        try {
-            String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(getTableName()).where(filter).toSql(getDataSource());
-            return getDataSource().executeStatement(summaryRowQuery, -1, -1, maxRowCount);
-        } catch (DataBaseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Override
+	protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+		try {
+			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(getTableName()).where(filter)
+					.toSql(getDataSource());
+			// summary row query result is 1, no need to calculate total results number, so calculateTotalResultsNumber is set to false
+			return getDataSource().executeStatement(summaryRowQuery, -1, -1, maxRowCount, false);
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    protected abstract String getTableName() throws DataBaseException;
+	protected abstract String getTableName() throws DataBaseException;
 
-    protected abstract IDataSource getDataSource();
+	protected abstract IDataSource getDataSource();
 }

@@ -54,16 +54,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * Defines an <code>DataSource</code> object
  *
- * The field <code>pwd</code> must be hidden during deserialization because
- * of security concerns: with {@link JsonIgnoreProperties} we enable it during
+ * The field <code>pwd</code> must be hidden during deserialization because of security concerns: with {@link JsonIgnoreProperties} we enable it during
  * serialization only.
  */
 @JsonInclude(Include.NON_NULL)
-@JsonIgnoreProperties(
-		value = { "pwd" },
-		allowGetters = false,
-		allowSetters = true
-	)
+@JsonIgnoreProperties(value = { "pwd" }, allowGetters = false, allowSetters = true)
 public class DataSource implements Serializable, IDataSource {
 
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
@@ -214,10 +209,8 @@ public class DataSource implements Serializable, IDataSource {
 	 *
 	 * @return Connection to database
 	 *
-	 * @throws NamingException
-	 *             the naming exception
-	 * @throws SQLException
-	 *             the SQL exception
+	 * @throws NamingException the naming exception
+	 * @throws SQLException    the SQL exception
 	 */
 	private Connection getJndiConnection(String jndiName) throws NamingException, SQLException {
 		Connection connection = null;
@@ -279,10 +272,8 @@ public class DataSource implements Serializable, IDataSource {
 	 *
 	 * @return Connection to database
 	 *
-	 * @throws ClassNotFoundException
-	 *             the class not found exception
-	 * @throws SQLException
-	 *             the SQL exception
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws SQLException           the SQL exception
 	 */
 	@JsonIgnore
 	private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
@@ -547,26 +538,35 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public IDataStore executeStatement(String statement, Integer start, Integer limit) {
-		return executeStatement(statement, start, limit, -1);
+		return executeStatement(statement, start, limit, -1, true);
 	}
 
 	@Override
-	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount) {
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, boolean calculateTotalResultsNumber) {
+		return executeStatement(statement, start, limit, -1, calculateTotalResultsNumber);
+	}
+
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber) {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
-		return executeStatement(dataSet, statement, start, limit, maxRowCount);
+		return executeStatement(dataSet, statement, start, limit, maxRowCount, calculateTotalResultsNumber);
 	}
 
 	@Override
-	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException {
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber)
+			throws DataBaseException {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		((AbstractJDBCDataset) dataSet).setSelectQuery(selectQuery);
-		return executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
+		return executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount, calculateTotalResultsNumber);
 	}
 
-	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount) {
-		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
+	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount,
+			boolean calculateTotalResultsNumber) {
+		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount
+				+ "], calculateTotalResultsNumber = [" + calculateTotalResultsNumber + "]");
 		dataSet.setDataSource(this);
 		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets retrieved by the factory extend AbstractJDBCDataset
+		((AbstractJDBCDataset) dataSet).setCalculateResultNumberOnLoad(calculateTotalResultsNumber);
 		if (start == null && limit == null && maxRowCount == null) {
 			dataSet.loadData();
 		} else {

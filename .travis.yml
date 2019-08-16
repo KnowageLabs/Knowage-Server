@@ -20,7 +20,6 @@ script:
   - travis_wait 30 mvn -q -f knowage-ce-parent/pom.xml clean compile
 
 after_success:
-  - mvn -f cas/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f jdbccore/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowage-core/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
   - mvn -f knowage-e2e-testing/pom.xml sonar:sonar -Dsonar.exclusions=src/main/webapp/js/lib/**,src/main/webapp/js/extjs/**,src/main/webapp/node_modules/**
