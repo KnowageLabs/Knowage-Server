@@ -468,6 +468,15 @@ angular.module('cockpitModule')
 			return obj;
 		}
 
+	    $scope.clearAllSelection = function(){
+	    	var tempItem = {
+	    			"aggregated" : $scope.aggregated,
+	    			"ds" : $scope.ngModel.dataset.label,
+	    			"columnName" : $scope.ngModel.content.selectedColumn.name
+	    	}
+	    	$scope.deleteSelections(tempItem);
+	    }
+	    
 	    $scope.deleteSelections = function(item){
 	    	var reloadAss=false;
 	    	var associatedDatasets = [];
