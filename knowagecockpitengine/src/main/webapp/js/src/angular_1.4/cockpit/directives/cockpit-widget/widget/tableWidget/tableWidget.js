@@ -858,8 +858,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.checkAggregation = function(){
 			var isAggregated;
-			for(var i in $scope.newModel.content.columnSelectedOfDataset){
-				var column = $scope.newModel.content.columnSelectedOfDataset[i];
+			for(var i in $scope.model.content.columnSelectedOfDataset){
+				var column = $scope.model.content.columnSelectedOfDataset[i];
 				if(column.fieldType == 'MEASURE'){
 					if(!column.isCalculated || column.datasetOrTableFlag == true){
 						if(column.aggregationSelected != 'NONE'){
