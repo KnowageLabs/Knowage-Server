@@ -857,23 +857,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.checkAggregation = function(){
-			var measures =0;
-			var noneAggr =0;
-			for(var i=0;i<$scope.model.content.columnSelectedOfDataset.length;i++){
-				var column = $scope.model.content.columnSelectedOfDataset[i];
+			var isAggregated;
+			for(var i in $scope.newModel.content.columnSelectedOfDataset){
+				var column = $scope.newModel.content.columnSelectedOfDataset[i];
 				if(column.fieldType == 'MEASURE'){
-					measures++;
-					if(column.datasetOrTableFlag && column.aggregationSelected == 'NONE'){
-						noneAggr++;
+					if(!column.isCalculated || column.datasetOrTableFlag == true){
+						if(column.aggregationSelected != 'NONE'){
+							if(isAggregated == false) return false;
+							else isAggregated = true;
+						}else{
+							if(isAggregated == true) return false;
+							else isAggregated = false;
+						}
 					}
-					if(typeof column.datasetOrTableFlag == 'undefined' && column.aggregationSelected == 'NONE'){
-						noneAggr++;
-					}
-				}
-			}
-			if(noneAggr!=0){
-				if(noneAggr != measures){
-					return false;
 				}
 			}
 			return true;
