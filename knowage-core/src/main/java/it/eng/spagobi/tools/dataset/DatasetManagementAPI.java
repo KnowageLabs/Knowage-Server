@@ -1209,26 +1209,26 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryDataset(IDataSet dataSet, IDataSource dataSource, List<Projection> projections, String tableName, Filter filter,
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-					throws DataBaseException {
+			throws DataBaseException {
 		IDataStore pagedDataStore = null;
 		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.queryDataset:total");
 		logger.debug("IN");
 
 		try {
 
-			SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);
-			pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount);
+			SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups)
+					.orderBy(sortings);
+			pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount, true);
 
 			if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-				String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);
-				IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
+				String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
+						.toSql(dataSource);
+				IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount, false);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
 
-
 			logger.debug("OUT");
-		}
-		finally {
+		} finally {
 			timing.stop();
 		}
 		return pagedDataStore;
@@ -1302,7 +1302,7 @@ public class DatasetManagementAPI {
 		}
 
 		if (paramValues.size() > 0) {
-			Map <String, String> newParamValues = new HashMap<>();
+			Map<String, String> newParamValues = new HashMap<>();
 			for (String paramName : paramValues.keySet()) {
 				for (int i = 0; i < parameters.size(); i++) {
 					JSONObject parameter = parameters.get(i);
@@ -1410,7 +1410,7 @@ public class DatasetManagementAPI {
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
 		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-		+ "] by user [" + userProfile.getUserId() + "].");
+				+ "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");

@@ -237,9 +237,12 @@ public interface IDataSource {
 
 	public IDataStore executeStatement(String statement, Integer start, Integer limit);
 
-	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount);
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, boolean calculateTotalResultsNumber);
 
-	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException;
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber);
+
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber)
+			throws DataBaseException;
 
 	public String getSignature(IEngUserProfile profile);
 

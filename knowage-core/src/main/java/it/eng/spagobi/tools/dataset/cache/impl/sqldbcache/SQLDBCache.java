@@ -466,12 +466,12 @@ public class SQLDBCache implements ICache {
 						String query = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups)
 								.orderBy(sortings).toSql(dataSource);
 						logger.debug("Cached dataset access query is equal to [" + query + "]");
-						IDataStore dataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
+						IDataStore dataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount, true);
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
 									.toSql(dataSource);
-							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
+							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, false);
 							datasetManagementAPI.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
 						}
 
@@ -1126,8 +1126,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -1136,10 +1135,8 @@ public class SQLDBCache implements ICache {
 	/**
 	 * Test if the passed schema name is correct. Create a table in the database via the dataSource then try to select the table using the schema.table syntax
 	 *
-	 * @param schema
-	 *            the schema name
-	 * @param dataSource
-	 *            the DataSource
+	 * @param schema     the schema name
+	 * @param dataSource the DataSource
 	 */
 	private void testDatabaseSchema(String schema, IDataSource dataSource) {
 		// Create a fake dataStore

@@ -29,9 +29,6 @@ import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,8 +41,11 @@ import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.user.UserProfileManager;
@@ -537,28 +537,37 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public IDataStore executeStatement(String statement, Integer start, Integer limit) {
-		return executeStatement(statement, start, limit, -1);
+		return executeStatement(statement, start, limit, -1, true);
 	}
 
 	@Override
-	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount) {
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, boolean calculateTotalResultsNumber) {
+		return executeStatement(statement, start, limit, -1, calculateTotalResultsNumber);
+	}
+
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber) {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
-		return executeStatement(dataSet, statement, start, limit, maxRowCount);
+		return executeStatement(dataSet, statement, start, limit, maxRowCount, calculateTotalResultsNumber);
 	}
 
 	@Override
-	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException {
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber)
+			throws DataBaseException {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		((AbstractJDBCDataset) dataSet).setSelectQuery(selectQuery);
-		IDataStore dataStore = executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
+		IDataStore dataStore = executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount, calculateTotalResultsNumber);
 		fixMetaData(dataStore, dataSet, selectQuery);
 		return dataStore;
 	}
 
-	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount) {
-		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
+	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount,
+			boolean calculateTotalResultsNumber) {
+		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount
+				+ "], calculateTotalResultsNumber = [" + calculateTotalResultsNumber + "]");
 		dataSet.setDataSource(this);
 		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets retrieved by the factory extend AbstractJDBCDataset
+		((AbstractJDBCDataset) dataSet).setCalculateResultNumberOnLoad(calculateTotalResultsNumber);
 		if (start == null && limit == null && maxRowCount == null) {
 			dataSet.loadData();
 		} else {
@@ -571,7 +580,7 @@ public class DataSource implements Serializable, IDataSource {
 	}
 
 	private void fixMetaData(IDataStore dataStore, IDataSet dataSet, SelectQuery selectQuery) {
-		if(dataSet instanceof JDBCHiveDataSet){
+		if (dataSet instanceof JDBCHiveDataSet) {
 			IMetaData dataStoreMetaData = dataStore.getMetaData();
 			List<Projection> projections = selectQuery.getProjections();
 			Assert.assertTrue(dataStoreMetaData.getFieldCount() == projections.size(), "Mismatching metadata");
