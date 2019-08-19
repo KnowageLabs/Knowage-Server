@@ -1252,6 +1252,7 @@
 		&.pivotTableWidget{
 			.pivotTableDesigner{
 				padding:0px;
+				min-height: calc(100% - 134px);
 				.measureAttributeTab{
 					min-width:250px;
 				}
@@ -2924,13 +2925,22 @@
         /*md-card-title {
             width: 100%;
         }*/
+        .kn-cockpit {
+        	.customTableWidgetConfiguration {
+			   &.pivotTableWidget{
+					.pivotTableDesigner{
+						min-height: 100%;
+					}
+				}
+			}
+        }
     }
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
 	.kn-cockpit {
 		.pivotTableDesigner {
-			min-height: 600px;
+			min-height: 600px !important;
 			.measureAttributeTab {
 				min-height: 600px;
 			}

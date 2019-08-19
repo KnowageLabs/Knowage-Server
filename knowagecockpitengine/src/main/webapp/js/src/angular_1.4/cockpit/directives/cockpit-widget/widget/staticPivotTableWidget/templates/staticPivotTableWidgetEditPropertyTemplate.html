@@ -11,7 +11,8 @@
 		  <md-tabs flex md-border-bottom>
 		  	
 		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		      	
+		      	<md-tab-body>
+		      	<div layout="column" layout-fill>
 	      	<md-card>
 		  		<md-card-content>
 		  		 	<dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
@@ -19,8 +20,8 @@
 		  	</md-card>
 			  
 			   
-			   <md-card ng-if="localModel.dataset.dsId!=undefined" >	
-			     	<md-card-content flex layout="row" class="pivotTableDesigner" >			     		
+			   <md-card ng-if="localModel.dataset.dsId!=undefined" flex layout="column">	
+			     	<md-card-content flex layout="row" class="pivotTableDesigner">			     		
 			     		<div layout="column" class="measureAttributeTab">
 			     			<div layout="column" flex="50">
 			     				<md-toolbar class="md-hue-2">
@@ -159,6 +160,8 @@
 	
 			     	</md-card-content>
 			    </md-card>
+			    </div>
+			    </md-tab-body>
 		     </md-tab>
 		  
 		  	<md-tab label="{{translate.load('sbi.cockpit.pivot.config')}}">
