@@ -712,7 +712,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		obj.type = 'operator';
 		obj.value = op;
 		$scope.formulaElement.push(obj);
-		$scope.formula = $scope.formula +" "+op+" ";
+		$scope.formula += op+" ";
 	}
 	$scope.addBracket= function(br){
 
@@ -743,14 +743,9 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		obj.type = 'measure';
 		obj.value = meas.alias;
 		$scope.formulaElement.push(obj);
-		if(!$scope.column.datasetOrTableFlag){
-			if ($scope.formula == "") {
-			$scope.formula = meas.aggregationSelected+'("'+meas.alias+'")';
-			}
-			else 	$scope.formula = $scope.formula +' '+meas.aggregationSelected+'("'+meas.alias+'")';
-			obj.aggregation = meas.aggregationSelected;
-		}
-		else $scope.formula = $scope.formula +' "'+meas.alias+'"';
+		if(meas.aggregationSelected) obj.aggregation = meas.aggregationSelected;
+		if(!$scope.column.datasetOrTableFlag && meas.aggregationSelected != 'NONE') $scope.formula += meas.aggregationSelected+'("'+meas.alias+'") ';
+		else $scope.formula += '"'+meas.alias+'" ';
 	}
 	$scope.deleteLast = function(){
 		if($scope.formulaElement.length>0){
@@ -773,17 +768,14 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		for(var i=0;i<$scope.formulaElement.length;i++){
 			var obj = $scope.formulaElement[i];
 			if(obj.type=="number"){
-				$scope.formula = $scope.formula +""+obj.value+"";
+				$scope.formula += obj.value + " ";
 			}else if(obj.type=="measure"){
-				if(!$scope.column.datasetOrTableFlag && obj.aggregation) {				
-					if ($scope.formula == "") {
-					$scope.formula = $scope.checkAggregation(obj) +'("'+obj.value+'")';
-					}
-					else 	$scope.formula = $scope.formula +' '+ $scope.checkAggregation(obj) +'("'+obj.value+'")';
+				if(!$scope.column.datasetOrTableFlag && obj.aggregation && $scope.checkAggregation(obj) != 'NONE') {
+				   	$scope.formula += $scope.checkAggregation(obj) +'("'+obj.value+'") ';
 				}
-				else $scope.formula = $scope.formula +'"'+obj.value+'"';
+				else $scope.formula += '"'+obj.value+'" ';
 			}else{
-				$scope.formula = $scope.formula +" "+obj.value+" ";
+				$scope.formula += obj.value+" ";
 			}
 
 		}
