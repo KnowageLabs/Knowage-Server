@@ -923,7 +923,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
                     obj["alias"] = col.aliasToShow || col.alias;
                     //in case of non aggregated measures, default summary row aggregation is set to SUM
                     obj["funct"] = col.aggregationSelected == 'NONE' ? 'SUM' : col.aggregationSelected;
-                    if(ngModel.type == "table"){
+                    if(ngModel.type == "table" || ngModel.type == "advanced-table"){
                         if(col.isCalculated) {
                             obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
                             obj["columnName"] = '';

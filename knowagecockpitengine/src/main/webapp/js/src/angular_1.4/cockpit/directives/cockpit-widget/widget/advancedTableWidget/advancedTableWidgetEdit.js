@@ -31,7 +31,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		for(var c in $scope.newModel.content.columnSelectedOfDataset){
 			if(!$scope.newModel.content.columnSelectedOfDataset[c].aliasToShow) $scope.newModel.content.columnSelectedOfDataset[c].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[c].alias;
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected) $scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected = 'SUM';
-			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].funcSummary) $scope.newModel.content.columnSelectedOfDataset[c].funcSummary = 'NONE';
+			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].funcSummary) $scope.newModel.content.columnSelectedOfDataset[c].funcSummary = 'SUM';
 		}
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
@@ -120,7 +120,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	
 	function refreshRow(cell){
 		if(cell.data.fieldType == 'MEASURE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
-		if(cell.data.fieldType == 'MEASURE' && !cell.data.funcSummary) cell.data.funcSummary = 'NONE';
+		if(cell.data.fieldType == 'MEASURE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
 		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 	}
 	
@@ -209,6 +209,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 			for(var i=0;i<$scope.columnSelected.length;i++){
 				var obj = $scope.columnSelected[i];
 				obj.aggregationSelected = 'SUM';
+				obj.funcSummary = 'SUM';
 				obj.typeSelected = $scope.columnSelected[i].type;
 				obj.label = $scope.columnSelected[i].alias;
 				obj.aliasToShow = $scope.columnSelected[i].alias;

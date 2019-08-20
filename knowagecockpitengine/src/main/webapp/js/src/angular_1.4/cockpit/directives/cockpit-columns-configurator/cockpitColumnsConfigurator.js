@@ -380,7 +380,8 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		}
 		for(var i=0;i<$scope.columnSelected.length;i++){
 			var obj = $scope.columnSelected[i];
-			obj.aggregationSelected = 'NONE';
+			obj.aggregationSelected = 'SUM';
+			obj.funcSummary = 'SUM';
 			obj.typeSelected = $scope.columnSelected[i].type;
 			obj.label = $scope.columnSelected[i].alias;
 			obj.aliasToShow = $scope.columnSelected[i].alias;
@@ -660,6 +661,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
 		$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
+		$scope.result.aggregationSelected = $scope.column.aggregationSelected == 'NONE' ? 'SUM' : $scope.column.aggregationSelected;
 		$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
