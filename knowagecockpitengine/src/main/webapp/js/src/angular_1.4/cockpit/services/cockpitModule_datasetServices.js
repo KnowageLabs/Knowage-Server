@@ -1028,7 +1028,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 									obj["columnName"] += (!col.datasetOrTableFlag && col.formulaArray[f].aggregation == 'NONE') ? 'SUM' : col.formulaArray[f].aggregation;
 									obj["columnName"] += '("'+col.formulaArray[f].value+'") ';
 								}else{
-									obj["columnName"] += col.formulaArray[f].value+" ";
+									if(col.formulaArray[f].type == 'measure' && col.datasetOrTableFlag) obj["columnName"] += '"'+col.formulaArray[f].value+'" ';
+									else obj["columnName"] += col.formulaArray[f].value+" ";
 								}
 							}
 							
