@@ -160,7 +160,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
 				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
 
-				loadColumnAliasToName(dataSet,categoriesObject, columnAliasToName);
+				loadColumnAliasToName(dataSet, categoriesObject, columnAliasToName);
 				loadColumnAliasToName(dataSet, measuresObject, columnAliasToName);
 
 				projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
@@ -266,7 +266,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			JSONObject measure = measures.getJSONObject(i);
 			addProjection(dataSet, projections, measure, columnAliasToName);
 
-
 		}
 
 		return projections;
@@ -286,7 +285,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			JSONObject measure = measures.getJSONObject(i);
 			addProjection(dataSet, projections, measure, columnAliasToName);
 
-
 		}
 
 		return projections;
@@ -305,7 +303,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
-		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag")) function =  AggregationFunctions.get("NONE");
+		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag"))
+			function = AggregationFunctions.get("NONE");
 		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
 		return projection;
 	}
@@ -314,6 +313,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (jsonObject.isNull("id") && jsonObject.isNull("columnName")) {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
+
+			if (jsonObject.has("datasetOrTableFlag")) {
+				// it is a calculated field
+				return jsonObject.getString("columnName");
+			}
+
 			String id = jsonObject.getString("id");
 			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);
 
@@ -331,15 +336,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				"Column alias [" + columnAlias + "] not found in dataset metadata");
 		return columnAlias;
 	}
-	private Projection getProjectionWithFunctSummary(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName,String oldColumnName, String functName)
-			throws JSONException {
-		String columnName = getColumnName(jsonObject, columnAliasToName);
-		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
-		IAggregationFunction function = AggregationFunctions.get(functName);
-		Projection projection = new Projection(function, dataSet, oldColumnName, columnAlias);
-		projection.setName(columnName);
-		return projection;
-	}
+
 	protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> groups = new ArrayList<Projection>(0);
@@ -536,40 +533,33 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		dataWriter.setLocale(buildLocaleFromSession());
 		return dataWriter;
 	}
-/*
-	protected static boolean isTrueDatasetColumn(IDataSet dataSet, String colName) {
-
-		IMetaData metadata = dataSet.getMetadata();
-		int fieldIndex = metadata.getFieldIndex(colName);
-		if (fieldIndex >= 0 && fieldIndex < metadata.getFieldCount()) {
-			if ( metadata.getFieldMeta(fieldIndex)!=null) {
-				return true;
-			}
-
-		} else {
-			return false;
-		}
-		return false;
-
-	}
-*/
+	/*
+	 * protected static boolean isTrueDatasetColumn(IDataSet dataSet, String colName) {
+	 *
+	 * IMetaData metadata = dataSet.getMetadata(); int fieldIndex = metadata.getFieldIndex(colName); if (fieldIndex >= 0 && fieldIndex <
+	 * metadata.getFieldCount()) { if ( metadata.getFieldMeta(fieldIndex)!=null) { return true; }
+	 *
+	 * } else { return false; } return false;
+	 *
+	 * }
+	 */
 
 	protected void loadColumnAliasToName(IDataSet dataSet, JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject category = jsonArray.getJSONObject(i);
 
-				String alias = category.optString("alias");
-				if (alias != null && !alias.isEmpty()) {
-					String id = category.optString("id");
-					if (id != null && !id.isEmpty()) {
-						columnAliasToName.put(alias, id);
-					}
-
-					String columnName = category.optString("columnName");
-					if (columnName != null && !columnName.isEmpty()) {
-						columnAliasToName.put(alias, columnName);
-					}
+			String alias = category.optString("alias");
+			if (alias != null && !alias.isEmpty()) {
+				String id = category.optString("id");
+				if (id != null && !id.isEmpty()) {
+					columnAliasToName.put(alias, id);
 				}
+
+				String columnName = category.optString("columnName");
+				if (columnName != null && !columnName.isEmpty()) {
+					columnAliasToName.put(alias, columnName);
+				}
+			}
 
 		}
 	}

@@ -847,9 +847,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 		}
-		
+
 		var filtersToSendWithoutParams = {};
-		
+
 		angular.copy(filtersToSend, filtersToSendWithoutParams);
 		angular.forEach(filtersToSendWithoutParams, function(item){
 			var paramsToDelete = [];
@@ -862,7 +862,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				delete item[prop];
 			});
 		});
-		
+
 		return filtersToSendWithoutParams;
 	}
 
@@ -911,36 +911,43 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	this.getSummaryRow = function(ngModel){
-		var measures = [];
-		var columns = ngModel.content.columnSelectedOfDataset;
+        var measures = [];
+        var columns = ngModel.content.columnSelectedOfDataset;
+        if(columns){
+            //create aggregation
+            for(var i=0;i<columns.length;i++){
+                var col = columns[i];
+                if(col.fieldType!="ATTRIBUTE" && !(col.style && col.style.hideSummary)){
+                    var obj = {};
+                    obj["id"] = col.name || col.alias;
+                    obj["alias"] = col.aliasToShow || col.alias;
+                    //in case of non aggregated measures, default summary row aggregation is set to SUM
+                    obj["funct"] = col.aggregationSelected == 'NONE' ? 'SUM' : col.aggregationSelected;
+                    if(ngModel.type == "table"){
+                        if(col.isCalculated) {
+                            obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
+                            obj["columnName"] = '';
+                            for(var f in col.formulaArray){
+                                if(col.formulaArray[f].type == 'measure' && !col.datasetOrTableFlag){
+                                    //in case of non aggregated measures, default summary row aggregation is set to SUM in all formula's fields
+                                    obj["columnName"] += (!col.datasetOrTableFlag && col.formulaArray[f].aggregation == 'NONE') ? 'SUM' : col.formulaArray[f].aggregation;
+                                    obj["columnName"] += '("'+col.formulaArray[f].value+'") ';
+                                }else{
+                                    obj["columnName"] += col.formulaArray[f].value+" ";
+                                }
+                            }
 
-		if(columns){
-			//create aggregation
-			for(var i=0;i<columns.length;i++){
-				var col = columns[i];
-
-				if(col.fieldType!="ATTRIBUTE" && !(col.style && col.style.hideSummary)){
-					var obj = {};
-					obj["id"] = col.name || col.alias;
-					obj["alias"] = (ngModel.type == "table" || ngModel.type == "advanced-table") ? col.aliasToShow : col.alias;
-					obj["funct"] = col.aggregationSelected;
-					if(ngModel.type == "table" || ngModel.type == "advanced-table"){
-						if(col.isCalculated) obj["columnName"] = col.formula;
-						else obj["columnName"] = col.name;
-					}else obj["columnName"] = col.alias;
-					if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
-
-					measures.push(obj);
-				}
-			}
-		}
-		var result = {};
-		result["measures"] = measures;
-		result["dataset"] = ngModel.dataset.dsId;
-
-		return result;
-
-	}
+                        }else obj["columnName"] = col.name;
+                    }else obj["columnName"] = col.alias;
+                    measures.push(obj);
+                }
+            }
+        }
+        var result = {};
+        result["measures"] = measures;
+        result["dataset"] = ngModel.dataset.dsId;
+        return result;
+    }
 
 	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd){
 		var deferred = $q.defer();
@@ -953,7 +960,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				attachTo: eleToAtt,
 				locals :{currentAvaiableDataset:container,multiple:multiple,deferred:deferred},
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
-					
+
 					$scope.translate = sbiModule_translate;
 					$scope.datasetSearchText = '';
 					$scope.filterDataset = function(){
@@ -975,7 +982,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
-					
+
 					$scope.cockpitDatasetGrid = {
 					        enableColResize: false,
 					        enableFilter: true,
@@ -987,19 +994,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					        onGridSizeChanged: resizeColumns,
 					        columnDefs : $scope.cockpitDatasetColumn
 					};
-					
+
 					function resizeColumns(){
 						$scope.cockpitDatasetGrid.api.sizeColumnsToFit();
 					}
-					
+
 					function hasParametersRenderer(params){
 						return (params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
 					}
-					
+
 					function typeRenderer(params){
 						return cockpitModule_datasetServices.datasetTypes[params.value] || sbiModule_translate.load('kn.cockpit.dataset.type.generic');
 					}
-					
+
 					$scope.isDatasetListLoaded = false;
 
 					cockpitModule_datasetServices.loadDatasetList().then(function(response){
