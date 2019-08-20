@@ -326,6 +326,7 @@
 						currentRow.formula = result.formula;
 						currentRow.formulaArray = result.formulaArray;
 						currentRow.aggregationSelected = result.aggregationSelected;
+						currentRow.funcSummary = result.funcSummary;
 						currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
 						currentRow.alias = result.alias;
 					}else{
@@ -661,7 +662,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
 		$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
-		$scope.result.aggregationSelected = $scope.column.aggregationSelected == 'NONE' ? 'SUM' : $scope.column.aggregationSelected;
+		$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
 		$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
