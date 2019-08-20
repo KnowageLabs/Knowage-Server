@@ -303,6 +303,15 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 			$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
 			return;
 		}
+		
+		if($scope.newModel.settings.summary && $scope.model.settings.summary && $scope.newModel.settings.summary.enabled){
+			for(var k in $scope.newModel.content.columnSelectedOfDataset){
+				if(!$scope.newModel.content.columnSelectedOfDataset[k].datasetOrTableFlag){
+					$scope.newModel.content.columnSelectedOfDataset[k].funcSummary = $scope.newModel.content.columnSelectedOfDataset[k].aggregationSelected == 'NONE' ? 'SUM' : $scope.newModel.content.columnSelectedOfDataset[k].aggregationSelected;
+				}
+			}
+		}
+		
 		 mdPanelRef.close();
 		 angular.copy($scope.newModel,model);
 		 $scope.$destroy();

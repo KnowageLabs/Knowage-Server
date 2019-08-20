@@ -822,10 +822,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
 				return;
 			}
-//			if(!$scope.checkFilters()){
-//				$scope.showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
-//				return;
-//			}
+			
+			if($scope.model.settings.summary && $scope.model.settings.summary && $scope.model.settings.summary.enabled){
+				for(var k in $scope.model.content.columnSelectedOfDataset){
+					if(!$scope.model.content.columnSelectedOfDataset[k].datasetOrTableFlag){
+						$scope.model.content.columnSelectedOfDataset[k].funcSummary = $scope.model.content.columnSelectedOfDataset[k].aggregationSelected == 'NONE' ? 'SUM' : $scope.model.content.columnSelectedOfDataset[k].aggregationSelected;
+					}
+				}
+			}
+			
 
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
@@ -835,9 +840,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				scopeFather.refreshWidget();
 			}
 			$scope.$destroy();
-			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
-				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
-			}
 			$scope.watchColumnSelectedOfDataset();
 			finishEdit.resolve();
 		}
