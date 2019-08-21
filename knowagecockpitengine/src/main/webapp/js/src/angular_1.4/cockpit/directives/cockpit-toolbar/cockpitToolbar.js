@@ -289,7 +289,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				setTimeout(function(){
 					$mdDialog.hide();
 	 				cockpitModule_properties.LOADING_SCREENSHOT = false;
-	 				reject($scope.translate.load('kn.error.timeout'));
+	 				reject($scope.translate.load('kn.error.export.timeout'));
 				},30000);
 			}
 				
@@ -389,7 +389,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					 	if($scope.sheetsWidgets.length == $scope.cockpitModule_widgetServices.getAllWidgets().length){
 					 		if(isIE11) { //if is IE11 and using higcharts
 						 			for(var w in sheet.widgets){
-					 					if(sheet.widgets[w].type == 'chart'){
+					 					if(sheet.widgets[w].type == 'chart' && $scope.enterpriseEdition){
 					 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
 					 						if(d3Charts.indexOf(chartType)==-1){
 					 							replaceWithCanvg(sheet.widgets[w]);
@@ -418,7 +418,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 								 				replaceIframe(sheet.widgets[w]);
 								 			}
 								 			if(isIE11){
-								 				if(sheet.widgets[w].type == 'chart'){
+								 				if(sheet.widgets[w].type == 'chart' && $scope.enterpriseEdition){
 							 						var chartType =  sheet.widgets[w].content.chartTemplate ?sheet.widgets[w].content.chartTemplate.CHART.type.toLowerCase() : "bar";
 							 						if(d3Charts.indexOf(chartType)==-1){
 							 							replaceWithCanvg(sheet.widgets[w]);
