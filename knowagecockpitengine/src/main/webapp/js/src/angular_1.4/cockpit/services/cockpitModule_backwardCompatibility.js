@@ -80,6 +80,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					model.content.name = 'widget_' + model.type + '_' + model.id;
 				}
 			}
+			if(!self.compareVersion("6.4.4",model.knowageVersion)){
+				if(model.type=='table'){
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(k in model.content.columnSelectedOfDataset){
+							if (model.content.columnSelectedOfDataset[k].isCalculated) {
+								if(!model.content.columnSelectedOfDataset[k].funcSummary){
+									model.content.columnSelectedOfDataset[k].funcSummary = model.content.columnSelectedOfDataset[k].aggregationSelected == 'NONE' ? 'SUM' : model.content.columnSelectedOfDataset[k].aggregationSelected;
+								}
+								model.content.columnSelectedOfDataset[k].datasetOrTableFlag = true;							
+							}
+						}
+					}
+				}
+			}
 			//to version 7.0
 			if(!self.compareVersion("7.0.0",model.knowageVersion)){
 				if(model.type=='table'){

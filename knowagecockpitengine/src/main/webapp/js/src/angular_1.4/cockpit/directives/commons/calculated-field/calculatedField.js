@@ -58,6 +58,7 @@ function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockp
                     $scope.currentRow.formula = result.formula;
                     $scope.currentRow.formulaArray = result.formulaArray;
                     $scope.currentRow.aggregationSelected = result.aggregationSelected;
+                    $scope.currentRow.funcSummary = result.funcSummary;
                     $scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
                     $scope.currentRow.alias = result.alias;
 				}else{
@@ -187,6 +188,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		$scope.result.formulaArray = $scope.formulaElement;
 		$scope.result.formula = $scope.formula;
 		$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
+		$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
 		$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
 		$scope.result.aliasToShow = $scope.result.alias;
 		$scope.result.fieldType = 'MEASURE';
