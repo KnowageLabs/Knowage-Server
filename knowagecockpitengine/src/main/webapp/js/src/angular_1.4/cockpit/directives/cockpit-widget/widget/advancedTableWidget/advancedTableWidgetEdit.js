@@ -121,6 +121,7 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 	function refreshRow(cell){
 		if(cell.data.fieldType == 'MEASURE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
 		if(cell.data.fieldType == 'MEASURE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
+		if(cell.data.isCalculated) cell.data.alias = cell.data.aliasToShow;
 		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 	}
 	
@@ -279,12 +280,12 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		  }
 	  }
 
-	$scope.$watchCollection('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+	$scope.$watch('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
 		if($scope.columnsGrid.api && newValue){
 			$scope.columnsGrid.api.setRowData(newValue);
 			$scope.columnsGrid.api.sizeColumnsToFit();
 		}
-	})
+	},true)
 	
 	$scope.saveConfiguration=function(){
 		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined ){
