@@ -132,7 +132,10 @@ if(importAngularMaterialForExport == null) {
 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 
+
+<link rel="stylesheet" type="text/css"  href="<%=urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.js")%>"></script>		
 
 <!-- colorpicker -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinycolor-min.js")%>"></script> 

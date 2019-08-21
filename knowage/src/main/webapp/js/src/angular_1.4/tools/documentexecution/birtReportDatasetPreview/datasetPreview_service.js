@@ -53,21 +53,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}else{
 						sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
 						.then(function(response){
-							var previewDataset = response.data[0];
-							if (parameters == null || parameters == undefined) {
-								sbiModule_restServices.promisePost('2.0/export/dataset/'+ previewDataset.id.toString() + '/csv')
-								.then(function(response){})
-							}else{
-								for(var i = 0; i < previewDataset.pars.length; i++) {
-									var value = parameters[0][previewDataset.pars[i].name];
-									previewDataset.pars[i].value = value;
+								var previewDataset = response.data[0];
+								var paramsUrl = '/csv';
+								if (parameters != null && typeof parameters != 'undefined') {
+									for(var i = 0; i < previewDataset.pars.length; i++) {
+										var value = parameters[0][previewDataset.pars[i].name];
+										previewDataset.pars[i].value = value;
+									}
+									paramsUrl = '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars));
 								}
-								sbiModule_restServices.promisePost('2.0/export/dataset/'+ previewDataset.id.toString() + '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars)))
-										.then(function(response){})
-							}
-						})
+									sbiModule_restServices.promisePost('2.0/export/dataset', previewDataset.id.toString() + paramsUrl)
+											.then(function(response){
+												popupMessage(response)
+											},function(error){
+												popupMessage(error)
+											})
+								},function(error){
+								popupMessage(error)
+							})
 					}
-						
+				}
+				
+				var popupMessage = function(result){
+					var message 	= 'The download has started in background. You will find the result file in your download page.';
+					var className 	= 'kn-infoToast';
+					if(result.data.errors){
+						message 	= result.data.errors[0].message;
+						className 	= 'kn-warningToast';
+					}
+					Toastify({
+						  text: message,
+						  duration: 10000,
+						  close: true,
+						  className: className,
+						  stopOnFocus: true
+						}).showToast();
 				}
 						
 				
