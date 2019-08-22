@@ -276,11 +276,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			JSONObject measure = measures.getJSONObject(i);
 			addProjection(dataSet, projections, measure, columnAliasToName);
 
-
 		}
 
 		return projections;
 	}
+
 	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> projections = new ArrayList<>(categories.length() + measures.length());
@@ -325,7 +325,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
 		Projection projection;
-		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag")) function =  AggregationFunctions.get("NONE");
+		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag"))
+			function = AggregationFunctions.get("NONE");
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
 			projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
@@ -340,13 +341,16 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 																												// proj)
 	}
 
-
-
-
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		if (jsonObject.isNull("id") && jsonObject.isNull("columnName")) {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
+
+			if (jsonObject.has("datasetOrTableFlag")) {
+				// it is a calculated field
+				return jsonObject.getString("columnName");
+			}
+
 			String id = jsonObject.getString("id");
 			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);
 
@@ -627,11 +631,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	/**
 	 * @param profile
 	 * @param datasetsJSONArray
-	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
-	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
-	 *            rifattorizzata al più presto.
+	 * @param typeDocWizard     Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al
+	 *                          momento filtra la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un
+	 *                          riferimento alla dimensione spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista
+	 *                          dei dataset è una follia che andrebbe rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
