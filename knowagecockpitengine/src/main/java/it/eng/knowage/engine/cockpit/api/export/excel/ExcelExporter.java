@@ -833,7 +833,7 @@ public class ExcelExporter {
 
 					JSONObject categoryOrMeasure = new JSONObject();
 					categoryOrMeasure.put("id", column.getString("alias"));
-					categoryOrMeasure.put("alias", column.getString("alias"));
+					categoryOrMeasure.put("alias", aliasToShow);
 
 					String formula = column.optString("formula");
 					String name = formula.isEmpty() ? column.optString("name") : formula;
