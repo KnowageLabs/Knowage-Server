@@ -48,8 +48,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.cache.SimpleCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.scheduler.CacheTriggerManagementAPI;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
@@ -288,6 +290,13 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject configObject = jsonArray.getJSONObject(i);
 				saveReceivedConfig(configObject);
+				
+				if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
+					
+					CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
+					String confValue = configObject.getString("value");
+					cacheTriggerManagementAPI.updateChronExpression(confValue);
+				}
 			}
 
 			uri = new URI("2.0/conf");
@@ -299,7 +308,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		}
 
 	}
-
+	
 	private void saveReceivedConfig(JSONObject configObject) {
 		Config c = null;
 		IConfigDAO configsDao = null;
