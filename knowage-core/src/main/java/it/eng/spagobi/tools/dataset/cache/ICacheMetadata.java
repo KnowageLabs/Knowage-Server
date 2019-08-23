@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
@@ -91,22 +92,27 @@ public interface ICacheMetadata {
 	/**
 	 * add a cacheItem
 	 */
-	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset);
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset);
 
 	/**
 	 * add a cacheItem
 	 */
-	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension);
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension);
 
 	/**
 	 * add a cacheItem
 	 */
-	public void addCacheItem(String resultsetSignature, String tableName, BigDecimal dimension);
+	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension);
 
 	/**
 	 * update the cacheItem
 	 */
 	public void updateCacheItem(CacheItem cacheItem);
+	
+	/**
+	 * update all cacheItems
+	 */
+	public void updateAllCacheItems(IDataSource dataSource);
 
 	/**
 	 * remove the cacheItem

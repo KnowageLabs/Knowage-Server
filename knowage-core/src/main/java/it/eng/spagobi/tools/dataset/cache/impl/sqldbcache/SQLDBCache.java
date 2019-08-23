@@ -17,12 +17,25 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+
 import com.hazelcast.core.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -42,14 +55,10 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -271,6 +280,8 @@ public class SQLDBCache implements ICache {
             timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingLock[" + hashedSignature + "]");
             if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
                 timing.stop();
+                
+                cacheMetadata.updateAllCacheItems(getDataSource());
 
                 try {
                     timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
@@ -349,6 +360,8 @@ public class SQLDBCache implements ICache {
                 timing.stop();
                 try {
                     timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:usingLock[" + hashedSignature + "]");
+                    cacheMetadata.updateAllCacheItems(getDataSource());
+                    
                     // check again it is not already inserted
                     if (!cacheMetadata.containsCacheItem(signature)) {
                         String tableName = PersistedTableManager.generateRandomTableName(cacheMetadata.getTableNamePrefix());
@@ -363,7 +376,14 @@ public class SQLDBCache implements ICache {
                             persistedTableManager.setQueryTimeout(queryTimeout);
                         }
                         persistedTableManager.persist(dataSet, getDataSource(), tableName);
-                        cacheMetadata.addCacheItem(signature, tableName, new BigDecimal(-1));
+                        
+                        cacheMetadata.addCacheItem(
+                        		dataSet.getName(),
+                        		signature,
+                        		tableName,
+                        		DatabaseUtilities.getUsedMemorySize(
+                        				DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName)
+                        	);
                     }
                 } catch (Exception e) {
                     new SpagoBIRuntimeException(e);
@@ -436,7 +456,7 @@ public class SQLDBCache implements ICache {
                             String tableName = persistStoreInCache(dataSet, dataStore);
                             timeSpent = System.currentTimeMillis() - start;
                             Map<String, Object> properties = new HashMap<String, Object>();
-                            getMetadata().addCacheItem(signature, properties, tableName, dataStore);
+                            getMetadata().addCacheItem(((AbstractDataSet)dataSet).getName(), signature, properties, tableName, dataStore);
 
                         } else {
                             throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
@@ -567,18 +587,8 @@ public class SQLDBCache implements ICache {
      *
      * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
      */
-
     @Override
-    public boolean delete(String signature) {
-        return delete(signature, false);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
-     */
-    private boolean delete(String signature, boolean isHash) {
+    public boolean delete(String signature, boolean isHash) {
         boolean result = false;
 
         logger.debug("IN");
@@ -824,4 +834,5 @@ public class SQLDBCache implements ICache {
             logger.debug("OUT");
         }
     }
+    
 }
