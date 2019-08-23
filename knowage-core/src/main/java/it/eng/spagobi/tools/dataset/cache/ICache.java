@@ -106,16 +106,20 @@ public interface ICache {
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
 	boolean delete(IDataSet dataSet);
-
+	
 	/**
 	 * Delete the specified resultSet
 	 *
 	 * @param resultsetSignature
 	 *            the unique resultSet signature
+	 *            
+     *        isHash
+     *        	  true if resultsetSignature is hashed signature
+     *        	  false if resultsetSignature is signature in clear text
 	 *
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
-	boolean delete(String resultsetSignature);
+	boolean delete(String resultsetSignature, boolean isHash);
 
 	/**
 	 * Delete objects in the cache till the cleaning quota is reached
