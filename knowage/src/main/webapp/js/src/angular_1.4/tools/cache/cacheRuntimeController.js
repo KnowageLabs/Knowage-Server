@@ -447,7 +447,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	self.deleteFunction=function (row)
 	{
 		namesToDelete=[];
-		namesToDelete.push(row.name);
+		namesToDelete.push(row.signature);
 		var body={};
 		body.namesArray=namesToDelete;
 
