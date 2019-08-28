@@ -564,7 +564,9 @@ angular.module('chartInitializer')
 			            }
 
 
-			            chart.drillUpButton.textSetter("← " +backText);
+			            chart.drillUpButton.attr({
+		                    text: backText
+		                }).align();
 
 						chart.hideLoading();
 					});
