@@ -487,30 +487,27 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
 	$scope.asyncExport = function(dataset, format) {
+		var data = {};
+
 		var id = dataset.id;
 		var suffixPath = null;
 		if(format == 'CSV') {
-			suffixPath = "/csv";
+			suffixPath = "csv";
 		} else if (format == 'XLSX') {
-			suffixPath = "/xls";
+			suffixPath = "xls";
 		} else {
 			throw "Format " + format + " not supported";
 		}
 
-		var url = sbiModule_restServices.getBaseUrl("2.0/export/dataset/" + id + suffixPath);
 		console.info("[EXPORT]: Exporting dataset with id " + id + " to " + format);
 		if($scope.drivers != undefined && $scope.drivers.length>0) {
-			urlBuilderService.setBaseUrl(url);
-			queryDriverObj = {}
-			queryDriverObj.DRIVERS = driversExecutionService.prepareDriversForSending($scope.drivers);
-			urlBuilderService.addQueryParams(queryDriverObj);
-			url = urlBuilderService.build();
+			data.drivers = $scope.drivers;
 		}
 
-		window.fetch(url, {
-			method: "POST"
-			})
-			.then(function(result) {
+		sbiModule_restServices.promisePost("2.0/export/dataset/" + id,
+			suffixPath, data)
+		.then(
+			function(result) {
 				if(result.errors){
 					Toastify({
 						text: result.errors[0].message,
@@ -520,17 +517,13 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 						stopOnFocus: true
 					}).showToast();
 				}
-			})
+			});
 
 	}
 
 	$scope.exportDatasetWithDrivers = function(dataset) {
 		$scope.showExportDriverPanel = false;
 		var format = $scope.formatValueForExport;
-		var id=dataset.id;
-		if(isNaN(id)) {
-			id=id.dsId;
-		}
 
 		if(format == 'CSV') {
 			$scope.asyncExport(dataset, format);

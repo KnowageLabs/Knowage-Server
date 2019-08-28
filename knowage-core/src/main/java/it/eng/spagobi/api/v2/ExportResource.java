@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,6 +45,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 import org.quartz.JobDataMap;
@@ -70,6 +72,10 @@ import it.eng.spagobi.user.UserProfileManager;
  */
 @Path("/2.0/export")
 public class ExportResource {
+
+	private static final String BODY_ATTR_PARAMETERS = "parameters";
+
+	private static final String BODY_ATTR_DRIVERS = "drivers";
 
 	private static final Logger logger = Logger.getLogger(ExportResource.class);
 
@@ -167,18 +173,30 @@ public class ExportResource {
 	/**
 	 * Schedules an export in CSV format of the dataset in input.
 	 *
-	 * @param dataSetId   Id of the dataset to be exported
-	 * @param driversJson JSON data of drivers
-	 * @param paramsJson  JSON data of parameters
+	 * @param dataSetId Id of the dataset to be exported
+	 * @param body      JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
 	@Path("/dataset/{dataSetId}/csv")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONArray driversJson,
-			@QueryParam("PARAMETERS") JSONArray paramsJson) {
+	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, String body) {
 
 		logger.debug("IN");
+
+		JSONArray driversJson = null;
+		JSONArray paramsJson = null;
+
+		try {
+			JSONObject data = new JSONObject(body);
+			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONArray(BODY_ATTR_DRIVERS) : null;
+			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
+		} catch (JSONException e) {
+			String msg = String.format("Body data is invalid: %s", body);
+			logger.error(msg, e);
+			return Response.serverError().build();
+		}
 
 		Response ret = null;
 		Locale locale = request.getLocale();
@@ -213,18 +231,30 @@ public class ExportResource {
 	/**
 	 * Schedules an export in Excel format of the dataset in input.
 	 *
-	 * @param dataSetId   Id of the dataset to be exported
-	 * @param driversJson JSON data of drivers
-	 * @param paramsJson  JSON data of parameters
+	 * @param dataSetId Id of the dataset to be exported
+	 * @param body      JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
 	@Path("/dataset/{dataSetId}/xls")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, @QueryParam("DRIVERS") JSONArray driversJson,
-			@QueryParam("PARAMETERS") JSONArray paramsJson) {
+	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, String body) {
 
 		logger.debug("IN");
+
+		JSONArray driversJson = null;
+		JSONArray paramsJson = null;
+
+		try {
+			JSONObject data = new JSONObject(body);
+			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONArray(BODY_ATTR_DRIVERS) : null;
+			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
+		} catch (JSONException e) {
+			String msg = String.format("Body data is invalid: %s", body);
+			logger.error(msg, e);
+			return Response.serverError().build();
+		}
 
 		Response ret = null;
 		Locale locale = request.getLocale();

@@ -16,19 +16,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 (function(){
-	
+
 	angular.module('datasetPreviewModule')
-			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices', 
+			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices',
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
-				
+
 				this.previewDataset = function(datasetLabel, parameters, directDownload) {
 					if(!directDownload){
 						var iframeSrcUrl = sbiModule_config.contextName + "/restful-services/2.0/datasets/preview";
-						
+
 						var config = {
 							datasetLabel: datasetLabel
 						};
-						
+
 						if (parameters == null || parameters == undefined) {
 							showExporters(config);
 							iframeSrcUrl += '?' + $httpParamSerializer(config);
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
 									.then(function(response){
 										var previewDataset = response.data[0];
-										
+
 										if (previewDataset.pars.length > 0) {
 											for(var i = 0; i < previewDataset.pars.length; i++) {
 												var value = parameters[0][previewDataset.pars[i].name];
@@ -49,31 +49,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										}
 										openPreviewDialog(iframeSrcUrl, datasetLabel);
 									});
-						}	
+						}
 					}else{
 						sbiModule_restServices.promiseGet('2.0/datasets', datasetLabel)
-						.then(function(response){
+						.then(
+							function(response){
 								var previewDataset = response.data[0];
-								var paramsUrl = '/csv';
+								var id = previewDataset.id;
+								var data = {};
 								if (parameters != null && typeof parameters != 'undefined') {
-									for(var i = 0; i < previewDataset.pars.length; i++) {
-										var value = parameters[0][previewDataset.pars[i].name];
-										previewDataset.pars[i].value = value;
-									}
-									paramsUrl = '/csv?PARAMETERS=' +encodeURIComponent(JSON.stringify(previewDataset.pars));
+									data.parameters = previewDataset.pars;
 								}
-									sbiModule_restServices.promisePost('2.0/export/dataset', previewDataset.id.toString() + paramsUrl)
-											.then(function(response){
-												popupMessage(response)
-											},function(error){
-												popupMessage(error)
-											})
-								},function(error){
+
+								sbiModule_restServices.promisePost("2.0/export/dataset/" + id,
+										"csv", data)
+								.then(
+									function(response){
+										popupMessage(response)
+									},function(error){
+										popupMessage(error)
+									});
+							},
+							function(error){
 								popupMessage(error)
-							})
+							});
 					}
 				}
-				
+
 				var popupMessage = function(result){
 					var message 	= 'The download has started in background. You will find the result file in your download page.';
 					var className 	= 'kn-infoToast';
@@ -89,8 +91,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						  stopOnFocus: true
 						}).showToast();
 				}
-						
-				
+
+
 				var openPreviewDialog = function(iframeSrcUrl, datasetLabel) {
 					$mdDialog.show({
 						parent: angular.element(document.body),
@@ -108,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						controller: function(scope, iframeSrcUrl, dsLabel) {
 							scope.previewUrl = iframeSrcUrl;
 							scope.datasetLabel = dsLabel;
-							
+
 							scope.closePreview = function() {
 								$mdDialog.hide();
 							}
@@ -116,13 +118,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						clickOutsideToClose: true
 					}).then(function(response){}, function(response){});
 				}
-				
+
 				var showExporters = function(config) {
 					config.options = {
 						exports: ['CSV', 'XLSX']
 					};
 				}
-				
+
 			}]);
-		
+
 })();

@@ -362,42 +362,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		}
 			
 			function exportDataset(format){
-       			var pars = {
-     				parameters: parameters
-   				};       			
-       			Toastify({
-					  text: "The download has started in background. You will find the result file in your download page.",
-					  duration: 10000,
-					  close: true,
-					  className: 'kn-infoToast',
-					  stopOnFocus: true
-					}).showToast();
+				var body = {};
+				Toastify({
+					text: "The download has started in background. You will find the result file in your download page.",
+					duration: 10000,
+					close: true,
+					className: 'kn-infoToast',
+					stopOnFocus: true
+				}).showToast();
 				
-	       		var concatParams = '';
-	       		var concatDrivers = '';
-	       		if(parameters && parameters.length > 0) concatParams = '?PARAMETERS=' + encodeURIComponent(JSON.stringify(parameters));
-	       		if(drivers && drivers.length > 0) concatDrivers = '?DRIVERS=' + encodeURIComponent(JSON.stringify(drivers));
-	       		
-				if(format == 'CSV') {
-					var exportFormat = '/csv';
-	       		}else if (format == 'XLSX') {
-	       			var exportFormat = '/xls';      		
-		       	}
-				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat + concatParams + concatDrivers, {
-		       		  method: "POST"
-		       		}).then(function(result){
-		       			if(result.errors){
-		       				Toastify({
-		  					  text: result.errors[0].message,
-		  					  duration: 10000,
-		  					  close: true,
-		  					  className: 'kn-warningToast',
-		  					  stopOnFocus: true
-		  					}).showToast();
-		       			}
-		       		})
-		    }			
-			  
+				if(parameters && parameters.length > 0) body.parameters = parameters;
+				if(drivers && drivers.length > 0) body.drivers = drivers;
+		
+				var exportFormat = null;
+				if (format == 'CSV') {
+					exportFormat = '/csv';
+				} else if (format == 'XLSX') {
+					exportFormat = '/xls';
+				}
+				
+				debugger;
+				
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(body)
+				}).then(function(result) {
+						if(result.errors){
+							Toastify({
+								text: result.errors[0].message,
+								duration: 10000,
+								close: true,
+								className: 'kn-warningToast',
+								stopOnFocus: true
+							}).showToast();
+						}
+					})
+			}
+
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
 	
