@@ -14,7 +14,7 @@
 		}
 	});
 
-	businessModelOpeningModule.service('bmOpen_urlViewPointService', function(sbiModule_restServices, sbiModule_config, sbiModule_i18n,  bmOpen_sessionParameterService, driversDependencyService, sbiModule_dateServices) {
+	businessModelOpeningModule.service('bmOpen_urlViewPointService', function(sbiModule_restServices, sbiModule_config, sbiModule_i18n,  bmOpen_sessionParameterService, driversDependencyService, driversExecutionService, sbiModule_dateServices) {
 
 		var serviceScope = this;
 		serviceScope.listOfDrivers = [];
