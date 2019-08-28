@@ -470,18 +470,9 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 			String[] visiblecolumns;
 
-			if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
-				visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
-				for (int j = 0; j < visiblecolumns.length; j++) {
-					visiblecolumns[j] = visiblecolumns[j].toUpperCase();
-				}
-			} else {
-
-				valueColumn = "value";
-				displayColumn = "label";
-				descriptionColumn = "description";
-
-				visiblecolumns = new String[] { "value", "label", "description" };
+			visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
+			for (int j = 0; j < visiblecolumns.length; j++) {
+				visiblecolumns[j] = visiblecolumns[j].toUpperCase();
 			}
 
 			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON, valueColumn.toUpperCase(), displayColumn.toUpperCase(),
