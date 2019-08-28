@@ -17,8 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf" %>
+
 <!DOCTYPE html>
     <head>
+    	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
     	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
@@ -33,9 +36,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<style>
     		html, body {height: 100%;}
     	</style>
+		<script type="text/javascript" charset="utf-8">
+			var rootElement = angular.element(document);
+			
+			var app = angular.module("previewApp", [ 'ngMaterial', 'sbiModule' ]);
+			
+			app.controller("previewCtrl", ["$scope", "sbiModule_restServices", function($scope, sbiModule_restServices) {
+					
+					$scope.exportDataset = function(format){
+						var id = DATASET.id.dsId;
+						var data = {};
+						Toastify({
+							text: "The download has started in background. You will find the result file in your download page.",
+							duration: 10000,
+							close: true,
+							className: 'kn-infoToast',
+							stopOnFocus: true
+						}).showToast();
+
+						if(window.parameters && window.parameters.length > 0) data.parameters = window.parameters;
+						if(window.drivers && window.drivers.length > 0) data.drivers = window.drivers;
+
+						var suffixPath = null;
+						if (format == 'CSV') {
+							suffixPath = 'csv';
+						} else if (format == 'XLSX') {
+							suffixPath = 'xls';
+						}
+
+						sbiModule_restServices.promisePost("2.0/export/dataset/" + id,
+								suffixPath, data)
+						.then(function(result) {
+								if(result.errors){
+									Toastify({
+										text: result.errors[0].message,
+										duration: 10000,
+										close: true,
+										className: 'kn-warningToast',
+										stopOnFocus: true
+									}).showToast();
+								}
+							});
+					}
+
+			}])
+			.provider({
+				$rootElement:function() {
+					this.$get = function() {
+						return rootElement;
+					};
+				}
+			});
+		</script>
     </head>
     
-    <body>
+    <body ng-app="previewApp" ng-controller="previewCtrl">
     	<div id="utility-bar" class="utility-bar hidden"></div>
     	
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
@@ -60,23 +115,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		var drivers = url.searchParams.getAll("drivers");
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		
-	  		var exporterBarShown = false;	  		
+	  		var exporterBarShown = false;
 	  		function showExportersBar(){
 	  			if(options && options['exports'] && !exporterBarShown) {
-		  			document.getElementById('utility-bar').classList.remove("hidden");
-		  			document.getElementById('myGrid').classList.add("has-utility-bar");
-		  			for(var e in options['exports']){
-		  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
-		  			}
-		  			exporterBarShown = true;
-		  		}
-	  		}
-	  		
-	  		//Utility methods
+					document.getElementById('utility-bar').classList.remove("hidden");
+					document.getElementById('myGrid').classList.add("has-utility-bar");
+					for(var e in options['exports']){
+						// document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" ng-click="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
+						var utilityBar = angular.element(document.getElementById('utility-bar'));
+						var exportButton = angular.element('<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" ng-click="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>');
+						utilityBar.append(exportButton);
+
+						// TODO : Update it when Angular version change
+						angular.element(document).injector().invoke(function($compile) {
+							var scope = angular.element(exportButton).scope();
+							$compile(exportButton)(scope);
+						});
+					}
+					exporterBarShown = true;
+				}
+			}
+			
+			//Utility methods
 	  		function isEmpty(obj) {
-	  		    for(var key in obj) {
-	  		        if(obj.hasOwnProperty(key)) return false;
-	  		    }return true;
+	  			for(var key in obj) {
+	  				if(obj.hasOwnProperty(key)) return false;
+	  			}return true;
 	  		}
 	  		
 	  		//Function to create the colDefs for ag-grid
@@ -348,7 +412,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						gridOptions.api.hideOverlay();
 					}
 					
-				})
+				});
 			}
 
 	  		getData(true);
@@ -361,51 +425,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				})
 	  		}
 			
-			function exportDataset(format){
-				var body = {};
-				Toastify({
-					text: "The download has started in background. You will find the result file in your download page.",
-					duration: 10000,
-					close: true,
-					className: 'kn-infoToast',
-					stopOnFocus: true
-				}).showToast();
-				
-				if(parameters && parameters.length > 0) body.parameters = parameters;
-				if(drivers && drivers.length > 0) body.drivers = drivers;
-		
-				var exportFormat = null;
-				if (format == 'CSV') {
-					exportFormat = '/csv';
-				} else if (format == 'XLSX') {
-					exportFormat = '/xls';
-				}
-				
-				debugger;
-				
-				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(body)
-				}).then(function(result) {
-						if(result.errors){
-							Toastify({
-								text: result.errors[0].message,
-								duration: 10000,
-								close: true,
-								className: 'kn-warningToast',
-								stopOnFocus: true
-							}).showToast();
-						}
-					})
-			}
-
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
 	
-	  </script>
-	  <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>
+		</script>
+		<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>
     </body>
 </html>
