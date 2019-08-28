@@ -55,6 +55,7 @@ public class ExcelExportJob extends AbstractExportJob {
 		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
 		OutputStream exportFileOS = getDataOutputStream();
+		DataIterator iterator = null;
 		try {
 
 			IDataSet dataSet = getDataSet();
@@ -126,7 +127,7 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 			// FILL CELL RECORD
 
-			DataIterator iterator = dataSet.iterator();
+			iterator = dataSet.iterator();
 			int i = 0;
 			while (iterator.hasNext()) {
 				try {
@@ -196,10 +197,14 @@ public class ExcelExportJob extends AbstractExportJob {
 			logger.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
+			if (iterator != null) {
+				iterator.close();
+			}
 			if (exportFileOS != null) {
 				try {
 					exportFileOS.close();
 				} catch (IOException e) {
+					// Yes, it's mute!
 				}
 			}
 		}
