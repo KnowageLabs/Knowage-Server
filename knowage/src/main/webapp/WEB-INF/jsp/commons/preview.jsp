@@ -29,13 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
 		<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
 		<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+		<!-- POLYFILLS -->
+		<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
 		<style>
 			html, body {height: 100%;}
 		</style>
 		<script type="text/javascript" charset="utf-8">
-			agGrid.initialiseAgGridWithAngular1(angular);
 
-			var rootElement = angular.element(document);
+			agGrid.initialiseAgGridWithAngular1(angular);
 
 			var app = angular.module("previewApp", [ "ngMaterial", "agGrid", "sbiModule" ]);
 
@@ -105,8 +106,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(options && options['exports'] && !exporterBarShown) {
 							document.getElementById('utility-bar').classList.remove("hidden");
 							document.getElementById('myGrid').classList.add("has-utility-bar");
-							for(var e in options['exports']){
-								// document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" ng-click="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
+							// in keyword seams not to work properly in IE11
+							for(var e=0; e < options['exports'].length; e++){
 								var utilityBar = angular.element(document.getElementById('utility-bar'));
 								var exportButton = angular.element('<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" ng-click="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>');
 								utilityBar.append(exportButton);
@@ -373,7 +374,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							data = response.data;
 							$scope.backEndPagination.totalRows = data.results;
 							if(data.results > MAX_ROWS_EXCEL_EXPORT){
-								if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
+								var exportXlsx = document.getElementById('export-XLSX');
+								if(exportXlsx) {
+									angular.element(exportXlsx).remove();
+								}
 							}
 							$scope.gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
 							if(options.backEndPagination){
@@ -403,7 +407,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							$scope.gridOptions.api.hideOverlay();
 
 						},function(response) {
-
 							errors = [ response.data.errors[0].message ];
 							$scope.gridOptions.api.showNoRowsOverlay();
 						});
