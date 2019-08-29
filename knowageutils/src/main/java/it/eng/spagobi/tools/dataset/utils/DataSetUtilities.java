@@ -240,7 +240,7 @@ public class DataSetUtilities {
 	 * @return
 	 */
 	private static String getDefaultValueByType(String defaultValue, ParamDefaultValue paramDefaultValue) {
-		if (!STRING_TYPE.equals(paramDefaultValue.getType())) {
+		if (!STRING_TYPE.equalsIgnoreCase(paramDefaultValue.getType())) {
 			return defaultValue;
 		}
 		return "'" + defaultValue + "'";
@@ -257,7 +257,7 @@ public class DataSetUtilities {
 		if (oldValue == null || oldValue.isEmpty()) {
 			return true;
 		}
-		if (STRING_TYPE.equals(paramDefaultValue.getType())) {
+		if (STRING_TYPE.equalsIgnoreCase(paramDefaultValue.getType())) {
 			if (oldValue == "''") {
 				return true;
 			}
