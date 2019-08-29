@@ -39,10 +39,7 @@
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
-				<md-chips ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" readonly="true">
-					 <md-chip-template>
-				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
-			        </md-chip-template>
+				<md-chips ng-model="parameter.parameterValue" readonly="true">					 
 				</md-chips>
 			</div>
 		</div>
@@ -63,10 +60,7 @@
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
-				<md-chips ng-model="parameter.parameterValue" readonly="true">
-					 <md-chip-template>
-				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
-			        </md-chip-template>
+				<md-chips ng-model="parameter.parameterValue" readonly="true">			        
 				</md-chips>
 			</div>
 		</div>
