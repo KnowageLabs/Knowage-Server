@@ -15,7 +15,7 @@
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
 				<md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
 				<span flex class="truncated"><md-tooltip md-delay="500">{{layer.alias}}</md-tooltip>{{layer.alias}}</span>
-				<md-icon ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'icon'" md-font-icon="{{ layer.markerConf.icon.className }}" style="color: {{ layer.markerConf.style.color }}"></md-icon>
+				<md-icon ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'icon'" md-font-icon="{{ layer.markerConf.icon.className }}" ng-style="{ color: layer.markerConf.style.color }"></md-icon>
 				<div ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'url'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
 					<img src="{{ layer.markerConf.url }}" style="max-width: 50%;max-height: 50%;"></img>
 				</div>
