@@ -1010,7 +1010,7 @@
 			#end
 			#if($a.type == "datetime")
             formatter: function() {
-                return '' + Highcharts.dateFormat('$dateFormat', this.value);
+                return '' + Highcharts.dateFormat('$dateFormat', this.value+86400000);
             },  
             #end
         	
