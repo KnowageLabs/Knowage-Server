@@ -1005,7 +1005,7 @@
 			#end
 			#if($a.type == "datetime")
             formatter: function() {
-                return '' + Highcharts.dateFormat('$dateFormat', this.value);
+                return '' + Highcharts.dateFormat('$dateFormat', this.value+86400000);
             },  
             #end
         	
@@ -2129,7 +2129,7 @@
 						+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
 				  
 			   if  (point.series.userOptions.category && point.series.userOptions.category =='$categoryDate'){
-					result += '<span>' + Highcharts.dateFormat('%A, %b %e, %Y', point.x) + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+					result += '<span>' + Highcharts.dateFormat('$dateFormat', point.x) + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
 				  
 				} else {
 					result += '<span>' + key + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
