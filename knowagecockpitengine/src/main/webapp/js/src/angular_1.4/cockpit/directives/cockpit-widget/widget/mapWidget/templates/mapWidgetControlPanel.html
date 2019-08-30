@@ -41,8 +41,8 @@
 						height="12">
 						<defs>
 							<linearGradient id="default_gradient">
-							<stop style="stop-color:{{ layer.analysisConf.fromColor }};stop-opacity:1" offset="0" />
-							<stop style="stop-color:{{ layer.analysisConf.toColor   }};stop-opacity:1" offset="1" />
+							<stop style="stop-opacity:1;" ng-style="{ 'stop-color': layer.analysisConf.fromColor }" offset="0" />
+							<stop style="stop-opacity:1;" ng-style="{ 'stop-color': layer.analysisConf.toColor   }" offset="1" />
 							</linearGradient>
 						</defs>
 						<rect style="opacity:1;fill:url(#default_gradient);fill-opacity:1.0;" width="12" height="12" x="0" y="0" />
