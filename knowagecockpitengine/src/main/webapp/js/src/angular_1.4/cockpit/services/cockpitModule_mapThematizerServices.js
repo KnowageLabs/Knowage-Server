@@ -261,20 +261,19 @@
 				break;
 
 			default:
+				var defaultImg = new Image(12,12);
+				defaultImg.src = 'data:image/svg+xml,' + escape('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg4505" width="12" height="12"> <circle r="5.1254177" style="fill: ' + color + ';opacity:1;fill-opacity:1;stroke:#000000;stroke-width:1.74916482;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" id="path826" cx="5.9999995" cy="6" /></svg>');
+
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
 						/** @type {olx.style.IconOptions} */
 					({
-						stroke: new ol.style.Stroke({ //border doesn't work
-						color: 'red',
-						width: 3
-					}),
-				    crossOrigin: 'anonymous',
-				    color: color,
-				    opacity: alpha,
-				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.svg'
-					}))
-		          });
+						crossOrigin: 'anonymous',
+						opacity: alpha,
+						img: defaultImg,
+						imgSize: [12, 12]
+					})
+				)});
 				break;
 
 			}
