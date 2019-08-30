@@ -73,7 +73,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				console.log("inputParameter: ", inputParameter);
 				console.log("otherOutputParameters: ", otherOutputParameters);
 
-				for (var n in navObj){
+				for (var n = 0; n < navObj.length; n++){
 					if (navObj[n].crossText){
 						//replace parameters placeholders if exist in navigation popup selection
 						var paramsRegex = /\$P\{([a-zA-Z0-9\_\-]*)}/g;
