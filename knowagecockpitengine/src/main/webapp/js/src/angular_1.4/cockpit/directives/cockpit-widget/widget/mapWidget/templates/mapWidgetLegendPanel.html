@@ -13,7 +13,8 @@
 			<!-- <br/> -->
 			<div layout="row" layout-align="start center">
 				  <span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
-				  <div style="background:linear-gradient(to right {{legendElem.colors}});height:10px;width:90%;display:block;border-radius:25px;"></div>
+				  <div style="height:10px;width:90%;display:block;border-radius:25px;"
+				    ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
 				  <span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
 			</div>
 	</div>
