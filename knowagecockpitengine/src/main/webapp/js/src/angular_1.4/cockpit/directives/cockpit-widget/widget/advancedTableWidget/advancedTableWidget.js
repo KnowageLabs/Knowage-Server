@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
-							
+
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -53,17 +53,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_analyticalDrivers,
 			cockpitModule_properties,
 			cockpitModule_defaultTheme){
-		
+
 		$scope.showGrid = true;
 		$scope.bulkSelection = false;
 		$scope.selectedCells = [];
 		$scope.selectedRows = [];
-		
+
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
 		}else $scope.ngModel.settings.page = 1;
-		
+
 		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
 		function getColumns(fields) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
 							tempCol.tooltipValueGetter = function(params) {
-								return $scope.translate.load('sbi.cockpit.table.cross.tooltip'); 
+								return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
 							};
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
@@ -97,17 +97,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
 						tempCol.headerComponentParams = {template: headerTemplate()};
-						
+
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
-						
+
 						tempCol.fieldType = cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type || ($scope.ngModel.content.columnSelectedOfDataset[c].fieldType == 'ATTRIBUTE'? 'java.lang.String': 'java.lang.Float')].label;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						if(tempCol.fieldType == 'date') tempCol.valueFormatter = dateFormatter;
 						if(tempCol.fieldType == 'timestamp') tempCol.valueFormatter = dateTimeFormatter;
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) tempCol.valueFormatter = numberFormatter;
-						
+
 						tempCol.cellRenderer = cellRenderer;
-						
+
 						if($scope.ngModel.settings.autoRowsHeight) {
 							tempCol.autoHeight = true;
 							if(tempCol.style) tempCol.style['white-space'] = 'normal';
@@ -131,14 +131,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return columns
 		}
-		
+
 		function getColumnName(colNum){
 			for(var k in $scope.metadata.fields){
 				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
 			}
 		}
-		
-		function headerTemplate() { 
+
+		function headerTemplate() {
 			var cellClasses = 'cellContainer ';
 			var headerStyle = {};
 			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = $scope.ngModel.style.th;
@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					'	</div>'+
 					'</div>';
 		}
-		
+
 		function getCellStyle(params){
 			var tempStyle = params.colDef.style || {};
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
@@ -170,26 +170,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return tempStyle;
 		}
-		
+
 		//VALUE FORMATTERS
 		function dateFormatter(params){
 			return isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
 		}
-		
+
 		function dateTimeFormatter(params){
 			return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 		}
-		
+
 		function numberFormatter(params){
 			if(params.value != "" && !params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
 		}
-		
+
 		//CELL RENDERERS
 		function cellRenderer () {}
-		
+
 		cellRenderer.prototype.init = function(params){
 			this.eGui = document.createElement('span');
 			var tempValue = params.valueFormatted || params.value;
@@ -216,11 +216,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			if(this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
-		
+
 		cellRenderer.prototype.getGui = function() {
 		    return this.eGui;
 		};
-		
+
 		cellRenderer.prototype.refresh = function(params) {
 			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
 			if($scope.bulkSelection){
@@ -231,11 +231,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		function crossIconRenderer(params){
 			return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
 		}
-		
+
 		function SummaryRowRenderer () {}
 
 		SummaryRowRenderer.prototype.init = function(params) {
@@ -259,7 +259,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		SummaryRowRenderer.prototype.getGui = function() {
 		    return this.eGui;
 		};
-		
+
 		function TooltipValue(params) {
 			if(params.colDef.style && params.colDef.style.tooltip) {
 				var tempValue = params.valueFormatted || params.value;
@@ -270,21 +270,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return params.valueFormatted || params.value;
 		}
-		
+
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
 				$scope.widgetIsInit=true;
 			},500);
 		}
-		
+
 		$scope.reinit = function(){
 			$scope.refreshWidget();
 		}
-		
+
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 			$scope.showWidgetSpinner();
-			
+
 			if(datasetRecords){
 				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
@@ -319,7 +319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				resizeColumns();
 				$scope.hideWidgetSpinner();
 			}else $scope.hideWidgetSpinner();
-			
+
 			if(nature == 'init'){
 				$timeout(function(){
 					$scope.widgetIsInit=true;
@@ -327,7 +327,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				},500);
 			}
 		}
-		
+
 		$scope.getOptions = function(){
 			var obj = {};
 				obj["page"] = $scope.ngModel.settings.page ? $scope.ngModel.settings.page - 1 : 0;
@@ -335,7 +335,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				obj["type"] = 'table';
 			return obj;
 		}
-		
+
 		$scope.advancedTableGrid = {
 				angularCompileRows: true,
 				onGridSizeChanged: resizeColumns,
@@ -353,6 +353,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					else return 28;
 				},
 				getRowStyle: function(params) {
+					// TODO : make this a CSS rule with a custom class
 					if($scope.ngModel.settings.alternateRows && $scope.ngModel.settings.alternateRows.enabled){
 					    if($scope.ngModel.settings.alternateRows.oddRowsColor && params.node.rowIndex % 2 === 0) {
 					        return { background: $scope.ngModel.settings.alternateRows.oddRowsColor }
@@ -375,6 +376,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');
 			}
+			// Re-apply styles to all rows
+			// TODO : it's too heavy!
+			$scope.advancedTableGrid.api.redrawRows();
 		}
 		function columnResized(params){
 			if(params.source != "sizeColumnsToFit"){
@@ -382,59 +386,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 						if($scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == params.column.colDef.headerName){
 							if($scope.ngModel.content.columnSelectedOfDataset[c].style) $scope.ngModel.content.columnSelectedOfDataset[c].style.width = params.column.actualWidth;
-							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.column.actualWidth};	
+							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.column.actualWidth};
 							break;
 						}
 					}
 				}
 			}
 		}
-		
+
 		var resizeTimer = false;
 		function readyResizeColumns(){
 			$scope.advancedTableGrid.api.sizeColumnsToFit();
 			if(resizeTimer) clearTimeout(resizeTimer);
 			else if($scope.advancedTableGrid.api) resizeTimer = setTimeout(function(){ $scope.advancedTableGrid.api.sizeColumnsToFit(); }, 5000);
 		}
-		
+
 		function resizeColumns(){
 			$scope.advancedTableGrid.api.sizeColumnsToFit();
 		}
-		
+
 	  	$scope.maxPageNumber = function(){
 			if($scope.ngModel.settings.page * $scope.ngModel.settings.pagination.itemsNumber < $scope.totalRows) return $scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber;
 			else return $scope.totalRows;
 	  	}
-	  	
+
 	  	$scope.disableFirst = function(){
 	  		return $scope.ngModel.settings.page == 1;
 	  	}
-	  	
+
 	  	$scope.disableLast = function(){
 	  		return $scope.ngModel.settings.page == $scope.totalPages;
 	  	}
-	  	
+
 	  	$scope.first = function(){
 	  		$scope.ngModel.settings.page = 1;
 	  		$scope.refreshWidget();
 		}
-		
+
 	  	$scope.prev = function(){
 	  		if($scope.ngModel.settings.page == 1) return;
 	  		$scope.ngModel.settings.page = $scope.ngModel.settings.page - 1;
 	  		$scope.refreshWidget();
 		}
-		
+
 	  	$scope.next = function(){
 	  		$scope.ngModel.settings.page = $scope.ngModel.settings.page + 1;
 	  		$scope.refreshWidget();
 		}
-		
+
 	  	$scope.last = function(){
 	  		$scope.ngModel.settings.page = $scope.totalPages;
 	  		$scope.refreshWidget();
 		}
-	  	
+
 	  	function mapRow(rowData){
 			var keyMap = {};
 			for(var r in rowData){
@@ -444,9 +448,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return keyMap;
 		}
-	  	
+
 	  	function previewDataset(row, column) {
-			if ($scope.ngModel.cross.preview.parameters && 
+			if ($scope.ngModel.cross.preview.parameters &&
 				    (angular.isArray($scope.ngModel.cross.preview.parameters) && $scope.ngModel.cross.preview.parameters.length > 0)) {
 				newValue = $scope.ngModel.cross.preview.parameters;
 				$scope.doSelection(column, row[column], newValue, undefined, row);
@@ -457,9 +461,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else {
 				// previewing common Dataset, without parameters
 				$scope.doSelection(column, row[column], undefined, undefined, row);
-			}	
+			}
 		}
-		
+
 		function onCellClicked(node){
 			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
 			var iconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'icon';
@@ -491,7 +495,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					break;
 				}
 			}
-			
+
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
 				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && !allRowEnabled)){
@@ -534,12 +538,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
 			}
 		}
-		
-		
+
+
 		$scope.clickItem = function(e,row,column){
 			$scope.advancedTableGrid.api.deselectAll();
 			var newValue = undefined;
-			
+
 			column = getColumnName(column);
 
 			var rows = [];
@@ -556,12 +560,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.doSelection(column,valuesArray,$scope.ngModel.settings.modalSelectionColumn || null,newValue,rows);
 			$scope.bulkSelection = false;
 		}
-		
+
 		$scope.cancelBulkSelection = function(){
 			$scope.bulkSelection = false;
 			$scope.advancedTableGrid.api.refreshCells({force:true});
 		}
-		
+
 		$scope.$watchCollection('ngModel.settings.pagination',function(newValue,oldValue){
 			if(newValue != oldValue){
 				$scope.showGrid = false;
