@@ -104,7 +104,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						if(tempCol.fieldType == 'date') tempCol.valueFormatter = dateFormatter;
 						if(tempCol.fieldType == 'timestamp') tempCol.valueFormatter = dateTimeFormatter;
-						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) tempCol.valueFormatter = numberFormatter;
+						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
+							tempCol.valueFormatter = numberFormatter;
+							// When server-side pagination is disabled
+							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
+								return valueA - valueB;
+							}
+						}
 
 						tempCol.cellRenderer = cellRenderer;
 
