@@ -47,6 +47,7 @@
 							angular.copy(response.data.filterStatus, businessModel.parametersData.documentParameters);
 							serviceScope.businessModel = {};
 							angular.copy(businessModel, serviceScope.businessModel);
+							angular.copy(serviceScope.businessModel.parametersData.documentParameters, serviceScope.listOfDrivers);
 							//check if document has parameters
 							if(response && response.data.filterStatus && response.data.filterStatus.length>0) {
 
