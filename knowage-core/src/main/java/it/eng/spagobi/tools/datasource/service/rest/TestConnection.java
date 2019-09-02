@@ -29,6 +29,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -37,7 +38,10 @@ import com.mongodb.MongoClient;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -135,6 +139,7 @@ public class TestConnection {
 
 		JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 
+		String label = requestBodyJSON.optString("label");
 		String url = requestBodyJSON.optString("urlConnection");
 		String user = requestBodyJSON.optString("user");
 		String pwd = requestBodyJSON.optString("pwd");
@@ -183,6 +188,16 @@ public class TestConnection {
 						}
 					}
 				} else {
+
+					// If password is not provided, use the old one if exist
+					if (!StringUtils.isEmpty(label) && StringUtils.isEmpty(pwd)) {
+						IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+						IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(label);
+						if (dataSource != null) {
+							pwd = dataSource.getPwd();
+						}
+					}
+
 					Class.forName(driver);
 					connection = DriverManager.getConnection(url, user, pwd);
 				}
