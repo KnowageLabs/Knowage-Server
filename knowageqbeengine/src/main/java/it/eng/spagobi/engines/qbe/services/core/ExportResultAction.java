@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
 import it.eng.qbe.datasource.transaction.ITransaction;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
@@ -140,7 +141,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				query = deserializeQuery(queryJSON);
 				Assert.assertNotNull(query, "Query object cannot be null in oder to execute " + this.getActionName() + " service");
 				Assert.assertTrue(query.isEmpty() == false, "Query object cannot be empty in oder to execute " + this.getActionName() + " service");
-
 				Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
 				Assert.assertTrue(MimeUtils.isValidMimeType(mimeType) == true, "[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
 
@@ -148,11 +148,15 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				// "Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
 				// Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
 				// "[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
+				UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+				IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
+
+				query = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
 
 				statement = getEngineInstance().getDataSource().createStatement(query);
-				// logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 
 				statement.setParameters(getEnv());
+				statement.setProfileAttributes(getUserProfileAttributes());
 
 				jpaQueryStr = statement.getQueryString();
 
@@ -227,6 +231,22 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 
 		logger.debug("OUT");
+	}
+
+	/**
+	 * @return
+	 * @throws EMFInternalError
+	 */
+	private Map getUserProfileAttributes() throws EMFInternalError {
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		Map userAttributes = new HashMap();
+		Iterator it = userProfile.getUserAttributeNames().iterator();
+		while (it.hasNext()) {
+			String attributeName = (String) it.next();
+			Object attributeValue = userProfile.getUserAttribute(attributeName);
+			userAttributes.put(attributeName, attributeValue);
+		}
+		return userAttributes;
 	}
 
 	private void exportIntoCSV(boolean writeBackResponseInline, String mimeType, String fileExtension, ITransaction transaction, String sqlQuery)
@@ -333,15 +353,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			dataSet = QbeDatasetFactory.createDataSet(statement);
 			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 
-			Map userAttributes = new HashMap();
-			UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			Iterator it = profile.getUserAttributeNames().iterator();
-			while (it.hasNext()) {
-				String attributeName = (String) it.next();
-				Object attributeValue = profile.getUserAttribute(attributeName);
-				userAttributes.put(attributeName, attributeValue);
-			}
-			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("attributes", getUserProfileAttributes());
 			dataSet.addBinding("parameters", this.getEnv());
 			logger.debug("Executing query ...");
 
