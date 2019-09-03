@@ -147,6 +147,9 @@ angular.module('chartInitializer')
 
 
 		Highcharts.setOptions({
+			time: {
+				useUTC: false
+			},
 			chart : {
 				renderTo : panelId,
 				backgroundColor : {
