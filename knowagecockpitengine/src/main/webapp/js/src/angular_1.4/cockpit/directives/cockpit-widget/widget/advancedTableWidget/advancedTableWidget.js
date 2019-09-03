@@ -541,7 +541,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				$scope.advancedTableGrid.api.refreshCells({force:true});
 			}else {
-				$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, null, mapRow(node.data));
+				newValue = []; 
+				if ($scope.ngModel.settings.modalSelectionColumn!= undefined) {
+
+					var rows = [];		 
+					rows.push(mapRow(node.data));
+
+					for(var k in rows){
+						newValue.push(rows[k][$scope.ngModel.settings.modalSelectionColumn]);
+					}
+				}
+				else {
+					newValue = null;
+				}
+				$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
 			}
 		}
 
