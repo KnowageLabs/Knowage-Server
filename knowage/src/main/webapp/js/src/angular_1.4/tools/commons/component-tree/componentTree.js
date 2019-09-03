@@ -58,6 +58,7 @@
 				, isInternalSelectionAllowed: "=?"
 				, forceVisibility: "=?" //boolean value
 				, checkChildren: '=?'	//boolean value
+				, uncheckParent: '=?'	//boolean value
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -97,6 +98,10 @@
 
 						if (scope.checkChildren == undefined) {
 							scope.checkChildren = true;
+						}
+
+						if (scope.uncheckParent == undefined) {
+							scope.uncheckParent = true;
 						}
 
 						scope.createTreeStructure = function (folders) {
@@ -342,7 +347,12 @@
 				if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
 					$scope.selectedItem.push(element);
 				}else{
-					$scope.uncheckParent(element);
+					var idx = $scope.selectedItem.indexOf(element);
+					$scope.selectedItem.splice(idx, 1);
+					if($scope.uncheckParent) {
+						$scope.deselectParent(element);
+					}
+
 				}
 
 				if (element.type == 'folder') {
@@ -359,12 +369,10 @@
 			}
 		};
 
-		$scope.uncheckParent = function(element) {
-			var idx = $scope.selectedItem.indexOf(element);
-			$scope.selectedItem.splice(idx, 1);
+		$scope.deselectParent = function(element) {
 			if(element.$parent && element.$parent.checked) {
 				element.$parent.checked = false;
-				$scope.uncheckParent(element.$parent);
+				$scope.deselectParent(element.$parent);
 			}
 		}
 
