@@ -254,7 +254,7 @@
 					}),
 					scale: (config.scale) ? (config.scale/100) : 1,
 					opacity: 1,
-				    crossOrigin: 'anonymous',
+				    crossOrigin: null,
 				    src: config[config.type]
 					}))
 		          });
