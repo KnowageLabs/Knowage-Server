@@ -381,7 +381,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
 	 	    	if (!$scope.ngModel.content.mapId){
 	 	    		$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
-	 	    		$scope.ngModel.content.optionSidenavId = 'optionSidenav-' + scope.ngModel.id;
+	 	    		$scope.ngModel.content.optionSidenavId = 'optionSidenav-' + $scope.ngModel.id;
 	 	    	}
 	 	    	//set default indicator (first one) for each layer
 	 	    	for (l in $scope.ngModel.content.layers){
