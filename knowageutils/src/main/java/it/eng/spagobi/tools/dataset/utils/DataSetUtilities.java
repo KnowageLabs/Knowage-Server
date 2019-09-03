@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
@@ -189,10 +190,8 @@ public class DataSetUtilities {
 	/**
 	 * Fill he parameters map with the default values if and only if they are not already present in the map.
 	 *
-	 * @param dataSet
-	 *            can't be null
-	 * @param parameters
-	 *            can be null
+	 * @param dataSet    can't be null
+	 * @param parameters can be null
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void fillDefaultValues(IDataSet dataSet, Map parameters) {
@@ -294,7 +293,12 @@ public class DataSetUtilities {
 				while (keys.hasNext()) {
 					String key = keys.next();
 					Object obj = jsonParameters.opt(key);
-					String value = (obj.equals(JSONObject.NULL)) ? "" : jsonParameters.getString(key);
+					String value = null;
+					if (obj instanceof JSONArray) {
+						value = ((JSONArray) obj).toString();
+					} else {
+						value = (obj.equals(JSONObject.NULL)) ? "" : jsonParameters.getString(key);
+					}
 					toReturn.put(key, value);
 				}
 			} catch (Throwable t) {
