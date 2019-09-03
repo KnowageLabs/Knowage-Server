@@ -377,10 +377,14 @@ public abstract class AbstractDataSet implements IDataSet {
 						String paramValue = paramValues.get(paramName);
 						String[] values = null;
 						if (isMultiValue) {
-							JSONArray jsonArray = new JSONArray(paramValue);
 							List<String> list = new ArrayList<String>();
-							for (int j = 0; j < jsonArray.length(); j++) {
-								list.add(jsonArray.getString(j));
+							try {
+								JSONArray jsonArray = new JSONArray(paramValue);
+								for (int j = 0; j < jsonArray.length(); j++) {
+									list.add(jsonArray.getString(j));
+								}
+							} catch (JSONException e) {
+								// Yes, it's mute!
 							}
 							values = list.toArray(new String[0]);
 						} else {
