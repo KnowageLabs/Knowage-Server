@@ -698,7 +698,10 @@ public class DataSetResource extends AbstractDataSetResource {
 								for (int j = 0; j < jsonPars.length(); j++) {
 									JSONObject jsonParam = jsonPars.getJSONObject(j);
 									if (name.equals(jsonParam.getString("name"))) {
-										if (jsonParam.optString("value") != "") {
+										boolean jMultivalue = jsonParam.getBoolean("multiValue");
+										if (jMultivalue) {
+											jsonPar.put(name, jsonParam.get("value"));
+										} else {
 											jsonPar.put(name, jsonParam.optString("value"));
 											break;
 										}

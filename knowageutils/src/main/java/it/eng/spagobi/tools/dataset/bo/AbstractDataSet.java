@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -374,7 +375,17 @@ public abstract class AbstractDataSet implements IDataSet {
 					if (paramName.equals(parameter.optString("namePar"))) {
 						boolean isMultiValue = parameter.optBoolean("multiValuePar");
 						String paramValue = paramValues.get(paramName);
-						String[] values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+						String[] values = null;
+						if (isMultiValue) {
+							JSONArray jsonArray = new JSONArray(paramValue);
+							List<String> list = new ArrayList<String>();
+							for (int j = 0; j < jsonArray.length(); j++) {
+								list.add(jsonArray.getString(j));
+							}
+							values = list.toArray(new String[0]);
+						} else {
+							values = Arrays.asList(paramValue).toArray(new String[0]);
+						}
 
 						String typePar = parameter.optString("typePar");
 						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";

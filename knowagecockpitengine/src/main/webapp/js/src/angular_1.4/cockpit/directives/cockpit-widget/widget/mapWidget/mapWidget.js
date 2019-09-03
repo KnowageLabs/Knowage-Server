@@ -27,8 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
 							//defines new id for clone widget action
 							if (scope.ngModel.content.mapId){
-				 	    		scope.ngModel.content.mapId =  'map-' + scope.ngModel.id;
-				 	    	}
+								scope.ngModel.content.mapId =  'map-' + scope.ngModel.id;
+								scope.ngModel.content.optionSidenavId = 'optionSidenav-' + scope.ngModel.id;
+							}
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -40,6 +41,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					};
 				}
 			}
+		})
+		// From https://github.com/angular/material/issues/4987
+		.directive('evalAttrAsExpr', function evalAttrAsExpr() {
+			/*
+			 * This directive is a workaround for the md-component-id attribute of the
+			 * mdSidenav directive.
+			 *
+			 * The mdSidenav directive, in its controller function, registers the element
+			 * using the md-component-id attribute. If we need this value to be an
+			 * expression to be evaluated in the scope, we can't do
+			 *
+			 * <md-sidenav md-component-id="{{ expr }}" [...]>
+			 *
+			 * because the curly braces are replaced in a subsequent stage. To work around
+			 * this, this directive replace the value of md-component-id with the value of
+			 * that expression in the scope. So the previous example becomes
+			 *
+			 * <md-sidenav md-component-id="expr" eval-attr-as-expr="mdComponentId" [...]>
+			 */
+			return {
+				restrict: 'A',
+				controller: function($scope, $element, $attrs) {
+					var attrToEval = $attrs.evalAttrAsExpr;
+					$attrs[attrToEval] = $scope.$eval($attrs[attrToEval]);
+				},
+				priority: 9999
+			};
 		})
 
 	function cockpitMapWidgetControllerFunction(
@@ -249,7 +277,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
 
 		$scope.toggleSidenav = function(){
-			var optionSidenav = $mdSidenav("optionSidenav");
+			var optionSidenav = $mdSidenav($scope.ngModel.content.optionSidenavId);
 			optionSidenav.toggle();
 			$scope.sideNavOpened = optionSidenav.isOpen();
 		}
@@ -353,6 +381,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
 	 	    	if (!$scope.ngModel.content.mapId){
 	 	    		$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
+	 	    		$scope.ngModel.content.optionSidenavId = 'optionSidenav-' + scope.ngModel.id;
 	 	    	}
 	 	    	//set default indicator (first one) for each layer
 	 	    	for (l in $scope.ngModel.content.layers){
