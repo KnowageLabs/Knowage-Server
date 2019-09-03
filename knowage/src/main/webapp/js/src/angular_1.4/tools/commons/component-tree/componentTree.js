@@ -76,6 +76,11 @@
 						var label = (attrs.textToShowKey &&  attrs.textToShowKey.trim() != '')? attrs.textToShowKey.trim() : 'name' ;
 
 						var leafIconCls = (attrs.leafIconCls &&  attrs.leafIconCls != '')? attrs.leafIconCls : 'fa fa-file';
+<<<<<<< HEAD
+=======
+
+						scope.stateCode = "stateCode";
+>>>>>>> 76b604646d... [SOLVED KNOWAGE-4305] - Chenge the selecion mode on tree analitycal driver
 
 						scope.label = label;
 						scope.subfoldersId = subfoldersId;
@@ -92,6 +97,13 @@
 
 						scope.seeTree = false;
 
+<<<<<<< HEAD
+=======
+						if (scope.checkChildren == undefined) {
+							scope.checkChildren = true;
+						}
+
+>>>>>>> 76b604646d... [SOLVED KNOWAGE-4305] - Chenge the selecion mode on tree analitycal driver
 						scope.createTreeStructure = function (folders) {
 							if (attrs.createTree !== undefined  && (attrs.createTree == true || attrs.createTree == 'true')) {
 								if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined) {
@@ -335,8 +347,7 @@
 				if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
 					$scope.selectedItem.push(element);
 				}else{
-					var idx = $scope.selectedItem.indexOf(element);
-					$scope.selectedItem.splice(idx, 1);
+					$scope.uncheckParent(element);
 				}
 
 				if (element.type == 'folder') {
@@ -352,6 +363,15 @@
 				}
 			}
 		};
+
+		$scope.uncheckParent = function(element) {
+			var idx = $scope.selectedItem.indexOf(element);
+			$scope.selectedItem.splice(idx, 1);
+			if(element.$parent && element.$parent.checked) {
+				element.$parent.checked = false;
+				$scope.uncheckParent(element.$parent);
+			}
+		}
 
 		$scope.openFolder = function (node,doClickAction) {
 			if(($scope.expandOnClick!=false && $scope.expandOnClick!='false') || doClickAction==false ){
