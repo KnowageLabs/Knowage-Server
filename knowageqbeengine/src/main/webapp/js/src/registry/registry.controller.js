@@ -58,7 +58,7 @@
 		self.propertyName = '';
 		self.reverse = false;
 		self.dateFormat='MM/dd/yyyy';
-		
+
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
@@ -82,7 +82,7 @@
 
         var readData = function(formParameters) {
         	 self.formatNumber= 0;
-        	registryCRUD.read(formParameters).then(function(response) {        	
+        	registryCRUD.read(formParameters).then(function(response) {
 	           	 self.data = response.data.rows;
 	           	 if(self.configuration.pagination != 'true'){
 	           	 self.data = orderBy(self.data,self.propertyName,self.reverse);
@@ -128,7 +128,7 @@
 				}
 			});
 		};
-		
+
 		//Sorting Columns
 		self.sortBy = function(propertyName){
 			if(self.configuration.pagination != 'true'){
@@ -179,7 +179,7 @@
                 return 'any';
             }
         };
-        
+
 		/* Pivot Table */
 		self.setRowspan = function(rows,rowIndex,columnIndex,columns){
 
@@ -296,7 +296,7 @@
 			}
                 return;
         };
-        
+
         self.isItSummaryRow = function(rows,indexF,index,columns){
         		var row = rows[indexF];
         		var columnField = columns[index].field;
@@ -311,17 +311,17 @@
         		return  (previousFieldValue === '      ' && fieldValue !== '      ' );
         };
 
-              
+
 	  //Adding options to combo columns
         var clicked = 0;
         self.dependentColumns = [];
-        
+
         self.addColumnOptions = function(column, row, $mdOpenMenu) {
             $mdOpenMenu();
             row.selected = true;
-            
+
             //regular independent combo columns
-            if(column.editor === 'COMBO' && !self.isDependentColumn(column)) {           	
+            if(column.editor === 'COMBO' && !self.isDependentColumn(column)) {
             	if(!self.comboColumnOptions[column.field]) {
             		self.comboColumnOptions[column.field] = {};
             		var promise = regFilterGetData.getData(column.field);
@@ -329,68 +329,68 @@
                         self.comboColumnOptions[column.field] = response;
                     });
                     return promise;
-            	}            
-            } 
-            
+            	}
+            }
+
             //dependent combo columns
-            if(column.editor === 'COMBO' && self.isDependentColumn(column)) {            	            	
+            if(column.editor === 'COMBO' && self.isDependentColumn(column)) {
             	if(!self.comboColumnOptions[column.field]) {
             		self.comboColumnOptions[column.field] = {};
-            		            		
+
             		var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
-                	dependencesPromise.then(function(response) {	                		
-                		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;                		
+                	dependencesPromise.then(function(response) {
+                		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                 	});
-                	return dependencesPromise;            		               	
+                	return dependencesPromise;
             	} else {
             		if(!self.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
             			var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
-                    	dependencesPromise.then(function(response) {	                		
-                    		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;                    		
+                    	dependencesPromise.then(function(response) {
+                    		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                     	});
                     	return dependencesPromise;
             		}
-            	}            	            	
+            	}
             }
         };
-                
+
         self.stopShow = false;
-                
+
         self.notifyAboutDependency = function(column, event) {
         	clicked++;
         	if(clicked == 1) {
         		fillDependencyColumns(column);
         		createDialog(self.dependentColumns);
-        	}        	        	
-          	        	
+        	}
+
         	if(self.dependentColumns.length != 0 && !self.stopShow) {
-        		
+
         		$mdDialog.show(self.confirm)
         				.then(function(result){
 						 self.stopShow = result;
 					 }, function(result){
 						 self.stopShow = result;
-					 }); 
-        	}        	
+					 });
+        	}
         };
-                 
+
         var fillDependencyColumns = function(column) {
         	for(var i = 0; i < self.columns.length; i++) {
         		var col = self.columns[i];
-        		if(col.dependsFrom === column.field) {        			
+        		if(col.dependsFrom === column.field) {
         			var dependent = col.title;
-        			self.dependentColumns.push(dependent);            			
+        			self.dependentColumns.push(dependent);
         		}
         	}
         };
-        
+
         var createDialog = function(dependentColumns) {
         	self.confirm = $mdDialog.prompt(
         			{
     					controller: DialogController,
     					parent: angular.element(document.body),
     					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
-    					locals: {    						
+    					locals: {
     						dontShowAgain: self.stopShow,
     						columns: self.dependentColumns
     					},
@@ -401,19 +401,19 @@
         			}
         	);
         };
-        
+
         function DialogController($scope, $mdDialog, dontShowAgain, columns, sbiModule_translate) {
         	 $scope.dontShowAgain = dontShowAgain;
         	 $scope.dependentColumns = columns;
         	 $scope.translate = sbiModule_translate;
-        	 
+
         	 $scope.closeDialog = function() {
          		 dontShowAgain = $scope.dontShowAgain;
-        		 $mdDialog.hide(dontShowAgain);        		 
-             }; 
-             
+        		 $mdDialog.hide(dontShowAgain);
+             };
+
         };
-                      
+
         self.isDependentColumn = function(column) {
         	if(column.hasOwnProperty('dependsFrom') && column.hasOwnProperty('dependsFromEntity')) {
         		return true;
@@ -601,7 +601,9 @@
         var dateRowsFilter= function(columnNames,rows){
         	for(var i = 0 ; i<columnNames.length ;  i++){
         		for(var j = 0 ; j < rows.length; j++){
-        			rows[j][columnNames[i]]= new Date((rows[j][columnNames[i]]));//.replace(/ /g,'T')
+        			if(!isNaN(new Date(rows[j][columnNames[i]]))){
+        				rows[j][columnNames[i]]= new Date((rows[j][columnNames[i]]));//.replace(/ /g,'T')
+        			}
         		}
         	}
         	return rows;
