@@ -162,45 +162,38 @@ function mapWidgetEditControllerFunction(
   		layer.splice(layer.indexOf(column),1);
   	}
 
-  	$scope.deleteLayer = function(layer){
-  		var index=$scope.newModel.content.layers.indexOf(layer);
-		var tempPos = layer.order;
+	$scope.deleteLayer = function(layer){
+		var index=$scope.newModel.content.layers.indexOf(layer);
 		$scope.newModel.content.layers.splice(index,1);
 		var nextItem=$scope.newModel.content.layers[index];
-		if(nextItem!=undefined){
-			nextItem.order=tempPos;
-		}
 		delete $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
-  	}
 
-  	$scope.move = function(e,row,direction){
-		var lower, current, upper;
-		for(var o in $scope.newModel.content.layers){
-			if($scope.newModel.content.layers[o].order == row.order){
-				current = o;
-			}else if($scope.newModel.content.layers[o].order == row.order-1){
-				upper = o;
-			}else if($scope.newModel.content.layers[o].order == row.order+1){
-				lower = o;
-			}
+		$scope.reorder();
+	}
+
+	$scope.move = function(e,current,direction){
+		var currentIdx = $scope.newModel.content.layers.indexOf(current);
+		var switchToIdx = null;
+		var switchTo = null;
+		if (direction=='up') {
+			switchToIdx = currentIdx - 1;
+		} else {
+			switchToIdx = currentIdx + 1;
 		}
-		if(direction=='up'){
-			$scope.newModel.content.layers[upper].order = row.order;
-			$scope.newModel.content.layers[current].order = row.order-1;
-		}else{
-			$scope.newModel.content.layers[lower].order = row.order;
-			$scope.newModel.content.layers[current].order = row.order+1;
-		}
+		$scope.newModel.content.layers[currentIdx] = $scope.newModel.content.layers[switchToIdx];
+		$scope.newModel.content.layers[switchToIdx] = current;
+
+		$scope.reorder();
 	};
 
-  	$scope.addLayer = function(ev) {
-  		$scope.myLayersId = [];
-  		for(var m in $scope.newModel.content.layers){
+	$scope.addLayer = function(ev) {
+		$scope.myLayersId = [];
+		for(var m in $scope.newModel.content.layers){
 			$scope.myLayersId.push($scope.newModel.content.layers[m].dsId);
 		}
-  		$mdDialog.show({
+		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
-		  		$scope.widgetSpinner = true;
+				$scope.widgetSpinner = true;
 				$scope.availableSpatialLayers = [];
 				cockpitModule_datasetServices.loadDatasetList().then(function(response){
 					var datasetList = cockpitModule_datasetServices.getDatasetList();
@@ -216,7 +209,7 @@ function mapWidgetEditControllerFunction(
 					$scope.widgetSpinner = false;
 				});
 
-			    //Add the layers to the newModel
+				//Add the layers to the newModel
 				$scope.add = function(){
 					if (!$scope.newModel.content.layers) $scope.newModel.content.layers = [];
 					for(var k in $scope.availableSpatialLayers){
@@ -227,8 +220,7 @@ function mapWidgetEditControllerFunction(
 								"type": "DATASET",
 								"dsId": tempLayer.id.dsId,
 								"alias": tempLayer.label,
-								"name": tempLayer.name,
-								"order": $scope.newModel.content.layers ? $scope.newModel.content.layers.length : 0
+								"name": tempLayer.name
 							}
 							for(var i in tempLayer.metadata.fieldsMeta){
 								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
@@ -248,6 +240,8 @@ function mapWidgetEditControllerFunction(
 							$scope.newModel.content.columnSelectedOfDataset[tempLayer.id.dsId] = columnSelected;
 						}
 					}
+
+					$scope.reorder();
 					$mdDialog.hide();
 				}
 
@@ -272,7 +266,7 @@ function mapWidgetEditControllerFunction(
 	    })
 //	    $scope.hideWidgetSpinner();
 	    $scope.widgetSpinner = false;
-//  		$scope.safeApply();
+//		$scope.safeApply();
   	}
 //  	$scope.colorPickerOptions = {format:'hex'};
   	$scope.colorPickerOptions = {format:'rgb'};
@@ -482,6 +476,12 @@ function mapWidgetEditControllerFunction(
   		mdPanelRef.close();
   		finishEdit.reject();
   	}
+
+	$scope.reorder = function() {
+		for(var idx in $scope.newModel.content.layers) {
+			$scope.newModel.content.layers[idx].order = 1 + Number(idx);
+		}
+	}
 
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
