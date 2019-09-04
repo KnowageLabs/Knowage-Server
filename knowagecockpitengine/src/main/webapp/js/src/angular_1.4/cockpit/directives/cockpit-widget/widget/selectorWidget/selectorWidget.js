@@ -436,12 +436,26 @@ angular.module('cockpitModule')
 			} else { // singleValue
 				if($scope.ngModel.settings.modalityPresent=="LIST"){
 					if($scope.selectedValues[0] != parVal){
-						$scope.selectedValues[0] = parVal;
-						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+						if (parVal.length == 0) {
+							item.value=angular.copy($scope.selectedValues[0]);
+							$rootScope.$broadcast('DELETE_SELECTION',item);
+							$scope.deleteSelections(item);
+						}
+						else {
+							$scope.selectedValues[0] = parVal;
+							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+				
+						}
 					} else {
-						item.value=angular.copy($scope.selectedValues[0]);
-						$rootScope.$broadcast('DELETE_SELECTION',item);
-						$scope.deleteSelections(item);
+						if ($scope.selectedValues[0]) {
+					    	$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+						}
+						else {
+							item.value=angular.copy($scope.selectedValues[0]);
+							$rootScope.$broadcast('DELETE_SELECTION',item);
+							$scope.deleteSelections(item);
+						}
+
 					}
 				}else{ // COMBOBOX
 					if(parVal){
