@@ -19,28 +19,28 @@
     angular.module('RegistryDocument')
     	   .factory('regFilterGetData', ['sbiModule_action_builder', 'registryConfigService', '$filter', '$q',
     			   function(sbiModule_action_builder, registryConfigService, $filter, $q) {
-    		   
+
     		   var registryConfiguration = registryConfigService.getRegistryConfig();
 
     		   var serviceObj = {};
     		   serviceObj.action = sbiModule_action_builder;
     		   serviceObj.filterOptions = {};
-    		       		   
-    		   serviceObj.getData = function(filterField){    			       			   
+
+    		   serviceObj.getData = function(filterField){
     			   var deferred = $q.defer();
-    			   
-    			   if(this.filterOptions[filterField]) {    				    			   		 
-     				  deferred.resolve(this.filterOptions[filterField]);    				   	       			 
+
+    			   if(this.filterOptions[filterField]) {
+     				  deferred.resolve(this.filterOptions[filterField]);
      			   } else {
-     				   var newPromise = getFiltersValues(filterField);   			       			   
+     				   var newPromise = getFiltersValues(filterField);
      				   newPromise.then(function(result){
      					  serviceObj.filterOptions[filterField] = result.data.rows;
            				  deferred.resolve(serviceObj.filterOptions[filterField]);
-          			   });  
-     			   }		      			   
+          			   });
+     			   }
     			    return deferred.promise;
 			   };
-			   
+
 			   serviceObj.getDependeceOptions = function(columnField, dependsFrom, value) {
 				   var entity = registryConfiguration.entity;
     			   var ENTITY_ID = createEntityId(entity, columnField);
@@ -48,56 +48,59 @@
     			   var getFilterValuesAction = serviceObj.action.getActionBuilder('POST');
     			   getFilterValuesAction.actionName = 'GET_FILTER_VALUES_ACTION';
     			   getFilterValuesAction.formParams.QUERY_TYPE = 'standard';
-    			   getFilterValuesAction.formParams.ENTITY_ID = ENTITY_ID;    			       			   
+    			   getFilterValuesAction.formParams.ENTITY_ID = ENTITY_ID;
     			   getFilterValuesAction.formParams.ORDER_ENTITY = ENTITY_ID;
     			   getFilterValuesAction.formParams.ORDER_TYPE = 'asc';
     			   getFilterValuesAction.formParams.QUERY_ROOT_ENTITY = true;
     			   getFilterValuesAction.formParams.query = '';
     			   getFilterValuesAction.formParams.DEPENDENCES = DEPENDENCES;
-    			   
+
     			   var promise = getFilterValuesAction.executeAction();
 
     			   return promise;
-			   }; 		   
-    		   
+			   };
+
 			   var createDependences = function(entity, dependsFrom, value) {
 				   var column = getColumn(dependsFrom);
     			   var SubEntity = column.subEntity;
     			   var foreignKey = column.foreignKey;
     			   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + dependsFrom + '=' + value;
 			   };
-			   
+
     		   var getColumn = function(filterField) {
     			   return $filter('filter')(registryConfiguration.columns,{field:filterField}, true)[0];
     		   };
-    		   
-    		   
+
+
     		   var createEntityId = function(entity, filterField) {
     			   var column = getColumn(filterField);
-    			   var SubEntity = column.subEntity;
-    			   var foreignKey = column.foreignKey;
-    			   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + filterField;
+    			   if (SubEntity) {
+    			   	   var foreignKey = column.foreignKey;
+    			   	   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + filterField;
+					} else {
+						return   entity + ':' + filterField;
+					}
     		   };
-    		   
-    		   
+
+
     		   var getFiltersValues = function(filterField) {
     			   var entity = registryConfiguration.entity;
     			   var ENTITY_ID = createEntityId(entity, filterField);
     			   var loadRegistryAction = serviceObj.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'GET_FILTER_VALUES_ACTION';
     			   loadRegistryAction.formParams.ENTITY_ID = ENTITY_ID;
-    			   loadRegistryAction.formParams.QUERY_TYPE = 'standard';    			   
+    			   loadRegistryAction.formParams.QUERY_TYPE = 'standard';
     			   loadRegistryAction.formParams.ORDER_ENTITY = ENTITY_ID;
     			   loadRegistryAction.formParams.ORDER_TYPE = 'asc';
     			   loadRegistryAction.formParams.QUERY_ROOT_ENTITY = true;
     			   loadRegistryAction.formParams.query = '';
-    			   
+
     			   var promise = loadRegistryAction.executeAction();
 
     			   return promise;
     		   };
-    		       		   
-    		   
+
+
     		   return serviceObj;
     	   }]);
 })();
