@@ -76,7 +76,8 @@
                                 <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="rc.setSelected(row)">                                                            
                                 <md-menu ng-if="col.editable && col.dataType !== 'boolean'">                                
                                     <div layout="row" class="clickable" ng-click="rc.addColumnOptions(col, row, $mdOpenMenu)">  
-	                                    <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
+	                                    <span ng-if="col.dataType === 'int' && row[col.field] != ''"">{{row[col.field] | number}}</span>
+	                                    <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
 	                                    <span ng-if="col.dataType === 'date'"> {{row[col.field] | date:"MM/dd/yyyy"}} </span>                                  	
 	                                    <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
 	                                    <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
