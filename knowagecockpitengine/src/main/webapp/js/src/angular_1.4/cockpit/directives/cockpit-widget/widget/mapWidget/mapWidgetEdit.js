@@ -220,7 +220,8 @@ function mapWidgetEditControllerFunction(
 								"type": "DATASET",
 								"dsId": tempLayer.id.dsId,
 								"alias": tempLayer.label,
-								"name": tempLayer.name
+								"name": tempLayer.name,
+								"defaultVisible": true
 							}
 							for(var i in tempLayer.metadata.fieldsMeta){
 								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
