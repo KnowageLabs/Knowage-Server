@@ -493,7 +493,7 @@
             
             dataLabels: {
                 enabled: true,
-                #*format: '<b>{point.name}</b>: {point.percentage:.1f} %',*#
+                #*format: '{point.name)}: {point.percentage:.1f} %',*#
                 style: {
                     color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                 }
@@ -761,7 +761,7 @@
 			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                     		*/
 			                   	formatter: function() {
-			                     
+			                     debugger
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
@@ -775,7 +775,20 @@
 			                      	
 			                      	var precision = '${relatedSerie.precision}';
 			                      	var pointPercentage = this.point.percentage;
-			                      	var catName = "<b>" + this.point.name + "</b>: ";
+
+
+ escapeHTML =  function (text,nl,empty) {
+  if (typeof nl != 'string') nl = "\n";
+
+  return ((text||"").toString().
+    replace(/&/g,'&amp;').
+    replace(/</g,'&lt;').
+    replace(/>/g,'&gt;').
+    replace(/\"/g,'&quot;').
+    replace(/\'/g,'&#39;').
+    replace(/\n|\r\n?/g, nl)) || empty;
+};
+			                      	var catName = "<b>"+escapeHTML( this.point.name) + "</b>: ";
 			                      	
 	                      	        newValue = catName;        	
 			                      	newValue += prefixValue;
@@ -833,7 +846,7 @@
 		    				},
 			                    enabled: true,
 			                    
-			                    format: '<b>{point.name}</b>'
+			                    format: '{point.name}'
 
 			              
 			                }  #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == false)
@@ -980,7 +993,18 @@
 			                      	
 			                      	var precision = '${relatedSerie.precision}';
 			                      	var pointPercentage = this.point.percentage;
-			                      	var catName = "<b>" + this.point.name + "</b>: ";
+ escapeHTML =  function (text,nl,empty) {
+  if (typeof nl != 'string') nl = "\n";
+
+  return ((text||"").toString().
+    replace(/&/g,'&amp;').
+    replace(/</g,'&lt;').
+    replace(/>/g,'&gt;').
+    replace(/\"/g,'&quot;').
+    replace(/\'/g,'&#39;').
+    replace(/\n|\r\n?/g, nl)) || empty;
+};
+			                      	var catName = "<b>"+escapeHTML( this.point.name) + "</b>: ";
 			                      	
 	                      	        newValue = catName;        	
 
@@ -1036,7 +1060,7 @@
 			                    enabled: true,
 			                    
 			                  
-			                    format: '<b>{point.name}</b>: ' +  '{point.percentage:.' + $precision + 'f}%'
+			                    format: '{point.name}: ' +  '{point.percentage:.' + $precision + 'f}%'
 			                }  
 		                #else
 		                
@@ -1051,7 +1075,7 @@
 					#set($serieTitleShow = $axis.TITLESERIE.showTitle)
 					#if($serieTitleShow=="true")
 					title: {
-		            format: '<b>{name}</b>',
+		            format: '{name}',
 		            
 		            align: '$axis.TITLESERIE.style.align',
 		            style:{
