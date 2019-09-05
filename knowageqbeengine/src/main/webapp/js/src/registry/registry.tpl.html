@@ -68,7 +68,7 @@
                 </thead>                
                 <tbody>                
                     <tr ng-repeat="row in rc.data">
-                    	<td class="recNo"> <span ng-if="!col.editable">{{row.id}}</span> </td>
+                    	<td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
                           <td ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible"  ng-class='rc.checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">                           
                             <div>                     	                                                          
                                 <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
