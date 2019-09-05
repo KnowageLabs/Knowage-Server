@@ -74,6 +74,7 @@
 
     		   var createEntityId = function(entity, filterField) {
     			   var column = getColumn(filterField);
+    			   var SubEntity = column.subEntity;
     			   if (SubEntity) {
     			   	   var foreignKey = column.foreignKey;
     			   	   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + filterField;
