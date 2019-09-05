@@ -195,19 +195,16 @@ function mapWidgetEditControllerFunction(
 			controller: function ($scope,$mdDialog) {
 				$scope.widgetSpinner = true;
 				$scope.availableSpatialLayers = [];
-				cockpitModule_datasetServices.loadDatasetList().then(function(response){
-					var datasetList = cockpitModule_datasetServices.getDatasetList();
-					for(var i in datasetList){
-						var dataset = datasetList[i];
-						if(dataset.hasSpatialAttributes && $scope.myLayersId.indexOf(dataset.id.dsId)==-1){
-							$scope.availableSpatialLayers.push(dataset);
-						}
+
+				// Datasets need to be added on cockpit
+				var datasetList = cockpitModule_datasetServices.getAvaiableDatasets();
+				for(var i in datasetList){
+					var dataset = datasetList[i];
+					if(dataset.hasSpatialAttributes && $scope.myLayersId.indexOf(dataset.id.dsId)==-1){
+						$scope.availableSpatialLayers.push(dataset);
 					}
-					$scope.widgetSpinner = false;
-				},function(response){
-					sbiModule_restServices.errorHandler(response.data,"");
-					$scope.widgetSpinner = false;
-				});
+				}
+				$scope.widgetSpinner = false;
 
 				//Add the layers to the newModel
 				$scope.add = function(){

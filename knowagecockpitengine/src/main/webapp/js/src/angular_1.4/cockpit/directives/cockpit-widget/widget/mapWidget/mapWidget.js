@@ -943,6 +943,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    //functions calls
 		$scope.getLayers();
+
+		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
+		if (cockpitModule_properties.EDIT_MODE) {
+			$scope.$watchCollection("cockpitModule_template.configuration.datasets", function (newValue, oldValue, $scope) {
+				var newIds = [];
+				for (var i in newValue) {
+					newIds.push(newValue[i].dsId);
+				}
+				var changed = false;
+				for (var i in $scope.ngModel.content.layers) {
+					var currDsId = $scope.ngModel.content.layers[i].dsId;
+					if (newIds.indexOf(currDsId) == -1) {
+						$scope.ngModel.content.layers.splice(i, 1);
+						changed = true;
+					}
+				}
+				if (changed) {
+					$scope.reinit();
+				}
+			});
+		}
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
