@@ -469,6 +469,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.doSelection(column, row[column], undefined, undefined, row);
 			}
 		}
+	  	
+		function getColumnNameFromTableMetadata(colAlias){
+			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+				if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
+			}
+		}
 
 		function onCellClicked(node){
 			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
@@ -554,7 +560,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				else {
 					newValue = null;
 				}
-				$scope.doSelection(node.column.colDef.headerName, node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
+				$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName), node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
 			}
 		}
 
