@@ -159,8 +159,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 				return;
 			};
-	  		$scope.doSelection(node.colDef.headerName,node.value,null,null,node.data, null);
+	  		$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName),node.value,null,null,node.data, null);
 	  	}
+		
+		function getColumnNameFromTableMetadata(colAlias){
+			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+				if($scope.ngModel.content.columnSelectedOfDataset[k].alias && $scope.ngModel.content.columnSelectedOfDataset[k].alias == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
+			}
+		}
+
 		
 		$scope.init = function(element,width,height){
 			$scope.element = element[0];
@@ -336,8 +343,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			if($scope.ngModel.settings.facets.selection){
 				$scope.ngModel.search.facets = {};
-				if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1
-						|| $scope.template.configuration.aggregations && $scope.template.configuration.aggregations[0].selection && $scope.template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1){
+				if($scope.template.configuration  
+						&& (cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1)
+						|| ($scope.template.configuration.aggregations &&  $scope.template.configuration.aggregations.length > 0 && $scope.template.configuration.aggregations[0].selection && $scope.template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1)){
 					$scope.deleteFilterSelection(group, item.column_1);
 				}else{
 					$scope.doSelection(group, item.column_1, null, null, item, null, undefined, !$scope.ngModel.settings.facets.selection);

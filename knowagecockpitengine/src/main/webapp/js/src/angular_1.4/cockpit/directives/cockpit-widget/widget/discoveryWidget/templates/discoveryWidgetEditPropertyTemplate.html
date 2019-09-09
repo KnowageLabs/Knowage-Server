@@ -15,10 +15,10 @@
 				<md-tab label="Settings">
 						<md-card>
 		        			<md-card-content layout="row">
-		   						<dataset-selector flex ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
+		   						<dataset-selector flex ng-model="newModel.dataset.dsId" on-change="handleEvent('datasetChanged',newModel.dataset.dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
 		   					</md-card-content>
 		   				</md-card>
-		   				<md-card ng-if="newModel.datasetId">
+		   				<md-card ng-if="newModel.dataset.dsId">
 		   					<md-subheader class="noPadding">
 		   						<div layout="row" layout-align="start center" style="height:48px;">
 		   							<span layout-padding>Settings</span><span flex></span>

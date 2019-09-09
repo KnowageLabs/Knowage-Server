@@ -19,7 +19,10 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -701,6 +704,16 @@ public class ExcelExporter {
 							if (!jsonobject.isNull("parameterValue")) {
 								Object values = jsonobject.get("parameterValue");
 								String valuesToChange = values.toString();
+								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+									SimpleDateFormat mdyFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+									try {
+										Date dateToconvert = mdyFormat.parse(valuesToChange);
+										SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+										valuesToChange = sdf.format(dateToconvert).toString();
+									} catch (ParseException e) {
+										throw new SpagoBIRuntimeException("Error while retrieving date formatting", e);
+									}
+								}
 								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 								valuesToChange = valuesToChange.replaceAll("\"", "\'");
 								newParameters.put(obj, valuesToChange);
@@ -710,7 +723,7 @@ public class ExcelExporter {
 								newParameters.put(obj, "");
 							}
 
-						} else if ((val != null && val.length() > 1) && (!val.contains("$P{"))) {
+						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) {
 							newParameters.put(obj, val);
 						}
 
@@ -899,6 +912,16 @@ public class ExcelExporter {
 						if (!jsonobject.isNull("parameterValue")) {
 							Object values = jsonobject.get("parameterValue");
 							String valuesToChange = values.toString();
+							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+								SimpleDateFormat mdyFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+								try {
+									Date dateToconvert = mdyFormat.parse(valuesToChange);
+									SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+									valuesToChange = sdf.format(dateToconvert).toString();
+								} catch (ParseException e) {
+									throw new SpagoBIRuntimeException("Error while retrieving date formatting", e);
+								}
+							}
 							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 							valuesToChange = valuesToChange.replaceAll("\"", "");
 							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0))
@@ -908,7 +931,7 @@ public class ExcelExporter {
 							newParameters.put(obj, "");
 
 						}
-					} else if ((val != null && val.length() > 1) && (!val.contains("$P{"))) { // parameter already set in data configuration
+					} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
 						newParameters.put(obj, val);
 					}
 
