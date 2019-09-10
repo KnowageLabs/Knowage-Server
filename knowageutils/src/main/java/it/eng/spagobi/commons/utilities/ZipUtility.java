@@ -1,4 +1,4 @@
-package it.eng.knowage.api.dossier;
+package it.eng.spagobi.commons.utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
