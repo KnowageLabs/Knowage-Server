@@ -2204,8 +2204,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			// REST JSON PATH
 			var restJsonPathAttributesTemp = [];
 
-			var restJsonPathAttributes = JSON.parse($scope.selectedDataSet.restJsonPathAttributes);
-			var restJsonPathAttributesLength = restJsonPathAttributes.length;
+			if($scope.selectedDataSet.restJsonPathAttributes) {
+				var restJsonPathAttributes = JSON.parse($scope.selectedDataSet.restJsonPathAttributes);
+				var restJsonPathAttributesLength = restJsonPathAttributes.length;
+			}
 
 			for (j=0; j<restJsonPathAttributesLength; j++) {
 
