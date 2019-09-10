@@ -13,11 +13,12 @@ import org.json.JSONObject;
 import it.eng.knowage.document.cockpit.CockpitDocument;
 import it.eng.knowage.document.cockpit.template.widget.ICockpitWidget;
 import it.eng.knowage.document.cockpit.template.widget.WidgetReaderFactory;
-import it.eng.knowage.document.export.cockpit.converter.CockpitWidgetJsonConfConverter;
-import it.eng.knowage.document.export.cockpit.converter.IJsonConfiguration;
+import it.eng.knowage.document.export.cockpit.converter.DataStoreConfigurationConverter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.FileManager;
+import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
 
 /**
  * @author Dragan Pirkovic
@@ -61,19 +62,18 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(userProfile);
 
 		FileManager fileManager = new FileManager(cockpitDocument.getLabel(), resourcePath);
-		IConverter<IJsonConfiguration, ICockpitWidget> converter = new CockpitWidgetJsonConfConverter(cockpitDocument);
-
+		IConverter<IDataStoreConfiguration, ICockpitWidget> converter = new DataStoreConfigurationConverter(cockpitDocument);
 		JSONArray jsonWidgets = cockpitDocument.getWidgets();
 
 		for (int i = 0; i < jsonWidgets.length(); i++) {
 			try {
 				JSONObject jsonWidget = jsonWidgets.getJSONObject(i);
 				ICockpitWidget widget = WidgetReaderFactory.getWidget(jsonWidget);
-				IJsonConfiguration conf = converter.convert(widget);
-				// IDataStore datastore = datasetManagementAPI.getDataStore(conf.getDatasetLabel(), true, conf.getParameters(), conf.getProjections(),
-				// conf.getFilter(), conf.getGroups(), conf.getSortings(), Collections.<Projection>emptyList(), -1, -1, -1);
+				IDataStoreConfiguration conf = converter.convert(widget);
+				IDataStore datastore = datasetManagementAPI.getDataStore(conf.getDataset(), true, conf.getParameters(), conf.getProjections(), conf.getFilter(),
+						conf.getGroups(), conf.getSortings(), conf.getSummaryRowProjections(), conf.getOffset(), conf.getFetchSize(), conf.getMaxRowCount());
 
-				// fileManager.createFile(widget.getName(), datastore);
+				fileManager.createFile(widget.getName(), datastore);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

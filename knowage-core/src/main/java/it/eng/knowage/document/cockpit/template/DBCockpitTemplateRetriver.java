@@ -3,6 +3,8 @@
  */
 package it.eng.knowage.document.cockpit.template;
 
+import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.error.EMFInternalError;
@@ -33,8 +35,14 @@ public class DBCockpitTemplateRetriver implements ICockpitTemplateRetriver {
 	public JSONObject getTemplate() {
 		try {
 			ObjTemplate activeTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
-			return new JSONObject(activeTemplate.getContent());
+			return new JSONObject(new String(activeTemplate.getContent()));
 		} catch (EMFInternalError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

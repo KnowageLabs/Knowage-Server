@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.knowage.document.cockpit.template.CockpitTemplateReader;
-import it.eng.knowage.document.cockpit.template.FileCockpitTemplateRetriver;
+import it.eng.knowage.document.cockpit.template.DBCockpitTemplateRetriver;
 import it.eng.knowage.document.cockpit.template.ICockpitTemplateReader;
 import it.eng.knowage.document.cockpit.template.ICockpitTemplateRetriver;
 
@@ -40,7 +40,7 @@ public class CockpitDocument {
 	 *
 	 */
 	private void init() {
-		ICockpitTemplateRetriver cockpitTemplateRetriver = new FileCockpitTemplateRetriver();
+		ICockpitTemplateRetriver cockpitTemplateRetriver = new DBCockpitTemplateRetriver(documentId);
 		JSONObject jsonTemplate = cockpitTemplateRetriver.getTemplate();
 		this.cockpitTemlate = new CockpitTemplateReader(jsonTemplate);
 
