@@ -49,7 +49,7 @@ public class FileManager {
 	private void createZip() {
 		ZipUtility zipUtility = new ZipUtility(directory.toString());
 		zipUtility.generateFileList(directory.toFile());
-		zipUtility.zipIt(directory.toString(), path + directoryName + ".zip");
+		zipUtility.zipIt(directory.toString(), path + "/" + "data");
 	}
 
 	/**

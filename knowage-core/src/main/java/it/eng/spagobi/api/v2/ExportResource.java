@@ -54,12 +54,12 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import it.eng.knowage.document.export.cockpit.CSVCockpitDataExporter;
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.api.v2.export.ExportDeleteOldJob;
 import it.eng.spagobi.api.v2.export.ExportJobBuilder;
 import it.eng.spagobi.api.v2.export.ExportMetadata;
 import it.eng.spagobi.api.v2.export.ExportPathBuilder;
+import it.eng.spagobi.api.v2.export.cockpit.CockpitDataExportJobBuilder;
 import it.eng.spagobi.api.v2.export.cockpit.DocumentExportConf;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -333,20 +333,20 @@ public class ExportResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response exportCockpitDocumentWidgetData(DocumentExportConf documentExportConf) {
 
-		new CSVCockpitDataExporter(documentExportConf.getDocumentId(), documentExportConf.getDocumentLabel(), documentExportConf.getParameters(), null,
-				UserProfileManager.getProfile(), SpagoBIUtilities.getResourcePath()).export();
+		// new CSVCockpitDataExporter(documentExportConf.getDocumentId(), documentExportConf.getDocumentLabel(), documentExportConf.getParameters(), null,
+		// UserProfileManager.getProfile(), SpagoBIUtilities.getResourcePath()).export();
 
-		// JobDetail exportJob = new CockpitDataExportJobBuilder().setDocumentExportConf(documentExportConf).setLocale(request.getLocale())
-		// .setUserProfile(UserProfileManager.getProfile()).build();
-		//
-		// try {
-		// Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-		// scheduler.addJob(exportJob, true);
-		// scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
-		// } catch (SchedulerException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		JobDetail exportJob = new CockpitDataExportJobBuilder().setDocumentExportConf(documentExportConf).setLocale(request.getLocale())
+				.setUserProfile(UserProfileManager.getProfile()).build();
+
+		try {
+			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+			scheduler.addJob(exportJob, true);
+			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return Response.ok().entity(documentExportConf).build();
 

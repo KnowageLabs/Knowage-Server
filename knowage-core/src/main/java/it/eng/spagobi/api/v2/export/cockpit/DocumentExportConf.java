@@ -3,13 +3,18 @@
  */
 package it.eng.spagobi.api.v2.export.cockpit;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author Dragan Pirkovic
  *
  */
-public class DocumentExportConf {
+public class DocumentExportConf implements Serializable {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer documentId;
 	private String documentLabel;
 	private Map<String, String> parameters;
