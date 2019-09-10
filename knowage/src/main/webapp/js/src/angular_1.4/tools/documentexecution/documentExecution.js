@@ -28,6 +28,9 @@
 
 		console.log("documentExecutionControllerFn IN ");
 
+		$scope.sbiModule_restServices = sbiModule_restServices;
+		$scope.sbiModule_messaging = sbiModule_messaging;
+
 		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
 		$scope.browser = sbiModule_device.browser;
 
@@ -547,6 +550,26 @@
 
 			console.log("executeParameter OUT ");
 		};
+
+		$scope.exportCsv = function(){
+			var body = {};
+
+			body.documentId=$scope.executionInstance.OBJECT_ID;
+			body.documentLabel=$scope.executionInstance.OBJECT_LABEL;
+			body.exportType="CSV";
+			body.parameters={};
+
+			for(var i =0 ; i<execProperties.parametersData.documentParameters.length; i++){
+				var parValue = execProperties.parametersData.documentParameters[i].parameterValue.constructor == Array ? execProperties.parametersData.documentParameters[i].parameterValue.join(","): execProperties.parametersData.documentParameters[i].parameterValue;
+				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = parValue;
+			}
+			$scope.sbiModule_messaging.showInfoMessage("The download has started in background. You will find the result file in your download page.");
+			$scope.sbiModule_restServices.promisePost("2.0/export","cockpitData",body).then(function(response){
+
+			},function(response){
+
+			})
+		}
 
 		/* This will set the refresh rate for the current document, based on the refresh seconds field set by user */
 		if($scope.executionInstance.REFRESH_SECONDS != undefined && $scope.executionInstance.REFRESH_SECONDS > 0)
