@@ -27,15 +27,17 @@ public class ConverterFactory {
 	/**
 	 * @return
 	 */
-	public static IConverter<Filter, JSONArray> createFilterConverter() {
-		return new FilterConverter();
+	public static IConverter<Filter, JSONObject> getFilterConverter(IDataSet dataSet, JSONObject aggregations) {
+		return new FilterConverter(dataSet, aggregations);
 	}
+
+	
 
 	/**
 	 * @return
 	 */
-	public static IConverter<List<Sorting>, JSONArray> createSortingsConverter() {
-		return new SortingConverter();
+	public static IConverter<List<Sorting>, JSONObject> getSortingsConverter(IDataSet dataSet) {
+		return new SortingConverter(dataSet);
 	}
 
 	public static IConverter<JSONObject, JSONObject> getAggregationConverter(String dataSetLabel) {

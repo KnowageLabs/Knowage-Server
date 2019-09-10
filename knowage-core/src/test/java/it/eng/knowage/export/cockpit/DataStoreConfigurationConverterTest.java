@@ -4,6 +4,7 @@
 package it.eng.knowage.export.cockpit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,6 +73,16 @@ public class DataStoreConfigurationConverterTest {
 	@Test
 	public void testGetProjections() {
 		assertEquals(this.converter.getProjections().size(), 4);
+	}
+
+	@Test
+	public void testGetSortings() {
+		assertNotNull(this.converter.getSortings());
+	}
+
+	@Test
+	public void testgetFilter() {
+		assertNotNull(this.converter.getFilter());
 	}
 
 }

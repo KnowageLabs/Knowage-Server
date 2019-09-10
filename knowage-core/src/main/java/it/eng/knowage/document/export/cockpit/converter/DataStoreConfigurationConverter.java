@@ -92,7 +92,10 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public Filter getFilter() {
-		// TODO Auto-generated method stub
+		if (jsonConfiguration != null) {
+			return ConverterFactory.getFilterConverter(getDataset(), jsonConfiguration.getAggregations()).convert(jsonConfiguration.getSelections());
+		}
+
 		return null;
 	}
 
@@ -169,7 +172,10 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public List<Sorting> getSortings() {
-		// TODO Auto-generated method stub
+		if (jsonConfiguration != null) {
+			return ConverterFactory.getSortingsConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+		}
+
 		return null;
 	}
 
