@@ -14,9 +14,6 @@ import org.json.JSONObject;
 
 import it.eng.knowage.document.export.cockpit.IConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 
 /**
@@ -90,29 +87,6 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<P
 			projections.add(projection);
 		}
 
-	}
-
-	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
-		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct")); // caso in cui ci siano facets complesse (coupled
-																												// proj)
-	}
-
-	private Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
-			throws JSONException {
-		String columnName = getColumnName(jsonObject, columnAliasToName);
-		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
-		IAggregationFunction function = AggregationFunctions.get(functName);
-		String functionColumnName = jsonObject.optString("functColumn");
-		Projection projection;
-		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag"))
-			function = AggregationFunctions.get("NONE");
-		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
-			Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
-			projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
-		} else {
-			projection = new Projection(function, dataSet, columnName, columnAlias);
-		}
-		return projection;
 	}
 
 }
