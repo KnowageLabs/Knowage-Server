@@ -1508,7 +1508,7 @@ div.lower i  {
 							<md-card layout-padding style="height:300px; margin:0 0 8 0">
 																		
 								<angular-table
-										id="requestAddtionalParametersTable"
+										id="requestAdditionalParametersTable"
 										flex
 										style="height:100%;padding:8px"
 										ng-model=restRequestAdditionalParameters
