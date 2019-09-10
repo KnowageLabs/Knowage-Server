@@ -44,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$filter,
 			sbiModule_config,
 			sbiModule_translate,
-			sbiModule_restServices,
 			cockpitModule_datasetServices,
 			cockpitModule_generalOptions,
 			cockpitModule_widgetConfigurator,

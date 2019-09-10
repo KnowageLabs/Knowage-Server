@@ -194,6 +194,10 @@
 				<i ng-if="ngModel.preview.icon" ng-class="ngModel.preview.icon"></i>
 			</button>
 			
+			<md-checkbox ng-model="ngModel.preview.background" ng-disabled="!ngModel.preview.enable">
+				Direct download
+			</md-checkbox>
+			
 		</md-card-content> 
 		<md-subheader ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">{{::translate.load('kn.crossconfigurator.datasetparameters')}}</md-subheader>
           <md-card-content ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">

@@ -16,8 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 (function(){
-
-	angular.module('datasetPreviewModule')
+	angular.module('datasetPreviewModule', ['ngMaterial', 'sbiModule'])
 			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices',
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
 

@@ -165,7 +165,6 @@ if(executionRoleNames.size() > 0) {
         <!--  -->
         
         <!-- dataset preview - Birt report -->
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/birtReportDatasetPreview/datasetPreviewModule.js")%>"></script>
 		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/birtReportDatasetPreview/datasetPreview_service.js")%>"></script>
 
         <style type="text/css">

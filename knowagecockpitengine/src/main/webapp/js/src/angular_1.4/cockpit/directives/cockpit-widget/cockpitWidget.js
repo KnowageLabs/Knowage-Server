@@ -233,6 +233,7 @@ angular.module('cockpitModule')
 
 function cockpitWidgetControllerFunction(
 		$scope,
+		$http,
 		$rootScope,
 		cockpitModule_widgetServices,
 		cockpitModule_generalServices,
@@ -261,6 +262,7 @@ function cockpitWidgetControllerFunction(
 	{
 
 	var SERVICE = "/restful-services/2.0/datasets/preview";
+	var PREVIEWBACKGROUND = "/restful-services/2.0/export/dataset/";
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
@@ -722,7 +724,23 @@ function cockpitWidgetControllerFunction(
 		}
 		return previewSettings.parameters;
 	}
-
+	
+	var popupMessage = function(result){
+		var message 	= 'The download has started in background. You will find the result file in your download page.';
+		var className 	= 'kn-infoToast';
+		if(result.data.errors){
+			message 	= result.data.errors[0].message;
+			className 	= 'kn-warningToast';
+		}
+		Toastify({
+			  text: message,
+			  duration: 10000,
+			  close: true,
+			  className: className,
+			  stopOnFocus: true
+			}).showToast();
+	}
+	
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -752,27 +770,43 @@ function cockpitWidgetControllerFunction(
 				if (previewDataset.parameters && previewDataset.parameters.length > 0)
 					config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
 
-				//showing exporters
-				config.options = {
-						exports: ['CSV', 'XLSX']
-				};
+				if(!previewSettings.background){
+					//showing exporters
+					config.options = {
+							exports: ['CSV', 'XLSX']
+					};
 
-				$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
+					$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
 
-					$mdDialog.show({
-						parent: angular.element(document.body),
-						templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
-						controller: function(scope) {
-							scope.previewUrl = $scope.iframeSrcUrl;
+						$mdDialog.show({
+							parent: angular.element(document.body),
+							templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+							controller: function(scope) {
+								scope.previewUrl = $scope.iframeSrcUrl;
 
-							scope.closePreview = function() {
-								$mdDialog.hide();
-							}
-						},
-						clickOutsideToClose: true
-					}).then(function(response){}, function(response){});
-				return;
+								scope.closePreview = function() {
+									$mdDialog.hide();
+								}
+							},
+							clickOutsideToClose: true
+						}).then(function(response){}, function(response){});
+				}else{
+					var id = previewDataset.id;
+					var data = {};
+					if (config.parameters != null && typeof config.parameters != 'undefined') {
+						data.parameters = config.parameters;
+					};
+					
+					$http.post(sbiModule_config.host + sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
+					.then(
+						function(response){
+							popupMessage(response)
+						},function(error){
+							popupMessage(error)
+						});
+				}
 			}
+			return;
 
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
