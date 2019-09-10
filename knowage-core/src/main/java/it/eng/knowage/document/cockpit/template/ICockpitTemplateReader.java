@@ -21,4 +21,6 @@ public interface ICockpitTemplateReader {
 
 	JSONObject getParamsByDataSetId(Integer dsId);
 
+	String getDataSetLabelById(Integer dsId);
+
 }

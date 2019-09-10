@@ -69,11 +69,15 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 			try {
 				JSONObject jsonWidget = jsonWidgets.getJSONObject(i);
 				ICockpitWidget widget = WidgetReaderFactory.getWidget(jsonWidget);
-				IDataStoreConfiguration conf = converter.convert(widget);
-				IDataStore datastore = datasetManagementAPI.getDataStore(conf.getDataset(), true, conf.getParameters(), conf.getProjections(), conf.getFilter(),
-						conf.getGroups(), conf.getSortings(), conf.getSummaryRowProjections(), conf.getOffset(), conf.getFetchSize(), conf.getMaxRowCount());
+				if (widget != null) {
+					IDataStoreConfiguration conf = converter.convert(widget);
+					IDataStore datastore = datasetManagementAPI.getDataStore(conf.getDataset(), true, conf.getParameters(), conf.getProjections(),
+							conf.getFilter(), conf.getGroups(), conf.getSortings(), conf.getSummaryRowProjections(), conf.getOffset(), conf.getFetchSize(),
+							conf.getMaxRowCount());
 
-				fileManager.createFile(widget.getName(), datastore);
+					fileManager.createFile(widget.getName(), datastore);
+				}
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

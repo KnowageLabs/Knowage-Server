@@ -44,7 +44,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class FilterConverter extends CommonJSON implements IConverter<Filter, JSONObject> {
 
-	private final IDataSet dataSet;
 	private final JSONObject aggregations;
 
 	/**

@@ -17,14 +17,12 @@
  */
 package it.eng.knowage.document.export.cockpit.converter;
 
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.document.export.cockpit.IConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -40,8 +38,10 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class CommonJSON {
 
+	protected IDataSet dataSet;
+
 	/**
-	 * 
+	 *
 	 */
 	public CommonJSON() {
 		super();
@@ -61,14 +61,14 @@ public class CommonJSON {
 				if (id != null && !id.isEmpty()) {
 					columnAliasToName.put(alias, id);
 				}
-	
+
 				String columnName = category.optString("columnName");
 				if (columnName != null && !columnName.isEmpty()) {
 					columnAliasToName.put(alias, columnName);
 				}
 			}
 		}
-	
+
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class CommonJSON {
 	 * @throws JSONException
 	 */
 	protected JSONArray getMeasures(JSONObject aggregations) throws JSONException {
-	
+
 		if (aggregations != null) {
 			return aggregations.getJSONArray("measures");
 		}
@@ -94,25 +94,25 @@ public class CommonJSON {
 			return aggregations.getJSONArray("categories");
 		}
 		return null;
-	
+
 	}
 
 	protected String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		if (jsonObject.isNull("id") && jsonObject.isNull("columnName")) {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
-	
+
 			if (jsonObject.has("datasetOrTableFlag")) {
 				// it is a calculated field
 				return jsonObject.getString("columnName");
 			}
-	
+
 			String id = jsonObject.getString("id");
 			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);
-	
+
 			String columnName = jsonObject.getString("columnName");
 			boolean isColumnNameMatching = columnAliasToName.containsKey(columnName) || columnAliasToName.containsValue(columnName);
-	
+
 			Assert.assertTrue(isIdMatching || isColumnNameMatching, "Column name [" + columnName + "] not found in dataset metadata");
 			return isColumnNameMatching ? columnName : id;
 		}
@@ -130,7 +130,8 @@ public class CommonJSON {
 																												// proj)
 	}
 
-	protected Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName) throws JSONException {
+	protected Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
+			throws JSONException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(functName);

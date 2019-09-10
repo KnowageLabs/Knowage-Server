@@ -25,8 +25,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
  */
 public class SortingConverter extends CommonJSON implements IConverter<List<Sorting>, JSONObject> {
 
-	private final IDataSet dataSet;
-
 	/**
 	 * @param dataSet
 	 */

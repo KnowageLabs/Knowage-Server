@@ -112,6 +112,10 @@ public class CockpitDocument {
 
 	}
 
+	public String getDataSetLabelById(Integer dsId) {
+		return this.cockpitTemlate.getDataSetLabelById(dsId);
+	}
+
 	public JSONObject getFilters() {
 		return this.cockpitTemlate.getFilters();
 

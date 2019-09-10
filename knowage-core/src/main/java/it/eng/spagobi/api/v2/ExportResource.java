@@ -334,7 +334,7 @@ public class ExportResource {
 	public Response exportCockpitDocumentWidgetData(DocumentExportConf documentExportConf) {
 
 		new CSVCockpitDataExporter(documentExportConf.getDocumentId(), documentExportConf.getDocumentLabel(), documentExportConf.getParameters(), null,
-				UserProfileManager.getProfile(), "C:\\Users\\dpirkovic").export();
+				UserProfileManager.getProfile(), SpagoBIUtilities.getResourcePath()).export();
 
 		// JobDetail exportJob = new CockpitDataExportJobBuilder().setDocumentExportConf(documentExportConf).setLocale(request.getLocale())
 		// .setUserProfile(UserProfileManager.getProfile()).build();

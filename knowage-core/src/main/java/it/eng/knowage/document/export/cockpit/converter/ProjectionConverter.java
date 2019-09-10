@@ -22,8 +22,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
  */
 public class ProjectionConverter extends CommonJSON implements IConverter<List<Projection>, JSONObject> {
 
-	private final IDataSet dataSet;
-
 	/**
 	 * @param dataset
 	 */

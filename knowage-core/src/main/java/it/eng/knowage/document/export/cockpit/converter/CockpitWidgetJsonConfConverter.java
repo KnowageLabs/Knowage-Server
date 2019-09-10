@@ -51,7 +51,7 @@ public class CockpitWidgetJsonConfConverter implements IConverter<IJsonConfigura
 	@Override
 	public String getDatasetLabel() {
 
-		return cockpitWidget.getDsLabel();
+		return cockpitDocument.getDataSetLabelById(cockpitWidget.getDsId());
 	}
 
 	/*

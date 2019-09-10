@@ -133,4 +133,22 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.knowage.document.cockpit.template.ICockpitTemplateReader#getDataSetLabelById(java.lang.Integer)
+	 */
+	@Override
+	public String getDataSetLabelById(Integer dsId) {
+		if (getDatasets() != null) {
+			for (int i = 0; i < getDatasets().length(); i++) {
+				if (getDatasetId(getDatasets().optJSONObject(i)).equals(dsId)) {
+					return getDatasets().optJSONObject(i).optString("dsLabel");
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

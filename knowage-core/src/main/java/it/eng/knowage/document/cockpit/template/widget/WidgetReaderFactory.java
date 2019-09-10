@@ -19,17 +19,21 @@ public class WidgetReaderFactory {
 	 */
 	public static ICockpitWidget getWidget(JSONObject jsonWidget) throws JSONException {
 		ICockpitWidget cockpitWidget = null;
-		switch (getWidgetType(jsonWidget)) {
-		case TABLE:
-			cockpitWidget = new TableWidgetReader(jsonWidget);
-			break;
-		case CHART:
-			cockpitWidget = new ChartWidgetReader(jsonWidget);
-			break;
+		WidgetType type = getWidgetType(jsonWidget);
+		if (type != null) {
+			switch (type) {
+			case TABLE:
+				cockpitWidget = new TableWidgetReader(jsonWidget);
+				break;
+			case CHART:
+				cockpitWidget = new ChartWidgetReader(jsonWidget);
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
 		}
+
 		return cockpitWidget;
 	}
 
@@ -38,7 +42,14 @@ public class WidgetReaderFactory {
 	 * @throws JSONException
 	 */
 	private static WidgetType getWidgetType(JSONObject jsonWidget) throws JSONException {
-		return WidgetType.valueOf(jsonWidget.getString("type").toUpperCase());
+		WidgetType[] values = WidgetType.values();
+		String type = jsonWidget.getString("type").toUpperCase();
+
+		for (int i = 0; i < values.length; i++) {
+			if (values[i].name().equals(type))
+				return values[i];
+		}
+		return null;
 
 	}
 

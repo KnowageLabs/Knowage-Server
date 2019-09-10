@@ -30,6 +30,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 
 	IConverter<IJsonConfiguration, ICockpitWidget> converter;
 	IJsonConfiguration jsonConfiguration;
+	private IDataSet dataSet;
 
 	/**
 	 * @return the jsonConfiguration
@@ -70,8 +71,9 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public IDataSet getDataset() {
 		if (jsonConfiguration != null)
-			return DAOFactory.getDataSetDAO().loadDataSetByLabel(jsonConfiguration.getDatasetLabel());
-		return null;
+			if (this.dataSet == null)
+				return DAOFactory.getDataSetDAO().loadDataSetByLabel(jsonConfiguration.getDatasetLabel());
+		return this.dataSet;
 	}
 
 	/*
