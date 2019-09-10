@@ -3,8 +3,13 @@
  */
 package it.eng.knowage.document.export.cockpit.converter;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.document.cockpit.CockpitDocument;
 import it.eng.knowage.document.cockpit.template.widget.ICockpitWidget;
@@ -53,7 +58,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	public IDataStoreConfiguration convert(ICockpitWidget widget) {
 		this.jsonConfiguration = converter.convert(widget);
 		return new DatastoreConfigurationBuilder().setDataSet(getDataset()).setParameters(getParameters()).setProjections(getProjections())
-				.setFilter(getFilter()).setGroups(getGroups()).setSortings(getSortings()).build();
+				.setFilter(getFilter()).setGroups(getGroups()).setSortings(getSortings()).setSummaryRow(getSummaryRowProjections()).build();
 
 	}
 
@@ -98,8 +103,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public List<Projection> getGroups() {
-		// TODO Auto-generated method stub
+		if (jsonConfiguration != null) {
+			return ConverterFactory.getGroupConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+		}
 		return null;
+
 	}
 
 	/*
@@ -131,8 +139,14 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public Map<String, String> getParameters() {
-		// TODO Auto-generated method stub
+		try {
+			return new ObjectMapper().readValue(jsonConfiguration.getParameters().toString(), new TypeReference<Map<String, String>>() {
+			});
+		} catch (IOException e1) {
+
+		}
 		return null;
+
 	}
 
 	/*
@@ -167,7 +181,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public List<Projection> getSummaryRowProjections() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 
 	/*

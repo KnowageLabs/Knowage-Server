@@ -36,7 +36,8 @@ public class CSVFileDataWriter implements IDataWriter {
 	 */
 	@Override
 	public Object write(IDataStore dataStore) {
-		byte[] bytes = (byte[]) new CSVByteDataWriter().write(dataStore);
+		String dataStoreString = (String) new CSVDataWriter().write(dataStore);
+		byte[] bytes = dataStoreString.getBytes();
 		Path f = null;
 		try {
 			f = Files.createTempFile(directory, fileName + "_", extension, new FileAttribute[0]);

@@ -61,7 +61,7 @@ public class ParametersConverter implements IConverter<JSONObject, JSONObject> {
 	private Map<String, String> toMap(JSONObject datasetParams) {
 
 		try {
-			return new ObjectMapper().readValue(datasetParams.toString(), new TypeReference<Map<String, Object>>() {
+			return new ObjectMapper().readValue(datasetParams.toString(), new TypeReference<Map<String, String>>() {
 			});
 		} catch (IOException e1) {
 

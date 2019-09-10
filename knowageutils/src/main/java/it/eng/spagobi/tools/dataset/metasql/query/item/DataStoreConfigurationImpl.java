@@ -26,6 +26,31 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	private final Integer fetchSize = -1;
 	private final Integer maxRowCount = -1;
 
+	/**
+	 *
+	 */
+
+	/**
+	 * @param dataset
+	 * @param parameters
+	 * @param projections
+	 * @param filters
+	 * @param groups
+	 * @param sortings
+	 * @param summaryRowProjections
+	 */
+	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<Projection> projections, Filter filters, List<Projection> groups,
+			List<Sorting> sortings, List<Projection> summaryRowProjections) {
+		super();
+		this.dataset = dataset;
+		this.parameters = parameters;
+		this.projections = projections;
+		this.filters = filters;
+		this.groups = groups;
+		this.sortings = sortings;
+		this.summaryRowProjections = summaryRowProjections;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

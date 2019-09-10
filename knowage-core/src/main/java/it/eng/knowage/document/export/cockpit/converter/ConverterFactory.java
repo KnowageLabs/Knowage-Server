@@ -34,13 +34,6 @@ public class ConverterFactory {
 	/**
 	 * @return
 	 */
-	public static IConverter<List<Projection>, JSONArray> createGroupsConverter() {
-		return new GroupConverter();
-	}
-
-	/**
-	 * @return
-	 */
 	public static IConverter<List<Sorting>, JSONArray> createSortingsConverter() {
 		return new SortingConverter();
 	}
@@ -86,6 +79,15 @@ public class ConverterFactory {
 	public static IConverter<List<Projection>, JSONObject> getProjectionConverter(IDataSet dataset) {
 		// TODO Auto-generated method stub
 		return new ProjectionConverter(dataset);
+	}
+
+	/**
+	 * @param dataset
+	 * @return
+	 */
+	public static IConverter<List<Projection>, JSONObject> getGroupConverter(IDataSet dataset) {
+		// TODO Auto-generated method stub
+		return new GroupConverter(dataset);
 	}
 
 }

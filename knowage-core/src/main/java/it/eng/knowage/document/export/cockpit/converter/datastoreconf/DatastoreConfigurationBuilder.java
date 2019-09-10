@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreConfigurationImpl;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
@@ -18,13 +19,21 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
  */
 public class DatastoreConfigurationBuilder {
 
+	private IDataSet dataset;
+	private Map<String, String> parameters;
+	private List<Projection> summaryRowProjections;
+	private List<Sorting> sortings;
+	private List<Projection> groups;
+	private Filter filter;
+	private List<Projection> projections;
+
 	/**
 	 * @param dataset
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setDataSet(IDataSet dataset) {
-		// TODO Auto-generated method stub
-		return null;
+		this.dataset = dataset;
+		return this;
 	}
 
 	/**
@@ -32,8 +41,8 @@ public class DatastoreConfigurationBuilder {
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setParameters(Map<String, String> parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		this.parameters = parameters;
+		return this;
 	}
 
 	/**
@@ -41,8 +50,8 @@ public class DatastoreConfigurationBuilder {
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setProjections(List<Projection> projections) {
-		// TODO Auto-generated method stub
-		return null;
+		this.projections = projections;
+		return this;
 	}
 
 	/**
@@ -50,8 +59,8 @@ public class DatastoreConfigurationBuilder {
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setFilter(Filter filter) {
-		// TODO Auto-generated method stub
-		return null;
+		this.filter = filter;
+		return this;
 	}
 
 	/**
@@ -59,8 +68,8 @@ public class DatastoreConfigurationBuilder {
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setGroups(List<Projection> groups) {
-		// TODO Auto-generated method stub
-		return null;
+		this.groups = groups;
+		return this;
 	}
 
 	/**
@@ -68,8 +77,8 @@ public class DatastoreConfigurationBuilder {
 	 * @return
 	 */
 	public DatastoreConfigurationBuilder setSortings(List<Sorting> sortings) {
-		// TODO Auto-generated method stub
-		return null;
+		this.sortings = sortings;
+		return this;
 	}
 
 	/**
@@ -77,7 +86,16 @@ public class DatastoreConfigurationBuilder {
 	 */
 	public IDataStoreConfiguration build() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DataStoreConfigurationImpl(dataset, parameters, projections, filter, groups, sortings, summaryRowProjections);
+	}
+
+	/**
+	 * @param summaryRowProjections
+	 * @return
+	 */
+	public DatastoreConfigurationBuilder setSummaryRow(List<Projection> summaryRowProjections) {
+		this.summaryRowProjections = summaryRowProjections;
+		return this;
 	}
 
 }
