@@ -106,6 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             onSortChanged: changeSorting,
             getRowHeight: rowHeight,
             onCellClicked: handleClick,
+            onColumnResized: columnResized,
             getRowHeight: getRowHeight,
             stopEditingWhenGridLosesFocus:true
 		};
@@ -116,6 +117,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(params.data[r].length > maxLength) maxLength = params.data[r].length;
 			}
 	        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
+		}
+		
+		function columnResized(params){
+			if(params.source != "sizeColumnsToFit"){
+				if(params.finished){
+					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[c].alias == params.column.colDef.headerName){
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style) $scope.ngModel.content.columnSelectedOfDataset[c].style.width = params.column.actualWidth;
+							else $scope.ngModel.content.columnSelectedOfDataset[c].style = {width : params.column.actualWidth};
+							break;
+						}
+					}
+				}
+			}
 		}
 		
 		function changeSorting(){
@@ -221,7 +236,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.cellClass = 'textCell';
 						}
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
-						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].style) {
+							tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style.width) {
+								tempCol.width = $scope.ngModel.content.columnSelectedOfDataset[c].style.width;
+								tempCol.suppressSizeToFit = true;
+							}
+						}
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
 						columns.push(tempCol);
@@ -402,6 +423,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.content.columnSelectedOfDataset[k].name == facet && $scope.ngModel.content.columnSelectedOfDataset[k].facet) return true
 			}
 			return false;
+		}
+		
+		$scope.customFacetWidth = function(){
+			if($scope.ngModel.settings.facets && $scope.ngModel.settings.facets.width) {
+				return {'width':$scope.ngModel.settings.facets.width};
+			}return false;
 		}
 		
 		$scope.isFacetSelected = function(group,item){
