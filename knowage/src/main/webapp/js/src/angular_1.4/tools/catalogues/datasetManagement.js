@@ -2154,7 +2154,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 
 			// Cast the REST directly JSON attributes (transform from the String)
-			if($scope.selectedDataSet.restDirectlyJSONAttributes!=""){
+			if($scope.selectedDataSet.restDirectlyJSONAttributes){
 				$scope.selectedDataSet.restDirectlyJSONAttributes = JSON.parse($scope.selectedDataSet.restDirectlyJSONAttributes);
 			} else {
 				$scope.selectedDataSet.restDirectlyJSONAttributes = $scope.selectedDataSet.restDirectlyJSONAttributes;
@@ -2164,26 +2164,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			var restRequestHeadersTemp = [];
 			//var counter = 0;
 
-			for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
-
-				var restRequestHeaderTemp = {};
-
-				  if (JSON.parse($scope.selectedDataSet.restRequestHeaders).hasOwnProperty(key)) {
-					  restRequestHeaderTemp["name"] = key;
-					  restRequestHeaderTemp["value"] = JSON.parse($scope.selectedDataSet.restRequestHeaders)[key];
-					  restRequestHeaderTemp["index"] = $scope.counterRequestHeaders;
+			function isObjectEmpty(obj) {
+				  for(var prop in obj) {
+				    if(obj.hasOwnProperty(prop)) {
+				      return false;
+				    }
 				  }
+				  return JSON.stringify(obj) === JSON.stringify({});
+				}
 
-				  $scope.counterRequestHeaders++;
-				  restRequestHeadersTemp.push(restRequestHeaderTemp);
+			if(!isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
+				for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
 
+					var restRequestHeaderTemp = {};
+
+					  if (JSON.parse($scope.selectedDataSet.restRequestHeaders).hasOwnProperty(key)) {
+						  restRequestHeaderTemp["name"] = key;
+						  restRequestHeaderTemp["value"] = JSON.parse($scope.selectedDataSet.restRequestHeaders)[key];
+						  restRequestHeaderTemp["index"] = $scope.counterRequestHeaders;
+					  }
+
+					  $scope.counterRequestHeaders++;
+					  restRequestHeadersTemp.push(restRequestHeaderTemp);
+
+				}
 			}
+
+
 
 			$scope.restRequestHeaders = restRequestHeadersTemp;
 
 			// REST ADDITIONAL PARAMETERS
 			if($scope.selectedDataSet.restRequestAdditionalParameters){
-				$scope.restRequestAdditionalParameters = JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters);
+				$scope.restRequestAdditionalParameters = angular.copy($scope.selectedDataSet.restRequestAdditionalParameters);
 			}else{
 				$scope.restRequestAdditionalParameters=[];
 			}
