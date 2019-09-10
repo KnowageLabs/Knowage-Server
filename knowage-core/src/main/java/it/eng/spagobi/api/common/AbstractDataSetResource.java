@@ -171,7 +171,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					JSONObject summaryRowObject = new JSONObject(summaryRow);
 					JSONArray summaryArray = summaryRowObject.getJSONArray("measures");
 					JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(summaryArray);
-					summaryRowProjections.addAll(getProjectionsSummary(dataSet, new JSONArray(), measuresObject, columnAliasToName));
+					summaryRowProjections.addAll(getProjectionsSummary(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 				}
 			}
 
@@ -314,10 +314,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
 
-//			if (jsonObject.has("datasetOrTableFlag")) {
-//				// it is a calculated field
-//				return jsonObject.getString("columnName");
-//			}
+			if (jsonObject.has("datasetOrTableFlag")) {
+				// it is a calculated field
+				return jsonObject.getString("columnName");
+			}
 
 			String id = jsonObject.getString("id");
 			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);

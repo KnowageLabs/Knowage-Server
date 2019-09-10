@@ -780,7 +780,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 			}else{
 				$scope.formula += obj.value+" ";
 			}
-
+			if(i == $scope.formulaElement.length - 1) $scope.formula = $scope.formula.slice(0, -1);
 		}
 	}
 	$scope.showAction = function(text) {
