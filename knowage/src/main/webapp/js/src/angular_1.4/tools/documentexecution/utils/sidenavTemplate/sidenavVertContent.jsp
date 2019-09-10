@@ -52,9 +52,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	</div>
 </md-content>
 <div flex></div>
-<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="exportCsv()" ng-hide="isParameterPanelDisabled()" ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
-	Export CSV
-</md-button>		
+		
 <!-- execute button -->
 <md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
 	{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
