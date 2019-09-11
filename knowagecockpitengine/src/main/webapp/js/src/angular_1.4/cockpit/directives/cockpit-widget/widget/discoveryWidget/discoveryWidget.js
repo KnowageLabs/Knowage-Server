@@ -219,6 +219,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
+		$scope.getFacetAlias = function(name){
+			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+				if($scope.ngModel.content.columnSelectedOfDataset[c].name == name) return $scope.ngModel.content.columnSelectedOfDataset[c].alias; 
+			}
+		}
+		
 		$scope.getColumns = function(fields) {
 			var columns = [];
 			$scope.ngModel.search.columns = [];
