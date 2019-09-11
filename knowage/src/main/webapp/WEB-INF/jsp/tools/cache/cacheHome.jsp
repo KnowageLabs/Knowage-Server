@@ -65,9 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 							<p>{{ctrl.translate.load("cache.manager.cacheEnabled")}}				{{ ctrl.data.enabled }}</p>
 			 
-							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ ctrl.formatSizeUnits(ctrl.data.totalMemory) }}</p>
+							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ ctrl.data.totalMemory / 1048576 }} MB</p>
 			
-							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ ctrl.formatSizeUnits(ctrl.data.availableMemory) }}</p>  
+							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ ctrl.data.availableMemory / 1048576 }} MB</p>
 	
 							<p>{{ctrl.translate.load("cache.manager.numberOfCachedObjects")}}		{{ ctrl.data.cachedObjectsCount }}</p>
 			

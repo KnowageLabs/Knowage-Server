@@ -132,7 +132,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 			self.spaceAvailable=parseInt(result.valueCheck);
 			$log.info("Configuration Resource Information obtained",result);
 			$log.info("Interesting info:",self.spaceAvailable);
-			self.variableSpaceAvailable=parseInt(result.valueCheck);
+			self.variableSpaceAvailable=parseInt(result.valueCheck) / 1048576;
 
 
 		});
@@ -324,7 +324,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 
 		self.enabled=angular.copy(self.variableEnabled);
 		self.namePrefix=angular.copy(self.variableNamePrefix);
-		self.spaceAvailable=angular.copy(self.variableSpaceAvailable);
+		self.spaceAvailable=angular.copy(self.variableSpaceAvailable * 1048576);
 		self.limitForClean=angular.copy(self.variableLimitForClean);
 		self.cacheLimitForStore=angular.copy(self.variableCacheLimitForStore);
 		self.schedulingFullClean=angular.copy(self.variableSchedulingFullClean.id);
@@ -447,7 +447,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	{
 		self.variableEnabled=angular.copy(self.enabled);
 		self.variableNamePrefix=angular.copy(self.namePrefix);
-		self.variableSpaceAvailable=angular.copy(self.spaceAvailable);
+		self.variableSpaceAvailable=angular.copy(self.spaceAvailable * 1048576);
 		self.variableLimitForClean=angular.copy(self.limitForClean);
 		self.variableCacheLimitForStore=angular.copy(self.cacheLimitForStore);
 		self.variableSchedulingFullClean=angular.copy(self.schedulingFullClean.id);
