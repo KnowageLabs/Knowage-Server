@@ -89,7 +89,7 @@
 	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
 	           	self.data = dateRowsFilter(dateColumns,response.data.rows);
-
+	           	self.columns.length=0
 	           	 self.resultsNumber = response.data.results;
 	           	self.initalizePagination();
 	           	 if(self.columnSizeInfo.length == 0) {

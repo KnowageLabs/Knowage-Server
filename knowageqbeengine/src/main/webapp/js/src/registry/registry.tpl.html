@@ -34,7 +34,7 @@
                 <thead>
                     <tr>
                     	<th class="recNo"><span>&nbsp;</span></th>
-                        <th ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible" width="{{col.size}}">
+                        <th ng-repeat="col in rc.columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
                             <div layout="row" layout-align="start center" ng-click="rc.sortBy(col.field)">                            
                                 <span class="sortorder" ng-class="{reverse: rc.reverse}" ng-if="rc.configuration.pagination != 'true'">{{col.title}}</span>
                                 <span ng-if="rc.configuration.pagination == 'true'">{{col.title}}</span>
@@ -69,7 +69,7 @@
                 <tbody>                
                     <tr ng-repeat="row in rc.data">
                     	<td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
-                          <td ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible"  ng-class='rc.checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">                           
+                          <td ng-repeat="col in rc.columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='rc.checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">                           
                             <div>                     	                                                          
                                 <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
                                 <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="rc.setSelected(row)" >
@@ -114,7 +114,7 @@
             <table class="kn-table pivot-table" ng-if="rc.configuration.pivot == true">
             	<thead>
             		<tr>
-            			<th ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible" width="{{col.size}}">
+            			<th ng-repeat="col in rc.columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
             				<div layout="row" layout-align="start center">
             					<span>{{col.title}}</span>
                                 <span flex></span>
@@ -124,7 +124,7 @@
             	</thead>
             	<tbody>
             		<tr ng-repeat="(indexF, row) in rc.data" ng-class="rc.setSummaryRowColor(rc.data,indexF,rc.columns)">
-            			 <td ng-repeat="col in rc.columns" rowspan="{{rc.setRowspan(rc.data,indexF,$index,rc.columns)}}"  ng-if="rc.compareRowsForRowspanPrint(rc.data,indexF,$index,rc.columns)" ng-class="rc.checkIfSelected(row)">    
+            			 <td ng-repeat="col in rc.columns | orderBy: 'position' track by $index" rowspan="{{rc.setRowspan(rc.data,indexF,$index,rc.columns)}}"  ng-if="rc.compareRowsForRowspanPrint(rc.data,indexF,$index,rc.columns)" ng-class="rc.checkIfSelected(row)">    
                                <div>                     	                                                          
                                  	<span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
                                           <span ng-if= "rc.isItSummaryRow(rc.data,indexF,$index,rc.columns)">{{row[col.field] | number:rc.getDecimalPlaces(col.field) }}</span>                   
