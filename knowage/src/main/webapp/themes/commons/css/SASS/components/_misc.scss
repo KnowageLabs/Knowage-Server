@@ -1089,6 +1089,34 @@ color-picker {
   }
 }
 
+.kn-buttonBar {
+  .kn-primaryButton{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+  }
+  md-menu{
+    overflow: hidden;
+    .kn-functionButton {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: 0;
+      min-width: 50px;
+      &:not([disabled]){
+        &:hover{
+          md-icon {
+            color: $lightTextColor !important;
+          }
+        }
+        md-icon {
+          color: $baseColor !important;
+        }
+      }
+      
+    }
+  }
+}
+
 md-dialog {
   background: $tabBackground;
 }

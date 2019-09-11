@@ -52,11 +52,26 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	</div>
 </md-content>
 <div flex></div>
-		<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="exportCsv()" ng-hide="isParameterPanelDisabled()" ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
-	Export CSV
-</md-button>	
+			
 <!-- execute button -->
-<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
-	{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-</md-button>
+<div layout="row" layout-align="center center" class="kn-buttonBar">
+	<md-button ng-cloak class="toolbar-button-custom md-raised kn-primaryButton" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()" flex>
+		{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+	</md-button>
+	<md-menu>
 	
+      <md-button class="toolbar-button-custom md-raised kn-functionButton" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="$mdOpenMenu();" md-menu-origin="">
+        <md-icon md-font-icon="fa fa-chevron-down"></md-icon>
+      </md-button>
+      <md-menu-content width="4" class="md-dense">
+        <md-menu-item>
+          <md-button ng-click="exportCsv($event)">
+            Export CSV
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+	<!-- md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="exportCsv()" ng-hide="isParameterPanelDisabled()" ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
+		Export CSV
+	</md-button-->
+</div>
