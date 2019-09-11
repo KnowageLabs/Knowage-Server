@@ -104,7 +104,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             onGridReady: resizeColumns,
             onGridSizeChanged: resizeColumns,
             onSortChanged: changeSorting,
-            getRowHeight: rowHeight,
             onCellClicked: handleClick,
             onColumnResized: columnResized,
             getRowHeight: getRowHeight,
@@ -112,11 +111,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		function getRowHeight(params){
-			var maxLength = 0;
-			for(var r in params.data){
-				if(params.data[r].length > maxLength) maxLength = params.data[r].length;
+			if($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) return parseInt($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) || 25;
+			else{
+				var maxLength = 0;
+				for(var r in params.data){
+					if(params.data[r].length > maxLength) maxLength = params.data[r].length;
+				}
+		        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
 			}
-	        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
 		}
 		
 		function columnResized(params){
@@ -143,10 +145,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function resizeColumns(){
 			$scope.gridOptions.api.sizeColumnsToFit();
-		}
-		
-		function rowHeight(){
-			return parseInt($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) || 25;
 		}
 		
 		function handleClick(node){
