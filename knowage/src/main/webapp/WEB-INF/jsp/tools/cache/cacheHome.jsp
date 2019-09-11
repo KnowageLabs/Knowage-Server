@@ -111,12 +111,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </md-input-container>
 				<!-- New -->		
 						<md-input-container class="md-block">
-            				<label>{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
+            				<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
             				<input ng-model="ctrl.variableLastAccessTtl" type="number">
           				</md-input-container>
 
 					    <md-input-container class="md-block">
-					    	<label>{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
+					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
 					       	<input ng-model="ctrl.variableCreateAndPersistTimeout" type="number">
 					    </md-input-container>
 						
@@ -149,12 +149,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           				</md-input-container>
 
 					    <md-input-container class="md-block">
-					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
+					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastTimeout" type="number">
 					    </md-input-container>		    
 					    
 					    <md-input-container class="md-block">
-					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
+					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastLeaseTime" type="number">
 					    </md-input-container>	
 					    
