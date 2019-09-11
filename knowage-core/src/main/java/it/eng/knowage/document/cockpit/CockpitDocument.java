@@ -36,29 +36,8 @@ public class CockpitDocument {
 		init();
 	}
 
-	/**
-	 *
-	 */
-	private void init() {
-		ICockpitTemplateRetriver cockpitTemplateRetriver = new DBCockpitTemplateRetriver(documentId);
-		JSONObject jsonTemplate = cockpitTemplateRetriver.getTemplate();
-		this.cockpitTemlate = new CockpitTemplateReader(jsonTemplate);
-
-	}
-
-	/**
-	 * @return the parameters
-	 */
-	public Map<String, String> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * @param parameters
-	 *            the parameters to set
-	 */
-	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
+	public String getDataSetLabelById(Integer dsId) {
+		return this.cockpitTemlate.getDataSetLabelById(dsId);
 	}
 
 	/**
@@ -69,26 +48,15 @@ public class CockpitDocument {
 	}
 
 	/**
-	 * @param documentId
-	 *            the documentId to set
-	 */
-	public void setDocumentId(Integer documentId) {
-		this.documentId = documentId;
-	}
-
-	/**
 	 * @return the documentLabel
 	 */
 	public String getDocumentLabel() {
 		return documentLabel;
 	}
 
-	/**
-	 * @param documentLabel
-	 *            the documentLabel to set
-	 */
-	public void setDocumentLabel(String documentLabel) {
-		this.documentLabel = documentLabel;
+	public JSONObject getFilters() {
+		return this.cockpitTemlate.getFilters();
+
 	}
 
 	/**
@@ -100,11 +68,10 @@ public class CockpitDocument {
 	}
 
 	/**
-	 * @return
+	 * @return the parameters
 	 */
-	public JSONArray getWidgets() {
-
-		return this.cockpitTemlate.getWidgets();
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 
 	public JSONObject getParamsByDataSetId(Integer dsId) {
@@ -112,12 +79,45 @@ public class CockpitDocument {
 
 	}
 
-	public String getDataSetLabelById(Integer dsId) {
-		return this.cockpitTemlate.getDataSetLabelById(dsId);
+	/**
+	 * @return
+	 */
+	public JSONArray getWidgets() {
+
+		return this.cockpitTemlate.getWidgets();
 	}
 
-	public JSONObject getFilters() {
-		return this.cockpitTemlate.getFilters();
+	/**
+	 * @param documentId
+	 *            the documentId to set
+	 */
+	public void setDocumentId(Integer documentId) {
+		this.documentId = documentId;
+	}
+
+	/**
+	 * @param documentLabel
+	 *            the documentLabel to set
+	 */
+	public void setDocumentLabel(String documentLabel) {
+		this.documentLabel = documentLabel;
+	}
+
+	/**
+	 * @param parameters
+	 *            the parameters to set
+	 */
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
+
+	/**
+	 *
+	 */
+	private void init() {
+		ICockpitTemplateRetriver cockpitTemplateRetriver = new DBCockpitTemplateRetriver(documentId);
+		JSONObject jsonTemplate = cockpitTemplateRetriver.getTemplate();
+		this.cockpitTemlate = new CockpitTemplateReader(jsonTemplate);
 
 	}
 

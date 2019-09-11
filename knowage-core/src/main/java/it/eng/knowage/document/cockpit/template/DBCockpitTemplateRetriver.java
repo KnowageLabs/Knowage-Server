@@ -37,14 +37,11 @@ public class DBCockpitTemplateRetriver implements ICockpitTemplateRetriver {
 			ObjTemplate activeTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
 			return new JSONObject(new String(activeTemplate.getContent()));
 		} catch (EMFInternalError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 		return null;
 	}
