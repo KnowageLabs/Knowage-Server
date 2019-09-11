@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -34,12 +35,13 @@ public class CockpitDataExportJob implements Job {
 	private String resourcePath;
 	private UserProfile userProfile;
 	private UUID id;
+	private Path path;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		init(context.getMergedJobDataMap());
 		ExportPathBuilder pathbuilder = ExportPathBuilder.getInstance();
-		Path path = pathbuilder.getPerJobExportPath(resourcePath, userProfile, id);
+		path = pathbuilder.getPerJobExportPath(resourcePath, userProfile, id);
 
 		try {
 			Files.createDirectories(path);
@@ -51,7 +53,8 @@ public class CockpitDataExportJob implements Job {
 
 		ICockpitDataExporter cockpitDataExporter = new CockpitDataExporterBuilder().setDocumentId(documentExportConf.getDocumentId())
 				.setDocumentLabel(documentExportConf.getDocumentLabel()).setDocumentParameters(documentExportConf.getParameters())
-				.setType(documentExportConf.getExportType()).setLocale(locale).setResourcePath(path.toString()).setUserProfile(userProfile).build();
+				.setType(documentExportConf.getExportType()).setLocale(locale).setResourcePath(path.toString()).setUserProfile(userProfile)
+				.setZipFileName("data").build();
 
 		cockpitDataExporter.export();
 
@@ -70,13 +73,21 @@ public class CockpitDataExportJob implements Job {
 			ExportMetadata.writeToJsonFile(exportMetadata, metadataFile);
 		} catch (Exception e) {
 
-			// deleteJobDirectory();
+			deleteJobDirectory();
 
 			String msg = String.format("Error creating file \"%s\"!", metadataFile);
 
 			throw new JobExecutionException(e);
 		}
 
+	}
+
+	private void deleteJobDirectory() {
+		try {
+			FileUtils.deleteDirectory(path.toFile());
+		} catch (IOException e) {
+			// Yes, it's mute!
+		}
 	}
 
 	private String extension() {

@@ -22,6 +22,23 @@ public class CockpitDataExporterBuilder {
 	private UserProfile userProfile;
 	private String resourcePath;
 	private String documentLabel;
+	private String zipFileName;
+
+	/**
+	 * @return the zipFileName
+	 */
+	public String getZipFileName() {
+		return zipFileName;
+	}
+
+	/**
+	 * @param zipFileName
+	 *            the zipFileName to set
+	 */
+	public CockpitDataExporterBuilder setZipFileName(String zipFileName) {
+		this.zipFileName = zipFileName;
+		return this;
+	}
 
 	/**
 	 * @return the parameters
@@ -127,7 +144,7 @@ public class CockpitDataExporterBuilder {
 		ICockpitDataExporter exporter = null;
 		switch (type) {
 		case CSV:
-			exporter = new CSVCockpitDataExporter(documentId, documentLabel, parameters, locale, userProfile, resourcePath);
+			exporter = new CSVCockpitDataExporter(documentId, documentLabel, parameters, locale, userProfile, resourcePath, zipFileName);
 			break;
 
 		default:

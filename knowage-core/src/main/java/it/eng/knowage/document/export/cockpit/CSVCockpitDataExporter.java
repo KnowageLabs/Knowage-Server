@@ -32,6 +32,7 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 	private final UserProfile userProfile;
 	private final String resourcePath;
 	private final String documentLabel;
+	private final String zipFileName;
 
 	/**
 	 * @param documentId
@@ -42,13 +43,14 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 	 * @param resourcePath
 	 */
 	public CSVCockpitDataExporter(Integer documentId, String documentLabel, Map<String, String> parameters, Locale locale, UserProfile userProfile,
-			String resourcePath) {
+			String resourcePath, String zipFileName) {
 		this.documentId = documentId;
 		this.parameters = parameters;
 		this.locale = locale;
 		this.userProfile = userProfile;
 		this.resourcePath = resourcePath;
 		this.documentLabel = documentLabel;
+		this.zipFileName = zipFileName;
 	}
 
 	/*
@@ -61,7 +63,7 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 		CockpitDocument cockpitDocument = new CockpitDocument(parameters, documentId, documentLabel);
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(userProfile);
 
-		FileManager fileManager = new FileManager(cockpitDocument.getLabel(), resourcePath);
+		FileManager fileManager = new FileManager(cockpitDocument.getLabel(), resourcePath, zipFileName);
 		IConverter<IDataStoreConfiguration, ICockpitWidget> converter = new DataStoreConfigurationConverter(cockpitDocument);
 		JSONArray jsonWidgets = cockpitDocument.getWidgets();
 

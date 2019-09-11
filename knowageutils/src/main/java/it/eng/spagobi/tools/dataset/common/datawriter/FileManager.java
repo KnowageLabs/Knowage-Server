@@ -20,6 +20,7 @@ public class FileManager {
 	private String directoryName;
 	private String path;
 	private Path directory;
+	private String zipFileName;
 
 	/**
 	 * @param directoryName
@@ -37,6 +38,24 @@ public class FileManager {
 	}
 
 	/**
+	 * @param label
+	 * @param resourcePath
+	 * @param zipFileName
+	 */
+	public FileManager(String directoryName, String path, String zipFileName) {
+		this.directoryName = directoryName;
+		this.path = path;
+		try {
+			this.directory = Files.createTempDirectory(this.directoryName + "_", new FileAttribute[0]);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		this.zipFileName = zipFileName;
+	}
+
+	/**
 	 * @param fileName
 	 * @param datastore
 	 */
@@ -49,7 +68,7 @@ public class FileManager {
 	private void createZip() {
 		ZipUtility zipUtility = new ZipUtility(directory.toString());
 		zipUtility.generateFileList(directory.toFile());
-		zipUtility.zipIt(directory.toString(), path + "/" + "data");
+		zipUtility.zipIt(directory.toString(), path + "/" + zipFileName);
 	}
 
 	/**
