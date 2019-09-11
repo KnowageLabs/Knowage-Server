@@ -1036,32 +1036,35 @@ function TableHeaderControllerFunction($scope, $timeout) {
         }
     }; 
     $scope.getColumnValue=function(row,columnName,columnTransformationText){ 
-    	var splname=columnName.split(".");
-    	var toReturn="";
-    	if(splname.length>1){
-    		var tmpVal=row[splname[0]];
-    		for(var i=1;i<splname.length;i++){
-    			if(tmpVal!=null && tmpVal!=undefined){
-    				 tmpVal=tmpVal[splname[i]];
-    			}else{
-    				break;
-				}
-    		}
-    		if(tmpVal!=null && tmpVal!=undefined){
-    			toReturn= tmpVal;
-    		}else{
-    			toReturn= row[columnName];
-    		}
-    	}else{
-    		toReturn= row[columnName];
+    	if(typeof columnName == 'string'){
+    		var splname=columnName.split(".");
+        	var toReturn="";
+        	if(splname.length>1){
+        		var tmpVal=row[splname[0]];
+        		for(var i=1;i<splname.length;i++){
+        			if(tmpVal!=null && tmpVal!=undefined){
+        				 tmpVal=tmpVal[splname[i]];
+        			}else{
+        				break;
+    				}
+        		}
+        		if(tmpVal!=null && tmpVal!=undefined){
+        			toReturn= tmpVal;
+        		}else{
+        			toReturn= row[columnName];
+        		}
+        	}else{
+        		toReturn= row[columnName];
+        	}
+        	
+        	if(columnTransformationText==undefined){
+        		return toReturn;
+        	}else{
+        		//apply filter
+        		return columnTransformationText(toReturn,row,columnName);
+        	}
     	}
     	
-    	if(columnTransformationText==undefined){
-    		return toReturn;
-    	}else{
-    		//apply filter
-    		return columnTransformationText(toReturn,row,columnName);
-    	}
     }
 }
 function TableFooterControllerFunction($scope, $timeout) {
