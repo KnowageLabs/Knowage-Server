@@ -27,7 +27,7 @@ abstract class JsonFacet {
 
     protected final String type = "terms";
     protected String field;
-    protected int limit = -1;
+    protected int limit = 10;
 
     public JsonFacet(String field) {
         this.field = field;
