@@ -1,5 +1,19 @@
-/**
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
@@ -15,7 +29,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
  * @author Dragan Pirkovic
  *
  */
-public class FileManager {
+public class CsvExportFileManager {
 
 	private String directoryName;
 	private String path;
@@ -26,14 +40,13 @@ public class FileManager {
 	 * @param directoryName
 	 * @param path
 	 */
-	public FileManager(String directoryName, String path) {
+	public CsvExportFileManager(String directoryName, String path) {
 		this.directoryName = directoryName;
 		this.path = path;
 		try {
 			this.directory = Files.createTempDirectory(this.directoryName + "_", new FileAttribute[0]);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 	}
 
@@ -42,14 +55,13 @@ public class FileManager {
 	 * @param resourcePath
 	 * @param zipFileName
 	 */
-	public FileManager(String directoryName, String path, String zipFileName) {
+	public CsvExportFileManager(String directoryName, String path, String zipFileName) {
 		this.directoryName = directoryName;
 		this.path = path;
 		try {
 			this.directory = Files.createTempDirectory(this.directoryName + "_", new FileAttribute[0]);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 
 		this.zipFileName = zipFileName;
@@ -59,7 +71,7 @@ public class FileManager {
 	 * @param fileName
 	 * @param datastore
 	 */
-	public void createFile(String fileName, IDataStore datastore) {
+	public void createCSVFileAndZipIt(String fileName, IDataStore datastore) {
 		new CSVFileDataWriter(this.directory, fileName).write(datastore);
 		createZip();
 

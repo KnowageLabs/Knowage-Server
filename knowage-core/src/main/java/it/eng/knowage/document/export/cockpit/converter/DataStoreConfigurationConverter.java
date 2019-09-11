@@ -1,5 +1,19 @@
-/**
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.document.export.cockpit.converter;
 
@@ -56,7 +70,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	}
 
 	@Override
-	public IDataStoreConfiguration convert(ICockpitWidget widget) {
+	public IDataStoreConfiguration convert(ICockpitWidget widget) throws IConverterException {
 		this.jsonConfiguration = converter.convert(widget);
 		return new DatastoreConfigurationBuilder().setDataSet(getDataset()).setParameters(getParameters()).setProjections(getProjections())
 				.setFilter(getFilter()).setGroups(getGroups()).setSortings(getSortings()).setSummaryRow(getSummaryRowProjections()).build();
@@ -95,7 +109,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public Filter getFilter() {
 		if (jsonConfiguration != null) {
-			return ConverterFactory.getFilterConverter(getDataset(), jsonConfiguration.getAggregations()).convert(jsonConfiguration.getSelections());
+			try {
+				return ConverterFactory.getFilterConverter(getDataset(), jsonConfiguration.getAggregations()).convert(jsonConfiguration.getSelections());
+			} catch (IConverterException e) {
+
+			}
 		}
 
 		return null;
@@ -109,7 +127,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public List<Projection> getGroups() {
 		if (jsonConfiguration != null) {
-			return ConverterFactory.getGroupConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			try {
+				return ConverterFactory.getGroupConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			} catch (IConverterException e) {
+
+			}
 		}
 		return null;
 
@@ -162,7 +184,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public List<Projection> getProjections() {
 		if (jsonConfiguration != null) {
-			return ConverterFactory.getProjectionConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			try {
+				return ConverterFactory.getProjectionConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			} catch (IConverterException e) {
+
+			}
 		}
 		return null;
 	}
@@ -175,7 +201,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public List<Sorting> getSortings() {
 		if (jsonConfiguration != null) {
-			return ConverterFactory.getSortingsConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			try {
+				return ConverterFactory.getSortingsConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+			} catch (IConverterException e) {
+
+			}
 		}
 
 		return null;

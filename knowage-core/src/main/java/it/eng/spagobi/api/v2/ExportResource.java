@@ -66,6 +66,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Manage entity exported to file.
@@ -332,23 +333,29 @@ public class ExportResource {
 	@Path("/cockpitData")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response exportCockpitDocumentWidgetData(DocumentExportConf documentExportConf) {
+		logger.debug("IN");
 
-		// new CSVCockpitDataExporter(documentExportConf.getDocumentId(), documentExportConf.getDocumentLabel(), documentExportConf.getParameters(), null,
-		// UserProfileManager.getProfile(), SpagoBIUtilities.getResourcePath()).export();
+		logger.debug(String.format("document id: %s", documentExportConf.getDocumentId()));
+		logger.debug(String.format("document label: %s", documentExportConf.getDocumentLabel()));
+		logger.debug(String.format("export type: %s", documentExportConf.getExportType()));
+		logger.debug(String.format("parameters: %s", documentExportConf.getParameters()));
 
 		JobDetail exportJob = new CockpitDataExportJobBuilder().setDocumentExportConf(documentExportConf).setLocale(request.getLocale())
 				.setUserProfile(UserProfileManager.getProfile()).build();
+		logger.debug("Created export job");
 
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.addJob(exportJob, true);
 			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
+			logger.debug("Export job triggered ");
 		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = String.format("Error during scheduling of export job for cokcpit document %d", documentExportConf.getDocumentLabel());
+			logger.error(msg, e);
+			throw new SpagoBIRuntimeException(msg);
 		}
-
-		return Response.ok().entity(documentExportConf).build();
+		logger.debug("OUT");
+		return Response.ok().entity(exportJob.getName()).build();
 
 	}
 
