@@ -290,12 +290,12 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject configObject = jsonArray.getJSONObject(i);
 				saveReceivedConfig(configObject);
-				
+
 				if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
-					
+
 					CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
-					String confValue = configObject.getString("value");
-					cacheTriggerManagementAPI.updateChronExpression(confValue);
+					String confValue = configObject.getString("id");
+					cacheTriggerManagementAPI.updateCronExpression(confValue);
 				}
 			}
 
@@ -308,7 +308,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	private void saveReceivedConfig(JSONObject configObject) {
 		Config c = null;
 		IConfigDAO configsDao = null;

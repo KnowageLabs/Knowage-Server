@@ -3,6 +3,7 @@ package it.eng.spagobi.tools.scheduler;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
@@ -13,10 +14,10 @@ import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
 public class CacheTriggerManagementAPI {
 
 	private static transient Logger logger = Logger.getLogger(CacheTriggerManagementAPI.class);
-	
-	public boolean updateChronExpression(String confValue) {
+
+	public boolean updateCronExpression(String confValue) {
 		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-		
+
 		Trigger simpleTrigger = new Trigger();
 		simpleTrigger.setName(CleanCacheQuartzInitializer.DEFAULT_TRIGGER_NAME);
 		simpleTrigger.setJob(schedulerDAO.loadJob(CleanCacheQuartzInitializer.DEFAULT_JOB_NAME, CleanCacheQuartzInitializer.DEFAULT_JOB_NAME));
@@ -24,12 +25,20 @@ public class CacheTriggerManagementAPI {
 		simpleTrigger.getChronExpression().setExpression(getCronExpression(confValue));
 		simpleTrigger.setStartTime(new Date());
 		simpleTrigger.setRunImmediately(false);
-		
-		schedulerDAO.updateTrigger(simpleTrigger);
-		
+
+		if (schedulerDAO.triggerExists(simpleTrigger)) {
+			if (confValue.equalsIgnoreCase("none")) {
+				schedulerDAO.deleteTrigger(CleanCacheQuartzInitializer.DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
+			} else {
+				schedulerDAO.updateTrigger(simpleTrigger);
+			}
+		} else if (!confValue.equalsIgnoreCase("none")) {
+			schedulerDAO.insertTrigger(simpleTrigger);
+		}
+
 		return true;
 	}
-	
+
 	private String getCronExpression(String valueCheck) {
 		if (valueCheck == null) {
 			logger.debug("This value is [" + valueCheck + "]");

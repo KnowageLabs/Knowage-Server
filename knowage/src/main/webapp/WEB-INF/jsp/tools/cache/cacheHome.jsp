@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.frequencyOfCleaningDaemon")}}</label>
 					       		<md-select ng-model="ctrl.variableSchedulingFullClean">
-					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val}}</md-option>
+					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val.label}}</md-option>
 					       		</md-select>
 					    </md-input-container>
 				<!-- New -->		
