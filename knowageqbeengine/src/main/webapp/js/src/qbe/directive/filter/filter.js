@@ -206,7 +206,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	$scope.entitiesField=[];
 	for (var i = 0; i < $scope.tree.length; i++) {
-		if($scope.tree[i].qtip==$scope.field.entity  ){
+		if($scope.tree[i].text==$scope.field.entity  ){
 			for (var j = 0; j < $scope.tree[i].children.length; j++) {
 				if($scope.tree[i].children[j].iconCls!="relation")
 					$scope.entitiesField.push($scope.tree[i].children[j])
@@ -315,7 +315,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	var openTableWithValues = function (filter){
 		//$scope.selected.length=filter.rightOperandValue.length;
 		$scope.showTable = true;
-		filters_service.getFieldsValue($scope.ngModel.field.id).then(function(response){
+		filters_service.getFieldsValue($scope.ngModel.field).then(function(response){
 			$scope.listOfValues = response.data.rows;
 			$scope.valuesGrid.api.setRowData($scope.listOfValues);
 			$scope.valuesGrid.api.forEachNode( function (node) {
