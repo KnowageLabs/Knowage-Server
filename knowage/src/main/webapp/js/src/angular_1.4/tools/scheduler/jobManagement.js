@@ -1189,18 +1189,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						return false;
 					}
 
-					cloneData.startDate=cloneData.startDate.getTime();
-					if(isNaN(cloneData.startDate)){
-						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
-						return false;
-					}
+					cloneData.startDate=cloneData.startDate.toJSON();
+//					if(isNaN(cloneData.startDate)){
+//						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
+//						return false;
+//					}
 
 					if(cloneData.endDate!=undefined){
-						cloneData.endDate=cloneData.endDate.getTime();
-						if(isNaN(cloneData.endDate)){
-							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
-							return false;
-						}
+						cloneData.endDate=cloneData.endDate.toJSON();
+//						if(isNaN(cloneData.endDate)){
+//							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
+//							return false;
+//						}
 					}
 
 					var definedActionCount = 0;
