@@ -1,5 +1,19 @@
-/**
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.document.cockpit;
 
@@ -36,29 +50,8 @@ public class CockpitDocument {
 		init();
 	}
 
-	/**
-	 *
-	 */
-	private void init() {
-		ICockpitTemplateRetriver cockpitTemplateRetriver = new DBCockpitTemplateRetriver(documentId);
-		JSONObject jsonTemplate = cockpitTemplateRetriver.getTemplate();
-		this.cockpitTemlate = new CockpitTemplateReader(jsonTemplate);
-
-	}
-
-	/**
-	 * @return the parameters
-	 */
-	public Map<String, String> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * @param parameters
-	 *            the parameters to set
-	 */
-	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
+	public String getDataSetLabelById(Integer dsId) {
+		return this.cockpitTemlate.getDataSetLabelById(dsId);
 	}
 
 	/**
@@ -69,26 +62,15 @@ public class CockpitDocument {
 	}
 
 	/**
-	 * @param documentId
-	 *            the documentId to set
-	 */
-	public void setDocumentId(Integer documentId) {
-		this.documentId = documentId;
-	}
-
-	/**
 	 * @return the documentLabel
 	 */
 	public String getDocumentLabel() {
 		return documentLabel;
 	}
 
-	/**
-	 * @param documentLabel
-	 *            the documentLabel to set
-	 */
-	public void setDocumentLabel(String documentLabel) {
-		this.documentLabel = documentLabel;
+	public JSONObject getFilters() {
+		return this.cockpitTemlate.getFilters();
+
 	}
 
 	/**
@@ -100,11 +82,10 @@ public class CockpitDocument {
 	}
 
 	/**
-	 * @return
+	 * @return the parameters
 	 */
-	public JSONArray getWidgets() {
-
-		return this.cockpitTemlate.getWidgets();
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 
 	public JSONObject getParamsByDataSetId(Integer dsId) {
@@ -112,12 +93,45 @@ public class CockpitDocument {
 
 	}
 
-	public String getDataSetLabelById(Integer dsId) {
-		return this.cockpitTemlate.getDataSetLabelById(dsId);
+	/**
+	 * @return
+	 */
+	public JSONArray getWidgets() {
+
+		return this.cockpitTemlate.getWidgets();
 	}
 
-	public JSONObject getFilters() {
-		return this.cockpitTemlate.getFilters();
+	/**
+	 * @param documentId
+	 *            the documentId to set
+	 */
+	public void setDocumentId(Integer documentId) {
+		this.documentId = documentId;
+	}
+
+	/**
+	 * @param documentLabel
+	 *            the documentLabel to set
+	 */
+	public void setDocumentLabel(String documentLabel) {
+		this.documentLabel = documentLabel;
+	}
+
+	/**
+	 * @param parameters
+	 *            the parameters to set
+	 */
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
+
+	/**
+	 *
+	 */
+	private void init() {
+		ICockpitTemplateRetriver cockpitTemplateRetriver = new DBCockpitTemplateRetriver(documentId);
+		JSONObject jsonTemplate = cockpitTemplateRetriver.getTemplate();
+		this.cockpitTemlate = new CockpitTemplateReader(jsonTemplate);
 
 	}
 

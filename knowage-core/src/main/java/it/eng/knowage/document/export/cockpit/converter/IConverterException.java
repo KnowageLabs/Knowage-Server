@@ -15,19 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.document.cockpit.template;
-
-import org.json.JSONObject;
+package it.eng.knowage.document.export.cockpit.converter;
 
 /**
  * @author Dragan Pirkovic
  *
  */
-public interface ICockpitTemplateRetriver {
+public class IConverterException extends Exception {
 
 	/**
-	 * @return
+	 *
 	 */
-	public JSONObject getTemplate();
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @param string
+	 * @param e
+	 */
+	public IConverterException(String string, Exception e) {
+		super(string, e);
+	}
 
 }

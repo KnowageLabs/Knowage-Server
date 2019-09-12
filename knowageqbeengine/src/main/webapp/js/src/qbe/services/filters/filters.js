@@ -2,7 +2,7 @@
 var filters = angular.module('filters',['sbiModule']);
 
 filters.service('filters_service',function(sbiModule_action,sbiModule_translate){
-	this.getFieldsValue= function(entityID){
+	this.getFieldsValue= function(entity){
 		var queryParam = {};
 		var formParam = {};
 		var headers = [];
@@ -12,7 +12,11 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 			},
 
 		};
-		queryParam.ENTITY_ID = entityID;
+		if(entityID.type == "inline.calculated.field"){
+			queryParam.fieldDescriptor = entity.id;
+		}else {
+			queryParam.ENTITY_ID = entity.id;
+		}
 		formParam.start = 0;
 		formParam.limit = 20;
 
@@ -99,7 +103,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 
 
 	//Polyfill for non IE11 compliant code - To replace with readable ie11 compliant code
-	
+
 	function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 	function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
@@ -162,7 +166,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 
 	  return Const;
 	}(Node);
-	
+
 	// End of polyfill
 
 	this.generateExpressions = function (filters){

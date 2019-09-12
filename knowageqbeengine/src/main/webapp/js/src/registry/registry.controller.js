@@ -89,7 +89,7 @@
 	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
 	           	self.data = dateRowsFilter(dateColumns,response.data.rows);
-
+	           	self.columns.length=0
 	           	 self.resultsNumber = response.data.results;
 	           	self.initalizePagination();
 	           	 if(self.columnSizeInfo.length == 0) {
@@ -483,6 +483,11 @@
 
         self.updateRow = function() {
 			for (var i = 0; i < self.selectedRow.length; i++) {
+				for(var property in self.selectedRow[i]) {
+	        		if(!self.selectedRow[i].id && self.selectedRow[i][property] && typeof self.selectedRow[i][property].getMonth === 'function') {
+	        			self.selectedRow[i][property].setTime(self.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
+	    	        }
+	        	}
 				registryCRUD.update(self.selectedRow[i]).then(function(response) {});
 				if (i == (self.selectedRow.length - 1)) {
 					sbiMessaging.showInfoMessage( self.sbiTranslate.load("kn.registry.registryDocument.update.success")
@@ -494,19 +499,24 @@
 
 		// Delete
 		self.deleteRowFromDB = function(row, event) {
-			var confirm = $mdDialog.confirm()
-            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
-            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
-            .targetEvent(event)
-            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
-            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
+			if(row.id) {
+				var confirm = $mdDialog.confirm()
+	            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
+	            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
+	            .targetEvent(event)
+	            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
+	            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
 
-			$mdDialog.show(confirm).then(function() {
-					registryCRUD.delete(row).then(function(response) {
-						sbiMessaging.showInfoMessage(self.sbiTranslate.load("kn.registry.registryDocument.delete.success"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
-						self.deleteRow(row.$$hashKey);
+				$mdDialog.show(confirm).then(function() {
+						registryCRUD.delete(row).then(function(response) {
+							sbiMessaging.showInfoMessage(self.sbiTranslate.load("kn.registry.registryDocument.delete.success"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
+							self.deleteRow(row.$$hashKey);
+						});
 					});
-				});
+			} else {
+				self.deleteRow(row.$$hashKey);
+			}
+
 		};
 
 		self.isArray = angular.isArray;

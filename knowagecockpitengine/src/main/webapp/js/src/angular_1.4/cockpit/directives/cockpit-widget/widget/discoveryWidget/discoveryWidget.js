@@ -104,7 +104,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             onGridReady: resizeColumns,
             onGridSizeChanged: resizeColumns,
             onSortChanged: changeSorting,
-            getRowHeight: rowHeight,
             onCellClicked: handleClick,
             onColumnResized: columnResized,
             getRowHeight: getRowHeight,
@@ -112,11 +111,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		function getRowHeight(params){
-			var maxLength = 0;
-			for(var r in params.data){
-				if(params.data[r].length > maxLength) maxLength = params.data[r].length;
+			if($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) return parseInt($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) || 25;
+			else{
+				var maxLength = 0;
+				for(var r in params.data){
+					if(params.data[r].length > maxLength) maxLength = params.data[r].length;
+				}
+		        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
 			}
-	        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
 		}
 		
 		function columnResized(params){
@@ -143,10 +145,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		function resizeColumns(){
 			$scope.gridOptions.api.sizeColumnsToFit();
-		}
-		
-		function rowHeight(){
-			return parseInt($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) || 25;
 		}
 		
 		function handleClick(node){
@@ -216,6 +214,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.widgetIsInit=true;
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 				},500);
+			}
+		}
+		
+		$scope.getFacetAlias = function(name){
+			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+				if($scope.ngModel.content.columnSelectedOfDataset[c].name == name) return $scope.ngModel.content.columnSelectedOfDataset[c].alias; 
 			}
 		}
 		
@@ -346,15 +350,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			item.value = value;
 			item.ds=$scope.ngModel.dataset.label;
 			if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label]) delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group];
-			if(cockpitModule_template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group]) delete cockpitModule_template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group];
+			if(cockpitModule_template.configuration.aggregations[0] && cockpitModule_template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group]) delete cockpitModule_template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group];
 			if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && Object.keys(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label]).length==0){
 				delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label];
 			}
 			if(Object.keys(cockpitModule_template.configuration.filters).length==0) cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
-			if(Object.keys(cockpitModule_template.configuration.aggregations[0].selection).length==0) cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
+			if(cockpitModule_template.configuration.aggregations[0] && Object.keys(cockpitModule_template.configuration.aggregations[0].selection).length==0) cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 			$rootScope.$broadcast('DELETE_SELECTION',item);
 			$scope.deleteSelections(item);
-			//$scope.refreshWidget();
+			if(cockpitModule_template.configuration.aggregations.length == 0) $scope.refreshWidget();
 		}
 		
 		$scope.selectItem = function(group, item){

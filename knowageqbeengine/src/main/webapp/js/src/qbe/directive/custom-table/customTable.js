@@ -138,8 +138,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
             	$scope.alias = field.alias;
 
                 $scope.ok= function(){
+
+                	field.index = $scope.ngModel.indexOf(field);
                 	field.alias = $scope.alias;
                     $mdDialog.hide();
+                    $rootScope.$broadcast('setAlias', field);
                 }
 
                 $scope.cancel = function(){
@@ -408,7 +411,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	},{
 	                        		"label":$scope.translate.load("kn.qbe.general.alias"),
 	                            	"name":"alias",
-	                            	editable:true,
+	                            	hideTooltip:true,
+	                            	transformer: function() {
+	                   	    		 return '<md-input-container class="md-block" style="margin:0"><input  ng-model="row.alias" ng-click="scopeFunctions.setAlias(row)"></md-input-container>';
+	                   	    	 }
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
@@ -563,6 +569,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		modifyCalculatedField : function (row){
 			$scope.modifyCalculatedField(row);
+		},
+		setAlias : function (row){
+			$scope.changeAlias(row);
 		}
 	};
 

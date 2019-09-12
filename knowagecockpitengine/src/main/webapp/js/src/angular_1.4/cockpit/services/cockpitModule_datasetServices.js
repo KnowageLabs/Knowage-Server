@@ -752,15 +752,22 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		
 		var filtersToSendWithoutParams = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
-		if(ngModel.search
-				&& ngModel.search.text && ngModel.search.text!=""
-				&& ngModel.search.columns && ngModel.search.columns.length>0){
-			var columns = ngModel.search.columns.join(",");
+		if(ngModel.search){
 			var searchData = {};
-			searchData[columns] = ngModel.search.text;
 			var likeSelections = {};
-			likeSelections[dataset.label] = searchData;
-			bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
+			if(ngModel.search.text && ngModel.search.text!="" && ngModel.search.columns && ngModel.search.columns.length>0){
+				var columns = ngModel.search.columns.join(",");
+				searchData[columns] = ngModel.search.text;
+			}
+			if(ngModel.search.facets && Object.keys(ngModel.search.facets).length > 0){
+				for(var f in ngModel.search.facets){
+					searchData[f] = ngModel.search.facets[f].filterVals[0];
+				}
+			}
+			if(Object.keys(searchData).length > 0){
+				likeSelections[dataset.label] = searchData;
+				bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
+			}
 		}
    
 		savedFilters = filtersToSendWithoutParams;

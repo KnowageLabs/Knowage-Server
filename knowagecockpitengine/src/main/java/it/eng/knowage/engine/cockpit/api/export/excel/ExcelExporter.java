@@ -618,7 +618,7 @@ public class ExcelExporter {
 						if (style.has("title")) {
 							JSONObject title = style.optJSONObject("title");
 							if (title.has("label")) {
-								widgetName = title.getString("label");
+								widgetName = title.getString("label") + "_" + widget.getString("id");
 							}
 						}
 

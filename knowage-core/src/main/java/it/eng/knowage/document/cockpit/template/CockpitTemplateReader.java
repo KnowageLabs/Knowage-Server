@@ -1,11 +1,27 @@
-/**
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.document.cockpit.template;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Dragan Pirkovic
@@ -29,9 +45,8 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 	 */
 	@Override
 	public JSONObject getFilters() {
-		if (getConfiguration() != null)
-			return getConfiguration().optJSONObject("filters");
-		return null;
+		Assert.assertNotNull(getConfiguration(), "configuration cannot be null");
+		return getConfiguration().optJSONObject("filters");
 
 	}
 
@@ -50,14 +65,12 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 	@Override
 	public JSONObject getParamsByDataSetId(Integer dsId) {
 
-		if (getDatasets() != null) {
-			for (int i = 0; i < getDatasets().length(); i++) {
-				if (getDatasetId(getDatasets().optJSONObject(i)).equals(dsId)) {
-					return getDatasets().optJSONObject(i).optJSONObject("parameters");
-				}
+		Assert.assertNotNull(getDatasets(), "Datasets cannot be null");
+		for (int i = 0; i < getDatasets().length(); i++) {
+			if (getDatasetId(getDatasets().optJSONObject(i)).equals(dsId)) {
+				return getDatasets().optJSONObject(i).optJSONObject("parameters");
 			}
 		}
-		;
 
 		return null;
 	}
@@ -70,18 +83,17 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 	@Override
 	public JSONArray getWidgets() {
 		JSONArray widgets = new JSONArray();
-		if (getSheets() != null) {
-			for (int i = 0; i < getSheets().length(); i++) {
+		Assert.assertNotNull(getSheets(), "sheets cannot be null");
+		for (int i = 0; i < getSheets().length(); i++) {
 
-				JSONArray widgetsInSheet = getWidgets(getSheets().optJSONObject(i));
+			JSONArray widgetsInSheet = getWidgets(getSheets().optJSONObject(i));
 
-				if (widgetsInSheet != null) {
-					for (int j = 0; j < widgetsInSheet.length(); j++) {
-						widgets.put(widgetsInSheet.optJSONObject(j));
-					}
+			if (widgetsInSheet != null) {
+				for (int j = 0; j < widgetsInSheet.length(); j++) {
+					widgets.put(widgetsInSheet.optJSONObject(j));
 				}
-
 			}
+
 		}
 
 		return widgets;
@@ -100,7 +112,7 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 	 * @throws JSONException
 	 */
 	private JSONObject getConfiguration() {
-
+		Assert.assertNotNull(jsonTemplate, "jsonTemplate cannot be null");
 		return jsonTemplate.optJSONObject("configuration");
 	}
 
@@ -113,11 +125,9 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 	 */
 	private JSONArray getDatasets() {
 
-		if (getConfiguration() != null) {
-			return getConfiguration().optJSONArray("datasets");
-		}
+		Assert.assertNotNull(getConfiguration(), "configuration cannot be null");
+		return getConfiguration().optJSONArray("datasets");
 
-		return null;
 	}
 
 	private JSONArray getSheets() {
@@ -135,16 +145,15 @@ public class CockpitTemplateReader implements ICockpitTemplateReader {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.document.cockpit.template.ICockpitTemplateReader#getDataSetLabelById(java.lang.Integer)
 	 */
 	@Override
 	public String getDataSetLabelById(Integer dsId) {
-		if (getDatasets() != null) {
-			for (int i = 0; i < getDatasets().length(); i++) {
-				if (getDatasetId(getDatasets().optJSONObject(i)).equals(dsId)) {
-					return getDatasets().optJSONObject(i).optString("dsLabel");
-				}
+		Assert.assertNotNull(getDatasets(), "datasets cannot be null");
+		for (int i = 0; i < getDatasets().length(); i++) {
+			if (getDatasetId(getDatasets().optJSONObject(i)).equals(dsId)) {
+				return getDatasets().optJSONObject(i).optString("dsLabel");
 			}
 		}
 

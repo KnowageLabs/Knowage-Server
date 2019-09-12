@@ -249,7 +249,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     });
 
 	$rootScope.$on('applyFunction', function (event, data) {
-		var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+		var indexOfEntity = findWithAttr($scope.entityModel.entities,'text', data.entity);
 		var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
 		var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
 		if(data.funct!= undefined && data.funct !=null && data.funct!="") {
@@ -319,11 +319,16 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	});
 
 	$scope.$on('setVisible', function (event, data) {
-		 var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+		 var indexOfEntity = findWithAttr($scope.entityModel.entities,'text', data.entity);
 		  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
 		  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
 		  $scope.isNotChangedFromHidingField = false;
 		  $scope.editQueryObj.fields[indexOfFieldInQuery].visible = data.visible;
+	});
+
+	$scope.$on('setAlias', function (event, data) {
+		$scope.editQueryObj.fields[data.index].alias = data.alias;
+
 	});
 
 	$scope.$on('showHiddenColumns', function (event, data) {
@@ -434,7 +439,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$rootScope.$on('group', function (event, data) {
 
-	  var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+	  var indexOfEntity = findWithAttr($scope.entityModel.entities,'text', data.entity);
 	  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
 	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
