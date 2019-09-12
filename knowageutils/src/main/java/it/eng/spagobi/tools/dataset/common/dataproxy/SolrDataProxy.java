@@ -82,7 +82,7 @@ public class SolrDataProxy extends RESTDataProxy {
 	public IDataStore load(IDataReader dataReader) {
 		if (!facets) {
 			this.address = this.address.replaceAll(" ", "%20");
-			logger.debug("SOLR QUERY TO EXECUTE [" + setPaginationParameters(address, dataReader) + "]");
+			logger.info("SOLR QUERY TO EXECUTE [" + setPaginationParameters(address, dataReader) + "]");
 			this.address = setPaginationParameters(address, dataReader);
 			return super.load(dataReader);
 		} else {

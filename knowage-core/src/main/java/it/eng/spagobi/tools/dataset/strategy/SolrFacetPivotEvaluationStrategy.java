@@ -19,6 +19,12 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.json.JSONException;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
@@ -29,11 +35,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.json.JSONException;
-
-import java.util.List;
 
 class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
@@ -46,6 +47,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
     @Override
     protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
+        solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
         SolrQuery solrQuery;
         try {
             solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(projections, groups, sortings);

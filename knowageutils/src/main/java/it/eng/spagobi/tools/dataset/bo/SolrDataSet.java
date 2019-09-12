@@ -277,6 +277,24 @@ public class SolrDataSet extends RESTDataSet {
 		}
 	}
 
+	public void setSolrQueryParameters(SolrQuery solrQuery, Map parametersMap) {
+		try {
+			JSONObject jsonConfiguration = new JSONObject(configuration);
+
+			List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConfiguration, true);
+			if (filterQueries != null && !filterQueries.isEmpty()) {
+				String[] array = new String[filterQueries.size()];
+				for (int i = 0; i < array.length; i++) {
+					array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
+				}
+				solrQuery.setFilterQueries(array);
+			}
+
+		} catch (JSONException e) {
+			throw new ConfigurationException("Problems in configuration of data proxy", e);
+		}
+	}
+
 	@Override
 	public boolean isCachingSupported() {
 		return false;

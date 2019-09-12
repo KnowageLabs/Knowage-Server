@@ -172,7 +172,7 @@ public class ExtendedSolrQuery extends SolrQuery {
         JSONObject innerFacet = new JSONObject();
         innerFacet.put("type", "terms");
         innerFacet.put("field", field);
-        innerFacet.put("limit", -1);
+        innerFacet.put("limit", 10);
         innerFacet.put("missing", true);
         if(jsonFacet.length() > 0) {
             innerFacet.put("facet", jsonFacet);

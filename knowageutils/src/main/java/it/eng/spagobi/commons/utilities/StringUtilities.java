@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
@@ -972,7 +973,21 @@ public class StringUtilities {
 		int suffixIndex = values.lastIndexOf(suffix);
 		if (prefixIndex > -1 && suffixIndex > -1) {
 			int prefixLength = prefix.length();
-			return values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
+
+			String[] returnedValues = values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
+
+			Character ch1 = values.charAt( values.lastIndexOf(suffix)-1);
+			Character ch2 = values.charAt( values.lastIndexOf(suffix));
+			if (ch1.equals(ch2)) {  // case when '' is present as last value
+				String[] returnedValuesEmpty = new String[returnedValues.length+1];
+				for (int i = 0; i < returnedValues.length; i++) {
+					returnedValuesEmpty[i] = returnedValues[i];
+				}
+				returnedValuesEmpty[returnedValues.length] = StringUtils.EMPTY;
+				return returnedValuesEmpty;
+			}
+
+			return returnedValues;
 		} else {
 			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
 		}
