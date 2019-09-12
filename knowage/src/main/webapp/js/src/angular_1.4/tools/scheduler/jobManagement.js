@@ -1182,21 +1182,21 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 
 				activityEventCtrl.saveEvent = function() {
-					var cloneData=JSON.parse(JSON.stringify(activityEventCtrl.event));
+					var cloneData=angular.copy(activityEventCtrl.event);
 
 					if(cloneData.startDate==undefined){
 						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.required", "component_scheduler_messages"));
 						return false;
 					}
 
-					cloneData.startDate=(new Date(cloneData.startDate)).getTime();
+					cloneData.startDate=cloneData.startDate.getTime();
 					if(isNaN(cloneData.startDate)){
 						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
 						return false;
 					}
 
 					if(cloneData.endDate!=undefined){
-						cloneData.endDate=(new Date(cloneData.endDate)).getTime();
+						cloneData.endDate=cloneData.endDate.getTime();
 						if(isNaN(cloneData.endDate)){
 							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
 							return false;
