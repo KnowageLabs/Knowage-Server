@@ -58,9 +58,9 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	<md-button ng-cloak class="toolbar-button-custom md-raised kn-primaryButton" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()" flex>
 		{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 	</md-button>
-	<md-menu>
+	<md-menu ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
 	
-      <md-button class="toolbar-button-custom md-raised kn-functionButton" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="$mdOpenMenu();" md-menu-origin="">
+      <md-button class="toolbar-button-custom md-raised" ng-class="{'kn-functionButton':executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'}" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="$mdOpenMenu();" md-menu-origin="">
         <md-icon md-font-icon="fa fa-chevron-down"></md-icon>
       </md-button>
       <md-menu-content width="4" class="md-dense">
