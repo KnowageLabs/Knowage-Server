@@ -483,6 +483,9 @@
 
         self.updateRow = function() {
 			for (var i = 0; i < self.selectedRow.length; i++) {
+				if(!self.selectedRow[i].id && self.selectedRow[i].first_opened_date) {
+					self.selectedRow[i].first_opened_date.setTime(self.selectedRow[i].first_opened_date.getTime() - new Date().getTimezoneOffset()*60*1000);
+	        	}
 				registryCRUD.update(self.selectedRow[i]).then(function(response) {});
 				if (i == (self.selectedRow.length - 1)) {
 					sbiMessaging.showInfoMessage( self.sbiTranslate.load("kn.registry.registryDocument.update.success")
