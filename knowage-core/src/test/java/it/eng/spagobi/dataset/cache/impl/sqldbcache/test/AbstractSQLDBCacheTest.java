@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
+import java.math.BigDecimal;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -37,10 +42,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.Random;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -236,7 +237,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		cache.put(fileDataset, resultset);
 		logger.debug("FileDataSet inserted inside cache");
 		String tableName = cache.getMetadata().getCacheItem(fileDataset.getSignature()).getTable();
-		assertTrue(cache.delete(fileDataset.getSignature()));
+		assertTrue(cache.delete(fileDataset.getSignature(), true));
 		assertNull("Dataset still present in cache registry", cache.get(fileDataset.getSignature()));
 		IDataStore dataStore = null;
 		// Check that the table is not present, if this fail with an exception we know that the table isn't on DB
@@ -260,7 +261,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		fileDataset.loadData();
 		resultset = fileDataset.getDataStore();
 
-		assertFalse(cache.delete(fileDataset.getSignature()));
+		assertFalse(cache.delete(fileDataset.getSignature(), true));
 
 	}
 
