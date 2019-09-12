@@ -447,11 +447,12 @@ if(executionRoleNames.size() > 0) {
                 <!-- "ng-show" is used instead of "ng-if" (or "ng-switch") in order to prevent the iframe reloading -->
                 <md-content id="documentFrameContainer" layout="column" flex ng-show="currentView.status == 'DOCUMENT'">  
                       <div layout="row" flex layout-align="center center"
-                            ng-hide="urlViewPointService.frameLoaded || browser.name == 'internet explorer' || hasValidOutputTypeParameter()">
+                            ng-hide="urlViewPointService.frameLoaded || hasValidOutputTypeParameter()">
                         <md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
+                        
                     </div>
                     <iframe class="noBorder" id="documentFrame" name="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
-                        iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded || browser.name == 'internet explorer'">
+                        iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded">
                     </iframe>
                     <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
 			                ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav-e" 
