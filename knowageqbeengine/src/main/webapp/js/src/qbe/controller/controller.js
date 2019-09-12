@@ -326,6 +326,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		  $scope.editQueryObj.fields[indexOfFieldInQuery].visible = data.visible;
 	});
 
+	$scope.$on('setAlias', function (event, data) {
+		$scope.editQueryObj.fields[data.index].alias = data.alias;
+
+	});
+
 	$scope.$on('showHiddenColumns', function (event, data) {
 		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
 			  $scope.editQueryObj.fields[i].visible = true;
