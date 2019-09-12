@@ -65,9 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 							<p>{{ctrl.translate.load("cache.manager.cacheEnabled")}}				{{ ctrl.data.enabled }}</p>
 			 
-							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ ctrl.data.totalMemory / 1048576 }} MB</p>
+							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ (ctrl.data.totalMemory / 1048576).toFixed(2) }} MB</p>
 			
-							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ ctrl.data.availableMemory / 1048576 }} MB</p>
+							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ (ctrl.data.availableMemory / 1048576).toFixed(2) }} MB</p>
 	
 							<p>{{ctrl.translate.load("cache.manager.numberOfCachedObjects")}}		{{ ctrl.data.cachedObjectsCount }}</p>
 			
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-toolbar> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
 				<md-card-content layout="column">		
 				<form layout="row" layout-wrap name=manageForm >
-					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="100" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
+					<!-- <md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="100" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch> -->
 										
 					<div flex="50" layout="column">
 						
@@ -111,12 +111,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </md-input-container>
 				<!-- New -->		
 						<md-input-container class="md-block">
-            				<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
+            				<label>{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
             				<input ng-model="ctrl.variableLastAccessTtl" type="number">
           				</md-input-container>
 
 					    <md-input-container class="md-block">
-					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
+					    	<label>{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
 					       	<input ng-model="ctrl.variableCreateAndPersistTimeout" type="number">
 					    </md-input-container>
 						
@@ -149,12 +149,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           				</md-input-container>
 
 					    <md-input-container class="md-block">
-					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
+					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastTimeout" type="number">
 					    </md-input-container>		    
 					    
 					    <md-input-container class="md-block">
-					    	<label style="white-space: pre-wrap;">{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
+					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastLeaseTime" type="number">
 					    </md-input-container>	
 					    
