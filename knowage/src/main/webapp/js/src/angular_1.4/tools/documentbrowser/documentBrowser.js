@@ -615,7 +615,8 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments,folderId){
+function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments,folderId,sbiModule_translate){
+	$scope.translate=sbiModule_translate;
 	$scope.closeDialogFromExt=function(){
 		 $mdDialog.cancel();
 		 //reload documents
@@ -625,7 +626,7 @@ function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document
 }
 
 function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
-
+	$scope.translate=sbiModule_translate;
 		var folderId = selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
 		$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
 
