@@ -291,6 +291,8 @@ angular.module('cockpitModule')
 						if(activeSelections.length > 0){
 							if(activeSelections.indexOf(itemsList[j].column_1) != -1){
 								scope.selectables.push({name: itemsList[j].column_1, selected: true});
+							}else {
+								scope.selectables.push({name: itemsList[j].column_1, selected: false});
 							}
 						}else {
 							scope.selectables.push({name: itemsList[j].column_1, selected: false});
