@@ -415,7 +415,7 @@ public class SQLDBCache implements ICache {
 		logger.debug("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
 
 		String signature = dataSet.getSignature();
-		String hashedSignature = Helper.sha256(dataSet.getSignature());
+		String hashedSignature = Helper.sha256(signature);
 		long timeSpent = 0;
 		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingMap");
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
