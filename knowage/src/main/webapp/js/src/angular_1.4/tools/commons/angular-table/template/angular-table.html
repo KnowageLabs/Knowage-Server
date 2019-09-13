@@ -100,7 +100,7 @@
 		</span>
 		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" ng-class="getChangedValueStyle(row,column.name)" build-template="column.template" ></span>
 
-		<span ng-switch-default ng-if="column.name=='--MULTISELECT--'" ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
+		<span ng-switch-default ng-if="column.name!='--MULTISELECT--'" ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
 	 		<!--dynamic cell (default)-->
 			<span  ng-switch-when="false"  ng-class="getChangedValueStyle(row,column.name)"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   >
 				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="100" md-direction="bottom"><span dynamichtml="getColumnValue(row,column.name,column.transformer)"></span></md-tooltip>
