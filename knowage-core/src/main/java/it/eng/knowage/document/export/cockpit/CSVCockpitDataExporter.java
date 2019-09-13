@@ -35,7 +35,6 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.CsvExportFileManager;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -80,10 +79,11 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 				logger.debug("getting widget");
 				widget = getWidget(i);
 
-				Assert.assertNotNull(widget, "widget cannot be null");
-				logger.debug("creating csv file");
-				fileManager.createCSVFileAndZipIt(widget.getName(), getDataStore(getDataStoreConf(widget)));
-				logger.debug("csv file created");
+				if (widget != null) {
+					logger.debug("creating csv file");
+					fileManager.createCSVFileAndZipIt(widget.getName(), getDataStore(getDataStoreConf(widget)));
+					logger.debug("csv file created");
+				}
 
 			} catch (JSONException | IConverterException e) {
 				String msg = String.format("Error while exporting csv file for widget with name: %s for cockpit with label: %d", widget.getName(),
