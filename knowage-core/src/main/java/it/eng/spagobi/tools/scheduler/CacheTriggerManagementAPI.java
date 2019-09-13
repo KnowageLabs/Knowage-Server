@@ -52,6 +52,7 @@ public class CacheTriggerManagementAPI {
 				return value.getExpression();
 			}
 		}
+
 		logger.debug("No predefined cron expression found with label equals to [" + valueCheck + "]. Returning null.");
 		return null;
 	}
