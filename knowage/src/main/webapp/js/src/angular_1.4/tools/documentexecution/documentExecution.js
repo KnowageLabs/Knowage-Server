@@ -657,6 +657,12 @@
 		$scope.isCloseDocumentButtonVisible=function(){
 			return $crossNavigationScope.isCloseDocumentButtonVisible();
 		};
+		
+		if($scope.browser.name == 'internet explorer'){
+			document.getElementById('documentFrame').onload = function() {
+				$scope.iframeOnload();
+		    }
+		}
 
 		$scope.iframeOnload = function(){
 			docExecute_urlViewPointService.frameLoaded = true;
@@ -666,17 +672,20 @@
 		};
 
 		$scope.hasValidOutputTypeParameter = function() {
-		    var url = new URL(location.origin + execProperties.documentUrl);
-            if(url.searchParams.has("outputType")) {
-            	var outputType = url.searchParams.get("outputType").toUpperCase();
-            	for(var i=0; i<docExecute_urlViewPointService.exportation.length; i++) {
-            		var exportType = docExecute_urlViewPointService.exportation[i];
-            		if(exportType.description.toUpperCase() === outputType) {
-            		    return true;
-            		}
-            	}
-            }
-            return false;
+			if($scope.browser.name != 'internet explorer'){
+				var url = new URL(location.origin + execProperties.documentUrl);
+	            if(url.searchParams.has("outputType")) {
+	            	var outputType = url.searchParams.get("outputType").toUpperCase();
+	            	for(var i=0; i<docExecute_urlViewPointService.exportation.length; i++) {
+	            		var exportType = docExecute_urlViewPointService.exportation[i];
+	            		if(exportType.description.toUpperCase() === outputType) {
+	            		    return true;
+	            		}
+	            	}
+	            }
+	            return false;
+			}
+		    return false;
 		};
 
 		$scope.previewDataset = function(datasetLabel, parameters, directDownload) {
