@@ -1157,6 +1157,9 @@ filter-by-tags {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  md-sidenav {
+    width: 320px !important;
+  }
   .canvas-for-highcharts{
     display: none;
     position: absolute;

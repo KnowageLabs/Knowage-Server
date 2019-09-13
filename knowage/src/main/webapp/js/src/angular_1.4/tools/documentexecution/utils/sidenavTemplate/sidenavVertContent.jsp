@@ -58,7 +58,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	<md-button ng-cloak class="toolbar-button-custom md-raised kn-primaryButton" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()" flex>
 		{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 	</md-button>
-	<md-menu ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
+	<md-menu ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'" ng-hide="isParameterPanelDisabled()">
 	
       <md-button class="toolbar-button-custom md-raised" ng-class="{'kn-functionButton':executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'}" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="$mdOpenMenu();" md-menu-origin="">
         <md-icon md-font-icon="fa fa-chevron-down"></md-icon>
@@ -66,7 +66,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
       <md-menu-content width="4" class="md-dense">
         <md-menu-item>
           <md-button ng-click="exportCsv($event)">
-            Export CSV
+            {{::translate.load("sbi.execution.parametersselection.executionbutton.exportcsv")}}
           </md-button>
         </md-menu-item>
       </md-menu-content>
