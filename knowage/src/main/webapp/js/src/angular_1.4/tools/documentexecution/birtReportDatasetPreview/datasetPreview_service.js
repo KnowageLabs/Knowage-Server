@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices',
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
 
-				this.prepareParameters = function(parameters) {
-					for(var i = 0; i < previewDataset.pars.length; i++) {
-						var value = parameters[0][previewDataset.pars[i].name];
-						previewDataset.pars[i].value = value;
+				var prepareParameters = function(previewDatasetParameters, parameters) {
+					for(var i = 0; i < previewDatasetParameters.length; i++) {
+						var value = parameters[0][previewDatasetParameters[i].name];
+						previewDatasetParameters[i].value = value;
 					}
 				}
 
@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										var previewDataset = response.data[0];
 
 										if (previewDataset.pars.length > 0) {
-											prepareParameters(previewDataset.pars);
+											prepareParameters(previewDataset.pars, parameters);
 											config.parameters = previewDataset.pars;
 											showExporters(config);
 											iframeSrcUrl += '?' + $httpParamSerializer(config);
@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var id = previewDataset.id;
 								var data = {};
 								if (parameters != null && typeof parameters != 'undefined') {
-									prepareParameters(previewDataset.pars);
+									prepareParameters(previewDataset.pars, parameters);
 									data.parameters = previewDataset.pars;
 								}
 
