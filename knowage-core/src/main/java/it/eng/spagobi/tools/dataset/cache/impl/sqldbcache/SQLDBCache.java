@@ -380,6 +380,11 @@ public class SQLDBCache implements ICache {
 
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
 								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
+
+						if (getMetadata().isCleaningEnabled() && getMetadata().getAvailableMemory().compareTo(new BigDecimal(0)) < 0) {
+							deleteToQuota();
+						}
+
 					}
 				} catch (Exception e) {
 					new SpagoBIRuntimeException(e);
@@ -676,6 +681,20 @@ public class SQLDBCache implements ICache {
 		}
 	}
 
+	private CacheItem getLastCachedItem() {
+		CacheItem ci = null;
+		Date localDate = new Date();
+		List<CacheItem> items = getMetadata().getCacheItems();
+		for (CacheItem cacheItem : items) {
+			if (cacheItem.getCreationDate().before(localDate)) {
+				ci = cacheItem;
+				localDate = cacheItem.getCreationDate();
+			}
+
+		}
+		return ci;
+	}
+
 	@Override
 	public void deleteToQuota() {
 		logger.trace("IN");
@@ -693,14 +712,20 @@ public class SQLDBCache implements ICache {
 				}
 			}
 			// Second loop through datasets
+			String lastCachedItem = null;
 			if (!isEnough) {
+				lastCachedItem = getLastCachedItem().getSignature();
 				for (String signature : getMetadata().getSignatures()) {
-					delete(signature, true);
-					if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
-						break;
+					if (!signature.equals(lastCachedItem)) {
+						delete(signature, true);
+						if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+							isEnough = true;
+							break;
+						}
 					}
 				}
 			}
+
 		} catch (Throwable t) {
 			if (t instanceof CacheException)
 				throw (CacheException) t;
