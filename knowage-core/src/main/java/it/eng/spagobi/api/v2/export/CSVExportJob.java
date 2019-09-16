@@ -40,7 +40,7 @@ public class CSVExportJob extends AbstractExportJob {
 	private static final Logger logger = Logger.getLogger(CSVExportJob.class);
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	protected void export(JobExecutionContext context) throws JobExecutionException {
 		super.execute(context);
 
 		logger.debug("Start CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());

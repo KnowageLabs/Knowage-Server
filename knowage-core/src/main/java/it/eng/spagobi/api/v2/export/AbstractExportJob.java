@@ -67,7 +67,7 @@ abstract class AbstractExportJob implements Job {
 	private UUID id = null;
 	private Locale locale = null;
 	private Map<String, String> parameters = null;
-	java.nio.file.Path resourcePath = null;
+	Path resourcePath = null;
 	private String resourcePathAsStr = null;
 	private UserProfile userProfile = null;
 
@@ -83,7 +83,7 @@ abstract class AbstractExportJob implements Job {
 	}
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public final void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
 
 		dataSetId = getDataSetId(mergedJobDataMap);
@@ -121,7 +121,7 @@ abstract class AbstractExportJob implements Job {
 			throw new JobExecutionException(e);
 		}
 
-		java.nio.file.Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
+		Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
 
 		try {
 			String dataSetName = dataSet.getName();
@@ -140,6 +140,20 @@ abstract class AbstractExportJob implements Job {
 			deleteJobDirectory();
 
 			String msg = String.format("Error creating file \"%s\"!", metadataFile);
+			logger.error(msg, e);
+			throw new JobExecutionException(e);
+		}
+
+		export(context);
+
+		Path perJobIdReadyPlaceholderFile = ExportPathBuilder.getInstance().getPerJobIdReadyPlaceholderFile(resourcePathAsStr, userProfile, id);
+		try {
+			Files.createFile(perJobIdReadyPlaceholderFile);
+		} catch (Exception e) {
+
+			deleteJobDirectory();
+
+			String msg = String.format("Error creating file \"%s\"!", perJobIdReadyPlaceholderFile);
 			logger.error(msg, e);
 			throw new JobExecutionException(e);
 		}
@@ -251,6 +265,14 @@ abstract class AbstractExportJob implements Job {
 		Tenant tenant = new Tenant(organization);
 		TenantManager.setTenant(tenant);
 	}
+
+	/**
+	 * Call the real export.
+	 *
+	 * @param context
+	 * @throws JobExecutionException
+	 */
+	protected abstract void export(JobExecutionContext context) throws JobExecutionException;
 
 	/**
 	 * @return The MIME type of generated file.
