@@ -64,7 +64,7 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
 	   }
 });
 
-function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template){
+function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template){
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
@@ -81,6 +81,14 @@ function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cock
 		if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
 		if(tempBgStyle.sheetsBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.sheetsBackgroundColor;
 		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
+		
+		$rootScope.showCockpitSpinner = function(){
+			$scope.cockpitSpinner = true;
+		}
+		
+		$rootScope.hideCockpitSpinner = function(){
+			$scope.cockpitSpinner = false;
+		}
 	}
 };
 

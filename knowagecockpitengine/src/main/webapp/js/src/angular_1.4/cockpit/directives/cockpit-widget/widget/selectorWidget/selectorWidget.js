@@ -202,6 +202,7 @@ angular.module('cockpitModule')
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
 				$scope.hideWidgetSpinner();
+				$rootScope.hideCockpitSpinner();
 				return;
 			}
 
@@ -275,7 +276,7 @@ angular.module('cockpitModule')
 	  			},function(error){});
         	}
         	
-    	function MultiSelectDialogController(scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title) {
+    	function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title) {
     		scope.settings = settings;
     		scope.title = title;
     		scope.translate = sbiModule_translate;
@@ -405,7 +406,7 @@ angular.module('cockpitModule')
 				}
 				$scope.oldSelectedValues = angular.copy(parVal);
 			}
-
+			$rootScope.showCockpitSpinner();
 			$scope.hasDefaultValues = false;
 
 			var item = {};
@@ -549,6 +550,7 @@ angular.module('cockpitModule')
                     cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
                 }
             }, 0);
+			$rootScope.hideCockpitSpinner();
 	    }
 
 	    $scope.editWidget=function(index){
