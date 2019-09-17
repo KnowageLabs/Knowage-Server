@@ -38,6 +38,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		callback(xmlhttp.responseText)
 	}
 	
+	 if (!String.prototype.endsWith) {
+	    	String.prototype.endsWith = function(search, this_len) {
+	    		if (this_len === undefined || this_len > this.length) {
+	    			this_len = this.length;
+	    		}
+	    		return this.substring(this_len - search.length, this_len) === search;
+	    	};
+	    }
+	
 	
 	var isEditOlap = function(){
 		
@@ -60,4 +69,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US'){
     	messageResource.load('messages', function(){});
     }
+    
+   
 </script>
