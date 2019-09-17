@@ -19,10 +19,10 @@ var EmptyJob = {
 
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger",
                                "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window",
-                               "$filter", "sbiModule_messaging", mainFunction ]);
+                               "sbiModule_dateServices", "sbiModule_messaging", mainFunction ]);
 
 function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
-		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, $filter, sbiModule_messaging) {
+		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_dateServices, sbiModule_messaging) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 
@@ -105,8 +105,15 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							// calc new date strings
 							for(var triggerIndex=0; triggerIndex<job.triggers.length; triggerIndex++){
 								var trigger = job.triggers[triggerIndex];
-								trigger.triggerStartDateTime = $filter('date')(trigger.triggerZonedStartTime, 'dd/MM/yyyy HH:mm');
-								trigger.triggerEndDateTime = $filter('date')(trigger.triggerZonedEndTime, 'dd/MM/yyyy HH:mm');
+
+								debugger;
+
+								var triggerZonedStartTime = new Date(trigger.triggerZonedStartTime);
+								var triggerZonedEndTime = new Date(trigger.triggerZonedEndTime);
+								trigger.triggerStartDateTime = sbiModule_dateServices.formatDate(triggerZonedStartTime)
+									+ " " + sbiModule_dateServices.formatDate(triggerZonedStartTime,'HH:mm');
+								trigger.triggerEndDateTime = sbiModule_dateServices.formatDate(triggerZonedEndTime)
+									+ " " + sbiModule_dateServices.formatDate(triggerZonedEndTime,'HH:mm');
 								trigger.triggerIsPausedString = (trigger.triggerIsPaused ? sbiModule_translate.load("sbi.general.yes") : sbiModule_translate.load("sbi.general.No"));
 							}
 							// update parameters
