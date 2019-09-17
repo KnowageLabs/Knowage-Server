@@ -176,25 +176,25 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		this.id = businessObjectID;
 	}
 
-//	/**
-//	 * Gets the bi object parameters.
-//	 *
-//	 * @return Returns the biObjectParameters.
-//	 */
-//	@JsonIgnore
-//	public List<BIObjectParameter> getDrivers() {
-//		return biObjectParameters;
-//	}
-//
-//	/**
-//	 * Sets the bi object parameters.
-//	 *
-//	 * @param businessObjectParameters
-//	 *            The biObjectParameters to set.
-//	 */
-//	public void setDrivers(List<BIObjectParameter> businessObjectParameters) {
-//		this.biObjectParameters = businessObjectParameters;
-//	}
+	// /**
+	// * Gets the bi object parameters.
+	// *
+	// * @return Returns the biObjectParameters.
+	// */
+	// @JsonIgnore
+	// public List<BIObjectParameter> getDrivers() {
+	// return biObjectParameters;
+	// }
+	//
+	// /**
+	// * Sets the bi object parameters.
+	// *
+	// * @param businessObjectParameters
+	// * The biObjectParameters to set.
+	// */
+	// public void setDrivers(List<BIObjectParameter> businessObjectParameters) {
+	// this.biObjectParameters = businessObjectParameters;
+	// }
 
 	/**
 	 * Gets the description.
@@ -615,8 +615,8 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 * @return the template list
 	 */
 	@JsonIgnore
-	public List getTemplateList() {
-		List templates = new ArrayList();
+	public List<ObjTemplate> getTemplateList() {
+		List<ObjTemplate> templates = new ArrayList();
 		try {
 			IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 			templates = objtempdao.getBIObjectTemplateList(this.getId());
@@ -733,11 +733,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		this.refreshSeconds = refreshSeconds;
 	}
 
-
 	public String getProfiledVisibility() {
 		return profiledVisibility;
 	}
-
 
 	public void setProfiledVisibility(String profiledVisibility) {
 		this.profiledVisibility = profiledVisibility;
@@ -918,6 +916,5 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public void setDrivers(List<BIObjectParameter> drivers) {
 		this.biObjectParameters = drivers;
 	}
-
 
 }
