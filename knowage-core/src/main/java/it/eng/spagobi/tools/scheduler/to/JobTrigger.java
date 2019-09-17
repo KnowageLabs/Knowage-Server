@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 public class JobTrigger implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -31,9 +35,25 @@ public class JobTrigger implements Serializable {
 	public static final String TRIGGER_NAME = "triggerName";
 	public static final String TRIGGER_GROUP = "triggerGroup";
 	public static final String TRIGGER_DESCRIPTION = "triggerDescription";
+	/**
+	 * @deprecated {@link #ZONED_START_TIME} may be preferred
+	 */
+	@Deprecated
 	public static final String START_DATE = "startDate";
+	/**
+	 * @deprecated {@link #ZONED_START_TIME} may be preferred
+	 */
+	@Deprecated
 	public static final String START_TIME = "startTime";
+	/**
+	 * @deprecated {@link #ZONED_END_TIME} may be preferred
+	 */
+	@Deprecated
 	public static final String END_DATE = "endDate";
+	/**
+	 * @deprecated {@link #ZONED_END_TIME} may be preferred
+	 */
+	@Deprecated
 	public static final String END_TIME = "endTime";
 	public static final String JOB_NAME = "jobName";
 	public static final String JOB_GROUP = "jobGroup";
@@ -41,6 +61,8 @@ public class JobTrigger implements Serializable {
 	public static final String CHRONO_TYPE = "type";
 	public static final String CHRONO_PARAMETER = "parameter";
 	public static final String DOCUMENTS = "documents";
+	public static final String ZONED_START_TIME = "zonedStartTime";
+	public static final String ZONED_END_TIME = "zonedEndTime";
 
 	// obj.get(CHRONO_TYPE) == ( "minute" || "hour" || "day" || "week" || "month" )
 	// obj.get(CHRONO_TYPE) == "month" and day choice type IS simple
@@ -61,9 +83,25 @@ public class JobTrigger implements Serializable {
 
 	private String triggerName = "";
 	private String triggerDescription = "";
+	/**
+	 * @deprecated {@link #zonedStartTime} may be preferred
+	 */
+	@Deprecated
 	private String startDate = "";
+	/**
+	 * @deprecated {@link #zonedStartTime} may be preferred
+	 */
+	@Deprecated
 	private String startTime = "";
+	/**
+	 * @deprecated {@link #zonedEndTime} may be preferred
+	 */
+	@Deprecated
 	private String endDate = "";
+	/**
+	 * @deprecated {@link #zonedEndTime} may be preferred
+	 */
+	@Deprecated
 	private String endTime = "";
 	private JobInfo jobInfo;
 	private Integer chronoParameterNumRepetition = null;
@@ -78,6 +116,15 @@ public class JobTrigger implements Serializable {
 	private String repeatInterval = "";
 	private Map<String, DispatchContext> saveOptions = null;
 
+	/**
+	 * ISO 8601 rappresentation of the start time.
+	 */
+	private String zonedStartTime = null;
+	/**
+	 * ISO 8601 rappresentation of the end time.
+	 */
+	private String zonedEndTime = null;
+
 	public String getChronoType() {
 		return chronoType;
 	}
@@ -90,7 +137,10 @@ public class JobTrigger implements Serializable {
 	 * Gets the end date.
 	 *
 	 * @return the end date
+	 *
+	 * @deprecated {@link #getZonedEndTime()} may be preferred
 	 */
+	@Deprecated
 	public String getEndDate() {
 		return endDate;
 	}
@@ -98,9 +148,11 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the end date.
 	 *
-	 * @param endDate
-	 *            the new end date
+	 * @param endDate the new end date
+	 *
+	 * @deprecated {@link #setZonedEndTime(String)} may be preferred
 	 */
+	@Deprecated
 	public void setEndDate(String endDate) {
 		if (endDate.matches("\\d+")) {
 			// millisec
@@ -137,7 +189,10 @@ public class JobTrigger implements Serializable {
 	 * Gets the end time.
 	 *
 	 * @return the end time
+	 *
+	 * @deprecated {@link #getZonedEndTime()} may be preferred
 	 */
+	@Deprecated
 	public String getEndTime() {
 		return endTime;
 	}
@@ -145,9 +200,11 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the end time.
 	 *
-	 * @param endTime
-	 *            the new end time
+	 * @param endTime the new end time
+	 *
+	 * @deprecated {@link #setZonedEndTime(String)} may be preferred
 	 */
+	@Deprecated
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
@@ -164,8 +221,7 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the repeat interval.
 	 *
-	 * @param repeatInterval
-	 *            the new repeat interval
+	 * @param repeatInterval the new repeat interval
 	 */
 	public void setRepeatInterval(String repeatInterval) {
 		this.repeatInterval = repeatInterval;
@@ -175,7 +231,10 @@ public class JobTrigger implements Serializable {
 	 * Gets the start date.
 	 *
 	 * @return the start date
+	 *
+	 * @deprecated {@link #getZonedStartTime()} may be preferred
 	 */
+	@Deprecated
 	public String getStartDate() {
 		return startDate;
 	}
@@ -183,9 +242,11 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the start date.
 	 *
-	 * @param startDate
-	 *            the new start date
+	 * @param startDate the new start date
+	 *
+	 * @deprecated {@link #setZonedStartTime(String)} may be preferred
 	 */
+	@Deprecated
 	public void setStartDate(String startDate) {
 		if (startDate.matches("\\d+")) {
 			// millisec
@@ -221,7 +282,10 @@ public class JobTrigger implements Serializable {
 	 * Gets the start time.
 	 *
 	 * @return the start time
+	 *
+	 * @deprecated {@link #getZonedStartTime()} may be preferred
 	 */
+	@Deprecated
 	public String getStartTime() {
 		return startTime;
 	}
@@ -229,9 +293,11 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the start time.
 	 *
-	 * @param startTime
-	 *            the new start time
+	 * @param startTime the new start time
+	 *
+	 * @deprecated {@link #setZonedStartTime(String)} may be preferred
 	 */
+	@Deprecated
 	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
@@ -248,8 +314,7 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the trigger description.
 	 *
-	 * @param triggerDescription
-	 *            the new trigger description
+	 * @param triggerDescription the new trigger description
 	 */
 	public void setTriggerDescription(String triggerDescription) {
 		this.triggerDescription = triggerDescription;
@@ -267,8 +332,7 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the trigger name.
 	 *
-	 * @param triggerName
-	 *            the new trigger name
+	 * @param triggerName the new trigger name
 	 */
 	public void setTriggerName(String triggerName) {
 		this.triggerName = triggerName;
@@ -289,8 +353,7 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the chron string.
 	 *
-	 * @param chrono
-	 *            the new chron string
+	 * @param chrono the new chron string
 	 */
 	public void setChrono(String chrono) {
 		this.chrono = chrono;
@@ -304,8 +367,7 @@ public class JobTrigger implements Serializable {
 	}
 
 	/**
-	 * @param jobInfo
-	 *            the jobInfo to set
+	 * @param jobInfo the jobInfo to set
 	 */
 	public void setJobInfo(JobInfo jobInfo) {
 		this.jobInfo = jobInfo;
@@ -323,18 +385,32 @@ public class JobTrigger implements Serializable {
 	/**
 	 * Sets the save options.
 	 *
-	 * @param saveOptions
-	 *            the new save options
+	 * @param saveOptions the new save options
 	 */
 	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
 		this.saveOptions = saveOptions;
+	}
+
+	public void setZonedEndTime(String zonedEndDate) {
+		DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+		DateTime parsedDateTime = dateTime.parseDateTime(zonedEndDate);
+		this.zonedEndTime = parsedDateTime.toString();
+	}
+
+	public void setZonedStartTime(String zonedStartDate) {
+		DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+		DateTime parsedDateTime = dateTime.parseDateTime(zonedStartDate);
+		this.zonedStartTime = parsedDateTime.toString();
 	}
 
 	/**
 	 * Gets the start date rf c3339.
 	 *
 	 * @return the start date rf c3339
+	 *
+	 * @deprecated {@link #getZonedStartTime()} may be preferred
 	 */
+	@Deprecated
 	public String getStartDateRFC3339() {
 		String startDRFC = "";
 		String startD = this.getStartDate();
@@ -349,7 +425,10 @@ public class JobTrigger implements Serializable {
 	 * Gets the end date rf c3339.
 	 *
 	 * @return the end date rf c3339
+	 *
+	 * @deprecated {@link #getZonedEndTime()} may be preferred
 	 */
+	@Deprecated
 	public String getEndDateRFC3339() {
 		String endDRFC = "";
 		String endD = this.getEndDate();
@@ -364,10 +443,19 @@ public class JobTrigger implements Serializable {
 		return endDRFC;
 	}
 
+	public String getZonedEndTime() {
+		return zonedEndTime;
+	}
+
+	public String getZonedStartTime() {
+		return zonedStartTime;
+	}
+
 	@Override
 	public String toString() {
-		return "{ triggerName = \"" + triggerName + "\"; triggerDescription = \"" + triggerDescription + "\"; startDate = \"" + startDate
-				+ "\"; startTime = \"" + startTime + "\"; endDate = \"" + endDate + "\"; endTime = \"" + endTime + "\"; chrono = \"" + chrono
-				+ "\"; jobInfo = {" + " jobName = \"" + jobInfo.getJobName() + "; jobGroupName = \"" + jobInfo.getJobGroupName() + "} }";
+		return "{ triggerName = \"" + triggerName + "\"; triggerDescription = \"" + triggerDescription + "\"; startDate = \"" + startDate + "\"; startTime = \""
+				+ startTime + "\"; endDate = \"" + endDate + "\"; endTime = \"" + endTime + "\"; zonedStartTime = \"" + zonedStartTime + "\"; zonedEndTime = \""
+				+ zonedEndTime + "\"; chrono = \"" + chrono + "\"; jobInfo = {" + " jobName = \"" + jobInfo.getJobName() + "; jobGroupName = \""
+				+ jobInfo.getJobGroupName() + "} }";
 	}
 }
