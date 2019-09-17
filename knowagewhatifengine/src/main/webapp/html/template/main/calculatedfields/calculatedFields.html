@@ -22,7 +22,7 @@
          
           
       </div>
-  <md-dialog-content >
+  <md-dialog-content ng-cloak>
     <md-tabs md-dynamic-height  md-selected="selectedTab" md-border-bottom>
       <md-tab label="Aggregation" ng-if="aggregationArray.length > 0">
     <md-content class="md-padding" style=" height: 200px;">
@@ -38,7 +38,6 @@
           </div>
           <md-divider ></md-divider>
         </md-list-item>
-        </md-list>
     </md-content>      
       </md-tab>
       <md-tab label="Arithmetic" ng-if="arithmeticArray.length > 0">
@@ -56,7 +55,6 @@
           </div>
           <md-divider ></md-divider>
         </md-list-item>
-			</md-list>	
     </md-content>      
       </md-tab>
       <md-tab label="Temporal" ng-if="temporalArray.length > 0">
@@ -73,7 +71,6 @@
           </div>
           <md-divider ></md-divider>
         </md-list-item>
-        </md-list>	
     </md-content>      
       </md-tab>
        <md-tab label="Custom" ng-if="customArray.length > 0">
@@ -90,29 +87,27 @@
           </div>
           <md-divider ></md-divider>
         </md-list-item>
-        </md-list>	
     </md-content>      
       </md-tab>
       
      <md-tab label="Recent" md-on-select="hideNameInputCC('select')" md-on-deselect="hideNameInputCC('deselect')">
-    	<md-content class="md-padding" style=" height: 200px;">
-      		<md-list flex>
-        		<md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray">
-					<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
-					<p>{{ item.name }}</p>
-					<md-button class="md-warn md-secondary" ng-click="deleteFromCookie($index,item);">Delete</md-button> 
-					<md-divider ></md-divider>
-				</md-list-item>
-			</md-list>	
-    	</md-content>
-          
+    <md-content class="md-padding" style=" height: 200px;">
+      <md-list flex>
+        <md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray">
+	<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
+	<p>{{ item.name }}</p>
+	<md-button class="md-warn md-secondary" ng-click="deleteFromCookie($index,item);">Delete</md-button> 
+	<md-divider ></md-divider>
+</md-list-item>
+    </md-content>      
       </md-tab>
     </md-tabs>
-    
-      <md-dialog-actions layout="column">
-     <div layout="column" flex>
+  </md-dialog-content>
+
+    <md-dialog-actions layout="column">
+     <div ayout="column" flex>
      <md-card class="menu-text">
-           
+          
 	Remember that, if you add more than one dimension on the pivot table, the calculated field created will be hidden
      </md-card>
 		
@@ -130,9 +125,6 @@
       	</div>
       </div>
     </md-dialog-actions>
-  </md-dialog-content>
-
-  
     
 </md-dialog>
 
