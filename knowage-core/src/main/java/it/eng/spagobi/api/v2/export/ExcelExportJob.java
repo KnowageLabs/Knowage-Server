@@ -50,7 +50,6 @@ public class ExcelExportJob extends AbstractExportJob {
 
 	@Override
 	protected void export(JobExecutionContext context) throws JobExecutionException {
-		super.execute(context);
 
 		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
