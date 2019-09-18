@@ -1178,7 +1178,7 @@ filter-by-tags {
   .itemboxGU {
     min-height: 100px;
   }
-  md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
+  md-checkbox.md-knowage-theme.md-checked ._md-icon:after,md-checkbox.md-knowage-theme.md-checked .md-icon::after {
     padding-top: 11px;
   }
   
