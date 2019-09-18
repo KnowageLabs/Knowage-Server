@@ -94,6 +94,7 @@
 	           	 if(self.columnSizeInfo.length == 0) {
 	           		self.columnSizeInfo = response.data.metaData.columnsInfos;
 	           		self.columnFieldTypes = response.data.metaData.fields;
+	           		self.columns.length=0
 	           		addColumnsInfo();
 	           	 }
 
