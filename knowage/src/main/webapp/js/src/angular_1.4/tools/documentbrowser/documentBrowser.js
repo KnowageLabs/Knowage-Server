@@ -331,10 +331,7 @@ function documentBrowserFunction($window,
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + document.name
 			;
-		var tmpDoc={};
-		angular.copy(document,tmpDoc);
-		tmpDoc.url=url;
-		$scope.runningDocuments.push(tmpDoc);
+
 		if(isIE){
 			location.href = url;
 		}else{
