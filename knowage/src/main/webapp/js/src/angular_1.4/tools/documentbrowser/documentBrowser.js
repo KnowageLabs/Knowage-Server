@@ -335,14 +335,14 @@ function documentBrowserFunction($window,
 		angular.copy(document,tmpDoc);
 		tmpDoc.url=url;
 		$scope.runningDocuments.push(tmpDoc);
-//		if(isIE){
-//			location.href = url;
-//		}else{
-//			var tmpDoc={};
-//			angular.copy(document,tmpDoc);
-//			tmpDoc.url=url;
-//			$scope.runningDocuments.push(tmpDoc);
-//		}
+		if(isIE){
+			location.href = url;
+		}else{
+			var tmpDoc={};
+			angular.copy(document,tmpDoc);
+			tmpDoc.url=url;
+			$scope.runningDocuments.push(tmpDoc);
+		}
 
 
 	};
