@@ -24,9 +24,9 @@
       	</div>
 	    <md-list ng-show="selectables.length > 0">
 			<md-virtual-repeat-container id="vertical-container">
-		      <md-list-item md-virtual-repeat="item in selectables | filter:{name:searchText}" class="selectableList" ng-class="{'disabled': !settings.hideDisabled && isDisabled(item.name)}">
+		      <md-list-item md-virtual-repeat="item in (availableItems = (selectables | filter:{name:searchText}))" class="selectableList" ng-class="{'disabled': !settings.hideDisabled && isDisabled(item.name)}">
 		         	<p class="truncated"> {{ item.name }} </p>
-    				<md-checkbox class="md-secondary" ng-model="item.selected" ng-disabled="!settings.hideDisabled && isDisabled(item.name)"></md-checkbox>
+    				 <md-checkbox class="md-secondary" ng-model="item.selected" ng-disabled="!settings.hideDisabled && isDisabled(item.name)"></md-checkbox>
 		      </md-list-item>
 		    </md-virtual-repeat-container>
 	    </md-list>

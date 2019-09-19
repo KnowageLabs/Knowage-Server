@@ -1003,7 +1003,7 @@ function cockpitWidgetControllerFunction(
 
 				}
 			}
-
+			$rootScope.hideCockpitSpinner();
 		}
 	}
 
