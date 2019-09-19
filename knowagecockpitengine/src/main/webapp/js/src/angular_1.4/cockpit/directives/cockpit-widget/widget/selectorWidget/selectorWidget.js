@@ -311,8 +311,8 @@ angular.module('cockpitModule')
 		    
 		    scope.selectAll = function(){
 		    	scope.allSelected = !scope.allSelected;
-		    	for(var s in scope.selectables){
-		    		if(!scope.isDisabled(scope.selectables[s].name)) scope.selectables[s].selected = scope.allSelected;
+		    	for(var s in scope.availableItems){
+		    		if(!scope.isDisabled(scope.availableItems[s].name)) scope.availableItems[s].selected = scope.allSelected;
 		    	}
 		    }
 		}

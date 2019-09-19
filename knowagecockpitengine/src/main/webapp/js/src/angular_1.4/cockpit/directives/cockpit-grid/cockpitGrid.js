@@ -68,6 +68,7 @@ function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridster
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
+	cockpitModule_properties.cockpitSpinner = false;
 	
 	if($scope.cockpitModule_template.configuration && $scope.cockpitModule_template.configuration.style){
 		var tempBgStyle = $scope.cockpitModule_template.configuration.style;
@@ -83,11 +84,15 @@ function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridster
 		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
 		
 		$rootScope.showCockpitSpinner = function(){
-			$scope.cockpitSpinner = true;
+			$timeout(function(){
+				cockpitModule_properties.cockpitSpinner = true;
+			},0)
 		}  
 		
 		$rootScope.hideCockpitSpinner = function(){
-			$scope.cockpitSpinner = false;
+			$timeout(function(){
+				cockpitModule_properties.cockpitSpinner = false;
+			},0)
 		}
 
 	}

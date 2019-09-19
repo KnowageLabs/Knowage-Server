@@ -482,7 +482,7 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 		}
-
+		$rootScope.hideCockpitSpinner();
 
 	}
 
@@ -501,6 +501,7 @@ function cockpitWidgetControllerFunction(
 			options.label = label;
 			$scope.refreshWidget(options,'filters');
 		}
+			$rootScope.hideCockpitSpinner();
 	}
 
 	$scope.getDocumentByLabel = function(label){
@@ -1003,7 +1004,6 @@ function cockpitWidgetControllerFunction(
 
 				}
 			}
-			$rootScope.hideCockpitSpinner();
 		}
 	}
 
