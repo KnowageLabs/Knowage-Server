@@ -1424,7 +1424,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					.promisePost("2.0", "lovs/preview",toSend)
 					.then(
 							function(response) {
-							if(response.statusText == 'No Content'){
+							if(response.status == 204){
 								$scope.enableTest = false;
 								sbiModule_messaging.showErrorMessage("Check your syntax", sbiModule_translate.load("sbi.generic.toastr.title.error"));
 
