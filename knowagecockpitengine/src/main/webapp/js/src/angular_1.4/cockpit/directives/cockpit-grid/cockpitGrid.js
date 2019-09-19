@@ -64,7 +64,7 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
 	   }
 });
 
-function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties, cockpitModule_template){
+function cockpitGridControllerFunction($rootScope, $scope, $timeout, cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties, cockpitModule_template){
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
