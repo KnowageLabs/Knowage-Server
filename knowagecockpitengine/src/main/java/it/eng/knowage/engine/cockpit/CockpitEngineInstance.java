@@ -92,7 +92,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 			this.associationManager = new AssociationManager();
 		} catch (JSONException e) {
-			throw new SpagoBIRuntimeException("Impossible to parse template", e);
+			String msg = String.format("Impossible to parse template: %s", template);
+			throw new SpagoBIRuntimeException(msg, e);
 		}
 	}
 
