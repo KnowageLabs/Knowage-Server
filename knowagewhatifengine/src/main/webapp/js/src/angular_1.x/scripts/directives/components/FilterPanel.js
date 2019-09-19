@@ -306,6 +306,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			.then(function(response) {
 					checkIfExists(response.data);
 					$scope.searchSucessText = $scope.searchText.toLowerCase();
+					$scope.hierarchyTreeService.setIsSlicer(response.data,filterFather)
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 			});
