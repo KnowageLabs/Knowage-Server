@@ -350,6 +350,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 		$scope.selectedBusinessModel.modelLocked = false;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 
+				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
+
 				sbiModule_restServices.promisePost("2.0/businessmodels","",$scope.selectedBusinessModel)
 				.then(function(response) {
 
@@ -376,6 +379,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				});
 			}
 			else{
+
+				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 
 				sbiModule_restServices.promisePut("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 				.then(function(response) {
