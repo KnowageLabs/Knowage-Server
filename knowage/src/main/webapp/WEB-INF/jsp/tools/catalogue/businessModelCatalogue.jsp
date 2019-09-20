@@ -142,7 +142,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								        <md-option ng-repeat="d in listOfDatasources" value="{{d.label}}">{{d.label}} </md-option>
 							       	</md-select>     
 								</md-input-container>
-						
+								<md-card-content layout="column">
+					      		<md-toolbar class="secondaryToolbar">
+							      <div class="md-toolbar-tools">
+							        <h2>
+							          <span>{{translate.load("sbi.bm.metaweb.configurationTablePrefixTitle")}}
+							          	<md-icon md-font-icon="fa fa-info-circle">
+								        		<md-tooltip md-delay="500">{{translate.load("sbi.bm.metaweb.configurationTablePrefixTooltip")}}</md-tooltip>
+								        </md-icon>
+								       </span>
+							        </h2>
+							      </div>
+						    	</md-toolbar>
+				        			<div layout="row" layout-align="start center">
+									
+								        <md-input-container class="md-block" flex>
+											<label>{{translate.load("sbi.bm.metaweb.tablePrefixLike")}}
+												<md-tooltip md-delay="500">{{translate.load("sbi.bm.metaweb.tablePrefixLikeExampleTooltip")}}</md-tooltip>
+											</label>
+								        	
+											<input ng-model="selectedBusinessModel.tablePrefixLike" ng-disabled="!metaWebFunctionality" ng-maxlength="500" id="tablePrefixLike" name="tablePrefixLike" ng-pattern="regex.extendedAlphanumeric" ng-onload="updateTablePrefixLikeValue()">
+		 									<div ng-messages="businessModelForm.tablePrefixLike.$error" role="alert" ng-messages-multiple>
+												<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+												<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+				  							</div>
+	 									</md-input-container>
+	 									<md-input-container class="md-block" flex>
+				  							<label>{{translate.load("sbi.bm.metaweb.tablePrefixNotLike")}}
+				  								<md-tooltip md-delay="500">{{translate.load("sbi.bm.metaweb.tablePrefixNotLikeExampleTooltip")}}</md-tooltip>
+											</label>
+											<input ng-model="selectedBusinessModel.tablePrefixNotLike" ng-disabled="!metaWebFunctionality" ng-maxlength="500" id="tablePrefixNotLike" name="tablePrefixNotLike" ng-pattern="regex.extendedAlphanumeric" ng-onload="updateTablePrefixNotLikeValue()">
+											<div ng-messages="businessModelForm.tablePrefixNotLike.$error" role="alert" ng-messages-multiple>
+												<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+												<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+				  							</div>
+										</md-input-container>
+										
+									</div>
+				        		</md-card-content>
+
 								<div layout="row" layout-wrap layout-align="start center">
 									<label ng-if="!metaWebFunctionality"  class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
 				      				<file-upload ng-if="!metaWebFunctionality"  flex ng-model="fileObj" id="businessModelFile" flex></file-upload>
@@ -157,8 +195,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-button>
 									
 									<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex>
-							          <md-switch ng-model="metaWebFunctionality" >{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
+							          <md-switch ng-model="metaWebFunctionality" ng-change="resetLikeConditions()">{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
 							        </md-input-container>
+								        
 									<%} %>
 				      				
 				      				<!-- ng-click="fileChange();checkChange()"  -->
@@ -168,7 +207,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 							        </md-input-container>
 									<%} %>
-				      				
 								</div>
 							</md-card-content>
 			      		</md-card>

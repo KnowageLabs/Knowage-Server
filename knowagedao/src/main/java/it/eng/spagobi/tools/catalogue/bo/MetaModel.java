@@ -55,6 +55,14 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 
 	private List<BIMetaModelParameter> biMetaModelParameters = null;
 
+	@ExtendedAlphanumeric
+	@Size(max = 500)
+	private String tablePrefixLike;
+
+	@ExtendedAlphanumeric
+	@Size(max = 500)
+	private String tablePrefixNotLike;
+
 	public Integer getId() {
 		return id;
 	}
@@ -87,8 +95,7 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param category
-	 *            the category to set
+	 * @param category the category to set
 	 */
 	public void setCategory(Integer category) {
 		this.category = category;
@@ -126,8 +133,7 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param modelLocked
-	 *            the modelLocked to set
+	 * @param modelLocked the modelLocked to set
 	 */
 	public void setModelLocked(Boolean modelLocked) {
 		this.modelLocked = modelLocked;
@@ -141,8 +147,7 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param modelLocker
-	 *            the modelLocker to set
+	 * @param modelLocker the modelLocker to set
 	 */
 	public void setModelLocker(String modelLocker) {
 		this.modelLocker = modelLocker;
@@ -161,10 +166,25 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 		return biMetaModelParameters;
 	}
 
-
 	@Override
 	public void setDrivers(List<BIMetaModelParameter> drivers) {
 		this.biMetaModelParameters = drivers;
+	}
+
+	public String getTablePrefixLike() {
+		return tablePrefixLike;
+	}
+
+	public void setTablePrefixLike(String tablePrefixLike) {
+		this.tablePrefixLike = tablePrefixLike;
+	}
+
+	public String getTablePrefixNotLike() {
+		return tablePrefixNotLike;
+	}
+
+	public void setTablePrefixNotLike(String tablePrefixNotLike) {
+		this.tablePrefixNotLike = tablePrefixNotLike;
 	}
 
 }

@@ -559,6 +559,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
 			hibModel.setCategory(model.getCategory());
+			hibModel.setTablePrefixLike(model.getTablePrefixLike());
+			hibModel.setTablePrefixNotLike(model.getTablePrefixNotLike());
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
@@ -617,6 +619,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
 			hibModel.setCategory(model.getCategory());
+			hibModel.setTablePrefixLike(model.getTablePrefixLike());
+			hibModel.setTablePrefixNotLike(model.getTablePrefixNotLike());
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
@@ -731,6 +735,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setName(hibModel.getName());
 			toReturn.setDescription(hibModel.getDescription());
 			toReturn.setCategory(hibModel.getCategory());
+			toReturn.setTablePrefixLike(hibModel.getTablePrefixLike());
+			toReturn.setTablePrefixNotLike(hibModel.getTablePrefixNotLike());
 
 			List metaModelParameters = new ArrayList();
 			Set<SbiMetaModelParameter> hibMetaModelPars = hibModel.getSbiMetaModelParameters();

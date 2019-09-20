@@ -54,6 +54,8 @@ import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -90,8 +92,7 @@ public class PhysicalModelInitializer {
 	}
 
 	/**
-	 * @param crossReferenceAdapter
-	 *            the crossReferenceAdapter to set
+	 * @param crossReferenceAdapter the crossReferenceAdapter to set
 	 */
 	public void setCrossReferenceAdapter(ECrossReferenceAdapter crossReferenceAdapter) {
 		this.crossReferenceAdapter = crossReferenceAdapter;
@@ -649,16 +650,20 @@ public class PhysicalModelInitializer {
 	/**
 	 * Get tables names that are present in the database but not in the passed physical model
 	 *
-	 * @param dataSource
-	 *            specified data source
-	 * @param physicalModel
-	 *            physical model to check
+	 * @param dataSource    specified data source
+	 * @param physicalModel physical model to check
 	 */
 	public List<String> getMissingTablesNames(IDataSource dataSource, PhysicalModel physicalModel) {
 		Connection connection = null;
 		try {
 			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
 			connection = dataSource.getConnection();
+
+			IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
+			MetaModel model = modelDAO.loadMetaModelById(dataSource.getDsId());
+
+			final String tableNamePatternLike = model.getTablePrefixLike();
+			final String tableNamePatternNotLike = model.getTablePrefixNotLike();
 
 			DatabaseMetaData dbMeta = connection.getMetaData();
 			addSchema(dbMeta, physicalModel, database.getSchema(connection));
@@ -669,7 +674,8 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				tablesOnDatabase.add(tableName);
+				if (isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
 
@@ -700,10 +706,8 @@ public class PhysicalModelInitializer {
 	/**
 	 * Get columns names that are present in the database but not in the passed physical model
 	 *
-	 * @param dataSource
-	 *            specified data source
-	 * @param physicalModel
-	 *            physical model to check
+	 * @param dataSource    specified data source
+	 * @param physicalModel physical model to check
 	 */
 	public List<String> getMissingColumnsNames(IDataSource dataSource, PhysicalModel physicalModel) {
 		Connection connection = null;
@@ -711,13 +715,29 @@ public class PhysicalModelInitializer {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
-			List<String> tablesOnDatabase = new ArrayList<String>();
 			List<String> newColumnsNames = new ArrayList<String>();
+//			List<String> tablesOnDatabase = new ArrayList<String>();
+//			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
+//
+//			while (tableRs.next()) {
+//				String tableName = tableRs.getString("TABLE_NAME");
+//				tablesOnDatabase.add(tableName);
+//			}
+//			tableRs.close();
+
+			IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
+			MetaModel model = modelDAO.loadMetaModelById(dataSource.getDsId());
+
+			final String tableNamePatternLike = model.getTablePrefixLike();
+			final String tableNamePatternNotLike = model.getTablePrefixNotLike();
+
+			List<String> tablesOnDatabase = new ArrayList<String>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				tablesOnDatabase.add(tableName);
+				if (isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
 
@@ -759,10 +779,8 @@ public class PhysicalModelInitializer {
 	/**
 	 * Get tables and columns names that are present in the database but not in the passed physical model
 	 *
-	 * @param dataSource
-	 *            specified data source
-	 * @param physicalModel
-	 *            physical model to check
+	 * @param dataSource    specified data source
+	 * @param physicalModel physical model to check
 	 */
 	public List<String> getRemovedTablesAndColumnsNames(IDataSource dataSource, PhysicalModel physicalModel) {
 		Connection connection = null;
@@ -771,15 +789,22 @@ public class PhysicalModelInitializer {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
-			List<String> tablesOnDatabase = new ArrayList<String>();
 			List<String> tablesRemoved = new ArrayList<String>();
 			List<String> columnsRemoved = new ArrayList<String>();
 
+			IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
+			MetaModel model = modelDAO.loadMetaModelById(dataSource.getDsId());
+
+			final String tableNamePatternLike = model.getTablePrefixLike();
+			final String tableNamePatternNotLike = model.getTablePrefixNotLike();
+
+			List<String> tablesOnDatabase = new ArrayList<String>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				tablesOnDatabase.add(tableName);
+				if (isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
 
@@ -973,10 +998,8 @@ public class PhysicalModelInitializer {
 	/**
 	 * Update originalTable with new columns information found in the updatedTable
 	 *
-	 * @param originalTable
-	 *            table to update
-	 * @param updatedTable
-	 *            table used to extract new informations
+	 * @param originalTable table to update
+	 * @param updatedTable  table used to extract new informations
 	 */
 	public PhysicalTable updateTable(PhysicalTable originalTable, PhysicalTable updatedTable) {
 		EList<PhysicalColumn> originalColumns = originalTable.getColumns();
@@ -1562,6 +1585,39 @@ public class PhysicalModelInitializer {
 			String connectionUsername, String connectionPassword, String connectionDatabaseName, String defaultCatalog, String defaultSchema) {
 		return initialize(modelName, conn, connectionName, connectionDriver, connectionUrl, connectionUsername, connectionPassword, connectionDatabaseName,
 				defaultCatalog, defaultSchema, null);
+	}
+
+	private boolean isTableToShow(String tableName, String tableNamePatternLike, String tableNamePatternNotLike) {
+		boolean result = false;
+		String[] tableNamePatternLikeTmp = null;
+		String[] tableNamePatternNotLikeTmp = null;
+
+		if ((tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) && (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty())) {
+
+			tableNamePatternLikeTmp = tableNamePatternLike.trim().replaceAll(" ", "").split(",", -1);
+			tableNamePatternNotLikeTmp = tableNamePatternNotLike.trim().replaceAll(" ", "").split(",", -1);
+
+			for (String likePattern : tableNamePatternLikeTmp) {
+				result |= tableName.startsWith(likePattern);
+
+				for (String notLikePattern : tableNamePatternNotLikeTmp) {
+					result &= !tableName.startsWith(notLikePattern);
+				}
+			}
+		} else if (tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) {
+			tableNamePatternLikeTmp = tableNamePatternLike.trim().replaceAll(" ", "").split(",", -1);
+			for (String likePattern : tableNamePatternLikeTmp) {
+				result |= tableName.startsWith(likePattern);
+			}
+		} else if (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty()) {
+			tableNamePatternNotLikeTmp = tableNamePatternNotLike.trim().replaceAll(" ", "").split(",", -1);
+			for (String notLikePattern : tableNamePatternNotLikeTmp) {
+				result &= !tableName.startsWith(notLikePattern);
+			}
+		} else
+			result = true;
+
+		return result;
 	}
 
 }

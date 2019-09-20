@@ -109,7 +109,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 			escapeToClose :false,
 			fullscreen: true
 		}).then(function(){
-			$scope.physicalModelTreeInterceptor.refreshTree();
+			$scope.businessViewTreeInterceptor.refreshTree();
 		});
 	}
 
