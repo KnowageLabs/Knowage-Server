@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="width=device-width">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/font-awesome/css/font-awesome.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/weather-icons/css/weather-icons.min.css")%>">
 
 <!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script-->
 
