@@ -315,7 +315,15 @@
 
 		    		if (source.getFeatures().length>0){
 		    			if (source.getFeatures()[0].get("isWKT")){
-		    				coord = source.getFeatures()[0].getGeometry().getCoordinates()[0];
+
+		    				debugger;
+
+		    				var geometry = source.getFeatures()[0].getGeometry();
+		    				if (geometry instanceof ol.geom.GeometryCollection) {
+		    					coord = geometry.getGeometries()[0].getCoordinates();
+		    				} else {
+		    					coord = geometry.getCoordinates()[0];
+		    				}
 
 		    			} else {
 		    				//string && json
