@@ -318,4 +318,40 @@ public class StringUtils {
 	public static String escapeForSQLColumnName(String fieldName) {
 		return fieldName == null ? "" : fieldName.trim().replaceAll("'", "").replaceAll("\"", "");
 	}
+	
+	public static boolean isTableToShow(String tableName, String tableNamePatternLike, String tableNamePatternNotLike) {
+		boolean result;
+		String[] tableNamePatternLikeTmp = null;
+		String[] tableNamePatternNotLikeTmp = null;
+
+		if ((tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) && (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty())) {
+
+			tableNamePatternLikeTmp = tableNamePatternLike.toUpperCase().trim().replaceAll(" ", "").split(",", -1);
+			tableNamePatternNotLikeTmp = tableNamePatternNotLike.toUpperCase().trim().replaceAll(" ", "").split(",", -1);
+			result = false;
+			for (String likePattern : tableNamePatternLikeTmp) {
+				result |= tableName.toUpperCase().startsWith(likePattern);
+
+				for (String notLikePattern : tableNamePatternNotLikeTmp) {
+					result &= !tableName.toUpperCase().startsWith(notLikePattern);
+				}
+			}
+		} else if (tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) {
+			tableNamePatternLikeTmp = tableNamePatternLike.toUpperCase().trim().replaceAll(" ", "").split(",", -1);
+			result = false;
+			for (String likePattern : tableNamePatternLikeTmp) {
+				result |= tableName.toUpperCase().startsWith(likePattern);
+			}
+		} else if (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty()) {
+			tableNamePatternNotLikeTmp = tableNamePatternNotLike.toUpperCase().trim().replaceAll(" ", "").split(",", -1);
+			result = true;
+			for (String notLikePattern : tableNamePatternNotLikeTmp) {
+				result &= !tableName.toUpperCase().startsWith(notLikePattern);
+			}
+		} else {
+			result = true;
+		}
+
+		return result;
+	}
 }

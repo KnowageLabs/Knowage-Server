@@ -109,15 +109,14 @@ function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiMo
 		var queryParams = "";
 		var varTablePrefixLike=tablePrefixLike;
 		var varTablePrefixNotLike=tablePrefixNotLike;
-		if ((varTablePrefixLike != undefined && !varTablePrefixLike == ("")) &&
-				(varTablePrefixLike != undefined && !varTablePrefixLike == (""))) {
-			queryParams += '?tablePrefixLike=' + varTablePrefixLike + "&tablePrefixNotLike" + varTablePrefixNotLike;
-		} else if (varTablePrefixLike != undefined && !varTablePrefixLike == ("")) {
+		if ((varTablePrefixLike != undefined && varTablePrefixLike != ("")) &&
+				(varTablePrefixNotLike != undefined && varTablePrefixNotLike != (""))) {
+			queryParams += '?tablePrefixLike=' + varTablePrefixLike + "&tablePrefixNotLike=" + varTablePrefixNotLike;
+		} else if (varTablePrefixLike != undefined && varTablePrefixLike != ("")) {
 			queryParams += '?tablePrefixLike=' + varTablePrefixLike;
-		} else if (varTablePrefixLike != undefined && !varTablePrefixLike == ("")){
-			queryParams += 'tablePrefixNotLike' + varTablePrefixNotLike;
+		} else if (varTablePrefixNotLike != undefined && varTablePrefixNotLike != ("")){
+			queryParams += '?tablePrefixNotLike=' + varTablePrefixNotLike;
 		}
-
 
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId + queryParams)
 				.then(

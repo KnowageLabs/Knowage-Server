@@ -64,6 +64,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
@@ -373,7 +374,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				while (rs.next()) {
 					ResultSet tabCol = null;
 					String tableName = rs.getString(3);
-					if (isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+					if (StringUtils.isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
 						try {
 							JSONObject column = new JSONObject();
 							tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
@@ -403,40 +404,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			}
 		}
 		return tableContent;
-	}
-
-	private boolean isTableToShow(String tableName, String tableNamePatternLike, String tableNamePatternNotLike) {
-		boolean result = false;
-		String[] tableNamePatternLikeTmp = null;
-		String[] tableNamePatternNotLikeTmp = null;
-
-		if ((tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) && (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty())) {
-
-			tableNamePatternLikeTmp = tableNamePatternLike.trim().replaceAll(" ", "").split(",", -1);
-			tableNamePatternNotLikeTmp = tableNamePatternNotLike.trim().replaceAll(" ", "").split(",", -1);
-
-			for (String likePattern : tableNamePatternLikeTmp) {
-				result |= tableName.startsWith(likePattern);
-
-				for (String notLikePattern : tableNamePatternNotLikeTmp) {
-					result &= !tableName.startsWith(notLikePattern);
-				}
-			}
-		} else if (tableNamePatternLike != null && !tableNamePatternLike.isEmpty()) {
-			tableNamePatternLikeTmp = tableNamePatternLike.trim().replaceAll(" ", "").split(",", -1);
-			for (String likePattern : tableNamePatternLikeTmp) {
-				result |= tableName.startsWith(likePattern);
-			}
-		} else if (tableNamePatternNotLike != null && !tableNamePatternNotLike.isEmpty()) {
-			tableNamePatternNotLikeTmp = tableNamePatternNotLike.trim().replaceAll(" ", "").split(",", -1);
-			for (String notLikePattern : tableNamePatternNotLikeTmp) {
-				result &= !tableName.startsWith(notLikePattern);
-			}
-		} else {
-			result = true;
-		}
-
-		return result;
 	}
 
 	@POST
