@@ -675,7 +675,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
@@ -737,7 +737,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
@@ -804,7 +804,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();

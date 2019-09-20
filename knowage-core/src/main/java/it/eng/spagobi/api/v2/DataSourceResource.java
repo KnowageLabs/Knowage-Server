@@ -374,7 +374,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				while (rs.next()) {
 					ResultSet tabCol = null;
 					String tableName = rs.getString(3);
-					if (StringUtils.isTableToShow(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
 						try {
 							JSONObject column = new JSONObject();
 							tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
