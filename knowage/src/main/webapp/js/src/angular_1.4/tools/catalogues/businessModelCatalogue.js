@@ -48,8 +48,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	$scope.togenerate = false;
 
-	var varTablePrefixLikeValue = "";
-	var varTablePrefixNotLikeValue = "";
+	$scope.varTablePrefixLikeValue;
+	$scope.varTablePrefixNotLikeValue;
 
 	var requiredPath = "2.0/businessmodels";
     var businessModelBasePath =""+ $scope.selectedBusinessModel.id;
@@ -151,7 +151,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.metaWebFunctionality=false;
 				$scope.businessModelForm.$setPristine();
 				$scope.businessModelForm.$setUntouched();
-				 driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+			    driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+			    $scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 			}else{
 				$mdDialog.show($scope.confirm).then(function(){
 					angular.copy(item,$scope.selectedBusinessModel);
@@ -168,6 +170,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.metaWebFunctionality=false;
 					$scope.businessModelForm.$setPristine();
 					$scope.businessModelForm.$setUntouched();
+					$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+					$scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 			    });
 			}
 
@@ -757,16 +761,20 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 $scope.createBusinessModels=function(){
 
 
-//			 if (varTablePrefixLikeValue != $scope.selectedBusinessModel.tablePrefixLike ||
-//					 varTablePrefixNotLikeValue != $scope.selectedBusinessModel.tablePrefixNotLike) {
-//				 $mdDialog.show(
-//					      $mdDialog.alert()
-//					       .parent(angular.element(document.querySelector('#popupContainer')))
-//					       .clickOutsideToClose(true)
-//					       .title('Save operation required')
-//					       .ok('OK')
-//					   );
-//			 } else {
+			 if ($scope.varTablePrefixLikeValue != $scope.selectedBusinessModel.tablePrefixLike ||
+					 $scope.varTablePrefixNotLikeValue != $scope.selectedBusinessModel.tablePrefixNotLike) {
+
+				 $scope.varTablePrefixLikeValue = $scope.selectedBusinessModel.tablePrefixLike;
+				 $scope.varTablePrefixNotLikeValue = $scope.selectedBusinessModel.tablePrefixNotLike;
+
+				 $mdDialog.show(
+					      $mdDialog.alert()
+					       .parent(angular.element(document.querySelector('#popupContainer')))
+					       .clickOutsideToClose(true)
+					       .title('Save operation required')
+					       .ok('OK')
+					   );
+			 } else {
 
 			 var dsId;
 			 for(var i=0;i<$scope.listOfDatasources.length;i++){
@@ -803,7 +811,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					//refresh
 					$scope.getVersions($scope.selectedBusinessModel.id);
 				})
-//			 }
+			 }
 				;
 			}
 
