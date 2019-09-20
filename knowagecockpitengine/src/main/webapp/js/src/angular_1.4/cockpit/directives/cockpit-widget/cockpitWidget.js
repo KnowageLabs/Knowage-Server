@@ -805,8 +805,8 @@ function cockpitWidgetControllerFunction(
 							popupMessage(error)
 						});
 				}
+				return;
 			}
-			return;
 
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
@@ -926,7 +926,6 @@ function cockpitWidgetControllerFunction(
 				else{
 					parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				}
-
 				return;
 			}
 		}
