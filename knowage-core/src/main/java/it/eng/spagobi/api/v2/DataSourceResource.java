@@ -345,6 +345,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 			conn = dataSource.getConnection();
 			DatabaseMetaData meta = conn.getMetaData();
+			final String tableNamePatternLike = tablePrefixLike;
+			final String tableNamePatternNotLike = tablePrefixNotLike;
 
 			if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
 				// String q =
@@ -354,17 +356,16 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				Statement stmt = conn.createStatement();
 				rs = stmt.executeQuery(q);
 				while (rs.next()) {
-					if (!tableContent.has(rs.getString(1))) {
-						tableContent.put(rs.getString(1), new JSONObject());
+					if (StringUtils.matchesLikeNotLikeCriteria(rs.getString(1), tableNamePatternLike, tableNamePatternNotLike)) {
+						if (!tableContent.has(rs.getString(1))) {
+							tableContent.put(rs.getString(1), new JSONObject());
+						}
+						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
 					}
-					tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
 				}
 			} else {
 				final String[] TYPES = { "TABLE", "VIEW" };
 				final String tableNamePattern = "%";
-
-				final String tableNamePatternLike = tablePrefixLike;
-				final String tableNamePatternNotLike = tablePrefixNotLike;
 
 				final MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
 				final String catalog = database.getCatalog(conn);
