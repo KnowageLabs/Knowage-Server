@@ -316,14 +316,33 @@
 		    		if (source.getFeatures().length>0){
 		    			if (source.getFeatures()[0].get("isWKT")){
 
-		    				debugger;
+							var geometry = source.getFeatures()[0].getGeometry();
+							if (geometry instanceof ol.geom.GeometryCollection) {
+								var coords = [];
 
-		    				var geometry = source.getFeatures()[0].getGeometry();
-		    				if (geometry instanceof ol.geom.GeometryCollection) {
-		    					coord = geometry.getGeometries()[0].getCoordinates();
-		    				} else {
-		    					coord = geometry.getCoordinates()[0];
-		    				}
+								// Center the map on all coordinates of all geometries
+								for (var i=0; i<geometry.getGeometries().length; i++) {
+									var coordinates = geometry.getGeometries()[i].getCoordinates();
+									// Coordinates can be an Array<Number> or Array<Array<Number>>
+									if (coordinates[0] instanceof Array) {
+										for (var j=0; j<coordinates.length; j++) {
+											coords.push(coordinates[j]);
+										}
+									} else {
+										coords.push(coordinates);
+									}
+								}
+								var length = coords.length;
+								coord = coords.reduce((a,b) => {
+										return [a[0]+b[0], a[1]+b[1]];
+									})
+									.map((element, index, array) => {
+										return array[index] / length;
+									});
+
+							} else {
+								coord = geometry.getCoordinates()[0];
+							}
 
 		    			} else {
 		    				//string && json
