@@ -303,6 +303,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
                             data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
                         }
+                        else {
+                            data.activeValues = config.activeValues;
+                        }
                         $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                     }
                 }

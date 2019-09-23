@@ -206,7 +206,7 @@ angular.module('cockpitModule')
 			updateModel();
 
 			$scope.showSelection = false;
-			if(datasetRecords.activeValues){
+			if(datasetRecords.activeValues && !Array.isArray(datasetRecords.activeValues)){
 				datasetRecords.activeValues.then(function(activeValues){
 					var tempActs = [];
 					for(var k in activeValues.rows){
@@ -220,7 +220,12 @@ angular.module('cockpitModule')
 				    $scope.hideWidgetSpinner();
 				    $scope.showSelection = true;
 				})
-			}else{
+			}else if(datasetRecords.activeValues && Array.isArray(datasetRecords.activeValues)){
+                $scope.ngModel.activeValues = datasetRecords.activeValues;
+                $scope.hideWidgetSpinner();
+                $scope.showSelection = true;
+                }			
+			else{
 			    $scope.ngModel.activeValues = null;
 				$timeout(function(){
 					$scope.hideWidgetSpinner();
