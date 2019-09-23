@@ -701,6 +701,11 @@ public class DataSetResource extends AbstractDataSetResource {
 										boolean jMultivalue = jsonParam.getBoolean("multiValue");
 										if (jMultivalue) {
 											Object opt = jsonParam.opt("value");
+											if (opt == null) {
+												logger.warn("Parameter [" + name
+														+ "] is expected to be a JSON Array but its value is missing (please use an empty json array in case no values are set)");
+												opt = new JSONArray();
+											}
 											// In AbstractDataSet opt will be distinguished between JSONArray and simple value
 											jsonPar.put(name, opt);
 										} else {
@@ -710,10 +715,10 @@ public class DataSetResource extends AbstractDataSetResource {
 									}
 								}
 							}
-							parameters = jsonPar.toString();
 						}
 					}
 				}
+				parameters = jsonPar.toString();
 
 				JSONArray jsonDrivers = jsonBody.optJSONArray("drivers");
 				if (jsonDrivers != null && jsonDrivers.length() > 0) {
