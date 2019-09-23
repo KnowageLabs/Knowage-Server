@@ -227,7 +227,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String stringFeed = gridDataFeed.toString();
 			return stringFeed;
 		} catch (ParametersNotValorizedException p) {
-			throw new ParametersNotValorizedException(p.getMessage());
+			throw p;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
