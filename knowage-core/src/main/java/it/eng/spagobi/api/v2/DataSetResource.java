@@ -52,6 +52,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -374,7 +375,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
 				jsonSbiDataSet.put("isIterable", dataSet.isIterable());
 				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-				if (dataSet instanceof AbstractJDBCDataset) {
+				if (dataSet instanceof AbstractJDBCDataset || dataSet instanceof QbeDataSet) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
 				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
