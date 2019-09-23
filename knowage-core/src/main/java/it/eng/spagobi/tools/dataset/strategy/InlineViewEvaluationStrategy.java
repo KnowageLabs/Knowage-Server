@@ -19,30 +19,28 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
+import it.eng.spagobi.tools.dataset.utils.InlineViewUtility;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import org.apache.log4j.Logger;
 
 class InlineViewEvaluationStrategy extends AbstractJdbcEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(InlineViewEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(InlineViewEvaluationStrategy.class);
 
-    public InlineViewEvaluationStrategy(IDataSet dataSet) {
-        super(dataSet);
-    }
+	public InlineViewEvaluationStrategy(IDataSet dataSet) {
+		super(dataSet);
+	}
 
-    @Override
-    protected String getTableName()  throws DataBaseException {
-        QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-        String subQueryAlias = DataBaseFactory.getDataBase(getDataSource()).getSubQueryAlias();
-        return "(\n" + querableBehaviour.getStatement().replace(";", "") + "\n) " + subQueryAlias;
-    }
+	@Override
+	protected String getTableName() throws DataBaseException {
+		return InlineViewUtility.getTableName(dataSet);
+	}
 
-    @Override
-    protected IDataSource getDataSource() {
-        return  dataSet.getDataSource();
-    }
+	@Override
+	protected IDataSource getDataSource() {
+		return InlineViewUtility.getDataSource(dataSet);
+	}
 }
