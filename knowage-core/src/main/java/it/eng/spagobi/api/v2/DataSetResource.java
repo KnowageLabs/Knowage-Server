@@ -53,7 +53,6 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.QbeDataSet;
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -68,7 +67,6 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
-import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -682,44 +680,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				aggregations = jsonAggregations.toString();
 
 				JSONArray jsonPars = jsonBody.optJSONArray("pars");
-				String params = dataSet.getParameters();
-				JSONObject jsonPar = new JSONObject();
-				if (params != null && !params.equals("")) {
-					SourceBean source = SourceBean.fromXMLString(params);
-					if (source != null && source.getName().equals("PARAMETERSLIST")) {
-						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
-
-						for (int i = 0; i < rows.size(); i++) {
-							SourceBean row = rows.get(i);
-							String name = (String) row.getAttribute("NAME");
-							String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
-
-							jsonPar.put(name, defaultValue);
-							if (jsonPars != null) {
-								for (int j = 0; j < jsonPars.length(); j++) {
-									JSONObject jsonParam = jsonPars.getJSONObject(j);
-									if (name.equals(jsonParam.getString("name"))) {
-										boolean jMultivalue = jsonParam.getBoolean("multiValue");
-										if (jMultivalue) {
-											Object opt = jsonParam.opt("value");
-											if (opt == null) {
-												logger.warn("Parameter [" + name
-														+ "] is expected to be a JSON Array but its value is missing (please use an empty json array in case no values are set)");
-												opt = new JSONArray();
-											}
-											// In AbstractDataSet opt will be distinguished between JSONArray and simple value
-											jsonPar.put(name, opt);
-										} else {
-											jsonPar.put(name, jsonParam.optString("value"));
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				parameters = jsonPar.toString();
+				JSONObject jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, jsonPars);
+				parameters = jsonObject.toString();
 
 				JSONArray jsonDrivers = jsonBody.optJSONArray("drivers");
 				if (jsonDrivers != null && jsonDrivers.length() > 0) {

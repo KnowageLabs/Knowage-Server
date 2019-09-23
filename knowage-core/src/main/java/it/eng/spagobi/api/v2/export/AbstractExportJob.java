@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -177,7 +178,8 @@ abstract class AbstractExportJob implements Job {
 		return dataSet;
 	}
 
-	private final IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile) {
+	private final IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile)
+			throws JobExecutionException {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
@@ -195,7 +197,12 @@ abstract class AbstractExportJob implements Job {
 		}
 
 		dataSet.setDrivers(drivers);
-		dataSet.setParamsMap(parameters);
+		try {
+			dataSet.setParametersMap(parameters);
+		} catch (JSONException e) {
+			throw new JobExecutionException("An error occurred when applying parameters into dataset", e);
+		}
+		dataSet.resolveParameters();
 
 		dataSet.setUserProfileAttributes(userProfile.getUserAttributes());
 		return dataSet;

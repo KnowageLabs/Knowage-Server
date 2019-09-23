@@ -62,9 +62,11 @@ import it.eng.spagobi.api.v2.export.ExportPathBuilder;
 import it.eng.spagobi.api.v2.export.cockpit.CockpitDataExportJobBuilder;
 import it.eng.spagobi.api.v2.export.cockpit.DocumentExportConf;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -209,7 +211,15 @@ public class ExportResource {
 		Response ret = null;
 		Locale locale = request.getLocale();
 		UserProfile userProfile = UserProfileManager.getProfile();
-		Map<String, String> params = manageDataSetParameters(paramsJson);
+		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+		JSONObject jsonObject;
+		try {
+			jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, paramsJson);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting parameters for dataset", e);
+		}
+		Map<String, String> params = DataSetUtilities.getParametersMap(jsonObject);
 		Map<String, Object> drivers = manageDataSetDrivers(driversJson);
 
 		try {
@@ -267,7 +277,15 @@ public class ExportResource {
 		Response ret = null;
 		Locale locale = request.getLocale();
 		UserProfile userProfile = UserProfileManager.getProfile();
-		Map<String, String> params = manageDataSetParameters(paramsJson);
+		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+		JSONObject jsonObject;
+		try {
+			jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, paramsJson);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting parameters for dataset", e);
+		}
+		Map<String, String> params = DataSetUtilities.getParametersMap(jsonObject);
 		Map<String, Object> drivers = manageDataSetDrivers(driversJson);
 
 		try {
@@ -380,30 +398,6 @@ public class ExportResource {
 		} catch (Exception e) {
 			logger.error("Cannot read dataset drivers", e);
 			throw new SpagoBIRuntimeException("Cannot read drivers", e);
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Manage parameters selected at client side.
-	 *
-	 * @param paramsJson JSON data of drivers
-	 */
-	private Map<String, String> manageDataSetParameters(JSONArray paramsJsonArray) {
-
-		Map<String, String> ret = new HashMap<>();
-
-		if (paramsJsonArray != null) {
-			try {
-				JSONObject pars = new JSONObject();
-				pars.put(DataSetConstants.PARS, paramsJsonArray);
-				ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
-				ret = mdsr.getDataSetParametersAsMap(pars);
-			} catch (Exception e) {
-				logger.error("Cannot read dataset parameters", e);
-				throw new SpagoBIRuntimeException("Cannot read dataset parameters", e);
-			}
 		}
 
 		return ret;
