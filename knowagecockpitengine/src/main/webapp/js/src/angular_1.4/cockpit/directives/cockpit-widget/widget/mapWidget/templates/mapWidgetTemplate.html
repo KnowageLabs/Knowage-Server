@@ -1,7 +1,7 @@
 <div layout="row" class="cockpit-map-widget" layout-fill style="position: relative;">
 	 <div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
 	 	<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }">
-	 		<md-tooltip>Toggle Map Options</md-tooltip>
+	 		<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 	 		<i class="fa fa-cog"></i>
 	 	</div>
 	 	<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
@@ -12,14 +12,17 @@
  		 	<i class="fa fa-times"></i>
  		 </a> 
  		 <div id="popup-content-{{ngModel.id}}" class="popup-content" >
- 		 	<h2>DETAILS</h2>
+ 		 	<h2>{{translate.load('sbi.cockpit.map.details')}}</h2>
     	    <ul>
     	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
 						<strong>{{prop.aliasToShow}}:</strong>
 						<span  ng-class="{'clickable' : prop.fieldType=='ATTRIBUTE'}" ng-cloak ng-click="selectPropValue(layerConfig.dsId, prop, layerConfig.modalSelectionColumn)">{{props[prop.name].value}}</span>
 					</p>
-    	    		<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
+    	    		<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> {{translate.load('sbi.cockpit.map.alarmrange')}}</p>
+    	    	</li>
+    	    	<li ng-if="checkCrossNavigation(layerConfig,props)">
+    	    		<a ng-click="crossNavigate(layerConfig)" href="#">{{crossTargetLabel || translate.load('sbi.cockpit.map.gotodetail')}}</a>
     	    	</li>
     	    </ul>
  		 </div>

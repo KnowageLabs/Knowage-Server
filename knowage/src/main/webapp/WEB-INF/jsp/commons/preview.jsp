@@ -386,8 +386,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					exportFormat = '/xls';
 				}
 				
-				debugger;
-				
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat, {
 					method: "POST",
 					headers: {

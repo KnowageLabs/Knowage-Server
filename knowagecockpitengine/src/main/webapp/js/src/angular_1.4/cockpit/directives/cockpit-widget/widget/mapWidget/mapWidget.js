@@ -896,6 +896,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }
+	    
+	    $scope.crossNavigate = function(layerConfig) {
+	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig.name].value, null, null, null, null, dsId);
+	    }
+	    
+	    $scope.checkCrossNavigation = function(layerConfig){
+	    	if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable) return true;
+	    	return false;
+	    }
 
 		var BACKGROUND_LAYER_NAME = "backgroundLayer";
 
