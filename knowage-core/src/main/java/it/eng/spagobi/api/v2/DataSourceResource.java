@@ -17,8 +17,41 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -31,25 +64,13 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.MetaDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.sql.*;
-import java.util.*;
 
 @Path("/2.0/datasources")
 public class DataSourceResource extends AbstractSpagoBIResource {
@@ -143,7 +164,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String postDataSource(IDataSource dataSource) {
-		logger.debug("IN");		
+		logger.debug("IN");
 		try {
 			IDataSourceDAO dataSourceDAO;
 
@@ -151,23 +172,23 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource existingDS = dataSourceDAO.findDataSourceByLabel(dataSource.getLabel());
-			
-			if(existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
+
+			if (existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
 				MessageBuilder msgBuilder = new MessageBuilder();
 				throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.exists"), buildLocaleFromSession(), new Throwable());
 			}
-			
+
 			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
 
 			IDataSource newLabel = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
 			int newId = newLabel.getDsId();
 
 			return Integer.toString(newId);
-			
+
 		} catch (SpagoBIRestServiceException e) {
 			throw e;
 		} catch (Exception exception) {
-			logger.error("Error while posting DS", exception);			
+			logger.error("Error while posting DS", exception);
 			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
 		} finally {
 			logger.debug("OUT");
@@ -294,7 +315,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/structure/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
-	public String getDataSourceStruct(@PathParam("dsId") Integer dsId) {
+	public String getDataSourceStruct(@PathParam("dsId") Integer dsId, @QueryParam("tablePrefixLike") String tablePrefixLike,
+			@QueryParam("tablePrefixNotLike") String tablePrefixNotLike) {
 
 		logger.debug("IN");
 		JSONObject tableContent = new JSONObject();
@@ -304,7 +326,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
-			tableContent = getTableMetadata(dataSource);
+			tableContent = getTableMetadata(dataSource, tablePrefixLike, tablePrefixNotLike);
 
 		} catch (Exception e) {
 			logger.error("Error while getting structure of data source by id", e);
@@ -315,7 +337,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		return tableContent.toString();
 	}
 
-	private JSONObject getTableMetadata(IDataSource dataSource)
+	private JSONObject getTableMetadata(IDataSource dataSource, String tablePrefixLike, String tablePrefixNotLike)
 			throws HibernateException, JSONException, SQLException, ClassNotFoundException, NamingException, DataBaseException {
 		JSONObject tableContent = new JSONObject();
 		Connection conn = null;
@@ -323,6 +345,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 			conn = dataSource.getConnection();
 			DatabaseMetaData meta = conn.getMetaData();
+			final String tableNamePatternLike = tablePrefixLike;
+			final String tableNamePatternNotLike = tablePrefixNotLike;
 
 			if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
 				// String q =
@@ -332,14 +356,17 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				Statement stmt = conn.createStatement();
 				rs = stmt.executeQuery(q);
 				while (rs.next()) {
-					if (!tableContent.has(rs.getString(1))) {
-						tableContent.put(rs.getString(1), new JSONObject());
+					if (StringUtils.matchesLikeNotLikeCriteria(rs.getString(1), tableNamePatternLike, tableNamePatternNotLike)) {
+						if (!tableContent.has(rs.getString(1))) {
+							tableContent.put(rs.getString(1), new JSONObject());
+						}
+						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
 					}
-					tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
 				}
 			} else {
 				final String[] TYPES = { "TABLE", "VIEW" };
 				final String tableNamePattern = "%";
+
 				final MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
 				final String catalog = database.getCatalog(conn);
 				final String schema = database.getSchema(conn);
@@ -348,22 +375,23 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				while (rs.next()) {
 					ResultSet tabCol = null;
 					String tableName = rs.getString(3);
-					try {
-						JSONObject column = new JSONObject();
-						tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
-						while (tabCol.next()) {
-							column.put(tabCol.getString(4), "null");
-						}
-						tableContent.put(tableName, column);
-					} catch (Exception e) {
-						logger.error(
-								"Impossible to obtain metadata for catalog " + rs.getString(1) + ", schema " + rs.getString(2) + ", table/view " + tableName,
-								e);
-						logger.error("Continue with the other tables/views");
-						continue;
-					} finally {
-						if (tabCol != null) {
-							tabCol.close();
+					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+						try {
+							JSONObject column = new JSONObject();
+							tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
+							while (tabCol.next()) {
+								column.put(tabCol.getString(4), "null");
+							}
+							tableContent.put(tableName, column);
+						} catch (Exception e) {
+							logger.error("Impossible to obtain metadata for catalog " + rs.getString(1) + ", schema " + rs.getString(2) + ", table/view "
+									+ tableName, e);
+							logger.error("Continue with the other tables/views");
+							continue;
+						} finally {
+							if (tabCol != null) {
+								tabCol.close();
+							}
 						}
 					}
 				}

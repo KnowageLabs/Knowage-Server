@@ -49,8 +49,7 @@ public class ExcelExportJob extends AbstractExportJob {
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		super.execute(context);
+	protected void export(JobExecutionContext context) throws JobExecutionException {
 
 		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 

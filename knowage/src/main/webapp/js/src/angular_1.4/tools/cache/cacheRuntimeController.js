@@ -132,7 +132,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 			self.spaceAvailable=parseInt(result.valueCheck);
 			$log.info("Configuration Resource Information obtained",result);
 			$log.info("Interesting info:",self.spaceAvailable);
-			self.variableSpaceAvailable=parseInt(result.valueCheck);
+			self.variableSpaceAvailable=parseInt(result.valueCheck) / 1048576;
 
 
 		});
@@ -155,16 +155,49 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 			self.schedulingFullClean=result.valueCheck;
 			$log.info("Configuration Resource Information obtained",result);
 			$log.info("Interesting info:",self.schedulingFullClean);
-			self.schedulingValues=[self.translate.load("cache.manager.none"),self.translate.load("cache.manager.hourly"),self.translate.load("cache.manager.daily"),self.translate.load("cache.manager.weekly"),self.translate.load("cache.manager.monthly"),self.translate.load("cache.manager.yearly")];
+			self.schedulingValues=[
+				{
+					label: self.translate.load("cache.manager.none"),
+					id: "NONE"
+				},
+				{
+					label: self.translate.load("cache.manager.every_10_mins"),
+					id: "EVERY_10_MINS"
+				},
+				{
+					label: self.translate.load("cache.manager.every_15_mins"),
+					id: "EVERY_15_MINS"
+				},
+				{
+					label: self.translate.load("cache.manager.every_20_mins"),
+					id: "EVERY_20_MINS"
+				},
+				{
+					label: self.translate.load("cache.manager.every_30_mins"),
+					id: "EVERY_30_MINS"
+				},
+				{
+					label: self.translate.load("cache.manager.hourly"),
+					id: "HOURLY"
+				},
+				{
+					label: self.translate.load("cache.manager.daily"),
+					id: "DAILY"
+				},
+				{
+					label: self.translate.load("cache.manager.weekly"),
+					id: "WEEKLY"
+				},
+				{
+					label: self.translate.load("cache.manager.monthly"),
+					id: "MONTHLY"
+				},
+				{
+					label: self.translate.load("cache.manager.yearly"),
+					id: "YEARLY"
+				}];
 
-			if(!self.schedulingValues.contains(result.valueCheck))
-			{
-				self.variableSchedulingFullClean=self.translate.load("cache.manager.none");
-			}
-			else
-			{
-				self.variableSchedulingFullClean=result.valueCheck;
-			}
+				self.variableSchedulingFullClean=self.schedulingValues.filter(x => x.id === result.valueCheck)[0];
 
 		});
 
@@ -291,10 +324,10 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 
 		self.enabled=angular.copy(self.variableEnabled);
 		self.namePrefix=angular.copy(self.variableNamePrefix);
-		self.spaceAvailable=angular.copy(self.variableSpaceAvailable);
+		self.spaceAvailable=angular.copy(self.variableSpaceAvailable * 1048576);
 		self.limitForClean=angular.copy(self.variableLimitForClean);
 		self.cacheLimitForStore=angular.copy(self.variableCacheLimitForStore);
-		self.schedulingFullClean=angular.copy(self.variableSchedulingFullClean);
+		self.schedulingFullClean=angular.copy(self.variableSchedulingFullClean.id);
 
 		self.lastAccessTtl=angular.copy(self.variableLastAccessTtl);
 		self.createAndPersistTimeout=angular.copy(self.variableCreateAndPersistTimeout);
@@ -323,7 +356,12 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 
 		var obj3=new Object();
 		obj3.label="SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN"
-		obj3.value=angular.copy(self.schedulingFullClean);
+		/*
+		 * id is saved into value because is the key
+		 * to read/write database
+		 */
+		obj3.value=angular.copy(self.variableSchedulingFullClean.id);
+		obj3.id=angular.copy(self.variableSchedulingFullClean.id);
 		configurations.push(obj3);
 
 		var obj4=new Object();
@@ -409,10 +447,10 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	{
 		self.variableEnabled=angular.copy(self.enabled);
 		self.variableNamePrefix=angular.copy(self.namePrefix);
-		self.variableSpaceAvailable=angular.copy(self.spaceAvailable);
+		self.variableSpaceAvailable=angular.copy(self.spaceAvailable * 1048576);
 		self.variableLimitForClean=angular.copy(self.limitForClean);
 		self.variableCacheLimitForStore=angular.copy(self.cacheLimitForStore);
-		self.variableSchedulingFullClean=angular.copy(self.schedulingFullClean);
+		self.variableSchedulingFullClean=angular.copy(self.schedulingFullClean.id);
 		self.variableSelectedDataSource=angular.copy(self.selectedDataSource);
 
 		self.variableLastAccessTtl=angular.copy(self.lastAccessTtl);
@@ -447,7 +485,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	self.deleteFunction=function (row)
 	{
 		namesToDelete=[];
-		namesToDelete.push(row.name);
+		namesToDelete.push(row.signature);
 		var body={};
 		body.namesArray=namesToDelete;
 

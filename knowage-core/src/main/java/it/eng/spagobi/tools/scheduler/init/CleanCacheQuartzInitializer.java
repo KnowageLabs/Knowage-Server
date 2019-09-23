@@ -36,8 +36,8 @@ import org.quartz.Scheduler;
 
 public class CleanCacheQuartzInitializer implements InitializerIFace {
 
-	public final String DEFAULT_JOB_NAME = "CleanCacheJob";
-	public final String DEFAULT_TRIGGER_NAME = "schedule_full_cache_cleaning";
+	public static final String DEFAULT_JOB_NAME = "CleanCacheJob";
+	public static final String DEFAULT_TRIGGER_NAME = "schedule_full_cache_cleaning";
 
 	private final SourceBean _config = null;
 	private transient Logger logger = Logger.getLogger(CleanCacheQuartzInitializer.class);

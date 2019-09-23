@@ -805,8 +805,8 @@ function cockpitWidgetControllerFunction(
 							popupMessage(error)
 						});
 				}
+				return;
 			}
-			return;
 
 		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
 
@@ -1076,14 +1076,16 @@ function cockpitWidgetControllerFunction(
 							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 					}
 					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
+					
 					if(!skipRefresh){
 						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 					}
 
 				}
 			}
-
+			$rootScope.hideCockpitSpinner();
 		}
+		
 	}
 
 	$scope.doEditWidget=function(initOnFinish){

@@ -701,9 +701,8 @@ public class DataSetResource extends AbstractDataSetResource {
 										boolean jMultivalue = jsonParam.getBoolean("multiValue");
 										if (jMultivalue) {
 											Object opt = jsonParam.opt("value");
-											if (opt instanceof JSONArray) {
-												jsonPar.put(name, opt);
-											}
+											// In AbstractDataSet opt will be distinguished between JSONArray and simple value
+											jsonPar.put(name, opt);
 										} else {
 											jsonPar.put(name, jsonParam.optString("value"));
 											break;

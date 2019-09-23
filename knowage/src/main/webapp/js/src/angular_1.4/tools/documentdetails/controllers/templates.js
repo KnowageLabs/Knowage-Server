@@ -22,50 +22,60 @@ angular
         										function(DocumentService, templateService, resourceService, $location, sbiModule_messaging, sbiModule_config, $scope, sbiModule_translate, $mdDialog, multipartForm, sbiModule_download){
 
         	   var self = this;
-        	   $scope.translate = sbiModule_translate;        	   
+        	   $scope.translate = sbiModule_translate;
         	   self.documentService = DocumentService;
         	   self.templateService = templateService;
         	   self.document = DocumentService.document;
         	   self.confirmDelete = self.documentService.confirmDelete;
-               self.documentInfoObject = $location.search();        	   
+               self.documentInfoObject = $location.search();
         	   var id = self.document.id;
                var basePath = id + "/" + 'templates';
                var resourceName = DocumentService.requiredPath;
-               self.showIndented = false;               
-               self.typeDocument = DocumentService.document.typeCode;               
-               
+               self.showIndented = false;
+               self.typeDocument = DocumentService.document.typeCode;
+
                self.selectTemplate = function(template) {
                    self.selectedTemplate = template;
                    self.isJson(self.selectedTemplate);
-                   self.showContent();
+                   self.getSelectedTemplateContent(template);
                }
-               
+
                self.openMenu = function(menu, e) {
             	   e.stopPropagation();
             	   menu(e);
                }
-               
+
                self.getTemplates = function() {
             	   resourceService.get(resourceName, basePath)
-            	   .then(function(response) {            		   
+            	   .then(function(response) {
             		   self.templateService.listOfTemplates = response.data;
             		   console.log(response);
             	   });
                };
-               
+
+               self.getSelectedTemplateContent = function(template) {
+            	   var templateBasePath = basePath + '/selected/' + template.id;
+            	   resourceService.get(resourceName, templateBasePath)
+            	   .then(function(response) {
+            		   self.templateService.selectedTemplateContent = response.data;
+            		   self.content = response.data;
+            		   console.log(response);
+            	   });
+               };
+
                self.showTemplateTab = function() {
             	   if(id) {
             		   self.getTemplates();
             	   }
                };
-               
+
                self.showTemplateTab();
 
-               self.removeTemplateFromList = function(index) {            	              	  
+               self.removeTemplateFromList = function(index) {
              	  self.templateService.templatesForDeleting.push(self.templateService.listOfTemplates[index]);
              	  self.templateService.listOfTemplates.splice(index, 1);
                }
-        	
+
          	self.downloadTemplate = function(template) {
          		var name = template.name;
          		var parts = name.split(".");
@@ -74,7 +84,7 @@ angular
     			sbiModule_download.getLink(link);
 
     		};
-    		
+
     		self.isJson = function(template) {
     			var name = template.name;
          		var parts = name.split(".");
@@ -85,25 +95,25 @@ angular
          			self.showIndented = false;
          		}
     		};
-    		
+
     		self.setActive = function(template) {
     			for(var i=0; i<self.templateService.listOfTemplates.length; i++) {
     				var temp = self.templateService.listOfTemplates[i];
     				if(temp.active == true) {
     					temp.active = false;
     				}
-    			}    			
+    			}
     			template.active = true;
     			self.templateService.changedTemplates = self.templateService.listOfTemplates;
     			self.document.docVersion = template.id;
     			self.templateService.changedTemplate = template;
     		}
-    		
-    		self.showContent = function() {    			
-    			self.content = atob(self.selectedTemplate.content);
-    			console.log(self.content);
-    		}
-    		
+
+//    		self.showContent = function(content) {
+//    			self.content = atob(content);
+//    			console.log(self.content);
+//    		}
+
     		self.openTemplateDesigner = function(type) {
 			$mdDialog.show({
 				controller: DialogNewTemplateController,
@@ -111,22 +121,22 @@ angular
 				fullscreen:true,
 				locals: {typeDocument: type}
 			}).then(function() {
-				
+
 			})
-			
-			
-		};
-		
-		function DialogNewTemplateController($scope, sbiModule_config) {			
-			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
-				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";				
-			} else {
-				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=NEW_DOCUMENT_TEMPLATE";				
-			}
-			
+
+
 		};
 
-     }])          
+		function DialogNewTemplateController($scope, sbiModule_config) {
+			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
+				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";
+			} else {
+				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=NEW_DOCUMENT_TEMPLATE";
+			}
+
+		};
+
+     }])
 })();
 
 

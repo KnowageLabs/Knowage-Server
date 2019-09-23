@@ -1157,6 +1157,9 @@ filter-by-tags {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  md-sidenav {
+    width: 320px !important;
+  }
   .canvas-for-highcharts{
     display: none;
     position: absolute;
@@ -1175,7 +1178,7 @@ filter-by-tags {
   .itemboxGU {
     min-height: 100px;
   }
-  md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
+  md-checkbox.md-knowage-theme.md-checked ._md-icon:after,md-checkbox.md-knowage-theme.md-checked .md-icon::after {
     padding-top: 11px;
   }
   

@@ -67,9 +67,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function getColumns(fields) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
+			$scope.columnsNameArray = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header){
+						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType,
 								"headerTooltip": $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias};
@@ -544,7 +546,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.selectedCells.length==0) $scope.bulkSelection=false;
 					}
 				}
-				$scope.advancedTableGrid.api.refreshCells({force:true});
+				$scope.advancedTableGrid.api.refreshCells({columns:$scope.columnsNameArray,force:true});
 			}else {
 				newValue = []; 
 				if ($scope.ngModel.settings.modalSelectionColumn!= undefined) {
@@ -587,7 +589,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.cancelBulkSelection = function(){
 			$scope.bulkSelection = false;
-			$scope.advancedTableGrid.api.refreshCells({force:true});
+			$scope.advancedTableGrid.api.refreshCells({columns:$scope.columnsNameArray,force:true});
 		}
 
 		$scope.$watchCollection('ngModel.settings.pagination',function(newValue,oldValue){

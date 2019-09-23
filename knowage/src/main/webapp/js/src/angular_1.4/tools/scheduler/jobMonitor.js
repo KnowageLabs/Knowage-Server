@@ -97,7 +97,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 									var trigger = job.triggers[triggerIndex];
 									for(var docIndex = 0; docIndex < trigger.documents.length; docIndex++){
 										for(var executionIndex = 0; executionIndex < trigger.executions.length; executionIndex++){
-											var date = sbiModule_dateServices.getDateFromFormat(trigger.executions[executionIndex], clientServerTimestampFormat);
+											var date = new Date(trigger.executions[executionIndex]);
 											var execution = {
 												executionDate: sbiModule_dateServices.formatDate(date, localizedTimestampFormat),
 												jobName: job.name,

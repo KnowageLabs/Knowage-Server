@@ -48,6 +48,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	$scope.togenerate = false;
 
+	$scope.varTablePrefixLikeValue;
+	$scope.varTablePrefixNotLikeValue;
+
 	var requiredPath = "2.0/businessmodels";
     var businessModelBasePath =""+ $scope.selectedBusinessModel.id;
     var driversService = DriversService;
@@ -55,7 +58,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	angular.element(document).ready(function () {
         $scope.getData();
     });
-
 
 	//methods
 	//////////////////////////////////////////////////////////
@@ -149,7 +151,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.metaWebFunctionality=false;
 				$scope.businessModelForm.$setPristine();
 				$scope.businessModelForm.$setUntouched();
-				 driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+			    driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+			    $scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 			}else{
 				$mdDialog.show($scope.confirm).then(function(){
 					angular.copy(item,$scope.selectedBusinessModel);
@@ -166,6 +170,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.metaWebFunctionality=false;
 					$scope.businessModelForm.$setPristine();
 					$scope.businessModelForm.$setUntouched();
+					$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+					$scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 			    });
 			}
 
@@ -344,6 +350,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 		$scope.selectedBusinessModel.modelLocked = false;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 
+				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
+
 				sbiModule_restServices.promisePost("2.0/businessmodels","",$scope.selectedBusinessModel)
 				.then(function(response) {
 
@@ -370,6 +379,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				});
 			}
 			else{
+
+				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
+			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 
 				sbiModule_restServices.promisePut("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 				.then(function(response) {
@@ -754,14 +766,29 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 		 $scope.createBusinessModels=function(){
 
-			var dsId;
+
+			 if ($scope.varTablePrefixLikeValue != $scope.selectedBusinessModel.tablePrefixLike ||
+					 $scope.varTablePrefixNotLikeValue != $scope.selectedBusinessModel.tablePrefixNotLike) {
+
+				 $scope.varTablePrefixLikeValue = $scope.selectedBusinessModel.tablePrefixLike;
+				 $scope.varTablePrefixNotLikeValue = $scope.selectedBusinessModel.tablePrefixNotLike;
+
+				 $mdDialog.show(
+					      $mdDialog.alert()
+					       .parent(angular.element(document.querySelector('#popupContainer')))
+					       .clickOutsideToClose(true)
+					       .title('Save operation required')
+					       .ok('OK')
+					   );
+			 } else {
+
+			 var dsId;
 			 for(var i=0;i<$scope.listOfDatasources.length;i++){
 				 if(angular.equals($scope.listOfDatasources[i].label, $scope.selectedBusinessModel.dataSourceLabel)){
 					 dsId=$scope.listOfDatasources[i].dsId;
 					 break;
 				 }
 			 }
-
 
 				$mdDialog.show({
 					preserveScope: true,
@@ -785,12 +812,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
 //					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
-					locals:{url:sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userUniqueIdentifier+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
+					locals:{url:sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userUniqueIdentifier+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name+"&tablePrefixLike="+$scope.selectedBusinessModel.tablePrefixLike+"&tablePrefixNotLike="+$scope.selectedBusinessModel.tablePrefixNotLike}
 				}).then(function(){
 					//refresh
 					$scope.getVersions($scope.selectedBusinessModel.id);
 				})
-
+			 }
 				;
 			}
 
@@ -801,6 +828,16 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				 return false;
 			 }
 		 }
+
+		 $scope.resetLikeConditions = function() {
+			 if(!$scope.metaWebFunctionality){
+				 if ($scope.selectedBusinessModel && $scope.selectedBusinessModel.tablePrefixLike) delete $scope.selectedBusinessModel.tablePrefixLike;
+				 if ($scope.selectedBusinessModel && $scope.selectedBusinessModel.tablePrefixNotLike) delete $scope.selectedBusinessModel.tablePrefixNotLike;
+			 }
+		 }
+
+
+
 };
 
 

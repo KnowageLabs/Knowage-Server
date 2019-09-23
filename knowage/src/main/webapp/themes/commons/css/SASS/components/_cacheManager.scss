@@ -9,4 +9,10 @@
 	md-tabs-canvas {
 		background-color: $tabBackground;
 	}
+
+	md-input-container {
+		label {
+			white-space: pre-wrap !important;
+		}
+	}
 }

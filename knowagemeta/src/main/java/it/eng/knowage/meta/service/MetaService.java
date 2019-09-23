@@ -983,9 +983,9 @@ public class MetaService extends AbstractSpagoBIResource {
 		// PhysicalModel phyMod = model.getPhysicalModels().get(0);
 		// IDataSource dataSource = phyMod.getDataSource();
 
-		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource, model.getPhysicalModels().get(0));
-		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource, model.getPhysicalModels().get(0));
-		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource, model.getPhysicalModels().get(0));
+		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource, model.getPhysicalModels().get(0), metamodel);
+		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource, model.getPhysicalModels().get(0), metamodel);
+		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource, model.getPhysicalModels().get(0), metamodel);
 		JSONObject resp = new JSONObject();
 		resp.put("missingTables", new JSONArray(JsonConverter.objectToJson(missingTables, missingTables.getClass())));
 		resp.put("missingColumns", new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));

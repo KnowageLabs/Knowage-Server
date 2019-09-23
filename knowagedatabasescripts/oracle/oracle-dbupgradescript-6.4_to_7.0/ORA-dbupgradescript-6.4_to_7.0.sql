@@ -275,3 +275,9 @@ DELETE FROM SBI_ENGINES WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.networ
 DELETE FROM SBI_DOMAINS WHERE VALUE_CD = 'NETWORK' AND DOMAIN_CD = 'BIOBJ_TYPE';
 COMMIT;
 
+-- Column to define prefixes to use in like conditions
+ALTER TABLE SBI_META_MODELS ADD TABLE_PREFIX_LIKE VARCHAR(4000) NULL;
+-- Column to define prefixes to use in not like conditions
+ALTER TABLE SBI_META_MODELS ADD TABLE_PREFIX_NOT_LIKE VARCHAR(4000) NULL;
+
+

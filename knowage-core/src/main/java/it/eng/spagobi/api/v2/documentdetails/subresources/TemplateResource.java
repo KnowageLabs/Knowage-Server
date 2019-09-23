@@ -64,11 +64,11 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public List<byte[]> getDocumentTemplates(@PathParam("id") Integer id) {
+	public List<ObjTemplate> getDocumentTemplates(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
 		BIObject document = null;
-		List<byte[]> documentTemplates = null;
+		List<ObjTemplate> documentTemplates = null;
 		try {
 			documentDao = DAOFactory.getBIObjectDAO();
 			document = documentDao.loadBIObjectById(id);
@@ -88,7 +88,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@Path("/{templateId}")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public byte[] getDocumentTemplate(@PathParam("id") Integer id) {
+	public byte[] getActiveDocumentTemplate(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
 		BIObject document = null;
@@ -101,6 +101,27 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(document, "Document can not be null");
 			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
 		} catch (EMFUserError e) {
+			logger.debug("Could not get content from template", e);
+			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
+		}
+		logger.debug("OUT");
+		return temp;
+	}
+
+	@GET
+	@Path("/selected/{templateId}")
+	@Produces("application/text")
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	public byte[] getDocumentTemplate(@PathParam("id") Integer id, @PathParam("templateId") Integer templateId) {
+		logger.debug("IN");
+		byte[] temp = null;
+		IObjTemplateDAO templateDAO = null;
+		try {
+			templateDAO = DAOFactory.getObjTemplateDAO();
+			ObjTemplate documentTemplate = templateDAO.loadBIObjectTemplate(templateId);
+			temp = documentTemplate.getContent();
+			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
+		} catch (EMFInternalError e) {
 			logger.debug("Could not get content from template", e);
 			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
 		}

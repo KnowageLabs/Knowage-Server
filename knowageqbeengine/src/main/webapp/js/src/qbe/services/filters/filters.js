@@ -12,7 +12,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 			},
 
 		};
-		if(entityID.type == "inline.calculated.field"){
+		if(entity.type == "inline.calculated.field"){
 			queryParam.fieldDescriptor = entity.id;
 		}else {
 			queryParam.ENTITY_ID = entity.id;

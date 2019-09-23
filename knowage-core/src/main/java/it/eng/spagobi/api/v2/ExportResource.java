@@ -99,8 +99,7 @@ public class ExportResource {
 	 * </ul>
 	 *
 	 * @return List of {@link Entry} with files exported by logged user
-	 * @throws IOException
-	 *             In case of errors during access of the filesystem
+	 * @throws IOException In case of errors during access of the filesystem
 	 */
 	@GET
 	@Path("/dataset")
@@ -134,6 +133,7 @@ public class ExportResource {
 					java.nio.file.Path downloadPlaceholderPath = curr.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
 					java.nio.file.Path metadataPath = curr.resolve(ExportPathBuilder.METADATA_FILENAME);
 					java.nio.file.Path dataPath = curr.resolve(ExportPathBuilder.DATA_FILENAME);
+					java.nio.file.Path readyPath = curr.resolve(ExportPathBuilder.READY_FILENAME);
 
 					boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
 
@@ -148,6 +148,10 @@ public class ExportResource {
 					}
 
 					if (!Files.isRegularFile(dataPath)) {
+						continue;
+					}
+
+					if (!Files.isRegularFile(readyPath)) {
 						continue;
 					}
 
@@ -177,10 +181,8 @@ public class ExportResource {
 	/**
 	 * Schedules an export in CSV format of the dataset in input.
 	 *
-	 * @param dataSetId
-	 *            Id of the dataset to be exported
-	 * @param body
-	 *            JSON that contains drivers and parameters data
+	 * @param dataSetId Id of the dataset to be exported
+	 * @param body      JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
@@ -237,10 +239,8 @@ public class ExportResource {
 	/**
 	 * Schedules an export in Excel format of the dataset in input.
 	 *
-	 * @param dataSetId
-	 *            Id of the dataset to be exported
-	 * @param body
-	 *            JSON that contains drivers and parameters data
+	 * @param dataSetId Id of the dataset to be exported
+	 * @param body      JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
@@ -362,8 +362,7 @@ public class ExportResource {
 	/**
 	 * Manage drivers selected at client side.
 	 *
-	 * @param driversJson
-	 *            JSON data of drivers
+	 * @param driversJson JSON data of drivers
 	 */
 	private Map<String, Object> manageDataSetDrivers(JSONArray driversJson) {
 
@@ -379,8 +378,8 @@ public class ExportResource {
 				}
 			}
 		} catch (Exception e) {
-			logger.debug("Cannot read dataset drivers");
-			throw new IllegalStateException("Cannot read drivers");
+			logger.error("Cannot read dataset drivers", e);
+			throw new SpagoBIRuntimeException("Cannot read drivers", e);
 		}
 
 		return ret;
@@ -389,8 +388,7 @@ public class ExportResource {
 	/**
 	 * Manage parameters selected at client side.
 	 *
-	 * @param paramsJson
-	 *            JSON data of drivers
+	 * @param paramsJson JSON data of drivers
 	 */
 	private Map<String, String> manageDataSetParameters(JSONArray paramsJsonArray) {
 
@@ -402,10 +400,9 @@ public class ExportResource {
 				pars.put(DataSetConstants.PARS, paramsJsonArray);
 				ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
 				ret = mdsr.getDataSetParametersAsMap(pars);
-
 			} catch (Exception e) {
-				logger.debug("Cannot read dataset parameters");
-				throw new IllegalStateException("Cannot read dataset parameters");
+				logger.error("Cannot read dataset parameters", e);
+				throw new SpagoBIRuntimeException("Cannot read dataset parameters", e);
 			}
 		}
 
@@ -415,8 +412,7 @@ public class ExportResource {
 	/**
 	 * Schedula a job to clean old export.
 	 *
-	 * @throws SchedulerException
-	 *             In case of error during scheduling
+	 * @throws SchedulerException In case of error during scheduling
 	 */
 	private void scheduleCleanUp() throws SchedulerException {
 

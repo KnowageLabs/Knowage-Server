@@ -45,6 +45,14 @@
     	        	});
     	        }
 
+    	        templateResource.getSelectedTemplate = function(template) {
+   	          	 var basePath = documentService.document.id + '/templates';
+   	          	 var basePathWithId = basePath + "/selected/" + template.id;
+   	          	 resourceService.get(requiredPath, basePathWithId).then(function(response) {
+   	          		 templateResource.selectedTemplateContent = response.data;
+   	          	 });
+   	           };
+
     	        templateResource.setActiveTemplate = function() {
     	        	if(templateResource.changedTemplate.id) {
     					var templateModifyBasePath = documentService.document.id + "/templates/" + templateResource.changedTemplate.id;

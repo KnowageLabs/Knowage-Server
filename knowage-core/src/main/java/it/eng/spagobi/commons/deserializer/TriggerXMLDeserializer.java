@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.deserializer;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spagobi.tools.scheduler.bo.CronExpression;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.date.DateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +26,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.safehaus.uuid.UUIDGenerator;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.date.DateUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -47,9 +49,25 @@ public class TriggerXMLDeserializer implements Deserializer {
 	public static String TRIGGER_GROUP = "triggerGroup";
 	public static String TRIGGER_DESCRIPTION = "triggerDescription";
 
+	/**
+	 * @deprecated {@link #TRIGGER_ZONED_START_TIME} may be prefered
+	 */
+	@Deprecated
 	public static String TRIGGER_START_DATE = "startDate";
+	/**
+	 * @deprecated {@link #TRIGGER_ZONED_START_TIME} may be prefered
+	 */
+	@Deprecated
 	public static String TRIGGER_START_TIME = "startTime";
+	/**
+	 * @deprecated {@link #TRIGGER_ZONED_END_TIME} may be prefered
+	 */
+	@Deprecated
 	public static String TRIGGER_END_DATE = "endDate";
+	/**
+	 * @deprecated {@link #TRIGGER_ZONED_END_TIME} may be prefered
+	 */
+	@Deprecated
 	public static String TRIGGER_END_TIME = "endTime";
 	public static String TRIGGER_RUN_IMMEDIATELY = "runImmediately";
 
@@ -58,6 +76,9 @@ public class TriggerXMLDeserializer implements Deserializer {
 	public static String JOB_PARAMETERS = "PARAMETERS";
 
 	public static String CRON_STRING = "chronString";
+
+	public static String TRIGGER_ZONED_START_TIME = "zonedStartTime";
+	public static String TRIGGER_ZONED_END_TIME = "zonedEndTime";
 
 	private static Logger logger = Logger.getLogger(TriggerXMLDeserializer.class);
 
@@ -72,6 +93,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 		String triggerDescription;
 		Date startTime;
 		Date endTime;
+		Date zonedStartTime = null;
+		Date zonedEndTime = null;
 		String jobName;
 		String jobGroup;
 		String cronString;
@@ -116,6 +139,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 				triggerDescription = (String) xml.getAttribute(TRIGGER_DESCRIPTION);
 				startTime = deserializeStartTimeAttribute(xml);
 				endTime = deserializeEndTimeAttribute(xml);
+				zonedStartTime = deserializeZonedStartTimeAttribute(xml);
+				zonedEndTime = deserializeZonedEndTimeAttribute(xml);
 				cronString = (String) xml.getAttribute(CRON_STRING);
 
 				jobName = (String) xml.getAttribute(JOB_NAME);
@@ -131,8 +156,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 			trigger.setRunImmediately(runImmediately);
 
-			trigger.setStartTime(startTime);
-			trigger.setEndTime(endTime);
+			trigger.setStartTime(zonedStartTime != null ? zonedStartTime : startTime);
+			trigger.setEndTime(zonedEndTime != null ? zonedEndTime : endTime);
 			trigger.setCronExpression(new CronExpression(cronString));
 
 			job = new Job();
@@ -173,7 +198,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 	/**
 	 * get the start date param (format dd-mm-yyyy) and end time (format hh:mm:ss)
+	 *
+	 * @deprecated Zoned values may be prefered
 	 */
+	@Deprecated
 	private Date deserializeStartTimeAttribute(SourceBean xml) {
 		Calendar calendar = null;
 
@@ -212,7 +240,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 	/**
 	 * get the end date param (format yyyy-mm-gg) and end time (format hh:mm:ss)
+	 *
+	 * @deprecated Zoned values may be prefered
 	 */
+	@Deprecated
 	private Date deserializeEndTimeAttribute(SourceBean xml) {
 		Calendar calendar = null;
 		String endDateStr = (String) xml.getAttribute(TRIGGER_END_DATE);
@@ -248,6 +279,24 @@ public class TriggerXMLDeserializer implements Deserializer {
 		}
 
 		return calendar != null ? calendar.getTime() : null;
+	}
+
+	/**
+	 * Parse ISO 8601 start time string to {@link Date}.
+	 */
+	private Date deserializeZonedStartTimeAttribute(SourceBean xml) {
+		String zonedStartDate = (String) xml.getAttribute(TRIGGER_ZONED_START_TIME);
+		DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+		return dateTime.parseDateTime(zonedStartDate).toDate();
+	}
+
+	/**
+	 * Parse ISO 8601 end time string to {@link Date}.
+	 */
+	private Date deserializeZonedEndTimeAttribute(SourceBean xml) {
+		String zonedEndDate = (String) xml.getAttribute(TRIGGER_ZONED_END_TIME);
+		DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+		return dateTime.parseDateTime(zonedEndDate).toDate();
 	}
 
 	private Map<String, String> deserializeParametersAttribute(SourceBean xml) {

@@ -18,10 +18,11 @@ var EmptyJob = {
 }
 
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger",
-                               "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", "sbiModule_messaging", mainFunction ]);
+                               "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window",
+                               "sbiModule_dateServices", "sbiModule_messaging", mainFunction ]);
 
 function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
-		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_messaging) {
+		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_dateServices, sbiModule_messaging) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 
@@ -104,8 +105,15 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							// calc new date strings
 							for(var triggerIndex=0; triggerIndex<job.triggers.length; triggerIndex++){
 								var trigger = job.triggers[triggerIndex];
-								trigger.triggerStartDateTime = trigger.triggerStartDate + " " + trigger.triggerStartTime;
-								trigger.triggerEndDateTime = trigger.triggerEndDate + " " + trigger.triggerEndTime;
+
+								debugger;
+
+								var triggerZonedStartTime = new Date(trigger.triggerZonedStartTime);
+								var triggerZonedEndTime = new Date(trigger.triggerZonedEndTime);
+								trigger.triggerStartDateTime = sbiModule_dateServices.formatDate(triggerZonedStartTime)
+									+ " " + sbiModule_dateServices.formatDate(triggerZonedStartTime,'HH:mm');
+								trigger.triggerEndDateTime = sbiModule_dateServices.formatDate(triggerZonedEndTime)
+									+ " " + sbiModule_dateServices.formatDate(triggerZonedEndTime,'HH:mm');
 								trigger.triggerIsPausedString = (trigger.triggerIsPaused ? sbiModule_translate.load("sbi.general.yes") : sbiModule_translate.load("sbi.general.No"));
 							}
 							// update parameters
@@ -1039,17 +1047,17 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								activityEventCtrl.event.triggerName = d.triggerName;
 								activityEventCtrl.event.triggerDescription =
 									(d.triggerDescription && d.triggerDescription != null) ? d.triggerDescription : "";
-								activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
-								activityEventCtrl.event.startTime = d.startTime;
 
-								if(d.endTime != undefined && d.endTime != "") {
-									activityEventCtrl.event.endTime = d.endTime;
-								} else {
-									activityEventCtrl.event.endTime = "";
-								}
+								activityEventCtrl.event._startDate = new Date(d.zonedStartTime);
+								activityEventCtrl.event._startTime = activityEventCtrl.event._startDate.getHours()
+									+ ":"
+									+ activityEventCtrl.event._startDate.getMinutes();
 
-								if(d.endDate != undefined && d.endDate != "") {
-									activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
+								if(d.zonedEndTime != undefined) {
+									activityEventCtrl.event._endDate = new Date(d.zonedEndTime);
+									activityEventCtrl.event._endTime = activityEventCtrl.event._endDate.getHours()
+										+ ":"
+										+ activityEventCtrl.event._endDate.getMinutes();
 								}
 
 								activityEventCtrl.event.chrono = d.chrono;
@@ -1184,23 +1192,36 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				activityEventCtrl.saveEvent = function() {
 					var cloneData=angular.copy(activityEventCtrl.event);
 
-					if(cloneData.startDate==undefined){
+					if(cloneData._startDate==undefined){
 						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.required", "component_scheduler_messages"));
 						return false;
 					}
 
-					cloneData.startDate=cloneData.startDate.getTime();
-					if(isNaN(cloneData.startDate)){
-						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
-						return false;
-					}
+					cloneData._startDate.setHours(cloneData._startTime.split(":")[0]);
+					cloneData._startDate.setMinutes(cloneData._startTime.split(":")[1]);
 
-					if(cloneData.endDate!=undefined){
-						cloneData.endDate=cloneData.endDate.getTime();
-						if(isNaN(cloneData.endDate)){
-							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
-							return false;
-						}
+					cloneData.zonedStartTime=cloneData._startDate.toJSON();
+
+					delete cloneData._startDate;
+					delete cloneData._startTime;
+
+//					if(isNaN(cloneData.startDate)){
+//						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
+//						return false;
+//					}
+
+					if(cloneData._endDate!=undefined){
+						cloneData._endDate.setHours(cloneData._endTime.split(":")[0]);
+						cloneData._endDate.setMinutes(cloneData._endTime.split(":")[1]);
+
+						cloneData.zonedEndTime=cloneData._endDate.toJSON();
+
+						delete cloneData._endDate;
+						delete cloneData._endTime;
+//						if(isNaN(cloneData.endDate)){
+//							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
+//							return false;
+//						}
 					}
 
 					var definedActionCount = 0;

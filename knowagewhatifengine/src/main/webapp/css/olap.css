@@ -645,6 +645,7 @@ md-dialog.fullscreen-dialog {
 	line-height: 2;
 	color:white;
 	text-align: center;
+	white-space: nowrap;
 	
 }
 

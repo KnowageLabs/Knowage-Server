@@ -20,6 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			.service('datasetPreview_service', ['$httpParamSerializer', '$mdDialog', 'sbiModule_config', 'sbiModule_restServices',
 				function($httpParamSerializer, $mdDialog, sbiModule_config, sbiModule_restServices){
 
+				var prepareParameters = function(previewDatasetParameters, parameters) {
+					for(var i = 0; i < previewDatasetParameters.length; i++) {
+						var value = parameters[0][previewDatasetParameters[i].name];
+						previewDatasetParameters[i].value = value;
+					}
+				}
+
 				this.previewDataset = function(datasetLabel, parameters, directDownload) {
 					if(!directDownload){
 						var iframeSrcUrl = sbiModule_config.contextName + "/restful-services/2.0/datasets/preview";
@@ -38,10 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										var previewDataset = response.data[0];
 
 										if (previewDataset.pars.length > 0) {
-											for(var i = 0; i < previewDataset.pars.length; i++) {
-												var value = parameters[0][previewDataset.pars[i].name];
-												previewDataset.pars[i].value = value;
-											}
+											prepareParameters(previewDataset.pars, parameters);
 											config.parameters = previewDataset.pars;
 											showExporters(config);
 											iframeSrcUrl += '?' + $httpParamSerializer(config);
@@ -57,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var id = previewDataset.id;
 								var data = {};
 								if (parameters != null && typeof parameters != 'undefined') {
+									prepareParameters(previewDataset.pars, parameters);
 									data.parameters = previewDataset.pars;
 								}
 

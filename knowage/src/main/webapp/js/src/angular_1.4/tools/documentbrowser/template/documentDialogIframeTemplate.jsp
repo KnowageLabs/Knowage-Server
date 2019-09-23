@@ -8,13 +8,13 @@
 				@author Ana Tomic (atomic, ana.tomic@mht.net)
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)				
 			 -->
-			<md-toolbar class="secondaryToolbar" ng-cloak ng-if="cancelDialog!=undefined">
+			<md-toolbar class="primaryToolbar" ng-cloak ng-if="cancelDialog!=undefined">
 				<div class="md-toolbar-tools " layout="row">
 					
 					<span flex></span>
 		       	 	
 		       	 	<md-button ng-click="cancelDialog()">
-		          		CLOSE
+		          		{{translate.load('sbi.general.close')}}
 		       	 	</md-button>
 		       	 	
 	        	</div>

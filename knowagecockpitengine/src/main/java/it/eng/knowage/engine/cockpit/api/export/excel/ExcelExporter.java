@@ -876,7 +876,12 @@ public class ExcelExporter {
 
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 
-		JSONArray cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
+		JSONArray cockpitSelectionsDatasetParameters = null;
+		try {
+			cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
+		} catch (JSONException e) {
+			logger.warn("No cockpit selections specified");
+		}
 
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");

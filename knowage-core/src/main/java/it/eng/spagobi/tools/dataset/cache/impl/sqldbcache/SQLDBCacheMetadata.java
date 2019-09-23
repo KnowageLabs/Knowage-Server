@@ -17,7 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.hazelcast.core.IMap;
+
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -25,18 +36,15 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.CacheDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -185,18 +193,18 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	@Override
-	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
-		addCacheItem(resultsetSignature, properties, tableName, getRequiredMemory(resultset));
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
+		addCacheItem(dataSetName, resultsetSignature, properties, tableName, getRequiredMemory(resultset));
 	}
 
 	@Override
-	public void addCacheItem(String resultsetSignature, String tableName, BigDecimal dimension) {
-		addCacheItem(resultsetSignature, new HashMap<String, Object>(0), tableName, dimension);
+	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension) {
+		addCacheItem(dataSetName, resultsetSignature, new HashMap<String, Object>(0), tableName, dimension);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension) {
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension) {
 		String hashedSignature = Helper.sha256(resultsetSignature);
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
@@ -205,7 +213,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			removeCacheItem(resultsetSignature);
 
 			CacheItem item = new CacheItem();
-			item.setName(resultsetSignature);
+			item.setName(dataSetName);
 			item.setTable(tableName);
 			item.setSignature(hashedSignature);
 			item.setDimension(dimension);
@@ -238,6 +246,27 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		} finally {
 			mapLocks.unlock(hashedSignature);
 		}
+	}
+	
+	/**
+	 * Updates all items in sbi_cache_item setting the correct dimension calculated
+	 * on the effective DB space occupation.
+	 * 
+	 */
+	@Override
+	public void updateAllCacheItems(IDataSource dataSource) {
+		List<CacheItem> cacheItems = getAllCacheItems();
+		for (CacheItem cacheItem : cacheItems) {
+			try {
+				cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(
+				            				DataBaseFactory.getCacheDataBase(dataSource), "cache", cacheItem.getTable()));
+			} catch (DataBaseException e) {
+				logger.error("Error updating cacheitem [" + cacheItem.getTable() + "]", e);
+				throw new SpagoBIRuntimeException("Error updating cacheitem [" + cacheItem.getTable() + "]", e);
+			}
+			cacheDao.updateCacheItem(cacheItem);
+		}
+		
 	}
 
 	@Override
@@ -371,4 +400,5 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public String getTableNamePrefix() {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
 	}
+
 }

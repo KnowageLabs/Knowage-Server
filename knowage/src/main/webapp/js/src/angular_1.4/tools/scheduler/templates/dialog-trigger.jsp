@@ -30,19 +30,19 @@
 					<div layout="row" layout-align="center center">
 						<label>{{::translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
 						<div layout="column">
-							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event.startDate" name="startDateField" md-placeholder={{::translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event._startDate" name="startDateField" md-placeholder={{::translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
 						</div>
 						<label style="margin: 0 20px;">{{::translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
-						<angular-time-picker id="myTimePicker1" ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
+						<angular-time-picker id="myTimePicker1" ng-model="activityEventCtrl.event._startTime"></angular-time-picker>
 					</div>
 
 					<div layout="row" layout-align="center center">
 						<label style="margin-right: 5px;">{{::translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
 						<div layout="column">
-							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event.endDate" name="endDateField" md-placeholder={{::translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
+							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event._endDate" name="endDateField" md-placeholder={{::translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
 						</div>
 						<label style="margin: 0 20px; margin-right: 26px;">{{::translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
-						<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
+						<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event._endTime"></angular-time-picker>
 					</div>
 					
 					<md-toolbar class="unselectedItem" flex>

@@ -42,6 +42,11 @@ public class SbiMetaModel extends SbiHibernateModel {
 	private String modelLocker;
 
 	private Set<SbiMetaModelParameter> biMetaModelParameters = null;
+
+	private String tablePrefixLike;
+
+	private String tablePrefixNotLike;
+
 	// Constructors
 
 	public SbiMetaModel() {
@@ -137,6 +142,22 @@ public class SbiMetaModel extends SbiHibernateModel {
 
 	public void setSbiMetaModelParameters(Set<SbiMetaModelParameter> sbiMetaModelParameters) {
 		this.biMetaModelParameters = sbiMetaModelParameters;
+	}
+
+	public String getTablePrefixLike() {
+		return tablePrefixLike;
+	}
+
+	public void setTablePrefixLike(String tablePrefixLike) {
+		this.tablePrefixLike = tablePrefixLike;
+	}
+
+	public String getTablePrefixNotLike() {
+		return tablePrefixNotLike;
+	}
+
+	public void setTablePrefixNotLike(String tablePrefixNotLike) {
+		this.tablePrefixNotLike = tablePrefixNotLike;
 	}
 
 }

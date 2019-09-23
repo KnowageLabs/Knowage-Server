@@ -30,6 +30,9 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,6 +123,32 @@ public class SchedulerUtilitiesV2 {
 
 		}
 
+		DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+
+		String zonedStartTime = jobt.getZonedStartTime();
+		DateTime parsedStartTime = null;
+		if (zonedStartTime != null) {
+			try {
+				parsedStartTime = dateTime.parseDateTime(zonedStartTime);
+			} catch (IllegalArgumentException e) {
+				ja.put(" Zoned start time is not valid ");
+			}
+		}
+
+		String zonedEndTime = jobt.getZonedEndTime();
+		DateTime parsedEndTime = null;
+		if (zonedEndTime != null) {
+			try {
+				parsedEndTime = dateTime.parseDateTime(zonedEndTime);
+			} catch (IllegalArgumentException e) {
+				ja.put(" Zoned end time is not valid ");
+			}
+		}
+
+		if (parsedStartTime != null && parsedEndTime != null && parsedEndTime.isBefore(parsedStartTime)) {
+			ja.put(" Zoned end time is before zoned start time ");
+		}
+
 		// TODO controls in documents data
 
 		JSONObject jo = new JSONObject();
@@ -153,59 +182,70 @@ public class SchedulerUtilitiesV2 {
 		jobTrigger.setStartTime(jsonObject.optString(JobTrigger.START_TIME));
 
 		boolean validStartDate = true;
-		if (jobTrigger.getStartDate() == null || jobTrigger.getStartDate().trim().isEmpty()) {
-			jerr.put("Null or not Valid Start date");
-			validStartDate = false;
-		}
-		if (jobTrigger.getStartTime() == null || jobTrigger.getStartTime().trim().isEmpty()) {
-			jerr.put("Null start time");
-			validStartDate = false;
-		} else {
-			String[] tp = jobTrigger.getStartTime().split(":");
-			int h = Integer.parseInt(tp[0]);
-			int m = Integer.parseInt(tp[1]);
-			if (h < 0 || h > 23) {
-				jerr.put(" start time hours not valid ");
+		boolean hasZonedStartTime = jsonObject.has(JobTrigger.ZONED_START_TIME);
+
+		if (!hasZonedStartTime) {
+			if (jobTrigger.getStartDate() == null || jobTrigger.getStartDate().trim().isEmpty()) {
+				jerr.put("Null or not Valid Start date");
 				validStartDate = false;
 			}
-			if (m < 0 || m > 59) {
-				jerr.put(" start time minutes not valid ");
+			if (jobTrigger.getStartTime() == null || jobTrigger.getStartTime().trim().isEmpty()) {
+				jerr.put("Null start time");
 				validStartDate = false;
+			} else {
+				String[] tp = jobTrigger.getStartTime().split(":");
+				int h = Integer.parseInt(tp[0]);
+				int m = Integer.parseInt(tp[1]);
+				if (h < 0 || h > 23) {
+					jerr.put(" start time hours not valid ");
+					validStartDate = false;
+				}
+				if (m < 0 || m > 59) {
+					jerr.put(" start time minutes not valid ");
+					validStartDate = false;
+				}
 			}
 		}
 
 		jobTrigger.setEndDate(jsonObject.optString(JobTrigger.END_DATE));
 		jobTrigger.setEndTime(jsonObject.optString(JobTrigger.END_TIME));
 
-		if (validStartDate && (jobTrigger.getEndDate() != null && !jobTrigger.getEndDate().equals(""))) {
-			boolean validTime = true;
-			String[] tp = jobTrigger.getEndTime().split(":");
-			int h = Integer.parseInt(tp[0]);
-			int m = Integer.parseInt(tp[1]);
-			if (h < 0 || h > 23) {
-				jerr.put(" end time hours not valid ");
-				validTime = false;
-			}
-			if (m < 0 || m > 59) {
-				jerr.put(" end time minutes not valid ");
-				validTime = false;
-			}
+		boolean hasZonedEndTime = jsonObject.has(JobTrigger.ZONED_END_TIME);
 
-			if (validTime) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-				try {
-					Date dateStart = sdf.parse(jobTrigger.getStartDate() + " " + jobTrigger.getStartTime());
-					Date dateEnd = sdf.parse(jobTrigger.getEndDate() + " " + jobTrigger.getEndTime());
-					if (dateEnd.before(dateStart)) {
-						jerr.put(" End time is before Start time  ");
-					}
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (!hasZonedEndTime) {
+			if (validStartDate && (jobTrigger.getEndDate() != null && !jobTrigger.getEndDate().equals(""))) {
+				boolean validTime = true;
+				String[] tp = jobTrigger.getEndTime().split(":");
+				int h = Integer.parseInt(tp[0]);
+				int m = Integer.parseInt(tp[1]);
+				if (h < 0 || h > 23) {
+					jerr.put(" end time hours not valid ");
+					validTime = false;
 				}
-			}
+				if (m < 0 || m > 59) {
+					jerr.put(" end time minutes not valid ");
+					validTime = false;
+				}
 
+				if (validTime) {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+					try {
+						Date dateStart = sdf.parse(jobTrigger.getStartDate() + " " + jobTrigger.getStartTime());
+						Date dateEnd = sdf.parse(jobTrigger.getEndDate() + " " + jobTrigger.getEndTime());
+						if (dateEnd.before(dateStart)) {
+							jerr.put(" End time is before Start time  ");
+						}
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			}
 		}
+
+		jobTrigger.setZonedStartTime(jsonObject.optString(JobTrigger.ZONED_START_TIME));
+		jobTrigger.setZonedEndTime(jsonObject.optString(JobTrigger.ZONED_END_TIME));
 
 		jobTrigger.setChrono(((JSONObject) jsonObject.opt(JobTrigger.CHRONO)).toString().replaceAll("\"", "'"));
 		JSONArray ja = (JSONArray) jsonObject.opt(JobTrigger.DOCUMENTS);
@@ -231,6 +271,8 @@ public class SchedulerUtilitiesV2 {
 			j.put("endDateRFC3339", trigg.getEndDateRFC3339());
 			j.put("endTime", trigg.getEndTime());
 		}
+		j.put(JobTrigger.ZONED_START_TIME, trigg.getZonedStartTime());
+		j.put(JobTrigger.ZONED_END_TIME, trigg.getZonedEndTime());
 
 		j.put("chrono", new JSONObject(trigg.getChrono()));
 
@@ -297,6 +339,16 @@ public class SchedulerUtilitiesV2 {
 					message.append(" endTime=\"" + endtime + "\" ");
 
 				}
+			}
+
+			String zonedStartTime = trigg.getZonedStartTime();
+			if (zonedStartTime != null) {
+				message.append(" zonedStartTime=\"" + zonedStartTime + "\" ");
+			}
+
+			String zonedEndTime = trigg.getZonedEndTime();
+			if (zonedEndTime != null) {
+				message.append(" zonedEndTime=\"" + zonedEndTime + "\" ");
 			}
 		}
 		String repeatinterval = trigg.getRepeatInterval();
@@ -514,6 +566,15 @@ public class SchedulerUtilitiesV2 {
 					if (!endtime.trim().equals("")) {
 						xml += " endTime=\"" + endtime + "\" ";
 					}
+				}
+
+				String zonedStartTime = triggerInfo.getZonedStartTime();
+				if (zonedStartTime != null) {
+					xml += " zonedStartTime=\"" + zonedStartTime + "\" ";
+				}
+				String zonedEndTime = triggerInfo.getZonedEndTime();
+				if (zonedEndTime != null) {
+					xml += " zonedEndTime=\"" + zonedEndTime + "\" ";
 				}
 
 				String repeatinterval = triggerInfo.getRepeatInterval();
@@ -911,6 +972,11 @@ public class SchedulerUtilitiesV2 {
 		triggerInfo.setChrono(chronString);
 		triggerInfo.setTriggerDescription(triggerDescription);
 		triggerInfo.setTriggerName(triggerName);
+
+		triggerInfo.setZonedStartTime((String) triggerInfoSB.getAttribute("triggerZonedStartTime"));
+		if (triggerInfoSB.containsAttribute("triggerZonedEndTime")) {
+			triggerInfo.setZonedEndTime((String) triggerInfoSB.getAttribute("triggerZonedEndTime"));
+		}
 
 		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobInfoSB);
 		triggerInfo.setJobInfo(jobInfo);

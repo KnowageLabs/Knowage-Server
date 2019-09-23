@@ -192,11 +192,14 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					if (ISelectField.SIMPLE_FIELD.equalsIgnoreCase(fieldType)) {
 
 						fieldUniqueName = fieldJSON.getString(QuerySerializationConstants.FIELD_ID);
-						Assert.assertNotNull(fieldUniqueName, "Field name connot be null");
+						Assert.assertNotNull(fieldUniqueName, "Field name cannot be null");
 
 						field = dataSource.getModelStructure().getField(fieldUniqueName);
-						Assert.assertNotNull(field, "Inpossible to retrive from datamart-structure a fild named " + fieldUniqueName
-								+ ". Please check select clause: " + fieldsJSON.toString());
+						Assert.assertNotNull(field,
+								String.format("Impossible to retrieve a field named %s from datamart-structure. Please check select clause: %s",
+										fieldUniqueName,
+										fieldsJSON.toString()));
+						
 						if (StringUtilities.isEmpty(alias))
 							alias = "Column_" + (i + 1);
 

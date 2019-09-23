@@ -202,22 +202,18 @@ eventDefinitionApp.controller('ActivityEventController',
 					activityEventCtrl.event.triggerName = d.triggerName;
 					activityEventCtrl.event.triggerDescription =
 						(d.triggerDescription && d.triggerDescription != null) ? d.triggerDescription : "";
-//					activityEventCtrl.event.startDate = new Date(d.startDate);
-					activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
-					activityEventCtrl.event.startTime = d.startTime;
 
-					if(d.endTime != undefined && d.endTime != "") {
-						activityEventCtrl.event.endTime = d.endTime;
-					} else {
-						activityEventCtrl.event.endTime = "";
+					activityEventCtrl.event._startDate = new Date(d.zonedStartTime);
+					activityEventCtrl.event._startTime = activityEventCtrl.event._startDate.getHours()
+						+ ":"
+						+ activityEventCtrl.event._startDate.getMinutes();
+
+					if(d.zonedEndTime != undefined) {
+						activityEventCtrl.event._endDate = new Date(d.zonedEndTime);
+						activityEventCtrl.event._endTime = activityEventCtrl.event._endDate.getHours()
+							+ ":"
+							+ activityEventCtrl.event._endDate.getMinutes();
 					}
-
-					if(d.endDate != undefined && d.endDate != "") {
-//						activityEventCtrl.event.endDate = new Date(d.endDate);
-						activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
-					}
-
-					activityEventCtrl.event.chrono = d.chrono;
 
 					var op = d.chrono;
 					activityEventCtrl.eventSched.repetitionKind = op.type;
@@ -318,12 +314,12 @@ eventDefinitionApp.controller('ActivityEventController',
 		if (!isValid) {
 			return false;
 		}
-		var cloneData=JSON.parse(JSON.stringify(activityEventCtrl.event));
+		var cloneData=angular.copy(activityEventCtrl.event);
 		if(cloneData.startDate!=undefined){
-			cloneData.startDate=(new Date(cloneData.startDate)).getTime();
+			cloneData.startDate=cloneData.startDate.toJSON();
 		}
 		if(cloneData.endDate!=undefined){
-			cloneData.endDate=(new Date(cloneData.endDate)).getTime();
+			cloneData.endDate=cloneData.endDate.toJSON();
 		}
 
 		sbiModule_restServices.post("scheduleree", "saveTrigger", cloneData)

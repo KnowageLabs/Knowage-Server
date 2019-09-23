@@ -65,9 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 							<p>{{ctrl.translate.load("cache.manager.cacheEnabled")}}				{{ ctrl.data.enabled }}</p>
 			 
-							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ ctrl.formatSizeUnits(ctrl.data.totalMemory) }}</p>
+							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ (ctrl.data.totalMemory / 1048576).toFixed(2) }} MB</p>
 			
-							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ ctrl.formatSizeUnits(ctrl.data.availableMemory) }}</p>  
+							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ (ctrl.data.availableMemory / 1048576).toFixed(2) }} MB</p>
 	
 							<p>{{ctrl.translate.load("cache.manager.numberOfCachedObjects")}}		{{ ctrl.data.cachedObjectsCount }}</p>
 			
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-toolbar> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
 				<md-card-content layout="column">		
 				<form layout="row" layout-wrap name=manageForm >
-					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="100" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
+					<!-- <md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="100" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch> -->
 										
 					<div flex="50" layout="column">
 						
@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.frequencyOfCleaningDaemon")}}</label>
 					       		<md-select ng-model="ctrl.variableSchedulingFullClean">
-					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val}}</md-option>
+					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val.label}}</md-option>
 					       		</md-select>
 					    </md-input-container>
 				<!-- New -->		

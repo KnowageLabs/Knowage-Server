@@ -82,13 +82,8 @@
 	                   var path = "";
 	                   crudService.get(base,path).then(function(response){
 	                			driversResource.analyticalDrivers=response.data;
-	                			console.log('response.data.drivers' )
-	                			console.log(response.data)
-	                			for(var i = 0; i < response.data.length; i++){
-	                				getLovsByAnalyticalDriverId(response.data[i].id)
-	                				driversResource.getParusesByAnaliticalDriverId(response.data[i].id)
-
-	                			}
+	                			console.log('response.data.drivers');
+	                			console.log(response.data);
 	                   });
 	    		   }
 
