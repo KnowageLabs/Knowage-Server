@@ -162,9 +162,24 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	
 	$scope.crossTable = $scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table';
 	
+	$scope.crossMap = $scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'map';
+	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'map'){
+		$scope.crossMap = true;
+		$scope.layers = $scope.$parent.newModel.content.layers;
+		for(var i in $scope.$parent.newModel.content.layers){
+			if($scope.$parent.newModel.content.layers[i].targetDefault){
+				$scope.targetLayer = $scope.$parent.newModel.content.layers[i];
+			}
+		}
+	}
+	
+	$scope.getMapLayersFields = function(layer){
+		return $scope.$parent.newModel.content.columnSelectedOfDataset[layer.dsId];
+	}
+	
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
 	
-	$scope.crossImage = (!$scope.crossTable && !$scope.crossChart);
+	$scope.crossImage = (!$scope.crossTable && !$scope.crossChart && !$scope.crossMap);
 	
 	$scope.toggleEnabled = function(type){
 		

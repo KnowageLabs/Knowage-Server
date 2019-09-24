@@ -897,8 +897,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 	    
-	    $scope.crossNavigate = function(layerConfig) {
-	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig.name].value, null, null, null, null, dsId);
+	    $scope.crossNavigate = function(dsId,layerConfig,props) {
+	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
 	    }
 	    
 	    $scope.checkCrossNavigation = function(layerConfig){

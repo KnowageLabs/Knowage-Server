@@ -895,7 +895,7 @@ function cockpitWidgetControllerFunction(
 						else if(content.type == 'dynamic'){
 							if(content.column){
 								var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-								var valToAdd = row[columnNameToSearch];
+								var valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
