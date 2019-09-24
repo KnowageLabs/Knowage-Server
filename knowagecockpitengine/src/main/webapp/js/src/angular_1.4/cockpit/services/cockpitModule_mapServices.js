@@ -335,10 +335,10 @@
 									}
 								}
 								var length = coords.length;
-								coord = coords.reduce((a,b) => {
+								coord = coords.reduce(function(a,b) {
 										return [a[0]+b[0], a[1]+b[1]];
 									})
-									.map((element, index, array) => {
+									.map(function(element, index, array) {
 										return array[index] / length;
 									});
 
