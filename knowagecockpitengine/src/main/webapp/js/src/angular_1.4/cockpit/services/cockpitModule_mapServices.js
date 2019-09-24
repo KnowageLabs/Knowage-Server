@@ -100,19 +100,21 @@
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
 								return null;
 							}
-						}else if (geoFieldConfig.properties.coordType == 'wkt'){
+						} else if (geoFieldConfig.properties.coordType == 'wkt'){
 							//test formato WKT
 
-						      feature = new ol.format.WKT().readFeature(geoFieldValue, {
-						        dataProjection: 'EPSG:4326',
-						        featureProjection: 'EPSG:3857'
-						      });
+							feature = new ol.format.WKT().readFeature(geoFieldValue, {
+								dataProjection: 'EPSG:4326',
+								featureProjection: 'EPSG:3857'
+							});
 
-						      feature.set("parentLayer",  config.layerID);
-//						      feature.set("isSimpleMarker", isSimpleMarker);
-						      feature.set("isWKT", true);
-						      feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-							  featuresSource.addFeature(feature);
+							feature.set("parentLayer",  config.layerID);
+//							feature.set("isSimpleMarker", isSimpleMarker);
+							feature.set("isWKT", true);
+							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+							featuresSource.addFeature(feature);
+
+							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 
 						}else if (geoFieldConfig.properties.coordType == 'string'){
 							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
