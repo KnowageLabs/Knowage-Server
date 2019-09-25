@@ -850,6 +850,9 @@ function cockpitWidgetControllerFunction(
 						}
 					}
 				}
+			}else if(model.cross.cross.crossType == 'categories' || model.cross.cross.crossType == 'measures'){
+				if(Array.isArray(columnName) && model.cross.cross.crossType == 'measures') doCross = true;
+				if(!Array.isArray(columnName) && model.cross.cross.crossType == 'categories') doCross = true;
 			}else{
 				// case a specific column is enabled for cross
 				// check if column clicked is the one for cross navigation
@@ -894,8 +897,13 @@ function cockpitWidgetControllerFunction(
 						}
 						else if(content.type == 'dynamic'){
 							if(content.column){
-								var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-								var valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+								if(model.type!='static-pivot-table'){
+									var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
+									var valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+								}else {
+									if(Array.isArray(columnName)) var valToAdd = columnValue[columnName.indexOf(content.column)];
+									else var valToAdd = columnValue;
+								}
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);

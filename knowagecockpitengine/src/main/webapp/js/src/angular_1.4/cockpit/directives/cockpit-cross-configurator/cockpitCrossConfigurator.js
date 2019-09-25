@@ -160,9 +160,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	}
 	
-	$scope.crossTable = $scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table';
+	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table'){
+		$scope.crossTable = true;
+		$scope.crossTableModel = $scope.$parent.newModel;
+	}
 	
-	$scope.crossMap = $scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'map';
 	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'map'){
 		$scope.crossMap = true;
 		$scope.layers = $scope.$parent.newModel.content.layers;
@@ -174,12 +176,21 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 	
 	$scope.getMapLayersFields = function(layer){
-		return $scope.$parent.newModel.content.columnSelectedOfDataset[layer.dsId];
+		if(layer) return $scope.$parent.newModel.content.columnSelectedOfDataset[layer.dsId];
 	}
+	
+	if($scope.localModel != undefined && $scope.localModel.type === 'static-pivot-table'){
+		$scope.crossPivot = true;
+		$scope.allCategories = [];
+		for(var k in $scope.localModel.content.crosstabDefinition.columns) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.columns[k]);
+		for(var i in $scope.localModel.content.crosstabDefinition.rows) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.rows[i]);
+		$scope.localModel.cross = $scope.localModel.cross || {'cross':{'crossType':'categories'}};
+	}
+	
 	
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
 	
-	$scope.crossImage = (!$scope.crossTable && !$scope.crossChart && !$scope.crossMap);
+	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
 	
 	$scope.toggleEnabled = function(type){
 		
@@ -254,14 +265,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			outPar.enabled=false;
 		}
 	}
-
-//	$scope.changeCurrentDatasetColumns=function(dataset){
-//		var meta = $scope.allCockpitDatasetsColumns[dataset.ds];
-//		$scope.currentDatasetsColumns = meta;
-//	}
-
-
-
 }
 
 })();
