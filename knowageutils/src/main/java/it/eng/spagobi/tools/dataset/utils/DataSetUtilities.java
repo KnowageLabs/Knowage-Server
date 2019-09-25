@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -283,6 +284,47 @@ public class DataSetUtilities {
 			toReturn = new HashMap<String, String>();
 		}
 		return toReturn;
+	}
+
+	public static JSONObject parametersJSONArray2JSONObject(IDataSet dataSet, JSONArray parameters) throws Exception {
+		String params = dataSet.getParameters();
+		JSONObject jsonPar = new JSONObject();
+		if (params != null && !params.equals("")) {
+			SourceBean source = SourceBean.fromXMLString(params);
+			if (source != null && source.getName().equals("PARAMETERSLIST")) {
+				List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+
+				for (int i = 0; i < rows.size(); i++) {
+					SourceBean row = rows.get(i);
+					String name = (String) row.getAttribute("NAME");
+					String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
+
+					jsonPar.put(name, defaultValue);
+					if (parameters != null) {
+						for (int j = 0; j < parameters.length(); j++) {
+							JSONObject jsonParam = parameters.getJSONObject(j);
+							if (name.equals(jsonParam.getString("name"))) {
+								boolean jMultivalue = jsonParam.getBoolean("multiValue");
+								if (jMultivalue) {
+									Object opt = jsonParam.opt("value");
+									if (opt == null) {
+										logger.warn("Parameter [" + name
+												+ "] is expected to be a JSON Array but its value is missing (please use an empty json array in case no values are set)");
+										opt = new JSONArray();
+									}
+									// In AbstractDataSet opt will be distinguished between JSONArray and simple value
+									jsonPar.put(name, opt);
+								} else {
+									jsonPar.put(name, jsonParam.optString("value"));
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return jsonPar;
 	}
 
 	public static Map<String, String> getParametersMap(JSONObject jsonParameters) {

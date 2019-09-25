@@ -100,19 +100,21 @@
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
 								return null;
 							}
-						}else if (geoFieldConfig.properties.coordType == 'wkt'){
+						} else if (geoFieldConfig.properties.coordType == 'wkt'){
 							//test formato WKT
 
-						      feature = new ol.format.WKT().readFeature(geoFieldValue, {
-						        dataProjection: 'EPSG:4326',
-						        featureProjection: 'EPSG:3857'
-						      });
+							feature = new ol.format.WKT().readFeature(geoFieldValue, {
+								dataProjection: 'EPSG:4326',
+								featureProjection: 'EPSG:3857'
+							});
 
-						      feature.set("parentLayer",  config.layerID);
-//						      feature.set("isSimpleMarker", isSimpleMarker);
-						      feature.set("isWKT", true);
-						      feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-							  featuresSource.addFeature(feature);
+							feature.set("parentLayer",  config.layerID);
+//							feature.set("isSimpleMarker", isSimpleMarker);
+							feature.set("isWKT", true);
+							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+							featuresSource.addFeature(feature);
+
+							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 
 						}else if (geoFieldConfig.properties.coordType == 'string'){
 							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
@@ -316,14 +318,33 @@
 		    		if (source.getFeatures().length>0){
 		    			if (source.getFeatures()[0].get("isWKT")){
 
-		    				debugger;
+							var geometry = source.getFeatures()[0].getGeometry();
+							if (geometry instanceof ol.geom.GeometryCollection) {
+								var coords = [];
 
-		    				var geometry = source.getFeatures()[0].getGeometry();
-		    				if (geometry instanceof ol.geom.GeometryCollection) {
-		    					coord = geometry.getGeometries()[0].getCoordinates();
-		    				} else {
-		    					coord = geometry.getCoordinates()[0];
-		    				}
+								// Center the map on all coordinates of all geometries
+								for (var i=0; i<geometry.getGeometries().length; i++) {
+									var coordinates = geometry.getGeometries()[i].getCoordinates();
+									// Coordinates can be an Array<Number> or Array<Array<Number>>
+									if (coordinates[0] instanceof Array) {
+										for (var j=0; j<coordinates.length; j++) {
+											coords.push(coordinates[j]);
+										}
+									} else {
+										coords.push(coordinates);
+									}
+								}
+								var length = coords.length;
+								coord = coords.reduce(function(a,b) {
+										return [a[0]+b[0], a[1]+b[1]];
+									})
+									.map(function(element, index, array) {
+										return array[index] / length;
+									});
+
+							} else {
+								coord = geometry.getCoordinates()[0];
+							}
 
 		    			} else {
 		    				//string && json
