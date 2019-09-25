@@ -19,7 +19,6 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +42,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +52,7 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -705,17 +708,18 @@ public class ExcelExporter {
 								Object values = jsonobject.get("parameterValue");
 								String valuesToChange = values.toString();
 								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
-									SimpleDateFormat mdyFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-									try {
-										Date dateToconvert = mdyFormat.parse(valuesToChange);
-										SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-										valuesToChange = sdf.format(dateToconvert).toString();
-									} catch (ParseException e) {
-										throw new SpagoBIRuntimeException("Error while retrieving date formatting", e);
-									}
+
+									DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+									DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
+									Date dateToconvert = parsedDateTime.toDate();
+									SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+									valuesToChange = sdf.format(dateToconvert).toString();
+
 								}
-								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
-								valuesToChange = valuesToChange.replaceAll("\"", "\'");
+								if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+							    	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
+									valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
+								}
 								newParameters.put(obj, valuesToChange);
 							}
 
@@ -918,17 +922,17 @@ public class ExcelExporter {
 							Object values = jsonobject.get("parameterValue");
 							String valuesToChange = values.toString();
 							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
-								SimpleDateFormat mdyFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-								try {
-									Date dateToconvert = mdyFormat.parse(valuesToChange);
-									SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-									valuesToChange = sdf.format(dateToconvert).toString();
-								} catch (ParseException e) {
-									throw new SpagoBIRuntimeException("Error while retrieving date formatting", e);
-								}
+
+								DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
+								DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
+								Date dateToconvert = parsedDateTime.toDate();
+								SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+								valuesToChange = sdf.format(dateToconvert).toString();
 							}
-							valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
-							valuesToChange = valuesToChange.replaceAll("\"", "");
+							if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+						    	valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
+								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
+							}
 							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0))
 								newParameters.put(obj, valuesToChange);
 						} else {
