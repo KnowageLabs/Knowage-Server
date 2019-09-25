@@ -184,7 +184,6 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.allCategories = [];
 		for(var k in $scope.localModel.content.crosstabDefinition.columns) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.columns[k]);
 		for(var i in $scope.localModel.content.crosstabDefinition.rows) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.rows[i]);
-		$scope.localModel.cross = $scope.localModel.cross || {'cross':{'crossType':'categories'}};
 	}
 	
 	

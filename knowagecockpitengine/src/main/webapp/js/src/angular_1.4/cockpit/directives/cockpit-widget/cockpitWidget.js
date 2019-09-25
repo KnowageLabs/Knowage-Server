@@ -850,9 +850,8 @@ function cockpitWidgetControllerFunction(
 						}
 					}
 				}
-			}else if(model.cross.cross.crossType == 'categories' || model.cross.cross.crossType == 'measures'){
-				if(Array.isArray(columnName) && model.cross.cross.crossType == 'measures') doCross = true;
-				if(!Array.isArray(columnName) && model.cross.cross.crossType == 'categories') doCross = true;
+			}else if(model.type == 'static-pivot-table'){
+				if(Array.isArray(columnName)) doCross = true;
 			}else{
 				// case a specific column is enabled for cross
 				// check if column clicked is the one for cross navigation

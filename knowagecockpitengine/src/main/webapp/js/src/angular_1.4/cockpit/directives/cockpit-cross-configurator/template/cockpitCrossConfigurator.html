@@ -18,15 +18,6 @@
 				</md-select>
 			</md-input-container>
 			
-			<md-input-container ng-show="crossPivot" class="md-block" flex>
-				<label>{{::translate.load('kn.crossconfigurator.interactiontype')}}</label>
-				<md-select ng-model="ngModel.cross.crossType" ng-disabled="!ngModel.cross.enable">
-					<md-option value="categories">{{::translate.load('kn.crossconfigurator.interactiontype.rowcategories')}}</md-option>
-					<md-option value="measures">{{::translate.load('kn.crossconfigurator.interactiontype.measuresgrid')}}</md-option>
-				</md-select>
-				<div class="hint">{{::translate.load('kn.crossconfigurator.hint.interactionwarning')}}</div>
-			</md-input-container>
-			
 			<div layout="row" flex="70" ng-if="crossTable && !ngModel.cross.crossType" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					{{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
@@ -160,10 +151,9 @@
 					&& crossPivot == true
 					">
 			
-				<label>Category</label>
+				<label>{{::translate.load("sbi.cockpit.cross.outputParameter.category")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
-					<md-option ng-repeat="c in localModel.content.crosstabDefinition.rows" ng-value="c.id" ng-if="ngModel.cross.crossType != 'measures'">{{c.id}}</md-option>
-					<md-option ng-repeat="c in allCategories" ng-value="c.id" ng-if="ngModel.cross.crossType == 'measures'">{{c.id}}</md-option>
+					<md-option ng-repeat="c in allCategories" ng-value="c.id">{{c.id}}</md-option>
 				</md-select>
 			</md-input-container>
 				
