@@ -1530,6 +1530,18 @@
 			&.leftPosition .showActionButtonHandler {
 				left: 0;
 			}
+			.widgetSpinner {
+				position:absolute;
+				z-index: 500;
+				display: flex;
+				flex-direction: row;
+				background:rgba(0,0,0, 0.3);
+				md-progress-circular {
+					top:50%;
+					left:50%;
+					transform: translateX(-50%) translateY(-50%);
+				}
+			}
         }
 
         .gridster-item md-card-title md-toolbar .md-toolbar-tools button, md-toolbar.miniToolbar .md-toolbar-tools button {
