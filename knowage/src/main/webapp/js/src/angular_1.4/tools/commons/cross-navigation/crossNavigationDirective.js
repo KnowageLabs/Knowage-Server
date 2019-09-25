@@ -308,6 +308,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 						if(navObj.navigationParams[key].value.isInput==true && angular.equals(navObj.navigationParams[key].value.label,urlName)){
 							//respStr[key]=inputParameter[parin].parameterValue;
 							respStr[key]=parseInputParameterValue(inputParameter[parin]);
+							respStr[key+'_field_visible_description']=inputParameter[parin].parameterDescription;
 
 
 						}
@@ -328,6 +329,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					for(var key in navObj.navigationParams){
 						if(navObj.navigationParams[key].fixed==false && angular.equals(navObj.navigationParams[key].value.label,staticParName)){
 							respStr[key]=staticParValue;
+							respStr[key+'_field_visible_description']=staticParValue;
 
 
 						}
