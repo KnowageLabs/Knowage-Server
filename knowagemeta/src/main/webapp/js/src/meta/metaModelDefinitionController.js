@@ -1,6 +1,6 @@
-angular.module('metaManager').controller('metaModelDefinitionController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','sbiModule_config',metaModelDefinitionControllerFunction ]);
+angular.module('metaManager').controller('metaModelDefinitionController', [ '$location', '$scope', '$httpParamSerializer', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', metaModelDefinitionControllerFunction]);
 
-function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config) {
+function metaModelDefinitionControllerFunction($location, $scope, $httpParamSerializer, sbiModule_translate,sbiModule_restServices, sbiModule_config) {
 	$scope.dataSourceStructure = [];
 
 	$scope.datasourceStructureColumnsList = [
@@ -106,19 +106,16 @@ function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiMo
 		// $scope.loadDatasourceSchemas(dsId)
 		sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
 
-		var queryParams = "";
-		var varTablePrefixLike=tablePrefixLike;
-		var varTablePrefixNotLike=tablePrefixNotLike;
-		if ((varTablePrefixLike != undefined && varTablePrefixLike != ("")) &&
-				(varTablePrefixNotLike != undefined && varTablePrefixNotLike != (""))) {
-			queryParams += '?tablePrefixLike=' + varTablePrefixLike + "&tablePrefixNotLike=" + varTablePrefixNotLike;
-		} else if (varTablePrefixLike != undefined && varTablePrefixLike != ("")) {
-			queryParams += '?tablePrefixLike=' + varTablePrefixLike;
-		} else if (varTablePrefixNotLike != undefined && varTablePrefixNotLike != ("")){
-			queryParams += '?tablePrefixNotLike=' + varTablePrefixNotLike;
-		}
+		var queryParameters = $location.search();
 
-		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId + queryParams)
+		var tablesFilters = {
+				'tablePrefixLike' : queryParameters['tablePrefixLike'],
+				'tablePrefixNotLike' : queryParameters['tablePrefixNotLike']
+		};
+
+		var queryString = $httpParamSerializer(tablesFilters);
+
+		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId + ((queryString) ? '?' + queryString : ""))
 				.then(
 						function(response) {
 							angular.copy($scope.sourceStructureBeautify(response.data),$scope.dataSourceStructure);

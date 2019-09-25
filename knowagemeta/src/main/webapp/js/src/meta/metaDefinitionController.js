@@ -1,9 +1,10 @@
 var app = angular.module('metaManager', [ 'ngMaterial', 'angular_table','sbiModule', 'componentTreeModule', 'expander-box','associator-directive','angular-list-detail' ]);
 
-app.config([ '$mdThemingProvider', function($mdThemingProvider) {
+app.config(function($mdThemingProvider, $locationProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
-} ]);
+	$locationProvider.html5Mode(true);
+});
 
 app.factory("dialogScope",function(){
 	return window.parent.angular.element(window.frameElement).scope() || {};

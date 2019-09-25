@@ -35,16 +35,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 String datasourceId= request.getParameter("datasourceId");
 String bmName= request.getParameter("bmName");
 String bmId= request.getParameter("bmId");
-String tablePrefixLike= request.getParameter("tablePrefixLike");
-String tablePrefixNotLike= request.getParameter("tablePrefixNotLike");
 %>
 
 <script> 
 var datasourceId='<%= datasourceId%>';
 var bmId='<%= bmId%>';
 var bmName='<%= bmName%>';
-var tablePrefixLike='<%= tablePrefixLike%>';
-var tablePrefixNotLike='<%= tablePrefixNotLike%>';
 var translatedModel=<%= translatedModel%>;
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -65,6 +61,9 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/services/businessViewFilterService.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/controllers/businessModelSqlFilterController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/interceptors/businessViewFilterInterceptor.js"></script>
+	
+	<base href="/" /> <!-- mandatory for HTML5 and $location usage -->
+	
 </head>
 <body ng-controller="metaDefinitionController" layout="column" class="kn-metaWeb" ng-switch on="steps.current">
 
