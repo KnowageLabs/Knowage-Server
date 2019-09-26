@@ -71,9 +71,6 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         onCellEditingStopped: refreshRow,
         singleClickEdit: true,
         stopEditingWhenGridLosesFocus: true,
-        omponents: {
-            agColumnHeader: CustomHeader
-        },
         columnDefs: $scope.columnsDefition,
 		rowData: $scope.newModel.content.columnSelectedOfDataset
 	}

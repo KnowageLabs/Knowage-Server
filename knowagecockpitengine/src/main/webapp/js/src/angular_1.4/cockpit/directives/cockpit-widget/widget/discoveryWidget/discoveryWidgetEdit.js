@@ -21,6 +21,7 @@ angular
 
 function discoveryWidgetEditControllerFunction(
 		$scope,
+		$compile,
 		finishEdit,
 		model,
 		sbiModule_translate,
@@ -46,16 +47,50 @@ function discoveryWidgetEditControllerFunction(
         columnDefs: [{"headerName":"Column","field":"name"},
     		{"headerName":"Alias","field":"alias","editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
     		{"headerName":"Type","field":"fieldType","editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
-    		{"headerName":"Style","field":"style", cellStyle: {border:"none"},cellRenderer:styleRenderer,width: 50},
-    		//{"headerName":"Aggregation","field":"aggregationSelected", cellRenderer:aggregationRenderer,width: 80},
-    		{"headerName":"Show Column","field":"visible",cellRenderer:checkboxRenderer,width: 100},
-    		{"headerName":"Show Facet","field":"facet",cellRenderer:checkboxRendererAggregated,width: 100},
-    		{"headerName":"Enable text search","field":"fullTextSearch",cellRenderer:checkboxRenderer,width: 100}],
+    		{"headerName":"Style","field":"style", cellStyle: {border:"none"},cellRenderer:styleRenderer,width: 50, headerClass:'header-cell-center'},
+    		{"headerName":"Show Column","field":"visible",cellRenderer:checkboxRenderer,width: 100,headerComponent: CustomHeader, headerClass:'header-cell-center'},
+    		{"headerName":"Show Facet","field":"facet",cellRenderer:checkboxRendererAggregated,width: 100,headerComponent: CustomHeader, headerClass:'header-cell-center'},
+    		{"headerName":"Enable text search","field":"fullTextSearch",cellRenderer:checkboxRenderer,width: 100,headerComponent: CustomHeader,headerClass:'header-cell-center'}],
     	rowData : $scope.newModel.content.columnSelectedOfDataset
 	};
 	
+	function CustomHeader() {}
+
+	CustomHeader.prototype.init = function (agParams) {
+	    this.agParams = agParams;
+	    this.eGui = document.createElement('div');
+	    this.eGui.innerHTML = '<span>'+agParams.displayName+'</span><input type="checkbox" ng-model="selectAll.'+agParams.column.colId+'" ng-change="changeSelectAll(\''+agParams.column.colId+'\')"/>';
+	    
+        this.$scope = $scope;
+        $compile(this.eGui)(this.$scope);
+        this.$scope.params = agParams;
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+	};
+
+	CustomHeader.prototype.getGui = function () {return this.eGui;};
+	
 	function resizeColumns(){
 		$scope.columnsGrid.api.sizeColumnsToFit();
+	}
+		
+	$scope.selectAll = {
+			visible: true,
+			fullTextSearch: false,
+			facet: false
+	};
+	
+	for(var k in $scope.newModel.content.columnSelectedOfDataset){
+		if($scope.newModel.content.columnSelectedOfDataset[k].visible) $scope.selectAll.visible = true;
+		if($scope.newModel.content.columnSelectedOfDataset[k].fullTextSearch) $scope.selectAll.fullTextSearch = true;
+		if($scope.newModel.content.columnSelectedOfDataset[k].facet) $scope.selectAll.facet = true;
+	}
+	
+	$scope.changeSelectAll = function(columnId){
+		for(var k in $scope.newModel.content.columnSelectedOfDataset){
+			if((columnId != 'facet') || (columnId == 'facet' && $scope.newModel.content.columnSelectedOfDataset[k].fieldType != 'MEASURE')){
+				$scope.newModel.content.columnSelectedOfDataset[k][columnId] = $scope.selectAll[columnId];
+			}
+		}
 	}
 	
 	function editableCell(params){

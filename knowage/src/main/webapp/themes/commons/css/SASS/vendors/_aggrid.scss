@@ -51,6 +51,11 @@ $aggrid-border-color: #d9dcde;
 				justify-content: flex-end;
 				align-items: center;
 			}
+			.header-cell-center {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
 			.md-button {
 				height: 24px;
 				width: 24px;
