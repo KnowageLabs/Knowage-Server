@@ -299,6 +299,12 @@ public class ExcelExporter {
 			}
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			JSONObject summaryRow = getSummaryRowFromWidget(widget);
+			if (summaryRow != null) {
+				logger.debug("summaryRow = " + summaryRow);
+				cockpitSelections.put("summaryRow", summaryRow);
+			}
+
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 
 			if (datastore != null) {
