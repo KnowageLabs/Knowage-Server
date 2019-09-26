@@ -16,12 +16,20 @@ angular
 	.module('cockpitModule')
 	.controller('advancedTableWidgetEditControllerFunction',advancedTableWidgetEditControllerFunction)
 
-function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers){
+function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
+	$scope.allHidden = false;
+	for(var k in $scope.newModel.content.columnSelectedOfDataset){
+		if($scope.newModel.content.columnSelectedOfDataset[k].style && $scope.newModel.content.columnSelectedOfDataset[k].style.hiddenColumn) $scope.allHidden = true;
+		else{
+			$scope.allHidden = false;
+			break;
+		}
+	}
 	
 	$scope.changeDS = function(id){
 	    $scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
@@ -46,7 +54,8 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
     		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
     	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
     		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
-    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}];
+    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false,
+    			headerComponent: CustomHeader,headerClass:'header-cell-buttons'}];
 	
 	$scope.columnsGrid = {
 		angularCompileRows: true,
@@ -62,6 +71,9 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
         onCellEditingStopped: refreshRow,
         singleClickEdit: true,
         stopEditingWhenGridLosesFocus: true,
+        omponents: {
+            agColumnHeader: CustomHeader
+        },
         columnDefs: $scope.columnsDefition,
 		rowData: $scope.newModel.content.columnSelectedOfDataset
 	}
@@ -103,16 +115,70 @@ function advancedTableWidgetEditControllerFunction($scope,finishEdit,$q,model,sb
 		}
 		
 		return 	calculator +
+				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.alias+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
+				'	<md-icon ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
+				'</md-button>'+
 				'<md-button class="md-icon-button" ng-click="toggleColumnVisibility(\''+params.rowIndex+'\')">'+
 				'   <md-tooltip md-delay="500">Hide/show Column</md-tooltip>'+
 				'	<md-icon ng-if="newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.hiddenColumn" md-font-icon="fa fa-ban fa-stack-2x text-danger"></md-icon>'+
 				'	<md-icon md-font-icon="fa fa-eye"></md-icon>'+
 				'</md-button>'+
-				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.alias+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
-				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
-				'	<md-icon ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
-				'</md-button>'+
 				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+	}
+	
+	function CustomHeader() {
+	}
+
+	CustomHeader.prototype.init = function (agParams) {
+	    this.agParams = agParams;
+	    this.eGui = document.createElement('div');
+	    this.eGui.innerHTML = '<md-button class="md-icon-button" ng-click="toggleAllColumnsVisibility()">'+
+					'   <md-tooltip ng-if="allHidden" md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.showall")}}</md-tooltip>'+
+					'   <md-tooltip ng-if="!allHidden" md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.hideall")}}</md-tooltip>'+
+					'	<md-icon ng-if="!allHidden" md-font-icon="fa fa-ban fa-stack-2x text-danger"></md-icon>'+
+					'	<md-icon md-font-icon="fa fa-eye"></md-icon>'+
+					'</md-button>'+
+					'<md-button class="md-icon-button" ng-click="deleteAllColumns($event)"><md-icon md-font-icon="fa fa-trash"></md-icon>'+
+					'<md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.deleteall")}}</md-tooltip></md-button>';
+	    
+        this.$scope = $scope;
+        $compile(this.eGui)(this.$scope);
+        this.$scope.params = agParams;
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+	};
+
+	CustomHeader.prototype.getGui = function () {
+	    return this.eGui;
+	};
+	
+	$scope.toggleAllColumnsVisibility = function(){
+		for(var k in $scope.newModel.content.columnSelectedOfDataset){
+			if($scope.newModel.content.columnSelectedOfDataset[k].style) $scope.newModel.content.columnSelectedOfDataset[k].style.hiddenColumn = !$scope.allHidden;
+	  		else $scope.newModel.content.columnSelectedOfDataset[k].style = {'hiddenColumn': !$scope.allHidden};
+		}
+		$scope.allHidden = !$scope.allHidden;
+	}
+	
+	$scope.deleteAllColumns = function($event){
+		var confirm = $mdDialog.confirm()
+	        .title($scope.translate.load("sbi.cockpit.widgets.table.confirm.delete"))
+	        .textContent($scope.translate.load("sbi.cockpit.widgets.table.confirm.delete.text"))
+	        .targetEvent($event)
+	        .ok($scope.translate.load("sbi.general.continue"))
+	        .cancel($scope.translate.load("sbi.generic.cancel"));
+
+		  $mdDialog.show(confirm).then(function() {
+			  $scope.newModel.content.columnSelectedOfDataset = [];
+		  }, function() {});
+	}
+	
+	function headerButtonRenderer() {
+		return 	'<div>'+
+				'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:flex-end"></div>'+
+				'	 <md-button class="md-icon-button" ng-click="deleteAllColumns($event)"><md-icon md-font-icon="fa fa-trash"></md-icon>'+
+				'	 <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>'+
+				'</div>';
 	}
 	
 	function refreshRow(cell){
