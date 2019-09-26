@@ -140,7 +140,7 @@ public class DocumentExecutionUtils {
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
-		DriversValidationAPI validation = new DriversValidationAPI();
+		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 		try {
 			List errors = null;
 			JSONObject executionInstanceJSON = null;

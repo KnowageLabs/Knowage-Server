@@ -518,7 +518,7 @@ public class BusinessModelOpenUtils {
 		logParam.put("NAME", businessModel.getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		BusinessModelRuntime dum = new BusinessModelRuntime(profile, locale);
-		DriversValidationAPI validation = new DriversValidationAPI();
+		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 		List errors = null;
 		try {
 

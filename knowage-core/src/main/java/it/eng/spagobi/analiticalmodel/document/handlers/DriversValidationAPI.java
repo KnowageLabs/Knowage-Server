@@ -47,6 +47,13 @@ public class DriversValidationAPI {
 		this.locale = locale;
 	}
 
+	/**
+	 *
+	 */
+	public DriversValidationAPI() {
+
+	}
+
 	// Thanks to Emanuele Granieri of osmosit.com
 	private List normalizeList(List l) {
 		Iterator i = l.iterator();

@@ -102,7 +102,7 @@ public class FunctionExecutionUtils {
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
 		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
-		DriversValidationAPI validation = new DriversValidationAPI();
+		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 
 		try {
 			List errors = null;
@@ -218,7 +218,7 @@ public class FunctionExecutionUtils {
 		logParam.put("ENGINE", "Data-mining Engine");
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		DocumentRuntime documentUrlManager = new DocumentRuntime(profile, locale);
-		DriversValidationAPI validation = new DriversValidationAPI();
+		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 		List errors = null;
 		try {
 
