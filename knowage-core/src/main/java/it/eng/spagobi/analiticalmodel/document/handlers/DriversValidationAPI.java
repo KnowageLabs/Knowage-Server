@@ -35,8 +35,17 @@ public class DriversValidationAPI {
 	static private Logger logger = Logger.getLogger(DriversValidationAPI.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
 
-	private final IEngUserProfile userProfile = null;
-	private final Locale locale = null;
+	private IEngUserProfile userProfile = null;
+	private Locale locale = null;
+
+	/**
+	 * @param profile
+	 * @param locale
+	 */
+	public DriversValidationAPI(UserProfile profile, Locale locale) {
+		this.userProfile = profile;
+		this.locale = locale;
+	}
 
 	// Thanks to Emanuele Granieri of osmosit.com
 	private List normalizeList(List l) {

@@ -250,18 +250,14 @@ public class DocumentExecutionUtils {
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
-		DriversValidationAPI validation = new DriversValidationAPI();
+		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 		List errors = null;
 		try {
-
-			try {
-				errors = validation.getParametersErrors(obj, role, dum);
-			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
-			}
+			errors = validation.getParametersErrors(obj, role, dum);
 
 		} catch (Exception e) {
 			logger.debug("Error in handleNormalExecutionError", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 
 		} finally {
 			handleNormalExecutionErrorMonitor.stop();
@@ -476,9 +472,8 @@ public class DocumentExecutionUtils {
 				boolean notNullNode = false; // if the row does not contain the value atribute we don't add the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-					if ((treeLovParentNodeName == "lovroot")
-							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString())
-									.equalsIgnoreCase(treeLovNodeValue))) {
+					if ((treeLovParentNodeName == "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
+							&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
 					}
 
