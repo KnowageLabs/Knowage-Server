@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(p1>tempMaxRow) tempMaxRow = parseInt(p1)+1;
 			})
 			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
-				if(p2>tempMaxRow) tempMaxRow = parseInt(p2)+1;
+				if(p2>=tempMaxRow) tempMaxRow = parseInt(p2)+1;
 			});
 			return tempMaxRow;
 		}
