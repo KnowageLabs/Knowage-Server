@@ -260,7 +260,8 @@ angular.module('cockpitModule')
 		    	  activeSelections: $scope.selectedValues, 
 		    	  targetModel: $scope.ngModel.content, 
 		    	  settings:$scope.ngModel.settings, 
-		    	  title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
+		    	  title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name,
+				  ds: $scope.ngModel.dataset.label
 		      }
 		    }).then(function(selectedFields) {
 		    	$scope.toggleParameter(selectedFields);
@@ -311,6 +312,9 @@ angular.module('cockpitModule')
 		    }
 		    
 		    scope.isDisabled = function(p){
+				if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name)) {
+					return false;
+				}
 				return selectables && selectables.indexOf(p) == -1;
 			}
 		    
