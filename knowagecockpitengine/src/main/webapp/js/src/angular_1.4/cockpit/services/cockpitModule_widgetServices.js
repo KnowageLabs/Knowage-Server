@@ -130,7 +130,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].name = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
 					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].column = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
 				}
-
+				if(!newModel.content.columnSelectedOfDataset[i].aggregationSelected) newModel.content.columnSelectedOfDataset[i].aggregationSelected = 'SUM';
 				if(newModel.content.columnSelectedOfDataset[i].alias.indexOf(newModel.content.columnSelectedOfDataset[i].aggregationSelected)==-1)
 					newModel.content.columnSelectedOfDataset[i].alias+="_"+newModel.content.columnSelectedOfDataset[i].aggregationSelected
 			} else {

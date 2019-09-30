@@ -566,6 +566,7 @@ function cockpitWidgetControllerFunction(
 			thisDs.alias = thisDs.name;
 			thisDs.aliasToShow = thisDs.name;
 			if(fieldsType) thisDs.type = fieldsType[thisDs.name];
+			if(thisDs.fieldType == 'MEASURE' && !thisDs.aggregationSelected) thisDs.aggregationSelected = 'SUM';
 		}
 	}
 	var prepareColumnSelectedOfDataset = function (newModel){
