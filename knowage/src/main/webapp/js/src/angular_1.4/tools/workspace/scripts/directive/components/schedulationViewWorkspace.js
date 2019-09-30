@@ -138,7 +138,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.getDocumentsSnapshots = function(scheduler, doc) {
 		sbiModule_restServices.promiseGet("2.0/workspace/scheduler", doc)
 		.then(function(response) {
-			sbiModule_restServices.get( "1.0/documentsnapshot", "getSnapshotsForSchedulationAndDocument?id="+response.data+"&scheduler="+econdeURIComponent(scheduler))
+			sbiModule_restServices.get( "1.0/documentsnapshot", "getSnapshotsForSchedulationAndDocument?id="+response.data+"&scheduler="+encodeURIComponent(scheduler))
 			.success(function(data, status, headers, config) {
 				sbiModule_logger.log('data scheduler '  ,  data.schedulers);
 				$scope.schedulers = data.schedulers;
