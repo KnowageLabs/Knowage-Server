@@ -337,14 +337,14 @@
             	if(!self.comboColumnOptions[column.field]) {
             		self.comboColumnOptions[column.field] = {};
 
-            		var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
+            		var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
                 	dependencesPromise.then(function(response) {
                 		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                 	});
                 	return dependencesPromise;
             	} else {
             		if(!self.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
-            			var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
+            			var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
                     	dependencesPromise.then(function(response) {
                     		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                     	});
@@ -415,7 +415,7 @@
         };
 
         self.isDependentColumn = function(column) {
-        	if(column.hasOwnProperty('dependsFrom') && column.hasOwnProperty('dependsFromEntity')) {
+        	if(column.hasOwnProperty('dependsFrom')) {
         		return true;
         	} else {
         		return false;

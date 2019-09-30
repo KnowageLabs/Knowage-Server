@@ -41,66 +41,136 @@
     			    return deferred.promise;
 			   };
 
-			   serviceObj.getDependeceOptions = function(columnField, dependsFrom, value) {
-				   var entity = registryConfiguration.entity;
-    			   var ENTITY_ID = createEntityId(entity, columnField);
-    			   var DEPENDENCES = createDependences(entity, dependsFrom, value);
-    			   var getFilterValuesAction = serviceObj.action.getActionBuilder('POST');
-    			   getFilterValuesAction.actionName = 'GET_FILTER_VALUES_ACTION';
-    			   getFilterValuesAction.formParams.QUERY_TYPE = 'standard';
-    			   getFilterValuesAction.formParams.ENTITY_ID = ENTITY_ID;
-    			   getFilterValuesAction.formParams.ORDER_ENTITY = ENTITY_ID;
-    			   getFilterValuesAction.formParams.ORDER_TYPE = 'asc';
-    			   getFilterValuesAction.formParams.QUERY_ROOT_ENTITY = true;
-    			   getFilterValuesAction.formParams.query = '';
-    			   getFilterValuesAction.formParams.DEPENDENCES = DEPENDENCES;
-
+			   serviceObj.getDependeceOptions = function(column, row) {
+				   var columnField = column.field;
+    			   var DEPENDENCES = createDependences(registryConfiguration.entity, column, row);
+    			   var getFilterValuesAction = getBasicParamsForAction(columnField);
+    			   if(DEPENDENCES!=''){
+        			   getFilterValuesAction.formParams.DEPENDENCES = DEPENDENCES;
+    			   }
     			   var promise = getFilterValuesAction.executeAction();
-
     			   return promise;
-			   };
-
-			   var createDependences = function(entity, dependsFrom, value) {
-				   var column = getColumn(dependsFrom);
-    			   var SubEntity = column.subEntity;
-    			   var foreignKey = column.foreignKey;
-    			   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + dependsFrom + '=' + value;
 			   };
 
     		   var getColumn = function(filterField) {
     			   return $filter('filter')(registryConfiguration.columns,{field:filterField}, true)[0];
     		   };
 
+    		   var getColumnConfiguration = function (field) {
+    				for (var i = 0; i < registryConfiguration.columns.length; i++) {
+    					if (registryConfiguration.columns[i].field == field) {
+    						return registryConfiguration.columns[i];
+    					}
+    				}
+    				return null;
+    			}
 
     		   var createEntityId = function(entity, filterField) {
     			   var column = getColumn(filterField);
-    			   var SubEntity = column.subEntity;
-    			   if (SubEntity) {
+    			   var index = entity.indexOf('::');
+    			   var temp = entity;
+    			   if (index != -1) {
+    					temp = entity.substring(0 , index);
+    				}
+    			   var subEntity = column.subEntity;
+    			   if (subEntity) {
     			   	   var foreignKey = column.foreignKey;
-    			   	   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + filterField;
+    			   	   return temp + '::' + subEntity + '(' + foreignKey + ')' + ':' + filterField;
 					} else {
-						return   entity + ':' + filterField;
+						return temp + ':' + filterField;
 					}
     		   };
 
+    		   var createOrderEntity = function(entity, filterField) {
+    			   var temp = entity;
+    			   var entityId = createEntityId(entity, filterField);
+    			   var orderBy = entityId;
+    			   var index = entity.indexOf('::');
+    			   if (index != -1) {
+    					temp = entity.substring(0 , index);
+    				}
+    			   var column = getColumn(filterField);
+    			   if(column.orderBy != null && column.orderBy != undefined){
+    					if (column.subEntity) {
+    						orderBy =   temp + "::" + column.subEntity + "(" + column.foreignKey + ")" + ":" + column.orderBy;
+    							}
+    					else{
+    						orderBy =  temp + ':' + column.orderBy;
+    					}
+    				}
+    			   return orderBy;
+    		   };
 
     		   var getFiltersValues = function(filterField) {
+    			   var loadRegistryAction = getBasicParamsForAction(filterField);
+    			   var promise = loadRegistryAction.executeAction();
+    			   return promise;
+    		   };
+
+    		   var createDependences = function(entity, columnObject, row) {
+				   var temp = registryConfiguration.entity;
+					var index = registryConfiguration.entity.indexOf('::');
+					if (index != -1) {
+						temp = registryConfiguration.entity.substring(0 , index);
+					}
+				   lstDependsFromRef = [];
+				   var dependences = ""
+					if (columnObject.dependsFrom){
+						var lstDependsFrom = columnObject.dependsFrom.split(",");
+						var lstDependsFromEntity = (columnObject.dependsFromEntity)?columnObject.dependsFromEntity.split(","):[];
+						for (var i=0; i<lstDependsFrom.length; i++){
+							var name = (lstDependsFromEntity && lstDependsFromEntity[i] != null && lstDependsFromEntity[i] !== '') ? lstDependsFromEntity[i] : temp;
+							var columnDepends = getColumn(lstDependsFrom[i].trim());
+							if (columnDepends && columnDepends.subEntity) {
+								name +=  "::" + columnDepends.subEntity + "(" + columnDepends.foreignKey + ")" + ":" + lstDependsFrom[i].trim();
+							}
+							else{
+								 name += ':' + lstDependsFrom[i].trim();
+							}
+							var tmpFieldRef = {};
+							tmpFieldRef.field = lstDependsFrom[i].trim();
+							tmpFieldRef.entity = name;
+							tmpFieldRef.title = columnObject.title;
+							lstDependsFromRef.push(tmpFieldRef);
+						}
+
+						for (var i=0; i<lstDependsFromRef.length; i++){
+							var name = '';
+							var comma = (i < lstDependsFrom.length-1)?',':'';
+							var filterValue;
+							for (var j=0; j<lstDependsFromRef.length; j++){
+								var tmpRef = lstDependsFromRef[j];
+								if (tmpRef.field == lstDependsFrom[i].trim()){
+									name = tmpRef.entity;
+									for(var k=0; k < registryConfiguration.filters.length; k++){
+										if (registryConfiguration.filters[k].name == tmpRef.field){
+											filterValue = registryConfiguration.filters[k].value;
+											break;
+										}
+									}
+									break;
+								}
+							}
+							dependences += (row[lstDependsFrom[i].trim()] != "")? name + '=' + row[lstDependsFrom[i].trim()] + comma : "";
+						}
+					}
+					return dependences;
+			   };
+
+    		   var getBasicParamsForAction = function (filterField){
     			   var entity = registryConfiguration.entity;
     			   var ENTITY_ID = createEntityId(entity, filterField);
+    			   var ORDER_ENTITY = createOrderEntity(entity, filterField);
     			   var loadRegistryAction = serviceObj.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'GET_FILTER_VALUES_ACTION';
     			   loadRegistryAction.formParams.ENTITY_ID = ENTITY_ID;
     			   loadRegistryAction.formParams.QUERY_TYPE = 'standard';
-    			   loadRegistryAction.formParams.ORDER_ENTITY = ENTITY_ID;
+    			   loadRegistryAction.formParams.ORDER_ENTITY = ORDER_ENTITY;
     			   loadRegistryAction.formParams.ORDER_TYPE = 'asc';
     			   loadRegistryAction.formParams.QUERY_ROOT_ENTITY = true;
     			   loadRegistryAction.formParams.query = '';
-
-    			   var promise = loadRegistryAction.executeAction();
-
-    			   return promise;
-    		   };
-
+    			   return loadRegistryAction;
+    		   }
 
     		   return serviceObj;
     	   }]);
