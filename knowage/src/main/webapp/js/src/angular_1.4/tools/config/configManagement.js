@@ -25,7 +25,7 @@ angular
 	    $mdThemingProvider.setDefaultTheme('knowage');
 	 }]);
 
-function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,$filter,sbiModule_config) {
 
 	var path = "2.0/configs";
 	var headers = {
@@ -34,7 +34,11 @@ function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.translate=sbiModule_translate;
 	$scope.message = sbiModule_messaging;
 	$scope.data=[]
-	
+	$scope.configSearchText = '';
+	$scope.filterConfig = function(){
+		var tempConfigList = $filter('filter')($scope.data,$scope.configSearchText);
+		$scope.configurationGridOptions.api.setRowData(tempConfigList);
+	}
 	$scope.columns = [{"headerName":"Label","field":"label"},
 		{"headerName":"Name","field":"name"},
 		{"headerName":"Value Check","field":"valueCheck"},

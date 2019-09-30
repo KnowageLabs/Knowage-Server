@@ -39,6 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body  ng-controller="Controller as ctr" >
 	<angular-list-detail full-screen=true layout-column>
 		<list label="translate.load('sbi.config.manageconfig')" new-function="addConfig" >
+			<div style="padding: 0px 16px;">
+				<md-input-container md-no-float class="md-block">
+			      <md-icon md-font-icon="fa fa-search"></md-icon>
+			      <input ng-model="configSearchText" ng-change="filterConfig()" type="text" placeholder="{{::translate.load('kn.internationalization.search')}}">
+			    </md-input-container>
+		    </div>
 			<div class="kn-grid-container">
 				<div ag-grid="configurationGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-default" style="width:100%;"></div>
 			</div>
