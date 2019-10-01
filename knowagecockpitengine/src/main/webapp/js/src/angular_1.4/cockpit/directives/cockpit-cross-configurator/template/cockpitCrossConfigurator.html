@@ -151,9 +151,12 @@
 					&& crossPivot == true
 					">
 			
-				<label>{{::translate.load("sbi.cockpit.cross.outputParameter.category")}}</label>
+				<label>{{::translate.load("sbi.cockpit.cross.outputParameter.dynamicvalue")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
-					<md-option ng-repeat="c in allCategories" ng-value="c.id">{{c.id}}</md-option>
+					<md-option value="MEASURE_COLUMN_NAME">{{::translate.load('sbi.cockpit.cross.outputParameter.measurescolumnname')}}</md-option>
+					<md-optgroup label="{{::translate.load('sbi.cockpit.cross.outputParameter.categories')}}">
+						<md-option ng-repeat="c in allCategories" ng-value="c.id">{{c.id}}</md-option>
+					</md-optgroup>
 				</md-select>
 			</md-input-container>
 				

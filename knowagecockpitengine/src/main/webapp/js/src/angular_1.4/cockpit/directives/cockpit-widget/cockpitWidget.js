@@ -901,8 +901,12 @@ function cockpitWidgetControllerFunction(
 									var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
 									var valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
 								}else {
-									if(Array.isArray(columnName)) var valToAdd = columnValue[columnName.indexOf(content.column)];
-									else var valToAdd = columnValue;
+									if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
+										var valToAdd = modalColumn;
+									}else{
+										if(Array.isArray(columnName)) var valToAdd = columnValue[columnName.indexOf(content.column)];
+										else var valToAdd = columnValue;
+									}
 								}
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;

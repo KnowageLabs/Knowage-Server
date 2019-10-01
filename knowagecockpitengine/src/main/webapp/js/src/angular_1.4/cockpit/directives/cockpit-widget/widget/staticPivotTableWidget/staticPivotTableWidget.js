@@ -383,9 +383,17 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				lstValues.push(columnValue);
 			}
 		}
+		
+		var measureId = '';
+		if (measureRef != ""){
+			var measureHeads = measureRef.split("_S_");
+			if (measureHeads[1] && measureHeads[1] != ""){
+				measureId = measureHeads[1];
+			}
+		}
 
 		if (lstHeaders.length>0)
-			$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
+			$scope.doSelection(lstHeaders,lstValues,measureId); //call selection method passing all headers and values (unique time)
 
 	};
 
