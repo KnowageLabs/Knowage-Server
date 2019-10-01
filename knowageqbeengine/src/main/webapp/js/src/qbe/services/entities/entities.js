@@ -22,6 +22,7 @@ entities.service('entity_service',function(sbiModule_action_builder,$filter){
 	this.getEntitiyTree = function(datamartName){
 		var getTreeAction = sbiModule_action_builder.getActionBuilder("GET");
 		getTreeAction.actionName = 'GET_TREE_ACTION';
+		getTreeAction.queryParams.datamartName = datamartName;
 		return getTreeAction.executeAction();
 
 	}
