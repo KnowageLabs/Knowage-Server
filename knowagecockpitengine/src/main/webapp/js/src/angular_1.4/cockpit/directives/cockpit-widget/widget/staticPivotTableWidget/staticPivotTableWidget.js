@@ -118,7 +118,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	$scope.removeDynamicWidthClass = function(elem){
 		elem.classList.remove("crosstab-fill-width");
 	}
-	
+
 	$scope.refresh=function(element,width,height, datasetRecords,nature){
 		if(datasetRecords==undefined){
 			return;
@@ -127,9 +127,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			var fatherElement = angular.element($scope.subCockpitWidget);
 			if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
-				$scope.addDynamicWidthClass(fatherElement[0].children[0]);	
+				$scope.addDynamicWidthClass(fatherElement[0].children[0]);
 			}else{
-//				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);	
+//				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);
 			}
 			return;
 		}
@@ -175,7 +175,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					$scope.hideWidgetSpinner();
 					$compile(fatherElement.contents())($scope);
 					if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
-						$scope.addDynamicWidthClass(fatherElement[0].children[0]);	
+						$scope.addDynamicWidthClass(fatherElement[0].children[0]);
 					}
 				},
 				function(response){
@@ -183,7 +183,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					$scope.hideWidgetSpinner();
 					}
 				)
-				
+
 		if(nature == 'init'){
 			$timeout(function(){
 				$scope.widgetIsInit=true;
@@ -355,35 +355,37 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	}
 
 
-	$scope.selectMeasure=function(rowHeaders, rowsValues, columnsHeaders, columnValues){
+	$scope.selectMeasure=function(rowHeaders, rowsValues, columnsHeaders, columnValues, measureRef){
 		var lstHeaders = []; //list of all headers (columns and rows)
 		var lstValues = []; //list of all values (columns and rows)
-		if (rowHeaders != ""){
+		if (rowsValues != ""){
 			//adds all selection references about the row side
 			var rowsHeads = rowHeaders.split("_S_");
 			var rowsVals = rowsValues.split("_S_");
 			for (var c=0; c < rowsHeads.length; c++){
-				if (rowsHeads[c] == "") continue;
-				var columnName = rowsHeads[c];
-				var columnValue = rowsVals[c];
-				lstHeaders.push(columnName);
-				lstValues.push(columnValue);
+				if (rowsHeads[c] == "" || !rowsVals[c] || rowsVals[c] == "") continue;
+				var rowName = rowsHeads[c];
+				var rowValue = rowsVals[c];
+				lstHeaders.push(rowName);
+				lstValues.push(rowValue);
 			}
 		}
 
-		if (columnsHeaders != ""){
+		if (columnValues != ""){
 			//adds all selection references about the column side
 			var columnHeads = columnsHeaders.split("_S_");
 			var columnVals = columnValues.split("_S_");
 			for (var c=0; c < columnHeads.length; c++){
-				if (columnHeads[c] == "") continue;
+				if (columnHeads[c] == "" || !columnVals[c] || columnVals[c] == "") continue;
 				var columnName = columnHeads[c];
 				var columnValue = columnVals[c];
 				lstHeaders.push(columnName);
 				lstValues.push(columnValue);
 			}
 		}
-		$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
+
+		if (lstHeaders.length>0)
+			$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
 
 	};
 
