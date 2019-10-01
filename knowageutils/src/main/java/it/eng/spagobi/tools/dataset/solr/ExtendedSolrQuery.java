@@ -79,7 +79,7 @@ public class ExtendedSolrQuery extends SolrQuery {
         return this;
     }
 
-    public ExtendedSolrQuery jsonFacets(List<Projection> groups) throws JsonProcessingException {
+    public ExtendedSolrQuery jsonFacets(List<Projection> groups, int limit) throws JsonProcessingException {
         if (!groups.isEmpty()) {
             Map<String, JsonFacet> jsonFacetMap = new HashMap<>(groups.size());
             for(Projection group : groups) {
@@ -87,7 +87,8 @@ public class ExtendedSolrQuery extends SolrQuery {
                 if(group instanceof CoupledProjection) {
                     jsonFacet = new AggregationJsonFacet(group.getName(), group.getAggregationFunction(), ((CoupledProjection)group).getAggregatedProjection().getName());
                 } else {
-                    jsonFacet = new CountJsonFacet(group.getName());
+
+                    jsonFacet = new CountJsonFacet(group.getName(), limit);
                 }
                 jsonFacetMap.put(group.getName(), jsonFacet);
             }

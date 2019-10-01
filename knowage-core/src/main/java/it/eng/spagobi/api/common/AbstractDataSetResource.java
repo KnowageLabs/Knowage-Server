@@ -84,6 +84,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
+	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -184,6 +185,16 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName, hasSolrFacetPivotOption(dataSet, optionMap)));
 				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 
+				if (isSolrDataset(dataSet)) {
+					IDataSet dataSetCopy = null;
+					if (dataSet instanceof VersionedDataSet) {
+						dataSetCopy = ((VersionedDataSet) dataSet).getWrappedDataset();
+					}
+					SolrDataSet solrDS = (SolrDataSet) dataSetCopy;
+					solrDS.setFacetsLimitOption(getSolrFacetLimitOption(optionMap));
+					((VersionedDataSet) dataSet).setWrappedDataset(solrDS);
+				}
+
 				if (summaryRow != null && !summaryRow.isEmpty()) {
 					JSONObject summaryRowObject = new JSONObject(summaryRow);
 					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
@@ -253,6 +264,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private boolean hasSolrFacetPivotOption(IDataSet dataSet, Map<String, Object> options) {
 		return isSolrDataset(dataSet) && Boolean.TRUE.equals(options.get("solrFacetPivot"));
+	}
+
+	private int getSolrFacetLimitOption(Map<String, Object> options) {
+		if (options.get("facetsLimit")!=null) {
+
+			return Integer.parseInt(options.get("facetsLimit").toString());
+		}
+		return SOLR_FACETS_DEFAULT_LIMIT;
 	}
 
 	private boolean isSolrDataset(IDataSet dataSet) {

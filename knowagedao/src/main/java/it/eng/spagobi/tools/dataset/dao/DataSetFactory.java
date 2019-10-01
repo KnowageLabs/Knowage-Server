@@ -1150,7 +1150,7 @@ public class DataSetFactory {
 			jsonConf.put(SolrDataSetConstants.SOLR_FIELDS, solrFields);
 			res.setConfiguration(jsonConf.toString());
 		}
-
+		res.setSolrQueryParameters(res.getSolrQuery(), res.getParamsMap());
 		return res;
 	}
 }

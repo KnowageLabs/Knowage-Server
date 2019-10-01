@@ -25,18 +25,30 @@ class CountJsonFacet extends JsonFacet {
 
     private static final Logger logger = Logger.getLogger(CountJsonFacet.class);
 
-    private final int mincount = 0;
-    private final int limit = 10;
+
+    private int limit = 10;
 
     public CountJsonFacet(String field) {
         super(field);
 
     }
 
-    public int getMincount() { return mincount; }
+    public CountJsonFacet(String field, int limit) {
+        super(field,limit);
+        this.limit = limit;
+    }
 
+
+	@Override
 	public int getLimit() {
 		return limit;
+	}
+
+
+
+	@Override
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 }

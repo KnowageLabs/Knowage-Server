@@ -527,7 +527,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 						if(obj instanceof Map) {
 							ObjectMapper mapper = new ObjectMapper();
 							try {
-								obj = mapper.writeValueAsString((LinkedHashMap)obj);
+								obj = mapper.writeValueAsString(obj);
 							} catch (JsonProcessingException e) {
 								System.out.println("Impossible to parse JSON");
 								e.printStackTrace();
@@ -613,7 +613,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 			Assert.assertNotNull(dateFormat != null, "dateFormat != null");
 			return getSimpleDateFormat(dateFormat).parse(value);
 		} else if (fieldType.equals(Timestamp.class)) {
+			if (value!=null && !value.isEmpty())
 			return new Timestamp(Instant.parse(value).getMillis());
+			else return null;
 		} else if (fieldType.equals(Boolean.class)) {
 			return Boolean.valueOf(value);
 		} else if (fieldType.equals(Long.class)) {

@@ -50,6 +50,7 @@ public class SolrDataSet extends RESTDataSet {
 
 	public static final String DATASET_TYPE = "SbiSolrDataSet";
 	private static final Logger logger = Logger.getLogger(SolrDataSet.class);
+	private int facetsLimitOption = 10;
 
 	protected SolrConfiguration solrConfiguration;
 	private DatasetEvaluationStrategyType evaluationStrategy;
@@ -109,6 +110,7 @@ public class SolrDataSet extends RESTDataSet {
 				for (int i = 0; i < array.length; i++) {
 					array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
 				}
+
 				solrQuery.setFilterQueries(array);
 			}
 			solrQuery.setFacet(isFacet());
@@ -280,11 +282,16 @@ public class SolrDataSet extends RESTDataSet {
 	public void setSolrQueryParameters(SolrQuery solrQuery, Map parametersMap) {
 		try {
 			JSONObject jsonConfiguration = new JSONObject(configuration);
-
 			List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConfiguration, true);
 			if (filterQueries != null && !filterQueries.isEmpty()) {
 				String[] array = new String[filterQueries.size()];
 				for (int i = 0; i < array.length; i++) {
+					if (filterQueries!= null && filterQueries.get(i) != null && filterQueries.get(i).getSecond() !=null && filterQueries.get(i).getSecond().contains(",")) {
+						String multivalue = filterQueries.get(i).getSecond().replace(","," OR ");
+						multivalue = "("+multivalue+")";
+						array[i] = filterQueries.get(i).getFirst() + ":" + multivalue;
+					}
+					else
 					array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
 				}
 				solrQuery.setFilterQueries(array);
@@ -317,4 +324,13 @@ public class SolrDataSet extends RESTDataSet {
 		}
 		return textFields;
 	}
+
+	public int getFacetsLimitOption() {
+		return facetsLimitOption;
+	}
+
+	public void setFacetsLimitOption(int facetsLimitOption) {
+		this.facetsLimitOption = facetsLimitOption;
+	}
+
 }

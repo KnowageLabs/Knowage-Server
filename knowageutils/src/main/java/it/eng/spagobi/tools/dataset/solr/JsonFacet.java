@@ -34,6 +34,11 @@ abstract class JsonFacet {
 
     }
 
+    public JsonFacet(String field, int limit) {
+        this.field = field;
+        this.limit = limit;
+    }
+
     public String getType() {
         return type;
     }
@@ -44,6 +49,10 @@ abstract class JsonFacet {
 
 	public int getLimit() {
 		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 

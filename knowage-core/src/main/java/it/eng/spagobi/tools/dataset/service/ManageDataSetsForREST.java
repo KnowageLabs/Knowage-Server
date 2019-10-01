@@ -623,7 +623,7 @@ public class ManageDataSetsForREST {
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SPARQL)) {
 			toReturn = manageSPARQLDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
-			toReturn = manageSolrDataSet(savingDataset, jsonDsConfig, json);
+			toReturn = manageSolrDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 			IDataSet dataSet;
 			String query = json.optString((DataSetConstants.QUERY).toLowerCase());
@@ -983,6 +983,62 @@ public class ManageDataSetsForREST {
 		return parametersMap;
 	}
 
+	public HashMap<String, String> getSolrDataSetParametersAsMap(JSONObject json, UserProfile userProfile) {
+		HashMap<String, String> parametersMap = null;
+
+		try {
+			parametersMap = new HashMap<>();
+			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
+			if (parsListJSON == null) {
+				return parametersMap;
+			}
+
+			for (int i = 0; i < parsListJSON.length(); i++) {
+				JSONObject obj = (JSONObject) parsListJSON.get(i);
+				String name = obj.optString("name");
+				String type = null;
+				if (obj.has("type")) {
+					type = obj.optString("type");
+				}
+
+				// check if has value, if has not a valid value then use default
+				// value
+				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+				String tempVal = "";
+				if (hasVal) {
+					tempVal = obj.getString(PARAM_VALUE_NAME);
+				} else {
+					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
+					if (hasDefaultValue) {
+						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
+						logger.debug("Value of param not present, use default value: " + tempVal);
+					}
+				}
+
+				boolean multivalue = false;
+				if (tempVal != null && tempVal.contains(",")) {
+					multivalue = true;
+				}
+
+				String value = "";
+				if (multivalue) {
+
+					value = getMultiValueSolr(tempVal, type);
+				} else {
+					value = getSingleValue(tempVal, type);
+				}
+
+				logger.debug("name: " + name + " / value: " + value);
+				parametersMap.put(name, value);
+			}
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+		}
+		return parametersMap;
+	}
 	public IMetaData getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
 		logger.debug("IN");
 
@@ -1211,7 +1267,7 @@ public class ManageDataSetsForREST {
 		return res;
 	}
 
-	private SolrDataSet manageSolrDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+	private SolrDataSet manageSolrDataSet(boolean savingDataset, JSONObject config, JSONObject json, UserProfile userProfile) throws JSONException {
 		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
 			String prop = json.optString(ja);
 			if (prop != null && !prop.trim().isEmpty()) {
@@ -1230,7 +1286,7 @@ public class ManageDataSetsForREST {
 			}
 		}
 
-		HashMap<String, String> parametersMap = getDataSetParametersAsMap(json);
+		HashMap<String, String> parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
 		String solrType = config.getString(SolrDataSetConstants.SOLR_TYPE);
 		Assert.assertNotNull(solrType, "Solr type cannot be null");
 		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap)
@@ -1291,6 +1347,22 @@ public class ManageDataSetsForREST {
 			}
 		}
 
+		return toReturn;
+	}
+
+	private String getMultiValueSolr(String value, String type) {
+		String toReturn = "(";
+
+		String[] tempArrayValues = value.split(",");
+		for (int j = 0; j < tempArrayValues.length; j++) {
+			String tempValue = tempArrayValues[j];
+			if (j == 0) {
+				toReturn = toReturn + getSingleValue(tempValue, type);
+			} else {
+				toReturn = toReturn + " OR " + getSingleValue(tempValue, type);
+			}
+		}
+		toReturn = toReturn + ")";
 		return toReturn;
 	}
 
@@ -1445,7 +1517,7 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException {
+	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
@@ -1460,8 +1532,14 @@ public class ManageDataSetsForREST {
 			dataSet = setTransformer(dataSet, transformerTypeCode, json);
 		}
 		HashMap<String, String> parametersMap = new HashMap<>();
+		String datasetTypeCode = json.optString(DataSetConstants.DS_TYPE_CD);
+
+		String datasetTypeName = getDatasetTypeName(datasetTypeCode, userProfile);
 		if (parsJSON != null) {
-			parametersMap = getDataSetParametersAsMap(json);
+			if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
+				parametersMap = getSolrDataSetParametersAsMap(json,userProfile);
+			}
+			else parametersMap = getDataSetParametersAsMap(json);
 		}
 		IEngUserProfile profile = userProfile;
 

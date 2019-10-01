@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -27,10 +33,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
