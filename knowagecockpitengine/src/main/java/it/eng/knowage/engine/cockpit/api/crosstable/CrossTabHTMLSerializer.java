@@ -777,9 +777,7 @@ public class CrossTabHTMLSerializer {
 
 					// 7. set selection function with the parent references (on row and column)
 					internalserializeData5 = MonitorFactory.start("CockpitEngine.serializeData.defineClickFunction");
-//					if (cellTypeValue.equalsIgnoreCase("data")) {
-					if (cellTypeValue.equalsIgnoreCase("data") || cellTypeValue.equalsIgnoreCase("partialsum") ||
-							 cellTypeValue.equalsIgnoreCase("totals")) {
+					if (cellTypeValue.equalsIgnoreCase("data") || cellTypeValue.equalsIgnoreCase("partialsum") || cellTypeValue.equalsIgnoreCase("totals")) {
 						String rowCord = "";
 						String rowHeaders = "";
 						String measureRef = "";
@@ -799,9 +797,7 @@ public class CrossTabHTMLSerializer {
 										//just for total/subtotal get the level to set substring of cord
 										levels = crossTab.getRowsRoot().getDistanceFromLeaves();
 									}
-									rowCord = (crossTab.getRowsSpecification().get(posRow) != null)
-											? StringEscapeUtils.escapeJavaScript(getRowCordContent(crossTab,levels,Integer.valueOf(posRow)))
-											: null;
+									rowCord = StringEscapeUtils.escapeJavaScript(getRowCordContent(crossTab,levels,Integer.valueOf(posRow),Integer.valueOf(j)));
 									}
 
 							} else {
@@ -873,15 +869,46 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
-	private String getRowCordContent(CrossTab crossTab, Integer levels, Integer row) {
-		String toReturn = StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(row));
+	/**
+	 * getRowCordContent: check the content of rowSpecification to understand which values are available
+	 * @param crossTab
+	 * @param levels
+	 * @param row
+	 * @return the string with row specification available for the row
+	 */
+	private String getRowCordContent(CrossTab crossTab, Integer levels, Integer row, Integer col) {
+		String toReturn = "";
+		String rowCord = StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(row));
+		int rowsTotal =  crossTab.getRowsSpecification().size();
 
-		if (levels==null || levels < 2)
-			return toReturn;
+		if (levels==null || levels < 2 ||
+			crossTab.getCelltypeOfColumns().get(col).getValue().equalsIgnoreCase("partialsum") ||
+			crossTab.getCelltypeOfColumns().get(col).getValue().equalsIgnoreCase("totals")) //when cellType is DATA (in this case all information are available and we don't need to check content)
+			return rowCord;																	//or columnCelType is total and subtotal (on columns)
 
-//		for (int tr=0; tr<levels-1;tr++) {
-			toReturn = toReturn.substring(0, toReturn.lastIndexOf(crossTab.PATH_SEPARATOR));
-//		}
+
+		if (row-1>= 0 && row-1 <= rowsTotal) {
+			String prevRowCord = StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(row-1));
+			String[] rowCordElems = rowCord.split(crossTab.PATH_SEPARATOR);
+			String[] nextRowCordElems = prevRowCord.split(crossTab.PATH_SEPARATOR);
+
+//			if (row==rowsTotal-1) { //last element row (total or subtotal)
+//				toReturn = crossTab.PATH_SEPARATOR + rowCordElems[1]; //the last element shows the first row specification
+//			}else {
+				for (int n=1; n<rowCordElems.length; n++) { 						 //start from 1 to exclude the first element that is always ""
+					if (rowCordElems[n].equalsIgnoreCase(nextRowCordElems[n])) {
+						toReturn += crossTab.PATH_SEPARATOR + rowCordElems[n];
+					}
+					else
+						break;
+				}
+//			}
+		}else {
+			toReturn = rowCord;
+		}
+
+		if (toReturn.equals("")) toReturn = rowCord;
+
 		return toReturn;
 	}
 
