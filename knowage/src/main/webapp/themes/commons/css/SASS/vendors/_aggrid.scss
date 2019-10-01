@@ -7,6 +7,9 @@ $aggrid-border-color: #d9dcde;
 }
 .ag-theme-balham {
 	font: 400 $mediumFontSize $defaultFontFamily;
+	.editableCell {
+		cursor: pointer;
+	}
 	.ag-body-viewport.ag-layout-auto-height{
 		height: auto;
 	}

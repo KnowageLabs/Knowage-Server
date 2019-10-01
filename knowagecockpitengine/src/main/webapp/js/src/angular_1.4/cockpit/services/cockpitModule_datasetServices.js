@@ -775,6 +775,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
             bodyString = bodyString + ",options:{solrFacetPivot:true}";
         }
+		if(dataset.type == "SbiSolrDataSet" && ngModel.type == "discovery"){
+			if(ngModel.settings.facets.limit) {
+				bodyString += ",options:{'facetsLimit':"+ngModel.settings.facets.limit+"}";
+			}
+		}
 
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
