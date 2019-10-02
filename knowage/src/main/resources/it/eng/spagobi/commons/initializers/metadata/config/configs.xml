@@ -548,6 +548,10 @@
 	<CONFIG label="internal.security.login.maxFailedLoginAttempts" name="Max failed login attempts"
 		description="Specify max value of failed login attempts before account locking" isActive="true"
 		valueCheck="3" valueType="NUM" category="SECURITY" />
+	
+	<CONFIG label="internal.nodejs.chromium.export.path" name="NodeJS Export script path"
+		description="Path of the export script for NodeJS" isActive="true"
+		valueCheck="/opt/knowage/cockpit-export/cockpit-export.js" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 </CONFIGS>
 

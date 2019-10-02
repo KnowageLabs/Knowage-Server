@@ -117,6 +117,7 @@
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
+		<module>../knowage-cockpit-export</module>
 	</modules>
 
 	<build>
