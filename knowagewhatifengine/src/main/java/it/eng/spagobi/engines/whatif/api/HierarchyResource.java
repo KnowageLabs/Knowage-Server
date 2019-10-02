@@ -20,15 +20,19 @@ package it.eng.spagobi.engines.whatif.api;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -44,12 +48,14 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.transform.SwapAxes;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.hierarchy.FilterTreeBuilder;
+import it.eng.spagobi.engines.whatif.hierarchy.NodeFilter;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.slicer.SlicerManager;
 import it.eng.spagobi.engines.whatif.version.SbiVersion;
 import it.eng.spagobi.engines.whatif.version.VersionDAO;
@@ -65,7 +71,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 public class HierarchyResource extends AbstractWhatIfEngineService {
 
-	private static final String NODE_PARM = "node";
 	public static transient Logger logger = Logger.getLogger(HierarchyResource.class);
 
 	@POST
@@ -75,15 +80,12 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		String hierarchyUniqueName = null;
 		List<String> memberUniqueNames = new ArrayList<>();
-		String memberUniqueName;
 		SlicerManager slicerManager = new SlicerManager(getWhatIfEngineInstance().getSpagoBIPivotModel());
 
 		try {
 			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			hierarchyUniqueName = paramsObj.getString("hierarchy");
-			// memberUniqueName = paramsObj.optString("member");
-			// memberUniqueNames.add(memberUniqueName);
 			JSONArray jSONArray = paramsObj.optJSONArray("members");
 			memberUniqueNames = new ArrayList<>();
 			for (int i = 0; i < jSONArray.length(); i++) {
@@ -111,7 +113,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		List<Member> list = new ArrayList<Member>();
-		List<Member> visibleMembers = null;
+		Set<Member> visibleMembers = null;
 		String memberDescription;
 
 		String hierarchyUniqueName = null;
@@ -132,11 +134,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			logger.error("Error reading body", e);
 		}
 
-		// if not a filter axis
-		if (axis >= 0) {
-			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
-			visibleMembers = pm.findVisibleMembers(CubeUtilities.getAxis(axis));
-		}
+		visibleMembers = getVisibleMembers(axis, hierarchyUniqueName);
 
 		logger.debug("Getting the node path from the request");
 		// getting the node path from request
@@ -217,11 +215,9 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				}
 
 				// check the visible members
-				if (visibleMembers != null && axis >= 0) {
-					members.add(new SbiMember(aMember, visibleMembers.contains(aMember), memberDescription));
-				} else {
-					members.add(new SbiMember(aMember, true, memberDescription));
-				}
+
+				members.add(new SbiMember(aMember, visibleMembers.contains(aMember), memberDescription));
+
 			}
 		}
 
@@ -234,162 +230,54 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	}
 
-	@POST
-	@Path("/search")
-	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req) {
-		Hierarchy hierarchy = null;
-		int nodeLimit = WhatIfEngineConfig.getInstance().getDepthLimit();
-		nodeLimit = nodeLimit > 0 ? nodeLimit : Integer.MAX_VALUE;
-		List<Integer> positionList = new ArrayList<Integer>();
-		List<String> fatherNameList = new ArrayList<String>();
-		List<Member> list = new ArrayList<Member>();
-		List<Member> visibleMembers = null;
-
-		String hierarchyUniqueName = null;
-		int axis = -2;
-		String name = null;
-		boolean showS = false;
-
-		try {
-			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
-
-			hierarchyUniqueName = paramsObj.getString("hierarchy");
-			name = paramsObj.getString("name");
-			showS = paramsObj.getBoolean("showS");
-			axis = paramsObj.getInt("axis");
-		} catch (Exception e) {
-			logger.error("Error reading body", e);
-		}
-
-		int lastDepth = -1;
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
-
-		if (axis >= 0) {
-			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
-			visibleMembers = pm.findVisibleMembers(CubeUtilities.getAxis(axis));
-		}
-
-		logger.debug("Getting the hierarchy " + hierarchyUniqueName + "from the cube");
-		try {
-			NamedList<Hierarchy> hierarchies = model.getCube().getHierarchies();
-			for (int i = 0; i < hierarchies.size(); i++) {
-				String hName = hierarchies.get(i).getUniqueName();
-				if (hName.equals(hierarchyUniqueName)) {
-					hierarchy = hierarchies.get(i);
-					break;
-				}
-			}
-		} catch (Exception e) {
-			logger.debug("Error getting the hierarchy " + hierarchy, e);
-			throw new SpagoBIEngineRuntimeException("Error getting the hierarchy " + hierarchy, e);
-		}
-
-		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
-		Level l = hierarchy.getLevels().get(0);
-		try {
-			String nameLower = name.toLowerCase();
-
-			for (int j = 0; j < hierarchy.getLevels().size() && j < nodeLimit; j++) {
-				l = hierarchy.getLevels().get(j);
-				list = l.getMembers();
-				positionList = new ArrayList<Integer>();
-				for (int i = 0; i < list.size(); i++) {
-					String currentNameLower = list.get(i).getName().toString().toLowerCase();
-					if (currentNameLower.contains(nameLower)) {
-						positionList.add(i);
-						if (list.get(i).getParentMember() != null)
-							fatherNameList.add(list.get(i).getParentMember().getUniqueName());
-						lastDepth = j;
-					}
-				}
-			}
-
-			l = hierarchy.getLevels().get(0);
-			list = l.getMembers();
-			for (int i = 0; i < list.size(); i++) {
-				nodes.add(new NodeFilter(list.get(i), lastDepth, fatherNameList, name, visibleMembers, showS));
-			}
-
-		} catch (OlapException e1) {
-			logger.error("Error while adding nodes", e1);
-		}
-		JSONArray serializedobject = new JSONArray();
-
-		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-			NodeFilter nodeFilter = (NodeFilter) iterator.next();
-			try {
-				serializedobject.put(nodeFilter.serialize());
-			} catch (JSONException e) {
-				logger.error("Error serializing JSON", e);
-			}
-		}
-
-		try {
-			return serializedobject.toString();
-		} catch (Exception e) {
-			logger.error("Error serializing the MemberEntry", e);
-			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
-		}
-	}
-
 	@GET
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
 
-	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+	public List<NodeFilter> getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
 			@PathParam("axis") int axis) {
 		Hierarchy hierarchy = null;
 
 		List<Member> list = new ArrayList<Member>();
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
-
-		logger.debug("Getting the hierarchy " + hierarchyUniqueName + "from the cube");
 		try {
-			NamedList<Hierarchy> hierarchies = model.getCube().getHierarchies();
-			for (int i = 0; i < hierarchies.size(); i++) {
-				String hName = hierarchies.get(i).getUniqueName();
-				if (hName.equals(hierarchyUniqueName)) {
-					hierarchy = hierarchies.get(i);
-					break;
-				}
-			}
-		} catch (Exception e) {
-			logger.debug("Error getting the hierarchy " + hierarchy, e);
-			throw new SpagoBIEngineRuntimeException("Error getting the hierarchy " + hierarchy, e);
-		}
+			hierarchy = CubeUtilities.getHierarchy(getPivotModel().getCube(), hierarchyUniqueName);
 
-		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
-		Level l = hierarchy.getLevels().get(0);
-		//// System.out.println(hierarchy.getLevels().size());
-		try {
+			List<NodeFilter> nodes = new ArrayList<NodeFilter>();
+			Level l = hierarchy.getLevels().get(0);
+
 			list = l.getMembers();
 			for (int i = 0; i < list.size(); i++) {
 				nodes.add(new NodeFilter(list.get(i)));
 			}
-		} catch (OlapException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
+			return nodes;
+		} catch (Exception e1) {
+			logger.error("Error while getting filter tree", e1);
+			throw new SpagoBIRuntimeException("Error while getting filter tree", e1);
 		}
 
-		JSONArray serializedobject = new JSONArray();
+	}
 
-		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-			NodeFilter nodeFilter = (NodeFilter) iterator.next();
-			try {
-				serializedobject.put(nodeFilter.serialize());
-			} catch (JSONException e) { // TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	@POST
+	@Path("/slicerTree")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Set<NodeFilter> getSlicerTree(Map<String, String> params) {
 
 		try {
-			return serializedobject.toString();
-		} catch (Exception e) {
-			logger.error("Error serializing the MemberEntry", e);
-			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
+			SlicerManager slicerManager = new SlicerManager((SpagoBIPivotModel) getPivotModel());
+
+			FilterTreeBuilder ftb = new FilterTreeBuilder();
+			ftb.setHierarchy(getHierarchy(params.get("hierarchyUniqueName")));
+			ftb.setTreeLeaves(slicerManager.getSlicers(params.get("hierarchyUniqueName")));
+			ftb.setVisibleMembers(slicerManager.getSlicers(params.get("hierarchyUniqueName")));
+			ftb.setShowSiblings(false);
+			return ftb.build();
+
+		} catch (Exception e1) {
+			logger.error("Error while getting slicer tree", e1);
+			throw new SpagoBIRuntimeException("Error while getting slicer tree", e1);
 		}
 
 	}
@@ -446,102 +334,38 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		}
 	}
 
-	private class NodeFilter {
-		private final String id;
-		private final String name;
-		private final String uniqueName;
-		private boolean collapsed;
-		private boolean visible;
-		private final List<NodeFilter> children;
+	@POST
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Set<NodeFilter> searchMembersByName(SeachParameters seachParameter) {
 
-		public NodeFilter(Member m) throws OlapException {
-			super();
+		try {
+			Hierarchy hierarchy = getHierarchy(seachParameter.getHierarchyUniqueName());
 
-			this.id = m.getUniqueName();
-			this.uniqueName = m.getUniqueName();
-			this.name = m.getCaption();
-			this.visible = false;
-			this.collapsed = false;
-			this.children = new ArrayList<HierarchyResource.NodeFilter>();
+			FilterTreeBuilder ftb = new FilterTreeBuilder();
+			Set<Member> treeLeaves = CubeUtilities.findMembersByName(hierarchy, seachParameter.getName(), false);
+			Set<Member> visibleMembers = getVisibleMembers(seachParameter.getAxis(), seachParameter.getHierarchyUniqueName());
+			ftb.setHierarchy(getHierarchy(seachParameter.getHierarchyUniqueName()));
+			ftb.setTreeLeaves(treeLeaves);
+			ftb.setVisibleMembers(visibleMembers);
+			ftb.setShowSiblings(seachParameter.isShowSiblings());
+			return ftb.build();
 
-			if (m != null) {
-				List<Member> list = (List<Member>) m.getChildMembers();
-				if (list != null && list.size() > 0) {
-					for (int i = 0; i < list.size(); i++) {
-						NodeFilter nf = new NodeFilter(list.get(i));
-						children.add(nf);
-					}
-				}
-			}
+		} catch (Exception e1) {
+			logger.error("Error while searching members", e1);
+			throw new SpagoBIRuntimeException("Error while searching members", e1);
 		}
 
-		@SuppressWarnings("unused")
-		public NodeFilter(Member m, int depth, List<String> fatherNameList, String name, List<Member> visibleMembers, boolean showS) throws OlapException {
+	}
 
-			super();
-			if (visibleMembers != null) {
-				this.visible = visibleMembers.contains(m);
-			} else {
-				this.visible = false;
-			}
-
-			this.id = m.getUniqueName();
-			this.uniqueName = m.getUniqueName();
-			this.name = m.getCaption();
-			this.collapsed = false;
-			this.children = new ArrayList<HierarchyResource.NodeFilter>();
-
-			int curDepth = m.getDepth();
-			if (curDepth <= depth) {
-				List<Member> list = (List<Member>) m.getChildMembers();
-
-				for (int i = 0; i < list.size(); i++) {
-					String parentUN = list.get(i).getParentMember() != null ? list.get(i).getParentMember().getUniqueName() : "";
-					boolean containsName = list.get(i).getName().toLowerCase().contains(name.toLowerCase());
-					if (fatherNameList.contains(parentUN) && containsName && !showS) {
-						this.collapsed = true;
-						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
-					} else if (fatherNameList.contains(parentUN) && showS) {
-						this.collapsed = true;
-						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
-					} else if (isPotentialChild(fatherNameList, list.get(i).getUniqueName())) {
-						this.collapsed = true;
-						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
-					}
-
-				}
-
-			}
-
-		};
-
-		public boolean isPotentialChild(List<String> fatherNameList, String uniqueName) {
-			for (int i = 0; i < fatherNameList.size(); i++) {
-				if (fatherNameList.get(i).contains(uniqueName))
-					return true;
-			}
-
-			return false;
-		}
-
-		public JSONObject serialize() throws JSONException {
-			JSONObject obj = new JSONObject();
-			obj.put("id", id);
-			obj.put("name", name);
-			obj.put("uniqueName", uniqueName);
-			obj.put("collapsed", collapsed);
-			obj.put("visible", visible);
-
-			JSONArray children = new JSONArray();
-
-			for (Iterator iterator = this.children.iterator(); iterator.hasNext();) {
-				NodeFilter nodeFilter = (NodeFilter) iterator.next();
-				children.put(nodeFilter.serialize());
-			}
-
-			obj.put("children", children);
-			return obj;
-		}
+	/**
+	 * @param hierarchyUniqueName
+	 * @return
+	 * @throws OlapException
+	 */
+	private Hierarchy getHierarchy(String hierarchyUniqueName) throws OlapException {
+		return CubeUtilities.getHierarchy(getPivotModel().getCube(), hierarchyUniqueName);
 	}
 
 	private List<SbiVersion> getVersions() {
@@ -573,6 +397,23 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			logger.debug("Closed the connection used to get the versions");
 		}
 		return versions;
+	}
+
+	/**
+	 * @param axis
+	 */
+	private Set<Member> getVisibleMembers(int axis, String hierarchyUniqueName) {
+		Set<Member> visibleMembers = new HashSet<>();
+		if (axis >= 0) {
+			PlaceMembersOnAxes pm = getPivotModel().getTransform(PlaceMembersOnAxes.class);
+			visibleMembers.addAll(pm.findVisibleMembers(CubeUtilities.getAxis(axis)));
+		} else {
+			SlicerManager sm = new SlicerManager((SpagoBIPivotModel) getPivotModel());
+			visibleMembers.addAll(sm.getSlicers(hierarchyUniqueName));
+		}
+
+		return visibleMembers;
+
 	}
 
 	private JSONObject serializeVisibleObject(Member m) throws JSONException {

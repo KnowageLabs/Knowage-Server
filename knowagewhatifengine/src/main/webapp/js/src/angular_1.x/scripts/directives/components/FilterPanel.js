@@ -97,7 +97,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 })
 
 
-function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService,hierarchyTreeService,FiltersService) {
+function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr, indexChangingService,hierarchyTreeService,FiltersService,$httpParamSerializer) {
 
 
 	var visibleSelectedTracker = [];
@@ -110,6 +110,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.hierarchyTreeService = hierarchyTreeService;
 	$scope.FiltersService = FiltersService;
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
+
 
 
 
@@ -137,8 +138,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.unSelectAll = function(tree){
 
 		hierarchyTreeService.setVisibilityForAll(tree,false);
-		tree[0].visible = true;
-		filterPlaceMemberOnAxis();
+
+
+			tree[0].visible = true;
+			if(!$scope.isSlicer){
+				filterPlaceMemberOnAxis();
+			}
+
+
+
 		tree[0].visible = false;
 
 	}
@@ -222,7 +230,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 
             if(loadHierarchy){
-			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
+            	if($scope.isSlicer){
+            		$scope.getSlicerTree();
+            	}else{
+            		$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
+            	}
+
 			$scope.dataPointers.push(filterFather);
             }
 
@@ -239,6 +252,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 *Tree functionalities
 	 **/
 	$scope.expandTreeAsync = function(item){
+
+		if($scope.selectView ){
+			item.collapsed = true;
+			return;
+		}
 
 		if($scope.bindMode){
 			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBinding.warning'), 'Warning');
@@ -306,13 +324,38 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			.then(function(response) {
 					checkIfExists(response.data);
 					$scope.searchSucessText = $scope.searchText.toLowerCase();
-					$scope.hierarchyTreeService.setIsSlicer(response.data,filterFather)
+					//$scope.hierarchyTreeService.setIsSlicer(response.data,filterFather)
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 			});
 		}
 
 	};
+
+	$scope.getSlicerTree = function(){
+		var queryParams = {};
+		queryParams.SBI_EXECUTION_ID = JSsbiExecutionID;
+		var body = {};
+		body.hierarchyUniqueName = filterFather;
+		sbiModule_restServices.promisePost("1.0/hierarchy/slicerTree?" + $httpParamSerializer(queryParams),"",body)
+		.then(function(response) {
+			checkIfExists(response.data);
+			$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data);
+
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
+	});
+	}
+
+	$scope.applyView = function(){
+		if(!$scope.selectView){
+			hierarchyTreeService.setCollapsedForAll($scope.data,true);
+		}else{
+			$scope.getSlicerTree();
+		}
+	}
+
+
 
 	checkIfExists = function(data){
 		var exist = false;
@@ -332,6 +375,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 
 	$scope.getHierarchyMembersAsynchronus = function(hierarchy,axis,node,id){
+
 		var toSend={
 			'hierarchy':hierarchy,
 			'axis':axis,
@@ -341,10 +385,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promisePost
 		(encoded,"",toSend)
 		.then(function(response) {
-				//$scope.handleResponse(response)
-			if(axis == -1){
-				$scope.hierarchyTreeService.setIsSlicer(response.data,hierarchy)
-			}
 
 			  if(node!=null){
 				  var shouldSearchVisible = true;
@@ -483,7 +523,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			if($scope.olapMode){
 				$scope.FiltersService.setSlicers(filterFather,[$scope.filterSelected[$scope.filterAxisPosition]])
 			}else{
-				$scope.FiltersService.setSlicers(filterFather,$scope.hierarchyTreeService.getSlicerMembers($scope.data))
+				$scope.FiltersService.setSlicers(filterFather,$scope.hierarchyTreeService.getVisibleMembers($scope.data))
 
 			}
 			if($scope.selectedAttribute){

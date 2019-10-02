@@ -117,6 +117,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.olapMode = false;
 
 	$scope.showSiblings = false;
+	$scope.selectview = false;
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;

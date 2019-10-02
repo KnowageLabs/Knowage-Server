@@ -31,12 +31,16 @@
 					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
 				</md-checkbox>	
 				
-				<md-button ng-if="!isSlicer" ng-click="unSelectAll(data)" class="md-raised">
+				<md-button  ng-click="unSelectAll(data)" class="md-raised">
 					<md-tooltip md-direction="top">
           				{{translate.load("sbi.common.unselect.all");}}
         			</md-tooltip>
 					{{translate.load("sbi.common.unselect.all");}}
 				</md-button>
+				<md-checkbox  ng-show="isSlicer" ng-change="applyView()" ng-model="selectView" aria-label="Select only view" style="display:initial;">
+					<span style="font-size: 10px">{{selectView?'Selected only view':'Complete hierarchy view'}}</span>
+				</md-checkbox>
+				
     	</div>
 		<div layout="row" flex>
 		<div ui-tree>

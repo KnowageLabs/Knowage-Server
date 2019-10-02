@@ -11,28 +11,15 @@
 				ng-click="hideAsyncTree(item)" class="dialog-button-padding"> 
 		</md-icon>
 		
-		<span  ng-show="activeaxis == -1 && !olapMode" style="padding-left:35px;">
-			<md-checkbox ng-model="item.isSlicer">
-			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
-				{{item.name}}
-			</span>
-			</md-checkbox>
-		</span>	
-		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1 && olapMode" id="tdl-value-{{item.name}}">
-			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
-				{{item.name}}
-			</span>
-			<md-icon md-font-icon="fa fa-check-circle-o" class="icon-color-green" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
-			</md-icon>
-		</span>
-		<span ng-click="" ng-show="activeaxis >= 0 && !item.leaf">
+
+		<span ng-click="" ng-show=" !item.leaf">
 			<md-checkbox ng-model="item.visible">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
 			</span>
 			</md-checkbox>
 		</span>
-		<span ng-click="" ng-show="activeaxis >= 0 && item.leaf" style="padding-left:35px;">
+		<span ng-click="" ng-show=" item.leaf" style="padding-left:35px;">
 			<md-checkbox ng-model="item.visible" >
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
 				{{item.name}}

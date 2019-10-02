@@ -4,7 +4,9 @@
 package it.eng.spagobi.engines.whatif.model.transform.slicer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -43,11 +45,11 @@ public class SlicerManager {
 		getSlicers(getHierarchy(hierarchyUniqueName)).clear();
 	}
 
-	private List<org.olap4j.metadata.Member> getSlicers(Hierarchy hierarchy) {
-		return ph.getSlicer(hierarchy);
+	private Set<Member> getSlicers(Hierarchy hierarchy) {
+		return new HashSet<Member>(ph.getSlicer(hierarchy));
 	}
 
-	private List<org.olap4j.metadata.Member> getSlicers(String hierarchyUniqueName) {
+	public Set<org.olap4j.metadata.Member> getSlicers(String hierarchyUniqueName) {
 		return getSlicers(getHierarchy(hierarchyUniqueName));
 	}
 

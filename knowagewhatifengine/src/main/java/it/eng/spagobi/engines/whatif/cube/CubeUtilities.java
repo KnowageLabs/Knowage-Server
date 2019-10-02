@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.cube;
 
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +40,14 @@ import org.olap4j.metadata.NamedList;
 import org.pivot4j.PivotModel;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+
 public class CubeUtilities {
 
 	public static final String PATH_DELIM = "[";
@@ -61,6 +63,33 @@ public class CubeUtilities {
 	 * @return the olap Member found.. null otherwise
 	 * @throws OlapException
 	 */
+	/**
+	 * @param hierarchy
+	 * @param name
+	 * @param strict
+	 *            TODO
+	 * @return
+	 * @throws OlapException
+	 */
+	public static Set<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict) throws OlapException {
+		Set<Member> searchResultMembers = new HashSet<Member>();
+		for (Level level : hierarchy.getLevels()) {// && j < nodeLimit
+
+			for (Member member : level.getMembers()) {
+
+				if (member.getName().toLowerCase().contains(name.toLowerCase()) && !strict) {
+
+					searchResultMembers.add(member);
+
+				} else if (member.getName().equalsIgnoreCase(name)) {
+
+				}
+
+			}
+		}
+		return searchResultMembers;
+	}
+
 	public static Member getMember(Cube cube, String memberUniqueName) throws OlapException {
 		Hierarchy hierarchy = null;
 		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
@@ -231,8 +260,8 @@ public class CubeUtilities {
 			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 			hierarchy = hierarchies.get(hierarchyUsed);
 		}
-		if(hierarchy == null){
-			hierarchy= versionDimension.getDefaultHierarchy();
+		if (hierarchy == null) {
+			hierarchy = versionDimension.getDefaultHierarchy();
 		}
 
 		return hierarchy;
@@ -290,9 +319,7 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Search if the specified member(s) currently exists, retrieve the
-	 * corresponding object(s) and insert it in the cellMembers array (with a
-	 * substitution)
+	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and insert it in the cellMembers array (with a substitution)
 	 */
 	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
 		boolean memberFound = false;
@@ -447,9 +474,8 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * uniqueNameParts: parts of the unique name of the current cell selected
-	 * memberToSearchSimpleName: specified level part in the member expression,
-	 * ex: Drink.Dairy in the member name [Product].[Drink.Dairy]
+	 * uniqueNameParts: parts of the unique name of the current cell selected memberToSearchSimpleName: specified level part in the member expression, ex:
+	 * Drink.Dairy in the member name [Product].[Drink.Dairy]
 	 */
 	private static String generateUniqueName(String uniqueNameParts[], String memberToSearchSimpleName) {
 		String[] uniqueNamesPartsCopy = new String[uniqueNameParts.length];
@@ -483,8 +509,7 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Transform a string separated with dot in a string with square brackets
-	 * separated by dot Ex: Name.Level -> [Name].[Level]
+	 * Transform a string separated with dot in a string with square brackets separated by dot Ex: Name.Level -> [Name].[Level]
 	 */
 	private static String formatNameWithSquareBracket(String name) {
 		ArrayList<String> nameParts = new ArrayList<String>();

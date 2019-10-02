@@ -41,12 +41,12 @@
 			}
 		}
 
-		function visibilityManagerVisitor(visible){
-			this.visible = visible;
+		function propertyManagerVisitor(propertyName,value){
+			this[propertyName] = value;
 
 			this.visit = function(element){
 
-				element.visible = this.visible;
+				element[propertyName] = this.value;
 
 			}
 		}
@@ -104,7 +104,14 @@
 		var setVisibilityForAll = function(tree,visible){
 
 			treeIteratorService
-			.accept(new visibilityManagerVisitor(visible))
+			.accept(new propertyManagerVisitor('visible',visible))
+			.iterate(tree,'children')
+		}
+
+		var setCollapsedForAll  = function(tree,collapsed){
+
+			treeIteratorService
+			.accept(new propertyManagerVisitor('collapsed',collapsed))
 			.iterate(tree,'children')
 		}
 
@@ -121,6 +128,7 @@
 			getSlicerMembers : getSlicerMembers,
 			setIsSlicer:setIsSlicer,
 			setVisibilityForAll:setVisibilityForAll,
+			setCollapsedForAll:setCollapsedForAll,
 			isAnyVisible:isAnyVisible
 
 		}
