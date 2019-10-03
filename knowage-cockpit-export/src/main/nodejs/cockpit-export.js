@@ -26,7 +26,7 @@ try {
 	encodedUserId = process.argv[3];
 } catch(e) {
 	console.log("Invalid user id at argumet 2", e);
-	process.exit(3);
+	process.exit(2);
 }
 
 // Arg[3]: output path
@@ -39,7 +39,21 @@ output = process.argv[4];
 
 var sheetCount = process.argv[5];
 
-var sheetHeight = process.argv[6];
+var sheetWidth = process.argv[6];
+if (sheetWidth == undefined) {
+	console.log("Invalid sheet width at argument 6", e);
+	process.exit(2);
+} else {
+	sheetWidth = new Number(sheetWidth);
+}
+
+var sheetHeight = process.argv[7];
+if (sheetWidth == undefined) {
+	console.log("Invalid sheet height at argument 7", e);
+	process.exit(2);
+} else {
+	sheetHeight = new Number(sheetHeight);
+}
 
 // Parameter ok, start browsing
 async function exportSheets() {
@@ -47,16 +61,16 @@ async function exportSheets() {
 	try {
 		const browser = await puppeteer.launch({
 			ignoreHTTPSErrors: true,
+			// Really, really important!
+			defaultViewport: { width: sheetWidth, height: sheetHeight, deviceScaleFactor: 0.80 },
 			headless: true,
 			args: [
-					'--window-size=2048,1080',
+					'--window-size=' + sheetWidth + ',' + sheetHeight + '',
 					'--no-sandbox'
 		]});
 
 		// Get a page
 		const page = (await browser.pages())[0];
-
-		await page.setViewport({ width: 2048, height: 1080 });
 
 		await page.setRequestInterception(true);
 
@@ -95,7 +109,7 @@ async function exportSheets() {
 				"sec-fetch-user": undefined,
 				"sec-fetch-mode": undefined,
 				"Pragma": undefined,
-		    "Cache-Control": undefined
+				"Cache-Control": undefined
 			});
 
 			request.continue({headers});
@@ -114,19 +128,14 @@ async function exportSheets() {
 			console.log("Generate image for sheet " + currSheet);
 			await page.emulateMedia('print');
 			
-
-			/*await page.screenshot({
-				path: path.join(output, "sheet_" + currSheet + ".png" ),
-				type: "png"
-			});*/
-			
 			await page.pdf({
-				path: path.join(output, "output.pdf"),
-				scale: 0.85,
+				path: path.join(output, "sheet_" + currSheet + ".pdf" ),
 				displayHeaderFooter: false,
 				printBackground: true,
 				landscape: true,
 				format: "A4",
+				width: sheetWidth,
+				height: sheetHeight,
 				margin: {
 					top: 0, right: 0, bottom: 0, left: 0
 				}
