@@ -282,7 +282,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.showDatasetDetails = function() {
-		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid() && !$scope.showExportDriverPanel;
+		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
 	};
 
 
@@ -532,6 +532,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		} else {
 			console.info("Format " + format + " not supported");
 		}
+		$scope.showDriversForExport = false;
+	}
+
+	$scope.hidePanel = function() {
 		$scope.showDriversForExport = false;
 	}
 
