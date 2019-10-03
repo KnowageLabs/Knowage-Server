@@ -845,7 +845,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     $scope.relationsListColumns = [
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.relation.name"), "name": "relationName"},
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.source.fields"), "name": "sourceFields"},
-    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.entity"), "name": "targetEntity"},
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.entity"), "name": "targetEntityLabel"},
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "targetFields"},
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "joinType"}
     ]

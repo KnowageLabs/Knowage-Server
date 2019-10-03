@@ -552,6 +552,7 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("relationName", relationName);
 			fieldNode.put("sourceFields", sourceText);
 			fieldNode.put("targetEntity", targetEntityUniqueName);
+			fieldNode.put("targetEntityLabel", targetEntityLabel);
 			fieldNode.put("targetFields", targetText);
 			fieldNode.put("joinType", relationJoinType);
 			fieldNode.put("isConsidered", true);
