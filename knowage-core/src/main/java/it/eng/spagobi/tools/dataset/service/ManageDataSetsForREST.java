@@ -1289,7 +1289,7 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
 		String solrType = config.getString(SolrDataSetConstants.SOLR_TYPE);
 		Assert.assertNotNull(solrType, "Solr type cannot be null");
-		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap)
+		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap, userProfile)
 				: new FacetSolrDataSet(config, parametersMap);
 		return res;
 	}

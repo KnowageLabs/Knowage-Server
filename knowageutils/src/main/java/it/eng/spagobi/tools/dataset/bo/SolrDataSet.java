@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy;
@@ -73,6 +74,13 @@ public class SolrDataSet extends RESTDataSet {
 		evaluationStrategy = DatasetEvaluationStrategyType.SOLR;
 	}
 
+	public SolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap, UserProfile userProfile) {
+		this.setParamsMap(parametersMap);
+		setConfiguration(jsonConf.toString());
+		initConf(jsonConf, true,userProfile);
+		evaluationStrategy = DatasetEvaluationStrategyType.SOLR;
+	}
+
 	@Override
 	public void initConf(JSONObject jsonConf, boolean resolveParams) {
 
@@ -82,7 +90,54 @@ public class SolrDataSet extends RESTDataSet {
 
 	}
 
+
+	public void initConf(JSONObject jsonConf, boolean resolveParams, UserProfile userProfile) {
+
+		initSolrConfiguration(jsonConf, resolveParams, userProfile);
+		initDataProxy(jsonConf, resolveParams);
+		initDataReader(jsonConf, resolveParams);
+
+	}
+
 	protected void initSolrConfiguration(JSONObject jsonConf, boolean resolveParams) {
+		try {
+			solrConfiguration = new SolrConfiguration();
+			String address = getProp(SolrDataSetConstants.SOLR_BASE_ADDRESS, jsonConf, false, resolveParams);
+			solrConfiguration.setUrl(address);
+			String collection = getProp(SolrDataSetConstants.SOLR_COLLECTION, jsonConf, false, resolveParams);
+			solrConfiguration.setCollection(collection);
+			SolrQuery solrQuery = new SolrQuery();
+			String query = getProp(SolrDataSetConstants.SOLR_QUERY, jsonConf, true, resolveParams);
+			if (query == null || query.isEmpty()) {
+				query = "*.*";
+			}
+			solrQuery.setQuery(query);
+			String fieldList = getProp(SolrDataSetConstants.SOLR_FIELD_LIST, jsonConf, true, resolveParams);
+			if (fieldList != null && !fieldList.trim().isEmpty()) {
+				solrQuery.setFields(fieldList.split(","));
+			}
+			String solrFields = getProp(SolrDataSetConstants.SOLR_FIELDS, jsonConf, true, resolveParams);
+			if (solrFields != null && !solrFields.trim().isEmpty()) {
+				solrConfiguration.setSolrFields(solrFields);
+			}
+
+			List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConf, true);
+			if (filterQueries != null && !filterQueries.isEmpty()) {
+				String[] array = new String[filterQueries.size()];
+				for (int i = 0; i < array.length; i++) {
+					array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
+				}
+
+				solrQuery.setFilterQueries(array);
+			}
+			solrQuery.setFacet(isFacet());
+			solrConfiguration.setSolrQuery(solrQuery);
+		} catch (JSONException e) {
+			throw new ConfigurationException("Problems in configuration of solr query", e);
+		}
+	}
+
+	protected void initSolrConfiguration(JSONObject jsonConf, boolean resolveParams, UserProfile userProfile) {
 		try {
 			solrConfiguration = new SolrConfiguration();
 			String address = getProp(SolrDataSetConstants.SOLR_BASE_ADDRESS, jsonConf, false, resolveParams);
