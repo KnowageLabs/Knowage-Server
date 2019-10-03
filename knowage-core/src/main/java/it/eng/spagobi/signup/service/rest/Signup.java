@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.signup.service.rest;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Security;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.mail.Authenticator;
@@ -46,7 +48,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.eng.spagobi.commons.validation.PasswordChecker;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +55,10 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.hazelcast.core.IMap;
 
 import it.eng.spago.error.EMFUserError;
@@ -66,11 +71,14 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -81,6 +89,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.publishers.PublisherService;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.signup.validation.SignupJWTTokenManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -362,44 +371,43 @@ public class Signup {
 		logger.debug("OUT");
 	}
 
-	@POST
+	@GET
 	@Path("/active")
 	@PublicService
-	public String active(@Context HttpServletRequest req) {
+	public String active(@Context HttpServletRequest request) throws JSONException {
 		logger.debug("IN");
-
+		
+		String token = request.getParameter("token");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-		String id = req.getParameter("accountId");
-		String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
+		String strLocale = GeneralUtilities.trim(request.getParameter("locale"));
 		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_") + 1));
-		String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
 
 		try {
+			String userId = SignupJWTTokenManager.verifyJWTToken(token);
+			
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-			SbiUser user = userDao.loadSbiUserById(Integer.parseInt(id));
-
+			SbiUser user = userDao.loadSbiUserByUserId(userId);
+			
 			if (user == null) {
 				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
-
 			}
-
+			
 			if (!user.getFlgPwdBlocked()) {
 				String msg = msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale);
 				return new JSONObject("{message: '" + msg + "'}").toString();
 			}
-
-			long now = System.currentTimeMillis();
-			if (now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000)
-				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationExpired", "messages", locale) + "'}").toString();
-
+	
 			user.setFlgPwdBlocked(false);
 			userDao.updateSbiUser(user, null);
 
 			logger.debug("OUT");
 			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
-		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
+		} catch (TokenExpiredException te) {
+			logger.error("Expired Token ["+token+"]", te);
+			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.expiredToken", "messages", locale) + "',expired:true}").toString();
+		} catch (Exception e) {
+			logger.error("Generic token validation error ["+token+"]", e);
+			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "'}").toString();
 		}
 	}
 
@@ -570,56 +578,52 @@ public class Signup {
 				CommunityManager communityManager = new CommunityManager();
 				communityManager.saveCommunity(community, enterprise, user.getUserId(), req);
 			}
-			StringBuffer sb = new StringBuffer();
-			sb.append("<HTML>");
-			sb.append("	<HEAD>");
-			sb.append("		<TITLE>Activation user</TITLE>");
-			sb.append("	</HEAD>");
-			sb.append("	<BODY>");
-
-			logger.debug("Preparing activation mail for user [" + username + "]");
-			// String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
-			String subject = msgBuilder.getMessage("signup.active.msg.1", "messages", locale);
-			logger.debug("Activation mail's subject set to [" + subject + "]");
-			// String body = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
-			String body = msgBuilder.getMessage("signup.active.msg.2", "messages", locale) + " ";
-			logger.debug("Activation mail's body set to [" + body + "]");
-
+					    
 			String host = req.getServerName();
 			logger.debug("Activation url host is equal to [" + host + "]");
 			int port = req.getServerPort();
 			logger.debug("Activation url port is equal to [" + port + "]");
+			
+			//Get confirmation mail template
+			String mailText = Resources.toString(getClass().getResource("/templates/confirmationMailTemplate.html"), Charsets.UTF_8);
 
-			// get uuid to authenticat request
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuid = uuidGen.generateRandomBasedUUID();
+			logger.debug("Preparing activation mail for user [" + username + "]");
+			String subject = msgBuilder.getMessage("signup.active.subject", "messages", locale);
+			logger.debug("Activation mail's subject set to [" + subject + "]");
 
-			String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + locale + "&uuid=" + uuid;
+			String token = SignupJWTTokenManager.createJWTToken(user.getUserId());
 
+			String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&locale=" + locale;
 			URL url = new URL(req.getScheme(), host, port, urlString);
+			
+			//Replacing all placeholder occurencies in template with dynamic user values
+			mailText = mailText.replaceAll("%%WELCOME%%",msgBuilder.getMessage("signup.active.welcome", "messages", locale));
+			mailText = mailText.replaceAll("%%USERNAME%%",username);
+			mailText = mailText.replaceAll("%%THANKS_MESSAGE%%",msgBuilder.getMessage("signup.active.thanks", "messages", locale));
+			mailText = mailText.replaceAll("%%WELCOME_MESSAGE%%",msgBuilder.getMessage("signup.active.message", "messages", locale));
+			mailText = mailText.replaceAll("%%URL%%",url.toString());
+			mailText = mailText.replaceAll("%%URL_LABEL%%", msgBuilder.getMessage("signup.active.labelUrl", "messages", locale));
+			mailText = mailText.replaceAll("%%BOOKMARK%%", msgBuilder.getMessage("signup.active.bookmark", "messages", locale));
+			mailText = mailText.replaceAll("%%QA%%", msgBuilder.getMessage("signup.active.qa", "messages", locale));
+			mailText = mailText.replaceAll("%%GITHUB%%", msgBuilder.getMessage("signup.active.github", "messages", locale));
+			mailText = mailText.replaceAll("%%DOCUMENTATION%%", msgBuilder.getMessage("signup.active.documentation", "messages", locale));
 
 			logger.debug("Activation url is equal to [" + url.toExternalForm() + "]");
-			body += " <a href=\"" + url.toString() + "\">" + msgBuilder.getMessage("signup.active.labelUrl", "messages", locale) + "</a>";
-			sb.append(body);
 			logger.debug("Activation mail for user [" + username + "] succesfully prepared");
 
-			sb.append("	</BODY>");
-			sb.append("</HTML>");
-			String mailTxt = sb.toString();
+//			// put on hazelcast map uuid
+//			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+//					SpagoBIConstants.DISTRIBUTED_MAP_FOR_SIGNUP);
+//
+//			mapLocks.put(Integer.valueOf(id).toString(), uuid.toString());
 
-			// put on hazelcast map uuid
-			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-					SpagoBIConstants.DISTRIBUTED_MAP_FOR_SIGNUP);
-
-			mapLocks.put(Integer.valueOf(id).toString(), uuid.toString());
-
-			sendMail(email, subject, mailTxt);
+			sendMail(email, subject, mailText);
 
 			String okMsg = msgBuilder.getMessage("signup.ok.message", "messages", locale);
 
 			// Captcha is burned and must be reloaded at client side
 			req.getSession().removeAttribute(Captcha.NAME);
-			
+
 			logger.debug("OUT");
 			return Response.ok(new JSONObject().put("message", okMsg).toString()).build();
 

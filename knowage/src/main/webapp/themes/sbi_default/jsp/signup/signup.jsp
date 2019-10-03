@@ -39,9 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
 		   <!-- Bootstrap -->
 		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
-		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/css/customStyle.css",currTheme)%>' type='text/css' />
-    
-    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+		<link rel="stylesheet" type="text/css"  href="<%= urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
+    	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
   </head>
 
   <body class="kn-login" ng-app="signUp" ng-controller="signUpCtrl" ng-cloak>
@@ -93,7 +92,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<script type="text/javascript">    
 
     angular.module('signUp', ['ngMaterial'])
-    .controller('signUpCtrl', function($scope,$http,$window,$mdToast,$timeout) {
+    .controller('signUpCtrl', function($scope,$http,$window,$timeout) {
+    	$scope.popup = function(type,message){
+    		Toastify({
+    			text: message,
+    			duration: 10000,
+    			close: true,
+    			className: type == 'error' ? 'kn-warningToast' : 'kn-infoToast',
+    			stopOnFocus: true
+    		}).showToast();
+    	}
+    	
+    	
 	  $scope.newUser = {};
 	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
 	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
@@ -117,23 +127,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  );
 				  return;
 			  }
-			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/create?SBI_EXECUTION_ID=-1")%>'
-					  , $scope.newUser)
+			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/create?SBI_EXECUTION_ID=-1")%>', $scope.newUser)
 			  .then(function(response) {
 				  if(response.data.errors){
-						$mdToast.show(
-						    $mdToast.simple()
-						      .textContent(response.data.errors[0].message)
-						  );
+					  $scope.popup('error',response.data.errors[0].message)
 				  }else{
-					  $mdToast.show(
-					    $mdToast.simple()
-					      .textContent(response.message)
-					  );
+					  $scope.popup('message',response.data.message)
+					  $scope.newUser = {};
 					  $timeout(function(){
 						  $window.parent.location.href = '<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>';
-					  }, 1000);
-					  
+					  }, 5000);
 				  }
 				  
 				  // Reset the captcha
@@ -152,5 +155,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     
   	</script>
+  	<script type="text/javascript" src="<%= urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.js")%>"></script>
   </body>
 </html>

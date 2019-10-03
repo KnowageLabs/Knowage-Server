@@ -1,0 +1,84 @@
+.kn-activation{
+	height: auto;
+	min-height: auto;
+	.top, .center, .bottom {
+		display:flex;
+		justify-content:center;
+		align-items:center;
+	}
+	.top {
+		margin: 20px auto;
+		justify-content: space-between;
+		max-width: 700px;
+		.social {
+			display: flex;
+		    height: 50px;
+		    justify-content: center;
+		    align-items: center;
+		    a {
+		    	margin: 5px;
+		    }
+		}
+	}
+	.center {
+		width: 100%;
+		height:336px;
+		background: url('../img/defaultTheme/activationBackground.png') no-repeat top center;
+		position: relative;
+		z-index: 1;
+		.activation, .error {
+			position: relative;
+			z-index: 3;
+			display:flex;
+			flex-direction:column;
+			justify-content:center;
+			align-items:center;
+			p {
+				color: white;
+				text-align: center;
+				font-family: 'roboto';
+				font-size: 20px;
+				width: 100%;
+				max-width: 500px;
+				padding: 8px;
+			}
+		}
+		.colorOverlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 2;
+			&.warning {
+				background-color: rgba($negativeColor,.6);
+			}
+			&.success {
+				background-color: rgba($baseColor,.6);
+			}
+		}
+	}
+	.bottom {
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		margin:0 auto;
+    	max-width: 700px;
+    	.third {
+    		align-items: center;
+    		height: 300px;
+		    display: flex;
+		    flex-direction: column;
+		    justify-content: flex-start;
+		    p {
+		    	text-align: center;
+		    }
+		    a {
+		    	height: 100px;
+		    	display: flex;
+		    	justify-content: center;
+		    	align-items: center;
+		    }
+    	}
+	}
+}
