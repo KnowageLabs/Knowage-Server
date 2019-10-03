@@ -551,7 +551,7 @@
 	
 	<CONFIG label="internal.nodejs.chromium.export.path" name="NodeJS Export script path"
 		description="Path of the export script for NodeJS" isActive="true"
-		valueCheck="/opt/knowage/cockpit-export/cockpit-export.js" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+		valueCheck="/opt/knowage/cockpit-export" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 </CONFIGS>
 
