@@ -77,11 +77,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	</div>
   	<div class="center">
   		<div class="loading" ng-if="loading">
-  			<p>{{translate.load('loading')}}</p>
+  			<p>{{translate.load('sbi.general.loading')}}</p>
   		</div>
   		<div class="activation" ng-if="activation" >
   			<p>{{activation}}</p>
-			<button class="md-button md-raised md-primary md-knowage-theme">{{translate.load('login')}}</button>
+			<button class="md-button md-raised md-primary md-knowage-theme">{{translate.load('sbi.execution.sendmail.login')}}</button>
   		</div>
   		<div class="error" ng-if="error">
   			<p>{{error}}</p>
