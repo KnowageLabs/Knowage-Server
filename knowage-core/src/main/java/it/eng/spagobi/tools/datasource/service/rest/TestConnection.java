@@ -42,6 +42,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -182,6 +183,7 @@ public class TestConnection {
 						return new JSONObject().toString();
 					} catch (Exception e) {
 						logger.error("Error connecting to the mongoDB", e);
+						throw new SpagoBIException("Error connecting to the mongoDB", e);
 					} finally {
 						if (mongoClient != null) {
 							mongoClient.close();
@@ -208,13 +210,13 @@ public class TestConnection {
 				return new JSONObject().toString();
 			} else {
 				JSONObject toReturn = new JSONObject();
-				toReturn.put("error", "");
+				toReturn.put("error", "Connection KO");
 				return toReturn.toString();
 			}
 		} catch (Exception ex) {
 			logger.error("Error testing datasources", ex);
 			JSONObject toReturn = new JSONObject();
-			toReturn.put("error", "Connection Test failed, please look for more details in log file and check Your parameters");
+			toReturn.put("error", ex.getMessage());
 			return toReturn.toString();
 		}
 	}
