@@ -303,7 +303,16 @@ public class ContentServiceImplSupplier {
 		}
 	}
 
-	private boolean checkParametersErrors(IEngUserProfile profile, Integer biobjectId, String roleName, Map parameters) {
+	/**
+	 * TODO
+	 *
+	 * @param profile    TODO
+	 * @param biobjectId TODO
+	 * @param roleName   TODO
+	 * @param parameters TODO
+	 * @throws SecurityException Map parameters is not compatible with the document in relation to profile e role
+	 */
+	private void checkParametersCorrectness(IEngUserProfile profile, Integer biobjectId, String roleName, Map parameters) throws SecurityException {
 		logger.debug("IN: user id = [" + ((UserProfile) profile).getUserId() + "], biobjectid = [" + biobjectId + "], " + "roleName = [" + roleName
 				+ "], parameters = [" + parameters + "]");
 		Monitor monitor = MonitorFactory.start("spagobi.service.ContentSupplier.checkParametersErrors");
@@ -317,13 +326,17 @@ public class ContentServiceImplSupplier {
 			boolean onEditMode = (parameters.get(EngineStartServletIOManager.ON_EDIT_MODE) != null);
 			List errors = instance.getParametersErrors(onEditMode);
 			if (errors != null && errors.size() > 0) {
-				return false;
-			} else {
-				return true;
+				String msg = String.format(
+						"Document with id %s cannot be executed by the user [%s] with role [%s] with the input parameters [%s]. With following errors: [%s]",
+						biobjectId, profile, roleName, parameters, errors);
+				logger.error(msg);
+				throw new SecurityException(msg);
 			}
 		} catch (Exception e) {
-			logger.error("Error while cheking parameters", e);
-			return false;
+			String msg = String.format("Error during execution of document with id %s by the user [%s] with role [%s] with the input parameters [%s]",
+					biobjectId, profile, roleName, parameters);
+			logger.error(msg, e);
+			throw new SecurityException(msg, e);
 		} finally {
 			logger.debug("OUT");
 			monitor.stop();
@@ -383,8 +396,6 @@ public class ContentServiceImplSupplier {
 				parameters = new HashMap();
 			}
 
-			boolean parametersAreCorrect = false;
-
 			String roleName = (String) parameters.get("SBI_EXECUTION_ROLE");
 			if (roleName != null) {
 				// if a role is specified, check if it is a valid role for
@@ -399,7 +410,7 @@ public class ContentServiceImplSupplier {
 					}
 				}
 				// check if parameter values are correct for the role
-				parametersAreCorrect = checkParametersErrors(profile, biobj.getId(), roleName, parameters);
+				checkParametersCorrectness(profile, biobj.getId(), roleName, parameters);
 			} else {
 				// if a role is not specified, iterate on valid roles
 				logger.debug("Execution role not specified: iterating on all available roles...");
@@ -407,22 +418,12 @@ public class ContentServiceImplSupplier {
 				while (it.hasNext()) {
 					roleName = it.next().toString();
 					// check if parameter values are correct for the role
-					parametersAreCorrect = checkParametersErrors(profile, biobj.getId(), roleName, parameters);
-					if (parametersAreCorrect) {
-						break;
-					} else {
-						logger.debug("Role " + roleName + " is NOT compatible with input parameters");
-					}
+					checkParametersCorrectness(profile, biobj.getId(), roleName, parameters);
 				}
 
 			}
 
-			if (!parametersAreCorrect) {
-				logger.error("Document cannot be executed by the user with the input parameters.");
-				throw new SecurityException("Document cannot be executed by the user with the input parameters.");
-			} else {
-				logger.debug("Role " + roleName + " is compatible with input parameters");
-			}
+			logger.debug("Role " + roleName + " is compatible with input parameters");
 		} finally {
 			monitor.stop();
 			logger.debug("OUT");
