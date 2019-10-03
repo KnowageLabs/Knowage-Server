@@ -151,7 +151,7 @@ public class JWTSsoService implements SsoServiceInterface {
 		return token;
 	}
 
-	public static String jwtToken2userId(String jwtToken) {
+	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
 		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
