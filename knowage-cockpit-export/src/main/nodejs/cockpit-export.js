@@ -49,13 +49,14 @@ async function exportSheets() {
 			ignoreHTTPSErrors: true,
 			headless: true,
 			args: [
-					'--window-size=1920,1357'
+					'--window-size=2048,1080',
+					'--no-sandbox'
 		]});
 
 		// Get a page
 		const page = (await browser.pages())[0];
 
-		await page.setViewport({ width: 1920, height: 1357 });
+		await page.setViewport({ width: 2048, height: 1080 });
 
 		await page.setRequestInterception(true);
 
@@ -123,7 +124,7 @@ async function exportSheets() {
 				path: path.join(output, "output.pdf"),
 				scale: 0.85,
 				displayHeaderFooter: false,
-				printBackground: false,
+				printBackground: true,
 				landscape: true,
 				format: "A4",
 				margin: {
