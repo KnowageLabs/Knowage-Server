@@ -63,14 +63,14 @@
             <div class="kn-info">{{selectedFunction.description}}</div>
             <md-input-container ng-repeat="argument in selectedFunction.arguments" class="noPadding">
                 <label>{{argument.name}}</label>
-                <input name="argument.name" type="text" ng-model="selectedFunction.temp[argument.name]" ng-if="!argument.type || argument.type=='String'">
-                <input name="argument.name" type="number" ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='int'">
-                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='field'">
+                <input name="argument.name" type="text" ng-model="selectedFunction.temp[argument.name]" ng-if="!argument.type || argument.type.toLowerCase()=='string'">
+                <input name="argument.name" type="number" ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type.toLowerCase()=='int'">
+                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type.toLowerCase()=='field'">
                     <md-option ng-value="fie.alias" ng-repeat="fie in fields | filter: { type: '!inline.calculated.field' }">
                         {{ fie.alias }}
                     </md-option>
                 </md-select>
-                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='list'">
+                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type.toLowerCase()=='list'">
                     <md-option ng-value="par" ng-repeat="par in argument.list">
                         {{ par }}
                     </md-option>

@@ -117,7 +117,14 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
                 angular.forEach(funct.arguments, function(value, key) {
                 	var regString = '\\$\\{('+value.placeholder+')\\}'
                     var regex = new RegExp(regString,"g");
-                    str = str.replace(regex, funct.temp[value.name]);
+					if(value.type.toLowerCase()=='field'){
+						str = str.replace(regex, '$F{'+funct.temp[value.name]+'}');
+					} else if(value.type.toLowerCase()=='string'){
+						str = str.replace(regex, "'"+funct.temp[value.name]+"'");
+					} else {
+						str = str.replace(regex, funct.temp[value.name]);
+					}
+                    
                 });
                 $scope.toggleFunctionWizard();
                 $scope.addTextInCodemirror(str);
