@@ -9,11 +9,11 @@
 	<nav class="primnav">
 		<ul>
 			<li>
-				<a href="#" ng-click="goHome()"> 
+				<a href="#" ng-click="toggleAdminMenu($event)"> 
 					<md-tooltip md-delay="500">{{translate.load('kn.mainmenu.systemadministration')}}</md-tooltip> 
-					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)"></div>
+					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome()"></div>
 					<span flex>{{translate.load('kn.mainmenu.systemadministration')}}</span>
-					<md-button class="md-icon-button" ng-click="toggleAdminMenu($event)">
+					<md-button class="md-icon-button" >
 						<md-icon ng-if="!adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
 						<md-icon ng-if="adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
 					</md-button>
@@ -50,7 +50,8 @@
 			
 			<li ng-repeat="custom in customs track by $index">
 				<a href="#" ng-click="menuCall(custom.src,custom.linkType)" layout="row"> 
-					<i class="icon fa fa-2x fa-folder-o"></i> 
+					<i ng-if="custom.menu" class="icon fa fa-2x fa-list-ul"></i> 
+					<i ng-if="!custom.menu" class="icon fa fa-2x fa-file-o"></i>
 					{{custom.text}}
 					<md-tooltip md-delay="500">{{custom.text}}</md-tooltip>
 					<span flex></span>
