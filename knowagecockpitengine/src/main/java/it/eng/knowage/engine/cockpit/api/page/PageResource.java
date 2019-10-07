@@ -238,13 +238,29 @@ public class PageResource extends AbstractCockpitEngineResource {
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
 
-		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
-		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
+		RenderOptions defaultRenderOptions = RenderOptions.DEFAULT;
+		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
+		long defaultJsRenderingWait = defaultRenderOptions.getJsRenderingWait();
+		int pdfWidth = Integer.valueOf(defaultDimensions.getWidth());
+		int pdfHeight = Integer.valueOf(defaultDimensions.getHeight());
+		long pdfRenderingWaitTime = defaultJsRenderingWait;
+
+		String widthParameterVal = request.getParameter(PDF_WIDTH);
+		String heightParameterVal = request.getParameter(PDF_HEIGHT);
+		String jsRenderingWaitParameterVal = request.getParameter(PDF_WAIT_TIME);
+
+		if (widthParameterVal != null) {
+			pdfWidth = Integer.valueOf(widthParameterVal);
+		}
+		if (heightParameterVal != null) {
+			pdfHeight = Integer.valueOf(heightParameterVal);
+		}
+		if (jsRenderingWaitParameterVal != null) {
+			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
+		}
+
 		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
-
-		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
-
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
+		RenderOptions renderOptions = defaultRenderOptions.withCustomHeaders(customHeaders).withDimensions(dimensions)
 				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
