@@ -251,30 +251,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
 	  	}
 
-	    $scope.reinit = function(){
-	    	var isNew = ($scope.layers.length == 0);
-	    	for (l in $scope.layers){
-	    		//remove old layers
-	    		var previousLayer = $scope.getLayerByName($scope.layers[l].name);
-	    		if (previousLayer) 	$scope.map.removeLayer(previousLayer); //ol obj
-	    	}
-	    	$scope.removeLayers(); //clean internal obj
+		$scope.addAllLayers = function() {
+			$scope.addBaseLayer();
+			$scope.addBackgroundLayer();
+			$scope.getLayers();
+		}
 
-			// get background layer
-			$scope.manageBackgroundLayer();
+		$scope.reinit = function(){
 
-	    	$scope.getLayers();
+			var isNew = ($scope.layers.length == 0);
+			if (isNew) {
+				$scope.createMap();
+			} else {
+				// Delete all layers
+				$scope.removeBaseLayer();
+				$scope.removeBackgroundLayer();
+				for (l in $scope.layers){
+					//remove old layers
+					var previousLayer = $scope.getLayerByName($scope.layers[l].name);
+					if (previousLayer) {
+						$scope.map.removeLayer(previousLayer);
+					}
+				}
+				$scope.clearInternalData();
+			}
 
-	    	if (isNew) $scope.createMap();
+			$scope.addAllLayers();
 
-	    	if (!$scope.map.getSize()){
-    			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
-    							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
-    		}else{
-    			$scope.map.setSize($scope.map.getSize());
-    		}
-			$scope.map.renderSync();
-        }
+			if (!$scope.map.getSize()){
+				$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
+									cockpitModule_widgetConfigurator.map.initialDimension.height]);
+			}else{
+				$scope.map.setSize($scope.map.getSize());
+			}
+		}
 
 		$scope.toggleSidenav = function(){
 			var optionSidenav = $mdSidenav($scope.ngModel.content.optionSidenavId);
@@ -371,32 +381,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.initializeTemplate = function (){
-	    	return $q(function(resolve, reject) {
-	    		if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
-	 	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
-	 	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
-	 	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
+		$scope.initializeTemplate = function (){
+//			return $q(function(resolve, reject) {
+				if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
+				if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
+				if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+				if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
 
-	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
-	 	    	if (!$scope.ngModel.content.mapId){
-	 	    		$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
-	 	    		$scope.ngModel.content.optionSidenavId = 'optionSidenav-' + $scope.ngModel.id;
-	 	    	}
-	 	    	//set default indicator (first one) for each layer
-	 	    	for (l in $scope.ngModel.content.layers){
-	 	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
-	 	    		for ( c in columns){
-	 	    			if (columns[c].properties.showMap){
-	 	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
-	 	    				break;
-	 	    			}
-	 	    		}
-	 	    	}
-	 	    	resolve('initialized');
-	    	 })
+				if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
+				if (!$scope.ngModel.content.mapId){
+					$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
+					$scope.ngModel.content.optionSidenavId = 'optionSidenav-' + $scope.ngModel.id;
+				}
+				//set default indicator (first one) for each layer
+				for (l in $scope.ngModel.content.layers){
+					var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
+					for ( c in columns){
+						if (columns[c].properties.showMap){
+							$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
+							break;
+						}
+					}
+				}
+				if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
+//				resolve('initialized');
+//			})
 
-	    }
+		}
 
 	    $scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
 	    	//prepare object with metadata for desiderata dataset columns
@@ -411,7 +422,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		//remove old layer
     		var previousLayer = $scope.getLayerByName(label);
-    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj
+    		if (previousLayer) {
+    			$scope.map.removeLayer(previousLayer); //ol obj
+    		}
     		$scope.removeLayer(label);
 
     		for (f in columnsForData){
@@ -675,67 +688,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	}
 
 		$scope.createMap = function (){
-			$scope.initializeTemplate().then(function(){
 
-				//create the base layer
-				$scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
+			/*$scope.initializeTemplatePromise = */$scope.initializeTemplate();
+
+//			$scope.initializeTemplatePromise.then(function(){
+
+				var layers = [];
+
+				if ($scope.needsBaseLayer()) {
+					layers.push($scope.createBaseLayer());
+				}
+
+				if ($scope.needsBackgroundLayer()) {
+					layers.push($scope.createBackgroundLayer());
+				}
 
 				if (!$scope.popupContainer){
 					$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
 					$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
 				}
 
-	            //create overlayers (popup..)
-	            var overlay = new ol.Overlay({
-		              element: $scope.popupContainer,
-		              autoPan: true,
-		              autoPanAnimation: {
-		                duration: 250
-		              }
-	            });
+				//create overlayers (popup..)
+				var overlay = new ol.Overlay({
+					element: $scope.popupContainer,
+					autoPan: true,
+					autoPanAnimation: {
+						duration: 250
+					}
+				});
 
-		    	//setting coordinates (from the first layer if they aren't set into the template)
-	            if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
-		    		var tmpLayer = $scope.layers[0].layer;
-		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
-	    		}
-//	            alert("creata mappa con id ["+ 'map-' + $scope.ngModel.id +"]");
-	    		$scope.map = new ol.Map({
-	    		  target: 'map-' + $scope.ngModel.id,
-	    		  layers: [ $scope.baseLayer ],
-	    		  overlays: [overlay],
-	    		  view: new ol.View({
-	    		    center: $scope.ngModel.content.currentView.center,
-	    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
-	    		  })
+				//setting coordinates (from the first layer if they aren't set into the template)
+				if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
+					var tmpLayer = $scope.layers[0].layer;
+					cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
+				}
 
-	    		});
-	    		console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
+				$scope.map = new ol.Map({
+					target: 'map-' + $scope.ngModel.id,
+					layers: layers,
+					overlays: [overlay],
+					view: new ol.View({
+						center: $scope.ngModel.content.currentView.center,
+						zoom: $scope.ngModel.content.currentView.zoom || 3
+					})
+				});
+				console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
 
-				// get background layer
-				$scope.manageBackgroundLayer();
+//				// get background layer
+//				$scope.addBackgroundLayer();
 
-	    		//just for refresh
-	    		if (!$scope.map.getSize()){
-	    			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
-	    							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
-	    		}else{
-	    			$scope.map.setSize($scope.map.getSize());
-	    		}
+				//just for refresh
+				if (!$scope.map.getSize()){
+					$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
+						cockpitModule_widgetConfigurator.map.initialDimension.height]);
+				}else{
+					$scope.map.setSize($scope.map.getSize());
+				}
 
-				$scope.map.renderSync();
+				// $scope.map.renderSync();
 
 				//add events methods
-	    		$scope.addViewEvents();
-	    		$scope.addMapEvents(overlay);
-	    		$scope.loading = false;
-    			$timeout(function(){
-    				$scope.widgetIsInit=true;
-    				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
-    			},1500);
+				$scope.addViewEvents();
+				$scope.addMapEvents(overlay);
+				$scope.loading = false;
+				$timeout(function(){
+					$scope.widgetIsInit=true;
+					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+				},1500);
 
-	    	});
-	    }
+//			});
+		}
 
 	    //control panel events
 	    $scope.toggleLayer = function(e,n){
@@ -860,7 +882,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.removeLayers = function(){
+	    $scope.clearInternalData = function(){
 	    	$scope.layers = [];
 	    	$scope.values = {};
 	    	$scope.savedValues = {};
@@ -896,22 +918,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }
-	    
+
 	    $scope.crossNavigate = function(dsId,layerConfig,props) {
 	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
 	    }
-	    
+
 	    $scope.checkCrossNavigation = function(layerConfig){
 	    	if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable) return true;
 	    	return false;
 	    }
 
-		var BACKGROUND_LAYER_NAME = "backgroundLayer";
+		var BASE_LAYER_TYPE = "baseLayer";
+		var BACKGROUND_LAYER_TYPE = "backgroundLayer";
+		var PROPERTY_LAYER_TYPE = "layerType";
 
 		function getBackgroundLayer() {
 			var ret = undefined;
 			$scope.map.getLayers().forEach(function(el) {
-					if (el.get("name") === BACKGROUND_LAYER_NAME) {
+					if (el.get(PROPERTY_LAYER_TYPE) === BACKGROUND_LAYER_TYPE) {
 						ret = el;
 					}
 				}
@@ -919,39 +943,108 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return ret;
 		}
 
-		$scope.manageBackgroundLayer = function() {
+		// Base layer
+		$scope.addBaseLayer = function() {
+			if ($scope.needsBaseLayer()) {
 
-			var currBackgroundLayer = getBackgroundLayer();
-			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+				var baseLayer = $scope.createBaseLayer();
 
-			if (backgroundLayerId) {
-				var url = sbiModule_config.externalBasePath + "/restful-services/layers/" + backgroundLayerId + "/download/geojson";
+				$scope.map.addLayer(baseLayer);
+			}
+		}
 
-				if (currBackgroundLayer) {
-					$scope.map.removeLayer(currBackgroundLayer);
+		$scope.createBaseLayer = function() {
+			var ret = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
+			ret.set(PROPERTY_LAYER_TYPE, BACKGROUND_LAYER_TYPE);
+			ret.setZIndex(0);
+			return ret;
+		}
+
+		function getBaseLayer() {
+			var ret = undefined;
+			$scope.map.getLayers().forEach(function(el) {
+					if (el.get(PROPERTY_LAYER_TYPE) === BACKGROUND_LAYER_TYPE) {
+						ret = el;
+					}
 				}
+			);
+			return ret;
+		}
+
+		$scope.needsBaseLayer = function() {
+			return $scope.ngModel.content.enableBaseLayer;
+		}
+
+		$scope.removeBaseLayer = function() {
+			if (!$scope.needsBaseLayer()) {
+				var currBaseLayer = getBaseLayer();
+				if (currBaseLayer) {
+					$scope.map.removeLayer(currBaseLayer);
+				}
+			}
+		}
+
+		// Background layer
+		$scope.addBackgroundLayer = function() {
+
+			if ($scope.needsBackgroundLayer()) {
+				var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+				var url = sbiModule_config.externalBasePath + "/restful-services/layers/" + backgroundLayerId + "/download/geojson";
 
 				var layer = new ol.layer.Vector({
 					source: new ol.source.Vector({
 						url: url,
 						format: new ol.format.GeoJSON()
-					}),
-					name: BACKGROUND_LAYER_NAME
+					})
 				});
 				layer.setZIndex(/* see other setZIndex() call */ 9);
+				layer.set(PROPERTY_LAYER_TYPE, BACKGROUND_LAYER_TYPE);
+				layer.set("layerId", backgroundLayerId);
 
 				$scope.map.addLayer(layer);
 
-			} else {
-				if (currBackgroundLayer) {
-					$scope.map.removeLayer(el);
-				}
+			}
+		}
+
+		$scope.createBackgroundLayer = function() {
+			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+
+			var url = sbiModule_config.externalBasePath + "/restful-services/layers/" + backgroundLayerId + "/download/geojson";
+
+			var ret = new ol.layer.Vector({
+				source: new ol.source.Vector({
+					url: url,
+					format: new ol.format.GeoJSON()
+				})
+			});
+			ret.setZIndex(/* see other setZIndex() call */ 9);
+			ret.set(PROPERTY_LAYER_TYPE, BACKGROUND_LAYER_TYPE);
+			ret.set("layerId", backgroundLayerId);
+
+			return ret;
+		}
+
+		$scope.needsBackgroundLayer = function() {
+			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+
+			return backgroundLayerId != undefined
+				&& backgroundLayerId != "";
+		}
+
+		$scope.removeBackgroundLayer = function() {
+
+			var currBackgroundLayer = getBackgroundLayer();
+			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
+			if (!backgroundLayerId
+					|| (backgroundLayerId
+							&& currBackgroundLayer
+							&& currBackgroundLayer.get("layerId") != backgroundLayerId)) {
+				$scope.map.removeLayer(currBackgroundLayer);
 			}
 
 		}
 
-	    //functions calls
-		$scope.getLayers();
+		$scope.reinit();
 
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
 		if (cockpitModule_properties.EDIT_MODE) {
@@ -973,6 +1066,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 		}
+
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory

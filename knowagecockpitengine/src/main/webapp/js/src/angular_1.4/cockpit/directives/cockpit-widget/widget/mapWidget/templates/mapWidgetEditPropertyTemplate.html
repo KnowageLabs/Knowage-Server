@@ -17,13 +17,14 @@
 						<md-card class="cockpit-map-widget-edit">
 							<md-toolbar class="secondaryToolbar"> 
 								<div class="md-toolbar-tools">
-									<h2>Background layers</h2>
+									<h2>{{translate.load('sbi.cockpit.map.backgroundLayers')}}</h2>
 									<span flex></span>
 								</div>
 							</md-toolbar>
 							<md-card-content>
-								<md-input-container>
-									<label>Layer</label>
+								<md-switch ng-model="newModel.content.enableBaseLayer" aria-label="{{translate.load('sbi.cockpit.map.enableBaseLayer')}}">{{translate.load('sbi.cockpit.map.enableBaseLayer')}}</md-switch>
+								<md-input-container style="width: 33%;">
+									<label>{{translate.load('sbi.cockpit.map.selectBackgroundLayer')}}</label>
 									<md-select ng-model="newModel.content.backgroundLayerId">
 										<md-option value=""></md-option>
 										<md-option ng-repeat="layer in availableBackgroundLayers  | orderBy:'value' " ng-value="layer.key">{{ layer.value }}</md-option>
