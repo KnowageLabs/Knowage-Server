@@ -159,7 +159,8 @@ public class SolrDataSet extends RESTDataSet {
 				solrConfiguration.setSolrFields(solrFields);
 			}
 
-			List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConf, true);
+
+			List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConf, true, userProfile);
 			if (filterQueries != null && !filterQueries.isEmpty()) {
 				String[] array = new String[filterQueries.size()];
 				for (int i = 0; i < array.length; i++) {

@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -37,12 +49,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.*;
 
 public class RESTDataSet extends ConfigurableDataSet {
 
@@ -290,6 +296,35 @@ public class RESTDataSet extends ConfigurableDataSet {
 	}
 
 	protected List<Couple<String, String>> getListProp(String propName, JSONObject conf, boolean resolveParams) throws JSONException {
+		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
+			// optional property
+			return Collections.emptyList();
+		}
+
+		Object c = conf.get(propName);
+		if (!(c instanceof JSONArray)) {
+			throw new ConfigurationException(String.format("%s is not another json object in configuration: %s", propName, conf.toString()));
+		}
+		Assert.assertNotNull(c, "property is null");
+		JSONArray r = (JSONArray) c;
+		List<Couple<String, String>> res = new ArrayList<Couple<String, String>>(r.length());
+
+		for (int i = 0; i < r.length(); i++) {
+			JSONObject jo = r.getJSONObject(i);
+			String key = jo.getString("name");
+			String value = jo.getString("value");
+			if (resolveParams) {
+				key = parametersResolver.resolveAll(key, this);
+				value = parametersResolver.resolveAll(value, this);
+				res.add(new Couple<String, String>(key, value));
+			}
+		}
+		return res;
+	}
+
+	protected List<Couple<String, String>> getListProp(String propName, JSONObject conf, boolean resolveParams, UserProfile userProfile) throws JSONException {
+		this.setUserProfile(userProfile);
+		this.setUserProfileAttributes(userProfile.getUserAttributes());
 		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
 			// optional property
 			return Collections.emptyList();
