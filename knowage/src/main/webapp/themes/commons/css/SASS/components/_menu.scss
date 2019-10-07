@@ -492,6 +492,7 @@ md-list-item.license-item::before{
       cursor: pointer;
       span {
         line-height: 38px;
+        font-size: $baseFontSize;
       }
       &:hover {
         background-color: lighten($shadowsColor, 5%);
