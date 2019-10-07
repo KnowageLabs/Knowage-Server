@@ -36,11 +36,6 @@
 </div-->
 <div data-ng-controller="menuCtrl" ng-app="menuAppAdmin" id="menuAppAdmin">
 	<menu-aside></menu-aside>
-	<div id="divContainer" class="overlayButtonBar ">
-		<span ng-if="downloadsList.length > 0" class="menuBadge">{{downloadsList.length + unreadNewsNumber}}</span>
-		<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons">menu</i></a>
-		<a href="#" class="logoKnowage" ng-click="goHome()"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
-	</div>
 </div>
 
 <script>

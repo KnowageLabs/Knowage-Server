@@ -35,7 +35,8 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval',
+	function($window,$http, $mdDialog, $timeout, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval) {
     return {
 
         restrict: 'E',
@@ -50,6 +51,24 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         		var isIe11 = $scope.ie11.test($scope.browser);
         		return isIe11;
         	}
+
+        	$scope.toggleCheck = function(){
+        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = !angular.element( document.querySelector( '#hamburger' ) )[0].checked;
+        		$scope.closeMenu();
+        	}
+
+        	$scope.closeCheck = function(){
+        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = false;
+        	}
+
+        	$scope.getImageBackgroundStyle = function(imagepath){
+        		if(imagepath){
+	        	    return {
+	        	        'background-image':'url(' + imagepath + ')'
+	        	    }
+        		}
+        	}
+
         	$http.get(Sbi.config.contextName+'/restful-services/1.0/menu/enduser',{
         	    params: {
         	    		curr_country: Sbi.config.curr_country,
@@ -60,6 +79,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         		$scope.messaging = sbiModule_messaging;
         		$scope.download = sbiModule_download;
         		$scope.user = sbiModule_user;
+        		$scope.userPicture = $scope.user.picture || Sbi.config.contextName+'/themes/commons/img/defaultTheme/logo.svg';
 
         		$scope.i18n = sbiModule_i18n;
 
@@ -529,7 +549,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.toggleMenu();
 				$scope.showAccessibilityDialog();
 			}
-			
+
 			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
 				$scope.downloadsList = result.data;
 			})
@@ -538,8 +558,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					$scope.downloadsList = result.data;
 				},function(error){})
 			}, 20000);
-			
-			
+
+
 			$scope.downloads = function(){
 				$scope.toggleMenu();
 				var parentEl = angular.element(document.body);
@@ -548,26 +568,26 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
 					controller: downloadsDialogController
 				});
-			
+
 
 				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
-	        	    scope.translate = sbiModule_translate; 
+	        	    scope.translate = sbiModule_translate;
 	        	    scope.closeDialog = function(){
 	        	    	$mdDialog.cancel();
 	        	    }
-	        	    
-	        	    
+
+
 	        	    scope.deleteDownload = function(index){
 	        	    	scope.rowData.splice(index,1);
 	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
-	        	    } 
-	        	    
+	        	    }
+
 	        	    scope.$watch('downloadsList', function(newValue,oldValue){
 						if(newValue && scope.downloadGridOptions.api) {
 							scope.downloadGridOptions.api.setRowData(newValue);
 						}
 					})
-					
+
 					var columnDefs =[
 					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename', cellClass: isNewDownload},
 					    {headerName: "Creation Date", field: 'startDate', cellRenderer: dateRenderer, sort: 'desc'},
@@ -577,19 +597,19 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					function isFullWidth(data) {
 					    return data.pars ? true : false;
 					}
-					
+
 					function isNewDownload(params){
 						return !params.data.alreadyDownloaded && 'newDownload' ;
 					}
-					
+
 					function dateRenderer(params){
 						return moment(params.value).locale(sbiModule_config.curr_language).format('llll');
 					}
-					
+
 					function buttonRenderer(params) {
 						return '<md-button class="md-icon-button" ng-click="downloadContent(\''+ params.data.id +'\')" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' ;
 					}
-					
+
 					scope.downloadContent = function(id){
 						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
 						var link = document.createElement("a");
@@ -598,21 +618,21 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						document.body.appendChild(link); // Required for FF
 						link.click();
 					}
-					
+
 					function FullWidthCellRenderer() {}
-	
+
 					FullWidthCellRenderer.prototype.init = function(params) {
 					    // trick to convert string of html into dom object
 					    var eTemp = document.createElement('div');
 					    eTemp.innerHTML = this.getTemplate(params);
 					    this.eGui = eTemp.firstElementChild;
 					};
-	
+
 					FullWidthCellRenderer.prototype.getTemplate = function(params) {
 					    //var data = params.node.data;
 					    return '<div class="full-width-panel" style="padding:8px">ciao</div>';
 					};
-	
+
 					FullWidthCellRenderer.prototype.getGui = function() {
 					    return this.eGui;
 					};
@@ -647,7 +667,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						    fullWidthCellRenderer: 'fullWidthCellRenderer'
 						};
 				}
-				
+
 			}
 
 			$scope.showAccessibilityDialog= function(){
@@ -720,6 +740,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 
 
 			$scope.menuCall = function menuCall(url,type){
+				$scope.closeMenu();
 				if (type == 'execDirectUrl'){
 					//custom fix to launch datasets in a new page. Please change after angular version is on
 					if(url=='/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE' && $scope.testIe11()){
@@ -753,9 +774,57 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
+				if(type) $scope.closeCheck();
+				else $scope.toggleCheck();
+			}
+
+			$scope.openMenu = function(e, cursor){
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				$scope.path = [cursor];
+				$scope.selectedCustom = $scope.customs[$scope.path[$scope.path.length-1]];
+			}
+
+			$scope.nextMenu = function(e, cursor){
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				$scope.path.push(cursor);
+				$scope.selectedCustom = $scope.selectedCustom.menu[$scope.path[$scope.path.length-1]];
+			}
+
+			$scope.backMenu = function(){
+				$scope.tempAnimateClass = true;
+				$timeout(function(){
+					$scope.path.pop();
+					if($scope.path.length == 0) delete $scope.selectedCustom;
+					else{
+						for(var k in $scope.path){
+							if(k == 0) $scope.selectedCustom = $scope.customs[$scope.path[0]];
+							else {
+								$scope.selectedCustom = $scope.selectedCustom.menu[$scope.path[$scope.path[k]]];
+							}
+						}
+					}$timeout(function(){
+						$scope.tempAnimateClass = false;
+					},300);
+				},0);
+			}
+
+			$scope.toggleAdminMenu = function(e){
+				if(e){
+					e.preventDefault();
+					e.stopImmediatePropagation();
+				}
+				$scope.adminOpened = !$scope.adminOpened;
+			}
+
+			$scope.closeMenu = function(){
+				delete $scope.adminOpened;
+				delete $scope.selectedCustom;
+				delete $scope.tempSelectedCustom;
 			}
         }
     };
-    
+
 }]);
 

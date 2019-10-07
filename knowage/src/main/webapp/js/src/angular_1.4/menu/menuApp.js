@@ -40,10 +40,11 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval'
+myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval'
   				, function(
   						$http,
   						$mdDialog,
+  						$timeout,
   						sbiModule_config,
   						sbiModule_restServices,
   						sbiModule_messaging,
@@ -59,6 +60,23 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         	$scope.translate = sbiModule_translate;
         	$scope.i18n = sbiModule_i18n;
 
+        	$scope.getImageBackgroundStyle = function(imagepath){
+        		if(imagepath){
+	        	    return {
+	        	        'background-image':'url(' + imagepath + ')'
+	        	    }
+        		}
+        	}
+
+        	$scope.toggleCheck = function(){
+        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = !angular.element( document.querySelector( '#hamburger' ) )[0].checked;
+        		$scope.closeMenu();
+        	}
+
+        	$scope.closeCheck = function(){
+        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = false;
+        	}
+
         	$http.get(Sbi.config.contextName+'/restful-services/1.0/menu/enduser',{
         	    params: {
         	    		curr_country: Sbi.config.curr_country,
@@ -68,6 +86,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         		$scope.links = response.data.userMenu;
         		$scope.fixed = response.data.fixedMenu;
         		$scope.userName = response.data.userName;
+        		$scope.userPicture = response.data.picture || Sbi.config.contextName+'/themes/commons/img/defaultTheme/logo.svg';
 
         		$scope.i18n.loadI18nMap().then(function() {
 
@@ -89,9 +108,9 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         			}
 
         		}); // end of load I 18n
-        		
-        		
-        		
+
+
+
         	},function(error){
         		$scope.showAlert('Attention, ' + $scope.userName,"Error Calling REST service for Menu. Please check if the server or connection is working.")
         	});
@@ -284,7 +303,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				$scope.toggleMenu();
 				$scope.showAccessibilityDialog();
 			}
-			
+
 			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
 				$scope.downloadsList = result.data;
 			})
@@ -293,8 +312,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					$scope.downloadsList = result.data;
 				},function(error){})
 			}, 20000);
-			
-			
+
+
 			$scope.downloads = function(){
 				$scope.toggleMenu();
 				var parentEl = angular.element(document.body);
@@ -303,26 +322,26 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
 					controller: downloadsDialogController
 				});
-			
+
 
 				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
-	        	    scope.translate = sbiModule_translate; 
+	        	    scope.translate = sbiModule_translate;
 	        	    scope.closeDialog = function(){
 	        	    	$mdDialog.cancel();
 	        	    }
-	        	    
-	        	    
+
+
 	        	    scope.deleteDownload = function(index){
 	        	    	scope.rowData.splice(index,1);
 	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
-	        	    } 
-	        	    
+	        	    }
+
 	        	    scope.$watch('downloadsList', function(newValue,oldValue){
 						if(newValue && scope.downloadGridOptions.api) {
 							scope.downloadGridOptions.api.setRowData(newValue);
 						}
 					})
-					
+
 					var columnDefs =[
 					    {headerName: scope.translate.load('sbi.ds.fileName'), field: 'filename', cellClass: isNewDownload},
 					    {headerName: "Creation Date", field: 'startDate', cellRenderer: dateRenderer, sort: 'desc'},
@@ -332,19 +351,19 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					function isFullWidth(data) {
 					    return data.pars ? true : false;
 					}
-					
+
 					function isNewDownload(params){
 						return !params.data.alreadyDownloaded && 'newDownload' ;
 					}
-					
+
 					function dateRenderer(params){
 						return moment(params.value).locale(sbiModule_config.curr_language).format('llll');
 					}
-					
+
 					function buttonRenderer(params) {
 						return '<md-button class="md-icon-button" ng-click="downloadContent(\''+ params.data.id +'\')" style="margin-top:4px;"><md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon></md-button>' ;
 					}
-					
+
 					scope.downloadContent = function(id){
 						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
 						var link = document.createElement("a");
@@ -353,21 +372,21 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 						document.body.appendChild(link); // Required for FF
 						link.click();
 					}
-					
+
 					function FullWidthCellRenderer() {}
-	
+
 					FullWidthCellRenderer.prototype.init = function(params) {
 					    // trick to convert string of html into dom object
 					    var eTemp = document.createElement('div');
 					    eTemp.innerHTML = this.getTemplate(params);
 					    this.eGui = eTemp.firstElementChild;
 					};
-	
+
 					FullWidthCellRenderer.prototype.getTemplate = function(params) {
 					    //var data = params.node.data;
 					    return '<div class="full-width-panel" style="padding:8px">ciao</div>';
 					};
-	
+
 					FullWidthCellRenderer.prototype.getGui = function() {
 					    return this.eGui;
 					};
@@ -402,7 +421,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 						    fullWidthCellRenderer: 'fullWidthCellRenderer'
 						};
 				}
-				
+
 			}
 
 			$scope.showAccessibilityDialog= function(){
@@ -480,6 +499,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 			}
 
 			$scope.menuCall = function menuCall(url,type){
+				$scope.closeMenu();
 				if (type == 'execDirectUrl'){
 					// this is the case linked document would not be executable
 //					if(url == 'noExecutableDoc'){
@@ -513,17 +533,66 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
+				if(type) $scope.closeCheck();
+				else $scope.toggleCheck();
 			}
-			
+
+
+			$scope.openMenu = function(e, cursor){
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				$scope.path = [cursor];
+				$scope.selectedCustom = $scope.customs[$scope.path[$scope.path.length-1]];
+			}
+
+			$scope.nextMenu = function(e, cursor){
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				$scope.path.push(cursor);
+				$scope.selectedCustom = $scope.selectedCustom.menu[$scope.path[$scope.path.length-1]];
+			}
+
+			$scope.backMenu = function(){
+				$scope.tempAnimateClass = true;
+				$timeout(function(){
+					$scope.path.pop();
+					if($scope.path.length == 0) delete $scope.selectedCustom;
+					else{
+						for(var k in $scope.path){
+							if(k == 0) $scope.selectedCustom = $scope.customs[$scope.path[0]];
+							else {
+								$scope.selectedCustom = $scope.selectedCustom.menu[$scope.path[$scope.path[k]]];
+							}
+						}
+					}$timeout(function(){
+						$scope.tempAnimateClass = false;
+					},300);
+				},0);
+			}
+
+			$scope.toggleAdminMenu = function(e){
+				if(e){
+					e.preventDefault();
+					e.stopImmediatePropagation();
+				}
+				$scope.adminOpened = !$scope.adminOpened;
+			}
+
+			$scope.closeMenu = function(){
+				delete $scope.adminOpened;
+				delete $scope.selectedCustom;
+				delete $scope.tempSelectedCustom;
+			}
+
 			$scope.setNewsBadge = function(){
 				sbiModule_restServices.promiseGet("2.0", "newsRead/unread").then(function(response){
 					$scope.unreadNewsNumber = response.data;
 				})
 			}
-			
-			
+
+
 			$scope.news = function(){
-				
+
 				$scope.toggleMenu();
 				var parentEl = angular.element(document.body);
 				$mdDialog.show({
@@ -533,7 +602,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 				});
 
 				function newsDialogController(scope, $mdDialog, sbiModule_translate) {
-	        	    scope.translate = sbiModule_translate;   
+	        	    scope.translate = sbiModule_translate;
 	        	    scope.loadingInfo = false;
 
 	        	    scope.openDetail = function(category,message, index){
@@ -548,11 +617,11 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 	        	    	}
 	        	    	message.opened = !message.opened;
 	        	    }
-	        	    
+
 	        	    sbiModule_restServices.promiseGet("2.0", "newsRead").then(function(readNews){
 	        	    	scope.updateNews(readNews.data);
     				})
-    				
+
     				scope.updateNews = function(readNews){
 	        	    	sbiModule_restServices.promiseGet("2.0", "news")
 		    			.then(function(response) {
@@ -562,19 +631,19 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 		    					for(var c in scope.news){
 		    						if(response.data[n].type == scope.news[c].id){
 		    							var tempNews = response.data[n];
-		    							if(readNews.indexOf(tempNews.id) != -1) tempNews.read = true; 
+		    							if(readNews.indexOf(tempNews.id) != -1) tempNews.read = true;
 		    							scope.news[c].messages.push(tempNews);
 		    						}
 		    					}
-		    					
+
 		    				}
-		    				
+
 		    			}, function(response) {
 		    				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load('sbi.general.error'));
 		    			});
 	        	    }
-	        	    
-	        	    
+
+
         	        scope.closeDialog = function() {
         	          $mdDialog.hide();
         	        }

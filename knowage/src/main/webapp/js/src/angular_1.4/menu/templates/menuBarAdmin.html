@@ -1,98 +1,105 @@
-<div>
-   <div class="sidebar-overlay" data-ng-click="toggleMenu()" data-ng-class="{'active' : openAside}"></div>
-   <aside id="sidebar" class="sidebar sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
-      <div class="sidebar-header header-cover" >
-         <a data-toggle="dropdown" class="sidebar-brand" role="link" href="#settings-dropdown" aria-expanded="false"><i aria-hidden="true" class="sidebar-icon material-icons md-32">account_circle</i> {{userName}} <b class="caret"></b> </a> 
-      </div>
-      <ul class="nav sidebar-nav">
-      	  <li class="dropdown">
-	            <ul id=settings-dropdown class=dropdown-menu >
-	            	<li data-ng-repeat="fix in fixed"><a href="#" title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
-	            </ul>
-	       </li>
-	  </ul>  
-      <div class="container-fluid">
-      <!-- User Menu -->
-	      <ul class="row iconBarAdmin">
-	         <li class="col-md-3 col-xs-6" data-ng-repeat="link in links">
-	         	<a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> 
-	         		<i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i>
-	         	</a> 
-	         	<span ng-if="link.iconCls == 'email' && unreadNewsNumber" class="newsBadge">{{unreadNewsNumber}}</span>
-	         </li>
-	         <li class="col-md-3 col-xs-6">
-	         	<a href="#" title="{{link.tooltip}}" data-ng-click="downloads()"> 
-	         		<i aria-hidden="true" class="navbar-icon material-icons-row md-32">inbox</i>
-	         	</a>
-	         	<span ng-if="downloadsList.length > 0" class="newsBadge">{{downloadsList.length}}</span>
-	         </li>
-	      </ul>
-      <!-- End User Menu -->   
-      <!-- Custom Menu -->
-      
-      <div id="customMenu">
-	      <ul id="customMenu" class="nav sidebar-nav">
-	      	<li data-ng-repeat="custom in customs"> 
-	      	<a data-ng-if="!custom.menu" href="#" title="{{custom.text}}" data-ng-click="menuCall(custom.src,custom.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label</i>  {{custom.text}}</a> 
-	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown-{{$index}}" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
-	      		<ul data-ng-if="custom.menu" class="nav sidebar-nav">
-	      		<li class="dropdown">
-	      		 <ul  id="custom-dropdown-{{$index}}" class="dropdown-menu" >
-	            	<li data-ng-repeat="menu in custom.menu">
-	            		<a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)" class="sidebar-nav-link"> 
-	            			<i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  
-	            			<span>{{menu.text}}</span><span flex></span>
-	            			<ng-include ng-init="levels = menu.menu;" ng-if="menu.menu" src="'innerMenu'" />
-	            		</a> 
-	            	</li>
-	       		 </ul>
-	       		</li> 
-	       		</ul>
-	      	</li>
-	      </ul>
-      </div>
-     
-      <!-- End Custom Menu -->    
-      </div>
-		<div class="top-bar">
-			<button aria-label="Close Menu" type="button" class="sidebar-toggle"
-				data-ng-click="toggleMenu()">
-				<i aria-hidden="true" class="material-icons">chevron_left</i>
-			</button>
+<div class="kn-mainMenu">
+	<input id="hamburger" class="hamburger" type="checkbox" ng-model="openedMenu" ng-change="closeMenu()"/> <label
+		for="hamburger" class="hamburger"> <i></i> 
+		<text> 
+			<close>{{translate.load('kn.generic.close')}}</close>
+			<open>{{translate.load('kn.mainmenu.menu')}}</open> 
+		</text>
+	</label>
+	<nav class="primnav">
+		<ul>
+			<li>
+				<a href="#" ng-click="goHome()"> 
+					<md-tooltip md-delay="500">{{translate.load('kn.mainmenu.systemadministration')}}</md-tooltip> 
+					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)"></div>
+					<span flex>{{translate.load('kn.mainmenu.systemadministration')}}</span>
+					<md-button class="md-icon-button" ng-click="toggleAdminMenu($event)">
+						<md-icon ng-if="!adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
+						<md-icon ng-if="adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
+					</md-button>
+					
+				</a>
+				<input id="sysadmin" class="sysadmin" type="checkbox" ng-model="adminOpened"/>
+				<ul class="secnav">
+					<li ng-repeat="fix in fixed" ng-click="menuCall(fix.firstUrl,fix.linkType)">
+						<a href="#">
+							<md-tooltip md-delay="500">{{fix.tooltip}}</md-tooltip> 
+							{{fix.tooltip}}
+						</a>
+					</li>
+				</ul>
+			</li>
+			
+			<li ng-repeat="link in links">
+				<a href="#" ng-click="menuCall(link.firstUrl,link.linkType)"> 
+					<i ng-class="['icon', link.iconCls]"></i> 
+					{{link.tooltip}}
+					<md-tooltip md-delay="500">{{link.tooltip}}</md-tooltip>
+				</a>
+				<div class="tag" ng-if="link.iconCls == 'email' && unreadNewsNumber">{{unreadNewsNumber}}</div>
+			</li>
+			
+			<li>
+				<a href="#" ng-click="downloads()"> 
+					<i class="icon fa fa-2x fa-download"></i> 
+					{{translate.load('sbi.generic.download')}}
+					<md-tooltip md-delay="500">{{translate.load('sbi.generic.download')}}</md-tooltip>
+				</a>
+				<div class="tag" ng-if="downloadsList.length > 0">{{downloadsList.length}}</div>
+			</li>
+			
+			<li ng-repeat="custom in customs track by $index">
+				<a href="#" ng-click="menuCall(custom.src,custom.linkType)" layout="row"> 
+					<i class="icon fa fa-2x fa-folder-o"></i> 
+					{{custom.text}}
+					<md-tooltip md-delay="500">{{custom.text}}</md-tooltip>
+					<span flex></span>
+					<md-button class="md-icon-button" ng-if="custom.menu" ng-click="openMenu($event,$index)">
+						<md-icon md-font-icon="fa fa-chevron-right"></md-icon>
+					</md-button>
+				</a>
+			</li>
+		</ul>
+	</nav>
+	
+	<nav class="secondLevelContainer" ng-if="selectedCustom">
+		<div layout="row" layout-align="center center">
+			<md-button class="md-icon-button" ng-click="backMenu($event,selectedCustom)">
+				<md-icon md-font-icon="fa fa-arrow-left"></md-icon>
+			</md-button>
+			<span flex></span>
 		</div>
-
-	</aside>
-    <div id="contieniLinkAdmin" ng-class="{'open' : openAside, 'hideAdminPanel':hideAdminPanel}"> 
-   <!-- <div id="contieniLinkTest" data-ng-class="{'open' : openAside}"> -->
-      <div class="row">
-         <div class="col-xs-6 col-sm-4 gruppoLinkAdmin" data-ng-repeat="group in groups">
-            <h4 data-ng-if="!group.href"><i class="sidebar-icon material-icons-admin md-32">{{group.iconCls}}</i> {{group.title}}</h4>
-            <a data-ng-if="group.href" href="#" data-ng-click="menuCall(group.src,group.linkType)"><h4 >{{group.tooltip}}</h4></a>
-            <ul class="list-unstyled">
-               <li data-ng-repeat="item in group.items">
-                  <a href="#" data-ng-click="menuCall(item.src,item.linkType)">{{item.text}}</a>
-               </li>
-            </ul>
-         </div>
-      </div>
-   </div>
-   <script type="text/ng-template" id="innerMenu">
-<md-menu-bar class="kn-inner-menu">
-	<md-menu>
-		<button class="levelsButton" ng-mouseenter="$mdOpenMenu();$event.stopPropagation()" md-menu-origin>
-        	<md-icon class="sidebar-icon material-icons">folder</md-icon>
-      	</button>
-      	<md-menu-content>
-        	<md-menu-item ng-repeat="level in levels">
-  				<md-button ng-click="menuCall(level.src,level.linkType)">
-    				{{level.text}}
-    				<ng-include ng-init="levels= level.menu" ng-if="level.menu" src="'innerMenu'" />
-  				</md-button>
-			</md-menu-item>
-    	</md-menu-content>
-	</md-menu>
-</md-menu-bar>
- </script>
+		<ul ng-animate-swap="selectedCustom" ng-class="{'reverseAnim' : tempAnimateClass, 'forwardAnim' : !tempAnimateClass}">
+			<li ng-repeat="item in selectedCustom.menu track by $index" ng-click="menuCall(item.src,item.linkType)" layout="row" layout-align="start center">
+				<span flex> 
+					{{item.text}}
+				</span>
+				<md-tooltip md-delay="500">{{item.text}}</md-tooltip>
+				<md-button class="md-icon-button" ng-if="item.menu" ng-click="nextMenu($event,$index)">
+					<md-icon md-font-icon="fa fa-chevron-right"></md-icon>
+				</md-button>
+			</li>
+		</ul>
+	</nav>
+	
+	<div class="adminMenuContainer" ng-class="{'customMenuOpened':selectedCustom}" layout="column">
+		<div class="menuSearch" layout="row">
+			<md-input-container flex>
+				<input ng-model="searchMenuText" type="text" placeholder="Search"> 
+			</md-input-container>
+		</div>
+		<div class="menuGrid" layout="row" layout-wrap flex>
+			<div flex="50" flex-gt-sm="33" ng-repeat="group in groups | filter:searchMenuText:'items.text'">
+				<h4>{{group.title}}</h4>
+				<ul class="list-unstyled">
+	               <li ng-repeat="item in group.items | filter:searchMenuText:'items.text'">
+	                  <a href="#" ng-click="menuCall(item.src,item.linkType)">{{item.text}}</a>
+	               </li>
+	            </ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="menuOverlay" ng-class="{'higherOverlay':selectedCustom}" ng-click="toggleCheck()"></div>
 </div>
-
- 
+	

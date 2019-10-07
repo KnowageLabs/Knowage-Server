@@ -21,11 +21,20 @@
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <html>
-<head>
-<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" /> 
- 
-</head>
-<body class="landingPageAdmin homePage">
-	<div class="layer"></div>
-</body>
+	<head>
+		<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" /> 
+	</head>
+	<body class="homePage">
+		<div class="layer">
+		<!-- user id="user">
+			  <section>
+			    <img src="https://randomuser.me/api/portraits" />
+			    <section>
+			      <name>Sarah Dekhard</name>
+			      <actions><a href="#logout">logout</a></actions>
+			    </section>
+			  </section>
+			</user-->
+		</div>
+	</body>
 </html>

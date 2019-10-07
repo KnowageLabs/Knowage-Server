@@ -39,14 +39,7 @@ firstUrlTocallvar = firstUrl;
 
 
 <div data-ng-controller="menuCtrl" ng-app="menuApp" id="menuApp">
-<div id="divContainer" class="overlayButtonBar ">
-	<span ng-if="downloadsList.length > 0" class="menuBadge">{{downloadsList.length + unreadNewsNumber}}</span>
-	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons">menu</i></a>
-	<a href="#" aria-hidden="true" ng-click="goHome()" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" /></a>
-	
-</div>
-<menu-aside></menu-aside>
-
+	<menu-aside></menu-aside>
 </div>
 
 

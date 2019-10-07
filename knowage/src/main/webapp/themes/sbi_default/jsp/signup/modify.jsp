@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
   </head>
 
-  <body class="kn-login" ng-app="signUp" ng-controller="modifyCtrl" ng-cloak>
+	<body class="kn-account" ng-app="signUp" ng-controller="modifyCtrl" ng-cloak>
   
   
   	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">

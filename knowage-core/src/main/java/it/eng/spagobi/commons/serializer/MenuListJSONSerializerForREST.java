@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +35,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.PublicProfile;
@@ -241,8 +241,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							//
 							// }
 
-//							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
-							if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
+							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
+							if (menuElem.getCode() != null
+									&& (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
 								temp.put(LINK_TYPE, "execDirectUrl");
@@ -343,7 +344,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			// build myAccount
 			JSONObject myAccount = new JSONObject();
 
-			myAccount.put(ICON_CLS, "face");
+			myAccount.put(ICON_CLS, "fa fa-2x fa-address-card");
 			myAccount.put(TOOLTIP, "My Account");
 			myAccount.put(ICON_ALIGN, "top");
 			myAccount.put(SCALE, "large");
@@ -355,15 +356,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(myAccount);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)) {
-			JSONObject browserAngular = createMenuItem("folder_open", HREF_DOC_BROWSER_ANGULAR, messageBuilder.getMessage("menu.Browser", locale), true, null);
+			JSONObject browserAngular = createMenuItem("fa fa-2x fa-folder-o", HREF_DOC_BROWSER_ANGULAR, messageBuilder.getMessage("menu.Browser", locale),
+					true, null);
 			tempMenuList.put(browserAngular);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_FAVOURITES, funcs)) {
-			JSONObject favourites = createMenuItem("bookmark", HREF_BOOKMARK, messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
+			JSONObject favourites = createMenuItem("fa fa-2x fa-bookmark", HREF_BOOKMARK, messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
 			tempMenuList.put(favourites);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_SUBSCRIPTIONS, funcs)) {
-			JSONObject subscriptions = createMenuItem("mail", HREF_SUBSCRIPTIONS, messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
+			JSONObject subscriptions = createMenuItem("fa fa-2x fa-envelope", HREF_SUBSCRIPTIONS, messageBuilder.getMessage("menu.Subscriptions", locale), true,
+					null);
 			tempMenuList.put(subscriptions);
 		}
 		if (isAbleTo(SpagoBIConstants.FINAL_USERS_MANAGEMENT, funcs)) {
@@ -392,7 +395,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		// workspace is added unconditionally
 		if (isAbleTo(SpagoBIConstants.SEE_MY_WORKSPACE, funcs)) {
 			JSONObject workspace = new JSONObject();
-			workspace.put(ICON_CLS, "work");
+			workspace.put(ICON_CLS, "fa fa-2x fa-briefcase");
 			workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
 			workspace.put(ICON_ALIGN, "top");
 			workspace.put(SCALE, "large");
@@ -430,7 +433,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.HIERARCHIES_MANAGEMENT, funcs)) {
 			JSONObject hierarchiesManagement = new JSONObject();
-			hierarchiesManagement.put(ICON_CLS, "device_hub");
+			hierarchiesManagement.put(ICON_CLS, "fa fa-2x fa-sitemap");
 			hierarchiesManagement.put(TOOLTIP, messageBuilder.getMessage("menu.HierarchiesManagement", locale));
 			hierarchiesManagement.put(ICON_ALIGN, "top");
 			hierarchiesManagement.put(SCALE, "large");
@@ -443,7 +446,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, funcs)) {
 			JSONObject functionsCatalog = new JSONObject();
-			functionsCatalog.put(ICON_CLS, "functions");
+			functionsCatalog.put(ICON_CLS, "fa fa-2x fa-cubes");
 			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
 			functionsCatalog.put(ICON_ALIGN, "top");
 			functionsCatalog.put(SCALE, "large");
@@ -456,7 +459,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
-			glossaryManagementTechnical.put(ICON_CLS, "font_download");
+			glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-download");
 			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.technical", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
@@ -469,7 +472,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
-			glossaryManagementTechnical.put(ICON_CLS, "spellcheck");
+			glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-building");
 			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.business", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
@@ -482,7 +485,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_CROSS_NAVIGATION, funcs)) {
 			JSONObject o = new JSONObject();
-			o.put(ICON_CLS, "compare_arrows");
+			o.put(ICON_CLS, "fa fa-2x fa-exchange");
 			o.put(TOOLTIP, messageBuilder.getMessage("menu.cross.definition", locale));
 			o.put(ICON_ALIGN, "top");
 			o.put(SCALE, "large");
@@ -495,7 +498,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_CALENDAR, funcs)) {
 			JSONObject calendar = new JSONObject();
-			calendar.put(ICON_CLS, "event");
+			calendar.put(ICON_CLS, "fa fa-2x fa-calendar");
 			calendar.put(TOOLTIP, messageBuilder.getMessage("menu.calendar", locale));
 			calendar.put(ICON_ALIGN, "top");
 			calendar.put(SCALE, "large");
@@ -505,7 +508,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			calendar.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(calendar);
 		}
-
 
 		// if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT,
 		// funcs)) {
@@ -525,7 +527,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
 			JSONObject lovsManagementTechnical = new JSONObject();
-			lovsManagementTechnical.put(ICON_CLS, "list");
+			lovsManagementTechnical.put(ICON_CLS, "fa fa-2x fa-list");
 			lovsManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.lovs.management", locale)); // TODO
 			lovsManagementTechnical.put(ICON_ALIGN, "top");
 			lovsManagementTechnical.put(SCALE, "large");
@@ -613,7 +615,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
 			JSONObject i18n = new JSONObject();
-			i18n.put(ICON_CLS, "flag");
+			i18n.put(ICON_CLS, "fa fa-2x fa-flag");
 			i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
 			i18n.put(ICON_ALIGN, "top");
 			i18n.put(SCALE, "large");
@@ -626,7 +628,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
 			JSONObject i18n = new JSONObject();
-			i18n.put(ICON_CLS, "flag");
+			i18n.put(ICON_CLS, "fa fa-2x fa-flag");
 			i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
 			i18n.put(ICON_ALIGN, "top");
 			i18n.put(SCALE, "large");
@@ -636,19 +638,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			i18n.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(i18n);
 		}
-		
-		//if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
-			JSONObject news = new JSONObject();
-			news.put(ICON_CLS, "email");
-			news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
-			news.put(ICON_ALIGN, "top");
-			news.put(SCALE, "large");
-			news.put(TARGET, "_self");
-			news.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
-			news.put(FIRST_URL, contextName + HREF_I18N);
-			news.put(LINK_TYPE, "news");
-			tempMenuList.put(news);
-		//}
+
+		// if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
+		JSONObject news = new JSONObject();
+		news.put(ICON_CLS, "fa fa-2x fa-newspaper-o");
+		news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
+		news.put(ICON_ALIGN, "top");
+		news.put(SCALE, "large");
+		news.put(TARGET, "_self");
+		news.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
+		news.put(FIRST_URL, contextName + HREF_I18N);
+		news.put(LINK_TYPE, "news");
+		tempMenuList.put(news);
+		// }
 
 		// end
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);

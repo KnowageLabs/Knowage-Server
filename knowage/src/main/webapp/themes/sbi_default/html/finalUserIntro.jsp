@@ -21,22 +21,10 @@
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <html>
-<head>
-	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
-	
-	
-	<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" />
-
- 
-</head>
-<body class="landingPageEndUser homePage">
-	<div class="layer"></div>
- 
-
- <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
- <script src=" <%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
- 
- 
-
-</body>
+	<head>
+		<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" />
+	</head>
+	<body class="landingPageEndUser homePage">
+		<div class="layer"></div>
+	</body>
 </html>

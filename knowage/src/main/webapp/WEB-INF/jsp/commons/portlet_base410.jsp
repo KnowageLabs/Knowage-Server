@@ -390,15 +390,6 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 <%-- ---------------------------------------------------------------------- --%>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/jquery/dist/jquery.min.js")%>"></script> 
-	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/css/bootstrap.min.css")%>">
-	<link rel="styleSheet" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/menuBar/style.css")%>" type="text/css" />
 	<link rel="styleSheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>" type="text/css" />
-
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INCLUDE Bootstrap														--%>
-<%-- ---------------------------------------------------------------------- --%>		
-
-<script src="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/bootstrap.min.js")%>"></script>
-
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>

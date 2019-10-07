@@ -1,28 +1,68 @@
 .homePage{
     .layer {
-    	height:100%;
-    	width:100%;
-    	position:fixed;
-    	left:0;
-    	top:0;
-    	z-index:1 !important;
-    	background-image: url('../img/defaultTheme/homeBackground.jpg');
-    	background-size: cover;
+        height: 100vh;
+        width: 100vw;
+        position:fixed;
+        left:0;
+        top:0;
+        z-index:1 !important;
+        background-image: url('../img/defaultTheme/homeBackground.jpg');
+        background-size: cover;
     }
-    img {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        margin: 10px;
-        width: 15%;
-    }
-    .text {
-        position: absolute;
-        bottom: 40px;
-        left: 0px;
-        margin: 10px;
-        font-family: Sans-Serif;
-        font-weight: 600;
-        color: rgb(189, 80, 128);
+    user {
+        font-family: 'Roboto';
+        padding: 5px;
+        padding-bottom: 3px;
+        flex-shrink: 0;
+        position: fixed;
+        font-weight: 400;
+        right: 0;
+        color: white;    
+        z-index: 99999;
+
+        > section {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            > section {
+              display: flex;
+              flex-direction: column;
+              white-space: nowrap;
+          }
+        }
+        img {
+            height: 54px;
+            width: 54px;
+            border: 2px solid $fabPrimaryColor;
+            border-radius: 50px;
+            overflow: hidden;
+            margin-left: 10px;
+            min-height: 54px;
+            min-width: 54px;
+            align-items: flex-end;
+        }
+        name {
+            font-weight: 400;
+            font-size: 1.5rem;
+            color: $darkTextColor;
+        }
+        actions {
+            padding: .1em 0;
+            font-size: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            a {
+              padding: 0 .5em;
+              color: $darkTextColor;
+              text-decoration: none;
+              text-transform: uppercase;
+              &:hover {
+                text-decoration: underline;
+                }
+                &:last-child {
+                    padding-right: 0;
+                }
+            }
+        }
     }
 }
