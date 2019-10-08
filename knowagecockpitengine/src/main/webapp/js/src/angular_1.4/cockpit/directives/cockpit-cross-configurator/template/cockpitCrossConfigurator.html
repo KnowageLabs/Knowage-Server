@@ -1,8 +1,8 @@
 <md-content class="md-padding noPadding" layout="row" layout-fill>
-	<div ng-if="localModel && !localModel.wtype && !crossPivot" flex layout="row" layout-align="center center">
+	<div ng-if="localModel && !localModel.wtype && !crossPivot && !crossText" flex layout="row" layout-align="center center">
 		<div class="kn-info">{{::translate.load('kn.crossconfigurator.savechart')}}</div>
 	</div>
-	<div layout="column" flex ng-hide="localModel && !localModel.wtype && !crossPivot">
+	<div layout="column" flex ng-hide="localModel && !localModel.wtype && !crossPivot && !crossText">
 	<md-card>
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.cross.enable" ng-change="toggleEnabled('cross')"></md-switch> {{::translate.load('kn.crossconfigurator.crossnavigation')}}</md-subheader>
 		<md-card-content >
@@ -159,7 +159,7 @@
 					</md-optgroup>
 				</md-select>
 			</md-input-container>
-				
+			
 			<!-- dataset and column if selection -->
 			<md-input-container class="md-block" flex=25
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
@@ -188,7 +188,7 @@
 		</md-card-content>	
 	</md-card>
 	
-	<md-card  ng-if="!crossImage && !crossMap && !crossPivot">
+	<md-card  ng-if="!crossImage && !crossMap && !crossPivot && !crossText">
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.preview.enable" ng-change="toggleEnabled('preview')"></md-switch> {{::translate.load('kn.crossconfigurator.previewnavigation')}}</md-subheader>
 		<md-card-content layout="row" layout-align="space-around center">
 			

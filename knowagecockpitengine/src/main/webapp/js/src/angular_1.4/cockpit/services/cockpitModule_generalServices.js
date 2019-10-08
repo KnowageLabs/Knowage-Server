@@ -199,11 +199,12 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		}
 
 	//get templates location
-	gs.getTemplateUrl = function(widget,template){
+	gs.getTemplateUrl = function(widget,template,format){
 		var basePath = sbiModule_config.host;
 		var templatesUrl = sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
-  		return basePath + templatesUrl + template +'.html';
+  		return basePath + templatesUrl + template + (format || '.html');
   	}
+
 
 	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){
 		$scope.translate = sbiModule_translate;

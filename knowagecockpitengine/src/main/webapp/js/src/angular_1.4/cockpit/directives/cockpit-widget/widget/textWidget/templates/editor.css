@@ -1,0 +1,12 @@
+.paramPlaceholder {
+	font-weight: bold;
+	font-style: italic;
+}
+.paramPlaceholder.crossNavigation {
+    transition: all .3s ease;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+.paramPlaceholder.crossNavigation:hover {
+    background-color: #ccc;
+  }

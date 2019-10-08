@@ -105,22 +105,31 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
 		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
 		];
-	
+
 	$scope.previewParametersType=
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
 		{"value": "driver", "label":'Analytical Driver'},
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
 		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}];
-	
+
 	//$scope.cockpitDatasets = cockpitModule_template.configuration.datasets;
-	$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList;
-	if($scope.cockpitDatasets == undefined) $scope.cockpitDatasets = [];
+	$scope.cockpitDatasets = [];
 	$scope.allCockpitDatasetsColumns = {};
+	if($scope.localModel && Array.isArray($scope.localModel.datasetId)){
+		for(var k in cockpitModule_datasetServices.datasetList){
+			if($scope.localModel.datasetId.indexOf(cockpitModule_datasetServices.datasetList[k].id.dsId) != -1 ){
+				$scope.cockpitDatasets.push(cockpitModule_datasetServices.datasetList[k]);
+			}
+		}
+	}else{
+		$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList || [];
+	}
+
 	for(var i = 0; i < $scope.cockpitDatasets.length;i++){
 		var meta = $scope.cockpitDatasets[i].metadata.fieldsMeta;
 		$scope.allCockpitDatasetsColumns[$scope.cockpitDatasets[i].label] = meta;
 	}
-	
+
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
@@ -129,12 +138,12 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		if($scope.iconOpened == type) $scope.iconOpened = false;
 		else $scope.iconOpened = type;
 	}
-	
+
 	$scope.setIcon = function(family,icon){
 		$scope.ngModel[$scope.iconOpened].icon = family.className+' '+icon.className;
 		$scope.iconOpened = false;
 	}
-	
+
 	$scope.changePreviewDataset = function(dsId){
 		$scope.ngModel.preview.parameters = cockpitModule_datasetServices.getDatasetById(dsId).parameters;
 	}
@@ -144,7 +153,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	if($scope.cockpitCross.outputParametersList == undefined){
 		$scope.cockpitCross.outputParametersList = [];
 	}
-	
+
 	for(var propt in docOutParList){
 		var dataType = docOutParList[propt];
 		var typeToPut="text";
@@ -159,12 +168,12 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.outputParametersList.push(par);
 
 	}
-	
+
 	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table'){
 		$scope.crossTable = true;
 		$scope.crossTableModel = $scope.$parent.newModel;
 	}
-	
+
 	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'map'){
 		$scope.crossMap = true;
 		$scope.layers = $scope.$parent.newModel.content.layers;
@@ -174,25 +183,27 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			}
 		}
 	}
-	
+
 	$scope.getMapLayersFields = function(layer){
 		if(layer) return $scope.$parent.newModel.content.columnSelectedOfDataset[layer.dsId];
 	}
-	
+
 	if($scope.localModel != undefined && $scope.localModel.type === 'static-pivot-table'){
 		$scope.crossPivot = true;
 		$scope.allCategories = [];
 		for(var k in $scope.localModel.content.crosstabDefinition.columns) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.columns[k]);
 		for(var i in $scope.localModel.content.crosstabDefinition.rows) $scope.allCategories.push($scope.localModel.content.crosstabDefinition.rows[i]);
 	}
-	
-	
+
+
 	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
-	
+
+	$scope.crossText = $scope.localModel != undefined && $scope.localModel.type === 'text';
+
 	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
-	
+
 	$scope.toggleEnabled = function(type){
-		
+
 		if($scope.crossTable){
 			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
 				$scope.$parent.newModel.cross.enable = $scope.ngModel.cross.enable = false;
@@ -208,16 +219,16 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 				$scope.localModel.preview.enable = $scope.ngModel.preview.enable = false;
 			}
 		}
-		
+
 	}
-	
+
 	$scope.$watchCollection('ngModel.preview.dataset',function(newValue,oldValue){
 		var newPreviewingDSLabel = cockpitModule_datasetServices.getDatasetLabelById(newValue);
 		if ($scope.allCockpitDatasetsColumns[newPreviewingDSLabel] == undefined) {
 			var foundDs = $filter('filter')($scope.cockpitDatasets, {label: newPreviewingDSLabel}, true);
-			if (foundDs.length > 0)					
+			if (foundDs.length > 0)
 			$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
-		} 
+		}
 		$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
 	});
 
@@ -234,7 +245,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			$scope.model.cross = $scope.model.cross || {};
 			$scope.model.preview = $scope.model.preview || {};
 		   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
-			   
+
 			   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 		   }else{
 			   $scope.model.dataset= {};

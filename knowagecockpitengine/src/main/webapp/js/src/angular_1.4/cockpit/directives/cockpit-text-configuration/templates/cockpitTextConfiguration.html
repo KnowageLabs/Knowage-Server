@@ -4,9 +4,14 @@
 		     <h2>{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.dynamic.title")}}</h2> 
 		  </div> 
 	</md-toolbar>
-	<md-card-content class="noPadding">	
+	<md-card-content class="noPadding">
+		<div layout="row" layout-align="start center" ng-if="ngModelShared.viewDatasets && ngModelShared.cross && ngModelShared.cross.enable">
+			<div class="chip" ng-class="{'active':ngModelShared.selectedClickFunct==clickFunct}" ng-repeat="clickFunct in ngModelShared.clickFunctions" ng-click="selectClickFunction(clickFunct)">
+			{{clickFunct}}		
+			</div>
+		</div> 	
 		<div layout="row" layout-align="center center" ng-if="ngModelShared.viewDatasets">
-			<div class="chip"  ng-class="{'active':ngModelShared.selectedAggregation==func}" ng-repeat="func in ngModelShared.functions" ng-click="selectAggregation(func)">
+			<div class="chip" ng-class="{'active':ngModelShared.selectedAggregation==func}" ng-repeat="func in ngModelShared.functions" ng-click="selectAggregation(func)">
 			{{func}}
 			<md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addFunction")}}</md-tooltip>			
 			</div>

@@ -814,6 +814,20 @@
 		  }
 	}
 
+	cockpit-text-widget{
+		.paramPlaceholder.crossNavigation {
+		    cursor: pointer;
+		    transition: all .3s ease;
+		    padding: 2px;
+		    border: 1px solid transparent;
+		    &:hover {
+		      background-color: lighten($ternaryColor, 10%);
+		      border: 1px solid $bordersColor;
+		    }
+	  	}
+	}
+
+
 	cockpit-table-widget {
 		height: 100%;
 		.kn-noItems {

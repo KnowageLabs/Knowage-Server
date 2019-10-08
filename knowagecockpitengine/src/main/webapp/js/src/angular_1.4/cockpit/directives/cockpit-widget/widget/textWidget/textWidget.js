@@ -44,7 +44,7 @@ angular.module('cockpitModule')
 		                	if(counter == 0 && refreshBool != undefined && refreshBool == true){
 		                		html = scope.ngModel.content.text;
 		                	}
-	
+
 		                	if (counter < elems.length){
 		                		// call this only if reference is really contained
 		                		if(html.indexOf(elems[counter])>=0){
@@ -67,7 +67,7 @@ angular.module('cockpitModule')
 		                			return callback();
 		                		}
 		                	}
-	                
+
 	                }
 
 	                scope.checkPlaceholders(0);
@@ -104,7 +104,7 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout){
+function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_generalServices,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout){
 
 	$scope.property={style:{}};
 	$scope.init=function(element,width,height){
@@ -135,7 +135,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 			},500);
 		}
-		
+
 
 	};
 
@@ -146,6 +146,10 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 				attachTo:  angular.element(document.body),
 				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 			    	  $scope.localModel = {};
+
+			    	  $scope.getcssUrl = function(){
+			  	  		return cockpitModule_generalServices.getTemplateUrl('textWidget','editor','.css');
+			  	  	}
 
 
 

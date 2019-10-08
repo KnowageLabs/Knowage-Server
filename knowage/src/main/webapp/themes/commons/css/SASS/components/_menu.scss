@@ -244,6 +244,9 @@ md-list-item.license-item::before{
     .icon {
       height: 58px;
       flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 58px;
       padding: 15px;
       margin-right: 5px;

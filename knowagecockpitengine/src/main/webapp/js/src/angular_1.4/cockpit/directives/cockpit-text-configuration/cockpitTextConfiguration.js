@@ -81,12 +81,13 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 				$scope.ngModelShared.viewDatasetsDett[tmpDs.label] = false;
 				$scope.ngModelShared.viewDatasets = true;
 				$scope.ngModelShared.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
+				$scope.ngModelShared.clickFunctions = ['CROSS-NAVIGATION'];
 			}
 
 		}
 	}
 
-	$scope.addToText = function (type, param, key, func){
+	$scope.addToText = function (type, param, key){
 		if (type=='parameter'){
 			param="<span class='paramPlaceholder'> $P{" + param + "}</span>";
 		}else if (type=='dataset') {
@@ -103,7 +104,18 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 				ph = $scope.ngModelShared.selectedAggregation + "(" + ph + ")";
 				$scope.ngModelShared.selectedAggregation = false; // reset function selection
 			}
-			param="<span  class='paramPlaceholder'>" + ph + "</span>";
+			if($scope.ngModelShared.selectedClickFunct && $scope.ngModelShared.selectedClickFunct == 'CROSS-NAVIGATION') {
+				var tempDsId;
+				for(var k in $scope.cockpitModule_template.configuration.datasets){
+					if($scope.cockpitModule_template.configuration.datasets[k].name == key) {
+						tempDsId = $scope.cockpitModule_template.configuration.datasets[k].dsId;
+						break;
+					}
+				}
+				var tempSelection = "doSelection('"+param+"','"+ph+"',null,null,null,null,"+tempDsId+")";
+				param="<span ng-click=\""+tempSelection+"\" class='paramPlaceholder crossNavigation'>" + ph + "</span>";
+			}
+			else param="<span  class='paramPlaceholder'>" + ph + "</span>";
 		}
 		if (!$scope.editorText) $scope.editorText="";
 		$scope.editorText += param;
@@ -121,6 +133,10 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 
 	$scope.selectAggregation = function(aggr){
 		$scope.ngModelShared.selectedAggregation = (!$scope.ngModelShared.selectedAggregation)?aggr:false;
+	}
+
+	$scope.selectClickFunction = function(clickFunct){
+		$scope.ngModelShared.selectedClickFunct = (!$scope.ngModelShared.selectedClickFunct)?clickFunct:false;
 	}
 
 	$scope.showHideParameters = function(){

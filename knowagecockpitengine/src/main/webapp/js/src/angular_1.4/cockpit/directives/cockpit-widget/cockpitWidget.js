@@ -305,7 +305,7 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
-	
+
 	$scope.hasButtons = function(){
 		var childs = document.querySelector("#w"+$scope.ngModel.id+" #viewModeMenu").childNodes;
 		for(var i in childs){
@@ -714,7 +714,7 @@ function cockpitWidgetControllerFunction(
 					previewSettings.parameters[p].value = cockpitModule_template.configuration.filters[previewSettings.parameters[p].dataset][previewSettings.parameters[p].column];
 				}else{
 					for(var k in cockpitModule_template.configuration.aggregations){
-						if(cockpitModule_template.configuration.aggregations[k].selection && 
+						if(cockpitModule_template.configuration.aggregations[k].selection &&
 								cockpitModule_template.configuration.aggregations[k].selection[previewSettings.parameters[p].dataset+'.'+previewSettings.parameters[p].column]){
 							var tempValue = cockpitModule_template.configuration.aggregations[k].selection[previewSettings.parameters[p].dataset+'.'+previewSettings.parameters[p].column];
 							previewSettings.parameters[p].value = tempValue.length > 1 ? tempValue : tempValue[0];
@@ -725,7 +725,7 @@ function cockpitWidgetControllerFunction(
 		}
 		return previewSettings.parameters;
 	}
-	
+
 	var popupMessage = function(result){
 		var message 	= 'The download has started in background. You will find the result file in your download page.';
 		var className 	= 'kn-infoToast';
@@ -741,7 +741,7 @@ function cockpitWidgetControllerFunction(
 			  stopOnFocus: true
 			}).showToast();
 	}
-	
+
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -753,9 +753,13 @@ function cockpitWidgetControllerFunction(
 		var model = $scope.ngModel;
 
 		var previewSettings;
-
 		if($scope.ngModel.cross && $scope.ngModel.cross.preview) previewSettings = angular.copy($scope.ngModel.cross.preview);
 		if($scope.ngModel.content && $scope.ngModel.content.preview) previewSettings = angular.copy($scope.ngModel.content.preview);
+
+		var crossSettings;
+		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross.cross);
+		else if($scope.ngModel.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross);
+
 
 		if (previewSettings && previewSettings.enable) {
 			if((previewSettings.previewType != 'singleColumn' || (previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName)) &&
@@ -797,7 +801,7 @@ function cockpitWidgetControllerFunction(
 					if (config.parameters != null && typeof config.parameters != 'undefined') {
 						data.parameters = config.parameters;
 					};
-					
+
 					$http.post(sbiModule_config.host + sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
 					.then(
 						function(response){
@@ -809,7 +813,7 @@ function cockpitWidgetControllerFunction(
 				return;
 			}
 
-		}else if(model.cross != undefined  && model.cross.cross != undefined && model.cross.cross.enable === true){
+		}else if(crossSettings && crossSettings.enable){
 
 			// enter cross navigation mode
 			var doCross = false;
@@ -827,18 +831,18 @@ function cockpitWidgetControllerFunction(
 				}
 			}
 
-			if(model.cross.cross.crossType == "allRow" || model.cross.cross.crossType == "icon"){
+			if(crossSettings.crossType == "allRow" || crossSettings.crossType == "icon"){
 				// case all columns are enabled for cross, get value for cross
 				// column (or alias if present)
-				var crossColumnOrAlias = model.cross.cross.column;
+				var crossColumnOrAlias = crossSettings.column;
 
 				for(var colIndex in model.content.columnSelectedOfDataset){
 					var col = model.content.columnSelectedOfDataset[colIndex];
-					if(col.aliasToShow != undefined && col.name == model.cross.cross.column){
+					if(col.aliasToShow != undefined && col.name == crossSettings.column){
 						crossColumnOrAlias = col.aliasToShow;
 					}
 				}
-				if(model.cross.cross.crossType == "icon" && columnValue && model.cross.cross.column) doCross = false;
+				if(crossSettings.crossType == "icon" && columnValue && crossSettings.column) doCross = false;
 				else doCross = true;
 				// get value to pass to cross navigation
 				if(row){
@@ -856,21 +860,21 @@ function cockpitWidgetControllerFunction(
 			}else{
 				// case a specific column is enabled for cross
 				// check if column clicked is the one for cross navigation
-				if(model.cross.cross.column == undefined || model.cross.cross.column === nameToCheckForCross){
+				if(crossSettings.column == undefined || crossSettings.column === nameToCheckForCross){
 					doCross = true;
 				}
 			}
 
 			if(doCross === true){
 				var outputParameter = {};
-				if(model.cross.cross.outputParameter){
-					outputParameter[model.cross.cross.outputParameter] = columnValue;
+				if(crossSettings.outputParameter){
+					outputParameter[crossSettings.outputParameter] = columnValue;
 				}
 
 
 				// parse output parameters if enabled
 				var otherOutputParameters = [];
-				var passedOutputParametersList = model.cross.cross.outputParametersList;
+				var passedOutputParametersList = crossSettings.outputParametersList;
 
 				// get Aliases for column
 				var columnAliasesMap = {};
@@ -911,6 +915,8 @@ function cockpitWidgetControllerFunction(
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
+							}else if(model.type == 'text'){
+								otherOutputParameters.push({[par]:columnValue});
 							}
 						}
 						else if(content.type == 'selection'){
@@ -932,8 +938,8 @@ function cockpitWidgetControllerFunction(
 				}
 
 				// if destination document is specified don't ask
-				if(model.cross.cross.crossName != undefined){
-					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName,null,otherOutputParameters);
+				if(crossSettings.crossName != undefined){
+					parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
 				}
 				else{
 					parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
@@ -1088,7 +1094,7 @@ function cockpitWidgetControllerFunction(
 							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 					}
 					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-					
+
 					if(!skipRefresh){
 						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 					}
@@ -1097,7 +1103,7 @@ function cockpitWidgetControllerFunction(
 			}
 			$rootScope.hideCockpitSpinner();
 		}
-		
+
 	}
 
 	$scope.doEditWidget=function(initOnFinish){
