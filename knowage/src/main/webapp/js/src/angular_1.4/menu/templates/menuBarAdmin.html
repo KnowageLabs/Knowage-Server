@@ -32,7 +32,8 @@
 			
 			<li ng-repeat="link in links">
 				<a href="#" ng-click="menuCall(link.firstUrl,link.linkType)"> 
-					<i ng-class="['icon', link.iconCls]"></i> 
+					<i ng-if="link.iconCls" ng-class="['icon', link.iconCls]"></i> 
+					<i ng-if="!link.iconCls" class="icon fa fa-2x fa-link"></i> 
 					{{link.tooltip}}
 					<md-tooltip md-delay="500">{{link.tooltip}}</md-tooltip>
 				</a>

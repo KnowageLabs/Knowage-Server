@@ -3,7 +3,7 @@
 	 
 	<ITEM	code="resources" 
 			title="#menu.Resources"
-			iconCls="cogwheels">
+			iconCls="fa fa-2x fa-cogs">
 			
 		<ITEM	code="data_providers" 
 				title="#menu.DataProviders"
@@ -26,7 +26,7 @@
 		<ITEM	code="profile_mng" 
 				title="#menu.ProfileMenu"
 				groupingMenu="true"
-				iconCls="supervisor_account">
+				iconCls="fa fa-2x fa-id-card-o">
 			
 			<ITEM	title="#menu.Attributes"
 					functionality="ProfileManagement"
@@ -56,7 +56,7 @@
 		<ITEM	code="behaviouralModel" 
 				title="#menu.BehaviouralModelMenu"
 				groupingMenu="true"
-				iconCls="group_work">
+				iconCls="fa fa-2x fa-users">
 				
 			<ITEM	title="#menu.LovMan"
 					functionality="LovsView"
@@ -78,7 +78,7 @@
 		<ITEM	code="catalogs" 
 				title="#menu.Catalogs"
 				groupingMenu="true"
-				iconCls="style">
+				iconCls="fa fa-2x fa-paint-brush">
 				
 	        <ITEM   title="#menu.MetaModelsCatalogue"
 	                functionality="MetaModelsCatalogueManagement"
@@ -121,7 +121,7 @@
 		<ITEM 	code="menu_tools" 
 				title="#menu.ToolsMenu" 
 				groupingMenu="true"	
-				iconCls="build">
+				iconCls="fa fa-2x fa-tasks">
 
 			<ITEM 	title="#menu.Scheduler" 
 					functionality="SchedulerManagement"
@@ -154,7 +154,7 @@
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"
 				groupingMenu="true"
-				iconCls="settings">
+				iconCls="fa fa-2x fa-cogs">
 				
 			<ITEM	title="#menu.UdpMan"
 					functionality="UserDefinedPropertyManagement"
@@ -217,7 +217,7 @@
             <ITEM 	title="#menu.event" functionality="EventsManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />
 	  	</ITEM>	 
 	  		
-	  		<ITEM code="manage_internationalization" title="#menu.i18n"	groupingMenu="true" iconCls="flag">
+	  		<ITEM code="manage_internationalization" title="#menu.i18n"	groupingMenu="true" iconCls="fa fa-flag">
 	  			<ITEM title="#menu.manageI18n" functionality="ManageInternationalization"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp" /> 	
 	  		</ITEM>
