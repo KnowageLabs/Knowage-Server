@@ -229,7 +229,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- based on ecexution mode include initial html  -->
 <% if (sbiMode.equalsIgnoreCase("WEB")){ %>
 <html
-	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
+	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>" style="overflow-x:hidden">
 <head>
 <title>Knowage</title>
 <meta name="viewport" content="initial-scale=1" />
