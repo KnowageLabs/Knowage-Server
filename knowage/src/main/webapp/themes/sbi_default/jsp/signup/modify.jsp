@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Email address</label>
-			        <input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat" required>
+			        <input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat" >
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Password</label>
