@@ -162,9 +162,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 				$scope.ngModel.preview.parameters.splice(p,1);
 			}
 		}
-		for(var k in newParamsList){
-			if(newParamsListNames.indexOf(newParamsList[k].name)!= -1){
-
+		for(var i in newParamsListNames){
+			for(var j in newParamsList){
+				if(newParamsListNames[i] == newParamsList[j].name){
+					$scope.ngModel.preview.parameters.push(newParamsList[j]);
+				}
 			}
 		}
 	}
@@ -250,7 +252,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
 		}
 		$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
-		$scope.checkParametersUpdate(21);
+		$scope.checkParametersUpdate(newValue);
 	});
 
 	if($scope.crossChart){
