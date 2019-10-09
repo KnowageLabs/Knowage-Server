@@ -217,7 +217,9 @@ public class Signup {
 				userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 
 				SbiUserAttributesId pk = new SbiUserAttributesId();
-				pk.setAttributeId(attributeId);
+				if (attributeId != null) {
+					pk.setAttributeId(attributeId);
+				}
 				pk.setId(id);
 				userAttribute.setId(pk);
 			}
