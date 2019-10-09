@@ -19,6 +19,11 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -28,29 +33,27 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-
-import java.util.List;
 
 class RealtimeEvaluationStrategy extends CachedEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(RealtimeEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(RealtimeEvaluationStrategy.class);
 
-    public RealtimeEvaluationStrategy(UserProfile userProfile, IDataSet dataSet, ICache cache) {
-        super(userProfile, dataSet, cache);
-    }
+	public RealtimeEvaluationStrategy(UserProfile userProfile, IDataSet dataSet, ICache cache) {
+		super(userProfile, dataSet, cache);
+	}
 
-    @Override
-    protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-        try {
-            return manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-        } catch (DataBaseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Override
+	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+		try {
+			return manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    protected DatasetEvaluationStrategyType getEvaluationStrategy() {
-        return DatasetEvaluationStrategyType.REALTIME;
-    }
+	@Override
+	protected DatasetEvaluationStrategyType getEvaluationStrategy() {
+		return DatasetEvaluationStrategyType.REALTIME;
+	}
 }

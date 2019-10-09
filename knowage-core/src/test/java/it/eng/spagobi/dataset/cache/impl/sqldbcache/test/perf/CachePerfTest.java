@@ -1,5 +1,18 @@
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test.perf;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.GenericSQLDBCachePersistTableTest;
 import it.eng.spagobi.dataset.cache.test.TestXmlFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -8,18 +21,6 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 @RunWith(value = Parameterized.class)
 public class CachePerfTest extends AbstractCachePerfTest {
@@ -125,7 +126,7 @@ public class CachePerfTest extends AbstractCachePerfTest {
 			ds.loadData();
 			IDataStore dataStore = ds.getDataStore();
 			long start = System.currentTimeMillis();
-			long persistTime = aCacahe.put(ds, dataStore);
+			long persistTime = aCacahe.put(ds, dataStore, null);
 			dataStore = aCacahe.get(ds.getSignature());
 			long end = System.currentTimeMillis();
 			tableNames.add(aCacahe.getMetadata().getCacheItem(ds.getSignature()).getTable());

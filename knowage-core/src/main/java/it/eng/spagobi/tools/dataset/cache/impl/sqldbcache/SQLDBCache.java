@@ -22,8 +22,11 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -231,14 +234,15 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups,
-			List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
+			List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
+			throws DataBaseException {
 		logger.debug("IN");
 		Assert.assertNotNull(dataSet, "Dataset cannot be null");
 		Assert.assertNotNull(userProfile, "User profile cannot be null");
 		IDataStore dataStore;
 		try {
 			dataSet.setUserProfile(userProfile);
-			dataStore = getInternal(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+			dataStore = getInternal(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -247,7 +251,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	private IDataStore getInternal(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
 		logger.debug("IN");
 
 		try {
@@ -257,7 +261,7 @@ public class SQLDBCache implements ICache {
 				return null;
 			}
 			return queryStandardCachedDataset(dataSet, resultsetSignature, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
-					maxRowCount);
+					maxRowCount, indexes);
 
 		} finally {
 			logger.debug("OUT");
@@ -267,8 +271,8 @@ public class SQLDBCache implements ICache {
 
 	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-			throws DataBaseException {
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
+			Set<String> indexes) throws DataBaseException {
 
 		IDataStore toReturn = null;
 
@@ -302,8 +306,39 @@ public class SQLDBCache implements ICache {
 
 						IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.FLAT, flatDataSet, null);
 
-						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 						toReturn.setCacheDate(cacheItem.getCreationDate());
+
+						/* CHECK IF INDEXES EXIST OR CREATE THEM */
+						if (indexes != null) {
+							Iterator<String> it = indexes.iterator();
+							while (it.hasNext()) {
+								String currInd = it.next();
+								Set<String> currIndSet = new HashSet<String>();
+								currIndSet.add(currInd);
+
+								PersistedTableManager persistedTableManager = new PersistedTableManager();
+								persistedTableManager.setTableName(tableName);
+								persistedTableManager.setDialect(DatabaseDialect.get(getDataSource().getHibDialectClass()));
+								persistedTableManager.setRowCountColumIncluded(false);
+
+								int queryTimeout;
+								try {
+									queryTimeout = Integer
+											.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+								} catch (NumberFormatException nfe) {
+									logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
+									queryTimeout = -1;
+								}
+
+								if (queryTimeout > 0) {
+									logger.debug("Setting query timeout...");
+									persistedTableManager.setQueryTimeout(queryTimeout);
+								}
+								persistedTableManager.createIndexesOnTable(dataSet, dataSource, tableName, currIndSet);
+							}
+						}
+
 					} else {
 						logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 					}
@@ -330,7 +365,7 @@ public class SQLDBCache implements ICache {
 	public void refresh(IDataSet dataSet) {
 		try {
 			dataSet.loadData();
-			this.put(dataSet, dataSet.getDataStore(), true);
+			this.put(dataSet, dataSet.getDataStore(), true, null);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -348,7 +383,7 @@ public class SQLDBCache implements ICache {
 	 */
 
 	@Override
-	public void put(IDataSet dataSet) {
+	public void put(IDataSet dataSet, Set<String> columns) {
 		logger.trace("IN");
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(signature);
@@ -377,6 +412,7 @@ public class SQLDBCache implements ICache {
 							persistedTableManager.setQueryTimeout(queryTimeout);
 						}
 						persistedTableManager.persist(dataSet, getDataSource(), tableName);
+						persistedTableManager.createIndexesOnTable(dataSet, getDataSource(), tableName, columns);
 
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
 								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
@@ -404,13 +440,13 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	@Deprecated
-	public long put(IDataSet dataSet, IDataStore dataStore) throws DataBaseException {
-		return put(dataSet, dataStore, false);
+	public long put(IDataSet dataSet, IDataStore dataStore, Set<String> columns) throws DataBaseException {
+		return put(dataSet, dataStore, false, columns);
 	}
 
 	@Override
 	@Deprecated
-	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) throws DataBaseException {
+	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate, Set<String> columns) throws DataBaseException {
 		logger.trace("IN");
 
 		if (dataStore.getMetaData().getFieldCount() == 0) {

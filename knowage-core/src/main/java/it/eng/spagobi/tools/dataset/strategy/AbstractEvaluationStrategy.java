@@ -19,111 +19,118 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.*;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
-import org.apache.log4j.Logger;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(AbstractEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(AbstractEvaluationStrategy.class);
 
-    protected IDataSet dataSet;
+	protected IDataSet dataSet;
 
-    public AbstractEvaluationStrategy(IDataSet dataSet) {
-        this.dataSet = dataSet;
-    }
+	public AbstractEvaluationStrategy(IDataSet dataSet) {
+		this.dataSet = dataSet;
+	}
 
-    @Override
-    public IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-        IDataStore dataStore;
-        if (isUnsatisfiedFilter(filter)) {
-            dataStore = new DataStore(dataSet.getMetadata());
-        } else {
-            dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-            if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-                IDataStore summaryRowDataStore = executeSummaryRow(summaryRowProjections, dataStore.getMetaData(), filter, maxRowCount);
-                appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
-            }
-        }
-        return dataStore;
-    }
+	@Override
+	public IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+		IDataStore dataStore;
+		if (isUnsatisfiedFilter(filter)) {
+			dataStore = new DataStore(dataSet.getMetadata());
+		} else {
+			dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+				IDataStore summaryRowDataStore = executeSummaryRow(summaryRowProjections, dataStore.getMetaData(), filter, maxRowCount);
+				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
+			}
+		}
+		return dataStore;
+	}
 
-    @Override
-    public IDataStore executeSummaryRowQuery(List<Projection> summaryRowProjections, Filter filter, int maxRowCount) {
-        return executeSummaryRow(summaryRowProjections, dataSet.getMetadata(), filter, maxRowCount);
-    }
+	@Override
+	public IDataStore executeSummaryRowQuery(List<Projection> summaryRowProjections, Filter filter, int maxRowCount) {
+		return executeSummaryRow(summaryRowProjections, dataSet.getMetadata(), filter, maxRowCount);
+	}
 
+	protected abstract IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
 
-    protected abstract IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount);
+	protected abstract IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);
 
-    protected abstract IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);
+	protected boolean isSummaryRowIncluded() {
+		return false;
+	}
 
-    protected boolean isSummaryRowIncluded() {
-        return false;
-    }
+	protected Date getDate() {
+		return now();
+	}
 
-    protected Date getDate() {
-        return now();
-    }
+	private Date now() {
+		return new Date();
+	}
 
-    private Date now() {
-        return new Date();
-    }
+	private boolean isUnsatisfiedFilter(Filter filter) {
+		return filter instanceof UnsatisfiedFilter;
+	}
 
-    private boolean isUnsatisfiedFilter(Filter filter) {
-        return filter instanceof UnsatisfiedFilter;
-    }
+	private void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
+			IDataStore summaryRowDataStore) {
+		IMetaData pagedMetaData = pagedDataStore.getMetaData();
+		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
-    private void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
-                                                  IDataStore summaryRowDataStore) {
-        IMetaData pagedMetaData = pagedDataStore.getMetaData();
-        IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
+		Assert.assertTrue(pagedMetaData.getFieldCount() >= summaryRowMetaData.getFieldCount(), "Summary row field count cannot be less than data field count");
 
-        Assert.assertTrue(pagedMetaData.getFieldCount() >= summaryRowMetaData.getFieldCount(), "Summary row field count cannot be less than data field count");
+		// calc a map for summaryRowProjections -> projections
+		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
+		for (int i = 0; i < summaryRowProjections.size(); i++) {
+			Projection summaryRowProjection = summaryRowProjections.get(i);
+			for (int j = 0; j < projections.size(); j++) {
+				Projection projection = projections.get(j);
+				String projectionAlias = projection.getAlias();
+				if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
+					projectionToSummaryRowProjection.put(j, i);
+					break;
+				}
+			}
+		}
 
-        // calc a map for summaryRowProjections -> projections
-        Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
-        for (int i = 0; i < summaryRowProjections.size(); i++) {
-            Projection summaryRowProjection = summaryRowProjections.get(i);
-            for (int j = 0; j < projections.size(); j++) {
-                Projection projection = projections.get(j);
-                String projectionAlias = projection.getAlias();
-                if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
-                    projectionToSummaryRowProjection.put(j, i);
-                    break;
-                }
-            }
-        }
+		// append summary row
+		IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
+		Record newRecord = new Record();
+		for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
+			Field field = new Field(null);
+			if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
+				Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+				Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
+				field.setValue(value);
+			}
+			newRecord.appendField(field);
+		}
+		pagedDataStore.appendRecord(newRecord);
 
-        // append summary row
-        IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
-        Record newRecord = new Record();
-        for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
-            Field field = new Field(null);
-            if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
-                Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-                Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
-                field.setValue(value);
-            }
-            newRecord.appendField(field);
-        }
-        pagedDataStore.appendRecord(newRecord);
-
-        // copy metadata from summary row
-        for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
-            Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-            pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
-        }
-    }
+		// copy metadata from summary row
+		for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
+			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
+		}
+	}
 }

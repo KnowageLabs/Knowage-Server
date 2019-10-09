@@ -23,9 +23,11 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -574,6 +576,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			String aggregations = null;
 			String summaryRow = null;
 			String options = null;
+			JSONArray jsonIndexes = null;
 
 			if (StringUtilities.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
@@ -595,11 +598,28 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject jsonOptions = jsonBody.optJSONObject("options");
 				options = jsonOptions != null ? jsonOptions.toString() : null;
+
+				jsonIndexes = jsonBody.optJSONArray("indexes");
 			}
 
+			Set<String> columns = null;
+
+			if (jsonIndexes != null && jsonIndexes.length() > 0) {
+				columns = new HashSet<String>();
+
+				for (int k = 0; k < jsonIndexes.length(); k++) {
+					JSONArray columnsArrayTemp = jsonIndexes.getJSONObject(k).getJSONArray("fields");
+
+					JSONObject columnsArray = columnsArrayTemp.getJSONObject(0);
+
+					if (columnsArray.getString("store").equals(label)) {
+						columns.add(columnsArray.getString("column"));
+					}
+				}
+			}
 			timing.stop();
 			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-					options);
+					options, columns);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
@@ -619,6 +639,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			String likeSelections = null;
 			int start = -1;
 			int limit = -1;
+			Set<String> columns = null;
 
 			if (StringUtilities.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
@@ -696,10 +717,24 @@ public class DataSetResource extends AbstractDataSetResource {
 					}
 				}
 
+				JSONArray jsonIndexes = jsonBody.optJSONArray("indexes");
+				if (jsonIndexes != null && jsonIndexes.length() > 0) {
+
+					for (int k = 0; k < jsonIndexes.length(); k++) {
+						JSONArray columnsArrayTemp = jsonIndexes.getJSONObject(k).getJSONArray("fields");
+
+						JSONObject columnsArray = columnsArrayTemp.getJSONObject(0);
+
+						if (columnsArray.getString("store").equals(label)) {
+							columns = new HashSet<String>(columnsArray.length());
+							columns.add(columnsArray.getString("column"));
+						}
+					}
+				}
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true);
+			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true, columns);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {
@@ -713,6 +748,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
+		Set<String> columns = new HashSet<String>();
+
 		logger.debug("IN");
 		try {
 			JSONArray requestBodyJSONArray = RestUtilities.readBodyAsJSONArray(req);
@@ -728,7 +765,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 					DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
 					dataSet.setParametersMap(DataSetUtilities.getParametersMap(parameters));
-					datasetManagementAPI.putDataSetInCache(dataSet, cache);
+					datasetManagementAPI.putDataSetInCache(dataSet, cache, columns);
 				}
 			}
 			return Response.ok().build();

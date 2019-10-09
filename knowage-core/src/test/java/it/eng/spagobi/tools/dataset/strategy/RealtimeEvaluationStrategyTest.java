@@ -19,6 +19,17 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -39,104 +50,98 @@ import it.eng.spagobi.utilities.MockDataSet;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.integration.junit4.JMockit;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 @RunWith(JMockit.class)
 public class RealtimeEvaluationStrategyTest {
 
-    {
-        new MockUp<CacheFactory>() {
+	{
+		new MockUp<CacheFactory>() {
 
-            @Mock
-            ICache getCache(ICacheConfiguration cacheConfiguration) {
-                return new SQLDBCache(null, null);
-            }
-        };
+			@Mock
+			ICache getCache(ICacheConfiguration cacheConfiguration) {
+				return new SQLDBCache(null, null);
+			}
+		};
 
-        new MockUp<SpagoBICacheConfiguration>() {
+		new MockUp<SpagoBICacheConfiguration>() {
 
-            @Mock
-            IDataSource getCacheDataSource() {
-                return DataSourceFactory.getDataSource();
-            }
+			@Mock
+			IDataSource getCacheDataSource() {
+				return DataSourceFactory.getDataSource();
+			}
 
-            @Mock
-            String getTableNamePrefix() {
-                return "prefix";
-            }
+			@Mock
+			String getTableNamePrefix() {
+				return "prefix";
+			}
 
-            @Mock
-            BigDecimal getCacheSpaceAvailable() {
-                return new BigDecimal(0);
-            }
+			@Mock
+			BigDecimal getCacheSpaceAvailable() {
+				return new BigDecimal(0);
+			}
 
-            @Mock
-            Integer getCachePercentageToClean() {
-                return 0;
-            }
+			@Mock
+			Integer getCachePercentageToClean() {
+				return 0;
+			}
 
-            @Mock
-            Integer getCacheDsLastAccessTtl() {
-                return 0;
-            }
+			@Mock
+			Integer getCacheDsLastAccessTtl() {
+				return 0;
+			}
 
-            @Mock
-            String getCacheSchedulingFullClean() {
-                return "";
-            }
+			@Mock
+			String getCacheSchedulingFullClean() {
+				return "";
+			}
 
-            @Mock
-            String getCacheDatabaseSchema() {
-                return "";
-            }
+			@Mock
+			String getCacheDatabaseSchema() {
+				return "";
+			}
 
-            @Mock
-            Integer getCachePercentageToStore() {
-                return 0;
-            }
+			@Mock
+			Integer getCachePercentageToStore() {
+				return 0;
+			}
 
-            @Mock
-            List<Properties> getDimensionTypes() {
-                return new ArrayList<>(0);
-            }
-        };
+			@Mock
+			List<Properties> getDimensionTypes() {
+				return new ArrayList<>(0);
+			}
+		};
 
-        new MockUp<RESTDataSet>() {
-            @Mock void subscribeNGSI() { return; }
-        };
-    }
+		new MockUp<RESTDataSet>() {
+			@Mock
+			void subscribeNGSI() {
+				return;
+			}
+		};
+	}
 
-    @Test
-    public void shouldReturnRealtimeStrategyType() {
-        RealtimeEvaluationStrategy strategy = (RealtimeEvaluationStrategy) DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.REALTIME, new MockDataSet(), new UserProfile());
-        assertThat(strategy.getEvaluationStrategy(), is(DatasetEvaluationStrategyType.REALTIME));
-    }
+	@Test
+	public void shouldReturnRealtimeStrategyType() {
+		RealtimeEvaluationStrategy strategy = (RealtimeEvaluationStrategy) DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.REALTIME,
+				new MockDataSet(), new UserProfile());
+		assertThat(strategy.getEvaluationStrategy(), is(DatasetEvaluationStrategyType.REALTIME));
+	}
 
-    @Test
-    public void shouldUnsetNgsiConsumerFlag() {
+	@Test
+	public void shouldUnsetNgsiConsumerFlag() {
 
-        new MockUp<SQLDBCache>() {
-            @Mock
-            IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-                           List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-                return new DataStore();
-            }
-        };
+		new MockUp<SQLDBCache>() {
+			@Mock
+			IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups,
+					List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+				return new DataStore();
+			}
+		};
 
-        RESTDataSet dataSet = new RESTDataSet();
-        dataSet.setRealtimeNgsiConsumer(true);
-        IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.CACHED, dataSet, new UserProfile());
-        strategy.executeQuery(null, null, null, null, null, 0, 0, 0);
-        assertThat(dataSet.isRealtimeNgsiConsumer(), is(false));
-    }
+		RESTDataSet dataSet = new RESTDataSet();
+		dataSet.setRealtimeNgsiConsumer(true);
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.CACHED, dataSet, new UserProfile());
+		strategy.executeQuery(null, null, null, null, null, 0, 0, 0, null);
+		assertThat(dataSet.isRealtimeNgsiConsumer(), is(false));
+	}
 
 }

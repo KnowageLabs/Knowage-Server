@@ -20,6 +20,7 @@
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -43,7 +44,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 
 	@Override
 	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		logger.debug("IN");
 
 		IDataStore pagedDataStore;

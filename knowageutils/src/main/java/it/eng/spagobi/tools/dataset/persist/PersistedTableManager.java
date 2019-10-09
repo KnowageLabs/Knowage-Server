@@ -29,6 +29,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -205,6 +206,7 @@ public class PersistedTableManager implements IPersistedManager {
 				logger.debug("OUT");
 			}
 		}
+
 	}
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
@@ -698,6 +700,234 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
+	public boolean createIndexesOnTable(IDataSet dataset, IDataSource datasource, String tablename, Set<String> columns) {
+		boolean result = false;
+		/* INDEXES CREATION */
+		if (columns != null && columns.size() > 0) {
+			try {
+				createIndexes(dataset, datasource, tablename, columns);
+				result = true;
+			} catch (Exception e) {
+				logger.error(e.getStackTrace(), e);
+			}
+		}
+
+		return result;
+	}
+
+	private boolean indexAlreadyOnTable(Connection conn, IDataSource datasource, String tableName, Set<String> columns, String indexName) {
+		boolean result = false;
+
+		Statement stmt = null;
+		ResultSet rs3 = null;
+
+		try {
+			String query = buildGetIndexOnTable(conn, tableName, columns, indexName);
+			stmt = conn.createStatement();
+			int count = -1;
+			if (query != null) {
+				rs3 = stmt.executeQuery(query);
+
+				while (rs3.next()) {
+					count = rs3.getInt("cnt");
+				}
+			}
+
+			result = count > 0;
+		} catch (SQLException e) {
+			logger.debug("Impossible to retrieve index for table [" + tableName + "] and columns [" + columns.iterator().next() + "]", e);
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e1) {
+					logger.debug(e1);
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e2) {
+					logger.debug(e2);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public void createIndexes(IDataSet dataset, IDataSource datasource, String tableName, Set<String> columns) throws Exception {
+		logger.debug("IN - Dataset label " + tableName);
+		String signature = tableName;
+		logger.debug("Retrieve table name for signature " + signature);
+
+		Connection conn = getConnection(datasource);
+		Statement stmt = null;
+
+		try {
+			Iterator<String> it = columns.iterator();
+			while (it.hasNext()) {
+				String currInd = it.next();
+				Set<String> currIndSet = new HashSet<String>();
+				currIndSet.add(currInd);
+
+				if (!indexAlreadyOnTable(conn, datasource, tableName, currIndSet, "fed" + Math.abs(columns.hashCode()))) {
+					String query = buildIndexStatement(conn, tableName, currIndSet);
+
+					if (query != null) {
+						stmt = conn.createStatement();
+						stmt.executeUpdate(query);
+					} else {
+						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+					}
+				} else {
+					logger.debug("Index on table " + tableName + " (" + columns.iterator().next() + ")already present in database");
+				}
+			}
+		} catch (SQLException e) {
+			logger.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	private String buildGetIndexOnTable(Connection conn, String tableName, Set<String> columns, String indexName) {
+		logger.debug("IN - Table [" + tableName + "], Column [" + columns + "]");
+
+		String column = columns.iterator().next();
+		String statement = null;
+		if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
+			try {
+				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("SELECT count(1) as cnt ");
+					sb.append("FROM all_ind_columns ic ");
+					sb.append("LEFT JOIN all_ind_expressions ie ");
+					sb.append("  ON ie.index_owner  = ic.index_owner ");
+					sb.append("  AND ie.index_name  = ic.index_name ");
+					sb.append("  AND ie.column_position = ic.column_position ");
+					sb.append("WHERE ic.table_name = '");
+					sb.append(tableName.toUpperCase());
+					sb.append("' ");
+					sb.append("and ic.column_name = '");
+					sb.append(column);
+					sb.append("' ");
+					statement = sb.toString();
+
+				} else if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("postgresql")) {
+					StringBuilder sb = new StringBuilder();
+
+					sb.append("select COUNT(1) as cnt");
+					sb.append(" from");
+					sb.append(" pg_class t,");
+					sb.append(" pg_class i,");
+					sb.append(" pg_index ix,");
+					sb.append(" pg_attribute a");
+					sb.append(" where");
+					sb.append(" t.oid = ix.indrelid");
+					sb.append(" and i.oid = ix.indexrelid");
+					sb.append(" and a.attrelid = t.oid");
+					sb.append(" and a.attnum = ANY(ix.indkey)");
+					sb.append(" and t.relkind = 'r'");
+					sb.append(" and t.relname = '");
+					sb.append(tableName);
+					sb.append("' ");
+					sb.append(" and a.attname = '");
+					sb.append(column);
+					sb.append("' ");
+
+					statement = sb.toString();
+				} else if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("mysql")) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("SELECT COUNT(1) AS cnt");
+					sb.append(" FROM INFORMATION_SCHEMA.STATISTICS");
+					sb.append(" WHERE TABLE_NAME = '");
+					sb.append(tableName);
+					sb.append("' ");
+					sb.append("and COLUMN_NAME = '");
+					sb.append(column);
+					sb.append("' ");
+					statement = sb.toString();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				logger.error(e.getMessage(), e);
+			}
+		}
+
+		return statement;
+	}
+
+	private String buildIndexStatement(Connection conn, String tableName, Set<String> columns) {
+		logger.debug("IN - Table [" + tableName + "], Column [" + columns + "]");
+
+		String statement = null;
+		if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
+
+			StringBuilder columnsSTring = new StringBuilder();
+			for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
+				String column = (String) iterator.next();
+				columnsSTring = columnsSTring.append(column);
+				columnsSTring = columnsSTring.append(",");
+			}
+			if (columnsSTring.length() > 2) {
+				columnsSTring.setLength(columnsSTring.length() - 1);
+
+				if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
+					try {
+						if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
+							StringBuilder sb = new StringBuilder();
+							sb.append("CREATE INDEX");
+							sb.append(" ");
+							sb.append("fed");
+							sb.append(Math.abs(columns.hashCode()));
+							sb.append(" ");
+							sb.append("ON");
+							sb.append(" ");
+							sb.append(tableName);
+							sb.append("(\"");
+							sb.append(columnsSTring);
+							sb.append("\")");
+							statement = sb.toString();
+						} else {
+							StringBuilder sb = new StringBuilder();
+							sb.append("CREATE INDEX");
+							sb.append(" ");
+							sb.append("fed");
+							sb.append(Math.abs(columns.hashCode()));
+							sb.append(" ");
+							sb.append("ON");
+							sb.append(" ");
+							sb.append(tableName);
+							sb.append("(");
+							sb.append(columnsSTring);
+							sb.append(")");
+							statement = sb.toString();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		return statement;
+	}
+
 	public PreparedStatement defineStatement(IMetaData storeMeta, IDataSource datasource, Connection connection) throws DataBaseException {
 		PreparedStatement statement;
 
@@ -910,8 +1140,7 @@ public class PersistedTableManager implements IPersistedManager {
 	/**
 	 * Create a random unique name for a creating a new table
 	 *
-	 * @param prefix
-	 *            an optional prefix to use for the generated table name
+	 * @param prefix an optional prefix to use for the generated table name
 	 */
 	public static String generateRandomTableName(String prefix) {
 		UUIDGenerator uuidGen = UUIDGenerator.getInstance();

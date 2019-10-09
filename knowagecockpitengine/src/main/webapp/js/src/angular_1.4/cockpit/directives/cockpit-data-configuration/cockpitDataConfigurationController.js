@@ -365,6 +365,9 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  $scope.tmpAvaiableDataset=[];
 		    	  angular.copy(cockpitModule_datasetServices.getAvaiableDatasets(),$scope.tmpAvaiableDataset);
 
+		    	  $scope.tmpAvaiableDatasetInCache=[];
+		    	  angular.copy(cockpitModule_datasetServices.getAvailableDatasetsInCache(),$scope.tmpAvaiableDatasetInCache);
+
 		    	  // clone de avaiable document to reset it if user cancel the
 					// dialog
 		    	  $scope.tmpAvaiableDocument=[];
@@ -378,6 +381,9 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    			 cockpitModule_datasetServices.forceNearRealTimeValues($scope.tmpAvaiableDataset, $scope.tmpAssociations);
 		    		  }
 		    	  });
+
+		    	  $scope.tmpIndexes=[];
+		    	  angular.copy(cockpitModule_template.configuration.indexes,$scope.tmpIndexes);
 
 		    	  $scope.tmpAggregations=[];
 		    	  angular.copy( cockpitModule_template.configuration.aggregations,$scope.tmpAggregations);
@@ -395,9 +401,15 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		  }
 		    		});
 
+		    	  var indexesWatch=$scope.$watch("tmpIndexes",function(newVal,oldVal){
+		    		  if(newVal != undefined){
+			    			 cockpitModule_datasetServices.forceNearRealTimeValues($scope.tmpAvaiableDataset, $scope.tmpIndexes);
+			    		  }
+		    	  },true);
+
 
 		    	  $scope.saveConfiguration =function(){
-		    		  if($scope.utils.currentAss!=undefined && $scope.utils.currentAss.id != undefined ){
+		    			if($scope.utils.currentAss!=undefined && $scope.utils.currentAss.id != undefined ){
 		    				$scope.tmpAssociations.push($scope.utils.currentAss);
 		    				$scope.doSave();
 		    			}
@@ -417,7 +429,29 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    			}else{
 		    				$scope.doSave();
 		    			}
+
+			    		  /*INDEXES*/
+			    		if($scope.utils.currentInd!=undefined && $scope.utils.currentInd.id != undefined ){
+		    				$scope.tmpIndexes.push($scope.utils.currentInd);
+		    				$scope.doSave();
+		    			} else if($scope.utils.currentInd!=undefined &&  $scope.utils.currentInd.length>0){
+		    				var confirm = $mdDialog.confirm()
+			    				.title('You have an unsaved indexes')
+			    				.textContent('If you save you will loose the indexes. Are you Sure?')
+			    				.ariaLabel('Lucky day')
+			    				.ok('Yes')
+			    				.cancel('No');
+
+		    				$mdDialog.show(confirm).then(function() {
+		    					$scope.doSave();
+		    				}, function() {
+		    					return;
+		    				});
+			    		}else{
+			    				$scope.doSave();
+			    			}
 		    	  }
+
 		    	  $scope.doSave=function(){
 		    		  if($scope.checkDataConfiguration()){
 		    	  		var datasetParChange=false;
@@ -462,6 +496,11 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  		}
 
 		    	  		angular.copy($scope.tmpAssociations,cockpitModule_template.configuration.associations);
+		    	  		if (!cockpitModule_template.configuration.indexes)
+		    	  			cockpitModule_template.configuration.indexes = [];
+
+		    	  		angular.copy($scope.tmpIndexes,cockpitModule_template.configuration.indexes);
+
 		    	  		cockpitModule_datasetServices.forceNearRealTimeValues();
 
 		    		  if(!angular.equals($scope.tmpAggregations,cockpitModule_template.configuration.aggregations)){
@@ -510,6 +549,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		  mdPanelRef.close();
 		    		  associationsWatch();
 		    		  selectionWatch();
+		    		  indexesWatch();
 		    		  $scope.$destroy();
 		    		  }
 		    	  }
@@ -517,6 +557,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		  mdPanelRef.close();
 		    		  associationsWatch();
 		    		  selectionWatch();
+		    		  indexesWatch();
 		    		  $scope.$destroy();
 		    	  }
 

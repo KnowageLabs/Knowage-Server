@@ -19,8 +19,14 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
@@ -35,95 +41,96 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-
-import java.util.List;
 
 class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(CachedEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(CachedEvaluationStrategy.class);
 
-    private ICache cache;
-    private UserProfile profile;
+	private ICache cache;
+	private UserProfile profile;
 
-    public CachedEvaluationStrategy(UserProfile userProfile, IDataSet dataSet, ICache cache) {
-        super(dataSet);
-        this.profile = userProfile;
-        this.cache = cache;
-    }
+	public CachedEvaluationStrategy(UserProfile userProfile, IDataSet dataSet, ICache cache) {
+		super(dataSet);
+		this.profile = userProfile;
+		this.cache = cache;
+	}
 
-    @Override
-    protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-        Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
-        IDataStore dataStore;
-        try {
-            dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-            if (dataSet.isRealtime()) unsetNgsiConsumer();
+	@Override
+	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+		Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
+		IDataStore dataStore;
+		try {
+			dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			if (dataSet.isRealtime())
+				unsetNgsiConsumer();
 
-            if (dataStore == null) {
-                dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-            } else {
-                if (dataSet.isRealtime()) subscribeNGSI();
-            }
+			if (dataStore == null) {
+				dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			} else {
+				if (dataSet.isRealtime())
+					subscribeNGSI();
+			}
 
-            dataStore.adjustMetadata(dataSet.getMetadata());
-            dataSet.decode(dataStore);
-        } catch (DataBaseException e) {
-            throw new RuntimeException(e);
-        } finally {
-            totalCacheTiming.stop();
-        }
-        return dataStore;
-    }
+			dataStore.adjustMetadata(dataSet.getMetadata());
+			dataSet.decode(dataStore);
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		} finally {
+			totalCacheTiming.stop();
+		}
+		return dataStore;
+	}
 
-    @Override
-    protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
-        throw new UnsupportedOperationException("Summary row is already included in the datastore from the execution, so this method should not be called");
-    }
+	@Override
+	protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+		throw new UnsupportedOperationException("Summary row is already included in the datastore from the execution, so this method should not be called");
+	}
 
-    @Override
-    protected boolean isSummaryRowIncluded() {
-        return true;
-    }
+	@Override
+	protected boolean isSummaryRowIncluded() {
+		return true;
+	}
 
+	protected IDataStore manageDatasetNotInCache(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
+		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
+		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
+		datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy(), indexes);
+		timing.stop();
 
-    protected IDataStore manageDatasetNotInCache(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-        Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
-        DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
-        datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy());
-        timing.stop();
+		if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
+			// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
+			// WTF???
+			logger.debug("Update datastore's metadata with dataset's metadata when no data is found...");
+			return new DataStore(dataSet.getMetadata());
+		}
 
-        if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
-            // update only datasource's metadata from dataset if for some strange cause it hasn't got fields
-            // WTF???
-            logger.debug("Update datastore's metadata with dataset's metadata when no data is found...");
-            return new DataStore(dataSet.getMetadata());
-        }
+		timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
+		IDataStore dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount,
+				indexes);
+		timing.stop();
+		if (dataStore == null) {
+			throw new CacheException("Impossible to get data of " + dataSet.getLabel() + " from cache");
+		}
 
-        timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
-        IDataStore dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-        timing.stop();
-        if (dataStore == null) {
-            throw new CacheException("Impossible to get data of " + dataSet.getLabel() + " from cache");
-        }
+		// if result was not cached put refresh date as now
+		dataStore.setCacheDate(getDate());
+		return dataStore;
+	}
 
-        // if result was not cached put refresh date as now
-        dataStore.setCacheDate(getDate());
-        return dataStore;
-    }
+	private void unsetNgsiConsumer() {
+		RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
+		restDataSet.setRealtimeNgsiConsumer(false);
+	}
 
-    private void unsetNgsiConsumer() {
-        RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
-        restDataSet.setRealtimeNgsiConsumer(false);
-    }
+	private void subscribeNGSI() {
+		RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
+		restDataSet.subscribeNGSI();
+	}
 
-    private void subscribeNGSI() {
-        RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
-        restDataSet.subscribeNGSI();
-    }
-
-    protected DatasetEvaluationStrategyType getEvaluationStrategy() {
-        return DatasetEvaluationStrategyType.CACHED;
-    }
+	protected DatasetEvaluationStrategyType getEvaluationStrategy() {
+		return DatasetEvaluationStrategyType.CACHED;
+	}
 
 }

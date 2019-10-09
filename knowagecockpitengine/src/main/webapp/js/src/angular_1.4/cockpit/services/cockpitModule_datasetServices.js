@@ -34,7 +34,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				angular.forEach(cockpitModule_template.configuration.datasets, function(item){
 					this.push(item.dsId);
 				}, dsIds);
-				
+
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=true&ids=" + dsIds.join())
 				.then(function(response){
@@ -70,9 +70,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.loadDatasetList=function(){
 		var def=$q.defer();
-		if(!ds.isDatasetListLoaded){			
-			// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //			
-			sbiModule_restServices.restToRootProject();						
+		if(!ds.isDatasetListLoaded){
+			// --- sbiModule_user.isTechnicalUser returning "true" or "false" as STRING --- //
+			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + sbiModule_user.isTechnicalUser)
 			.then(function(response){
 				var allDatasets = response.data.item;
@@ -144,7 +144,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			dataset.hasSpatialAttributes = hasSpatialAttributes;
 		}
 	}
-  
+
 
 	this.forceNearRealTimeValues=function(datasets, associations){
 		if(datasets == undefined){
@@ -347,7 +347,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
 					if(actualDs!=undefined){
-						
+
 						var selectedColumnsDs = widget.content.columnSelectedOfDataset;
 						if(selectedColumnsDs !== undefined){
 							selectedColumnsDs = (selectedColumnsDs instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
@@ -492,6 +492,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return fad;
 	}
 
+	this.getAvailableDatasetsInCache=function(){
+		var fad=[];
+		var tmpAvailableDatasets=this.getAvaiableDatasets();
+		for(var i=0;i<tmpAvailableDatasets.length;i++){
+			var dataset = cockpitModule_template.configuration.datasets[i];
+			if (dataset.useCache === true) {
+				fad.push(ds.getDatasetById(dataset.dsId));
+			}
+		}
+
+		return fad;
+	}
+
 	//get in input a full list of avaiable dataset and save only the attributes needed in template
 	this.setAvaiableDataset=function(adl){
 		angular.copy([],cockpitModule_template.configuration.datasets);
@@ -526,26 +539,26 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
 							this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
 							if (item == undefined) {
-								
+
 								var datasetFound=ds.getDatasetById(dsId);
 								var paramsFound = datasetFound.parameters;
 								for (var j = 0; j < paramsFound.length; j++) {
-									
+
 									if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
 										this[key] = paramsFound[j].defaultValue;
 										cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
 									}
-									
+
 								}
-								
+
 							}
 					},params);
-					
-					
+
+
 				}
 			}
 
-			
+
 			var datasetLabel=ds.getDatasetById(dsId).label;
 			var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
 			if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
@@ -598,8 +611,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
-		
-																																																   
+
+
 		var newModel = angular.copy(ngModel);
 		if (Array.isArray(ngModel.content.columnSelectedOfDataset)){
 			//converts the columns array in a jsonObject of arrays
@@ -610,7 +623,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
-																													
+
 
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
@@ -749,7 +762,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
         if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
             params += "&limit=" + limitRows.rows;
         }
-		
+
 		var filtersToSendWithoutParams = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
 		if(ngModel.search){
@@ -769,7 +782,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
 			}
 		}
-   
+
 		savedFilters = filtersToSendWithoutParams;
 
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
@@ -781,7 +794,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 
-		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
+		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams);
+
+		/*INDEX TODO ALBNALE */
+		var indexes = cockpitModule_template.configuration.indexes;
+		bodyString = bodyString + ",indexes:" + JSON.stringify(indexes)  + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
 		if(ngModel.content.wtype=="chart"){
@@ -952,9 +969,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 		}
-		
+
 		var filtersToSendWithoutParams = {};
-		
+
 		angular.copy(filtersToSend, filtersToSendWithoutParams);
 		angular.forEach(filtersToSendWithoutParams, function(item){
 			var paramsToDelete = [];
@@ -967,7 +984,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				delete item[prop];
 			});
 		});
-		
+
 		return filtersToSendWithoutParams;
 	}
 
@@ -1044,7 +1061,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 									else obj["columnName"] += col.formulaArray[f].value+" ";
 								}
 							}
-							
+
 						}else obj["columnName"] = col.name;
 					}else obj["columnName"] = col.alias;
 
@@ -1078,7 +1095,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						var tempDatasetList = $filter('filter')($scope.datasetList,$scope.datasetSearchText);
 						$scope.cockpitDatasetGrid.api.setRowData(tempDatasetList);
 					}
-					
+
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
@@ -1115,11 +1132,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					function hasParametersRenderer(params){
 						return (params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
 					}
-					
+
 					function typeRenderer(params){
 						return cockpitModule_datasetServices.datasetTypes[params.value] || sbiModule_translate.load('kn.cockpit.dataset.type.generic');
 					}
-					
+
 					function tagsRenderer(params){
 						if(params.value && params.value.length > 0) {
 							var cell = '';
@@ -1153,14 +1170,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 												specificDatasets.push(datasetList[y]);
 												break;
 											}
-										} 
+										}
 										else {
 											specificDatasets.push(datasetList[y]);
 											break;
 										}
 									}
 								}
-								
+
 							}
 							datasetList = specificDatasets;
 						}
@@ -1173,18 +1190,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 												datasetList.splice(y,1);
 												break;
 											}
-										} 
+										}
 										else {
 											datasetList.splice(y,1);
 											break;
 										}
 									}
 								}
-								
+
 							}
 						}
-						
-						
+
+
 						$scope.datasetList = datasetList;
 						$scope.isDatasetListLoaded = true;
 						$scope.cockpitDatasetGrid.api.setRowData($scope.datasetList);
@@ -1299,6 +1316,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
 				params.parameters = ds.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
+				/* TODO ALBNALE */
+				//params.indexes = cockpitModule_widgetSelection.getIndexes(undefined,dataset,undefined, undefined);
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}
@@ -1524,43 +1543,43 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	    						var aggFunc = matchAgg[0];
     							if(dsObject.aggregationSelected.indexOf(aggFunc) == -1){
     								dsObject.aggregationSelected.push(aggFunc);
-																						  
+
     							}
 	    					}else{
 	    						noAggregation = true;
 	    					}
 
-														
-															  
-					   
-																  
-									  
-																		
-															
-																  
-														 
-													 
-							  
-															  
-													  
+
+
+
+
+
+
+
+
+
+
+
+
+
 	            		}
 
 						if(noAggregation){
 							dsObject.aggregationSelected.push('NONE');
     					}
 
-		  
-							 
+
+
     					if(dsObject.aggregationSelected != undefined){
     						for(var i = 0; i<dsObject.aggregationSelected.length; i++){
     							var agg = dsObject.aggregationSelected[i];
     							columnsToshow.push(dataset.label+'.'+header+':'+agg);
     							columnsToshowMeta.push(dsObject);
     						}
-			  
-																
+
+
     					}
-												
+
 					}
 				}
 //				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;

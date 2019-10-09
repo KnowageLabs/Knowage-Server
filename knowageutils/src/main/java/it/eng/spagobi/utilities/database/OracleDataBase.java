@@ -32,6 +32,8 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 
 	private static transient Logger logger = Logger.getLogger(OracleDataBase.class);
 
+	private static int MAX_VARCHAR_VALUE = 4000;
+
 	private int varcharLength = 255;
 
 	public OracleDataBase(IDataSource dataSource) {
@@ -54,7 +56,7 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 		String toReturn = null;
 		String javaTypeName = javaType.toString();
 
-		if (javaTypeName.contains("java.lang.String")) {
+		if (javaTypeName.contains("java.lang.String") && getVarcharLength() <= MAX_VARCHAR_VALUE) {
 			toReturn = " VARCHAR (" + getVarcharLength() + " CHAR)";
 		} else if (javaTypeName.contains("java.lang.Byte")) {
 			toReturn = " INTEGER ";
@@ -83,8 +85,8 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
 			toReturn = " CLOB ";
 		} else {
-			toReturn = " VARCHAR(4000) ";
-			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set VARCHAR(4000) by default ");
+			toReturn = String.format(" VARCHAR(%s) ", MAX_VARCHAR_VALUE);
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set VARCHAR(" + MAX_VARCHAR_VALUE + ") by default ");
 		}
 
 		return toReturn;

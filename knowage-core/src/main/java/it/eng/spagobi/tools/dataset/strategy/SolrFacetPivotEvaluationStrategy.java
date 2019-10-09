@@ -20,6 +20,7 @@
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -38,33 +39,34 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(SolrFacetPivotEvaluationStrategy.class);
+	private static final Logger logger = Logger.getLogger(SolrFacetPivotEvaluationStrategy.class);
 
-    public SolrFacetPivotEvaluationStrategy(IDataSet dataSet) {
-        super(dataSet);
-    }
+	public SolrFacetPivotEvaluationStrategy(IDataSet dataSet) {
+		super(dataSet);
+	}
 
-    @Override
-    protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-        SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
-        solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
-        SolrQuery solrQuery;
-        try {
-            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(projections, groups, sortings);
-        } catch (JSONException e) {
-            throw new SpagoBIRuntimeException(e);
-        }
-        solrQuery.setRows(0);
+	@Override
+	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> columns) {
+		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
+		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
+		SolrQuery solrQuery;
+		try {
+			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(projections, groups, sortings);
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+		solrQuery.setRows(0);
 
-        solrDataSet.setSolrQuery(solrQuery, null);
+		solrDataSet.setSolrQuery(solrQuery, null);
 
-        JSONPathDataReader dataReader = solrDataSet.getDataReader();
-        SolrFacetPivotDataReader solrFacetPivotDataReader = new SolrFacetPivotDataReader(dataReader.getJsonPathItems(), dataReader.getJsonPathAttributes());
-        solrDataSet.setDataReader(solrFacetPivotDataReader);
+		JSONPathDataReader dataReader = solrDataSet.getDataReader();
+		SolrFacetPivotDataReader solrFacetPivotDataReader = new SolrFacetPivotDataReader(dataReader.getJsonPathItems(), dataReader.getJsonPathAttributes());
+		solrDataSet.setDataReader(solrFacetPivotDataReader);
 
-        dataSet.loadData(offset, fetchSize, maxRowCount);
-        IDataStore dataStore = dataSet.getDataStore();
-        dataStore.setCacheDate(getDate());
-        return dataStore;
-    }
+		dataSet.loadData(offset, fetchSize, maxRowCount);
+		IDataStore dataStore = dataSet.getDataStore();
+		dataStore.setCacheDate(getDate());
+		return dataStore;
+	}
 }

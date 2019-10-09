@@ -115,13 +115,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, Set<String> indexes) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-				null);
+				indexes);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options) {
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options, Set<String> indexes) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
@@ -220,7 +220,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
 			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), filters,
-					likeFilters);
+					likeFilters, indexes);
 			timingMinMax.stop();
 
 			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
@@ -228,7 +228,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			timing.stop();
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
-					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			IDataWriter dataWriter = getDataStoreWriter();
 
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");

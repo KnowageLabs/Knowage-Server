@@ -116,7 +116,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		sqlDataset.loadData();
 		resultset = sqlDataset.getDataStore();
-		cache.put(sqlDataset, resultset);
+		cache.put(sqlDataset, resultset, null);
 		assertNotNull(cache.get(sqlDataset.getSignature()));
 		logger.debug("JDBCDataset inserted inside cache");
 	}
@@ -126,7 +126,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		fileDataset.loadData();
 		resultset = fileDataset.getDataStore();
-		cache.put(fileDataset, resultset);
+		cache.put(fileDataset, resultset, null);
+		;
 		assertNotNull(cache.get(fileDataset.getSignature()));
 		logger.debug("FileDataSet inserted inside cache");
 	}
@@ -136,7 +137,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		qbeDataset.loadData();
 		resultset = qbeDataset.getDataStore();
-		cache.put(qbeDataset, resultset);
+		cache.put(qbeDataset, resultset, null);
 		assertNotNull(cache.get(qbeDataset.getSignature()));
 		logger.debug("QbeDataSet inserted inside cache");
 
@@ -147,7 +148,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		flatDataset.loadData();
 		resultset = flatDataset.getDataStore();
-		cache.put(flatDataset, resultset);
+		cache.put(flatDataset, resultset, null);
 		assertNotNull(cache.get(flatDataset.getSignature()));
 		logger.debug("FlatDataSet inserted inside cache");
 
@@ -158,7 +159,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		scriptDataset.loadData();
 		resultset = scriptDataset.getDataStore();
-		cache.put(scriptDataset, resultset);
+		cache.put(scriptDataset, resultset, null);
 		assertNotNull(cache.get(scriptDataset.getSignature()));
 		logger.debug("ScriptDataset inserted inside cache");
 
@@ -171,7 +172,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		if (dataStore == null) {
 			sqlDataset.loadData();
 			dataStore = sqlDataset.getDataStore();
-			cache.put(sqlDataset, dataStore);
+			cache.put(sqlDataset, dataStore, null);
 		}
 		dataStore = cache.get(signature);
 		assertNotNull(dataStore);
@@ -184,7 +185,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		if (dataStore == null) {
 			fileDataset.loadData();
 			dataStore = fileDataset.getDataStore();
-			cache.put(fileDataset, dataStore);
+			cache.put(fileDataset, dataStore, null);
 		}
 		dataStore = cache.get(signature);
 		assertNotNull(dataStore);
@@ -197,7 +198,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		if (dataStore == null) {
 			qbeDataset.loadData();
 			dataStore = qbeDataset.getDataStore();
-			cache.put(qbeDataset, dataStore);
+			cache.put(qbeDataset, dataStore, null);
 		}
 		dataStore = cache.get(signature);
 		assertNotNull(dataStore);
@@ -210,7 +211,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		if (dataStore == null) {
 			flatDataset.loadData();
 			dataStore = flatDataset.getDataStore();
-			cache.put(flatDataset, dataStore);
+			cache.put(flatDataset, dataStore, null);
 		}
 		dataStore = cache.get(signature);
 		assertNotNull(dataStore);
@@ -223,7 +224,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		if (dataStore == null) {
 			scriptDataset.loadData();
 			dataStore = scriptDataset.getDataStore();
-			cache.put(scriptDataset, dataStore);
+			cache.put(scriptDataset, dataStore, null);
 		}
 		dataStore = cache.get(signature);
 		assertNotNull(dataStore);
@@ -234,7 +235,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		fileDataset.loadData();
 		resultset = fileDataset.getDataStore();
-		cache.put(fileDataset, resultset);
+		cache.put(fileDataset, resultset, null);
 		logger.debug("FileDataSet inserted inside cache");
 		String tableName = cache.getMetadata().getCacheItem(fileDataset.getSignature()).getTable();
 		assertTrue(cache.delete(fileDataset.getSignature(), true));
@@ -295,7 +296,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		boolean flag = false;
 		if (usedSpacePrevision.compareTo(BigDecimal.ZERO) >= 0) {
 			flag = true;
-			cache.put(fileDataset, resultset);
+			cache.put(fileDataset, resultset, null);
 			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
 			if (cachedResultSet != null) {
 				flag = true;
@@ -319,7 +320,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		if (cacheMetadata.hasEnoughMemoryForStore(resultset)) {
-			cache.put(fileDataset, resultset);
+			cache.put(fileDataset, resultset, null);
 			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
 			assertNotNull("Checking space for dataset is wrong", cachedResultSet);
 
@@ -337,7 +338,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		sqlDataset.loadData();
 		resultset = sqlDataset.getDataStore();
 		try {
-			cacheZero.put(sqlDataset, resultset);
+			cacheZero.put(sqlDataset, resultset, null);
 
 		} catch (CacheException | DataBaseException ex) {
 			logger.error("Dataset cannot be cached", ex);
@@ -412,7 +413,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		qbeDataset.loadData();
 		resultset = qbeDataset.getDataStore();
 		String signature = qbeDataset.getSignature();
-		cache.put(qbeDataset, resultset);
+		cache.put(qbeDataset, resultset, null);
 		logger.debug("QbeDataSet inserted inside cache");
 
 		ICacheMetadata cacheMetadata = cache.getMetadata();

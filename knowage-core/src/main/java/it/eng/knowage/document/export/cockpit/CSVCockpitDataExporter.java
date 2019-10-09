@@ -128,7 +128,7 @@ public class CSVCockpitDataExporter implements ICockpitDataExporter {
 	 */
 	private IDataStore getDataStore(IDataStoreConfiguration conf) throws JSONException {
 		return new DatasetManagementAPI(userProfile).getDataStore(conf.getDataset(), true, conf.getParameters(), conf.getProjections(), conf.getFilter(),
-				conf.getGroups(), conf.getSortings(), conf.getSummaryRowProjections(), conf.getOffset(), conf.getFetchSize(), conf.getMaxRowCount());
+				conf.getGroups(), conf.getSortings(), conf.getSummaryRowProjections(), conf.getOffset(), conf.getFetchSize(), conf.getMaxRowCount(), null);
 	}
 
 	/**

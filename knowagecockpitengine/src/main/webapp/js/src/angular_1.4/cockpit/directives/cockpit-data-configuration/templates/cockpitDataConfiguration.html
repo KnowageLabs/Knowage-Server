@@ -199,7 +199,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		         
 		        </md-content>
 		 	</md-tab>
-     		<md-tab label="Associations" >
+     		<md-tab label="{{translate.load('sbi.cockpit.associations')}}" >
 		        <md-content  layout-fill layout="row" ng-controller="dataAssociationController"> 
 		          <div layout="column" layout-fill ng-if="displayAssociationsContent==true">
 		          	<div flex="50" layout="row" style="overflow: auto;">
@@ -308,16 +308,126 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					 
 		        </md-content>
 		 	</md-tab>
-		 	<md-tab ng-if="showNearRealTimeCockpit" label="Frequency"  md-on-select="refreshFrequencyNearRTData()" >
+		 	<md-tab label="{{translate.load('sbi.cockpit.indexes')}}">
+				<md-content  layout-fill layout="row" ng-controller="dataIndexesController"> 
+		          <div layout="column" layout-fill ng-if="displayIndexesContent==true">
+		          	<div flex="50" layout="row" style="overflow: auto;">
+						<md-card class=" associationCard flexCard"  ng-repeat="avDataset in tmpAvaiableDataset" layout="column"
+							ng-if="avDataset.useCache"> 
+							<md-card-content flex="" layout="column" class="noPadding">
+								<md-toolbar class="secondaryToolbar" >
+									<div class="md-toolbar-tools" layout="row">
+										<p class="wrapText" >{{avDataset.label}}</p>
+									</div>
+								</md-toolbar>
+								<md-content flex layout>
+									<md-list class="md-dense" flex>
+										<md-list-item class="md-long-text" ng-repeat="meta in avDataset.metadata.fieldsMeta" 
+										ng-click="toggleIndexes(avDataset.label,meta.alias,'dataset')" ng-class="{'selectedRow':jsonCurrentInd[avDataset.label]==('dataset'+meta.name)}" title="{{meta.alias}}">
+											<span layout="row" flex layout-align="space-between center">
+												
+												<p flex=70 class="metaname" >{{meta.alias}}</p>
+                                                <!--  <p flex=70 class="metaname" ng-if="meta.alias==''">{{meta.name}}</p>   -->
+												<p class="metatype">({{meta.type | metatype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+										<md-list-item class="md-long-text" ng-repeat="param in avDataset.parameters" title="{{param.name}}"
+										ng-click="toggleIndexes(avDataset.label,'$P{'+param.name+'}','dataset')" ng-class="{'selectedRow':jsonCurrentInd[avDataset.label]==('dataset'+'$P{'+param.name+'}')}">
+											<span layout="row" flex layout-align="space-between center">
+												<p flex=70 class="metaname" >$P{<span ng-bind="param.name"></span>}</p>
+												<p class="metatype">({{param.type | metatype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+									</md-list>
+								</md-content>
+							</md-card-content>
+						</md-card>
+						<md-card class=" associationCard flexCard"  ng-repeat="avDocument in tmpAvaiableDocument" layout="column" ng-if="avDocument.objParameter.length>0"> 
+							<md-card-content flex="" layout="column" class="noPadding">
+								<md-toolbar class="documentIndexesToolbar" >
+									<div class="md-toolbar-tools" layout="row">
+										<p class="wrapText" >{{avDocument.DOCUMENT_LABEL}}</p>
+									</div>
+								</md-toolbar>
+								<md-content flex layout>
+									<md-list class="md-dense" flex>
+										<md-list-item class="md-long-text" ng-repeat=" param in avDocument.objParameter" title="{{param.urlName}}"
+										ng-click="toggleIndexes(avDocument.DOCUMENT_LABEL,'$P{'+param.urlName+'}','document')" ng-class="{'selectedRow':jsonCurrentInd[avDocument.DOCUMENT_LABEL]==('document'+'$P{'+param.urlName+'}')}">
+											<span layout="row" flex layout-align="space-between center">
+												<p flex class="metaname">$P{<span ng-bind="param.urlName"></span>}</p>
+												<p class="metatype">({{param.type | parametertype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+									</md-list>
+								</md-content>
+							</md-card-content>
+						</md-card>
+		          	</div>
+		          	<div flex="50" layout="column">
+		          		<md-toolbar class="secondaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<p flex class="wrapText" >{{translate.load("sbi.cockpit.indexes.editor.wizard.list.title")}}</p>
+								<md-button ng-if="showSmartDetection" ng-click="autodetect()" ng-hide="tmpAvaiableDataset.length<2">{{translate.load("sbi.cockpit.indexes.editor.wizard.list.autodetect")}}</md-button>
+								<md-button ng-click="clearIndexes()">{{translate.load("sbi.cockpit.indexes.clear")}}</md-button>
+							</div>
+						</md-toolbar>
+						<md-content flex  >
+							<div  class="associationBox editingAssociation" layout="row"   >
+								<div layout="row" layout-wrap flex layout-align="center center">
+									<span layout="row" ng-repeat="item in utils.currentInd.fields">
+										<span>{{item.store}}.{{item.column}}</span>
+										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
+									</span>
+								</div>
+								<div layout="row">
+									 <md-button class="md-icon-button" ng-disabled="utils.currentInd.fields.length==0" ng-click="saveCurrentIndexes()" aria-label="save">
+								        <md-icon md-font-icon="fa fa-save"></md-icon>
+								      </md-button>
+								      <md-button class="md-icon-button" ng-click="deleteCurrentIndexes()"  aria-label="delete">
+								        <md-icon md-font-icon="fa fa-times"></md-icon>
+								      </md-button>
+								</div>
+							</div>
+							<div  class="associationBox" layout="row" ng-repeat="ind in tmpIndexes">
+								<div layout="row" layout-wrap flex layout-align="center center">
+									<span layout="row" ng-repeat="item in ind.fields">
+										<span>{{item.store}}.{{item.column}}</span>
+										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
+									</span>
+								</div>
+								<div layout="row">
+									 <md-button class="md-icon-button" ng-disabled="utils.currentInd.fields.length>0" ng-click="editIndexes(ind)" aria-label="save">
+								        <md-icon md-font-icon="fa fa-edit"></md-icon>
+								      </md-button>
+								      <md-button class="md-icon-button" ng-click="deleteIndexes(ind)"  aria-label="delete">
+								        <md-icon md-font-icon="fa fa-trash"></md-icon>
+								      </md-button>
+								</div>
+							</div>
+						
+						</md-content>
+						
+		          	</div>
+		          </div>
+					 
+		        </md-content>
+		 	</md-tab>
+		 	<md-tab ng-if="showNearRealTimeCockpit" label="{{translate.load('sbi.cockpit.frequency')}}"  md-on-select="refreshFrequencyNearRTData()" >
 		        <md-content layout-fill ng-include="baseScriptPath+'/directives/cockpit-data-configuration/templates/CockpitDataConfigurationAssociationGroup.html'">
 		        </md-content>
 		 	</md-tab>
-		 	<md-tab label="template">
+		 	<md-tab label="{{translate.load('sbi.cockpit.template')}}">
 		        <md-content ng-controller="dataAssociationController">
 		        	<md-card>
 		        		<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
-								<md-switch ng-model="showIndented">smart json visualization</md-switch>
+								<md-switch ng-model="showIndented">{{translate.load("sbi.documentdetails.templates.smartvisualization")}}</md-switch>
 							</div>
 						</md-toolbar>
 		        		<md-card-content>

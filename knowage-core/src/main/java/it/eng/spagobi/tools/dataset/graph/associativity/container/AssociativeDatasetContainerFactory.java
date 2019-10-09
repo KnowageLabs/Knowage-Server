@@ -18,25 +18,29 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.*;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import org.apache.log4j.Logger;
-
-import java.util.Map;
 
 public abstract class AssociativeDatasetContainerFactory {
 
 	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
 
 	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategyType evaluationStrategyType, IDataSet dataSet,
-                                                            Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
+			Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
 		Assert.assertNotNull(evaluationStrategyType, "Dataset evaluation strategy cannot be null");
 
 		switch (evaluationStrategyType) {
@@ -69,7 +73,7 @@ public abstract class AssociativeDatasetContainerFactory {
 	private static CacheItem cacheDataSetIfMissing(IDataSet dataSet, ICache cache, CacheItem cacheItem, UserProfile userProfile) throws DataBaseException {
 		if (cacheItem == null) {
 			logger.debug("Unable to find dataset [" + dataSet.getLabel() + "] in cache. This can be due to changes on dataset parameters");
-			new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache);
+			new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache, null);
 			cacheItem = cache.getMetadata().getCacheItem(dataSet.getSignature());
 			if (cacheItem == null) {
 				throw new CacheException("Unable to find dataset [" + dataSet.getLabel() + "] in cache.");

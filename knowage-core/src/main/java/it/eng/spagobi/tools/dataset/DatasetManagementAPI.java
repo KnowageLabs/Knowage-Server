@@ -270,8 +270,8 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-					throws JSONException {
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
+			Set<String> indexes) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -279,7 +279,7 @@ public class DatasetManagementAPI {
 			dataSet.resolveParameters();
 
 			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
-			return strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+			return strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 
 		} finally {
 			totalTiming.stop();
@@ -287,29 +287,30 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
-		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategyType.CACHED);
+	public void putDataSetInCache(IDataSet dataSet, ICache cache, Set<String> columns) throws DataBaseException {
+		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategyType.CACHED, columns);
 	}
 
-	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy) throws DataBaseException {
+	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy, Set<String> columns)
+			throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof VersionedDataSet) {
 				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 			}
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
-				cache.put(dataSet);
+				cache.put(dataSet, columns);
 			} else {
 				logger.debug("Copying dataset in cache by loading the whole set of data in memory");
 				dataSet.loadData();
 				if (dataSet.getDataStore().getMetaData().getFieldCount() > 0) {
 					if (DatasetEvaluationStrategyType.REALTIME.equals(evaluationStrategy)) {
-						cache.put(dataSet, dataSet.getDataStore(), true);
+						cache.put(dataSet, dataSet.getDataStore(), true, columns);
 					} else {
-						cache.put(dataSet, dataSet.getDataStore());
+						cache.put(dataSet, dataSet.getDataStore(), columns);
 					}
 				} else {
-					cache.put(dataSet, new DataStore(dataSet.getMetadata()));
+					cache.put(dataSet, new DataStore(dataSet.getMetadata()), columns);
 				}
 			}
 		}
@@ -708,7 +709,7 @@ public class DatasetManagementAPI {
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
 		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-		+ "] by user [" + userProfile.getUserId() + "].");
+				+ "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");
@@ -720,7 +721,7 @@ public class DatasetManagementAPI {
 
 	// FIXME
 	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Filter> filters,
-			List<SimpleFilter> likeFilters) throws JSONException {
+			List<SimpleFilter> likeFilters, Set<String> indexes) throws JSONException {
 
 		logger.debug("IN");
 
@@ -764,10 +765,9 @@ public class DatasetManagementAPI {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 			IDataStore dataStore = null;
-			if (dataSet.getEvaluationStrategy(isNearRealtime).equals(DatasetEvaluationStrategyType.CACHED )) {
-				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1);
-			}
-			else {
+			if (dataSet.getEvaluationStrategy(isNearRealtime).equals(DatasetEvaluationStrategyType.CACHED)) {
+				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1, indexes);
+			} else {
 				dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
 			}
 			if (dataStore == null) {
