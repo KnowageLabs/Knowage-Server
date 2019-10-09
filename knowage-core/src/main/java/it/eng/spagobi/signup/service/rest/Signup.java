@@ -195,10 +195,15 @@ public class Signup {
 
 	}
 
-	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, int attributeId) throws EMFUserError {
+	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, SbiAttribute attribute) throws EMFUserError {
 		logger.debug("IN");
+		Integer attributeId = null;
+		SbiUserAttributes userAttribute = null;
+		if (attribute != null) {
+			attributeId = attribute.getAttributeId();
+			userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
+		}
 		if (attributeValue != null) {
-			SbiUserAttributes userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
 			if (userAttribute != null) {
 				userAttribute.getCommonInfo().setTimeUp(new Date(System.currentTimeMillis()));
 				userAttribute.getCommonInfo().setUserUp(userId);
@@ -219,7 +224,7 @@ public class Signup {
 			userDao.updateSbiUserAttributes(userAttribute);
 		} else {
 			try {
-				if (dao.loadSbiAttributesByUserAndId(id, attributeId) != null) {
+				if (userAttribute != null) {
 					userDao.deleteSbiUserAttributeById(id, attributeId);
 				}
 			} catch (EMFUserError err) {
@@ -282,9 +287,12 @@ public class Signup {
 				user.setPassword(Password.encriptPassword(password));
 			userDao.updateSbiUser(user, userId);
 
-			updAttribute(userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId());
-			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId());
-			updAttribute(userDao, attrDao, address, user.getUserId(), userId, attrDao.loadSbiAttributeByName("address").getAttributeId());
+			SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
+			SbiAttribute currBirthDate = attrDao.loadSbiAttributeByName("birth_date");
+			SbiAttribute currAddress = attrDao.loadSbiAttributeByName("address");
+			updAttribute(userDao, attrDao, email, user.getUserId(), userId, currEmail);
+			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, currBirthDate);
+			updAttribute(userDao, attrDao, address, user.getUserId(), userId, currAddress);
 			// updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
 			// updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
 
