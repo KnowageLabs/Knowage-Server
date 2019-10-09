@@ -18,6 +18,7 @@
 package it.eng.spagobi.analiticalmodel.document.dao;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -221,7 +222,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 	 * null; Transaction tx = null; try { aSession = getSession(); tx = aSession.beginTransaction(); // String hql = //
 	 * "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc"; String hql =
 	 * "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
-	 * 
+	 *
 	 * Query query = aSession.createQuery(hql); query.setString(0, biobjLabel); List result = query.list(); Iterator it = result.iterator(); while
 	 * (it.hasNext()) { templates.add(toObjTemplate((SbiObjTemplates) it.next())); } tx.commit(); } catch (HibernateException he) { logException(he); if (tx !=
 	 * null) tx.rollback(); throw new EMFInternalError(EMFErrorSeverity.ERROR, "100"); } finally { if (aSession != null) { if (aSession.isOpen())
@@ -286,11 +287,12 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				String hql = "delete from SbiObjTemplates where active=false and sbiObject.biobjId=? and creationDate<?";
 				Query query = aSession.createQuery(hql);
 				query.setInteger(0, documents.getJSONObject(i).getInt("id"));
-				query.setString(1, documents.getJSONObject(i).getString("data"));
-
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				Date creationDate = formatter.parse(documents.getJSONObject(i).getString("data"));
+				query.setDate(1, creationDate);
 				query.executeUpdate();
 				tx.commit();
-			} catch (HibernateException he) {
+			} catch (HibernateException | ParseException he) {
 				logException(he);
 				if (tx != null)
 					tx.rollback();
