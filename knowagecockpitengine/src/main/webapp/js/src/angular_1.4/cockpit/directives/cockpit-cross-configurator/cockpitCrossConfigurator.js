@@ -150,6 +150,10 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.outputParametersList = [];
 
 	$scope.checkParametersUpdate = function(dsId){
+		$scope.previewParamWarning = {
+			removed : [],
+			added: []
+		};
 		var newParamsList = angular.copy(cockpitModule_datasetServices.getDatasetById(dsId).parameters);
 		var newParamsListNames = [];
 		for(var k in newParamsList){
@@ -159,12 +163,14 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			if(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name)!= -1){
 				newParamsListNames.splice(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name),1);
 			}else{
+				$scope.previewParamWarning.removed.push($scope.ngModel.preview.parameters[p].name);
 				$scope.ngModel.preview.parameters.splice(p,1);
 			}
 		}
 		for(var i in newParamsListNames){
 			for(var j in newParamsList){
 				if(newParamsListNames[i] == newParamsList[j].name){
+					$scope.previewParamWarning.added.push(newParamsList[j].name);
 					$scope.ngModel.preview.parameters.push(newParamsList[j]);
 				}
 			}

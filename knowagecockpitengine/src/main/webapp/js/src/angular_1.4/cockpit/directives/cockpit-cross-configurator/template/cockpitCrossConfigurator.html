@@ -235,6 +235,15 @@
 		</md-card-content> 
 		<md-subheader ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">{{::translate.load('kn.crossconfigurator.datasetparameters')}}</md-subheader>
           <md-card-content ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">
+          	<div layout="row" layout-align="center center" kn-if="previewParamWarning.added.length > 0 || previewParamWarning.removed.length > 0">
+          		<div class="kn-warning" layout="column" layout-align="center center">
+          			<p><b>{{translate.load('sbi.generic.warning')}}</b> {{translate.load('kn.crossconfigurator.parameterchangedwarning')}}</p>
+      				<ul>
+      					<li ng-repeat="removed in previewParamWarning.removed">{{translate.load('kn.crossconfigurator.removedparameter')}} <b>{{removed}}</b></li>
+      					<li ng-repeat="added in previewParamWarning.added">{{translate.load('kn.crossconfigurator.addedparameter')}} <b>{{added}}</b></li>
+      				</ul>
+          		</div>
+          	</div>
           	<div ng-repeat="parameter in ngModel.preview.parameters" layout="row" layout-align="start center">
           		<i layout-padding class="fa" ng-class="{'fa-font': parameter.type == 'String', 'fa-hashtag' :parameter.type == 'Number', 'fa-code' : parameter.type == 'Raw', 'fa-cube' : parameter.type == 'Generic'}">
           			<md-tooltip md-delay="500">{{parameter.type}}</md-tooltip>
