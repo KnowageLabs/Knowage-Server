@@ -46,7 +46,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.eng.spagobi.commons.validation.PasswordChecker;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,8 +70,10 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
