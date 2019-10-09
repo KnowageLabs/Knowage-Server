@@ -17,7 +17,7 @@
  */
 
 agGrid.initialiseAgGridWithAngular1(angular);
-var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule', 'agGrid']);
+var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule', 'agGrid', 'ngScrollbars']);
 
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
@@ -30,9 +30,14 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.config(function($mdThemingProvider) {
+myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
+    ScrollBarsProvider.defaults = {
+            axis: 'y', // enable 2 axis scrollbars by default
+            theme: 'minimal',
+            autoHideScrollbar: true
+        };
 });
 
 myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval',

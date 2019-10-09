@@ -50,6 +50,7 @@
     "jsonformatter": "0.6.0",
     "jspdf": "1.5.3",
     "moment": "2.22.2",
+    "ng-scrollbars": "0.0.11",
     "ngdraggable": "0.1.10",
     "pleaserotate.js": "0.1.2",
     "toastify-js": "^1.6.1",

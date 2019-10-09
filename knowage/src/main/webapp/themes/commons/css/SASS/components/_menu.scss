@@ -177,7 +177,7 @@ md-list-item.license-item::before{
   .primnav {
     position: fixed;
     top: 0;
-    height: 58px;
+    height: 52px;
     width: 100vw;
     font-size: .8em;
     text-transform: uppercase;
@@ -186,9 +186,6 @@ md-list-item.license-item::before{
     flex-direction: column;
     transition: height 246ms .5s ease;
     padding-top: 58px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    border-top: 1px solid $text;
     box-sizing: border-box;
     z-index: 7;
     @include media-sm {
