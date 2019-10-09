@@ -177,7 +177,7 @@ md-list-item.license-item::before{
   .primnav {
     position: fixed;
     top: 0;
-    height: 52px;
+    height: 46px;
     width: 100vw;
     font-size: .8em;
     text-transform: uppercase;
@@ -236,10 +236,9 @@ md-list-item.license-item::before{
         @include alpha-attribute('color', rgba($text, 0.8), white);
         text-decoration: none;
       }
-      
     }
     .icon {
-      height: 58px;
+      height: 46px;
       flex-shrink: 0;
       display: flex;
       justify-content: center;
@@ -259,6 +258,9 @@ md-list-item.license-item::before{
         border: 2px solid #C70751;
         padding: 8px;
         background-position: center;
+      }
+      &.fa-2x {
+        font-size: 1.7em;
       }
     }
     expand:hover {
@@ -382,6 +384,13 @@ md-list-item.license-item::before{
           .tag {
             right: 10px;
             top: 20px;
+          }
+          a{
+             span{
+              white-space: normal;
+              max-height: 46px;
+              overflow: hidden;
+            }
           }
         }
       }

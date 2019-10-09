@@ -149,6 +149,26 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 	$scope.outputParametersList = [];
 
+	$scope.checkParametersUpdate = function(dsId){
+		var newParamsList = angular.copy(cockpitModule_datasetServices.getDatasetById(dsId).parameters);
+		var newParamsListNames = [];
+		for(var k in newParamsList){
+			newParamsListNames.push(newParamsList[k].name);
+		}
+		for(var p in $scope.ngModel.preview.parameters){
+			if(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name)!= -1){
+				newParamsListNames.splice(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name),1);
+			}else{
+				$scope.ngModel.preview.parameters.splice(p,1);
+			}
+		}
+		for(var k in newParamsList){
+			if(newParamsListNames.indexOf(newParamsList[k].name)!= -1){
+
+			}
+		}
+	}
+
 	var docOutParList = cockpitModule_properties.OUTPUT_PARAMETERS;
 	if($scope.cockpitCross.outputParametersList == undefined){
 		$scope.cockpitCross.outputParametersList = [];
@@ -230,6 +250,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			$scope.allCockpitDatasetsColumns[newPreviewingDSLabel] = foundDs[0].metadata.fieldsMeta;
 		}
 		$scope.previewDatasetColumns = $scope.allCockpitDatasetsColumns[newPreviewingDSLabel];
+		$scope.checkParametersUpdate(21);
 	});
 
 	if($scope.crossChart){

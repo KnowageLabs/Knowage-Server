@@ -11,7 +11,7 @@
 			<li>
 				<a href="#" ng-click="toggleAdminMenu($event)"> 
 					<md-tooltip md-delay="500">{{translate.load('kn.mainmenu.systemadministration')}}</md-tooltip> 
-					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome()"></div>
+					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome($event)"></div>
 					<span flex>{{translate.load('kn.mainmenu.systemadministration')}}</span>
 					<md-button class="md-icon-button" >
 						<md-icon ng-if="!adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
@@ -34,7 +34,7 @@
 				<a href="#" ng-click="menuCall(link.firstUrl,link.linkType)"> 
 					<i ng-if="link.iconCls" ng-class="['icon', link.iconCls]"></i> 
 					<i ng-if="!link.iconCls" class="icon fa fa-2x fa-link"></i> 
-					{{link.tooltip}}
+					<span>{{link.tooltip}}</span>
 					<md-tooltip md-delay="500">{{link.tooltip}}</md-tooltip>
 				</a>
 				<div class="tag" ng-if="link.iconCls == 'email' && unreadNewsNumber">{{unreadNewsNumber}}</div>
@@ -43,7 +43,7 @@
 			<li>
 				<a href="#" ng-click="downloads()"> 
 					<i class="icon fa fa-2x fa-download"></i> 
-					{{translate.load('sbi.generic.download')}}
+					<span>{{translate.load('sbi.generic.download')}}</span>
 					<md-tooltip md-delay="500">{{translate.load('sbi.generic.download')}}</md-tooltip>
 				</a>
 				<div class="tag" ng-if="downloadsList.length > 0">{{downloadsList.length}}</div>
@@ -53,7 +53,7 @@
 				<a href="#" ng-click="menuCall(custom.src,custom.linkType)" layout="row"> 
 					<i ng-if="custom.menu" class="icon fa fa-2x fa-list-ul"></i> 
 					<i ng-if="!custom.menu" class="icon fa fa-2x fa-file-o"></i>
-					{{custom.text}}
+					<span>{{custom.text}}</span>
 					<md-tooltip md-delay="500">{{custom.text}}</md-tooltip>
 					<span flex></span>
 					<md-button class="md-icon-button" ng-if="custom.menu" ng-click="openMenu($event,$index)">

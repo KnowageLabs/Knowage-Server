@@ -254,7 +254,11 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$scope.redirectIframe(url);
 			}
 
-			$scope.goHome = function goHome(html){
+			$scope.goHome = function goHome(e,html){
+				if(e){
+					e.stopImmediatePropagation();
+					e.preventDefault();
+				}
 				var url;
 				if(!html){
 					url = firstUrlTocallvar;
@@ -532,7 +536,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				}else if (type == "callExternalApp"){
 					$scope.callExternalApp(url)
 				} else if (type == "goHome"){
-					$scope.goHome(url);
+					$scope.goHome(null,url);
 				} else if (type == "languageSelection"){
 					$scope.languageSelection();
 				} else if (type == "accessibilitySettings"){
