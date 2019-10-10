@@ -38,6 +38,7 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 					delete $scope.jsonCurrentInd[objLabel];
 				}else{
 					//change
+					$scope.jsonCurrentInd = {};
 					$scope.utils.currentInd.fields[i].store=objLabel;
 					$scope.utils.currentInd.fields[i].column=fieldName;
 					$scope.jsonCurrentInd[objLabel]=type+fieldName;
@@ -51,7 +52,8 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 		if(!found){
 			//add it
 			$scope.utils.currentInd.fields.pop();
-			delete $scope.jsonCurrentInd[objLabel];
+			$scope.jsonCurrentInd = {};
+			//delete $scope.jsonCurrentInd[objLabel];
 			$scope.utils.currentInd.fields.push({column:fieldName,store:objLabel,type:type});
 			$scope.jsonCurrentInd[objLabel]=type+fieldName;
 		}
@@ -80,7 +82,33 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 
 	 $scope.isValidIndexes=function(){
 		 var deferred = $q.defer();
-		 deferred.resolve();
+		 var stop=false;
+
+		 if ($scope.tmpIndexes == undefined) {
+			 stop=true;
+		 } else {
+
+			 var copyOfcurrentInd=angular.copy($scope.utils.currentInd);
+			 delete copyOfcurrentInd.$$hashKey;
+			 delete copyOfcurrentInd.description;
+			 delete copyOfcurrentInd.id;
+			 for(var k=0; k<$scope.tmpIndexes.length; k++){
+				 var tmpInd= angular.copy($scope.tmpIndexes[k]);
+				 delete tmpInd.$$hashKey;
+				 delete tmpInd.description;
+				 delete tmpInd.id;
+
+				 if(angular.equals(tmpInd,copyOfcurrentInd)){
+						deferred.reject(sbiModule_translate.load("sbi.cockpit.index.editor.msg.duplicate"));
+						stop=true;
+						break;
+				 }
+			 }
+		 }
+		 if(!stop){
+			 deferred.resolve();
+		 }
+
 		 return deferred.promise;
 	 }
 
