@@ -797,7 +797,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams);
 
 		/*INDEX TODO ALBNALE */
-		var indexes = cockpitModule_template.configuration.indexes;
+		var indexes = cockpitModule_template.configuration.indexes == undefined ? [] : cockpitModule_template.configuration.indexes;
 		bodyString = bodyString + ",indexes:" + JSON.stringify(indexes)  + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
