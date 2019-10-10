@@ -157,7 +157,24 @@ public class ManageDataSetsForREST {
 
 	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		IDataSet ds = getGuiGenericDatasetToInsert(json, userProfile);
+
 		return datasetInsert(ds, dsDao, locale, userProfile, json, req);
+	}
+
+	/**
+	 * @param ds
+	 * @param dsDao
+	 */
+	private void datasetUpdateOldVersions(IDataSet ds, IDataSetDAO dsDao) {
+
+		for (IDataSet oldVersionDs : dsDao.loadDataSetOlderVersions(ds.getId())) {
+			oldVersionDs.setName(ds.getName());
+			oldVersionDs.setLabel(ds.getLabel());
+
+			dsDao.modifyDataSet(oldVersionDs);
+		}
+		;
+
 	}
 
 	protected IDataSet getGuiGenericDatasetToInsert(JSONObject json, UserProfile userProfile) throws JSONException {
@@ -1039,6 +1056,7 @@ public class ManageDataSetsForREST {
 		}
 		return parametersMap;
 	}
+
 	public IMetaData getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
 		logger.debug("IN");
 
@@ -1434,6 +1452,7 @@ public class ManageDataSetsForREST {
 				}
 
 				AuditLogUtilities.updateAudit(req, profile, operation, logParam, "OK");
+				dsDao.updateDatasetOlderVersion(ds);
 				return attributesResponseSuccessJSON.toString();
 			} catch (Exception e) {
 				AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD", logParam, "KO");
@@ -1537,9 +1556,9 @@ public class ManageDataSetsForREST {
 		String datasetTypeName = getDatasetTypeName(datasetTypeCode, userProfile);
 		if (parsJSON != null) {
 			if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
-				parametersMap = getSolrDataSetParametersAsMap(json,userProfile);
-			}
-			else parametersMap = getDataSetParametersAsMap(json);
+				parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
+			} else
+				parametersMap = getDataSetParametersAsMap(json);
 		}
 		IEngUserProfile profile = userProfile;
 

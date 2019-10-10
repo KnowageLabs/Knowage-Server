@@ -136,6 +136,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public Integer getHigherVersionNumForDS(Integer dsId);
 
+	public void updateDatasetOlderVersion(IDataSet dataSet);
+
 	// ========================================================================================
 	// DELETE operations (cruD)
 	// ========================================================================================
