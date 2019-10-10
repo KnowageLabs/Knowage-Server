@@ -182,12 +182,14 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 	 }
 
 	 $scope.autodetect=function(){
+		var tmpAvaiableDatasetCopy = [];
+		angular.copy($scope.tmpAvaiableDataset, tmpAvaiableDatasetCopy);
 		for (var k = 0; k < $scope.tmpAssociations.length; k++) {
 			var assFields = $scope.tmpAssociations[k].fields;
 			for (var j = 0; j < assFields.length; j++) {
 				/* Dataset useCache is true */
-				var tmp = $scope.tmpAvaiableDataset.find((test) => test.label=assFields[j].store);
-				if (tmp != null && tmp.useCache) {
+				var tmp = tmpAvaiableDatasetCopy.find((test) => test.label == assFields[j].store);
+				if (tmp && tmp.useCache) {
 					var obj = {column:assFields[j].column,store:assFields[j].store,type:assFields[j].type};
 
 					if(!$scope.utils.currentInd.fields) {
