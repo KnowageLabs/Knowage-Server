@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.signup.service.rest;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Security;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.mail.Authenticator;
@@ -52,10 +50,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -66,14 +61,11 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -81,6 +73,7 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
@@ -91,7 +84,6 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.signup.validation.SignupJWTTokenManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
@@ -204,37 +196,45 @@ public class Signup {
 
 	}
 
-	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, int attributeId) throws EMFUserError {
+	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, SbiAttribute attribute)
+			throws EMFUserError {
 		logger.debug("IN");
-		if (attributeValue != null) {
-			SbiUserAttributes userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
-			if (userAttribute != null) {
-				userAttribute.getCommonInfo().setTimeUp(new Date(System.currentTimeMillis()));
-				userAttribute.getCommonInfo().setUserUp(userId);
-				userAttribute.getCommonInfo().setSbiVersionUp(SbiCommonInfo.getVersion());
-			} else {
-				userAttribute = new SbiUserAttributes();
-				userAttribute.getCommonInfo().setOrganization(defaultTenant);
-				userAttribute.getCommonInfo().setTimeIn(new Date(System.currentTimeMillis()));
-				userAttribute.getCommonInfo().setUserIn(userId);
-				userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
-
-				SbiUserAttributesId pk = new SbiUserAttributesId();
-				pk.setAttributeId(attributeId);
-				pk.setId(id);
-				userAttribute.setId(pk);
+		try {
+			Integer attributeId = null;
+			SbiUserAttributes userAttribute = null;
+			if (attribute != null) {
+				attributeId = attribute.getAttributeId();
+				userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
 			}
-			userAttribute.setAttributeValue(attributeValue);
-			userDao.updateSbiUserAttributes(userAttribute);
-		} else {
-			try {
-				if (dao.loadSbiAttributesByUserAndId(id, attributeId) != null) {
+			if (attributeValue != null) {
+				if (userAttribute != null) {
+					userAttribute.getCommonInfo().setTimeUp(new Date(System.currentTimeMillis()));
+					userAttribute.getCommonInfo().setUserUp(userId);
+					userAttribute.getCommonInfo().setSbiVersionUp(SbiCommonInfo.getVersion());
+				} else {
+					userAttribute = new SbiUserAttributes();
+					userAttribute.getCommonInfo().setOrganization(defaultTenant);
+					userAttribute.getCommonInfo().setTimeIn(new Date(System.currentTimeMillis()));
+					userAttribute.getCommonInfo().setUserIn(userId);
+					userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
+
+					SbiUserAttributesId pk = new SbiUserAttributesId();
+					if (attributeId != null) {
+						pk.setAttributeId(attributeId);
+					}
+					pk.setId(id);
+					userAttribute.setId(pk);
+				}
+				userAttribute.setAttributeValue(attributeValue);
+				userDao.updateSbiUserAttributes(userAttribute);
+			} else {
+				if (userAttribute != null) {
 					userDao.deleteSbiUserAttributeById(id, attributeId);
 				}
-			} catch (EMFUserError err) {
-				logger.error("Error while deleting user", err);
-				throw new SpagoBIServiceException("Error while deleting user", err);
 			}
+		} catch (EMFUserError err) {
+			logger.error("Error while deleting user", err);
+			throw new SpagoBIServiceException("Error while deleting user", err);
 		}
 		logger.debug("OUT");
 	}
@@ -273,8 +273,7 @@ public class Signup {
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
 
 			try {
-				PasswordChecker.getInstance()
-					.isValid(user, user.getPassword(), password, password);
+				PasswordChecker.getInstance().isValid(user, user.getPassword(), password, password);
 			} catch (Exception e) {
 				logger.error("Password is not valid", e);
 				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
@@ -292,9 +291,12 @@ public class Signup {
 				user.setPassword(Password.encriptPassword(password));
 			userDao.updateSbiUser(user, userId);
 
-			updAttribute(userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId());
-			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId());
-			updAttribute(userDao, attrDao, address, user.getUserId(), userId, attrDao.loadSbiAttributeByName("address").getAttributeId());
+			SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
+			SbiAttribute currBirthDate = attrDao.loadSbiAttributeByName("birth_date");
+			SbiAttribute currAddress = attrDao.loadSbiAttributeByName("address");
+			updAttribute(userDao, attrDao, email, user.getUserId(), userId, currEmail);
+			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, currBirthDate);
+			updAttribute(userDao, attrDao, address, user.getUserId(), userId, currAddress);
 			// updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
 			// updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
 
@@ -376,7 +378,7 @@ public class Signup {
 	@PublicService
 	public String active(@Context HttpServletRequest request) throws JSONException {
 		logger.debug("IN");
-		
+
 		String token = request.getParameter("token");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		String strLocale = GeneralUtilities.trim(request.getParameter("locale"));
@@ -384,29 +386,29 @@ public class Signup {
 
 		try {
 			String userId = SignupJWTTokenManager.verifyJWTToken(token);
-			
+
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser user = userDao.loadSbiUserByUserId(userId);
-			
+
 			if (user == null) {
 				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
 			}
-			
+
 			if (!user.getFlgPwdBlocked()) {
 				String msg = msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale);
 				return new JSONObject("{message: '" + msg + "'}").toString();
 			}
-	
+
 			user.setFlgPwdBlocked(false);
 			userDao.updateSbiUser(user, null);
 
 			logger.debug("OUT");
 			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (TokenExpiredException te) {
-			logger.error("Expired Token ["+token+"]", te);
+			logger.error("Expired Token [" + token + "]", te);
 			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.expiredToken", "messages", locale) + "',expired:true}").toString();
 		} catch (Exception e) {
-			logger.error("Generic token validation error ["+token+"]", e);
+			logger.error("Generic token validation error [" + token + "]", e);
 			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "'}").toString();
 		}
 	}
@@ -464,8 +466,7 @@ public class Signup {
 		}
 
 		try {
-			PasswordChecker.getInstance()
-				.isValid(password, password);
+			PasswordChecker.getInstance().isValid(password, password);
 		} catch (Exception e) {
 			logger.error("Password is not valid", e);
 			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
@@ -578,13 +579,13 @@ public class Signup {
 				CommunityManager communityManager = new CommunityManager();
 				communityManager.saveCommunity(community, enterprise, user.getUserId(), req);
 			}
-					    
+
 			String host = req.getServerName();
 			logger.debug("Activation url host is equal to [" + host + "]");
 			int port = req.getServerPort();
 			logger.debug("Activation url port is equal to [" + port + "]");
-			
-			//Get confirmation mail template
+
+			// Get confirmation mail template
 			String mailText = Resources.toString(getClass().getResource("/templates/confirmationMailTemplate.html"), Charsets.UTF_8);
 
 			logger.debug("Preparing activation mail for user [" + username + "]");
@@ -595,13 +596,13 @@ public class Signup {
 
 			String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&locale=" + locale;
 			URL url = new URL(req.getScheme(), host, port, urlString);
-			
-			//Replacing all placeholder occurencies in template with dynamic user values
-			mailText = mailText.replaceAll("%%WELCOME%%",msgBuilder.getMessage("signup.active.welcome", "messages", locale));
-			mailText = mailText.replaceAll("%%USERNAME%%",username);
-			mailText = mailText.replaceAll("%%THANKS_MESSAGE%%",msgBuilder.getMessage("signup.active.thanks", "messages", locale));
-			mailText = mailText.replaceAll("%%WELCOME_MESSAGE%%",msgBuilder.getMessage("signup.active.message", "messages", locale));
-			mailText = mailText.replaceAll("%%URL%%",url.toString());
+
+			// Replacing all placeholder occurencies in template with dynamic user values
+			mailText = mailText.replaceAll("%%WELCOME%%", msgBuilder.getMessage("signup.active.welcome", "messages", locale));
+			mailText = mailText.replaceAll("%%USERNAME%%", username);
+			mailText = mailText.replaceAll("%%THANKS_MESSAGE%%", msgBuilder.getMessage("signup.active.thanks", "messages", locale));
+			mailText = mailText.replaceAll("%%WELCOME_MESSAGE%%", msgBuilder.getMessage("signup.active.message", "messages", locale));
+			mailText = mailText.replaceAll("%%URL%%", url.toString());
 			mailText = mailText.replaceAll("%%URL_LABEL%%", msgBuilder.getMessage("signup.active.labelUrl", "messages", locale));
 			mailText = mailText.replaceAll("%%BOOKMARK%%", msgBuilder.getMessage("signup.active.bookmark", "messages", locale));
 			mailText = mailText.replaceAll("%%QA%%", msgBuilder.getMessage("signup.active.qa", "messages", locale));
