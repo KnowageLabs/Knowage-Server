@@ -11,7 +11,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     //VARIABLES
 
     $scope.showme = false; // flag for showing right side
-    $scope.dirtyForm = false; // flag to check for modification
     $scope.passwordRequired = true;
     $scope.translate = sbiModule_translate;
     $scope.selectedUser = {}; // main item
@@ -67,10 +66,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         $scope.getRoles();
         $scope.getAttributes();
     });
-
-    $scope.setDirty = function () {
-        $scope.dirtyForm = true;
-    }
 
     /*
      * 	this function is used to properly fill
@@ -247,21 +242,18 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.loadUser = function (item) { // this function is called when item from custom table is clicked
 
-        if ($scope.dirtyForm) {
+    	if ($scope.oldItem && !angular.equals($scope.selectedUser, $scope.oldItem)) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.showme = true;
-                $scope.dirtyForm = false;
                 $scope.selectedUser = angular.copy(item);
                 $scope.setRoles();
                 $scope.setAttributes();
                 $scope.selectedUser.confirm = $scope.selectedUser.password;
-
+                $scope.oldItem = angular.copy($scope.selectedUser);
 
             }, function () {
                 $scope.showme = true;
                 $scope.selectedUser.confirm = $scope.selectedUser.password;
-
-
             });
 
         } else {
@@ -271,34 +263,31 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.setAttributes();
             $scope.showme = true;
             $scope.selectedUser.confirm = $scope.selectedUser.password;
-
+            $scope.oldItem = angular.copy($scope.selectedUser);
         }
 
         $scope.passwordRequired = false;
+
     }
 
     $scope.cancel = function () { // on cancel button
         $scope.selectedUser = {};
         $scope.showme = false;
-        $scope.dirtyForm = false;
         $scope.tempAttributes = [];
         $scope.role = [];
     }
 
-
-
     $scope.createUser = function () { // this function is called when clicking on plus button
         $scope.setAttributes();
-        if ($scope.dirtyForm) {
+        if ($scope.oldItem && !angular.equals($scope.selectedUser, $scope.oldItem)) {
             $mdDialog.show($scope.confirm).then(function () {
 
-                $scope.dirtyForm = false;
                 $scope.selectedUser = {};
                 $scope.showme = true;
                 $scope.role = [];
                 $scope.passwordRequired = true;
                 $scope.setAttributes();
-
+                $scope.oldItem = angular.copy($scope.selectedUser);
 
             }, function () {
 
@@ -312,6 +301,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	            $scope.role = [];
                 $scope.passwordRequired = true;
 	            $scope.setAttributes();
+	            $scope.oldItem = angular.copy($scope.selectedUser);
         }
 
     }
@@ -398,7 +388,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
              sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
              $scope.selectedUser = {};
              $scope.showme = false;
-             $scope.dirtyForm = false;
 
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

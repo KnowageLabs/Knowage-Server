@@ -82,7 +82,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 	<form name="attributeForm" layout-fill
 		ng-submit="attributeForm.$valid && saveUser()"
 		class="detailBody ">
-			
+
 			 <md-tabs  class="mozScroll hideTabs h100"
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
@@ -94,7 +94,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.userId")}}</label>
 					<input name="id" ng-model="selectedUser.userId" ng-required="true"
-						ng-maxlength="100" ng-change="setDirty()">
+						ng-maxlength="100">
 
 					<div ng-messages="attributeForm.id.$error"
 						ng-show="selectedUser.userId== null">
@@ -105,7 +105,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.fullName")}}</label>
 					<input name="name" ng-model="selectedUser.fullName"
-						ng-required="true" ng-maxlength="255" ng-change="setDirty()">
+						ng-required="true" ng-maxlength="255">
 
 					<div ng-messages="attributeForm.name.$error"
 						ng-show="selectedUser.fullName== null">
@@ -118,7 +118,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<input data-ng-model="selectedUser.password" type="password"
 						name="password" 
 						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
-						ng-maxlength="100" ng-change="setDirty()">
+						ng-maxlength="100">
 
 					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
 					<div ng-messages="attributeForm.password.$error"
@@ -134,8 +134,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<input ng-model="selectedUser.confirm" type="password"
 						name="confirm_password" 
 						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
-						ng-maxlength="100" ng-change="setDirty()"
-						nx-equal-ex="selectedUser.password">
+						ng-maxlength="100" nx-equal-ex="selectedUser.password">
 					
 					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
 						<div ng-messages="attributeForm.confirm_password.$error"
@@ -187,8 +186,8 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes | orderBy : '-lovId'">
 				<div flex=100 ng-if="attribute.lovId == null || attribute.lovId == 0  ">
 					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
-					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
-						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>	
+					<input name="attr" ng-model="attribute.value" ng-maxlength="100">
+					<div ng-messages="" ng-show="false"></div></md-input-container>	
 				</div>
 				<div flex=100 layout="row" ng-if="attribute.lovId != null ">
 				<div flex>
