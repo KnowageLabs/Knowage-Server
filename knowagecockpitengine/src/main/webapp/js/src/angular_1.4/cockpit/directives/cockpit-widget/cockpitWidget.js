@@ -1555,8 +1555,8 @@ function cockpitWidgetControllerFunction(
 
 	};
 
-	$scope.exportToExcel = function(event, ngModel) {
-		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel);
+	$scope.exportToExcel = function(event, ngModel, options) {
+		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel, options);
 	}
 
 };

@@ -166,7 +166,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		dataToSend.crosstabDefinition.columns = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.columns, 'style', false);
 
 		$scope.applyI18N(dataToSend);
-
+		$scope.options = dataToSend;
+		
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					var fatherElement = angular.element($scope.subCockpitWidget);

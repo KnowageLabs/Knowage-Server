@@ -49,6 +49,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
+import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
+import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
+import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
+import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -62,6 +68,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.utils.ParamDefaultValue;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
@@ -82,6 +89,8 @@ public class ExcelExporter {
 	private final boolean exportWidget;
 
 	private final JSONObject body;
+
+	private Locale locale;
 
 	// Old implementation with parameterMap
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
@@ -109,6 +118,7 @@ public class ExcelExporter {
 		this.body = body;
 
 		Locale locale = getLocale(body);
+		this.locale = locale;
 		try {
 			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
 			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
@@ -177,7 +187,67 @@ public class ExcelExporter {
 		return mimeType;
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) {
+	public byte[] getBinaryDataPivot(Integer documentId, String documentLabel, String templateString, String options) throws JSONException, SerializationException {
+
+		JSONObject optionsObj = new JSONObject(options);
+
+		if (templateString == null) {
+			ObjTemplate template = null;
+			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
+			try {
+				if (documentId != null && documentId.intValue() != 0) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
+				} else if (documentLabel != null && !documentLabel.isEmpty()) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
+				}
+
+				if (template == null) {
+					throw new SpagoBIRuntimeException(message);
+				}
+				templateString = new String(template.getContent());
+			} catch (EMFAbstractError e) {
+				throw new SpagoBIRuntimeException(message);
+			}
+		}
+
+		Workbook wb;
+
+		if ("xlsx".equalsIgnoreCase(outputType)) {
+			wb = new XSSFWorkbook();
+		} else if ("xls".equalsIgnoreCase(outputType)) {
+			wb = new HSSFWorkbook();
+		} else {
+			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
+		}
+
+		if (exportWidget) {
+			try {
+				String widgetId = String.valueOf(body.get("widget"));
+				exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
+			} catch (JSONException e) {
+				logger.error("Cannot find widget in body request");
+			}
+		} else {
+			// TODO: Implement logic for DataReader, now everything stays in memory - bad when widget have large number of Data
+			List<JSONObject> excelSheets = getExcelSheetsList(templateString);
+			if (!excelSheets.isEmpty()) {
+				exportWidgetsToExcel(excelSheets, wb);
+			}
+		}
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			wb.write(out);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Unable to generate output file with extension [" + outputType + "]", e);
+		}
+
+		return out.toByteArray();
+	}
+
+	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException, SerializationException {
 		if (templateString == null) {
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
@@ -234,7 +304,7 @@ public class ExcelExporter {
 		return out.toByteArray();
 	}
 
-	private void exportWidget(String templateString, String widgetId, Workbook wb) {
+	private void exportWidget(String templateString, String widgetId, Workbook wb) throws SerializationException {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
@@ -262,6 +332,75 @@ public class ExcelExporter {
 			logger.error("Unable to load template", e);
 		}
 	}
+
+
+	private void exportWidgetCrossTab(String templateString, String widgetId, Workbook wb, JSONObject optionsObj) throws SerializationException {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			if (widget != null) {
+				String widgetName = null;
+				JSONObject style = widget.optJSONObject("style");
+				if (style != null) {
+					JSONObject title = style.optJSONObject("title");
+					if (title != null) {
+						widgetName = title.optString("label");
+					} else {
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							widgetName = content.getString("name");
+						}
+					}
+				}
+
+				CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null);
+
+				JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
+				JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
+				JSONObject crosstabStyleJo = (optionsObj.isNull("style")) ? new JSONObject() : optionsObj.getJSONObject("style");
+				crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
+
+				JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
+
+				JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
+
+				List<Map<String, Object>> columnsSortKeys;
+				List<Map<String, Object>> rowsSortKeys;
+				List<Map<String, Object>> measuresSortKeys;
+
+				// the id of the crosstab in the client configuration array
+				Integer myGlobalId;
+				JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+				JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+				JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
+				myGlobalId = sortOptions.optInt("myGlobalId");
+				columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
+				rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+				measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+
+				Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
+				JSONObject styleJSON = (!optionsObj.isNull("style") ? optionsObj.getJSONObject("style") : new JSONObject());
+				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"), optionsObj.getJSONObject("metadata"), styleJSON);
+
+				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+
+				Sheet sheet;
+
+				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+				sheet = wb.createSheet(widgetName);
+
+				CreationHelper createHelper = wb.getCreationHelper();
+
+				exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
+
+			}
+		} catch (JSONException e) {
+			logger.error("Unable to load template", e);
+		}
+	}
+
 
 	private JSONObject getWidgetById(JSONObject template, String widgetId) {
 		try {
@@ -346,189 +485,237 @@ public class ExcelExporter {
 		return datastore;
 	}
 
-	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName) {
+	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName) throws JSONException, SerializationException {
 		CreationHelper createHelper = wb.getCreationHelper();
-		try {
-			JSONObject metadata = dataStore.getJSONObject("metaData");
-			JSONArray columns = metadata.getJSONArray("fields");
-			columns = filterDataStoreColumns(columns);
-			JSONArray rows = dataStore.getJSONArray("rows");
+
+		if (dataStore.has("widgetType") && dataStore.getString("widgetType").equalsIgnoreCase("[\"static-pivot-table\"]")) {
+
+			CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null);
+
+			JSONObject content = dataStore.getJSONArray("widget").getJSONObject(0).getJSONObject("content");
+			JSONObject crosstabDefinitionJo = content.getJSONObject("crosstabDefinition");
+			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
+			JSONObject crosstabStyleJo = (content.isNull("style")) ? new JSONObject() : content.getJSONObject("style");
+			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
+
+			JSONObject sortOptions = content.getJSONObject("sortOptions");
+
+			List<Map<String, Object>> columnsSortKeys;
+			List<Map<String, Object>> rowsSortKeys;
+			List<Map<String, Object>> measuresSortKeys;
+
+			// the id of the crosstab in the client configuration array
+			Integer myGlobalId;
+			JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+			JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+			JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
+			myGlobalId = sortOptions.optInt("myGlobalId");
+			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
+			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+
+			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
+			JSONObject styleJSON = (!content.isNull("style") ? content.getJSONObject("style") : new JSONObject());
+
+			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
+
+			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"), datastoreObjData.getJSONObject("metaData"), styleJSON);
+
+			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
 			Sheet sheet;
-			Row header = null;
-			if (exportWidget) {
-				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-				sheet = wb.createSheet(widgetName);
 
-				// Create HEADER - Column Names
-				header = sheet.createRow((short) 0); // first row
-			} else {
-				String sheetName = "empty";
-				if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
-					if (dataStore.has("sheetInfo")) {
-						sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
-					} else {
-						sheetName = widgetName;
+			widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+			sheet = wb.createSheet(widgetName);
+
+			exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
+
+		}
+		else {
+			try {
+				JSONObject metadata = dataStore.getJSONObject("metaData");
+				JSONArray columns = metadata.getJSONArray("fields");
+				columns = filterDataStoreColumns(columns);
+				JSONArray rows = dataStore.getJSONArray("rows");
+
+				Sheet sheet;
+				Row header = null;
+				if (exportWidget) {
+					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+					sheet = wb.createSheet(widgetName);
+
+					// Create HEADER - Column Names
+					header = sheet.createRow((short) 0); // first row
+				} else {
+					String sheetName = "empty";
+					if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
+						if (dataStore.has("sheetInfo")) {
+							sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+						} else {
+							sheetName = widgetName;
+						}
 					}
+
+					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
+					sheet = wb.createSheet(sheetName);
+					// First row for Widget name in case exporting whole Cockpit document
+					Row firstRow = sheet.createRow((short) 0);
+					Cell firstCell = firstRow.createCell(0);
+					firstCell.setCellValue(widgetName);
+					header = sheet.createRow((short) 1);
 				}
 
-				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
-				sheet = wb.createSheet(sheetName);
-				// First row for Widget name in case exporting whole Cockpit document
-				Row firstRow = sheet.createRow((short) 0);
-				Cell firstCell = firstRow.createCell(0);
-				firstCell.setCellValue(widgetName);
-				header = sheet.createRow((short) 1);
-			}
+				JSONObject widgetData = dataStore.getJSONObject("widgetData");
 
-			JSONObject widgetData = dataStore.getJSONObject("widgetData");
+				if (widgetData != null)
+					logger.debug("widgetData: " + widgetData.toString());
 
-			if (widgetData != null)
-				logger.debug("widgetData: " + widgetData.toString());
+				JSONObject widgetContent = widgetData.getJSONObject("content");
+				HashMap<String, String> arrayHeader = new HashMap<String, String>();
 
-			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<String, String> arrayHeader = new HashMap<String, String>();
+				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
 
-			if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
+					if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length() > 0) {
 
-				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length() > 0) {
+						if (widgetContent.has("columnSelectedOfDataset"))
+							logger.debug("columnSelectedOfDataset: " + widgetContent.getJSONArray("columnSelectedOfDataset").toString());
 
-					if (widgetContent.has("columnSelectedOfDataset"))
-						logger.debug("columnSelectedOfDataset: " + widgetContent.getJSONArray("columnSelectedOfDataset").toString());
+						for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 
+							JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+
+							if (column.has("name")) {
+
+								arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
+
+							} else {
+
+								if (column.has("aliasToShow")) {
+									arrayHeader.put(column.getString("alias"), column.getString("aliasToShow"));
+								} else {
+
+									arrayHeader.put(column.getString("alias"), column.getString("alias"));
+								}
+							}
+						}
+					}
+
+				}
+
+				// column.header matches with name or alias
+				// Fill Header
+				JSONArray columnsOrdered = new JSONArray();
+				if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
+						&& widgetContent.has("columnSelectedOfDataset")) {
 					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 
 						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-
-						if (column.has("name")) {
-
-							arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
-
-						} else {
-
-							if (column.has("aliasToShow")) {
-								arrayHeader.put(column.getString("alias"), column.getString("aliasToShow"));
-							} else {
-
-								arrayHeader.put(column.getString("alias"), column.getString("alias"));
-							}
-						}
-					}
-				}
-
-			}
-
-			// column.header matches with name or alias
-			// Fill Header
-			JSONArray columnsOrdered = new JSONArray();
-			if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
-					&& widgetContent.has("columnSelectedOfDataset")) {
-				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-
-					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-					boolean hidden = false;
-					if (column.has("style")) {
-						JSONObject style = column.optJSONObject("style");
-						if (style.has("hiddenColumn")) {
-							if (style.getString("hiddenColumn").equals("true")) {
-								hidden = true;
-							}
-
-						}
-					}
-					if (!hidden) {
-
-						for (int j = 0; j < columns.length(); j++) {
-							JSONObject columnOld = columns.getJSONObject(j);
-							if (column.has("name")) {
-								if (columnOld.getString("header").equals(column.getString("name"))) {
-
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-									columnsOrdered.put(columnOld);
-									break;
+						boolean hidden = false;
+						if (column.has("style")) {
+							JSONObject style = column.optJSONObject("style");
+							if (style.has("hiddenColumn")) {
+								if (style.getString("hiddenColumn").equals("true")) {
+									hidden = true;
 								}
-							} else {
-								if (columnOld.getString("header").equals(column.getString("alias"))) {
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-									columnsOrdered.put(columnOld);
-									break;
+
+							}
+						}
+						if (!hidden) {
+
+							for (int j = 0; j < columns.length(); j++) {
+								JSONObject columnOld = columns.getJSONObject(j);
+								if (column.has("name")) {
+									if (columnOld.getString("header").equals(column.getString("name"))) {
+
+										columnsOrdered.put(columnOld);
+										break;
+									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+										columnsOrdered.put(columnOld);
+										break;
+									}
+								} else {
+									if (columnOld.getString("header").equals(column.getString("alias"))) {
+										columnsOrdered.put(columnOld);
+										break;
+									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+										columnsOrdered.put(columnOld);
+										break;
+									}
 								}
 							}
 						}
 					}
+				} else {
+					columnsOrdered = columns;
 				}
-			} else {
-				columnsOrdered = columns;
-			}
 
-			for (int i = 0; i < columnsOrdered.length(); i++) {
-				JSONObject column = columnsOrdered.getJSONObject(i);
-				String columnName = column.getString("header");
-				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
-					if (arrayHeader.get(columnName) != null) {
-						columnName = arrayHeader.get(columnName);
+				for (int i = 0; i < columnsOrdered.length(); i++) {
+					JSONObject column = columnsOrdered.getJSONObject(i);
+					String columnName = column.getString("header");
+					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
+						if (arrayHeader.get(columnName) != null) {
+							columnName = arrayHeader.get(columnName);
+						}
 					}
+
+					Cell cell = header.createCell(i);
+					cell.setCellValue(columnName);
 				}
 
-				Cell cell = header.createCell(i);
-				cell.setCellValue(columnName);
-			}
+				// Cell styles for int and float
+				CellStyle intCellStyle = wb.createCellStyle();
+				intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
-			// Cell styles for int and float
-			CellStyle intCellStyle = wb.createCellStyle();
-			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+				CellStyle floatCellStyle = wb.createCellStyle();
+				floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
-			CellStyle floatCellStyle = wb.createCellStyle();
-			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+				// FILL RECORDS
+				for (int r = 0; r < rows.length(); r++) {
+					JSONObject rowObject = rows.getJSONObject(r);
+					Row row;
+					if (exportWidget)
+						row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+					else
+						row = sheet.createRow(r + 2);
 
-			// FILL RECORDS
-			for (int r = 0; r < rows.length(); r++) {
-				JSONObject rowObject = rows.getJSONObject(r);
-				Row row;
-				if (exportWidget)
-					row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
-				else
-					row = sheet.createRow(r + 2);
+					for (int c = 0; c < columnsOrdered.length(); c++) {
+						JSONObject column = columnsOrdered.getJSONObject(c);
+						String type = column.getString("type");
+						String colIndex = column.getString("name"); // column_1, column_2, column_3...
 
-				for (int c = 0; c < columnsOrdered.length(); c++) {
-					JSONObject column = columnsOrdered.getJSONObject(c);
-					String type = column.getString("type");
-					String colIndex = column.getString("name"); // column_1, column_2, column_3...
+						Cell cell = row.createCell(c);
+						Object value = rowObject.get(colIndex);
 
-					Cell cell = row.createCell(c);
-					Object value = rowObject.get(colIndex);
-
-					if (value != null) {
-						String s = value.toString();
-						switch (type) {
-						case "string":
-							cell.setCellValue(s);
-							break;
-						case "int":
-							if (!s.trim().isEmpty()) {
-								cell.setCellValue(Double.parseDouble(s));
+						if (value != null) {
+							String s = value.toString();
+							switch (type) {
+							case "string":
+								cell.setCellValue(s);
+								break;
+							case "int":
+								if (!s.trim().isEmpty()) {
+									cell.setCellValue(Double.parseDouble(s));
+								}
+								cell.setCellStyle(intCellStyle);
+								break;
+							case "float":
+								if (!s.trim().isEmpty()) {
+									cell.setCellValue(Double.parseDouble(s));
+								}
+								cell.setCellStyle(floatCellStyle);
+								break;
+							default:
+								cell.setCellValue(s);
+								break;
 							}
-							cell.setCellStyle(intCellStyle);
-							break;
-						case "float":
-							if (!s.trim().isEmpty()) {
-								cell.setCellValue(Double.parseDouble(s));
-							}
-							cell.setCellStyle(floatCellStyle);
-							break;
-						default:
-							cell.setCellValue(s);
-							break;
 						}
 					}
 				}
+			} catch (Exception e) {
+				logger.error("Cannot write data to Excel file", e);
 			}
-		} catch (Exception e) {
-			logger.error("Cannot write data to Excel file", e);
 		}
 	}
 
@@ -576,8 +763,94 @@ public class ExcelExporter {
 			for (int j = 0; j < widgets.length(); j++) {
 				JSONObject widget = widgets.getJSONObject(j);
 				String widgetType = widget.getString("type");
+				if ("static-pivot-table".equals(widgetType)) {
+					JSONObject content = widget.getJSONObject("content");
+					JSONObject crosstabDefinitionJo = content.getJSONObject("crosstabDefinition");
+					JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
+					JSONObject crosstabStyleJo = (content.isNull("style")) ? new JSONObject() : content.getJSONObject("style");
+					crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
 
-				if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
+					JSONObject datastoreObj = new JSONObject();
+
+					datastoreObj.append("widget", widget);
+					datastoreObj.append("widgetType", "static-pivot-table");
+					datastoreObj.append("crosstabDefinition", crosstabDefinitionJo);
+					datastoreObj.append("style", "style");
+
+					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
+					datastoreObj.put("sheetName", sheetName);
+					datastoreObj.put("widgetData", widget);
+
+					String widgetName = null;
+					if (content.has("style")) {
+						JSONObject style = widget.optJSONObject("style");
+						if (style.has("title")) {
+							JSONObject title = style.optJSONObject("title");
+							if (title.has("label")) {
+								widgetName = title.getString("label") + "_" + widget.getString("id");
+							}
+						}
+
+					}
+					if (widgetName == null && content != null) {
+
+						widgetName = content.getString("name");
+					}
+					datastoreObj.put("widgetName", widgetName);
+					datastoreObj.put("sheetInfo", sheet.getString("label"));
+
+					JSONObject datasetObj = widget.getJSONObject("dataset");
+					int datasetId = datasetObj.getInt("dsId");
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					String datasetLabel = dataset.getLabel();
+
+					JSONObject body = new JSONObject();
+
+					JSONObject aggregations = getAggregationsFromWidget(widget, configuration, widgetType);
+					logger.debug("aggregations = " + aggregations);
+					body.put("aggregations", aggregations);
+
+					JSONObject parameters = getParametersFromWidget(widget, configuration);
+
+					logger.debug("parameters = " + parameters);
+					body.put("parameters", parameters);
+
+					JSONObject summaryRow = getSummaryRowFromWidget(widget);
+					if (summaryRow != null) {
+						logger.debug("summaryRow = " + summaryRow);
+						body.put("summaryRow", summaryRow);
+					}
+
+					JSONObject likeSelections = getLikeSelectionsFromWidget(widget, configuration);
+					if (likeSelections != null) {
+						logger.debug("likeSelections = " + likeSelections);
+						body.put("likeSelections", likeSelections);
+					}
+
+					JSONObject selections = getSelectionsFromWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+					body.put("selections", selections);
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+					if (getRealtimeFromTableWidget(datasetId, configuration)) {
+						logger.debug("nearRealtime = true");
+						map.put("nearRealtime", true);
+					}
+
+					int limit = getLimitFromTableWidget(widget);
+					if (limit > 0) {
+						logger.debug("limit = " + limit);
+						map.put("limit", limit);
+					}
+
+					JSONObject datastoreObjData = getDatastore(datasetLabel, null, body.toString());
+
+					datastoreObj.put("datastoreObjData", datastoreObjData);
+					excelSheets.add(datastoreObj);
+
+				}
+				else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
@@ -667,7 +940,7 @@ public class ExcelExporter {
 		return excelSheets;
 	}
 
-	private void exportWidgetsToExcel(List<JSONObject> excelSheets, Workbook wb) {
+	private void exportWidgetsToExcel(List<JSONObject> excelSheets, Workbook wb) throws JSONException, SerializationException {
 		Iterator<JSONObject> it = excelSheets.iterator();
 		while (it.hasNext()) {
 			JSONObject widgetDatastore = it.next();
@@ -856,6 +1129,50 @@ public class ExcelExporter {
 		boolean isSolrDataset = isSolrDataset(dataset);
 		JSONObject content = widget.optJSONObject("content");
 		if (content != null) {
+
+			widgetType = widget.getString("type");
+			if ("static-pivot-table".equals(widgetType)) {
+
+				JSONObject columns = content.getJSONObject("crosstabDefinition");
+				JSONArray measuresJSON = columns.getJSONArray("measures");
+				JSONArray rowsJSON = columns.getJSONArray("rows");
+				JSONArray columnsJSON = columns.getJSONArray("columns");
+
+			    for (int i = 0 ; i < measuresJSON.length(); i++) {  // looping over measures
+			        JSONObject measureObj = measuresJSON.getJSONObject(i);
+					JSONObject measuress = new JSONObject();
+					measuress.put("id", measureObj.getString("id"));
+					measuress.put("alias", measureObj.getString("alias"));
+					measuress.put("funct", measureObj.getString("funct"));
+					measuress.put("orderType", "");
+					measuress.put("columnName", measureObj.getString("alias"));
+					measures.put(measuress);
+			    }
+
+			    for (int i = 0 ; i < rowsJSON.length(); i++) {  // looping over rows
+			        JSONObject attributesObj = rowsJSON.getJSONObject(i);
+					JSONObject attributess = new JSONObject();
+					attributess.put("id", attributesObj.getString("id"));
+					attributess.put("alias", attributesObj.getString("alias"));
+					attributess.put("orderType", "");
+					attributess.put("columnName", attributesObj.getString("alias"));
+					categories.put(attributess);
+			    }
+
+			    for (int i = 0 ; i < columnsJSON.length(); i++) {  // looping over columns
+			        JSONObject attributesObj = columnsJSON.getJSONObject(i);
+					JSONObject attributess = new JSONObject();
+					attributess.put("id", attributesObj.getString("id"));
+					attributess.put("alias", attributesObj.getString("alias"));
+					attributess.put("orderType", "");
+					attributess.put("columnName", attributesObj.getString("alias"));
+					categories.put(attributess);
+			    }
+
+
+
+			}else {
+
 			JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
 			if (columns != null) {
 				for (int i = 0; i < columns.length(); i++) {
@@ -905,12 +1222,13 @@ public class ExcelExporter {
 				}
 			}
 		}
-
+		}
 		JSONObject datasetJsn = getDatasetFromWidget(widget, configuration);
 		String datasetName = datasetJsn.getString("name");
 		aggregations.put("dataset", datasetName);
 
 		return aggregations;
+
 	}
 
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
@@ -1289,5 +1607,25 @@ public class ExcelExporter {
 		selections.put(datasetName, datasetFilters);
 		return selections;
 	}
+
+
+	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
+		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
+
+		for (int s=0; s<sortKeyMap.size(); s++) {
+			Map <String, Object> sMap = sortKeyMap.get(s);
+			NodeComparator nc = new NodeComparator();
+
+			nc.setParentValue((String)sMap.get("parentValue"));
+			nc.setMeasureLabel((String)sMap.get("measureLabel"));
+			if (sMap.get("direction")!= null) {
+				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
+				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
+			}
+		}
+		return sortKeys;
+	}
+
+
 
 }

@@ -197,8 +197,8 @@
 							sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/HTMLPDF/getResult/"+data)
 						}
 					}).error(function(data, status, headers, config) {
-								console.log("[UPLOAD]: FAIL!"+status);
-							});
+						console.log("[UPLOAD]: FAIL!"+status);
+					});
 		}
 
 		dee.exportCockpitTablesToAMP3 = function($sce){
@@ -217,45 +217,45 @@
 			var handleErrors = function(data, status, headers, config){
 				sbiModule_restServices.errorHandler("Error while trying to convert file","Error")
 				console.log("[UPLOAD]: FAIL!"+status);
+			}
+
+			var handleDownloadSuccess = function(data, status, headers, config){
+				if(data.hasOwnProperty("errors")){
+					handleErrors(data, status, headers, config);
+				}else{
+					sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/TXTMP3/getResult/"+data);
 				}
+			}
 
-				var handleDownloadSuccess = function(data, status, headers, config){
-					if(data.hasOwnProperty("errors")){
-						handleErrors(data, status, headers, config);
-					}else{
-						sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/TXTMP3/getResult/"+data);
-					}
+			var handleTxtSuccess = function(data, status, headers, config){
+				if(data.hasOwnProperty("errors")){
+					handleErrors(data, status, headers, config);
+				}else{
+
+					sbiModule_restServices.promiseGet("2.0/exportAccessibleDocument/HTMLTXT/getResult/"+data,"",null).
+					then(function(data, status, headers, config){handleSuccess(data, status, headers, config)}),
+					(function(data, status, headers, config){handleErrors(txtfile, status, headers, config)});
+
 				}
+			}
 
-				var handleTxtSuccess = function(data, status, headers, config){
-					if(data.hasOwnProperty("errors")){
-						handleErrors(data, status, headers, config);
-					}else{
+			var handleSuccess = function(data, status, headers, config){
 
-						sbiModule_restServices.promiseGet("2.0/exportAccessibleDocument/HTMLTXT/getResult/"+data,"",null).
-						then(function(data, status, headers, config){handleSuccess(data, status, headers, config)}),
-						(function(data, status, headers, config){handleErrors(txtfile, status, headers, config)});
+				if(data.hasOwnProperty("errors")){
+					handleErrors(data, status, headers, config);
+				}else{
+					var formData = {};
+					formData.file = data.data;
+					formData.fileName = "table.txt";
+					formData.audiolanguage = sbiModule_config.curr_language+sbiModule_config.curr_country;
+					formData.speedoptions = "-8";
+					formData.formatoptions = "1";
+					multipartForm.post("2.0/exportAccessibleDocument/TXTMP3/startconversion",formData).
+					success(function(data, status, headers, config){handleDownloadSuccess(data, status, headers, config)}).
+					error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
 
-					}
 				}
-
-				var handleSuccess = function(data, status, headers, config){
-
-					if(data.hasOwnProperty("errors")){
-						handleErrors(data, status, headers, config);
-					}else{
-						var formData = {};
-						formData.file = data.data;
-						formData.fileName = "table.txt";
-						formData.audiolanguage = sbiModule_config.curr_language+sbiModule_config.curr_country;
-						formData.speedoptions = "-8";
-						formData.formatoptions = "1";
-						multipartForm.post("2.0/exportAccessibleDocument/TXTMP3/startconversion",formData).
-						success(function(data, status, headers, config){handleDownloadSuccess(data, status, headers, config)}).
-						error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
-
-					}
-				}
+			}
 
 			multipartForm.post("2.0/exportAccessibleDocument/HTMLTXT/startconversion",formData).
 			success(function(data, status, headers, config){handleTxtSuccess(data, status, headers, config)}).
@@ -321,51 +321,51 @@
 			var eleToAtt=document.body;
 			if(exportType.toLowerCase() == 'pdf'){
 				var config = {
-					attachTo: eleToAtt,
-					locals :{deferred:deferred},
-					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
-						$scope.translate = sbiModule_translate;
+						attachTo: eleToAtt,
+						locals :{deferred:deferred},
+						controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
+							$scope.translate = sbiModule_translate;
 
-						var iframe = document.getElementById('documentFrame');
-						var gridsterContainer = iframe.contentDocument.getElementById('gridsterContainer');
-						var width = gridsterContainer ? gridsterContainer.parentNode.scrollWidth : 800;
-						var height = gridsterContainer ? gridsterContainer.parentNode.scrollHeight : 600;
-						var zoomFactor = 2.0;
+							var iframe = document.getElementById('documentFrame');
+							var gridsterContainer = iframe.contentDocument.getElementById('gridsterContainer');
+							var width = gridsterContainer ? gridsterContainer.parentNode.scrollWidth : 800;
+							var height = gridsterContainer ? gridsterContainer.parentNode.scrollHeight : 600;
+							var zoomFactor = 2.0;
 
-						$scope.parameters = {
-							pdfWidth: width,
-							pdfHeight: height,
-							pdfWaitTime: 30,
-							pdfZoomFactor: zoomFactor,
-							pdfPageOrientation: 'landscape',
-							pdfFrontPage: true,
-							pdfBackPage: true
-						}
+							$scope.parameters = {
+									pdfWidth: width,
+									pdfHeight: height,
+									pdfWaitTime: 30,
+									pdfZoomFactor: zoomFactor,
+									pdfPageOrientation: 'landscape',
+									pdfFrontPage: true,
+									pdfBackPage: true
+							}
 
-						$scope.closeDialog=function(){
-							mdPanelRef.close();
-							$scope.$destroy();
-							deferred.reject();
-						}
+							$scope.closeDialog=function(){
+								mdPanelRef.close();
+								$scope.$destroy();
+								deferred.reject();
+							}
 
-						$scope.exportPdf=function(){
-							var parameters = {};
-							angular.copy($scope.parameters, parameters);
-							deferred.resolve(parameters);
-							mdPanelRef.close();
-							$scope.$destroy();
-						}
-					},
-					disableParentScroll: true,
-					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
-					position: $mdPanel.newPanelPosition().absolute().center(),
-					trapFocus: true,
-//					zIndex: 150,
-					fullscreen :false,
-					clickOutsideToClose: true,
-					escapeToClose: false,
-					focusOnOpen: false,
-					onRemoving :function(){}
+							$scope.exportPdf=function(){
+								var parameters = {};
+								angular.copy($scope.parameters, parameters);
+								deferred.resolve(parameters);
+								mdPanelRef.close();
+								$scope.$destroy();
+							}
+						},
+						disableParentScroll: true,
+						templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
+						position: $mdPanel.newPanelPosition().absolute().center(),
+						trapFocus: true,
+//						zIndex: 150,
+						fullscreen :false,
+						clickOutsideToClose: true,
+						escapeToClose: false,
+						focusOnOpen: false,
+						onRemoving :function(){}
 				};
 				$mdPanel.open(config);
 			}else{
@@ -472,9 +472,9 @@
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
 
 			for (var parameter in parameters) {
-			    if (parameters.hasOwnProperty(parameter)) {
-			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
-			    }
+				if (parameters.hasOwnProperty(parameter)) {
+					requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
+				}
 			}
 
 			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
@@ -482,7 +482,7 @@
 			var cockpitSelections = {};
 			cockpitSelections.aggregations = angular.copy(aggregations);
 			cockpitSelections.filters = filters;
-            requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
+			requestUrl += '&COCKPIT_SELECTIONS=' + encodeURIComponent(JSON.stringify(cockpitSelections));
 
 			var requestConf = {
 					method: 'GET',
@@ -516,13 +516,27 @@
 			return deferred.promise;
 		};
 
-		var buildRequestConfiguration = function(exportType, parameters) {
+		var buildRequestConfiguration = function(exportType, parameters, options) {
 			var deferred = $q.defer();
 
 			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
 
 			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
+			var widgetsPivot = [];
+			var sheets = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.sheets;
 
+			for (i = 0; i < sheets.length; i++) {
+				var widgets = sheets[i].widgets;
+				for (j = 0; j < widgets.length; j++) {
+
+					if( widgets[j].type=='static-pivot-table') {
+						widgetsPivot.push(widgets[j].id);
+					}
+				}
+
+
+			} 
+			
 			var body = {
 					user_id: sbiModule_user.userUniqueIdentifier,
 					outputType: exportType,
@@ -530,35 +544,38 @@
 					DOCUMENT_LABEL: execProperties.executionInstance.OBJECT_LABEL,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
-					parametersDataArray : execProperties.parametersData.documentParameters
-				};
+					parametersDataArray : execProperties.parametersData.documentParameters,
+					widgetsPivot : widgetsPivot
 
-				for (var parameter in parameters) {
-				    if (parameters.hasOwnProperty(parameter)) {
-				    	body.parameter = parameters[parameter];
-				    }
+			};
+
+			for (var parameter in parameters) {
+				if (parameters.hasOwnProperty(parameter)) {
+					body.parameter = parameters[parameter];
 				}
+			}
 
-				var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
-				var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
-				var cockpitSelections = {};
-				cockpitSelections.aggregations = angular.copy(aggregations);
-				cockpitSelections.filters = filters;
-	            body.COCKPIT_SELECTIONS = cockpitSelections;
+		
+			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
+			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
+			var cockpitSelections = {};
+			cockpitSelections.aggregations = angular.copy(aggregations);
+			cockpitSelections.filters = filters;
+			body.COCKPIT_SELECTIONS = cockpitSelections;
 
-				var requestConf = {
+			var requestConf = {
 					method: 'POST',
 					url: requestUrl,
 					responseType: 'arraybuffer',
 					data: body
-				};
+			};
 
-				deferred.resolve(requestConf);
-				return deferred.promise;
+			deferred.resolve(requestConf);
+			return deferred.promise;
 		}
 
 		dee.getExporters = function(engine, type) {
-			 return $q(function(resolve, reject) {
+			return $q(function(resolve, reject) {
 				var exportationHandlers = {};
 
 				sbiModule_restServices.promiseGet('2.0/exporters',engine)
@@ -639,9 +656,9 @@
 			switch (engineType) {
 			case "CHART":
 				expObj.func = function(){
-					dee.exportDocumentChart(type)
-				};
-				break;
+				dee.exportDocumentChart(type)
+			};
+			break;
 			case "DOCUMENT_COMPOSITE":
 				switch (type) {
 				case "XLS":
@@ -681,7 +698,7 @@
 						dee.exportDocCompTo('JPG')};
 				};
 
-					break;
+				break;
 				case "APDF":
 					expObj.func = function(){dee.exportCockpitTablesToAPDF()};
 					break;
@@ -695,14 +712,14 @@
 				break;
 			case "REPORT":
 				expObj.func = function(){
-					if(engineDriver.indexOf("Jasper")>=0){
-						dee.exportJasperReportTo(type);
-					}
-					else{
-						dee.exportBirtReportTo(type);
-					}
-				};
-				break;
+				if(engineDriver.indexOf("Jasper")>=0){
+					dee.exportJasperReportTo(type);
+				}
+				else{
+					dee.exportBirtReportTo(type);
+				}
+			};
+			break;
 			case "OLAP":
 				expObj.func = function(){dee.exportOlapTo(type)};
 				break;
@@ -750,8 +767,8 @@
 		dee.getCockpitCsvData = function(documentFrame) {
 			var deferred=$q.defer();
 			if (documentFrame
-				&& documentFrame.contentWindow
-				&& documentFrame.contentWindow.angular){
+					&& documentFrame.contentWindow
+					&& documentFrame.contentWindow.angular){
 
 				// copied and adapted from "/knowage/web-content/js/src/ext/sbi/execution/toolbar/ExportersMenu.js"
 				// S.Lupo 06/oct/2016 - modified to work with angular cockpit
@@ -759,9 +776,9 @@
 				documentFrame.contentWindow.angular.element(document).find('iframe').contents().find('body').scope().exportCsv(def)
 				.then(function(csvData){
 					if(csvData){
-				    	csvData = btoa(csvData);
-				    }
-				    deferred.resolve(csvData);
+						csvData = btoa(csvData);
+					}
+					deferred.resolve(csvData);
 				},function(e){
 					deferred.reject(e);
 				});

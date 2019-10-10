@@ -23,11 +23,13 @@
 	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection) {
 		var objToReturn = {};
 
-		objToReturn.exportWidgetToExcel = function (type, widget) {
+		objToReturn.exportWidgetToExcel = function (type, widget, options) {
+			 
+			 
 			/**
 			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
 			 */
-			createRequest(type, widget, true)
+			createRequest(type, widget, true, options)
 				.then(function(requestConfig){
 					var config = {"responseType": "arraybuffer"};
 					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
@@ -49,7 +51,8 @@
 				});
 		}
 
-		var createRequest = function (type, widget, exportWidget) {
+		
+		var createRequest = function (type, widget, exportWidget, options) {
 			var deferred = $q.defer();
 			var requestUrl = {
 					user_id: sbiModule_user.userUniqueIdentifier,
@@ -58,7 +61,8 @@
 					widget: widget.id,
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
 					SBI_COUNTRY: sbiModule_config.curr_country,
-					SBI_LANGUAGE: sbiModule_config.curr_language
+					SBI_LANGUAGE: sbiModule_config.curr_language,
+					options : options
 			}
 
 			if (exportWidget) {
@@ -81,7 +85,7 @@
 			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
 			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
 			requestUrl.COCKPIT_SELECTIONS.selections = selections;
-
+			requestUrl.options = options;
 			deferred.resolve(requestUrl);
 
 			return deferred.promise;
