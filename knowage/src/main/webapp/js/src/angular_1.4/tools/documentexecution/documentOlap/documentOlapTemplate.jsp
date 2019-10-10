@@ -10,7 +10,7 @@
       </div>
     </md-toolbar>	
 <md-dialog-content flex layout="column" class="dialogFrameContent" >
-			<iframe flex class=" noBorder" ng-src="{{urlViewPointService.snapshotUrl}}" name="angularIframe"></iframe> 
+			<iframe flex class=" noBorder" ng-src="{{docExecute_urlViewPointService.snapshotUrl}}" name="angularIframe"></iframe> 
 	</md-dialog-content> 
  </md-dialog>
 </script>
