@@ -497,7 +497,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var tmpAvailableDatasets=this.getAvaiableDatasets();
 		for(var i=0;i<tmpAvailableDatasets.length;i++){
 			var dataset = cockpitModule_template.configuration.datasets[i];
-			if (dataset.useCache === true) {
+			if (dataset.useCache) {
 				fad.push(ds.getDatasetById(dataset.dsId));
 			}
 		}
@@ -1315,8 +1315,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
 				params.parameters = ds.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
-				/* TODO ALBNALE */
-				//params.indexes = cockpitModule_widgetSelection.getIndexes(undefined,dataset,undefined, undefined);
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}
