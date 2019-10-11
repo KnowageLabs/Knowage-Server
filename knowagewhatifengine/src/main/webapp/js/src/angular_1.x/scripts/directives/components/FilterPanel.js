@@ -110,6 +110,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.hierarchyTreeService = hierarchyTreeService;
 	$scope.FiltersService = FiltersService;
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
+	$scope.selectView = true;
 
 
 
@@ -340,19 +341,29 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promisePost("1.0/hierarchy/slicerTree?" + $httpParamSerializer(queryParams),"",body)
 		.then(function(response) {
 			checkIfExists(response.data);
-			$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data);
+			$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+
+
 
 	}, function(response) {
 		sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 	});
 	}
 
-	$scope.applyView = function(){
-		if(!$scope.selectView){
-			hierarchyTreeService.setCollapsedForAll($scope.data,true);
-		}else{
-			$scope.getSlicerTree();
-		}
+	$scope.isAnySelected = function(){
+
+		return $scope.FiltersService.getSlicers(filterFather).length > 0;
+	}
+
+	$scope.setAllView = function(){
+		$scope.selectView = false;
+		hierarchyTreeService.setCollapsedForAll($scope.data,true);
+	}
+
+	$scope.setSelectedView = function(){
+		$scope.selectView = true;
+		$scope.getSlicerTree();
+
 	}
 
 

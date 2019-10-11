@@ -11,35 +11,52 @@
 		<span class="dialog-msg" ng-if="searchText.length > 0 && searchText.length < minNumOfLetters")>
 			You need at least {{minNumOfLetters}} letters to start search!
 		</span>	
-		<div class="no-wrap">
-			<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
-        			ng-show="true" 
-        			ng-model="searchText" 
-        			placeholder="Insert text here" 
-        			ng-keypress="(searchText.length > 0 && searchText.length >= minNumOfLetters) ? searchFilter($event):''"
-        			width="70%!important"/>				
-				<!-- showSearchInput -->
-				<md-button ng-show="true" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
-					<md-tooltip md-direction="top">
-          				Search
-        			</md-tooltip>
-					<md-icon class="fa fa-search"></md-icon>
-				</md-button>
-				
-				
-				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
-					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
-				</md-checkbox>	
-				
+		<div class="no-wrap" layout="row">
+		<div layout="column">
+			
+			<div layout="row">
 				<md-button  ng-click="unSelectAll(data)" class="md-raised">
 					<md-tooltip md-direction="top">
           				{{translate.load("sbi.common.unselect.all");}}
         			</md-tooltip>
 					{{translate.load("sbi.common.unselect.all");}}
 				</md-button>
-				<md-checkbox  ng-show="isSlicer" ng-change="applyView()" ng-model="selectView" aria-label="Select only view" style="display:initial;">
-					<span style="font-size: 10px">{{selectView?'Selected only view':'Complete hierarchy view'}}</span>
-				</md-checkbox>
+				<md-button  ng-show="isSlicer&&!selectView&&isAnySelected()" ng-click="setSelectedView()"  aria-label="Select only view" class="md-raised">
+				Show selected only
+				</md-button>
+				
+				<md-button  ng-show="isSlicer&&selectView&&isAnySelected()" ng-click="setAllView()"  aria-label="Show All view" class="md-raised">
+				Show All
+				</md-button>
+			</div>
+			<span flex></span>
+		</div>
+			
+				<span flex></span>
+				
+				
+				<md-input-container flex=30>
+				
+					<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
+        					ng-show="true" 
+        			
+        					ng-model="searchText" 
+        					placeholder="Insert text here" 
+        					ng-keypress="(searchText.length > 0 && searchText.length >= minNumOfLetters) ? searchFilter($event):''"
+        					width="70%!important"/>
+        			
+				</md-input-container>
+				<md-button class="md-fab md-mini" ng-disabled="minNumOfLetters > searchText.length" ng-click="searchFilter()">
+          			<md-icon class="fa fa-search"></md-icon>
+        		</md-button>	
+						
+				
+				<md-input-container >
+				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
+					{{showSiblings?'Show siblings':'Hide siblings'}}
+				</md-checkbox>	
+				</md-input-container>
+				
 				
     	</div>
 		<div layout="row" flex>
