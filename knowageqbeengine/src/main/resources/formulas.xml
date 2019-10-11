@@ -667,8 +667,8 @@
 	
 	<formula>
 		<name>Length</name>
-		<syntax>Length (Geom, Dim, Unit, Tol)</syntax>
-		<body>Length(${geom}, ${dim}, ${unit}, ${tol})</body>
+		<syntax>Length (Geom, Unit, Tol)</syntax>
+		<body>Length(${geom}, ${unit}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
@@ -676,13 +676,7 @@
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
 			<placeholder>geom</placeholder>
-		</argument>
-		<argument>
-			<name>Dim1</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom.</argument_description>
-			<placeholder>dim</placeholder>
+			<type>field</type>
 		</argument>
 		<argument>
 			<name>Unit</name>
@@ -690,6 +684,7 @@
 			<default_value></default_value>
 			<argument_description>Unit of measurement.</argument_description>
 			<placeholder>unit</placeholder>
+			<type>string</type>
 		</argument>
 		<argument>
 			<name>Tol</name>
@@ -697,6 +692,7 @@
 			<default_value></default_value>
 			<argument_description>Tolerance value</argument_description>
 			<placeholder>tol</placeholder>
+			
 		</argument>
 		
 		<output>Number</output>
