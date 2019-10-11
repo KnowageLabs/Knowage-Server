@@ -15,8 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
-
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.HashMap"%>
@@ -74,56 +72,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
 	<head>
-	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Analytical Drivers List</title>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/analyticalDriversList.js")%>"></script>
 		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
-	
-		</head>
-
+	</head>
 	<body class="bodyStyle" ng-app="analyticalDriversListModule" id="ng-app">
-	
-	<div ng-controller="analyticalDriversListCTRL" layout-fill>
-		
-		<md-card   layout-fill layout="column" class="flexCard" style="position:absolute">
- <md-card-content flex layout="column" class="noPadding">
-  <md-toolbar >
-      <div class="md-toolbar-tools">
-      {{translate.load("sbi.analytical.drivers.title");}}
-      </div>
-  </md-toolbar>
-  <md-content flex layout="column" >
-
-    <angular-table flex
-			id="adList_id" 
-			ng-model="adList"
-			columns='[
-					  {"label":"Label","name":"label"},
-					  {"label":"Name","name":"name"},
-					  {"label":"Type","name":"type"}
-					]'
-			columns-search='["label","name","type"]'
-			show-search-bar=true
-			highlights-selected-item=true
-			click-function="selectAD(item)">
-		     </angular-table>
-					
-  </md-content>
-</md-card-content>
-<md-card-actions layout="row" layout-align="end center">
-<md-button ng-click="close()">{{translate.load("sbi.generic.cancel");}}</md-button>
-<md-button ng-click="goBackandSave()">{{translate.load("sbi.generic.save");}}</md-button>
-</md-card-actions>
-</md-card>
-		
-		
-		
-		
-	</div>
+		<div ng-controller="analyticalDriversListCTRL" layout-fill>
+			<md-card layout-fill layout="column" class="flexCard" style="position:absolute">
+ 				<md-card-content flex layout="column" class="noPadding">
+  					<md-toolbar>
+				    	<div class="md-toolbar-tools">
+				      		{{translate.load("sbi.analytical.drivers.title");}}
+				      	</div>
+				  	</md-toolbar>
+  				  	<md-content flex layout="column" >
+				    	<angular-table flex
+							id="adList_id" 
+							ng-model="adList"
+							columns='[
+									  {"label":"Label","name":"label"},
+									  {"label":"Name","name":"name"},
+									  {"label":"Type","name":"type"}
+									]'
+							columns-search='["label","name","type"]'
+							show-search-bar=true
+							highlights-selected-item=true
+							click-function="selectAD(item)">
+					     </angular-table>
+  					</md-content>
+				</md-card-content>
+				<md-card-actions layout="row" layout-align="end center">
+					<md-button class="md-raised" ng-click="close()">{{translate.load("sbi.generic.cancel");}}</md-button>
+					<md-button class="md-raised md-primary" ng-click="goBackandSave()">{{translate.load("sbi.generic.save");}}</md-button>
+				</md-card-actions>
+			</md-card>
+		</div>
 	</body>
-
 </html>
