@@ -1,6 +1,9 @@
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -16,6 +19,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.UriBuilder;
@@ -99,8 +103,9 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 	@Override
 	public byte[] getBinaryData() throws IOException, InterruptedException, EMFUserError {
 
-		Path outputDir = Files.createTempDirectory("knowage-pdf-exporter-2");
-		Path outputFile = outputDir.resolve("output.pdf");
+		final Path outputDir = Files.createTempDirectory("knowage-pdf-exporter-2");
+		final Path nodeOutput = Files.createTempFile("knowage-pdf-exporter-2", "nodejs-output");
+		final Path outputFile = outputDir.resolve("output.pdf");
 
 		Files.createDirectories(outputDir);
 
@@ -130,9 +135,28 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight));
 
 		// Link stdin, stdout, stderr to the same stdin, stdout, stderr of the JVM (that means that you have to see catalina.out for errors)
-		processBuilder.inheritIO();
+		// processBuilder.inheritIO();
+		processBuilder.redirectOutput(nodeOutput.toFile());
 
 		Process exec = processBuilder.start();
+
+		Executors.defaultThreadFactory().newThread(new Runnable() {
+
+			@Override
+			public void run() {
+				File file = nodeOutput.toFile();
+				try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						logger.warn(line);
+					}
+
+				} catch (Exception e) {
+					logger.error("Error reading NodeJS output", e);
+				}
+			}
+		}).start();
 
 		exec.waitFor();
 
@@ -164,6 +188,11 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 		} finally {
 			for (InputStream currImageinputStream : imagesInputStreams) {
 				IOUtils.closeQuietly(currImageinputStream);
+			}
+			try {
+				Files.delete(nodeOutput);
+			} catch (Exception e) {
+				// Yes, it's mute!
 			}
 			try {
 				Files.delete(outputDir);
