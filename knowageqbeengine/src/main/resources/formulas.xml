@@ -417,8 +417,8 @@
 	
 	<formula>
 		<name>Distance</name>
-		<syntax>Distance (Geom1, Dim1, Geom2, Dim2, Unit, Tol)</syntax>
-		<body>Distance(${geom1}, ${dim1}, ${geom2}, ${dim2}, ${unit}, ${tol})</body>
+		<syntax>Distance (Geom1, Geom2, Unit, Tol)</syntax>
+		<body>Distance(${geom1}, ${geom2}, ${unit}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
@@ -426,34 +426,25 @@
 			<default_value></default_value>
 			<argument_description>Geometry object whose distance from geom2 is to be computed.</argument_description>
 			<placeholder>geom1</placeholder>
+			<type>field</type>
 		</argument>
-		<argument>
-			<name>Dim1</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
-			<placeholder>dim1</placeholder>
-		</argument>
+		
 		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object whose distance from geom1 is to be computed.</argument_description>
 			<placeholder>geom2</placeholder>
+			<type>field</type>
 		</argument>
-		<argument>
-			<name>Dim2</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
-			<placeholder>dim2</placeholder>
-		</argument>
+		
 		<argument>
 			<name>Unit</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Unit of measurement.</argument_description>
 			<placeholder>unit</placeholder>
+			<type>string</type>
 		</argument>
 		<argument>
 			<name>Tol</name>
