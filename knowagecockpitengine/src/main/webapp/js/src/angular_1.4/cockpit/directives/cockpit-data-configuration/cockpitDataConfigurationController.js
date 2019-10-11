@@ -148,6 +148,30 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		 row.expanded = !row.expanded;
 	 }
 
+	 $scope.updateTmpIndexes = function (row) {
+
+		if ($scope.tmpIndexes && row.useCache) { /* Actual value of useCache parameter is true. The next will be false.*/
+			var tmpAvaiableDatasetCopy = [];
+			angular.copy(cockpitModule_datasetServices.getAvaiableDatasets(), tmpAvaiableDatasetCopy);
+			var ds = tmpAvaiableDatasetCopy.filter(function (test) {
+				  return test.label == row.label;
+				}
+			);
+
+			if (ds.length > 0) {
+				for (var k = $scope.tmpIndexes.length - 1; k >= 0; k--) {
+					var indFields = $scope.tmpIndexes[k].fields;
+					for (var j = 0; j < indFields.length; j++) {
+						if (ds[0].label == indFields[j].store) {
+							delete $scope.tmpIndexes.splice(k, 1);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	 $scope.cockpitDatasetTableColumns=[
 		{
 			label:" ",

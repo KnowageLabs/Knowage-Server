@@ -185,12 +185,15 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 		var tmpAvaiableDatasetCopy = [];
 		angular.copy($scope.tmpAvaiableDataset, tmpAvaiableDatasetCopy);
 		for (var k = 0; k < $scope.tmpAssociations.length; k++) {
-			var assFields = $scope.tmpAssociations[k].fields;
-			for (var j = 0; j < assFields.length; j++) {
+			var indFields = $scope.tmpAssociations[k].fields;
+			for (var j = 0; j < indFields.length; j++) {
 				/* Dataset useCache is true */
-				var tmp = tmpAvaiableDatasetCopy.find((test) => test.label == assFields[j].store);
-				if (tmp && tmp.useCache) {
-					var obj = {column:assFields[j].column,store:assFields[j].store,type:assFields[j].type};
+				var tmp = tmpAvaiableDatasetCopy.filter(function (test) {
+					  return test.label == indFields[j].store;
+					}
+				);
+				if (tmp && tmp[0].useCache) {
+					var obj = {column:indFields[j].column,store:indFields[j].store,type:indFields[j].type};
 
 					if(!$scope.utils.currentInd.fields) {
 						$scope.utils.currentInd.fields= [];
@@ -204,9 +207,9 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 					for (var ll = 0; ll < $scope.tmpIndexes.length; ll++){
 						for (var lll = 0; lll < $scope.tmpIndexes[ll].fields.length; lll++){
 							var o = $scope.tmpIndexes[ll].fields[lll];
-							if (o.column === assFields[j].column &&
-									o.store === assFields[j].store &&
-									o.type === assFields[j].type){
+							if (o.column === indFields[j].column &&
+									o.store === indFields[j].store &&
+									o.type === indFields[j].type){
 								found = true;
 								break;
 							}
@@ -217,7 +220,7 @@ function dataIndexesControllerFunction($scope,cockpitModule_template,cockpitModu
 
 					if (!found) {
 						$scope.utils.currentInd.fields.push(obj);
-						$scope.jsonCurrentInd[assFields[j].store]=assFields[j].type+assFields[j].column;
+						$scope.jsonCurrentInd[indFields[j].store]=indFields[j].type+indFields[j].column;
 						$scope.refreshIndexesDescriptor($scope.utils.currentInd);
 						if($scope.utils.currentInd.id==undefined){
 							 $scope.utils.currentInd.id=$scope.generateIndexesId();
