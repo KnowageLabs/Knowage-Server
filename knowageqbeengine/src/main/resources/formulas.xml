@@ -524,8 +524,8 @@
 	
 	<formula>
 		<name>Difference</name>
-		<syntax>Difference (Geom1, Dim1, Geom2, Dim2, Tol)</syntax>
-		<body>Difference(${geom1}, ${dim1}, ${geom2}, ${dim2}, ${tol})</body>
+		<syntax>Difference (Geom1, Geom2, Tol)</syntax>
+		<body>Difference(${geom1}, ${geom2}, ${tol})</body>
 		
 		<argument>
 			<name>Geom1</name>
@@ -535,26 +535,12 @@
 			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
-			<name>Dim1</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
-			<placeholder>dim1</placeholder>
-		</argument>
-		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
 			<placeholder>geom2</placeholder>
-		</argument>
-		<argument>
-			<name>Dim2</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
-			<placeholder>dim2</placeholder>
-		</argument>		
+		</argument>	
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
@@ -623,26 +609,12 @@
 			<placeholder>geom1</placeholder>
 		</argument>
 		<argument>
-			<name>Dim1</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
-			<placeholder>dim1</placeholder>
-		</argument>
-		<argument>
 			<name>Geom2</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
 			<argument_description>Geometry object.</argument_description>
 			<placeholder>geom2</placeholder>
-		</argument>
-		<argument>
-			<name>Dim2</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
-			<placeholder>dim2</placeholder>
-		</argument>		
+		</argument>	
 		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
