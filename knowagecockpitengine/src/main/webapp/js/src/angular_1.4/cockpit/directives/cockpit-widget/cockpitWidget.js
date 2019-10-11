@@ -950,7 +950,7 @@ function cockpitWidgetControllerFunction(
 
 		if(dataset && columnName){
 
-			if(modalColumn!=undefined && modalValue!=undefined)
+			if(modalColumn!=undefined && modalColumn!= "" && modalValue!=undefined && modalValue!= "")
 			{
 				columnValue = modalValue;
 				columnName = modalColumn;

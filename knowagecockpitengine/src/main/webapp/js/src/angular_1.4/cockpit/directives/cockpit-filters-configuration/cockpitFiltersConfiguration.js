@@ -98,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.filtersTableColumns=[
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.dataset"),"name":"dataset"},
-			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colAlias"},
+			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colName"},
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.operator"),"name":"filterOperator"},
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val")+'1',"name":"filterVal1"},
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val")+'2',"name":"filterVal2"}
