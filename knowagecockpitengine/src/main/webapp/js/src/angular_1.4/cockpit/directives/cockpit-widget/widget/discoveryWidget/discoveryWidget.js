@@ -44,21 +44,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdDialog,
 			$q,
 			$filter,
+			sbiModule_config,
 			sbiModule_translate,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetSelection,
 			cockpitModule_generalServices,
 			cockpitModule_properties,
 			cockpitModule_template){
-		
+
 		$scope.template = cockpitModule_template;
-		
+
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('discoveryWidget',template);
-	  	}		
-		
+	  	}
+
 		$scope.selectedItems = {};
-		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}}; 
+		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}};
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = {
 				"pagination" : {
@@ -75,10 +76,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			};
 		}else $scope.ngModel.settings.page = 1;
-		
-			
+
+
 		if($scope.ngModel.settings)
-		
+
 		$scope.getOptions = function(){
 			var obj = {};
 				obj["page"] = $scope.ngModel.settings.page ? $scope.ngModel.settings.page - 1 : 0;
@@ -86,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				obj["type"] = $scope.ngModel.type;
 			return obj;
 		}
-		
+
 		$scope.ngModel.search = {
 //				facets : [
 //					{
@@ -96,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //				]
 		};
 		$scope.facets = [];
-		
+
 		$scope.gridOptions = {
 			angularCompileRows: true,
             enableColResize: true,
@@ -109,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             getRowHeight: getRowHeight,
             stopEditingWhenGridLosesFocus:true
 		};
-		
+
 		function getRowHeight(params){
 			if($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) return parseInt($scope.ngModel.style.tr && $scope.ngModel.style.tr.height) || 25;
 			else{
@@ -120,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        return !params.node.rowPinned ? 28 * Math.min((Math.floor(maxLength / 80) + 1),3) : 28;
 			}
 		}
-		
+
 		function columnResized(params){
 			if(params.source != "sizeColumnsToFit"){
 				if(params.finished){
@@ -134,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		function changeSorting(){
 			$scope.showWidgetSpinner()
 			var sorting = $scope.gridOptions.api.getSortModel();
@@ -142,11 +143,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 			$scope.refreshWidget();
 		}
-		
+
 		function resizeColumns(){
 			$scope.gridOptions.api.sizeColumnsToFit();
 		}
-		
+
 		function handleClick(node){
 			if(node.colDef.paramType == 'text'){
 				$mdDialog.show({
@@ -174,22 +175,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			};
 	  		$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName),node.value,null,null,node.data, null);
 	  	}
-		
+
 		function getColumnNameFromTableMetadata(colAlias){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].alias && $scope.ngModel.content.columnSelectedOfDataset[k].alias == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
 			}
 		}
 
-		
+
 		$scope.init = function(element,width,height){
 			$scope.element = element[0];
 		}
-		
+
 		$scope.reinit = function(){
 			$scope.refreshWidget(null, 'init');
 		}
-		
+
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 			$scope.showWidgetSpinner();
 			if(datasetRecords){
@@ -200,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(nature == 'init'){
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
-						$scope.gridOptions.api.resetRowHeights();	
+						$scope.gridOptions.api.resetRowHeights();
 					}
 					$scope.gridOptions.api.setRowData(datasetRecords.rows);
 					resizeColumns();
@@ -216,18 +217,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				},500);
 			}
 		}
-		
+
 		$scope.getFacetAlias = function(name){
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-				if($scope.ngModel.content.columnSelectedOfDataset[c].name == name) return $scope.ngModel.content.columnSelectedOfDataset[c].alias; 
+				if($scope.ngModel.content.columnSelectedOfDataset[c].name == name) return $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 			}
 		}
-		
+
+		function dateTimeFormatter(params){
+			return isNaN(moment(params.value,cockpitModule_generalServices.defaultValues.dateTime))? params.value : moment(params.value,cockpitModule_generalServices.defaultValues.dateTime).locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
+		}
+
+		$scope.setTimeFormat = function(date, format){
+			return isNaN(moment(date,cockpitModule_generalServices.defaultValues.dateTime))? date : moment(date,cockpitModule_generalServices.defaultValues.dateTime).locale(sbiModule_config.curr_language).format(format || 'LLL');
+		}
+
 		$scope.getColumns = function(fields) {
 			var columns = [];
 			$scope.ngModel.search.columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-				
+
 				if($scope.ngModel.content.columnSelectedOfDataset[c].fullTextSearch){
 					$scope.ngModel.search.columns.push($scope.ngModel.content.columnSelectedOfDataset[c].name);
 				}
@@ -247,6 +256,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								tempCol.suppressSizeToFit = true;
 							}
 						}
+						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
+							tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+							if($scope.facets) $scope.facets[fields[f].header].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+						}
+						if(tempCol.paramType == 'date' || tempCol.paramType == 'timestamp'){
+							tempCol.valueFormatter = dateTimeFormatter;
+							if($scope.facets) $scope.facets[fields[f].header].metaData.type = 'date';
+						}
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
 						columns.push(tempCol);
@@ -256,7 +273,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return columns
 		}
-		
+
 		function textCellRenderer () {}
 		textCellRenderer.prototype.init = function(params) {
 		    this.eGui = document.createElement('div');
@@ -265,8 +282,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		textCellRenderer.prototype.getGui = function() {
 		    return this.eGui;
 		};
-		
-		function headerTemplate() { 
+
+		function headerTemplate() {
 			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+$scope.ngModel.style.th["background-color"]+'">'+
 					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
 					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation"  style="justify-content:'+$scope.ngModel.style.th["justify-content"]+'">'+
@@ -279,18 +296,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					'	</div>'+
 					'</div>';
 		}
-		
+
 		function getCellStyle(params){
 			var tempStyle = angular.copy(params.colDef.style);
 			return tempStyle;
 		}
-		
+
 		$scope.getColumnName = function(colNum){
 			for(var k in $scope.metaData.fields){
 				if($scope.metaData.fields[k].dataIndex && $scope.metaData.fields[k].dataIndex == colNum) return $scope.metaData.fields[k].header;
 			}
 		}
-		
+
 	    $scope.deleteSelections = function(item){
 	    	var reloadAss=false;
 	    	var reloadFilt=[];
@@ -341,7 +358,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 			}
 	    }
-		
+
 		$scope.deleteFilterSelection = function(group, value){
 			var item = {};
 			item.aggregated= cockpitModule_template.configuration.aggregations ? true : false;
@@ -360,7 +377,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.deleteSelections(item);
 			if(cockpitModule_template.configuration.aggregations.length == 0) $scope.refreshWidget();
 		}
-		
+
 		$scope.selectItem = function(group, item){
 			if(item.column_2==0) return;
 			if($scope.dimensions && $scope.dimensions.width<600){
@@ -368,7 +385,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			if($scope.ngModel.settings.facets.selection){
 				$scope.ngModel.search.facets = {};
-				if($scope.template.configuration  
+				if($scope.template.configuration
 						&& (cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1)
 						|| ($scope.template.configuration.aggregations &&  $scope.template.configuration.aggregations.length > 0 && $scope.template.configuration.aggregations[0].selection && $scope.template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1)){
 					$scope.deleteFilterSelection(group, item.column_1);
@@ -392,49 +409,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.refreshWidget();
 			}
 		}
-		
+
 		$scope.first = function(){
 			$scope.ngModel.settings.page = 1;
 			$scope.refreshWidget();
 		}
-		
+
 		$scope.prev = function(){
 			$scope.ngModel.settings.page = $scope.ngModel.settings.page - 1;
 			$scope.refreshWidget();
 		}
-		
+
 		$scope.next = function(){
 			$scope.ngModel.settings.page = $scope.ngModel.settings.page + 1;
 			$scope.refreshWidget();
 		}
-		
+
 		$scope.last = function(){
 			$scope.ngModel.settings.page = $scope.totalPageNumber();
 			$scope.refreshWidget();
 		}
-		
+
 		$scope.maxPageNumber = function(){
 			if($scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber < $scope.totalResults) return $scope.ngModel.settings.page*$scope.ngModel.settings.pagination.itemsNumber;
 			else return $scope.totalResults;
 		}
-		
+
 		$scope.totalPageNumber = function(){
 			return Math.ceil($scope.totalResults/$scope.ngModel.settings.pagination.itemsNumber);
 		}
-		
+
 		$scope.isFacetVisible = function(facet){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].name == facet && $scope.ngModel.content.columnSelectedOfDataset[k].facet) return true
 			}
 			return false;
 		}
-		
+
 		$scope.customFacetWidth = function(){
 			if($scope.ngModel.settings.facets && $scope.ngModel.settings.facets.width) {
 				return {'width':$scope.ngModel.settings.facets.width};
 			}return false;
 		}
-		
+
 		$scope.isFacetSelected = function(group,item){
 			if($scope.template.configuration.filters && $scope.template.configuration.filters[$scope.ngModel.dataset.label] && $scope.template.configuration.filters[$scope.ngModel.dataset.label][group] == item.column_1) return true;
 			if($scope.ngModel.search.facets && $scope.ngModel.search.facets[group] && $scope.ngModel.search.facets[group].filterVals.indexOf(item.column_1)!=-1) return true;
@@ -459,30 +476,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.toggleMenu = function() {
 			$scope.sidemenuOpened = !$scope.sidemenuOpened;
 		}
-		
+
 		var timer;
 		$scope.searchWatcher = $scope.$watch('ngModel.search.text', function(newValue, oldValue){
 			if(oldValue != newValue){
 				if(timer){
 					$timeout.cancel(timer)
-				}  
+				}
 				timer = $timeout(function(){
 					$scope.showWidgetSpinner();
 					$scope.refreshWidget();
 				},500)
 			}
-		});		
-		
+		});
+
 		$scope.facetSettingsWatcher = $scope.$watch('ngModel.settings.facet', function(newValue,oldValue){
 			if(newValue && oldValue != newValue){
 				$scope.ngModel.filters
 			}
 		})
-		
+
 		$scope.dimensionWatcher = $scope.$watch('element.clientWidth',function(newValue, oldValue){
 			if(newValue) $scope.dimensions = {"width": newValue};
 		})
-		
+
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
@@ -502,9 +519,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdPanel.open(config);
 			return finishEdit.promise;
 		}
-		
+
 		$scope.reinit();
-		
+
 	}
 
 	/**

@@ -44,7 +44,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	        			ng-class="{'selected': isFacetSelected(key,item),'notAllowedCursor':item.column_2==0}" 
 	        			ng-click="selectItem(key,item)" 
 	        			layout="row" layout-align="start center">
-	          			<span class="discoveryFiltersListName truncated">
+	          			<span class="discoveryFiltersListName truncated" ng-if="facet.metaData.type == 'date'">
+	          				{{ setTimeFormat(item.column_1,facet.metaData.momentDateFormat) }}
+	          			</span>
+	          			<span class="discoveryFiltersListName truncated" ng-if="facet.metaData.type != 'date'">
 	          				{{ item.column_1 }}
 	          			</span>
 	          			<span flex></span>

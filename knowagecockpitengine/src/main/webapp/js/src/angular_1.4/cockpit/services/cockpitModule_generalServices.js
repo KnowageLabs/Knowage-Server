@@ -1,6 +1,11 @@
 angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location, kn_regex, sbiModule_config){
 			var gs=this;
 	var savingDataConf = false;
+
+	this.defaultValues = {
+		"dateTime": "DD/MM/YYYY HH:mm:ss.SSS"
+	}
+
 	this.savingDataConfiguration = function (isSaving){
 		savingDataConf = isSaving
 	}

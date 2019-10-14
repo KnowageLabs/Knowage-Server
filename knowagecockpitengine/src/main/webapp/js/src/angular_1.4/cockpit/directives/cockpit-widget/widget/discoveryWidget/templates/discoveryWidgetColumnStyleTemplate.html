@@ -48,6 +48,16 @@
 				</md-select>
 			</md-input-container>
 		</div>
+		<div flex layout="row" ng-if="::isDateColumn(selectedColumn.type)">
+			<md-input-container flex class="md-block" class="small counter" >
+				<label>{{translate.load('sbi.cockpit.style.dateformat')}}</label>
+	            <md-select ng-model="selectedColumn.momentDateFormat">
+		            <md-option ng-repeat="df in cockpitModule_generalOptions.momentDateFormat" ng-value="df.value" >
+		              <span>{{df.hint}}</small>
+		            </md-option>
+	            </md-select>
+			</md-input-container>
+		</div>
     </md-dialog-content>
 
     <md-dialog-actions layout="row">

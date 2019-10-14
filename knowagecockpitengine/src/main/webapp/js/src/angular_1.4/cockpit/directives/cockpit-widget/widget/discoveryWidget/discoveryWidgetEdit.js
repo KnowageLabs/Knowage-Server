@@ -35,16 +35,19 @@ function discoveryWidgetEditControllerFunction(
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.newModel = angular.copy(model);
 	$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
-	
+
 	$scope.columnsGrid = {
 		angularCompileRows: true,
 		enableColResize: false,
         enableSorting: false,
         enableFilter: false,
+        rowDragManaged: true,
+        onRowDragEnter: rowDragEnter,
+        onRowDragEnd: onRowDragEnd,
         onGridReady: resizeColumns,
         onGridSizeChanged: resizeColumns,
         onCellEditingStopped: refreshRow,
-        columnDefs: [{"headerName":"Column","field":"name"},
+        columnDefs: [{"headerName":"Column","field":"name",rowDrag: true},
     		{"headerName":"Alias","field":"alias","editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
     		{"headerName":"Type","field":"fieldType","editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
     		{"headerName":"Style","field":"style", cellStyle: {border:"none"},cellRenderer:styleRenderer,width: 50, headerClass:'header-cell-center'},
@@ -53,14 +56,27 @@ function discoveryWidgetEditControllerFunction(
     		{"headerName":"Enable text search","field":"fullTextSearch",cellRenderer:checkboxRenderer,width: 100,headerComponent: CustomHeader,headerClass:'header-cell-center'}],
     	rowData : $scope.newModel.content.columnSelectedOfDataset
 	};
-	
+
+	function moveInArray(arr, fromIndex, toIndex) {
+        var element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+    }
+
+	function rowDragEnter(event){
+		$scope.startingDragRow = event.overIndex;
+	}
+	function onRowDragEnd(event){
+		moveInArray($scope.newModel.content.columnSelectedOfDataset, $scope.startingDragRow, event.overIndex);
+	}
+
 	function CustomHeader() {}
 
 	CustomHeader.prototype.init = function (agParams) {
 	    this.agParams = agParams;
 	    this.eGui = document.createElement('div');
 	    this.eGui.innerHTML = '<span>'+agParams.displayName+'</span><input type="checkbox" ng-model="selectAll.'+agParams.column.colId+'" ng-change="changeSelectAll(\''+agParams.column.colId+'\')"/>';
-	    
+
         this.$scope = $scope;
         $compile(this.eGui)(this.$scope);
         this.$scope.params = agParams;
@@ -68,23 +84,23 @@ function discoveryWidgetEditControllerFunction(
 	};
 
 	CustomHeader.prototype.getGui = function () {return this.eGui;};
-	
+
 	function resizeColumns(){
 		$scope.columnsGrid.api.sizeColumnsToFit();
 	}
-		
+
 	$scope.selectAll = {
 			visible: true,
 			fullTextSearch: false,
 			facet: false
 	};
-	
+
 	for(var k in $scope.newModel.content.columnSelectedOfDataset){
 		if($scope.newModel.content.columnSelectedOfDataset[k].visible) $scope.selectAll.visible = true;
 		if($scope.newModel.content.columnSelectedOfDataset[k].fullTextSearch) $scope.selectAll.fullTextSearch = true;
 		if($scope.newModel.content.columnSelectedOfDataset[k].facet) $scope.selectAll.facet = true;
 	}
-	
+
 	$scope.changeSelectAll = function(columnId){
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
 			if((columnId != 'facet') || (columnId == 'facet' && $scope.newModel.content.columnSelectedOfDataset[k].fieldType != 'MEASURE')){
@@ -92,15 +108,15 @@ function discoveryWidgetEditControllerFunction(
 			}
 		}
 	}
-	
+
 	function editableCell(params){
 		return '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 	}
-	
+
 	function checkboxRenderer(params){
 		return '<div style="display:inline-flex;justify-content:center;width:100%;height:100%;align-items:center;"><input type="checkbox" ng-model="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']"/></div>';
 	}
-	
+
 	function checkboxRendererAggregated(params){
 		var input = '<input type="checkbox" ng-model="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']"/>';
 		var button = '<md-button class="md-icon-button" ng-if="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']" ng-click="showAggregationDialog($event,'+params.rowIndex+')" >'+
@@ -114,62 +130,62 @@ function discoveryWidgetEditControllerFunction(
 		    return '<span></span>';
 		}
 	}
-	
+
 	function styleRenderer(params){
 		return 	'<div style="display:inline-flex;justify-content:center;width:100%;"><md-button class="md-icon-button" ng-click="showSettingsDialog($event,'+params.rowIndex+')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
 			  	'	<md-tooltip md-delay="500">Column Style</md-tooltip>'+
 			  	'	<md-icon md-font-icon="fa fa-paint-brush" ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}"></md-icon>'+
 			  	'</md-button></div>';
 	}
-	
+
 	function aggregationRenderer(params){
 		return '<div style="display:inline-flex;justify-content:center;width:100%;"><md-button class="md-icon-button" ng-click="showAggregationDialog($event,'+params.rowIndex+')" >'+
 			  	'	<md-tooltip md-delay="500">Column Settings</md-tooltip>'+
 			  	'	<md-icon md-font-icon="fa fa-pencil"></md-icon>'+
 			  	'</md-button></div>';
 	}
-	
+
 	function refreshRow(cell){
-		if(cell.node.data.fieldType == 'MEASURE') $scope.newModel.content.columnSelectedOfDataset[cell.rowIndex].facet = false; 
+		if(cell.node.data.fieldType == 'MEASURE') $scope.newModel.content.columnSelectedOfDataset[cell.rowIndex].facet = false;
 		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 	}
-	
+
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
 		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
 	}
-	
+
 	$scope.colorPickerPropertyTh = {
-			format:'rgb', 
-			placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), 
+			format:'rgb',
+			placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),
 			disabled:($scope.newModel.style.th && $scope.newModel.style.th.enabled === false)
 	};
-	
+
 	$scope.toggleTh = function(){
 		$scope.colorPickerPropertyTh.disabled = $scope.newModel.style.th.enabled;
 	}
-	
+
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('discoveryWidget',template);
   	}
-  	
+
   	$scope.initProperty = function(property){
   		if(typeof property == 'undefined') return true
   		return property;
   	}
-  	
+
   	$scope.initTh = function(){
   		return typeof($scope.newModel.style.th.enabled) != 'undefined' ? $scope.newModel.style.th.enabled : true;
   	}
-  	
+
   	$scope.initAggregation = function(col){
   		if(typeof col.aggregationSelected == 'undefined') return 'COUNT';
   		return col.aggregationSelected;
   	}
-  	
+
   	$scope.resetAggregations = function(col){
   		if(col.fieldType == 'ATTRIBUTE') col.aggregationSelected = 'COUNT';
   	}
-  	
+
   	$scope.handleEvent = function(event ,dsId){
   		if($scope.newModel.dataset) $scope.newModel.dataset.dsId = dsId;
   		else $scope.newModel.dataset = {"dsId":dsId};
@@ -185,11 +201,11 @@ function discoveryWidgetEditControllerFunction(
   		}
   		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
   	}
-  	
+
   	$scope.addColumn = function(){
   		$scope.newModel.content.columnSelectedOfDataset.push({});
   	}
-  	
+
   	$scope.deleteColumn = function(col){
   		for(var k in $scope.newModel.content.columnSelectedOfDataset){
   			if($scope.newModel.content.columnSelectedOfDataset[k].$$hashKey == col.$$hashKey) {
@@ -198,7 +214,7 @@ function discoveryWidgetEditControllerFunction(
   			}
   		}
   	}
-  	
+
   	$scope.showSettingsDialog = function(ev,index){
 	    $mdDialog.show({
 	      controller: settingsDialogContent,
@@ -213,23 +229,30 @@ function discoveryWidgetEditControllerFunction(
         }, function() {
         });
   	}
-  	
+
   	function settingsDialogContent($scope, $mdDialog, column, index){
   		$scope.translate=sbiModule_translate;
   		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
   		$scope.selectedColumn = angular.copy(column);
   		$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
   		$scope.colorPickerProperty = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
-  		
+
+  		$scope.isDateColumn = function(type){
+  			if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){
+  				return true;
+  			}
+  			return false;
+  		}
+
   		$scope.cancel = function(){
   			$mdDialog.cancel();
   		}
-  		
+
   		$scope.save = function(){
   			$mdDialog.hide($scope.selectedColumn);
   		}
   	}
-  	
+
   	$scope.showAggregationDialog = function(ev,index){
   		 $mdDialog.show({
   		      controller: aggregationDialogContent,
@@ -244,7 +267,7 @@ function discoveryWidgetEditControllerFunction(
   	        }, function() {
   	        });
   	}
-  	
+
   	function aggregationDialogContent($scope, $mdDialog, columns, index){
   		$scope.translate=sbiModule_translate;
   		$scope.columns = columns;
@@ -255,16 +278,16 @@ function discoveryWidgetEditControllerFunction(
   			{name:'SUM',available:['MEASURE','ATTRIBUTE']},
   			{name:'AVG',available:['MEASURE','ATTRIBUTE']}
   		];
-  		
+
   		$scope.cancel = function(){
   			$mdDialog.cancel();
   		}
-  		
+
   		$scope.save = function(){
   			$mdDialog.hide($scope.selectedColumn);
   		}
   	}
-  	
+
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
 		mdPanelRef.close();
