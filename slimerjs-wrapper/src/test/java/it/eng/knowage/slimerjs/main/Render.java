@@ -48,8 +48,7 @@ public class Render {
 	/**
 	 * Render the first argument to a PDF located at the second argument
 	 *
-	 * @param args
-	 *            command line arguments
+	 * @param args command line arguments
 	 * @throws IOException
 	 * @throws RenderException
 	 * @throws URISyntaxException
@@ -65,7 +64,7 @@ public class Render {
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
 		List<InputStream> images = SlimerJS.render(url, 2,
-				RenderOptions.DEFAULT.withCustomHeaders(new CustomHeaders(authenticationHeaders)).withJavaScriptExecutionDetails(5000L, 15000L));
+				RenderOptions.defaultOptions().withCustomHeaders(new CustomHeaders(authenticationHeaders)).withJavaScriptExecutionDetails(5000L, 15000L));
 		// List<InputStream> images = SlimerJS.render(urlQA, 1, RenderOptions.DEFAULT);
 		PDFCreator.createPDF(images, output, true, true);
 		ExportDetails details = new ExportDetails(new FrontpageDetails("Cool dashboard", "The most cool dashboard on earth", new Date()),

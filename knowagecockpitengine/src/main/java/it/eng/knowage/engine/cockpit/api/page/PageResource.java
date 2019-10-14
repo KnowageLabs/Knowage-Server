@@ -227,7 +227,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
+		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
 		return renderOptions;
 	}
 
@@ -238,7 +238,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
 
-		RenderOptions defaultRenderOptions = RenderOptions.DEFAULT;
+		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
 		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
 		long defaultJsRenderingWait = defaultRenderOptions.getJsRenderingWait();
 		int pdfWidth = Integer.valueOf(defaultDimensions.getWidth());
@@ -259,7 +259,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
 		}
 
-		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
 		RenderOptions renderOptions = defaultRenderOptions.withCustomHeaders(customHeaders).withDimensions(dimensions)
 				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;

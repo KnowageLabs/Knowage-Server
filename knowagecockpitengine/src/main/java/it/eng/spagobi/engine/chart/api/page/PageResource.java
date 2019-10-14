@@ -259,13 +259,29 @@ public class PageResource extends AbstractChartEngineResource {
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
 
-		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
-		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
-		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
+		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
+		long defaultJsRenderingWait = defaultRenderOptions.getJsRenderingWait();
+		int pdfWidth = Integer.valueOf(defaultDimensions.getWidth());
+		int pdfHeight = Integer.valueOf(defaultDimensions.getHeight());
+		long pdfRenderingWaitTime = defaultJsRenderingWait;
 
-		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
+		String widthParameterVal = request.getParameter(PDF_WIDTH);
+		String heightParameterVal = request.getParameter(PDF_HEIGHT);
+		String jsRenderingWaitParameterVal = request.getParameter(PDF_WAIT_TIME);
 
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
+		if (widthParameterVal != null) {
+			pdfWidth = Integer.valueOf(widthParameterVal);
+		}
+		if (heightParameterVal != null) {
+			pdfHeight = Integer.valueOf(heightParameterVal);
+		}
+		if (jsRenderingWaitParameterVal != null) {
+			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
+		}
+
+		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
+		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withDimensions(dimensions)
 				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
@@ -276,7 +292,7 @@ public class PageResource extends AbstractChartEngineResource {
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
+		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
 		return renderOptions;
 	}
 

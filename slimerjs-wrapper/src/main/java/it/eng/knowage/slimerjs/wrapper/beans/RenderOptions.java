@@ -3,10 +3,15 @@ package it.eng.knowage.slimerjs.wrapper.beans;
 import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 
 public class RenderOptions {
-	public static final RenderOptions EMPTY = new RenderOptions(null, null, null, null, null, null, null, null, null, null, null);
-	public static final RenderOptions DEFAULT = EMPTY.withDimensions(ViewportDimensions.VIEW_1920_1080).withRenderFormat(RenderFormat.PNG)
-			.withJavaScriptExecutionDetails(60000L, 5000L).withSlimerJSOptions(SlimerJSOptions.DEFAULT.withDiskCache(true))
-			.withCustomHeaders(CustomHeaders.EMPTY).withZoomFactor(2.0);
+	private static final RenderOptions EMPTY = new RenderOptions(null, null, null, null, null, null, null, null, null, null, null);
+
+	public static final RenderOptions defaultOptions() {
+
+		ViewportDimensions defaulViewportDimensions = ViewportDimensions.builder().build();
+
+		return EMPTY.withDimensions(defaulViewportDimensions).withRenderFormat(RenderFormat.PNG).withJavaScriptExecutionDetails(60000L, 5000L)
+				.withSlimerJSOptions(SlimerJSOptions.DEFAULT.withDiskCache(true)).withCustomHeaders(CustomHeaders.EMPTY).withZoomFactor(2.0);
+	}
 
 	private final SlimerJSOptions options;
 	private final PaperSize paperSize;
