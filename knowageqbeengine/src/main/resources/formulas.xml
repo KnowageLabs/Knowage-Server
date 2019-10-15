@@ -417,8 +417,8 @@
 	
 	<formula>
 		<name>Distance</name>
-		<syntax>Distance (Geom1, Geom2, Unit, Tol)</syntax>
-		<body>Distance(${geom1}, ${geom2}, ${unit}, ${tol})</body>
+		<syntax>distance (Geom1, Geom2, Tol, Unit)</syntax>
+		<body>distance(${geom1}, ${geom2}, ${tol}, ${unit})</body>
 		
 		<argument>
 			<name>Geom1</name>
@@ -437,6 +437,13 @@
 			<placeholder>geom2</placeholder>
 			<type>field</type>
 		</argument>
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
+		</argument>
 		
 		<argument>
 			<name>Unit</name>
@@ -446,13 +453,7 @@
 			<placeholder>unit</placeholder>
 			<type>string</type>
 		</argument>
-		<argument>
-			<name>Tol</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Tolerance value</argument_description>
-			<placeholder>tol</placeholder>
-		</argument>
+		
 		
 		<output>Number</output>
 		<description>Returns the distance between two geometry objects.</description>
@@ -629,9 +630,9 @@
 	</formula>
 	
 	<formula>
-		<name>Length</name>
-		<syntax>Length (Geom, Unit, Tol)</syntax>
-		<body>Length(${geom}, ${unit}, ${tol})</body>
+		<name>length_spa</name>
+		<syntax>length_spa (Geom, Tol, Unit)</syntax>
+		<body>length_spa(${geom}, ${tol}, ${unit})</body>
 		
 		<argument>
 			<name>Geom1</name>
@@ -642,14 +643,6 @@
 			<type>field</type>
 		</argument>
 		<argument>
-			<name>Unit</name>
-			<expected_value></expected_value>
-			<default_value></default_value>
-			<argument_description>Unit of measurement.</argument_description>
-			<placeholder>unit</placeholder>
-			<type>string</type>
-		</argument>
-		<argument>
 			<name>Tol</name>
 			<expected_value></expected_value>
 			<default_value></default_value>
@@ -657,6 +650,15 @@
 			<placeholder>tol</placeholder>
 			
 		</argument>
+		<argument>
+			<name>Unit</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Unit of measurement.</argument_description>
+			<placeholder>unit</placeholder>
+			<type>string</type>
+		</argument>
+		
 		
 		<output>Number</output>
 		<description>Returns the length or perimeter of a geometry object.</description>

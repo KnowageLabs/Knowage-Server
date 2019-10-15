@@ -333,7 +333,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
 		} else if (dialect != null && dialect.contains("MySQL")) {
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
-		} else if (dialect != null && dialect.contains("Oracle")) {
+		} else if (dialect != null && dialect.contains("CustomOracleSpatialDialect")) {
+			dialect = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
+		}else if (dialect != null && dialect.contains("Oracle")) {
 			dialect = "org.hibernate.dialect.ExtendedOracleDialect";
 		} else if (SqlUtils.isHiveLikeDialect(dialect)) {
 			// because it seems similar.... really?
