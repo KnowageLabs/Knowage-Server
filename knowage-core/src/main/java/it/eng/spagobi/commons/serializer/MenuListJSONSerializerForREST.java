@@ -794,14 +794,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private boolean isAbleTo(String func, List funcs) {
-		boolean toReturn = false;
-		for (int i = 0; i < funcs.size(); i++) {
-			if (func.equals(funcs.get(i))) {
-				toReturn = true;
-				break;
-			}
-		}
-		return toReturn;
+		return funcs.contains(func);
 	}
 
 	public IEngUserProfile getUserProfile() {
