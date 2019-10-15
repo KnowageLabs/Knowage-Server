@@ -187,6 +187,10 @@ public class UserUtilities {
 	}
 
 	public static IEngUserProfile getUserProfile(String userId) throws Exception {
+		return getUserProfile(userId, null);
+	}
+
+	public static IEngUserProfile getUserProfile(String userId, String defaultRole) throws Exception {
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
 		logger.debug("IN.userId=" + userId);
@@ -213,9 +217,21 @@ public class UserUtilities {
 					}
 
 					checkTenant(user);
+
 					user.setFunctions(readFunctionality(user));
 
-					profile = new UserProfile(user);
+					if (defaultRole == null) {
+						profile = new UserProfile(user);
+					} else {
+						profile = new UserProfile(user);
+						profile.setDefaultRole(defaultRole);
+
+						SpagoBIUserProfile clone = UserUtilities.clone(user);
+						clone.setRoles(new String[] { defaultRole });
+						String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
+						Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
+						profile.setFunctionalities(toReturn);
+					}
 
 				}
 
@@ -415,8 +431,7 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param username
-	 *            the username
+	 * @param username the username
 	 * @return true, if successful
 	 * @throws Exception the exception
 	 */
@@ -436,10 +451,9 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param userProfile
-	 *            the user profile
+	 * @param userProfile the user profile
 	 * @return true, if successful
-	 	 * @throws Exception the exception
+	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(UserProfile userProfile) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -457,10 +471,8 @@ public class UserUtilities {
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
 	 *
-	 * @param userProfile
-	 *            UserProfile the user profile object
-	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
+	 * @param userProfile         UserProfile the user profile object
+	 * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
 	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
@@ -517,8 +529,7 @@ public class UserUtilities {
 	/**
 	 * Creates the user functionality root.
 	 *
-	 * @param userProfile
-	 *            the user profile
+	 * @param userProfile the user profile
 	 * @throws Exception the exception
 	 */
 	public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
@@ -724,15 +735,15 @@ public class UserUtilities {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_INTERNATIONALIZATION);
 			}
 
-			if(virtualRole.isAbleToCreateSelfServiceCockpit()) {
+			if (virtualRole.isAbleToCreateSelfServiceCockpit()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_COCKPIT);
 			}
 
-			if(virtualRole.isAbleToCreateSelfServiceGeoreport()) {
+			if (virtualRole.isAbleToCreateSelfServiceGeoreport()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_GEOREPORT);
 			}
 
-			if(virtualRole.isAbleToCreateSelfServiceKpi()) {
+			if (virtualRole.isAbleToCreateSelfServiceKpi()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_KPI);
 			}
 
@@ -954,15 +965,15 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to manage Internationalization.");
 						virtualRole.setAbleToManageInternationalization(true);
 					}
-					if(anotherRole.isAbleToCreateSelfServiceCockpit()) {
+					if (anotherRole.isAbleToCreateSelfServiceCockpit()) {
 						logger.debug("User has role " + roleName + " that is able to create self service cockpit.");
 						virtualRole.setAbleToCreateSelfServiceCockpit(true);
 					}
-					if(anotherRole.isAbleToCreateSelfServiceGeoreport()) {
+					if (anotherRole.isAbleToCreateSelfServiceGeoreport()) {
 						logger.debug("User has role " + roleName + " that is able to create self service geographic report.");
 						virtualRole.setAbleToCreateSelfServiceGeoreport(true);
 					}
-					if(anotherRole.isAbleToCreateSelfServiceKpi()) {
+					if (anotherRole.isAbleToCreateSelfServiceKpi()) {
 						logger.debug("User has role " + roleName + " that is able to create self service kpi.");
 						virtualRole.setAbleToCreateSelfServiceKpi(true);
 					}
@@ -1030,8 +1041,7 @@ public class UserUtilities {
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
 	 *
-	 * @param profile
-	 *            The input SpagoBIUserProfile object
+	 * @param profile The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
 	 */
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {

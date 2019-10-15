@@ -118,7 +118,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<input data-ng-model="selectedUser.password" type="password"
 						name="password" 
 						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
-						ng-maxlength="100">
+						ng-maxlength="100" autocomplete="new-password"> <!-- Using input autocomplete to prevent browser autocomplete -->
 
 					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
 					<div ng-messages="attributeForm.password.$error"
@@ -134,7 +134,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<input ng-model="selectedUser.confirm" type="password"
 						name="confirm_password" 
 						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> ng-required="passwordRequired" <%}%>
-						ng-maxlength="100" nx-equal-ex="selectedUser.password">
+						ng-maxlength="100" nx-equal-ex="selectedUser.password" autocomplete="new-password"> <!-- Using input autocomplete to prevent browser autocomplete -->
 					
 					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
 						<div ng-messages="attributeForm.confirm_password.$error"
@@ -162,6 +162,21 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
 					</div>  
 				</md-input-container>
+				
+				<div flex=100 ng-if="role.length > 1">
+					<md-input-container class="md-block">
+						<label>{{translate.load("sbi.users.defaultRole")}}</label>
+						<md-select ng-model="selectedUser.defaultRoleId" flex=100>
+							<md-option></md-option>
+							<md-option ng-value="opt.id" ng-repeat="opt in role">
+								{{ opt.name }}
+							</md-option>
+						</md-select>
+						<div class="hint">
+						{{translate.load("sbi.users.defaultRoleHint")}}
+						</div>
+					</md-input-container>
+				</div>
 				
 				 <angular-table layout-fill
 				  id="usersRoles_id" ng-model="usersRoles"

@@ -50,21 +50,19 @@ public class UserProfile implements IEngUserProfile {
 	private static transient Logger logger = Logger.getLogger(UserProfile.class);
 
 	private enum PREDEFINED_PROFILE_ATTRIBUTES {
-		USER_ID("user_id"), 
-		USER_ROLES("user_roles"), 
-		TENANT_ID("TENANT_ID");
-	
+		USER_ID("user_id"), USER_ROLES("user_roles"), TENANT_ID("TENANT_ID");
+
 		private String name;
-		
+
 		PREDEFINED_PROFILE_ATTRIBUTES(String name) {
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return this.name;
 		}
-	};	
-	
+	};
+
 	private static String SCHEDULER_USER_NAME = "scheduler";
 	private static String SCHEDULER_USER_ID_PREFIX = "scheduler - ";
 
@@ -89,8 +87,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * The Constructor.
 	 *
-	 * @param profile
-	 *            SpagoBIUserProfile
+	 * @param profile SpagoBIUserProfile
 	 */
 	public UserProfile(SpagoBIUserProfile profile) {
 		logger.debug("IN");
@@ -132,7 +129,7 @@ public class UserProfile implements IEngUserProfile {
 			userAttributes = new HashMap();
 			logger.debug("NO USER ATTRIBUTES");
 		}
-		
+
 		setPredefinedProfileAttributes();
 
 		logger.debug("OUT");
@@ -146,11 +143,11 @@ public class UserProfile implements IEngUserProfile {
 		// putting tenant id as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.TENANT_ID.getName(), this.organization);
 	}
-	
+
 	private String concatenateRolesForINClause() {
 		return "'" + StringUtils.join(this.roles, "','") + "'";
 	}
-	
+
 	public UserProfile(String userUniqueIdentifier, String userId, String userName, String organization) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.userId = userId;
@@ -377,8 +374,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the functionalities.
 	 *
-	 * @param functs
-	 *            the new functionalities
+	 * @param functs the new functionalities
 	 */
 	public void setFunctionalities(Collection functs) {
 		this.functionalities = functs;
@@ -387,8 +383,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the attributes.
 	 *
-	 * @param attrs
-	 *            the new attributes
+	 * @param attrs the new attributes
 	 */
 	public void setAttributes(Map attrs) {
 		this.userAttributes = attrs;
@@ -412,8 +407,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the roles.
 	 *
-	 * @param rols
-	 *            the new roles
+	 * @param rols the new roles
 	 */
 	public void setRoles(Collection rols) {
 		this.roles = rols;
@@ -461,8 +455,7 @@ public class UserProfile implements IEngUserProfile {
 	 * To be used by external engines ONLY. The user unique identifier must be a JWT token expiring in SCHEDULER_JWT_TOKEN_EXPIRE_HOURS hours containing a claim
 	 * SsoServiceInterface.USER_ID: the value of this claim must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name.
 	 *
-	 * @param userUniqueIdentifier
-	 *            The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
+	 * @param userUniqueIdentifier The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
 	 * @return the user profile for the scheduler
 	 */
 	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {

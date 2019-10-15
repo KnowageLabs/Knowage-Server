@@ -47,8 +47,10 @@
         <property name="isSuperadmin" type="java.lang.Boolean">
             <column name="IS_SUPERADMIN" />
         </property>
-      
-            
+        <property name="defaultRoleId" type="java.lang.Integer">
+            <column name="DEFAULT_ROLE_ID" />
+        </property>
+        
         <set name="sbiExtUserRoleses" inverse="false" lazy="true" table="SBI_EXT_USER_ROLES" cascade="all" >
             <key>
                 <column name="ID" not-null="true" />

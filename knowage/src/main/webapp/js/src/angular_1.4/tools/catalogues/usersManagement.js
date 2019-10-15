@@ -32,6 +32,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
     }];
 
+    $scope.selectedUser.defaultRoleId;
 
     $scope.confirm = $mdDialog
         .confirm()
@@ -105,6 +106,16 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
 
     }
+
+    $scope.defaultUserWatcher=$scope.$watchCollection("role", function(newValue, oldValue) {
+    	if (newValue) {
+	    	for (var i in newValue) {
+	    		if ($scope.selectedUser.defaultRoleId && newValue[i].id==$scope.selectedUser.defaultRoleId) return;
+	    	}
+
+	    	$scope.selectedUser.defaultRoleId = null;
+    	}
+    });
 
     $scope.openLovs = function(ev,attribute) {
 

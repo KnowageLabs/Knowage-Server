@@ -69,10 +69,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	/**
 	 * Load SbiUser by id.
 	 *
-	 * @param id
-	 *            the identifier /** Load SbiUser by id.
-	 * @param id
-	 *            the bi object id
+	 * @param id the identifier /** Load SbiUser by id.
+	 * @param id the bi object id
 	 * @return the BI object
 	 * @throws SpagoBIDAOException
 	 */
@@ -163,7 +161,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Reset failed login attemtpts counter.
-	 * 
+	 *
 	 * @author Marco Libanori
 	 */
 	@Override
@@ -173,16 +171,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		Session aSession = null;
 		Transaction tx = null;
 		try {
-			
+
 			if (isUserIdAlreadyInUse(userId) != null) {
-				
+
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				
-				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId")
-					.setParameter("userId", userId)
-					.executeUpdate();
-	
+
+				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId").setParameter("userId", userId)
+						.executeUpdate();
+
 				tx.commit();
 			}
 
@@ -495,6 +492,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.setId(id);
 				userToUpdate.setFailedLoginAttempts(user.getFailedLoginAttempts());
+				userToUpdate.setDefaultRoleId(user.getDefaultRoleId());
 				updateSbiCommonInfo4Update(userToUpdate);
 				aSession.save(userToUpdate);
 				currentSessionUser = userToUpdate;
@@ -503,6 +501,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				newUser.setUserId(user.getUserId());
 				newUser.setFullName(user.getFullName());
 				newUser.setPassword(user.getPassword());
+				newUser.setDefaultRoleId(user.getDefaultRoleId());
 				newUser.getCommonInfo().setOrganization(user.getCommonInfo().getOrganization());
 				if (user.getCommonInfo().getUserIn() != null)
 					newUser.getCommonInfo().setUserIn(user.getCommonInfo().getUserIn());
@@ -595,7 +594,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Get value of failed login attemtpts counter from DB.
-	 *  
+	 *
 	 * @author Marco Libanori
 	 */
 	@Override
@@ -605,28 +604,23 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		Session aSession = null;
 		Transaction tx = null;
 		try {
-			
+
 			Integer result = 0;
-			
+
 			if (isUserIdAlreadyInUse(userId) != null) {
-			
+
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				
-				ProjectionList projList = Projections.projectionList()
-						.add(Projections.property("failedLoginAttempts"), "failedLoginAttempts");
-				
+
+				ProjectionList projList = Projections.projectionList().add(Projections.property("failedLoginAttempts"), "failedLoginAttempts");
+
 				SimpleExpression eq = Restrictions.eq("userId", userId);
-				
-				result = (Integer) aSession.createCriteria(SbiUser.class)
-						.add(eq)
-						.setProjection(projList)
-						.uniqueResult();
-				
-			
+
+				result = (Integer) aSession.createCriteria(SbiUser.class).add(eq).setProjection(projList).uniqueResult();
+
 				tx.commit();
 			}
-			
+
 			return result;
 		} catch (HibernateException he) {
 			if (tx != null)
@@ -643,7 +637,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Increment failed login attemtpts counter.
-	 * 
+	 *
 	 * @author Marco Libanori
 	 */
 	@Override
@@ -653,16 +647,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		Session aSession = null;
 		Transaction tx = null;
 		try {
-			
+
 			if (isUserIdAlreadyInUse(userId) != null) {
-				
+
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				
+
 				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = us.failedLoginAttempts + 1 WHERE us.userId = :userId")
-					.setParameter("userId", userId)
-					.executeUpdate();
-				
+						.setParameter("userId", userId).executeUpdate();
+
 				tx.commit();
 			}
 
@@ -683,10 +676,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
 	 * should be null.
 	 *
-	 * @param userId
-	 *            The user identifier to check
-	 * @param id
-	 *            The id of the user to which the user identifier should be validated
+	 * @param userId The user identifier to check
+	 * @param id     The id of the user to which the user identifier should be validated
 	 * @throws SpagoBIDAOException
 	 */
 	@Override
@@ -745,8 +736,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	/**
 	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
 	 *
-	 * @param sbiUser
-	 *            The Hibernate SbiUser
+	 * @param sbiUser The Hibernate SbiUser
 	 * @return the corrispondent output <code>UserBO</code>
 	 * @throws EMFUserError
 	 */
@@ -763,6 +753,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		userBO.setPassword(sbiUser.getPassword());
 		userBO.setUserId(sbiUser.getUserId());
 		userBO.setIsSuperadmin(sbiUser.getIsSuperadmin());
+		userBO.setDefaultRoleId(sbiUser.getDefaultRoleId());
 
 		List<Integer> userRoles = new ArrayList<>();
 		Set roles = sbiUser.getSbiExtUserRoleses();
@@ -809,8 +800,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	/**
 	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
 	 *
-	 * @param userId
-	 *            The user identifier
+	 * @param userId The user identifier
 	 * @return the SbiUser object with the input user identifier
 	 */
 	protected SbiUser getSbiUserByUserId(String userId) {

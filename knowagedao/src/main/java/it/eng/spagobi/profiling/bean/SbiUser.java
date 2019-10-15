@@ -43,6 +43,8 @@ public class SbiUser extends SbiHibernateModel {
 
 	private Boolean isSuperadmin;
 
+	private Integer defaultRoleId;
+
 	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<SbiExtRoles>(0);
 	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<SbiUserAttributes>(0);
 
@@ -165,9 +167,17 @@ public class SbiUser extends SbiHibernateModel {
 		this.isSuperadmin = isSuperadmin;
 	}
 
+	public Integer getDefaultRoleId() {
+		return defaultRoleId;
+	}
+
+	public void setDefaultRoleId(Integer defaultRoleId) {
+		this.defaultRoleId = defaultRoleId;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -185,12 +195,13 @@ public class SbiUser extends SbiHibernateModel {
 		result = prime * result + ((sbiExtUserRoleses == null) ? 0 : sbiExtUserRoleses.hashCode());
 		result = prime * result + ((sbiUserAttributeses == null) ? 0 : sbiUserAttributeses.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((defaultRoleId == null) ? 0 : defaultRoleId.hashCode());
 		return result;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -253,6 +264,11 @@ public class SbiUser extends SbiHibernateModel {
 			if (other.userId != null)
 				return false;
 		} else if (!userId.equals(other.userId))
+			return false;
+		if (defaultRoleId == null) {
+			if (other.defaultRoleId != null)
+				return false;
+		} else if (!defaultRoleId.equals(other.defaultRoleId))
 			return false;
 		return true;
 	}
