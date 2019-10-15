@@ -156,19 +156,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 				JSONArray menuUserList = new JSONArray();
 				MessageBuilder msgBuild = new MessageBuilder();
-				// build home
-				JSONObject home = new JSONObject();
-				JSONObject personal = new JSONObject();
 
-				home.put(ICON_CLS, "home");
-				home.put(TOOLTIP, "Home");
-				home.put(ICON_ALIGN, "top");
-				home.put(SCALE, "large");
-				home.put(PATH, "Home");
-				home.put(LABEL, HOME);
-				home.put(TARGET, "_self");
-				home.put(HREF, "javascript:goHome(null, 'spagobi');");
-				home.put(LINK_TYPE, "goHome");
+				JSONObject personal = new JSONObject();
 
 				String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
 				personal.put(ICON_CLS, "spagobi");
@@ -178,8 +167,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				personal.put(PATH, userMenuMessage);
 				personal.put(TARGET, "_self");
 
-				// TODO: commented to hide home
-				// tempFirstLevelMenuList.put(home);
 				tempFirstLevelMenuList.put(personal);
 				boolean isAdmin = false;
 				for (int i = 0; i < filteredMenuList.size(); i++) {
@@ -228,19 +215,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
 
-							// OLD DOC MANAGER
-							// if (menuElem.getCode() != null &&
-							// menuElem.getCode().equals("doc_admin")) {
-							// temp.put(HREF,
-							// "javascript:javascript:execDirectUrl('" +
-							// contextName + HREF_DOC_BROWSER + "', '" + text +
-							// "')");
-							// temp.put(FIRST_URL, contextName +
-							// HREF_DOC_BROWSER);
-							// temp.put(LINK_TYPE, "execDirectUrl");
-							//
-							// }
-
 							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
 							if (menuElem.getCode() != null
 									&& (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
@@ -261,34 +235,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 								temp.put(LINK_TYPE, "execDirectUrl");
 
 							}
-
-							/**
-							 * Commented by Danilo Ristovski (danristo)
-							 */
-							// if (menuElem.getCode() != null &&
-							// menuElem.getCode().equals("my_data_admin")) {
-							// // admins and devs can see ONLY models tab,
-							// // while tester can see datasets and models
-							// if
-							// (UserUtilities.isTechDsManager(this.getUserProfile()))
-							// {
-							// temp.put(HREF,
-							// "javascript:javascript:execDirectUrl('" +
-							// contextName + HREF_MYDATA_ADMIN + "', '" + text +
-							// "')");
-							// temp.put(FIRST_URL, contextName +
-							// HREF_MYDATA_ADMIN);
-							// temp.put(LINK_TYPE, "execDirectUrl");
-							// } else if
-							// (UserUtilities.isTester(this.getUserProfile())) {
-							// temp.put(HREF,
-							// "javascript:javascript:execDirectUrl('" +
-							// contextName + HREF_MYDATA + "', '" + text +
-							// "')");
-							// temp.put(LINK_TYPE, "execDirectUrl");
-							// temp.put(FIRST_URL, contextName + HREF_MYDATA);
-							// }
-							// }
 
 							if (menuElem.getHasChildren()) {
 								List lstChildrenLev2 = menuElem.getLstChildren();
@@ -374,24 +320,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(createDoc);
 		}
 
-		/**
-		 * Commented by Danilo Ristovski (danristo)
-		 */
-		// if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
-		// JSONObject createDoc = createMenuItem("create", HREF_PENCIL,
-		// messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
-		// tempMenuList.put(createDoc);
-		// }
-
-		/**
-		 * Commented by Danilo Ristovski (danristo)
-		 */
-		// if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
-		// JSONObject myData = createMenuItem("web", HREF_MYDATA,
-		// messageBuilder.getMessage("menu.MyData", locale), true, null);
-		// tempMenuList.put(myData);
-		// }
-
 		// workspace is added unconditionally
 		if (isAbleTo(SpagoBIConstants.SEE_MY_WORKSPACE, funcs)) {
 			JSONObject workspace = new JSONObject();
@@ -424,10 +352,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					+ "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry());
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
 
-			/*
-			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
-			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
-			 */
 			tempMenuList.put(socialAnalysis);
 		}
 
@@ -508,22 +432,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			calendar.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(calendar);
 		}
-
-		// if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT,
-		// funcs)) {
-		// JSONObject udpManagementTechnical = new JSONObject();
-		// udpManagementTechnical.put(ICON_CLS, "local_library");
-		// udpManagementTechnical.put(TOOLTIP,
-		// messageBuilder.getMessage("menu.udp.management", locale)); // TODO
-		// udpManagementTechnical.put(ICON_ALIGN, "top");
-		// udpManagementTechnical.put(SCALE, "large");
-		// udpManagementTechnical.put(TARGET, "_self");
-		// udpManagementTechnical.put(HREF, "javascript:execDirectUrl('" +
-		// contextName + HREF_MANAGE_UDP + "');");
-		// udpManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_UDP);
-		// udpManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		// tempMenuList.put(udpManagementTechnical);
-		// }
 
 		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
 			JSONObject lovsManagementTechnical = new JSONObject();
@@ -651,6 +559,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		news.put(LINK_TYPE, "news");
 		tempMenuList.put(news);
 		// }
+
+		JSONObject download = new JSONObject();
+		download.put(ICON_CLS, "fa fa-2x fa-download");
+		download.put(TOOLTIP, messageBuilder.getMessage("menu.Download", locale));
+		download.put(ICON_ALIGN, "top");
+		download.put(SCALE, "large");
+		download.put(TARGET, "_self");
+		download.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
+		download.put(FIRST_URL, contextName + HREF_I18N);
+		download.put(LINK_TYPE, "downloads");
+		tempMenuList.put(download);
 
 		// end
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
@@ -795,11 +714,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				text = childElem.getName();
 			}
 		}
-		/*
-		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
-		 */
-		// temp2.put(ID, new Double(Math.random()).toString());
 
 		level++;
 		if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
@@ -824,9 +738,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					temp2.put(LINK_TYPE, "execDirectUrl");
 					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
 				} else {
-					// temp2.put(HREF, "javascript:execDirectUrl('')");
-					// temp2.put(LINK_TYPE, "execDirectUrl");
-					// temp2.put(SRC, "");
 					temp2.put("isClickable", "false");
 				}
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
@@ -860,10 +771,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					// if (!GeneralUtilities.isSSOEnabled()) {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
 							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
-					/*
-					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
-					 * locale.getCountry() + "'"; }
-					 */
 				}
 				temp2.put(SRC, src);
 				temp2.put(HREF, url + ", '" + path + "')");
