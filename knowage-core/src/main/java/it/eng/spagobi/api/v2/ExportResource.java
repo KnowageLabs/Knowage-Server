@@ -101,7 +101,8 @@ public class ExportResource {
 	 * </ul>
 	 *
 	 * @return List of {@link Entry} with files exported by logged user
-	 * @throws IOException In case of errors during access of the filesystem
+	 * @throws IOException
+	 *             In case of errors during access of the filesystem
 	 */
 	@GET
 	@Path("/dataset")
@@ -183,8 +184,10 @@ public class ExportResource {
 	/**
 	 * Schedules an export in CSV format of the dataset in input.
 	 *
-	 * @param dataSetId Id of the dataset to be exported
-	 * @param body      JSON that contains drivers and parameters data
+	 * @param dataSetId
+	 *            Id of the dataset to be exported
+	 * @param body
+	 *            JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
@@ -195,12 +198,12 @@ public class ExportResource {
 
 		logger.debug("IN");
 
-		JSONArray driversJson = null;
+		JSONObject driversJson = null;
 		JSONArray paramsJson = null;
 
 		try {
 			JSONObject data = new JSONObject(body);
-			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONArray(BODY_ATTR_DRIVERS) : null;
+			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONObject(BODY_ATTR_DRIVERS) : null;
 			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
 		} catch (JSONException e) {
 			String msg = String.format("Body data is invalid: %s", body);
@@ -249,8 +252,10 @@ public class ExportResource {
 	/**
 	 * Schedules an export in Excel format of the dataset in input.
 	 *
-	 * @param dataSetId Id of the dataset to be exported
-	 * @param body      JSON that contains drivers and parameters data
+	 * @param dataSetId
+	 *            Id of the dataset to be exported
+	 * @param body
+	 *            JSON that contains drivers and parameters data
 	 * @return The job id
 	 */
 	@POST
@@ -261,12 +266,12 @@ public class ExportResource {
 
 		logger.debug("IN");
 
-		JSONArray driversJson = null;
+		JSONObject driversJson = null;
 		JSONArray paramsJson = null;
 
 		try {
 			JSONObject data = new JSONObject(body);
-			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONArray(BODY_ATTR_DRIVERS) : null;
+			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONObject(BODY_ATTR_DRIVERS) : null;
 			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
 		} catch (JSONException e) {
 			String msg = String.format("Body data is invalid: %s", body);
@@ -380,20 +385,18 @@ public class ExportResource {
 	/**
 	 * Manage drivers selected at client side.
 	 *
-	 * @param driversJson JSON data of drivers
+	 * @param driversJson
+	 *            JSON data of drivers
 	 */
-	private Map<String, Object> manageDataSetDrivers(JSONArray driversJson) {
+	private Map<String, Object> manageDataSetDrivers(JSONObject driversJson) {
 
 		Map<String, Object> ret = new HashMap<String, Object>();
 
 		try {
 			if (driversJson != null) {
 				int length = driversJson.length();
-				for (int i = 0; i < length; i++) {
-					JSONObject jsonObject = driversJson.getJSONObject(i);
-					HashMap<String, Object> hashMapFromJSONObject = JSONObjectDeserializator.getHashMapFromJSONObject(jsonObject);
-					ret.putAll(hashMapFromJSONObject);
-				}
+				HashMap<String, Object> hashMapFromJSONObject = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
+				ret.putAll(hashMapFromJSONObject);
 			}
 		} catch (Exception e) {
 			logger.error("Cannot read dataset drivers", e);
@@ -406,7 +409,8 @@ public class ExportResource {
 	/**
 	 * Schedula a job to clean old export.
 	 *
-	 * @throws SchedulerException In case of error during scheduling
+	 * @throws SchedulerException
+	 *             In case of error during scheduling
 	 */
 	private void scheduleCleanUp() throws SchedulerException {
 
