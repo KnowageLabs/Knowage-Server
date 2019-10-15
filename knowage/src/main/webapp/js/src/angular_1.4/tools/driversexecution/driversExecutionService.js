@@ -398,19 +398,32 @@
 				var transformedDrivers = {};
 					if(drivers){
 						for(var i = 0; i < drivers.length; i++){
-								var tempDriver = {}
-								tempDriver.urlName = drivers[i].urlName;
-								tempDriver.type = drivers[i].type;
-								tempDriver.multivalue = drivers[i].multivalue;
+								var tempDriver = [];
+								var urlName = drivers[i].urlName;
 								if(drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)){
-									tempDriver.value = [];
 									for(var j = 0; j < drivers[i].parameterValue.length; j++) {
-										tempDriver.value.push(drivers[i].parameterValue[j])
+										if(drivers[i].parameterValue[j].value && drivers[i].parameterValue[j].description) {
+											var val = drivers[i].parameterValue[j];
+										} else {
+											var val = {value: drivers[i].parameterValue[j]};
+											if(drivers[i].parameterDescription && Array.isArray(drivers[i].parameterDescription)) {
+												val.description = drivers[i].parameterDescription[j];
+											} else {
+												val.description = drivers[i].parameterDescription[drivers[i].parameterValue[j]];
+											}
+										}
+										tempDriver.push(val);
 									}
 								}else{
-									tempDriver.value = drivers[i].parameterValue;
+									 var val = {value: drivers[i].parameterValue};
+									 if(drivers[i].parameterDescription) {
+										 val.description = drivers[i].parameterDescription;
+									 } else {
+										 val.description = drivers[i].parameterValue;
+									 }
+									 tempDriver.push(val);
 								}
-								transformedDrivers[tempDriver.urlName] = tempDriver;
+								transformedDrivers[urlName] = tempDriver;
 
 						}
 					}

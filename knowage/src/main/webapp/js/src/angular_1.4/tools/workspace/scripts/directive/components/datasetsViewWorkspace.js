@@ -501,7 +501,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 		console.info("[EXPORT]: Exporting dataset with id " + id + " to " + format);
 		if($scope.drivers != undefined && $scope.drivers.length>0) {
-			data.drivers = $scope.drivers;
+			data.drivers = driversExecutionService.prepareDriversForSending($scope.drivers);
 		}
 
 		sbiModule_restServices.promisePost("2.0/export/dataset/" + id,
