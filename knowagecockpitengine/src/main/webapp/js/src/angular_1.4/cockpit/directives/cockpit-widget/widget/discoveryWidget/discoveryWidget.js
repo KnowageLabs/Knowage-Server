@@ -258,11 +258,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
 							tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
-							if($scope.facets) $scope.facets[fields[f].header].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+							if($scope.facets && $scope.facets[fields[f].header]) $scope.facets[fields[f].header].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						}
 						if(tempCol.paramType == 'date' || tempCol.paramType == 'timestamp'){
 							tempCol.valueFormatter = dateTimeFormatter;
-							if($scope.facets) $scope.facets[fields[f].header].metaData.type = 'date';
+							if($scope.facets && $scope.facets[fields[f].header]) $scope.facets[fields[f].header].metaData.type = 'date';
 						}
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;
