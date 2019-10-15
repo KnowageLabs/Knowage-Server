@@ -37,16 +37,8 @@
 					<span>{{link.tooltip}}</span>
 					<md-tooltip md-delay="500">{{link.tooltip}}</md-tooltip>
 				</a>
-				<div class="tag" ng-if="link.iconCls == 'email' && unreadNewsNumber">{{unreadNewsNumber}}</div>
-			</li>
-			
-			<li>
-				<a href="#" ng-click="downloads()"> 
-					<i class="icon fa fa-2x fa-download"></i> 
-					<span>{{translate.load('sbi.generic.download')}}</span>
-					<md-tooltip md-delay="500">{{translate.load('sbi.generic.download')}}</md-tooltip>
-				</a>
-				<div class="tag" ng-if="downloadsList.length > 0">{{downloadsList.length}}</div>
+				<div class="tag" ng-if="link.linkType == 'news' && unreadNewsNumber">{{unreadNewsNumber}}</div>
+				<div class="tag" ng-if="link.linkType == 'downloads' && downloadsList.length > 0">{{downloadsList.length}}</div>
 			</li>
 			
 			<li ng-repeat="custom in customs track by $index">

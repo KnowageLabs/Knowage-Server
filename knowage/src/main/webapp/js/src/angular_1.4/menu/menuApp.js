@@ -533,6 +533,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					$scope.info();
 				} else if(type == "news"){
 					$scope.news();
+				}else if(type == "downloads"){
+					$scope.downloads();
 				}else if (type == "callExternalApp"){
 					$scope.callExternalApp(url)
 				} else if (type == "goHome"){
