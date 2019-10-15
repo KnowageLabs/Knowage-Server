@@ -140,7 +140,7 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>		
 
 <!-- MOMENT.JS -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
 <script type="text/javascript">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
         document.write('<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');

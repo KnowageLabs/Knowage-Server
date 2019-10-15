@@ -228,8 +228,8 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		}
 
 	}
-
+	gs.numericalColumn = ['java.lang.Double','java.lang.Float','java.math.BigInteger','java.math.BigDecimal','java.lang.Long','java.lang.Integer'];
 	gs.isNumericColumn = function(column){
-	    return column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigInteger' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long' || column.type == 'java.lang.Integer';
+	    return gs.numericalColumn.indexOf(column.type) != -1;
 	}
 });

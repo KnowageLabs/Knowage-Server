@@ -104,8 +104,8 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 		 ],
 
 		 typesMap: {
-			"java.lang.String": {label:"string",icon:"fa fa-quote-right"}, 
-			"java.lang.Boolean": {label:"boolean",icon:"fa fa-star-half-o"}, 
+			"java.lang.String": {label:"string",icon:"fa fa-quote-right"},
+			"java.lang.Boolean": {label:"boolean",icon:"fa fa-star-half-o"},
 			"java.lang.Byte" : {label:"byte",icon:"fa fa-hashtag"},
 			"java.lang.Long" : {label:"long",icon:"fa fa-hashtag"},
 			"java.lang.Short" : {label:"short",icon:"fa fa-hashtag"},
@@ -113,7 +113,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			"java.math.BigInteger" :{label:"integer",icon:"fa fa-hashtag"},
 			"java.lang.Double": {label:"float",icon:"fa fa-hashtag"},
 			"java.lang.Float": {label:"float",icon:"fa fa-hashtag"},
-			"java.math.BigDecimal": {label:"float",icon:"fa fa-hashtag"}, 
+			"java.math.BigDecimal": {label:"float",icon:"fa fa-hashtag"},
 			"oracle.sql.TIMESTAMP": {label:'timestamp',icon:'fa fa-calendar'},
 			"java.sql.Timestamp": {label:'timestamp',icon:'fa fa-calendar'},
 			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
@@ -131,7 +131,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumDate"),value:'mediumDate',hint:'Sep 3, 2010'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'shortDate',hint:'09/03/10'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'dd/MM/yyyy',hint:'09/03/2010 (dd/mm/yyyy)'},
-			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'MM/dd/yyyy',hint:'09/03/2010 (mm/dd/yyyy)'},
+			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortDate"),value:'MM/dd/yyyy',hint:'03/09/2010 (mm/dd/yyyy)'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.mediumTime"),value:'mediumTime',hint:'12:05:08 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'shortTime',hint:'12:05 PM'},
 			 {label:sbiModule_translate.load("sbi.cockpit.date.format.shortTime"),value:'yyyy',hint:'2010'}
@@ -141,13 +141,15 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {value:'llll',hint:moment().locale(sbiModule_config.curr_language).format('llll')},
 			 {value:'LLL',hint:moment().locale(sbiModule_config.curr_language).format('LLL')},
 			 {value:'lll',hint:moment().locale(sbiModule_config.curr_language).format('lll')},
+			 {value:'DD/MM/YYYY HH:MM:SS',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:MM:SS')},
+			 {value:'DD/MM/YYYY HH:MM',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:MM')},
 			 {value:'LL',hint:moment().locale(sbiModule_config.curr_language).format('LL')},
 			 {value:'ll',hint:moment().locale(sbiModule_config.curr_language).format('ll')},
 			 {value:'L',hint:moment().locale(sbiModule_config.curr_language).format('L')},
 			 {value:'l',hint:moment().locale(sbiModule_config.curr_language).format('l')},
 			 {value:'LT',hint:moment().locale(sbiModule_config.curr_language).format('LT')},
 			 {value:'LTS',hint:moment().locale(sbiModule_config.curr_language).format('LTS')},
-			 
+
 		 ]
 	}
 });

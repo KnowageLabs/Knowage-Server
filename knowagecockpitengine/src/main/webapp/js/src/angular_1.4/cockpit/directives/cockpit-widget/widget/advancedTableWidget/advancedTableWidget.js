@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 
 						tempCol.fieldType = cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type || ($scope.ngModel.content.columnSelectedOfDataset[c].fieldType == 'ATTRIBUTE'? 'java.lang.String': 'java.lang.Float')].label;
-						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].dateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].dateFormat;
 						if(tempCol.fieldType == 'date') tempCol.valueFormatter = dateFormatter;
 						if(tempCol.fieldType == 'timestamp') tempCol.valueFormatter = dateTimeFormatter;
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
@@ -470,7 +470,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.doSelection(column, row[column], undefined, undefined, row);
 			}
 		}
-	  	
+
 		function getColumnNameFromTableMetadata(colAlias){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
@@ -548,10 +548,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				$scope.advancedTableGrid.api.refreshCells({columns:$scope.columnsNameArray,force:true});
 			}else {
-				newValue = []; 
+				newValue = [];
 				if ($scope.ngModel.settings.modalSelectionColumn!= undefined) {
 
-					var rows = [];		 
+					var rows = [];
 					rows.push(mapRow(node.data));
 
 					for(var k in rows){

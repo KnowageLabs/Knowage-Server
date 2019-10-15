@@ -173,11 +173,6 @@
 									<md-input-container flex class="md-block" class="small counter" ng-if="::isDateColumn(selectedColumn.type)">
 										<label>{{::translate.load('sbi.cockpit.style.dateformat')}}</label>
 										 <md-select ng-model="selectedColumn.dateFormat" ng-if="model.type == 'table'">
-								            <md-option ng-repeat="df in cockpitModule_generalOptions.dateFormat" ng-value="df.value" >
-								              <span>{{df.hint}}</small>
-								            </md-option>
-							            </md-select>
-							            <md-select ng-model="selectedColumn.momentDateFormat" ng-if="model.type == 'advanced-table'">
 								            <md-option ng-repeat="df in cockpitModule_generalOptions.momentDateFormat" ng-value="df.value" >
 								              <span>{{df.hint}}</small>
 								            </md-option>
