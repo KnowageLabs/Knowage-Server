@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetSelection,
 			cockpitModule_generalServices,
+			cockpitModule_generalOptions,
 			cockpitModule_properties,
 			cockpitModule_template){
 
@@ -200,9 +201,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
 					if(nature == 'init'){
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
+						$scope.updateDates();
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
 						$scope.gridOptions.api.resetRowHeights();
-					}
+					}else $scope.updateDates();
 					$scope.gridOptions.api.setRowData(datasetRecords.rows);
 					resizeColumns();
 				}
@@ -225,14 +227,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function dateTimeFormatter(params){
-			return isNaN(moment(params.value,cockpitModule_generalServices.defaultValues.dateTime))? params.value : moment(params.value,cockpitModule_generalServices.defaultValues.dateTime).locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
+			return isNaN(moment(params.value,cockpitModule_generalOptions.defaultValues.dateTime))? params.value : moment(params.value,cockpitModule_generalOptions.defaultValues.dateTime).locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 		}
 
 		$scope.setTimeFormat = function(date, format){
-			return isNaN(moment(date,cockpitModule_generalServices.defaultValues.dateTime))? date : moment(date,cockpitModule_generalServices.defaultValues.dateTime).locale(sbiModule_config.curr_language).format(format || 'LLL');
+			return isNaN(moment(date,cockpitModule_generalOptions.defaultValues.facetDateTime))? date : moment(date,cockpitModule_generalOptions.defaultValues.facetDateTime).locale(sbiModule_config.curr_language).format(format || 'LLL');
 		}
 
-		$scope.getColumns = function(fields) {
+		$scope.updateDates = function (){
+			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+				if(cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type].label == 'date' || cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type].label == 'timestamp'){
+					if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
+						if($scope.facets && $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name]) $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+					}
+					if($scope.facets && $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name]) $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name].metaData.type = 'date';
+				}
+			}
+		}
+
+		$scope.getColumns = function (fields) {
 			var columns = [];
 			$scope.ngModel.search.columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
@@ -258,11 +271,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
 							tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
-							if($scope.facets && $scope.facets[fields[f].header]) $scope.facets[fields[f].header].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
 						}
 						if(tempCol.paramType == 'date' || tempCol.paramType == 'timestamp'){
 							tempCol.valueFormatter = dateTimeFormatter;
-							if($scope.facets && $scope.facets[fields[f].header]) $scope.facets[fields[f].header].metaData.type = 'date';
 						}
 						tempCol.headerComponentParams = {template: headerTemplate()};
 						tempCol.cellStyle = getCellStyle;

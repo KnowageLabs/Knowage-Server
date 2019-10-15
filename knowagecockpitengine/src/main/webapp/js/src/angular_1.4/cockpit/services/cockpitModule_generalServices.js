@@ -2,10 +2,6 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			var gs=this;
 	var savingDataConf = false;
 
-	this.defaultValues = {
-		"dateTime": "DD/MM/YYYY HH:mm:ss.SSS"
-	}
-
 	this.savingDataConfiguration = function (isSaving){
 		savingDataConf = isSaving
 	}

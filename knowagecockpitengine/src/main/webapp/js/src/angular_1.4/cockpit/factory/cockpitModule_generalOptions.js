@@ -30,6 +30,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			{label:'24px',value:'24px'}
 		],
 		//
+		defaultValues : {
+				"dateTime": "DD/MM/YYYY HH:mm:ss.SSS",
+				"facetDateTime" : "YYYY-MM-DDT00:00:00Z",
+			},
 		textDecoration:	[
 			{label:'',value:''},
 			{label:sbiModule_translate.load("sbi.cockpit.style.fontDecoration.overline"),value:'overline'},
