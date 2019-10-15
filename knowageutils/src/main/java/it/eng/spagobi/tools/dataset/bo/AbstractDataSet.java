@@ -392,6 +392,10 @@ public abstract class AbstractDataSet implements IDataSet {
 								list.add(paramValue);
 							}
 							values = list.toArray(new String[0]);
+							if (values!= null && values.length == 1 && !values[0].isEmpty()) {
+							String	valuesString = values[0];
+							values = valuesString.split(",");
+							}
 						} else {
 							values = Arrays.asList(paramValue).toArray(new String[0]);
 						}

@@ -31,6 +31,9 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -363,8 +366,18 @@ public class DataSetUtilities {
 						Date date = new SimpleDateFormat(CockpitJSONDataWriter.TIMESTAMP_FORMAT).parse(value);
 						String formattedValue = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT).format(date);
 						result = Timestamp.valueOf(formattedValue);
-					} catch (ParseException | IllegalArgumentException ex) {
-						throw new SpagoBIRuntimeException(ex);
+					} catch (ParseException | IllegalArgumentException ex) {   // tries Solr date format
+						try {
+							DateTimeFormatter dateTime = ISODateTimeFormat.dateTimeNoMillis();
+							DateTime parsedDateTime = dateTime.parseDateTime(value);
+							Date dateToconvert = parsedDateTime.toDate();
+							SimpleDateFormat sdf = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+							String valuesToChange = sdf.format(dateToconvert);
+							result = Timestamp.valueOf(valuesToChange);
+						}
+						catch (Exception ex2) {
+						throw new SpagoBIRuntimeException(ex2);
+						}
 					}
 				}
 			} else if (Date.class.isAssignableFrom(type)) {
