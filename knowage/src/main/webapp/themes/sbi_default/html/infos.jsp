@@ -4,9 +4,6 @@
 <%@page import="it.eng.knowage.wapp.Version"%>
 
  <%
-
-
-
  	String userName="";
  	String tenantName="";
 	IEngUserProfile userProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -38,7 +35,7 @@
 				</p>
 				
 				<p layout-align ="center center" > 
-					<i>&#169; 2017 Engineering Ingegneria Informatica S.p.A.</i>
+					<i>&#169; 2019 Engineering Ingegneria Informatica S.p.A.</i>
 				</p>
 			</div>
 	</md-dialog-content>

@@ -12,7 +12,7 @@
 				<a href="#" ng-click="toggleAdminMenu($event)"> 
 					<md-tooltip md-delay="500">{{translate.load('kn.mainmenu.systemadministration')}}</md-tooltip> 
 					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome($event)"></div>
-					<span flex>{{translate.load('kn.mainmenu.systemadministration')}}</span>
+					<span flex>{{userName}}</span>
 					<md-button class="md-icon-button" >
 						<md-icon ng-if="!adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
 						<md-icon ng-if="adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
