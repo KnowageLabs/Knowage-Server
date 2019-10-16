@@ -134,8 +134,6 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
 				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight));
 
-		// Link stdin, stdout, stderr to the same stdin, stdout, stderr of the JVM (that means that you have to see catalina.out for errors)
-		// processBuilder.inheritIO();
 		processBuilder.redirectOutput(nodeOutput.toFile());
 
 		Process exec = processBuilder.start();
