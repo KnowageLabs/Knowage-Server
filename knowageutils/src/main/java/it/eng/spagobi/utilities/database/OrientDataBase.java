@@ -22,6 +22,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class OrientDataBase extends AbstractDataBase {
 
+	public static final String ORIENT_ALIAS_DELIMITER = "";
+
 	public OrientDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
@@ -30,5 +32,10 @@ public class OrientDataBase extends AbstractDataBase {
 	public String getSubQueryAlias() {
 		return "";
 
+	}
+
+	@Override
+	public String getAliasDelimiter() {
+		return ORIENT_ALIAS_DELIMITER;
 	}
 }
