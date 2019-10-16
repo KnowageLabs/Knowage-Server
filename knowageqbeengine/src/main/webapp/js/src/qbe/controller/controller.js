@@ -45,14 +45,16 @@ angular
 		"queryEntitiesService",
 		"expression_service",
 		"exportService",
+		"filterFilter",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService,expression_service, exportService){
+function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user,windowCommunicationService, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter,selectedEntitiesRelationshipsService,queryEntitiesService,expression_service, exportService,filterFilter){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
+	$scope.filterFilter = filterFilter;
 	$scope.queryModel = [];
 	$scope.pars = inputParamService.params;
 	$scope.meta = [];
@@ -472,6 +474,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 
 		if(!calcField){
+			$scope.isSpatial(field,$scope.entityModel);
 			var newField  = {
 				   "id":field.attributes.type === "inLineCalculatedField" ? field.attributes.formState : field.id,
 				   "alias":field.attributes.field,
@@ -481,7 +484,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "field":field.attributes.field,
 				   "funct":isColumnType(field,"measure")? "SUM":"",
 				   "color":field.color,
-				   "group":isColumnType(field,"attribute"),
+				   "group":isColumnType(field,"attribute")&&!$scope.isSpatial(field),
 				   "order":"NONE",
 				   "include":true,
 				   "visible":true,
@@ -506,6 +509,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	var isColumnType = function(field,columnType){
 		return field.iconCls==columnType || isCalculatedFieldColumnType(field,columnType)
+	}
+
+	$scope.isSpatial = function(field){
+		return this.filterFilter(this.entityModel.entities,{children:{id:field.id}})[0].iconCls == "geographic_dimension";
+
 	}
 
 	var isInLineCalculatedField = function(field){
@@ -914,7 +922,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
             		$scope.modifyCF = true;
             		$scope.originalCFname = angular.copy($scope.cfSelectedField.name);
             		$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.name;
-                   	$scope.calculatedFieldOutput.formula = $scope.cfSelectedField.id.expression;
+                   	angular.copy($scope.cfSelectedField.id.expression,$scope.calculatedFieldOutput.formula) ;
                    	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
                 	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
                 	$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;

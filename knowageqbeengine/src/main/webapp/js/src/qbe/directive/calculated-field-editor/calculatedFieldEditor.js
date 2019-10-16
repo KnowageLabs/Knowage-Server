@@ -159,7 +159,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             				var match = regExGroups.exec($scope.calculatedField.formula);
             				//get the id of the field from the label
                 			angular.forEach($scope.fields, function(value, key) {
-                				if(value.field==match[2]){
+                				if(value.alias==match[2]){
                 					tempReplace = value.id;
                 					return;
                 				}
