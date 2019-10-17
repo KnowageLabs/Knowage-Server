@@ -142,9 +142,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 	  $scope.classiffyToolbarButtons = function() {
 		  for (var i = 0; i < $scope.buttons.length; i++) {
-				if($scope.buttons[i].name == 'BUTTON_CC' && !$scope.showCalculatedField) {
-					$scope.buttons.splice(i, 1);
-				}
+
 				switch ($scope.buttons[i].category) {
 				/*case "DRILL_ON_DATA":
 					whatifButtonNames.push($scope.buttons[i].name);
@@ -162,6 +160,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 					olapButtonNames.push($scope.buttons[i].name);
 					break;
 				case "OLAP_DESIGNER":
+					if($scope.buttons[i].name == 'BUTTON_CC' && !$scope.showCalculatedField) {
+						break;
+					}
 					$scope.olapDesignerButtonNames.push($scope.buttons[i]);
 					break;
 				default:
