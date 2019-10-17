@@ -358,7 +358,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 				dbMetadata = connection.getMetaData();
 			}
 		} catch (SQLException e) {
-			logger.error("Error getting database metadata");
+			logger.error("Error getting database metadata", e);
 		}
 		// DialectResolver resolver = new StandardDialectResolver();
 		Dialect dialect = resolver.resolveDialect(dbMetadata);
