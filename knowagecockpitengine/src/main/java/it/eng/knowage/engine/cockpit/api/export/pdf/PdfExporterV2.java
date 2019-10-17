@@ -2,7 +2,6 @@ package it.eng.knowage.engine.cockpit.api.export.pdf;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +26,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import it.eng.knowage.export.pdf.ExportDetails;
 import it.eng.knowage.export.pdf.PDFCreator;
@@ -56,7 +54,7 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 		 *
 		 * It's not static just because i think it's not thread-safe.
 		 */
-		private final PathMatcher imagePathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf");
+		private final PathMatcher imagePathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.png");
 
 		/**
 		 * Reference to the array of input streams.
@@ -167,16 +165,7 @@ public class PdfExporterV2 extends AbstractPdfExporter {
 				throw new IllegalStateException("No files in " + outputDir + ": see main log file of the AS");
 			}
 
-			PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
-
-			pdfMergerUtility.setDestinationStream(new FileOutputStream(outputFile.toFile()));
-
-			for (InputStream is : imagesInputStreams) {
-				pdfMergerUtility.addSource(is);
-			}
-
-			pdfMergerUtility.mergeDocuments(null);
-
+			PDFCreator.createPDF(imagesInputStreams, outputFile, false, false);
 			ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), null);
 			PDFCreator.addInformation(outputFile, details);
 
