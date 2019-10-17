@@ -663,7 +663,7 @@
 	<formula>
 		<name>Relate</name>
 		<syntax>Relate (Geom1, Mask, Geom2, Tol)</syntax>
-		<body>Relate(${geom1}, static${mask}, ${geom2}, ${tol}))</body>
+		<body>Relate(${geom1}, ${mask}, ${geom2}, ${tol}))</body>
 		
 		<argument>
 			<name>Geom1</name>
