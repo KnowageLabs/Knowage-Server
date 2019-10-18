@@ -157,7 +157,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				JSONArray menuUserList = new JSONArray();
 				MessageBuilder msgBuild = new MessageBuilder();
 
-				JSONObject personal = new JSONObject();
+				JSONObject personal = new JSONObject(); // MB
 
 				String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
 				personal.put(ICON_CLS, "spagobi");
