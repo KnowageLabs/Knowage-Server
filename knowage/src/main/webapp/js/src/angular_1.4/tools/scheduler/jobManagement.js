@@ -105,9 +105,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							// calc new date strings
 							for(var triggerIndex=0; triggerIndex<job.triggers.length; triggerIndex++){
 								var trigger = job.triggers[triggerIndex];
-
-								debugger;
-
 								var triggerZonedStartTime = new Date(trigger.triggerZonedStartTime);
 								var triggerZonedEndTime = new Date(trigger.triggerZonedEndTime);
 								trigger.triggerStartDateTime = sbiModule_dateServices.formatDate(triggerZonedStartTime)
