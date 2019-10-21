@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function cockpitModule_backwardCompatibility(cockpitModule_properties){
 		var self=this;
 		var currentVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
-		
+
 		self.compareVersion = function(v1,v2){
 			if(!v2) return false;
-			
+
 			function versionToArray(v){
 				var snapshot = v.indexOf('-S');
 				var releaseCandidate = v.indexOf('-RC');
@@ -36,10 +36,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    if(releaseCandidate != -1) v.push('RC');
 			    return v;
 			}
-			
+
 			v1 = versionToArray(v1);
 			v2 = versionToArray(v2);
-			
+
 			for(var k in v1){
 				if(v1[k]>v2[k]) {
 					return false;
@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!v1[3] && v2[3]) return false;
 			return true;
 		}
-		
+
 		self.updateCockpitModel = function(template){
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",template.knowageVersion)){
@@ -57,13 +57,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return template;
 		}
-		
+
 		self.updateModel = function(model){
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",model.knowageVersion)){
 				if(model.type=='table'){
 					if(model.content && model.content.columnSelectedOfDataset){
-						for(k in model.content.columnSelectedOfDataset){
+						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.td) {
 								model.content.columnSelectedOfDataset[k].style['justify-content'] = model.content.columnSelectedOfDataset[k].style.td['justify-content'];
 								delete model.content.columnSelectedOfDataset[k].style.td;
@@ -83,12 +83,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!self.compareVersion("6.4.4",model.knowageVersion)){
 				if(model.type=='table'){
 					if(model.content && model.content.columnSelectedOfDataset){
-						for(k in model.content.columnSelectedOfDataset){
+						for(var k in model.content.columnSelectedOfDataset){
 							if (model.content.columnSelectedOfDataset[k].isCalculated) {
 								if(!model.content.columnSelectedOfDataset[k].funcSummary){
 									model.content.columnSelectedOfDataset[k].funcSummary = model.content.columnSelectedOfDataset[k].aggregationSelected == 'NONE' ? 'SUM' : model.content.columnSelectedOfDataset[k].aggregationSelected;
 								}
-								model.content.columnSelectedOfDataset[k].datasetOrTableFlag = true;							
+								model.content.columnSelectedOfDataset[k].datasetOrTableFlag = true;
 							}
 						}
 					}
@@ -98,15 +98,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!self.compareVersion("7.0.0",model.knowageVersion)){
 				if(model.type=='table'){
 					if(model.content && model.content.columnSelectedOfDataset){
-						for(k in model.content.columnSelectedOfDataset){
+						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].fieldType == "ATTRIBUTE" && model.content.columnSelectedOfDataset[k].funcSummary) {
 								delete model.content.columnSelectedOfDataset[k].funcSummary;
 							}
+							if(model.content.columnSelectedOfDataset[k].style && model.content.columnSelectedOfDataset[k].style.width) delete model.content.columnSelectedOfDataset[k].style.width;
 						}
 					}
 				}
 			}
-			
+
 			model.knowageVersion = currentVersion;
 			return model;
 		}
