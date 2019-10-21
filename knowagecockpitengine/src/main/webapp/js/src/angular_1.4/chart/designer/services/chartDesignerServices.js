@@ -539,7 +539,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		               };
 
 
-			if(type == 'PIE'){
+			if(chartType == 'PIE'){
 
 				barLine.CHART.AXES_LIST.AXIS[0].TITLESERIE = titleSerie;
 				barLine.CHART.type = chartType;
