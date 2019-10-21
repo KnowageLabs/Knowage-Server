@@ -1,10 +1,32 @@
-var app = angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","angular-list-detail"]);
-app.config(['$mdThemingProvider', function($mdThemingProvider) {
-    $mdThemingProvider.theme('knowage')
-    $mdThemingProvider.setDefaultTheme('knowage');
- }]);
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
-app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", "sbiModule_config", UsersManagementFunction]);
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+(function(){
+
+agGrid.initialiseAgGridWithAngular1(angular);
+angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","angular-list-detail","agGrid"])
+	.config(['$mdThemingProvider', function($mdThemingProvider) {
+	    $mdThemingProvider.theme('knowage')
+	    $mdThemingProvider.setDefaultTheme('knowage');
+	 }])
+
+	 .controller("UsersManagementController", UsersManagementFunction)
+	 .directive('nxEqualEx', nxEqualExDirective)
 
 function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging, sbiModule_config) {
 
@@ -24,15 +46,10 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.umSpeedMenu = [{
         label: sbiModule_translate.load("sbi.generic.delete"),
         icon: 'fa fa-trash',
-        //icon: 'fa fa-trash-o fa-lg',
-        //color: '#153E7E',
         action: function (item, event) {
-
         	$scope.confirmDelete(item,event);
         }
     }];
-
-    $scope.selectedUser.defaultRoleId;
 
     $scope.confirm = $mdDialog
         .confirm()
@@ -106,16 +123,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
 
     }
-
-    $scope.defaultUserWatcher=$scope.$watchCollection("role", function(newValue, oldValue) {
-    	if (newValue) {
-	    	for (var i in newValue) {
-	    		if ($scope.selectedUser.defaultRoleId && newValue[i].id==$scope.selectedUser.defaultRoleId) return;
-	    	}
-
-	    	$scope.selectedUser.defaultRoleId = null;
-    	}
-    });
 
     $scope.openLovs = function(ev,attribute) {
 
@@ -191,13 +198,16 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
      */
     $scope.setRoles = function () {
         $scope.role = [];
-        for (var i = 0; i < $scope.usersRoles.length; i++) {
-            for (var j = 0; j < $scope.selectedUser.sbiExtUserRoleses.length; j++) {
-                if ($scope.selectedUser.sbiExtUserRoleses[j] == $scope.usersRoles[i].id) {
-                    $scope.role.push($scope.usersRoles[i]);
-                }
-            }
-        }
+        $scope.rolesGridOptions.api.deselectAll();
+        var tempSelectedRoles = angular.copy($scope.selectedUser.sbiExtUserRoleses);
+		$scope.rolesGridOptions.api.forEachNode( function(rowNode, index) {
+			for(var r in tempSelectedRoles){
+				if(rowNode.data.id == tempSelectedRoles[r]){
+					rowNode.setSelected(true);
+					continue;
+				}
+			}
+		});
     }
     /*
      * 	this function is used to properly format
@@ -328,6 +338,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 					$scope.getUsers();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				delete $scope.oldItem;
 				$scope.cancel();
 
     		}, function(response) {
@@ -365,10 +376,44 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		});
     }
 
+    $scope.columns = [{"headerName":"Name","field":"name","headerCheckboxSelection":true,"checkboxSelection":true},{"headerName":"Value","field":"description"}]
+
+    $scope.rolesGridOptions = {
+        enableColResize: false,
+        enableSorting: true,
+        domLayout: 'autoHeight',
+        onSelectionChanged: rolesSelection,
+        onGridSizeChanged: resizeColumns,
+        defaultColDef: {
+        	suppressMovable: true,
+        	tooltip: function (params) {
+                return params.value;
+            },
+        },
+        rowSelection: 'multiple',
+        rowMultiSelectWithClick: true,
+        columnDefs: $scope.columns
+	};
+
+    function resizeColumns(grid){
+		grid.api.sizeColumnsToFit();
+	}
+
+    function rolesSelection(params){
+    	$scope.role = $scope.rolesGridOptions.api.getSelectedRows();
+	    	for (var i = 0; i < $scope.role.length; i++) {
+	    		if ($scope.selectedUser.defaultRoleId && $scope.role[i].id == $scope.selectedUser.defaultRoleId) break;
+	    		if (i != $scope.role.length-1) $scope.selectedUser.defaultRoleId = null;
+	    	}
+
+    	$scope.$apply();
+	}
+
     $scope.getRoles = function () { // service that gets list of roles GET
     	sbiModule_restServices.promiseGet("2.0", "roles")
 		.then(function(response) {
 			$scope.usersRoles = response.data;
+			$scope.rolesGridOptions.api.setRowData($scope.usersRoles);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
@@ -407,15 +452,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     }
 };
 
-/*
- * 	this directive is used for
- *  password fields matching.
- *  its not my code found this
- *  snippet on internet and it
- *  worked best
- *
- */
-app.directive('nxEqualEx', function() {
+function nxEqualExDirective() {
     return {
         require: 'ngModel',
         link: function (scope, elem, attrs, model) {
@@ -441,4 +478,6 @@ app.directive('nxEqualEx', function() {
             });
         }
     };
-});
+};
+
+})();
