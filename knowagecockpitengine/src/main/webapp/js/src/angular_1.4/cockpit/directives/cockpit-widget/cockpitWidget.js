@@ -235,6 +235,7 @@ function cockpitWidgetControllerFunction(
 		$scope,
 		$http,
 		$rootScope,
+		$window,
 		cockpitModule_widgetServices,
 		cockpitModule_generalServices,
 		cockpitModule_properties,
@@ -263,6 +264,7 @@ function cockpitWidgetControllerFunction(
 
 	var SERVICE = "/restful-services/2.0/datasets/preview";
 	var PREVIEWBACKGROUND = "/restful-services/2.0/export/dataset/";
+	var MAXMENUWIDTH = 425;
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
@@ -272,6 +274,16 @@ function cockpitWidgetControllerFunction(
 
 	if(!cockpitModule_backwardCompatibility.compareVersion(cockpitModule_properties.CURRENT_KNOWAGE_VERSION,$scope.ngModel.knowageVersion)){
 		$scope.ngModel = cockpitModule_backwardCompatibility.updateModel($scope.ngModel);
+	}
+
+	$scope.checkType = function(type,availableTypes){
+		return availableTypes.indexOf(type) != -1;
+	}
+
+	$scope.coords = function(){
+		if((angular.element(document.querySelector('#w'+$scope.ngModel.id)).prop('offsetLeft') + MAXMENUWIDTH) < $window.innerWidth){
+			return 'right';
+		}return 'left';
 	}
 
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -348,7 +360,7 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.showScreenshotButton = function(){
-		if($scope.ngModel.type =='selector' || $scope.ngModel.type =='selection' || $scope.ngModel.type =='document') return false;
+		if($scope.checkType($scope.ngModel.type, ['selector','selection','document', 'text','image'])) return false;
 		if(typeof($scope.ngModel.style.showScreenshot) == 'undefined' ) {
 			return cockpitModule_template.configuration.showScreenshot;
 		}else return $scope.ngModel.style.showScreenshot;
@@ -889,7 +901,7 @@ function cockpitWidgetControllerFunction(
 					}
 				}
 
-				for(par in passedOutputParametersList){
+				for(var par in passedOutputParametersList){
 					var content = passedOutputParametersList[par];
 
 					if(content.enabled == true){
@@ -916,7 +928,9 @@ function cockpitWidgetControllerFunction(
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
 							}else if(model.type == 'text'){
-								otherOutputParameters.push({[par]:columnValue});
+								var OBJ = {};
+								OBJ[par] = columnValue;
+								otherOutputParameters.push(OBJ);
 							}
 						}
 						else if(content.type == 'selection'){

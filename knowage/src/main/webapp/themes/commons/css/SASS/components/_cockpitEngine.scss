@@ -1331,9 +1331,6 @@
 			}
 		}
 	}
-    .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
-        background-color: darken($baseColor, 15%);
-    }
 
     md-fab-toolbar {
         position: absolute;
@@ -1412,6 +1409,65 @@
         			display: none !important;
         		}
         	}
+        	&.expandedWidget {
+        		#editModeMenuSpeedDial, #viewModeMenuSpeedDial {
+        			md-fab-speed-dial {
+        				bottom: 30px;
+        			}
+        		}
+        	}
+        	#editModeMenuSpeedDial, #viewModeMenuSpeedDial {
+        		md-fab-speed-dial {
+        			&.md-is-open {
+        				md-fab-trigger {
+		        			.md-fab{
+		        				md-icon {
+		        					color: $darkTextColor !important;
+		        				}
+		        			}
+		        		}
+        			}
+        			&.md-left {
+        				right: -52px;
+					    bottom: 0;
+					    position: absolute;
+        			}
+        			md-fab-trigger {
+	        			.md-fab{
+	        				background-color: transparent !important;
+	        				transition: color .3s ease;
+	        				box-shadow: none;
+	        				md-icon {
+	        					color: transparent;
+	        				}
+	        				&:hover {
+	        					md-icon {
+	        						color: $darkTextColor !important;
+	        					}
+	        				}
+	        			}
+	        		}
+	        		.md-fab-action-item {
+	        			.md-fab {
+	        				margin: 8px 4px 8px 0;
+	        				&:hover {
+	        					md-icon {
+	        						color: $lightTextColor;
+	        					}
+	        				}
+	        				&.md-warning {
+	        					background-color:  lighten($negativeColor,20%);
+	        					&:hover {
+									background-color:  $negativeColor;
+	        					}
+	        					md-icon {
+	        						color: $lightTextColor;
+	        					}
+	        				}
+	        			}
+	        		}
+        		}
+        	}
         	.viewModeMenu, .editModeMenu {
 				transition: background-color .3s ease;
 				position: absolute;
@@ -1455,6 +1511,18 @@
             			opacity: 1 !important;
             		}
             	}
+            	#editModeMenuSpeedDial, #viewModeMenuSpeedDial {
+        			md-fab-speed-dial {
+        				md-fab-trigger {
+	        				.md-fab{
+	        					display: block;
+								md-icon {
+	        						color: lighten($darkTextColor,50%);
+	        					}
+	        				}
+	        			}
+	        		}
+	        	}
 				.viewModeMenu {	
 					background-color: rgba(white,.6);
             		.md-button, a {

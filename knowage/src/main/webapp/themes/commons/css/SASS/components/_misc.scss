@@ -137,13 +137,13 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
 }
 
 .md-button.md-knowage-theme.md-fab {
-  &:not([disabled]) {
+  &:not([disabled]):not(.md-mini) {
           background-color: $fabPrimaryColor !important;
   }
   top: $fabTop;
 }
 
-.md-button.md-knowage-theme.md-fab {
+.md-button.md-knowage-theme.md-fab:not(.md-mini) {
   width: $fabHeight;
   height: $fabHeight;
   md-icon {
@@ -305,7 +305,7 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
 }
 
 //Raised Button
-.md-button.md-knowage-theme.md-raised {
+.md-button.md-knowage-theme.md-raised:not(.md-fab) {
     color: $baseColor;
     background-color: $secondaryColor;
 }
