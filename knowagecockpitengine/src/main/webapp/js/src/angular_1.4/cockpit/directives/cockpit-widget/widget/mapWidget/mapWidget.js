@@ -284,6 +284,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else{
 				$scope.map.setSize($scope.map.getSize());
 			}
+			$scope.map.renderSync();
 		}
 
 		$scope.toggleSidenav = function(){
@@ -382,7 +383,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 		$scope.initializeTemplate = function (){
-//			return $q(function(resolve, reject) {
+			return $q(function(resolve, reject) {
 				if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
 				if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
 				if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
@@ -404,8 +405,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 				if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
-//				resolve('initialized');
-//			})
+				resolve('initialized');
+			});
 
 		}
 
@@ -689,9 +690,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.createMap = function (){
 
-			/*$scope.initializeTemplatePromise = */$scope.initializeTemplate();
-
-//			$scope.initializeTemplatePromise.then(function(){
+			$scope.initializeTemplate().then(function(){
 
 				var layers = [];
 
@@ -745,7 +744,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.map.setSize($scope.map.getSize());
 				}
 
-				// $scope.map.renderSync();
+				$scope.map.renderSync();
 
 				//add events methods
 				$scope.addViewEvents();
@@ -756,7 +755,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 				},1500);
 
-//			});
+			}).then(function() {
+				$scope.addAllLayers();
+				$scope.map.renderSync();
+			});
 		}
 
 	    //control panel events
@@ -1044,7 +1046,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 
-		$scope.reinit();
+		// $scope.reinit();
 
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
 		if (cockpitModule_properties.EDIT_MODE) {
