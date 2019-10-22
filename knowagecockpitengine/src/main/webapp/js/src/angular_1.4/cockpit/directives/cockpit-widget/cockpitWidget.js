@@ -280,6 +280,13 @@ function cockpitWidgetControllerFunction(
 		return availableTypes.indexOf(type) != -1;
 	}
 
+	$scope.checkMenuVisibility = function(){
+		if(cockpitModule_template.configuration.hideUserMenu) return false;
+		if($scope.checkType($scope.ngModel.type, ['image','text'])) return false;
+		if($scope.checkType($scope.ngModel.type, ['html']) && !$scope.showScreenshotButton()) return false;
+		return true;
+	}
+
 	$scope.coords = function(){
 		if((angular.element(document.querySelector('#w'+$scope.ngModel.id)).prop('offsetLeft') + MAXMENUWIDTH) < $window.innerWidth){
 			return 'right';
