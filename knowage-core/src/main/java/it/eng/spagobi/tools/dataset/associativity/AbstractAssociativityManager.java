@@ -235,10 +235,19 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
 								HashSet<Tuple> tuples = new HashSet<Tuple>();
-								Tuple tuple = new Tuple(value != null && value.startsWith("'") && value.endsWith("'") ? value.substring(1, value.length() - 1) :
-									value);
+								if (value!=null) {
+								String[] valueArray = value.split("','");
+
+								if (valueArray.length == 1) {
+									if (value.startsWith("'") && value.endsWith("'")) {
+										value = value.substring(1, value.length() - 1);
+									}
+								}
+
+								Tuple tuple = new Tuple(value);
 								tuples.add(tuple);
 								groupToValues.put(missingColumn, tuples);
+								}
 
 							}
 							else {      // document case

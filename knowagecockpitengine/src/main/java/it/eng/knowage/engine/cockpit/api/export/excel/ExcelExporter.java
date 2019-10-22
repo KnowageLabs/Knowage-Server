@@ -1145,7 +1145,7 @@ public class ExcelExporter {
 					measuress.put("alias", measureObj.getString("alias"));
 					measuress.put("funct", measureObj.getString("funct"));
 					measuress.put("orderType", "");
-					measuress.put("columnName", measureObj.getString("alias"));
+					measuress.put("columnName", measureObj.getString("id"));
 					measures.put(measuress);
 			    }
 
@@ -1155,7 +1155,7 @@ public class ExcelExporter {
 					attributess.put("id", attributesObj.getString("id"));
 					attributess.put("alias", attributesObj.getString("alias"));
 					attributess.put("orderType", "");
-					attributess.put("columnName", attributesObj.getString("alias"));
+					attributess.put("columnName", attributesObj.getString("id"));
 					categories.put(attributess);
 			    }
 
@@ -1165,7 +1165,7 @@ public class ExcelExporter {
 					attributess.put("id", attributesObj.getString("id"));
 					attributess.put("alias", attributesObj.getString("alias"));
 					attributess.put("orderType", "");
-					attributess.put("columnName", attributesObj.getString("alias"));
+					attributess.put("columnName", attributesObj.getString("id"));
 					categories.put(attributess);
 			    }
 
