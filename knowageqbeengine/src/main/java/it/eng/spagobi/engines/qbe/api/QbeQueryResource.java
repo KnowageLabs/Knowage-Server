@@ -55,6 +55,7 @@ import it.eng.qbe.statement.graph.PathInspector;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph;
 import it.eng.qbe.statement.hibernate.HQLDataSet;
 import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
@@ -826,7 +827,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	 * @return
 	 */
 	private Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> getAmbiguousMap(Query filteredQuery, String modelName) {
-		PathInspector pathInspector = new PathInspector(getRootEntitiesGraph(modelName), getModelEntities(filteredQuery));
+		ShortestPathsCoverGraph spcg = new ShortestPathsCoverGraph();
+		Set<IModelEntity> entities = getModelEntities(filteredQuery);
+		Graph<IModelEntity, Relationship> rootEntitiesGraph = getRootEntitiesGraph(modelName);
+		// Before inspection, get the cover subgraph for the selected entities
+		rootEntitiesGraph = spcg.getCoverSubGraph(rootEntitiesGraph, entities);
+		//
+		PathInspector pathInspector = new PathInspector(rootEntitiesGraph, entities);
 		Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> ambiguousMap = pathInspector.getAmbiguousEntitiesAllPathsMap();
 		return ambiguousMap;
 	}
@@ -1002,8 +1009,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	 */
 	private List<GraphPath<IModelEntity, Relationship>> getShortestPaths(Query filteredQuery, IModelEntity modelEntity) {
 		List<GraphPath<IModelEntity, Relationship>> shortestPaths = new ArrayList<>();
-		if (getModelEntityPaths(filteredQuery, modelEntity) != null) {
-			for (GraphPath<IModelEntity, Relationship> path : getModelEntityPaths(filteredQuery, modelEntity)) {
+		Set<GraphPath<IModelEntity, Relationship>> modelEntityPaths = getModelEntityPaths(filteredQuery, modelEntity);
+		if (modelEntityPaths != null) {
+			for (GraphPath<IModelEntity, Relationship> path : modelEntityPaths) {
 
 				if (!shortestPaths.isEmpty() && path.getWeight() == shortestPaths.get(shortestPaths.size() - 1).getWeight()) {
 					shortestPaths.add(path);
@@ -1050,7 +1058,24 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		for (Map.Entry<IModelField, Set<IQueryField>> modelFields : getModelFieldsMap(filteredQuery).entrySet()) {
 
-			if (getShortestPaths(filteredQuery, modelFields.getKey().getParent()).size() > 1) {
+			List<GraphPath<IModelEntity, Relationship>> shortestPaths = getShortestPaths(filteredQuery, modelFields.getKey().getParent());
+			if (shortestPaths.size() > 1) {
+				logger.debug("Dump ambiguos shortest paths:");
+				int i = 1;
+				for (GraphPath<IModelEntity, Relationship> path : shortestPaths) {
+					logger.debug("--- Ambiguos path #" + i);
+					logger.debug("Start vertex: " + path.getStartVertex().getName());
+					List<Relationship> edgeList = path.getEdgeList();
+					logger.debug("\t   V   ");
+					for (Relationship rel : edgeList) {
+						logger.debug("\t   .   ");
+						logger.debug("\t " + rel.getSourceEntity().getName() + " -> " + rel.getTargetEntity().getName());
+						logger.debug("\t   .   ");
+					}
+					logger.debug("\t   X   ");
+					logger.debug("End vertex: " + path.getEndVertex().getName());
+					i++;
+				}
 				return true;
 			}
 			;

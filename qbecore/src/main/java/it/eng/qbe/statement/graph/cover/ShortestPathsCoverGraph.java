@@ -44,12 +44,11 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 
 	public static transient Logger logger = Logger.getLogger(ShortestPathsCoverGraph.class);
 
-	@Override
-	public QueryGraph getCoverGraph(Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities) {
-		Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> subgraph;
+	public Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> getCoverSubGraph(Graph<IModelEntity, Relationship> rootEntitiesGraph,
+			Set<IModelEntity> entities) {
+		Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> subGraph = null;
 		Iterator<IModelEntity> it = entities.iterator();
 		Set<Relationship> connectingRelatiosnhips = new HashSet<Relationship>();
-		Set<Relationship> minimumRelatiosnhips = new HashSet<Relationship>();
 
 		Set<IModelEntity> connectedEntities = new HashSet<IModelEntity>();
 		if (it.hasNext())
@@ -99,13 +98,22 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 		}
 
 		if (rootEntitiesGraph instanceof DirectedGraph) {
-			subgraph = (Subgraph) new DirectedSubgraph<IModelEntity, Relationship>((DirectedGraph) rootEntitiesGraph, connectedEntities,
+			subGraph = (Subgraph) new DirectedSubgraph<IModelEntity, Relationship>((DirectedGraph) rootEntitiesGraph, connectedEntities,
 					connectingRelatiosnhips);
 		} else {
-			subgraph = (Subgraph) new UndirectedSubgraph<IModelEntity, Relationship>((UndirectedGraph) rootEntitiesGraph, connectedEntities,
+			subGraph = (Subgraph) new UndirectedSubgraph<IModelEntity, Relationship>((UndirectedGraph) rootEntitiesGraph, connectedEntities,
 					connectingRelatiosnhips);
 		}
 		logger.debug("Subgraph built");
+
+		return subGraph;
+	}
+
+	@Override
+	public QueryGraph getCoverGraph(Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities) {
+		Set<Relationship> minimumRelatiosnhips = new HashSet<Relationship>();
+
+		Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> subgraph = getCoverSubGraph(rootEntitiesGraph, entities);
 
 		logger.debug("Getting the minimum spaning tree on the subgraph");
 		KruskalMinimumSpanningTree<IModelEntity, Relationship> kruscal = new KruskalMinimumSpanningTree<IModelEntity, Relationship>(subgraph);
