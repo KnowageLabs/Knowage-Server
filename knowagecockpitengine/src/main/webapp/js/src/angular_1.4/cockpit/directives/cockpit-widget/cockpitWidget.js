@@ -161,7 +161,7 @@ angular.module('cockpitModule')
 	                    			if(scope.ngModel.cliccable){
 	                    				scope.ngModel.drillable = false;
 	                    			} else {
-	                    				if(scope.enterpriseEdition)
+	                    				if(scope.highcharts)
 	                    				scope.ngModel.drillable = true;
 	                    			}
 
@@ -297,6 +297,14 @@ function cockpitWidgetControllerFunction(
 	$scope.translate		= sbiModule_translate;
 	$scope.i18n		= sbiModule_i18n;
 	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
+	$scope.highcharts = Highcharts!= undefined ? true : false;
+
+	try{
+		$scope.highcharts = Highcharts != undefined ? true : false;
+	} catch {
+		$scope.highcharts =  false;
+	}
+
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {};
@@ -697,7 +705,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.chartsForDrill = ["bar","pie","line","treemap"]
 	$scope.changeClickability = function(){
-		if($scope.ngModel.cliccable && !$scope.ngModel.drillable && $scope.enterpriseEdition){
+		if($scope.ngModel.cliccable && !$scope.ngModel.drillable && $scope.highcharts){
 			$scope.ngModel.cliccable = false;
 			$scope.ngModel.drillable = true;
 		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
