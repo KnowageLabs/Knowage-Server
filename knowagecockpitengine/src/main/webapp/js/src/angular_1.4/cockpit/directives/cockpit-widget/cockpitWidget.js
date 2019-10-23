@@ -297,8 +297,6 @@ function cockpitWidgetControllerFunction(
 	$scope.translate		= sbiModule_translate;
 	$scope.i18n		= sbiModule_i18n;
 	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
-	$scope.highcharts = Highcharts!= undefined ? true : false;
-
 	try{
 		$scope.highcharts = Highcharts != undefined ? true : false;
 	} catch {
