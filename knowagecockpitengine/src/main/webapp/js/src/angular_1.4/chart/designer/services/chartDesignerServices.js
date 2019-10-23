@@ -213,7 +213,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			break;
 		case 'line':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
-				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"},
+				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.accessibility"),value:"accessibility"}]
 
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
@@ -235,7 +236,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		case 'bar':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
 				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"},
-				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"},
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.accessibility"),value:"accessibility"}]
 
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
@@ -278,6 +280,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				explanationURL: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/explanation.html',
 				advancedSerieBarURL: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/advanced_serie_conf_bar.html',
 				customColorsURL: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/custom_colors.html',
+				accessibilityURL: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/accessibility.html'
 
 			 };
 		return data;

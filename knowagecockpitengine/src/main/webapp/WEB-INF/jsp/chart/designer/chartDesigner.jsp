@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 
 	<body class="bodyStyle kn-chartdesigner" ng-controller="ChartDesignerController">
-		<form name="userForm" layout="column" layout-fill ng-submit="saveChartTemplate(true)"><!-- izmena -->
+		<form name="userForm" layout="column" layout-fill ng-submit="saveChartTemplate(true)">
 		<div layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);' ng-if="!chartTypes.length>0">
 			<md-progress-circular md-mode="indeterminate" style='top:50%;left:50%' ng-disabled="chartTypes.length>0"></md-progress-circular>
 		</div>
@@ -88,7 +88,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </md-tab-label>
             
             <md-tab-body ng-if="chartTemplate">
-                <div flex><chartstructure-tab></chartstructure-tab></div>
+                <div flex>
+                	<chartstructure-tab></chartstructure-tab>
+                </div>
             </md-tab-body>
 			
 			</md-tab>
@@ -104,7 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </md-tab-label>
             
             <md-tab-body ng-if="chartTemplate">
-                <div flex><configuration-tab></configuration-tab></div>
+                <div flex>
+                	<configuration-tab></configuration-tab>
+                </div>
             </md-tab-body>
 			
 			</md-tab> 

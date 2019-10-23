@@ -56,7 +56,7 @@
 			<div id="titleandsubtitle" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.titlesubtitle')">
 				<md-content flex layout="column">
 				
-				<div ng-include src="templateUrls.titleSubtitleDetailsURL" layout-margin></div>
+				<div ng-include src="templateUrls.titleSubtitleDetailsURL"></div>
 				
 				</md-content>
 			</div>
@@ -165,11 +165,15 @@
 				</md-content>
 			</div>							
 				
-				<div  id="customColors" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.customColors') ">
+			<div  id="customColors" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.customColors') ">
 
-				
 				<div ng-include src="templateUrls.customColorsURL" layout-margin></div>
-				
+
+			</div>	
+			
+			<div  id="accessibility" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.accessibility') ">
+
+				<div ng-include src="templateUrls.accessibilityURL" layout-margin></div>
 
 			</div>	
 			

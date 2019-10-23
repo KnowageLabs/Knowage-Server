@@ -201,6 +201,10 @@
 	@include custom-background-image('../img/chart/configuration/configuration_custom_colors.png');
 }
 
+.accessibility_config{
+	@include custom-background-image('../img/chart/configuration/configuration_accessibility.png');
+}
+
 .dangerBorder {
 	border: 2px solid $negativeColor;
 }
