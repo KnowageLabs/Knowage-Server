@@ -58,14 +58,20 @@ angular.module('cockpitModule')
 			cockpitModule_properties,
 			cockpitModule_template,
 			accessibility_preferences,
-			cockpitModule_generalServices,
+			cockpitModule_generalServices, 
 			$rootScope){
 
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
 	  	}
 
-		$scope.isDisabled = function(p){
+		$scope.isDisabled = function(p){		
+	 
+		    
+			if (cockpitModule_properties.TAINTED_ASSOCIATIONS[$scope.ngModel.dataset.label]) {
+				return false;
+			}
+			
 			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue=="singleValue"){
 				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1 && $scope.selectedValues.indexOf(p) == -1;
 			}else{

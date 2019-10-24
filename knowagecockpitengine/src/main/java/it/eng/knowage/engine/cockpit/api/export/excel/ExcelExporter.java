@@ -852,7 +852,7 @@ public class ExcelExporter {
 						categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
 						measures.put(categoryOrMeasure);
 					} else {
-						throw new SpagoBIRuntimeException("Unsupported field type");
+						throw new SpagoBIRuntimeException("Unsupported field type [ "+fieldType+" ]");
 					}
 				}
 

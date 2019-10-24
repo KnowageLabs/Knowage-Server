@@ -254,10 +254,13 @@ function cockpitWidgetControllerFunction(
 		$filter,
 		$sce,
 		$mdDialog,cockpitModule_backwardCompatibility,
-		cockpitModule_exportWidgetService)
+		cockpitModule_exportWidgetService,
+		cockpitModule_templateServices)
 
 	{
 
+	cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
+	
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
 	$scope.openMenu = function($mdMenu, ev) {
