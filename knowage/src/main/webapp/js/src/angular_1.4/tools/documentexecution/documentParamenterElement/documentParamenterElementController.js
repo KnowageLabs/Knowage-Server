@@ -410,7 +410,7 @@
 							if(paramDialogCtrl.tempParameter.multivalue) {
 
 								var parameterValueArrayToShow = [];
-								
+
 								for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
 									var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
 
@@ -520,10 +520,10 @@
 						objPost.PARAMETER_ID = paramDialogCtrl.tempParameter.urlName;
 						objPost.MODE = 'extra';
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
-						
+
 						paramDialogCtrl.columns = [{"headerName":"Label","field":"label",headerCheckboxSelection: paramDialogCtrl.tempParameter.multivalue, checkboxSelection: paramDialogCtrl.tempParameter.multivalue},
 							{"headerName":"Description","field":"description"}];
-						
+
 						paramDialogCtrl.lookoutGridOptions = {
 				            enableColResize: false,
 				            enableFilter: false,
@@ -531,6 +531,7 @@
 				            pagination: true,
 				            paginationAutoPageSize: true,
 				            onGridSizeChanged: resizeColumns,
+				            onGridReady: resizeColumns,
 				            rowSelection: paramDialogCtrl.tempParameter.multivalue ? 'multiple' : 'single',
 				            rowMultiSelectWithClick: paramDialogCtrl.tempParameter.multivalue,
 				            defaultColDef: {
@@ -542,17 +543,17 @@
 				            columnDefs: paramDialogCtrl.columns,
 				            postSort : postSort
 						}
-						
-						
+
+
 						paramDialogCtrl.filterDataset = function(){
 							var tempParametersList = $filter('filter')(paramDialogCtrl.tableData,paramDialogCtrl.paramSearchText);
 							paramDialogCtrl.lookoutGridOptions.api.setRowData(tempParametersList);
 						}
-						
-						function resizeColumns(){
-							if(paramDialogCtrl.lookoutGridOptions.api) paramDialogCtrl.lookoutGridOptions.api.sizeColumnsToFit();
+
+						function resizeColumns(grid){
+							grid.api.sizeColumnsToFit();
 						}
-						
+
 						function postSort(nodes){
 
 						    function move(toIndex, fromIndex) {
@@ -591,9 +592,9 @@
 									sbiModule_messaging.showWarningMessage(response.data.errors[0].message, 'Warning');
 								}
 								else if(response.data.status=="OK"){
-									
+
 									paramDialogCtrl.lookoutGridOptions.api.setColumnDefs(getColumnsDefs(response.data.result.metaData.fields));
-									
+
 									paramDialogCtrl.tableData = response.data.result.root;
 									paramDialogCtrl.lookoutGridOptions.api.setRowData(response.data.result.root);
 									if(parameter.parameterValue && parameter.parameterValue.length>0){
@@ -602,6 +603,7 @@
 										});
 									}
 									paramDialogCtrl.lookoutGridOptions.api.refreshClientSideRowModel('sort');
+									paramDialogCtrl.lookoutGridOptions.api.sizeColumnsToFit();
 									paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 								}
 						  });
