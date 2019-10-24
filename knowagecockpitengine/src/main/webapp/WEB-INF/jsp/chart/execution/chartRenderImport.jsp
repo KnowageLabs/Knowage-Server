@@ -50,7 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- JsonChartTemplateService -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/JsonChartTemplateService/services/JsonChartTemplateService.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/JsonChartTemplateService/services/chartConfMergeService.js")%>"></script><!-- izmena -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartRenderer/services/chartConfMergeService.js")%>"></script><!-- izmena -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartRenderer/services/chartSonifyService.js")%>"></script><!-- izmena -->
 
 
 <!-- d3  -->

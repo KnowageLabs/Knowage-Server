@@ -9,9 +9,9 @@ drillable='ngModel.drillable'
 on-click-series='reloadWidgetsByChartEvent' 
 layout-column flex>
 </chart-renderer>
-<div ng-if="ngModel.content.chartTemplate.accessibility && ngModel.content.chartTemplate.accessibility.sonification">
-	<button id="play" tab-index="1" aria-label="play">Play</button>
-    <button id="pause" tab-index="2" aria-label="pause">Pause</button>
-    <button id="rewind" tab-index="3" aria-label="rewind">Rewind</button>
+<div ng-if="ngModel.content.chartTemplate.CHART.accessibility && ngModel.content.chartTemplate.CHART.accessibility.sonification">
+	<button id="play" tab-index="1" aria-label="play" ng-click="playSonify()">Play</button>
+    <button id="pause" tab-index="2" aria-label="pause" ng-click="pauseSonify()">Pause</button>
+    <button id="rewind" tab-index="3" aria-label="rewind" ng-click="rewindSonify()">Rewind</button>
 </div>
 <canvas class="canvas-for-highcharts" ng-class="{'show-for-canvas': IEChartToFix() && cockpitModule_properties.LOADING_SCREENSHOT}" ng-if='IEChartToFix()' id="canvas_{{ngModel.id}}"></canvas>

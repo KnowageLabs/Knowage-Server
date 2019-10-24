@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService){//izmena
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService','chartSonifyService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService,chartSonifyService){//izmena
 
 	this.chart = null;
 	var chartConfConf = null;
@@ -50,6 +50,13 @@ angular.module('chartInitializer')
 		var selectionsAndParams = renderObj.selectionsAndParams;
 
 		chartConfConf = chartConf;
+		if(renderObj.chartTemplate.accessibility){
+			chartConf.accessibility = renderObj.chartTemplate.accessibility;
+			for (var i = 0; i < chartConf.series.length; i++) {
+				chartConf.series[i].id = i+1;
+			}
+			chartConf.tooltip = {enabled:false}
+		}
 		if(!exportWebApp) {
 			adjustChartSize(element,chartConf);
 		}
@@ -120,6 +127,7 @@ angular.module('chartInitializer')
 			}
 
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
+
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
@@ -136,7 +144,7 @@ angular.module('chartInitializer')
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
 			}
-
+			chartSonifyService.setChart(this.chart)
 			//return chart;
 
 		}
@@ -838,8 +846,19 @@ angular.module('chartInitializer')
 		output += "}";
 
 		return output;
-	}
+	};
 
+	this.cancelSonify = function () {
+		//this is for speed
+		chartSonifyService.cancelSonify();
+	};
 
+	this.playSonify = function () {
+		chartSonifyService.playSonify()
+	};
+	this.pauseSonify = function () {		chartSonifyService.pauseSonify();
+	};
+	this.rewindSonify = function () {		chartSonifyService.rewindSonify();
+	};
 
 }])

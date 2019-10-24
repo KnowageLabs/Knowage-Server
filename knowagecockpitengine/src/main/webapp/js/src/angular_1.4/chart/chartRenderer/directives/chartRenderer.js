@@ -281,7 +281,18 @@ angular.module('chartRendererModule')
 				}
 
 			}
+			scope.$on('playSonify',function(event,data){
+				scope.chartInitializer.playSonify()
 
+			})
+			scope.$on('pauseSonify',function(event,data){
+				scope.chartInitializer.pauseSonify()
+
+			})
+			scope.$on('rewindSonify',function(event,data){
+				scope.chartInitializer.rewindSonify()
+
+			})
 
 
 		}

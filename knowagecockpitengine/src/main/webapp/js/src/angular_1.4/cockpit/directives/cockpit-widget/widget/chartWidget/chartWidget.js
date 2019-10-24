@@ -237,7 +237,7 @@ function cockpitChartWidgetControllerFunction(
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 
 	$scope.user = sbiModule_user;
-	
+
 	$scope.IEChartToFix = function(){
 		return $scope.isIE && $scope.enterpriseEdition && $scope.d3Charts.indexOf($scope.chartType)==-1;
 	}
@@ -321,6 +321,18 @@ function cockpitChartWidgetControllerFunction(
 		}
 
 	};
+
+	$scope.playSonify = function(){
+		$scope.$broadcast("playSonify");
+	};
+
+	$scope.pauseSonify = function(){
+		$scope.$broadcast("pauseSonify");
+	}
+
+	$scope.rewindSonify = function(){
+		$scope.$broadcast("rewindSonify");
+	}
 
 	$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
 	/**

@@ -1,10 +1,10 @@
 <div layout="column">
-	<md-switch ng-model="accessibility.sonification" aria-label="sonification">
+	<md-switch ng-model="chartTemplate.accessibility.sonification" aria-label="sonification">
 		{{translate.load("sbi.chartengine.designer.tab.configuration.sonification")}}
 	</md-switch>
-	<md-input-container ng-if="accessibility.sonification" class="md-block">
+	<md-input-container ng-if="chartTemplate.accessibility.sonification" class="md-block">
       <label>{{translate.load("sbi.chartengine.designer.tab.configuration.targetserie")}}</label>
-      <md-select ng-model="accessibility.sonificationSerie">
+      <md-select ng-model="chartTemplate.accessibility.sonificationSerie">
         <md-option></md-option>
         <md-option ng-repeat="serie in chartTemplate.VALUES.SERIE" ng-value="serie.name">
           {{serie.name}}
