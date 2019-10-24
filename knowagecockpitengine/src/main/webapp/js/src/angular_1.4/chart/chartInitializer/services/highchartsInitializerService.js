@@ -848,17 +848,4 @@ angular.module('chartInitializer')
 		return output;
 	};
 
-	this.cancelSonify = function () {
-		//this is for speed
-		chartSonifyService.cancelSonify();
-	};
-
-	this.playSonify = function () {
-		chartSonifyService.playSonify()
-	};
-	this.pauseSonify = function () {		chartSonifyService.pauseSonify();
-	};
-	this.rewindSonify = function () {		chartSonifyService.rewindSonify();
-	};
-
 }])

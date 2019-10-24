@@ -75,18 +75,23 @@
 		};
 
 		this.playSonify = function () {
-		    if (!this.chart.sonification.timeline || this.chart.sonification.timeline.atStart()) {
+			var chart = this.chart;
+		    if (!chart.sonification.timeline || chart.sonification.timeline.atStart()) {
 		    	var seriesOptions = this.getInstrumentOptions()
-		        this.chart.sonify({
+		        chart.sonify({
 		            duration: 5000,
 		            order: 'simultaneous',
 		            pointPlayTime: 'x',
 		            seriesOptions: seriesOptions,
-		            onEnd: this.onEndFunction
+		            onEnd: function () {
+		                if (chart.sonification.timeline) {
+		                    delete chart.sonification.timeline;
+		                }
+		            }
 
 		        });
 		    } else {
-		        this.chart.resumeSonify();
+		        chart.resumeSonify();
 		    }
 		};
 
@@ -101,11 +106,6 @@
 		    this.chart.cancelSonify();
 		};
 
-		this.onEndFunction = function () {
-            if (this.chart.sonification.timeline) {
-                delete this.chart.sonification.timeline;
-            }
-        };
 
 	});
 

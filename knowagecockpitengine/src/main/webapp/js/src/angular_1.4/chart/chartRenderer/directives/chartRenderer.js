@@ -17,7 +17,7 @@
  */
 angular.module('chartRendererModule')
 
-.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n, ChartUpdateService){
+.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n, ChartUpdateService,chartSonifyService){
 
 	return{
 		restrict:'E',
@@ -282,15 +282,15 @@ angular.module('chartRendererModule')
 
 			}
 			scope.$on('playSonify',function(event,data){
-				scope.chartInitializer.playSonify()
+				chartSonifyService.playSonify()
 
 			})
 			scope.$on('pauseSonify',function(event,data){
-				scope.chartInitializer.pauseSonify()
+				chartSonifyService.pauseSonify()
 
 			})
 			scope.$on('rewindSonify',function(event,data){
-				scope.chartInitializer.rewindSonify()
+				chartSonifyService.rewindSonify()
 
 			})
 
