@@ -212,9 +212,10 @@
 					}else {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
-
+							parameter.parameterDescription = {};
 						} else {
 							parameter.parameterValue = '';
+							parameter.parameterDescription = {};
 						}
 					}
 				} else {
