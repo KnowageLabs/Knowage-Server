@@ -177,14 +177,15 @@ public class PageResource extends AbstractChartEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("JPG".equals(outputType)) {
-					String requestURL = getRequestUrlForJpgExport(request);
-					request.setAttribute("requestURL", requestURL);
-
-					RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
-					request.setAttribute("renderOptions", renderOptions);
-
-					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportJpg.jsp";
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					// String requestURL = getRequestUrlForJpgExport(request);
+					// request.setAttribute("requestURL", requestURL);
+					//
+					// RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
+					// request.setAttribute("renderOptions", renderOptions);
+					//
+					// dispatchUrl = "/WEB-INF/jsp/???.jsp";
+					// response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else {
 					engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
 

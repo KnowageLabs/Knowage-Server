@@ -163,14 +163,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
-					String requestURL = getRequestUrlForJpgExport(request);
-					request.setAttribute("requestURL", requestURL);
-
-					RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
-					request.setAttribute("renderOptions", renderOptions);
-
-					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportJpg.jsp";
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					// String requestURL = getRequestUrlForJpgExport(request);
+					// request.setAttribute("requestURL", requestURL);
+					//
+					// RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
+					// request.setAttribute("renderOptions", renderOptions);
+					//
+					// dispatchUrl = "/WEB-INF/jsp/???.jsp";
+					// response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
