@@ -194,17 +194,17 @@
 									<color-picker options="colorPickerPropertyEvenOddRows" ng-model="newModel.settings.alternateRows.oddRowsColor"/>
 								</md-input-container>
 							</div>
-							<!-- div flex layout="row">
+							<div flex layout="row">
 								<div flex=20 layout="row" layout-align="start center">
-									<md-checkbox ng-model="model.settings.noData.enabled" class="md-block" aria-label="Enable nodata message">
+									<md-checkbox ng-model="newModel.settings.norows.hide" class="md-block" aria-label="Enable nodata message">
 										{{::translate.load('sbi.cockpit.widgets.table.nodata.label')}}
 									</md-checkbox>
 								</div>
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.widgets.table.nodata.message')}}</label>
-									<input class="input_class" ng-disabled="!model.settings.noData.enabled" ng-model="model.settings.noData.message" />
+									<input class="input_class" ng-disabled="newModel.settings.norows.hide" ng-model="newModel.settings.norows.message" />
 								</md-input-container>
-							</div-->
+							</div>
 						</div>
 					</md-card-content>
 				</md-card>

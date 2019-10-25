@@ -51,7 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetSelection,
 			cockpitModule_analyticalDrivers,
 			cockpitModule_properties,
-			cockpitModule_defaultTheme){
+			cockpitModule_defaultTheme,
+			knModule_aggridLabels){
 
 		$scope.showGrid = true;
 		$scope.bulkSelection = false;
@@ -310,7 +311,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[datasetRecords.rows.length-1]]);
 				}
 				else {
-					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
+					//$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
+					$scope.advancedTableGrid.api.setRowData([]);
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([]);
 				}
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
@@ -321,6 +323,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.refreshWidget();
 						return;
 					};
+				}
+				if($scope.ngModel.settings.norows){
+					if($scope.ngModel.settings.norows.hide) $scope.advancedTableGrid.api.hideOverlay();
+					if($scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
 				}
 				if(!$scope.ngModel.settings.pagination.enabled) $scope.advancedTableGrid.api.paginationSetPageSize($scope.totalRows);
 				if($scope.ngModel.settings.pagination.enabled && $scope.ngModel.settings.pagination.frontEnd && $scope.ngModel.settings.pagination.itemsNumber) $scope.advancedTableGrid.api.paginationSetPageSize($scope.ngModel.settings.pagination.itemsNumber);
@@ -370,8 +376,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    	return { background: $scope.ngModel.settings.alternateRows.evenRowsColor }
 					    }
 					}
-				}
+				},
+				localeText : knModule_aggridLabels
 		}
+
+		if($scope.ngModel.settings.norows && $scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
 		function getRowHeight(params) {
 			if(_rowHeight > 0) return _rowHeight;
 			else return 28;
