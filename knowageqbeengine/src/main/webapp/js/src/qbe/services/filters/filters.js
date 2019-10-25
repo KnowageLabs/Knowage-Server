@@ -71,6 +71,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		         ];
 	this.getSpatialOperators = [
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.contains"),value:"SPATIAL_CONTAINS"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.nn"),value:"SPATIAL_NN"},
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.covered.by"),value:"SPATIAL_COVERED_BY"},
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.covers"),value:"SPATIAL_COVERS"},
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.disjoint"),value:"SPATIAL_DISJOINT"},

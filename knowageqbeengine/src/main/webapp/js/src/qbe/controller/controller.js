@@ -482,7 +482,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "fieldType":field.attributes.iconCls,
 				   "entity":field.attributes.entity,
 				   "field":field.attributes.field,
-				   "funct":isColumnType(field,"measure")? "SUM":"",
+				   "funct":getFunct(field,"measure"),
 				   "color":field.color,
 				   "group":isColumnType(field,"attribute")&&!$scope.isSpatial(field),
 				   "order":"NONE",
@@ -505,6 +505,16 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			$scope.editQueryObj.fields.push(newField);
 		}
 
+	}
+
+	var getFunct =function(field){
+		if(isColumnType(field,"measure")){
+			return "SUM"
+		}else if($scope.isSpatial(field)){
+			return "COUNT"
+		}else{
+			return "";
+		}
 	}
 
 	var isColumnType = function(field,columnType){

@@ -704,6 +704,42 @@
 	</formula>
 	
 	<formula>
+		<name>Intersection</name>
+		<syntax>Intersection (Geom1, Geom2, Tol)</syntax>
+		<body>Relate(${geom1},  ${geom2}, ${tol}))</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom1</placeholder>
+			<type>field</type>
+		</argument>
+		
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+			<placeholder>geom2</placeholder>
+			<type>field</type>
+		</argument>
+		
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+			<placeholder>tol</placeholder>
+		</argument>
+		
+		<output>String</output>
+		<description>Examines two geometry objects to determine their spatial relationship.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
 		<name>Case</name>
 		<syntax>Case when Exp then val else val2 end </syntax>
 		<body>Case when ${Exp} then ${val} else ${val2} end</body>

@@ -37,6 +37,9 @@ public class CustomOracleSpatialDialect extends OracleSpatial10gDialect {
 	public CustomOracleSpatialDialect() {
 		super();
 		registerFunction("dwithin", new StandardSQLFunction("SDO_WITHIN_DISTANCE", StandardBasicTypes.STRING));
+		registerFunction("spatial_contains", new StandardSQLFunction("SDO_CONTAINS", StandardBasicTypes.BOOLEAN));
+		registerFunction("intersection", new StandardSQLFunction("SDO_GEOM.SDO_INTERSECTION", GeometryUserType.TYPE));
+		registerFunction("spatial_nn", new StandardSQLFunction("SDO_NN", StandardBasicTypes.BIG_DECIMAL));
 		registerFunction("length_spa", new StandardSQLFunction("SDO_GEOM.SDO_LENGTH", StandardBasicTypes.BIG_DECIMAL));
 		registerFunction("filter", new StandardSQLFunction("SDO_FILTER", StandardBasicTypes.STRING));
 		registerFunction("distance", new StandardSQLFunction("SDO_GEOM.SDO_DISTANCE", StandardBasicTypes.BIG_DECIMAL));
