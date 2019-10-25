@@ -89,6 +89,36 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 			return dsNotAss;
 	}
 
+	// Function used to retrieve the dataset with parameters list
+
+	this.getDatasetUsetByWidgetWithParams = function(){
+		var taintedColumns = {};
+		for (var k in cockpitModule_template.configuration.associations) {		
+			var tempFields = {};
+			var taintedAssociations = false;
+			for (var j in cockpitModule_template.configuration.associations[k].fields) {
+				if (cockpitModule_template.configuration.associations[k].fields[j].column.match(/\$P\{/g)) {
+					taintedAssociations = true;		
+				}
+				else {					
+					tempFields[cockpitModule_template.configuration.associations[k].fields[j].store] = cockpitModule_template.configuration.associations[k].fields[j].column;					
+				}
+			}
+			if (taintedAssociations) {
+				for (var y in tempFields) {
+					if (taintedColumns[y]) {
+						if (taintedColumns[y].indexOf(tempFields[y]) != -1) {
+							taintedColumns[y].push(tempFields[y]);
+						}
+					}
+					else {
+						taintedColumns[y] = [tempFields[y]];
+					}
+				}
+			}
+		}		
+		cockpitModule_properties.TAINTED_ASSOCIATIONS = taintedColumns;
+	}
 
 	this.getDatasetInAssociation = function(){
 		var dsList = [];

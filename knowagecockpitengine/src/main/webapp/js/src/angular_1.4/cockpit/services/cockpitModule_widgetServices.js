@@ -388,8 +388,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         }
                     }else{
                         var data = {};
-                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name) || 
+                            	cockpitModule_properties.TAINTED_ASSOCIATIONS[config.dataset.label]){
                         data.activeValues = wi.loadDatasetRecords(config, options, false);
+                        }
+                        else {
+                            data.activeValues = config.activeValues;
                         }
                         $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                     }

@@ -167,12 +167,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	this.getDatasetLabelsByIds=function(dsIds){
-	    dsLabels = [];
-	    for(var i in dsIds){
-	        dsLabels.push(ds.getDatasetLabelById(dsIds[i]));
-	    }
-        return dsLabels;
-    }
+		dsLabels = [];
+		for(var i in dsIds){
+			dsLabels.push(ds.getDatasetLabelById(dsIds[i]));
+		}
+		return dsLabels;
+	}
 
 	this.checkForDSChange=function(){
 		var changed=[];
@@ -264,21 +264,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					//check removed params
 					for (var paramName in item.parameters) {
-					    if (item.parameters.hasOwnProperty(paramName)) {
-					    	var removed = true;
-					    	for(var i=0; i<actualDs.parameters.length; i++){
+						if (item.parameters.hasOwnProperty(paramName)) {
+							var removed = true;
+							for(var i=0; i<actualDs.parameters.length; i++){
 								if(actualDs.parameters[i].name == paramName){
 									removed = false;
 									break;
 								}
 							}
-					    	if(removed){
-					    		removedParams.push(paramName);
-					    		removedDatasetParams[item.dsLabel].push(paramName);
-					    		this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedParameter")
-					    				.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
-					    	}
-					    }
+							if(removed){
+								removedParams.push(paramName);
+								removedDatasetParams[item.dsLabel].push(paramName);
+								this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedParameter")
+										.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
+							}
+						}
 					}
 				}
 
@@ -537,21 +537,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 				if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
-							this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
-							if (item == undefined) {
+						this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
+						if (item == undefined) {
 
-								var datasetFound=ds.getDatasetById(dsId);
-								var paramsFound = datasetFound.parameters;
-								for (var j = 0; j < paramsFound.length; j++) {
+							var datasetFound=ds.getDatasetById(dsId);
+							var paramsFound = datasetFound.parameters;
+							for (var j = 0; j < paramsFound.length; j++) {
 
-									if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
-										this[key] = paramsFound[j].defaultValue;
-										cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
-									}
-
+								if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
+									this[key] = paramsFound[j].defaultValue;
+									cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
 								}
 
 							}
+
+						}
 					},params);
 
 
@@ -696,8 +696,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						var valueCount = parameters[parameter].length;
 						if(!dataset.parameters[i].multiValue && valueCount > 1){
 							var parameterError = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoapplyvaluestosinglevalueparameter")
-									.replace("{0}", "<b>" + valueCount + "</b>")
-									.replace("{1}", "<b>" + dataset.name + ".$P{" + parameter + "}</b>")
+							.replace("{0}", "<b>" + valueCount + "</b>")
+							.replace("{1}", "<b>" + dataset.name + ".$P{" + parameter + "}</b>")
 							parameterErrors.push(parameterError);
 						}
 						break;
@@ -707,7 +707,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		if(parameterErrors.length > 0){
 			var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
-					.replace("{0}", "<b>" + ngModel.content.name + "</b>");
+			.replace("{0}", "<b>" + ngModel.content.name + "</b>");
 			sbiModule_restServices.errorHandler(parameterErrors.join("<br>"), title);
 			deferred.reject('Error');
 		}
@@ -754,14 +754,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var limitRows;
-        if(ngModel.limitRows){
-            limitRows = ngModel.limitRows;
-        }else if(ngModel.content && ngModel.content.limitRows){
-            limitRows = ngModel.content.limitRows;
-        }
-        if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
-            params += "&limit=" + limitRows.rows;
-        }
+		if(ngModel.limitRows){
+			limitRows = ngModel.limitRows;
+		}else if(ngModel.content && ngModel.content.limitRows){
+			limitRows = ngModel.content.limitRows;
+		}
+		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+			params += "&limit=" + limitRows.rows;
+		}
 
 		var filtersToSendWithoutParams = ds.getWidgetSelectionsAndFilters(ngModel, dataset, loadDomainValues);
 
@@ -786,8 +786,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		savedFilters = filtersToSendWithoutParams;
 
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
-            bodyString = bodyString + ",options:{solrFacetPivot:true}";
-        }
+			bodyString = bodyString + ",options:{solrFacetPivot:true}";
+		}
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type == "discovery"){
 			if(ngModel.settings.facets.limit) {
 				bodyString += ",options:{'facetsLimit':"+ngModel.settings.facets.limit+"}";
@@ -818,9 +818,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var datasetLabel = array[2];
 				var widgetName = array[4];
 				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
-						.replace("{0}", "<b>" + widgetName + "</b>");
+				.replace("{0}", "<b>" + widgetName + "</b>");
 				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
-						.replace("{0}", "<b>" + datasetLabel + "</b>")
+				.replace("{0}", "<b>" + datasetLabel + "</b>")
 				text += "<br>";
 				text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
 				sbiModule_restServices.errorHandler(text, title);
@@ -842,9 +842,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var datasetLabel = array[2];
 				var widgetName = array[4];
 				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
-						.replace("{0}", "<b>" + widgetName + "</b>");
+				.replace("{0}", "<b>" + widgetName + "</b>");
 				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
-						.replace("{0}", "<b>" + datasetLabel + "</b>")
+				.replace("{0}", "<b>" + datasetLabel + "</b>")
 				text += "<br>";
 				text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
 				sbiModule_restServices.errorHandler(text, title);
@@ -868,30 +868,33 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			var filters = angular.copy(cockpitModule_widgetSelection.getCurrentFilters(datasetLabel));
 			angular.merge(filtersToSend, filters);
 
-            if(widgetObject.type=="selector"){
-                var isColumnInAssociation = false;
-                for(var i=0; !isColumnInAssociation && i<cockpitModule_template.configuration.aggregations.length; i++){
-                    var aggregation = cockpitModule_template.configuration.aggregations[i];
-                    for(var j=0; !isColumnInAssociation && j<aggregation.associations.length; j++){
-                        var association = aggregation.associations[j];
-                        for(var k=0; !isColumnInAssociation && k<association.fields.length; k++){
-                            var field = association.fields[k];
-                            if(field.type=="dataset" && field.store==datasetLabel && field.column==widgetObject.content.selectedColumn.name){
-                                isColumnInAssociation = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+			if(widgetObject.type=="selector"){
+				var isColumnInAssociation = false;
+				for(var i=0; !isColumnInAssociation && i<cockpitModule_template.configuration.aggregations.length; i++){
+					var aggregation = cockpitModule_template.configuration.aggregations[i];
+					for(var j=0; !isColumnInAssociation && j<aggregation.associations.length; j++){
+						var association = aggregation.associations[j];
+						for(var k=0; !isColumnInAssociation && k<association.fields.length; k++){
+							var field = association.fields[k];
+							if(field.type=="dataset" && field.store==datasetLabel && field.column==widgetObject.content.selectedColumn.name){
+								isColumnInAssociation = true;
+								break;
+							}
+						}
+					}
+				}
 
-                if(!isColumnInAssociation){
-                    if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
-                            && widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
-                            && filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
-                        delete filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name];
-                    }
-                }
-            }
+				if(!isColumnInAssociation){
+					if(!isColumnInAssociation && !cockpitModule_widgetSelection.isLastTimestampedSelection(widgetObject.dataset.label,widgetObject.content.selectedColumn.name)){
+
+						if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
+						&& widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
+						&& filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
+							delete filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name];
+						}
+					}
+				}
+			}
 		}
 
 		var filters;
@@ -1007,28 +1010,28 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	// returns the internationalized template
 	this.getI18NTemplate = function (chartTemplate) {
-    	var clone = angular.copy(chartTemplate);
+		var clone = angular.copy(chartTemplate);
 
-    	// looks for all "text" properties and apply I18N to them
-    	var func = function (key, object) {
-    		if (object.hasOwnProperty("text")) {
-    			object.text = sbiModule_i18n.getI18n(object.text);
-	        }
-    	}
+		// looks for all "text" properties and apply I18N to them
+		var func = function (key, object) {
+			if (object.hasOwnProperty("text")) {
+				object.text = sbiModule_i18n.getI18n(object.text);
+			}
+		}
 
-    	this.traverse(clone, func);
-    	return clone;
+		this.traverse(clone, func);
+		return clone;
 
 	}
 
 	this.traverse = function(o, func) {
-	    for (var i in o) {
-	        if (o[i] !== null && typeof(o[i])=="object") {
-	        	func.apply(this, [i, o[i]]);
-	            //going one step down in the object tree!!
-    	        this.traverse(o[i], func);
-	        }
-	    }
+		for (var i in o) {
+			if (o[i] !== null && typeof(o[i])=="object") {
+				func.apply(this, [i, o[i]]);
+				//going one step down in the object tree!!
+				this.traverse(o[i], func);
+			}
+		}
 	}
 
 	this.getSummaryRow = function(ngModel){
@@ -1110,18 +1113,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
 						{"headerName": "Tags","field":"tags", cellRenderer:tagsRenderer},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
-							{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
+						{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 
 					$scope.cockpitDatasetGrid = {
-					        enableColResize: false,
-					        enableFilter: true,
-					        enableSorting: true,
-					        pagination: true,
-					        paginationAutoPageSize: true,
-					        rowSelection: multiple ? 'multiple' : 'single',
-					        rowMultiSelectWithClick: multiple,
-					        onGridSizeChanged: resizeColumns,
-					        columnDefs : $scope.cockpitDatasetColumn
+							enableColResize: false,
+							enableFilter: true,
+							enableSorting: true,
+							pagination: true,
+							paginationAutoPageSize: true,
+							rowSelection: multiple ? 'multiple' : 'single',
+									rowMultiSelectWithClick: multiple,
+									onGridSizeChanged: resizeColumns,
+									columnDefs : $scope.cockpitDatasetColumn
 					};
 
 					function resizeColumns(){
@@ -1236,39 +1239,39 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0 && !skipParameters){
 								//fill the parameter
 
-								 $mdDialog.show({
-								      controller: function($scope,sbiModule_translate,parameters){
-								    	  $scope.translate=sbiModule_translate;
-								    	  $scope.tmpParam=angular.copy(parameters);
-								    	  $scope.saveConfiguration=function(){
-								    		  $mdDialog.hide($scope.tmpParam);
-								    	  }
-								    	  $scope.cancelConfiguration=function(){
-								    		  $mdDialog.cancel();
-								    	  }
-								      },
-								      templateUrl: baseScriptPath+ '/directives/cockpit-data-configuration/templates/CockpitDataConfigurationDatasetParameterFill.html',
-								      clickOutsideToClose:false,
-								      parent: mdPanelRef._panelContainer[0].querySelector(".md-panel md-card"),
-								      hasBackdrop :true,
-								      preserveScope :true,
-								      locals:{parameters:$scope.tmpCurrentAvaiableDataset.parameters}
-								    })
-								    .then(function(data) {
-								    	angular.copy(data,$scope.tmpCurrentAvaiableDataset.parameters)
-								    	$scope.tmpCurrentAvaiableDataset.expanded = true;
-								    	if(autoAdd){
-											ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
-										}else{
-											angular.copy($scope.tmpCurrentAvaiableDataset,currentAvaiableDataset);
+								$mdDialog.show({
+									controller: function($scope,sbiModule_translate,parameters){
+										$scope.translate=sbiModule_translate;
+										$scope.tmpParam=angular.copy(parameters);
+										$scope.saveConfiguration=function(){
+											$mdDialog.hide($scope.tmpParam);
 										}
-										deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
-										mdPanelRef.close();
-										$scope.$destroy();
+										$scope.cancelConfiguration=function(){
+											$mdDialog.cancel();
+										}
+									},
+									templateUrl: baseScriptPath+ '/directives/cockpit-data-configuration/templates/CockpitDataConfigurationDatasetParameterFill.html',
+									clickOutsideToClose:false,
+									parent: mdPanelRef._panelContainer[0].querySelector(".md-panel md-card"),
+									hasBackdrop :true,
+									preserveScope :true,
+									locals:{parameters:$scope.tmpCurrentAvaiableDataset.parameters}
+								})
+								.then(function(data) {
+									angular.copy(data,$scope.tmpCurrentAvaiableDataset.parameters)
+									$scope.tmpCurrentAvaiableDataset.expanded = true;
+									if(autoAdd){
+										ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
+									}else{
+										angular.copy($scope.tmpCurrentAvaiableDataset,currentAvaiableDataset);
+									}
+									deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
+									mdPanelRef.close();
+									$scope.$destroy();
 
-								    }, function() {
-								      $scope.status = 'You cancelled the dialog.';
-								    });
+								}, function() {
+									$scope.status = 'You cancelled the dialog.';
+								});
 
 
 							}else{
@@ -1345,161 +1348,161 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var config = {
-			attachTo: elemToAtt,
-			locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,deferred:deferred},
-			controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,datasets,associations,deferred,$mdDialog){
+				attachTo: elemToAtt,
+				locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,deferred:deferred},
+				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,datasets,associations,deferred,$mdDialog){
 
-				$scope.translate = sbiModule_translate;
+					$scope.translate = sbiModule_translate;
 
-				// table columns
-				$scope.cockpitAutodetectColumns=[{label:sbiModule_translate.load("sbi.cockpit.association.editor.wizard.list.autodetect.similarity"),
-					name:"___similarity",
-					transformer:function(input){return $filter('number')(input * 100, 2) + '%';}
-				}];
-				angular.forEach(datasets,function(item){
-					var column = {label:item.label, name:item.label};
-					this.push(column);
-				},$scope.cockpitAutodetectColumns);
+					// table columns
+					$scope.cockpitAutodetectColumns=[{label:sbiModule_translate.load("sbi.cockpit.association.editor.wizard.list.autodetect.similarity"),
+						name:"___similarity",
+						transformer:function(input){return $filter('number')(input * 100, 2) + '%';}
+					}];
+					angular.forEach(datasets,function(item){
+						var column = {label:item.label, name:item.label};
+						this.push(column);
+					},$scope.cockpitAutodetectColumns);
 
-				// table search columns
-				$scope.cockpitAutodetectColumnsSearch=[];
-				angular.forEach(datasets,function(item){
-					this.push(item.label);
-				},$scope.cockpitAutodetectColumnsSearch);
+					// table search columns
+					$scope.cockpitAutodetectColumnsSearch=[];
+					angular.forEach(datasets,function(item){
+						this.push(item.label);
+					},$scope.cockpitAutodetectColumnsSearch);
 
-				// table selected row
-				$scope.cockpitAutodetectSelectedRow = null;
+					// table selected row
+					$scope.cockpitAutodetectSelectedRow = null;
 
-				$scope.saveAutodetect=function(){
-					deferred.resolve(angular.copy($scope.cockpitAutodetectSelectedRow));
-					mdPanelRef.close();
-					$scope.$destroy();
-				}
-
-				$scope.closeDialog=function(){
-					mdPanelRef.close();
-					$scope.$destroy();
-					deferred.reject();
-				}
-
-				// Similarity filter management
-
-				$scope.minSimilarity = 0.2;
-
-				$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
-				for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
-					if($scope.minSimilarityValues[i] < $scope.minSimilarity){
-						$scope.minSimilarityValues.splice(i, 1);
+					$scope.saveAutodetect=function(){
+						deferred.resolve(angular.copy($scope.cockpitAutodetectSelectedRow));
+						mdPanelRef.close();
+						$scope.$destroy();
 					}
-				}
 
-				$scope.selectedMinSimilarityValue = $scope.minSimilarity;
+					$scope.closeDialog=function(){
+						mdPanelRef.close();
+						$scope.$destroy();
+						deferred.reject();
+					}
 
-				$scope.$watch("selectedMinSimilarityValue",function(newValue,oldValue){
-		    		  $scope.filterCockpitAutodetectRows(newValue, $scope.selectedMinLengthValue);
-				});
+					// Similarity filter management
 
-				// Length filter management
+					$scope.minSimilarity = 0.2;
 
-				$scope.minLength = 2;
-
-				$scope.minLengthValues = [];
-				for(var i=$scope.minLength; i<=datasets.length; i++){
-					$scope.minLengthValues.unshift(i);
-				}
-
-				$scope.selectedMinLengthValue = $scope.minLength;
-
-				$scope.$watch("selectedMinLengthValue",function(newValue,oldValue){
-		    		  $scope.filterCockpitAutodetectRows($scope.selectedMinSimilarityValue, newValue);
-				});
-
-				// Filtered table model
-
-				$scope.cockpitAutodetectRows = [];
-				$scope.cockpitAutodetectFilteredRows = [];
-				$scope.showTable = false;
-
-				$scope.filterCockpitAutodetectRows=function(minSimilarity, minLength){
-					var rows = [];
-					angular.copy($scope.cockpitAutodetectRows, rows);
-
-					for(var i=rows.length-1; i>=0; i--){
-						var row = rows[i];
-						if(row["___similarity"] < minSimilarity || row["___length"] < minLength){
-							rows.splice(i, 1);
+					$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
+					for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
+						if($scope.minSimilarityValues[i] < $scope.minSimilarity){
+							$scope.minSimilarityValues.splice(i, 1);
 						}
 					}
 
-					angular.copy(rows, $scope.cockpitAutodetectFilteredRows);
-				}
+					$scope.selectedMinSimilarityValue = $scope.minSimilarity;
 
-				var datasetNames = {};
-				angular.forEach(datasets,function(item){
-					var params = {};
-					angular.forEach(item.parameters,function(parameter){
-						this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
-					},params);
-					this[item.label] = params;
-				},datasetNames);
+					$scope.$watch("selectedMinSimilarityValue",function(newValue,oldValue){
+						$scope.filterCockpitAutodetectRows(newValue, $scope.selectedMinLengthValue);
+					});
 
-				var payload = JSON.stringify(datasetNames);
-				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promisePost("2.0/datasetsee","associations/autodetect?wait=true&aggregate=true&evaluateNumber=true&threshold=" + $scope.minSimilarity, payload)
-				.then(function(response){
-					// get table rows from REST service response
+					// Length filter management
+
+					$scope.minLength = 2;
+
+					$scope.minLengthValues = [];
+					for(var i=$scope.minLength; i<=datasets.length; i++){
+						$scope.minLengthValues.unshift(i);
+					}
+
+					$scope.selectedMinLengthValue = $scope.minLength;
+
+					$scope.$watch("selectedMinLengthValue",function(newValue,oldValue){
+						$scope.filterCockpitAutodetectRows($scope.selectedMinSimilarityValue, newValue);
+					});
+
+					// Filtered table model
+
 					$scope.cockpitAutodetectRows = [];
-					angular.forEach(response.data,function(item, key){
-						var row = {};
-						row["___id"] = key;
-						row["___similarity"] = item.coefficient;
-						row["___length"] = item.fields.length;
-						angular.forEach(datasets,function(dataset){
-							row[dataset.label] = null;
-						}, row);
-						angular.forEach(item.fields,function(field){
-							row[field.datasetLabel] = field.datasetColumn;
-						}, row);
-						this.push(row);
-					},$scope.cockpitAutodetectRows);
+					$scope.cockpitAutodetectFilteredRows = [];
+					$scope.showTable = false;
 
-					// remove rows equal to existing associations
-					for(var i=$scope.cockpitAutodetectRows.length-1; i>=0; i--){
-						var autodetectRow = $scope.cockpitAutodetectRows[i];
-						for(var j=0; j<associations.length; j++){
-							var association = associations[j];
-							var isEqual = true;
-							for(var k=0; k<association.fields.length; k++){
-								var field = association.fields[k];
-								if(!autodetectRow.hasOwnProperty(field.store) || autodetectRow[field.store] != field.column){
-									isEqual = false;
+					$scope.filterCockpitAutodetectRows=function(minSimilarity, minLength){
+						var rows = [];
+						angular.copy($scope.cockpitAutodetectRows, rows);
+
+						for(var i=rows.length-1; i>=0; i--){
+							var row = rows[i];
+							if(row["___similarity"] < minSimilarity || row["___length"] < minLength){
+								rows.splice(i, 1);
+							}
+						}
+
+						angular.copy(rows, $scope.cockpitAutodetectFilteredRows);
+					}
+
+					var datasetNames = {};
+					angular.forEach(datasets,function(item){
+						var params = {};
+						angular.forEach(item.parameters,function(parameter){
+							this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
+						},params);
+						this[item.label] = params;
+					},datasetNames);
+
+					var payload = JSON.stringify(datasetNames);
+					sbiModule_restServices.restToRootProject();
+					sbiModule_restServices.promisePost("2.0/datasetsee","associations/autodetect?wait=true&aggregate=true&evaluateNumber=true&threshold=" + $scope.minSimilarity, payload)
+					.then(function(response){
+						// get table rows from REST service response
+						$scope.cockpitAutodetectRows = [];
+						angular.forEach(response.data,function(item, key){
+							var row = {};
+							row["___id"] = key;
+							row["___similarity"] = item.coefficient;
+							row["___length"] = item.fields.length;
+							angular.forEach(datasets,function(dataset){
+								row[dataset.label] = null;
+							}, row);
+							angular.forEach(item.fields,function(field){
+								row[field.datasetLabel] = field.datasetColumn;
+							}, row);
+							this.push(row);
+						},$scope.cockpitAutodetectRows);
+
+						// remove rows equal to existing associations
+						for(var i=$scope.cockpitAutodetectRows.length-1; i>=0; i--){
+							var autodetectRow = $scope.cockpitAutodetectRows[i];
+							for(var j=0; j<associations.length; j++){
+								var association = associations[j];
+								var isEqual = true;
+								for(var k=0; k<association.fields.length; k++){
+									var field = association.fields[k];
+									if(!autodetectRow.hasOwnProperty(field.store) || autodetectRow[field.store] != field.column){
+										isEqual = false;
+									}
+								}
+								if(isEqual){
+									$scope.cockpitAutodetectRows.splice(i, 1);
 								}
 							}
-							if(isEqual){
-								$scope.cockpitAutodetectRows.splice(i, 1);
-							}
 						}
-					}
 
-					angular.copy($scope.cockpitAutodetectRows, $scope.cockpitAutodetectFilteredRows);
-					$scope.showTable = true;
-				},function(response){
-					$scope.showTable = true;
-					sbiModule_restServices.errorHandler(response.data,"");
-				});
-			},
-			disableParentScroll: true,
-			templateUrl: baseScriptPath+'/directives/cockpit-data-configuration/templates/dataAssociationAutodetectChoice.html',
+						angular.copy($scope.cockpitAutodetectRows, $scope.cockpitAutodetectFilteredRows);
+						$scope.showTable = true;
+					},function(response){
+						$scope.showTable = true;
+						sbiModule_restServices.errorHandler(response.data,"");
+					});
+				},
+				disableParentScroll: true,
+				templateUrl: baseScriptPath+'/directives/cockpit-data-configuration/templates/dataAssociationAutodetectChoice.html',
 //				hasBackdrop: true,
-			position: $mdPanel.newPanelPosition().absolute().center(),
-			trapFocus: true,
-			zIndex: 150,
-			fullscreen :true,
-			clickOutsideToClose: true,
-			escapeToClose: false,
-			focusOnOpen: false,
-			onRemoving :function(){
-			}
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				trapFocus: true,
+				zIndex: 150,
+				fullscreen :true,
+				clickOutsideToClose: true,
+				escapeToClose: false,
+				focusOnOpen: false,
+				onRemoving :function(){
+				}
 		};
 
 		$mdPanel.open(config);
@@ -1514,39 +1517,37 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if (dataset != undefined) {
 				var columnsToshow = [];
 				var columnsToshowMeta = [];
-        		var columnsToshowIndex = [];
+				var columnsToshowIndex = [];
 				var localModel = model;
-	       	 	var datasetId = dataset.id.dsId;
-	       	 	model.dataset = {}
-	       	 	model.dataset.dsId = datasetId;
+				var datasetId = dataset.id.dsId;
+				model.dataset = {}
+				model.dataset.dsId = datasetId;
 
-	       	 	var regAggFunctions = 'AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT'
+				var regAggFunctions = 'AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT'
 
-	       	 	//get columnsSelected metadata: adds aggregation functions if required
-				for(var dsField in dataset.metadata.fieldsMeta){
-					var dsObject = dataset.metadata.fieldsMeta[dsField];
-					var header = dsObject.alias;
-					var reg = new RegExp('('+regAggFunctions+')\\(\\$F{'+dataset.label+'.'+header+'}\\)|\\$F{'+dataset.label+'.'+header+'}','g');
-            		var matches = text.match(reg);
-					if(matches){
-						dsObject.aggregationSelected = [];
-						var noAggregation = false;
+					//get columnsSelected metadata: adds aggregation functions if required
+					for(var dsField in dataset.metadata.fieldsMeta){
+						var dsObject = dataset.metadata.fieldsMeta[dsField];
+						var header = dsObject.alias;
+						var reg = new RegExp('('+regAggFunctions+')\\(\\$F{'+dataset.label+'.'+header+'}\\)|\\$F{'+dataset.label+'.'+header+'}','g');
+						var matches = text.match(reg);
+						if(matches){
+							dsObject.aggregationSelected = [];
+							var noAggregation = false;
 
-						for(var j = 0; j < matches.length; j++){
-	            			//aggregation function management (ie: COUNT($F{xxx}) )
-	            			var regAgg = new RegExp('^'+regAggFunctions,'g');
-	            			var matchAgg = matches[j].match(regAgg);
-	    					if (matchAgg){
-	    						var aggFunc = matchAgg[0];
-    							if(dsObject.aggregationSelected.indexOf(aggFunc) == -1){
-    								dsObject.aggregationSelected.push(aggFunc);
+							for(var j = 0; j < matches.length; j++){
+								//aggregation function management (ie: COUNT($F{xxx}) )
+								var regAgg = new RegExp('^'+regAggFunctions,'g');
+								var matchAgg = matches[j].match(regAgg);
+								if (matchAgg){
+									var aggFunc = matchAgg[0];
+									if(dsObject.aggregationSelected.indexOf(aggFunc) == -1){
+										dsObject.aggregationSelected.push(aggFunc);
 
-    							}
-	    					}else{
-	    						noAggregation = true;
-	    					}
-
-
+									}
+								}else{
+									noAggregation = true;
+								}
 
 
 
@@ -1559,139 +1560,141 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 
 
-	            		}
-
-						if(noAggregation){
-							dsObject.aggregationSelected.push('NONE');
-    					}
 
 
+							}
 
-    					if(dsObject.aggregationSelected != undefined){
-    						for(var i = 0; i<dsObject.aggregationSelected.length; i++){
-    							var agg = dsObject.aggregationSelected[i];
-    							columnsToshow.push(dataset.label+'.'+header+':'+agg);
-    							columnsToshowMeta.push(dsObject);
-    						}
+							if(noAggregation){
+								dsObject.aggregationSelected.push('NONE');
+							}
 
 
-    					}
 
+							if(dsObject.aggregationSelected != undefined){
+								for(var i = 0; i<dsObject.aggregationSelected.length; i++){
+									var agg = dsObject.aggregationSelected[i];
+									columnsToshow.push(dataset.label+'.'+header+':'+agg);
+									columnsToshowMeta.push(dsObject);
+								}
+
+
+							}
+
+						}
 					}
-				}
 //				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 				model.content.columnSelectedOfDataset = columnsToshowMeta;
 
 				this.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){
 
-	 				//get columnsSelected dataIndex
+					//get columnsSelected dataIndex
 
 					var fieldCounterInserted = {};
 					var alreadyInserted = [];
 					var currentCounter = 0;
 					var fieldCounter;
 
-	 				for (var col in columnsToshow){
-	 					var headerToSearchTmp = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);
-	 					var headerToSearch;
-	 					if(headerToSearchTmp.indexOf(':')>=0){
-	 						headerToSearch = headerToSearchTmp.substring(0, headerToSearchTmp.indexOf(':'));
-	 					}
-	 					else{
-	 						headerToSearch = headerToSearchTmp;
-	 					}
+					for (var col in columnsToshow){
+						var headerToSearchTmp = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);
+						var headerToSearch;
+						if(headerToSearchTmp.indexOf(':')>=0){
+							headerToSearch = headerToSearchTmp.substring(0, headerToSearchTmp.indexOf(':'));
+						}
+						else{
+							headerToSearch = headerToSearchTmp;
+						}
 
-        				if(fieldCounterInserted[headerToSearch] == undefined) fieldCounterInserted[headerToSearch]=0;
-        				fieldCounter = fieldCounterInserted[headerToSearch];
-        				currentCounter = 0;
+						if(fieldCounterInserted[headerToSearch] == undefined) fieldCounterInserted[headerToSearch]=0;
+						fieldCounter = fieldCounterInserted[headerToSearch];
+						currentCounter = 0;
 
-        				for (var field in allDatasetRecords.metaData.fields){
-        					if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
-        						var header = allDatasetRecords.metaData.fields[field].header;
-        						if (header == headerToSearch){
+						for (var field in allDatasetRecords.metaData.fields){
+							if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
+								var header = allDatasetRecords.metaData.fields[field].header;
+								if (header == headerToSearch){
 
-        							if(alreadyInserted.indexOf(headerToSearchTmp) >= 0){
-        								// this means that field with aggregation was already inserted
-        								break;
-        							}
-        							else{
-        								if(currentCounter >= fieldCounter){
+									if(alreadyInserted.indexOf(headerToSearchTmp) >= 0){
+										// this means that field with aggregation was already inserted
+										break;
+									}
+									else{
+										if(currentCounter >= fieldCounter){
 
-        									// if fieldCounter > 0 means there are more occurrences of that field with different aggregation, than jump to next
-        									columnsToshowIndex.push(columnsToshow[col] + '|' +allDatasetRecords.metaData.fields[field].dataIndex);
+											// if fieldCounter > 0 means there are more occurrences of that field with different aggregation, than jump to next
+											columnsToshowIndex.push(columnsToshow[col] + '|' +allDatasetRecords.metaData.fields[field].dataIndex);
 
-        									var counter = fieldCounterInserted[headerToSearch];
-        									var counter = counter+1;
-        									fieldCounterInserted[headerToSearch] = counter;
+											var counter = fieldCounterInserted[headerToSearch];
+											var counter = counter+1;
+											fieldCounterInserted[headerToSearch] = counter;
 
-        									alreadyInserted.push(headerToSearchTmp);
+											alreadyInserted.push(headerToSearchTmp);
 
-        									break;
-        								}
-        							}
-            						currentCounter++;
-        						}
-	                		}
-	                	}
-	 				}
-	 				//get columnsSelected values and replace placeholders
-	 				var row = allDatasetRecords.rows[0] || []; //get the first row
-	 				for (var col in columnsToshowIndex){
-	 					var colAliasTmp =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
-	 					var colAlias;
-	 					if(colAliasTmp.indexOf(':')>=0){
-	 						colAlias =  colAliasTmp.substring(0,  colAliasTmp.indexOf(':'));
-	 					}
-	 					else{
-	 						colAlias =  colAliasTmp;
-	 					}
+											break;
+										}
+									}
+									currentCounter++;
+								}
+							}
+						}
+					}
+					//get columnsSelected values and replace placeholders
+					var row = allDatasetRecords.rows[0] || []; //get the first row
+					for (var col in columnsToshowIndex){
+						var colAliasTmp =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
+						var colAlias;
+						if(colAliasTmp.indexOf(':')>=0){
+							colAlias =  colAliasTmp.substring(0,  colAliasTmp.indexOf(':'));
+						}
+						else{
+							colAlias =  colAliasTmp;
+						}
 
-	 					var aggregation = '';
-	 					if(colAliasTmp.indexOf(':')>=0){
-	 						aggregation= colAliasTmp.substring(colAliasTmp.indexOf(':')+1);
-	 					}
-	 					aggregation = aggregation.toUpperCase();
+						var aggregation = '';
+						if(colAliasTmp.indexOf(':')>=0){
+							aggregation= colAliasTmp.substring(colAliasTmp.indexOf(':')+1);
+						}
+						aggregation = aggregation.toUpperCase();
 
-	 					var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
-	 					var colValue = row[colIdx];
-	 					if(colValue == undefined) colValue ='';
+						var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
+						var colValue = row[colIdx];
+						if(colValue == undefined) colValue ='';
 
-	 					if(allDatasetRecords.metaData.fields[1].type == 'float' && model.numbers){
-	 						if(model.numbers.format) colValue = $filter('number')(colValue,model.numbers.precision);
-	 						else colValue = model.numbers.precision ? parseFloat(colValue).toFixed(model.numbers.precision) : colValue;
-	 						colValue = (model.numbers.prefix || '') + colValue + (model.numbers.suffix || '');
-	 					}
-
-
-
-	 					// if aggregation is specified search for right match and not for a generic one
-
-	 					var reg;
-	 					if(aggregation != ''){
-	 						reg = new RegExp(aggregation+'(\\(\\$F{'+colAlias+'}\\))','g');
-	 					}
-	 					else{
-	 						reg = new RegExp('\\$F{'+colAlias+'}','g');
-	 					}
+						if(allDatasetRecords.metaData.fields[1].type == 'float' && model.numbers){
+							if(model.numbers.format) colValue = $filter('number')(colValue,model.numbers.precision);
+							else colValue = model.numbers.precision ? parseFloat(colValue).toFixed(model.numbers.precision) : colValue;
+							colValue = (model.numbers.prefix || '') + colValue + (model.numbers.suffix || '');
+						}
 
 
-	 					//at first check for aggregation functions , than for simple values
-	 					//var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
-	 					var matches = text.match(reg);
-	 					if (matches){
-	 						text = text.replace(reg, colValue);
-	 					}else{
-	 						var reg = new RegExp('\\$F\\{('+colAlias+')\\}','g');
-	 						matches = text.match(reg);
-	 						if (matches){
-	 							text = text.replace(reg, colValue);
-	 						}
-	 					}
-	 				}
-	 				deferred.resolve(text);
-	 			},function(error){
-	         		deferred.reject(error);
-	 			});
+
+						// if aggregation is specified search for right match and not for a generic one
+
+						var reg;
+						if(aggregation != ''){
+							reg = new RegExp(aggregation+'(\\(\\$F{'+colAlias+'}\\))','g');
+						}
+						else{
+							reg = new RegExp('\\$F{'+colAlias+'}','g');
+						}
+
+
+						//at first check for aggregation functions , than for simple values
+						//var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
+						var matches = text.match(reg);
+						if (matches){
+							text = text.replace(reg, colValue);
+						}else{
+							var reg = new RegExp('\\$F\\{('+colAlias+')\\}','g');
+							matches = text.match(reg);
+							if (matches){
+								text = text.replace(reg, colValue);
+							}
+						}
+					}
+					deferred.resolve(text);
+				},function(error){
+					deferred.reject(error);
+				});
 				return deferred.promise;
 
 			}
@@ -1701,70 +1704,70 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	//conditional value formatting
-//    ds.formatValue = function (value, numbersModel){
-//		var output = value;
-//		if(!numbersModel || !numbersModel.precision || numbersModel.precision < 0) numbersModel.precision = 2;
-//
-//		//setting the number precision when format is not present
-//		if (numbersModel && numbersModel.precision && !numbersModel.format) {
-//			output = parseFloat(value).toFixed(numbersModel.precision);
-//		}
-//
-//		if (numbersModel && numbersModel.format){
-//	    	switch (numbersModel.format) {
-//	    	case "#.###":
-//	    		output = ds.numberFormat(value, 0, ',', '.');
-//	    	break;
-//	    	case "#,###":
-//	    		output = ds.numberFormat(value, 0, '.', ',');
-//	    	break;
-//	    	case "#.###,##":
-//	    		output = ds.numberFormat(value, numbersModel.precision, ',', '.');
-//	    	break;
-//	    	case "#,###.##":
-//	    		output = ds.numberFormat(value, numbersModel.precision, '.', ',');
-//	    		break;
-//	    	default:
-//	    		break;
-//	    	}
-//		}
-//    	return (numbersModel.prefix||'') + output + (numbersModel.suffix||'');
+//	ds.formatValue = function (value, numbersModel){
+//	var output = value;
+//	if(!numbersModel || !numbersModel.precision || numbersModel.precision < 0) numbersModel.precision = 2;
+
+//	//setting the number precision when format is not present
+//	if (numbersModel && numbersModel.precision && !numbersModel.format) {
+//	output = parseFloat(value).toFixed(numbersModel.precision);
 //	}
-//
-//    //formatting function with the given parameters
+
+//	if (numbersModel && numbersModel.format){
+//	switch (numbersModel.format) {
+//	case "#.###":
+//	output = ds.numberFormat(value, 0, ',', '.');
+//	break;
+//	case "#,###":
+//	output = ds.numberFormat(value, 0, '.', ',');
+//	break;
+//	case "#.###,##":
+//	output = ds.numberFormat(value, numbersModel.precision, ',', '.');
+//	break;
+//	case "#,###.##":
+//	output = ds.numberFormat(value, numbersModel.precision, '.', ',');
+//	break;
+//	default:
+//	break;
+//	}
+//	}
+//	return (numbersModel.prefix||'') + output + (numbersModel.suffix||'');
+//	}
+
+//	//formatting function with the given parameters
 //	ds.numberFormat = function (value, dec, dsep, tsep) {
-//
-//		  if (isNaN(value) || value == null) return value;
-//
-//		  value = parseFloat(value).toFixed(~~dec);
-//		  tsep = typeof tsep == 'string' ? tsep : ',';
-//
-//		  var parts = value.split('.'), fnums = parts[0],
-//		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
-//
-//		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
+
+//	if (isNaN(value) || value == null) return value;
+
+//	value = parseFloat(value).toFixed(~~dec);
+//	tsep = typeof tsep == 'string' ? tsep : ',';
+
+//	var parts = value.split('.'), fnums = parts[0],
+//	decimals = parts[1] ? (dsep || '.') + parts[1] : '';
+
+//	return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
 //	}
 
 })
 .run(function() {
 	//adds methods for IE11
 	if (!String.prototype.startsWith) {
-	    String.prototype.startsWith = function(searchString, position){
-	      position = position || 0;
-	      return this.substr(position, searchString.length) === searchString;
-	  };
+		String.prototype.startsWith = function(searchString, position){
+			position = position || 0;
+			return this.substr(position, searchString.length) === searchString;
+		};
 	}
 
 	if (!String.prototype.endsWith) {
-		  String.prototype.endsWith = function(searchString, position) {
-		      var subjectString = this.toString();
-		      if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-		        position = subjectString.length;
-		      }
-		      position -= searchString.length;
-		      var lastIndex = subjectString.lastIndexOf(searchString, position);
-		      return lastIndex !== -1 && lastIndex === position;
-		  };
-		}
+		String.prototype.endsWith = function(searchString, position) {
+			var subjectString = this.toString();
+			if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+				position = subjectString.length;
+			}
+			position -= searchString.length;
+			var lastIndex = subjectString.lastIndexOf(searchString, position);
+			return lastIndex !== -1 && lastIndex === position;
+		};
+	}
 
 });

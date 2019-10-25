@@ -71,6 +71,9 @@ angular.module('cockpitModule')
 		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX') $scope.ngModel.settings.modalityValue = "dropdown";
 
 		$scope.isDisabled = function(p){
+			if (cockpitModule_properties.TAINTED_ASSOCIATIONS[$scope.ngModel.dataset.label]) {
+				return false;
+			}
 			if($scope.ngModel.settings.modalityValue=="dropdown"){
 				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1 && $scope.selectedValues.indexOf(p) == -1;
 			}else{
@@ -269,6 +272,7 @@ angular.module('cockpitModule')
         			activeSelections: $scope.selectedValues, 
         			targetModel: $scope.ngModel.content, 
         			settings:$scope.ngModel.settings,
+        			ds: $scope.ngModel.dataset.label,
         			title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
         		}
 	  		}).then(function(selectedFields) {
@@ -276,7 +280,7 @@ angular.module('cockpitModule')
 	  			},function(error){});
         	}
         	
-    	function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title) {
+    	function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title, ds) {
     		scope.settings = settings;
     		scope.title = title;
     		scope.translate = sbiModule_translate;
@@ -320,6 +324,9 @@ angular.module('cockpitModule')
         	 }
         	 
         	 scope.isDisabled = function(p){
+        		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name) || cockpitModule_properties.TAINTED_ASSOCIATIONS[ds]) {
+ 					return false;
+ 				}
         		 return selectables && selectables.indexOf(p) == -1;
         	 }
         	               

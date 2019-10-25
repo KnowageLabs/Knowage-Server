@@ -258,9 +258,12 @@ function cockpitWidgetControllerFunction(
 		$mdDialog,cockpitModule_backwardCompatibility,
 		cockpitModule_exportWidgetService,
 		$httpParamSerializer,
-		cockpitModule_defaultTheme)
+		cockpitModule_defaultTheme,
+		cockpitModule_templateServices)
 
-	{
+{
+
+cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	var SERVICE = "/restful-services/2.0/datasets/preview";
 	var PREVIEWBACKGROUND = "/restful-services/2.0/export/dataset/";
