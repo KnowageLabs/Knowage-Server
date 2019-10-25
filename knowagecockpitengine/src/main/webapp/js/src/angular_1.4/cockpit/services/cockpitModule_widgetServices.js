@@ -300,7 +300,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         }
                     }else{
                         var data = {};
-                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name)){
+                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name) || 
+                        	cockpitModule_properties.TAINTED_ASSOCIATIONS[config.dataset.label]){
                             data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
                         }
                         else {
