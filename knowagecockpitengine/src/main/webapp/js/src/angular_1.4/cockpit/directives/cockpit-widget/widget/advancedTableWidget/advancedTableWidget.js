@@ -311,8 +311,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[datasetRecords.rows.length-1]]);
 				}
 				else {
-					//$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
-					$scope.advancedTableGrid.api.setRowData([]);
+					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([]);
 				}
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
