@@ -334,6 +334,9 @@ function cockpitChartWidgetControllerFunction(
 		$scope.$broadcast("rewindSonify");
 	}
 
+	$scope.cancelSonify = function(){
+		$scope.$broadcast("cancelSonify");
+	}
 	$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
 	/**
 	 * Set a watcher on a variable that can contains the associative selections for realtime dataset

@@ -17,7 +17,7 @@
  */
 angular.module('chartRendererModule')
 
-.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n, ChartUpdateService,chartSonifyService){
+.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n, ChartUpdateService){
 
 	return{
 		restrict:'E',
@@ -60,6 +60,7 @@ angular.module('chartRendererModule')
 				scope.chartConf;
 				scope.chartTemplate;
 				scope.chartInitializer;
+				scope.chartSonifyService;
 
 				scope.renderChart = function(chartConf, jsonData,selectionsAndParams){
 					var locale = sbiModule_config.curr_language + "-" + sbiModule_config.curr_country;
@@ -110,6 +111,7 @@ angular.module('chartRendererModule')
 						renderObject.locale = locale;
 						renderObject.widgetData = scope.widgetData;
 						renderObject.chartTemplate = scope.chartTemplate.CHART;
+						renderObject.chartSonifyService = scope.chartSonifyService;
 						if(selectionsAndParams){
 							renderObject.selectionsAndParams = selectionsAndParams;
 						}
@@ -197,6 +199,7 @@ angular.module('chartRendererModule')
 				if(lib){
 					scope.noLib = false;
 					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
+					scope.chartSonifyService = chartInitializerRetriver.getChartInitializer("chartSonifyService");
 					/*var template = scope.chartTemplate;
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
@@ -280,19 +283,27 @@ angular.module('chartRendererModule')
 					element[0].innerHTML = "no library implementation";
 				}
 
-			}
+			};
+
 			scope.$on('playSonify',function(event,data){
-				chartSonifyService.playSonify()
+
+				scope.chartSonifyService.playSonify()
 
 			})
 			scope.$on('pauseSonify',function(event,data){
-				chartSonifyService.pauseSonify()
+
+				scope.chartSonifyService.pauseSonify()
 
 			})
 			scope.$on('rewindSonify',function(event,data){
-				chartSonifyService.rewindSonify()
 
-			})
+				scope.chartSonifyService.rewindSonify()
+
+			});
+			scope.$on('cancelSonify',function(event,data){
+
+				scope.chartSonifyService.cancelSonify()
+			});
 
 
 		}

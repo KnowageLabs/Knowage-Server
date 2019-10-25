@@ -3,7 +3,7 @@
 		{{translate.load("sbi.chartengine.designer.tab.configuration.sonification")}}
 	</md-switch>
 	<md-input-container ng-if="chartTemplate.accessibility.sonification" class="md-block">
-      <label>{{translate.load("sbi.chartengine.designer.tab.configuration.targetserie")}}</label>
+      <label>{{translate.load("sbi.chartengine.designer.tab.configuration.sonificationtargetserie")}}</label>
       <md-select ng-model="chartTemplate.accessibility.sonificationSerie">
         <md-option></md-option>
         <md-option ng-repeat="serie in chartTemplate.VALUES.SERIE" ng-value="serie.name">
@@ -11,4 +11,10 @@
         </md-option>
       </md-select>
     </md-input-container>
+    
+    <md-input-container class="md-block"> 
+		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.sonification.duration")}}</label>
+		 <input type="number" step="any" name="duration" ng-model="chartTemplate.accessibility.duration" ng-init="chartTemplate.accessibility.duration=5"/> 
+	</md-input-container>
+    
 </div>

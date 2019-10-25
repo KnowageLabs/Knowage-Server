@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService','chartSonifyService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService,chartSonifyService){//izmena
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService){//izmena
 
 	this.chart = null;
 	var chartConfConf = null;
@@ -144,7 +144,7 @@ angular.module('chartInitializer')
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
 			}
-			chartSonifyService.setChart(this.chart)
+			renderObj.chartSonifyService.setChart(this.chart)
 			//return chart;
 
 		}
@@ -847,5 +847,18 @@ angular.module('chartInitializer')
 
 		return output;
 	};
+
+	/*this.cancelSonify = function () {
+		//this is for speed
+		chartSonifyService.cancelSonify();
+	};
+
+	this.playSonify = function () {
+		chartSonifyService.playSonify()
+	};
+	this.pauseSonify = function () {		chartSonifyService.pauseSonify();
+	};
+	this.rewindSonify = function () {		chartSonifyService.rewindSonify();
+	};*/
 
 }])
