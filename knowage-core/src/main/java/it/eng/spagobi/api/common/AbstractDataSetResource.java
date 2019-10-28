@@ -117,7 +117,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
 			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, Set<String> indexes) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-				indexes);
+				null, indexes);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
@@ -267,7 +267,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private int getSolrFacetLimitOption(Map<String, Object> options) {
-		if (options.get("facetsLimit")!=null) {
+		if (options.get("facetsLimit") != null) {
 
 			return Integer.parseInt(options.get("facetsLimit").toString());
 		}
