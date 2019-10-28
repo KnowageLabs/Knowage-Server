@@ -42,10 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
-import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -177,14 +175,6 @@ public class PageResource extends AbstractChartEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("JPG".equals(outputType)) {
-					// String requestURL = getRequestUrlForJpgExport(request);
-					// request.setAttribute("requestURL", requestURL);
-					//
-					// RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
-					// request.setAttribute("renderOptions", renderOptions);
-					//
-					// dispatchUrl = "/WEB-INF/jsp/???.jsp";
-					// response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else {
 					engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
@@ -258,7 +248,6 @@ public class PageResource extends AbstractChartEngineResource {
 		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
-		CustomHeaders customHeaders = new CustomHeaders(headers);
 
 		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
 		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
@@ -282,18 +271,7 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
-		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
-		return renderOptions;
-	}
-
-	private RenderOptions getRenderOptionsForJpgExporter(HttpServletRequest request) throws UnsupportedEncodingException {
-		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
-		Map<String, String> headers = new HashMap<String, String>(1);
-		headers.put("Authorization", "Direct " + encodedUserId);
-		CustomHeaders customHeaders = new CustomHeaders(headers);
-		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
+		RenderOptions renderOptions = RenderOptions.defaultOptions().withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
 

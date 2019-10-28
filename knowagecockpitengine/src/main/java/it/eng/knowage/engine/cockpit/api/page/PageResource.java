@@ -46,10 +46,8 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
-import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -163,14 +161,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
-					// String requestURL = getRequestUrlForJpgExport(request);
-					// request.setAttribute("requestURL", requestURL);
-					//
-					// RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
-					// request.setAttribute("renderOptions", renderOptions);
-					//
-					// dispatchUrl = "/WEB-INF/jsp/???.jsp";
-					// response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
@@ -202,42 +192,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private String getRequestUrlForJpgExport(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
-		String sep = "?";
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (String parameter : parameterMap.keySet()) {
-			if (!JPG_PARAMETERS.contains(parameter)) {
-				String[] values = parameterMap.get(parameter);
-				if (values != null && values.length > 0) {
-					sb.append(sep);
-					sb.append(parameter);
-					sb.append("=");
-					sb.append(values[0]);
-					sep = "&";
-				}
-			}
-		}
-		sb.append("&export=true");
-		return sb.toString();
-	}
-
-	private RenderOptions getRenderOptionsForJpgExporter(HttpServletRequest request) throws UnsupportedEncodingException {
-		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
-		Map<String, String> headers = new HashMap<String, String>(1);
-		headers.put("Authorization", "Direct " + encodedUserId);
-		CustomHeaders customHeaders = new CustomHeaders(headers);
-		RenderOptions renderOptions = RenderOptions.defaultOptions().withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
-		return renderOptions;
-	}
-
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
-		CustomHeaders customHeaders = new CustomHeaders(headers);
 
 		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
 		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
@@ -261,8 +220,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
-		RenderOptions renderOptions = defaultRenderOptions.withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		RenderOptions renderOptions = defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
 
