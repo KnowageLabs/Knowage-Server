@@ -1,0 +1,6 @@
+ <md-input-container flex >
+	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+		<md-select ng-model="filter.rightOperandDescription" >
+			<md-option ng-repeat="parameter in obj.parameters" value="{{parameter.name}}" ng-click="fillInput(parameter)">{{parameter.name}}</md-option>
+		</md-select>   
+</md-input-container>

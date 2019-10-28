@@ -1,0 +1,30 @@
+<div layout="row" flex>
+<md-input-container flex> 
+	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label> 
+	<input name="rightOperand" ng-model="filter.rightOperandDescription" readonly> 
+</md-input-container>          
+
+<div  >
+	<md-menu>
+		<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);" >
+			<md-icon md-menu-origin class="fa fa-angle-down"></md-icon>
+		</md-button>
+		<md-menu-content>
+			<md-menu-item ng-repeat="entity in obj.entities">
+				<md-menu class="filterOtherEntity">
+					<md-button ng-click="$mdMenu.open()"><span>{{entity.text}}</span></md-button>
+				    	<md-menu-content >
+				    		<md-menu-item ng-repeat="child in entity.children">
+							    <md-button  ng-click="fillInput(child)">
+							       	<span>{{child.text}}</span>
+							    </md-button>
+							</md-menu-item>
+						</md-menu-content>
+				</md-menu>
+			</md-menu-item>
+		</md-menu-content>
+	</md-menu>
+</div> 
+
+
+</div>

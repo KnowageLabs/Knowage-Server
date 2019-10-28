@@ -1,5 +1,5 @@
 
-<%String basePath = urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/filter/target"); %>
+<%String basePath = urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/filter/filterTarget"); %>
 <%String servicesPath = basePath +"/services"; %>
 <%String directivesPath = basePath +"/directives"; %>
 <!-- app -->

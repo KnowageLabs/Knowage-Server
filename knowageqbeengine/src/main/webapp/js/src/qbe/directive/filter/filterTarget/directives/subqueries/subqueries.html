@@ -1,0 +1,6 @@
+<md-input-container flex >
+	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+	<md-select ng-model="filter.rightOperandDescription" >
+		<md-option ng-repeat="subquery in obj.subqueries" value="{{subquery.name}}" ng-click="fillInput(subquery)">{{subquery.name}}</md-option>
+	</md-select>  
+</md-input-container>
