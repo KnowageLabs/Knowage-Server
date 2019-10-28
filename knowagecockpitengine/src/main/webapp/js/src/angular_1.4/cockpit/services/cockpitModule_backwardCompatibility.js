@@ -97,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//to version 7.0
 			if(!self.compareVersion("7.0.0",model.knowageVersion)){
 				if(model.type=='table'){
+					if(model.cross && !model.cross.crossType) model.cross.crossType = 'allRow';
 					if(model.content && model.content.columnSelectedOfDataset){
 						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].fieldType == "ATTRIBUTE" && model.content.columnSelectedOfDataset[k].funcSummary) {
