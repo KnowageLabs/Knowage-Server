@@ -79,7 +79,7 @@
 		    if (!chart.sonification.timeline || chart.sonification.timeline.atStart()) {
 		    	var seriesOptions = this.getInstrumentOptions()
 		        chart.sonify({
-		            duration: 5000,
+		            duration:  this.chart.userOptions.accessibility.duration *1000,
 		            order: 'simultaneous',
 		            pointPlayTime: 'x',
 		            seriesOptions: seriesOptions,
