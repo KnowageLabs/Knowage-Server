@@ -36,6 +36,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
@@ -194,8 +195,10 @@ public class DataSetUtilities {
 	/**
 	 * Fill he parameters map with the default values if and only if they are not already present in the map.
 	 *
-	 * @param dataSet    can't be null
-	 * @param parameters can be null
+	 * @param dataSet
+	 *            can't be null
+	 * @param parameters
+	 *            can be null
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void fillDefaultValues(IDataSet dataSet, Map parameters) {
@@ -354,6 +357,24 @@ public class DataSetUtilities {
 		return toReturn;
 	}
 
+	public static Map<String, Object> getDriversMap(JSONObject driversJson) {
+
+		Map<String, Object> ret = new HashMap<String, Object>();
+
+		try {
+			if (driversJson != null) {
+				int length = driversJson.length();
+				HashMap<String, Object> hashMapFromJSONObject = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
+				ret.putAll(hashMapFromJSONObject);
+			}
+		} catch (Exception e) {
+			logger.error("Cannot read dataset drivers", e);
+			throw new SpagoBIRuntimeException("Cannot read drivers", e);
+		}
+
+		return ret;
+	}
+
 	public static Object getValue(String value, Class type) {
 		Object result = null;
 
@@ -366,7 +387,7 @@ public class DataSetUtilities {
 						Date date = new SimpleDateFormat(CockpitJSONDataWriter.TIMESTAMP_FORMAT).parse(value);
 						String formattedValue = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT).format(date);
 						result = Timestamp.valueOf(formattedValue);
-					} catch (ParseException | IllegalArgumentException ex) {   // tries Solr date format
+					} catch (ParseException | IllegalArgumentException ex) { // tries Solr date format
 						try {
 							DateTimeFormatter dateTime = ISODateTimeFormat.dateTimeNoMillis();
 							DateTime parsedDateTime = dateTime.parseDateTime(value);
@@ -374,9 +395,8 @@ public class DataSetUtilities {
 							SimpleDateFormat sdf = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
 							String valuesToChange = sdf.format(dateToconvert);
 							result = Timestamp.valueOf(valuesToChange);
-						}
-						catch (Exception ex2) {
-						throw new SpagoBIRuntimeException(ex2);
+						} catch (Exception ex2) {
+							throw new SpagoBIRuntimeException(ex2);
 						}
 					}
 				}

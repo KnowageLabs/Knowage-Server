@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -732,16 +731,7 @@ public class ManageDataSetsForREST {
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
 
-			if (driversMap != null && driversMap.size() > 0) {
-				Set<String> driverUrlNames = driversMap.keySet();
-				for (String driverName : driverUrlNames) {
-					Map mapOfValues = (Map) driversMap.get(driverName);
-					if (mapOfValues.containsKey("value")) {
-						logger.debug("Setting drivers");
-						dataSet.setDrivers(driversMap);
-					}
-				}
-			}
+			dataSet.setDrivers(DataSetUtilities.getDriversMap(driversJSON));
 			// START -> This code should work instead of CheckQbeDataSets around
 			// the projects
 			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
@@ -810,10 +800,6 @@ public class ManageDataSetsForREST {
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		return toReturn;
 	}
-
-	/**
-	 * @return
-	 */
 
 	public List getCategories(UserProfile userProfile) {
 		IRoleDAO rolesDao = null;
