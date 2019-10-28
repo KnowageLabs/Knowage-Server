@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_filter', ['ngMaterial','angular_table' ])
+angular.module('qbe_filter', ['ngMaterial','angular_table','targetApp' ])
 .directive('qbeFilter', function() {
 	return {
 

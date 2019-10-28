@@ -68,3 +68,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- ADVANCE FILTERS -->
 <%@include file="/WEB-INF/jsp/commons/advancedFilterAppImport/advancedFilterImport.jspf"%>
+
+<!-- FILTER TARGET APP -->
+<%@include file="/WEB-INF/jsp/commons/targetApp/targetAppImport.jspf"%>

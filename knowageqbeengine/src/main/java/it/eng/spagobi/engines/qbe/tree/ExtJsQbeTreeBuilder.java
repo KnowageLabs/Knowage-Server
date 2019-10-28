@@ -379,6 +379,7 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("id", field.getUniqueName());
 			fieldNode.put("text", fieldLabel);
 			fieldNode.put("iconCls", iconCls);
+			fieldNode.put("dataType", field.getType());
 			fieldNode.put("leaf", true);
 			fieldNode.put("qtip", fieldTooltip);
 			if (iconCls.equals(QuerySerializationConstants.CALENDAR)) {

@@ -42,6 +42,8 @@
 				                 
 				             </md-select>   
 				        </md-input-container>
+				        
+				          <!-- targetTypes -->
 						<md-input-container flex=20 >
 							<label class="filterLabel">{{translate.load("kn.qbe.filters.targetType")}}</label>
 				          	<md-select ng-model="filter.rightType" >
@@ -49,52 +51,74 @@
 				                 ng-click="changeTarget(type.value,filter)">{{type.name}}</md-option>
 				             </md-select>   
 				        </md-input-container>
+				          <!-- targetTypes -->
 				        
-					 	<md-input-container flex=25  ng-if="filter.rightType=='anotherEntity'">
-					 		<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
-				        	<input name="rightOperand" ng-model="filter.rightOperandDescription" readonly>
-					    </md-input-container>       
+				        <!-- anotherEntity -->
+<!-- 					 	<md-input-container flex=25  ng-if="filter.rightType=='anotherEntity'"> -->
+<!-- 					 		<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label> -->
+<!-- 				        	<input name="rightOperand" ng-model="filter.rightOperandDescription" readonly> -->
+<!-- 					    </md-input-container>        -->
 					    
-					    <div  ng-if="filter.rightType=='anotherEntity'" >
-				        	<md-menu>
-				        		<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);" >
-									<md-icon md-menu-origin class="fa fa-angle-down"></md-icon>
-								</md-button>
-				       			<md-menu-content>
-									<md-menu-item ng-repeat="entity in tree">
-										<md-menu class="filterOtherEntity">
-					      					<md-button ng-click="$mdMenu.open()"><span>{{entity.text}}</span></md-button>
-				    						<md-menu-content >
-				    							<md-menu-item ng-repeat="r in entity.children">
-							    					<md-button  ng-click="fillInput(filter, r, 'field')">
-							       						<span>{{r.text}}</span>
-							    					</md-button>
-								    			</md-menu-item>
-											</md-menu-content>
-										</md-menu>
-									</md-menu-item>
-								</md-menu-content>
-							</md-menu>
-				       	</div>
+<!-- 					    <div  ng-if="filter.rightType=='anotherEntity'" > -->
+<!-- 				        	<md-menu> -->
+<!-- 				        		<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);" > -->
+<!-- 									<md-icon md-menu-origin class="fa fa-angle-down"></md-icon> -->
+<!-- 								</md-button> -->
+<!-- 				       			<md-menu-content> -->
+<!-- 									<md-menu-item ng-repeat="entity in tree"> -->
+<!-- 										<md-menu class="filterOtherEntity"> -->
+<!-- 					      					<md-button ng-click="$mdMenu.open()"><span>{{entity.text}}</span></md-button> -->
+<!-- 				    						<md-menu-content > -->
+<!-- 				    							<md-menu-item ng-repeat="r in entity.children"> -->
+<!-- 							    					<md-button  ng-click="fillInput(filter, r, 'field')"> -->
+<!-- 							       						<span>{{r.text}}</span> -->
+<!-- 							    					</md-button> -->
+<!-- 								    			</md-menu-item> -->
+<!-- 											</md-menu-content> -->
+<!-- 										</md-menu> -->
+<!-- 									</md-menu-item> -->
+<!-- 								</md-menu-content> -->
+<!-- 							</md-menu> -->
+<!-- 				       	</div> -->
+<!-- 				       	 anotherEntity -->
+				       	 
+<!-- 				       	 subquery -->
+<!-- 				        <md-input-container flex=30 ng-if="filter.rightType=='subquery'" > -->
+<!-- 				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label> -->
+<!-- 				       		<md-select ng-model="filter.rightOperandDescription" > -->
+<!-- 				               <md-option ng-repeat="s in subqueries" value="{{s.name}}" ng-click="fillInput(filter,s, 'subquery')">{{s.name}}</md-option> -->
+<!-- 				           </md-select>   -->
+<!-- 				       	</md-input-container> -->
+<!-- 				       	 subquery -->
+				       	
+<!-- 				       	parameter -->
+<!-- 				        <md-input-container flex=30 ng-if="filter.rightType=='parameter'"> -->
+<!-- 				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label> -->
+<!-- 							<md-select ng-model="filter.rightOperandDescription" > -->
+<!-- 								<md-option ng-repeat="p in pars" value="{{p.name}}" ng-click="fillInput(filter,p, 'parameter')">{{p.name}}</md-option> -->
+<!-- 							</md-select>    -->
+<!-- 					    </md-input-container> -->
+<!-- 					    parameter -->
+					   
+<!-- 						 default -->
+<!-- 				        <md-input-container flex=30  ng-if="filter.rightType!='parameter' && filter.rightType!='subquery' && filter.rightType!='anotherEntity'" ng-show="field.iconCls!='the_date'" > -->
+<!-- 				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label> -->
+<!-- 					    	<input name="rightOperand" ng-model="filter.rightOperandDescription" ng-change="edit(filter)"> -->
+<!-- 					    </md-input-container> -->
+<!-- 					     default -->
 
-				        <md-input-container flex=30 ng-if="filter.rightType=='subquery'" >
-				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
-				       		<md-select ng-model="filter.rightOperandDescription" >
-				               <md-option ng-repeat="s in subqueries" value="{{s.name}}" ng-click="fillInput(filter,s, 'subquery')">{{s.name}}</md-option>
-				           </md-select>  
-				       	</md-input-container>
-				        <md-input-container flex=30 ng-if="filter.rightType=='parameter'">
-				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
-							<md-select ng-model="filter.rightOperandDescription" >
-								<md-option ng-repeat="p in pars" value="{{p.name}}" ng-click="fillInput(filter,p, 'parameter')">{{p.name}}</md-option>
-							</md-select>   
-					    </md-input-container>
-
-				        <md-input-container flex=30  ng-if="filter.rightType!='parameter' && filter.rightType!='subquery' && filter.rightType!='anotherEntity'">
-				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
-					    	<input name="rightOperand" ng-model="filter.rightOperandDescription" ng-change="edit(filter)">
-					    </md-input-container>
-
+					    <target flex=30
+					    	obj="{	subqueries:subqueries,
+					    			entities:tree,
+					    			parameters:pars}"
+					    	filter="filter"
+					    	field-type="field.dataType"
+					    	target-type="filter.rightType"
+					    ></target>
+					    
+<!-- 						 <md-datepicker  ng-show="field.iconCls=='the_date'"  ng-model="filter.rightOperandDescription"></md-datepicker > -->
+<!-- 						 <angular-time-picker    ng-model="filter.rightOperandDescription"></angular-time-picker> -->
+						 
 				        <md-button  class="md-icon-button" ng-click="deleteFilter(filter)">
 				        	<md-icon md-font-icon="fa fa-eraser" ></md-icon>
 				        	<md-tooltip md-delay="1000" >{{translate.load("kn.qbe.filters.clear")}}</md-tooltip>
@@ -102,6 +126,7 @@
 					</div>	
 				</md-card-content>
 			</md-card>
+			
 			<md-card  ng-if="showTable" >
 				<md-card-content layout="column" layout-padding style="height:400px">
 					<div  ag-grid="valuesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage" 

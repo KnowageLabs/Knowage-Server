@@ -1,0 +1,30 @@
+
+<%String basePath = urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/directive/filter/target"); %>
+<%String servicesPath = basePath +"/services"; %>
+<%String directivesPath = basePath +"/directives"; %>
+<!-- app -->
+<script type="text/javascript" src="<%= basePath + "/targetApp.js"%>"></script>
+<%@include file="/js/src/qbe/directive/filter/target/targetAppConf.jspf"%>
+
+
+<!-- services -->
+<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/multiConditionTemplateRetriver.js"%>"></script> 
+<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/parsingHelper.js"%>"></script> 
+<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/mappings.js"%>"></script>
+<script type="text/javascript" src="<%= servicesPath + "/dateService.js"%>"></script>  
+
+
+<!-- directives -->
+<script type="text/javascript" src="<%= directivesPath + "/anotherentity/anotherentity.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/date/date.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/manual/manual.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/parameter/parameter.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/multidate/multidate.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/multitime/multitime.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/multitimestamp/multitimestamp.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/subqueries/subqueries.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/time/time.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/timestamp/timestamp.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/target.js"%>"></script>
+
+
