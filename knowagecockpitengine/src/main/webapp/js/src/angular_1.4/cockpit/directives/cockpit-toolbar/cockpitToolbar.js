@@ -288,6 +288,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				if(abortTimeout) clearTimeout(abortTimeout);
 				abortTimeout = setTimeout(function(){
 					$mdDialog.hide();
+					$scope.$destroy();
 	 				cockpitModule_properties.LOADING_SCREENSHOT = false;
 	 				reject($scope.translate.load('kn.error.export.timeout'));
 				},30000);

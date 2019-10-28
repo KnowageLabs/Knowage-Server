@@ -154,7 +154,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			removed : [],
 			added: []
 		};
-		var newParamsList = angular.copy(cockpitModule_datasetServices.getDatasetById(dsId).parameters);
+		var newParamsList = dsId ? angular.copy(cockpitModule_datasetServices.getDatasetById(dsId).parameters) : [];
 		var newParamsListNames = [];
 		for(var k in newParamsList){
 			newParamsListNames.push(newParamsList[k].name);
