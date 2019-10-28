@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +46,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONObjectDeserializator;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -223,7 +221,7 @@ public class ExportResource {
 			throw new SpagoBIRuntimeException("Error while getting parameters for dataset", e);
 		}
 		Map<String, String> params = DataSetUtilities.getParametersMap(jsonObject);
-		Map<String, Object> drivers = manageDataSetDrivers(driversJson);
+		Map<String, Object> drivers = DataSetUtilities.getDriversMap(driversJson);
 
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -291,7 +289,7 @@ public class ExportResource {
 			throw new SpagoBIRuntimeException("Error while getting parameters for dataset", e);
 		}
 		Map<String, String> params = DataSetUtilities.getParametersMap(jsonObject);
-		Map<String, Object> drivers = manageDataSetDrivers(driversJson);
+		Map<String, Object> drivers = DataSetUtilities.getDriversMap(driversJson);
 
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -380,30 +378,6 @@ public class ExportResource {
 		logger.debug("OUT");
 		return Response.ok().entity(exportJob.getName()).build();
 
-	}
-
-	/**
-	 * Manage drivers selected at client side.
-	 *
-	 * @param driversJson
-	 *            JSON data of drivers
-	 */
-	private Map<String, Object> manageDataSetDrivers(JSONObject driversJson) {
-
-		Map<String, Object> ret = new HashMap<String, Object>();
-
-		try {
-			if (driversJson != null) {
-				int length = driversJson.length();
-				HashMap<String, Object> hashMapFromJSONObject = JSONObjectDeserializator.getHashMapFromJSONObject(driversJson);
-				ret.putAll(hashMapFromJSONObject);
-			}
-		} catch (Exception e) {
-			logger.error("Cannot read dataset drivers", e);
-			throw new SpagoBIRuntimeException("Cannot read drivers", e);
-		}
-
-		return ret;
 	}
 
 	/**
