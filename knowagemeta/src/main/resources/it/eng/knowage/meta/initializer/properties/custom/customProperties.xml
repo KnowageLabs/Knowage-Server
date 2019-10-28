@@ -204,6 +204,7 @@
         <value>INTEGER</value>
         <value>DOUBLE</value>
         <value>DATE</value>
+        <value>TIME</value>
         <value>TIMESTAMP</value>
       </admissibleValuesOf>
       
