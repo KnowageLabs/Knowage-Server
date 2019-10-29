@@ -706,7 +706,7 @@
 	<formula>
 		<name>Intersection</name>
 		<syntax>Intersection (Geom1, Geom2, Tol)</syntax>
-		<body>Relate(${geom1},  ${geom2}, ${tol}))</body>
+		<body>Intersection(${geom1},  ${geom2}, ${tol}))</body>
 		
 		<argument>
 			<name>Geom1</name>
