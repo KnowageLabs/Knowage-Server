@@ -1179,8 +1179,25 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		angular.copy($scope.datasetInPreview, $scope.dataset);
 
 			$scope.driversAreSet = function(){
-				for(var k in driversExecutionService.prepareDriversForSending($scope.drivers)){
-					if(typeof driversExecutionService.prepareDriversForSending($scope.drivers)[k].value == 'undefined') return false
+				var preparedDriver = driversExecutionService.prepareDriversForSending($scope.drivers);
+				for(var k in preparedDriver) {
+					var currDriverDescValArr = preparedDriver[k];
+					if(typeof currDriverDescValArr == 'undefined') {
+						return false;
+					} else {
+						if (currDriverDescValArr.length == 0) {
+							return false;
+						} else {
+							var allValuesSet = true;
+							for (var i in currDriverDescValArr) {
+								var curr = currDriverDescValArr[i];
+								if (curr.value == undefined) {
+									allValuesSet = false;
+								}
+								return allValuesSet;
+							}
+						}
+					}
 				}
 				return true;
 			}
