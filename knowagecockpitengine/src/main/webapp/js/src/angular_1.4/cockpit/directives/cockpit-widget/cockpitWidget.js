@@ -285,7 +285,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.checkMenuVisibility = function(){
 		if(cockpitModule_template.configuration.hideUserMenu) return false;
-		if($scope.checkType($scope.ngModel.type, ['image','text'])) return false;
+		if($scope.checkType($scope.ngModel.type, ['image','text','selector','selection'])) return false;
 		if($scope.checkType($scope.ngModel.type, ['html']) && !$scope.showScreenshotButton()) return false;
 		return true;
 	}

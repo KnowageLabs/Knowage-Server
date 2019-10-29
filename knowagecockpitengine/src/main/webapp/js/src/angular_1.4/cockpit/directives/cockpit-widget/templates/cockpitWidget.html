@@ -146,11 +146,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
 					<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 				</md-button>
-				
-				<md-button class="md-fab md-raised md-mini"  ng-click="clearAllSelection();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['selector']) || (ngModel.type=='selection' && selection && selection.length > 0)" >
-					<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.selections.clearselections")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-eraser"></md-icon>
-				</md-button>
 			
 				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table']) && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
@@ -163,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-button>
 				
 				<md-button class="md-fab md-raised md-mini" aria-label="unselectable button" 
-			ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) &&  (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1) && showNegativer"
+					ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) &&  (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1) && showNegativer"
 					ng-click="changeClickability();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 					<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
 	          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
