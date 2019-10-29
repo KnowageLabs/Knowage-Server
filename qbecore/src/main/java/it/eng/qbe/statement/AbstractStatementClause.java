@@ -410,11 +410,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 					toReturn = " TO_TIMESTAMP('" + toReturn + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = toReturn;
-				} else {
-					toReturn = "'" + toReturn + "'";
-				}
+				toReturn = quoute(toReturn);
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
 				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
@@ -463,17 +459,17 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
+					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y') ";
 				} else {
-					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y %H:%i:%s') ";
+					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y') ";
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat daf;
 					if (StringUtils.isBounded(toReturn, "'")) {
-						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+						daf = new SimpleDateFormat("'dd/MM/yyyy '");
 					} else {
-						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+						daf = new SimpleDateFormat("dd/MM/yyyy ");
 					}
 
 					Date myDate = daf.parse(toReturn);
@@ -493,22 +489,18 @@ public abstract class AbstractStatementClause implements IStatementClause {
 					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)
 					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE_SPATIAL)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS') ";
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY ') ";
 				} else {
-					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH24:MI:SS') ";
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY') ";
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS') ";
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY') ";
 				} else {
-					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH24:MI:SS') ";
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY') ";
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = toReturn;
-				} else {
-					toReturn = "'" + toReturn + "'";
-				}
+				toReturn = quoute(toReturn);
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
 				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
@@ -532,6 +524,17 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			}
 		}
 
+		return toReturn;
+	}
+
+	/**
+	 * @param toReturn
+	 * @return
+	 */
+	private String quoute(String toReturn) {
+		if (!toReturn.startsWith("'") && !toReturn.endsWith("'")) {
+			toReturn = "'" + toReturn + "'";
+		}
 		return toReturn;
 	}
 
