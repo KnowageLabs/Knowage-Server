@@ -403,7 +403,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	$scope.role = $scope.rolesGridOptions.api.getSelectedRows();
 	    	for (var i = 0; i < $scope.role.length; i++) {
 	    		if ($scope.selectedUser.defaultRoleId && $scope.role[i].id == $scope.selectedUser.defaultRoleId) break;
-	    		if (i != $scope.role.length-1) $scope.selectedUser.defaultRoleId = null;
+	    		if (i == $scope.role.length-1) $scope.selectedUser.defaultRoleId = null;
 	    	}
 
     	$scope.$apply();
