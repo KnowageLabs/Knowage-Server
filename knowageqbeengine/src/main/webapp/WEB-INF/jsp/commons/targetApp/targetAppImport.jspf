@@ -4,7 +4,7 @@
 <%String directivesPath = basePath +"/directives"; %>
 <!-- app -->
 <script type="text/javascript" src="<%= basePath + "/targetApp.js"%>"></script>
-<%@include file="/js/src/qbe/directive/filter/filterTarget/targetAppConf.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/targetApp/targetAppConf.jspf"%>
 
 
 <!-- services -->
