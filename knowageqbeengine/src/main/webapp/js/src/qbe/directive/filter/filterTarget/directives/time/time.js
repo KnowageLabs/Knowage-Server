@@ -35,13 +35,14 @@
 						var hour = $scope.time.split(':')[0]
 						var minutes = $scope.time.split(':')[1]
 
-						$scope.filter.rightOperandDescription="TO_TIME('"+hour+"."+minutes+".00', 'HH24.MI.SS')"
+						$scope.filter.rightOperandDescription="'"+hour+"."+minutes+".00'"
 
 					}
 
 				}
 
 				var init = function(){
+					$scope.filter.rightOperandType="Static Content";
 					if(dateService.getTime($scope.filter.rightOperandDescription)){
 						$scope.time = dateService.getHour($scope.filter.rightOperandDescription)
 										+ ":"

@@ -67,7 +67,7 @@ angular.module('targetApp').directive('multidate', function(targetAppBasePath,_d
 
 
 				var init = function(){
-
+					$scope.filter.rightOperandType="Static Content";
 					$scope.dates = [{},{}]
 
 					if(getMultiValues($scope.filter.rightOperandDescription)){

@@ -67,7 +67,7 @@ angular.module('targetApp').directive('multitime', function(targetAppBasePath,_d
 
 
 				var init = function(){
-
+					$scope.filter.rightOperandType="Static Content";
 					$scope.times = [{},{}]
 
 					if(getMultiValues($scope.filter.rightOperandDescription)){

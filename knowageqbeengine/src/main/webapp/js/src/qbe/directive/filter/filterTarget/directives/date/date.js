@@ -34,12 +34,13 @@ angular.module('targetApp').directive('date', function(targetAppBasePath,_dateSe
 					var year = $scope.date.getFullYear();
 
 
-					$scope.filter.rightOperandDescription="TO_DATE('"+date+"/"+month+"/"+year+"', 'DD/MM/YYYY')"
+					$scope.filter.rightOperandDescription="'"+date+"/"+month+"/"+year+"'"
 				}
 
 
 
 				var init = function(){
+					$scope.filter.rightOperandType="Static Content";
 					if(dateService.getFullDate($scope.filter.rightOperandDescription)){
 						$scope.date = new Date(	dateService.getYear($scope.filter.rightOperandDescription),
 												dateService.getMonth($scope.filter.rightOperandDescription),

@@ -67,7 +67,7 @@ angular.module('targetApp').directive('multitimestamp', function(targetAppBasePa
 
 
 				var init = function(){
-
+					$scope.filter.rightOperandType="Static Content";
 					$scope.timestamps = [{},{}]
 
 					if(getMultiValues($scope.filter.rightOperandDescription)){

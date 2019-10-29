@@ -48,6 +48,7 @@
 				}
 
 				var init = function(){
+					$scope.filter.rightOperandType="Static Content";
 					if(dateService.getFullDate($scope.filter.rightOperandDescription)){
 						$scope.date = new Date(	dateService.getYear($scope.filter.rightOperandDescription),
 												dateService.getMonth($scope.filter.rightOperandDescription),
@@ -63,7 +64,7 @@
 				init()
 
 				var buildTimestamp = function(date,month,year,hour,minutes){
-					return "".concat("TO_TIMESTAMP('",date,"/",month,"/",year," ",hour,":",minutes,":00.000', 'DD/MM/YYYY HH24:MI:SS.FF')")
+					return "".concat(date,"/",month,"/",year," ",hour,":",minutes)
 				}
 
 			}

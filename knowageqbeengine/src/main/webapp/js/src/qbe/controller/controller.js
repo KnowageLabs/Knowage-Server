@@ -489,6 +489,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "include":true,
 				   "visible":true,
 				   "iconCls":field.iconCls,
+				   "dataType":field.dataType,
 				   "longDescription":field.attributes.longDescription,
 				   "distinct":$scope.editQueryObj.distinct,
 				   "leaf":field.leaf

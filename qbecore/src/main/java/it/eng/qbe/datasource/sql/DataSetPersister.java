@@ -36,12 +36,11 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
  * @author Gavardi Giulio(giulio.gavardi@eng.it)
  */
 
-public class DataSetPersister extends SimpleRestClient{
+public class DataSetPersister extends SimpleRestClient {
 
-	private String serviceUrl = "/restful-services/1.0/datasets/list/persist";
+	private final String serviceUrl = "/restful-services/1.0/datasets/list/persist";
 
-
-	public DataSetPersister(){
+	public DataSetPersister() {
 
 	}
 
@@ -53,10 +52,11 @@ public class DataSetPersister extends SimpleRestClient{
 
 		logger.debug("Call persist service in post");
 		Response resp = executePostService(null, serviceUrl, userId, MediaType.APPLICATION_JSON, datasetLabels);
-
+		JSONObject ja = null;
 		String respString = resp.readEntity(String.class);
-
-		JSONObject ja = new JSONObject(respString);
+		if (respString != null && !respString.equals("")) {
+			ja = new JSONObject(respString);
+		}
 
 		logger.debug("OUT");
 
