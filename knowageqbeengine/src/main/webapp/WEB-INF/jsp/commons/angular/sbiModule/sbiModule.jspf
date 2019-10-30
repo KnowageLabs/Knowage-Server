@@ -17,7 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 
-	angular.module('sbiModule',['ngSanitize']);
+	var  app = angular.module('sbiModule',['ngSanitize']);
+	
+	app.config(function($mdDateLocaleProvider) {
+      
+        $mdDateLocaleProvider.parseDate = function(dateString) {
+            var m = moment(dateString, 'L', true);
+            return m.isValid() ? m.toDate() : new Date(NaN);
+        };
+        $mdDateLocaleProvider.formatDate = function(date) {
+            return moment(date).locale("<%=locale.toString()%>").format('L');
+        };
+    });
 	
 </script>
 

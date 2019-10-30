@@ -63,7 +63,7 @@ author:...
 	String dynamicResourcesEnginePath = urlBuilder.getDynamicResourcesEnginePath();    //  /qbeengine/js/src
 	
     //UserProfile profile;
-    Locale locale =null;
+    Locale locale =null; 
     String isFromCross;
     String spagobiServerHost = null;
     String spagobiContext = null;
@@ -78,12 +78,16 @@ author:...
     ExecutionSession es = new ExecutionSession(request, request.getSession());
     JSONArray paramsJsonArray = new JSONArray();
 
+	
+
     
    	//load user profile 
    	IEngUserProfile userProfile  = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+   	
+   	locale = new Locale((String)userProfile.getUserAttribute(SpagoBIConstants.LANGUAGE),(String)userProfile.getUserAttribute(SpagoBIConstants.COUNTRY));
    	String userUniqueIdentifier="";
    	String userId="";
-   	String userName="";
+   	String userName=""; 
    	String defaultRole="";
    	List userRoles = new ArrayList();
    	
