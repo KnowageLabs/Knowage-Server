@@ -9,10 +9,10 @@ drillable='ngModel.drillable'
 on-click-series='reloadWidgetsByChartEvent' 
 layout-column flex>
 </chart-renderer>
-<div ng-if="ngModel.content.chartTemplate.CHART.accessibility && ngModel.content.chartTemplate.CHART.accessibility.sonification">
-	<button id="play" tab-index="1" aria-label="play" ng-click="playSonify()"><md-icon md-font-icon="fa fa-play" ></md-icon></button>
-    <button id="pause" tab-index="2" aria-label="pause" ng-click="pauseSonify()"><md-icon md-font-icon="fa fa-pause" ></md-icon></button>
-    <button id="rewind" tab-index="3" aria-label="rewind" ng-click="rewindSonify()"><md-icon md-font-icon="fa fa-backward" ></md-icon></button>
-    <button id="stop" tab-index="3" aria-label="stop" ng-click="cancelSonify()"><md-icon md-font-icon="fa fa-stop" ></md-icon></button>
+<div ng-if="ngModel.content.chartTemplate.CHART.accessibility && ngModel.content.chartTemplate.CHART.accessibility.sonification" class="sonification-controls">
+	<button id="play" tabindex="1" aria-label="play" ng-click="playSonify()"><md-icon md-font-icon="fa fa-play" ></md-icon></button>
+    <button id="pause" tabindex="2" aria-label="pause" ng-click="pauseSonify()"><md-icon md-font-icon="fa fa-pause" ></md-icon></button>
+    <button id="rewind" tabindex="4" aria-label="rewind" ng-click="rewindSonify()"><md-icon md-font-icon="fa fa-backward" ></md-icon></button>
+    <button id="stop" tabindex="3" aria-label="stop" ng-click="cancelSonify()"><md-icon md-font-icon="fa fa-stop" ></md-icon></button>
 </div>
 <canvas class="canvas-for-highcharts" ng-class="{'show-for-canvas': IEChartToFix() && cockpitModule_properties.LOADING_SCREENSHOT}" ng-if='IEChartToFix()' id="canvas_{{ngModel.id}}"></canvas>
