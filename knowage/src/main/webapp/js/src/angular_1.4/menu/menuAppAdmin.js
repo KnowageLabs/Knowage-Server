@@ -514,6 +514,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 				if(url){
 					$scope.redirectIframe(url);
 				}
+				$scope.closeCheck();
 			}
 
 			$scope.languageSelection = function languageSelection(){

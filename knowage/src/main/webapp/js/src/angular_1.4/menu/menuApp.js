@@ -268,6 +268,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				if(url){
 					$scope.redirectIframe(url);
 				}
+				$scope.closeCheck();
 			}
 
 			$scope.languageSelection = function languageSelection(){
