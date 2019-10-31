@@ -61,8 +61,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("datasetLabel");
-	  		var parameters = url.searchParams.getAll("parameters");
-	  		var drivers = url.searchParams.getAll("drivers");
+	  		var parameters = url.searchParams.getAll("parameters");	  		
+	  		var drivers = url.searchParams.get("drivers");
 	  		var options = JSON.parse(url.searchParams.get("options")) || {};
 	  		
 	  		var exporterBarShown = false;	  		
@@ -313,11 +313,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(typeof parameters[i] == 'string') parameters[i] = JSON.parse(parameters[i]);
 					}
 					fetchParams.body.pars = parameters;
-				}
+				}				
 				if(!isEmpty(drivers)){
-					for (var i = 0; i < drivers.length; i++) {
-						if(typeof drivers[i] == 'string') drivers[i] = JSON.parse(drivers[i]);
-					}
+					drivers = JSON.parse(drivers);
 					fetchParams.body.drivers = drivers;
 				}
 				fetchParams.body = JSON.stringify(fetchParams.body);
@@ -377,7 +375,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}).showToast();
 				
 				if(parameters && parameters.length > 0) body.parameters = parameters;
-				if(drivers && drivers.length > 0) body.drivers = drivers;
+				if(drivers) body.drivers = drivers;
 		
 				var exportFormat = null;
 				if (format == 'CSV') {

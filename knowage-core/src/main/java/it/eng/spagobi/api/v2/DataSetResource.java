@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONObjectDeserializator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -704,19 +703,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONObject jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, jsonPars);
 				parameters = jsonObject.toString();
 
-				JSONArray jsonDrivers = jsonBody.optJSONArray("drivers");
-				if (jsonDrivers != null && jsonDrivers.length() > 0) {
-					for (int j = 0; j < jsonDrivers.length(); j++) {
-						JSONObject jsonDriver = jsonDrivers.getJSONObject(j);
-						try {
-							driversRuntimeMap = JSONObjectDeserializator.getHashMapFromJSONObject(jsonDriver);
-						} catch (Exception e1) {
-							logger.error("Getting Drivers has encoutered error");
-							throw new SpagoBIRuntimeException(e1.getLocalizedMessage(), e1);
-						}
-					}
-				}
-
+				JSONObject jsonDrivers = jsonBody.optJSONObject("drivers");
+				driversRuntimeMap = DataSetUtilities.getDriversMap(jsonDrivers);
 				JSONArray jsonIndexes = jsonBody.optJSONArray("indexes");
 				if (jsonIndexes != null && jsonIndexes.length() > 0) {
 
