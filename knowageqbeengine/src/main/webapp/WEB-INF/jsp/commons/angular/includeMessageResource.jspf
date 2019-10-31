@@ -50,4 +50,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//Load of default file (en_US): it can be used if a message of the current locale is missing
     messageResource.load('messages', function(){});
     
+    messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');
+    
+    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US')
+    {
+        messageResource.load('messages', function(){});
+    }
+
+    
 </script>

@@ -83,12 +83,14 @@ author:...
     
    	//load user profile 
    	IEngUserProfile userProfile  = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-   	
-   	locale = new Locale((String)userProfile.getUserAttribute(SpagoBIConstants.LANGUAGE),(String)userProfile.getUserAttribute(SpagoBIConstants.COUNTRY));
+   	String language =(String) request.getParameter(SpagoBIConstants.SBI_LANGUAGE);
+   	String country =(String) request.getParameter(SpagoBIConstants.SBI_COUNTRY);
+   	locale = new Locale(language,country);
+   
    	String userUniqueIdentifier="";
    	String userId="";
    	String userName=""; 
-   	String defaultRole="";
+   	String defaultRole=""; 
    	List userRoles = new ArrayList();
    	
    	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();

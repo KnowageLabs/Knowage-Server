@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             return m.isValid() ? m.toDate() : new Date(NaN);
         };
         $mdDateLocaleProvider.formatDate = function(date) {
-            return moment(date).locale("<%=locale.toString()%>").format('L');
+            return moment(date).locale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>').format('L');
         };
     });
 	
