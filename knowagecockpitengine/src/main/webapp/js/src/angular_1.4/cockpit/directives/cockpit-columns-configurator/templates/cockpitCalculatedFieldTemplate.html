@@ -1,99 +1,96 @@
+<style>
+.CodeMirror-wrap {
+    border: 1px solid #ccc;
+    width: 100%;
+    }
+.CodeMirror {
+	width: 100%;
+}
+.CodeMirror .CodeMirror-gutter {
+	width: 29px !important;
+}
+
+.CodeMirror .CodeMirror-sizer {
+	margin-left: 30px !important;
+}
+
+.CodeMirror-gutter-wrapper {
+	left: -30px;
+}
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+	width: auto !important;
+}
+.calculatedFieldEditor md-menu-bar {
+    padding: 0;
+    background-color: #f2f2f2;
+    margin-top: 15px;
+}
+.calculatedFieldEditor md-menu-bar .validationMenu {
+    float: right;
+}
+span.functionDescription {
+    font-size: .6rem;
+    text-align: right;
+}
+</style>
 <div layout-fill class="overlayGray" layout="row" layout-align="center center">
 	<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80 calculatedField">
-	    <md-toolbar class="secondaryToolbar" layout="row">
-			<h1 flex class="md-toolbar-tools">{{::translate.load('sbi.cockpit.table.column.calcfield')}}</h1>
-		</md-toolbar>
-	    <md-dialog-content style="height:500px">
-	    	<div layout="row" style="height:500px">
-	    		<div flex="30" layout-column style="border-right: 1px solid #ccc">
-					<md-toolbar>
-						<div class="md-toolbar-tools">
-					    	<h2>{{::translate.load('sbi.cockpit.table.columns')}}</h2>
-					    </div>
-				    </md-toolbar>
-					<h3 ng-if="measuresList.length==0">{{::translate.load('sbi.cockpit.table.nomeasure')}}</h3>
-					
-					<md-list style="overflow: auto;height:calc(100% - 32px)" class="noPadding md-dense" ng-if="!column.datasetOrTableFlag">
-			   		   	<md-list-item class="md-2-line" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
-			   		   		<div class="md-list-item-text"><h3>{{meas.aliasToShow}}</h3>
-			   		   		<p>{{meas.alias}} ({{meas.aggregationSelected}})</p></div>			   		   		 
-		   		   			<md-divider></md-divider>
-		   		   		</md-list-item>
-		   		   	</md-list>
-		   		   	<md-list style="overflow: auto;height:calc(100% - 32px)" class="noPadding" ng-if="column.datasetOrTableFlag">
-			   		   	<md-list-item ng-repeat="column in datasetColumnsList" ng-click="addMeasures(column)">
-			   		   		{{column.alias}}
-		   		   			<md-divider></md-divider>
-		   		   		</md-list-item>
-		   		   	</md-list>
-				</div>
-			
-		   	<div flex layout="column" layout-margin>
-		   		<div layout="row">
-			   		<md-input-container flex>
-				    	<label>{{::translate.load('sbi.cockpit.table.alias')}}</label>
-				        <input ng-model="column.alias" />
-	          		</md-input-container>
-	          		<md-input-container flex="30" ng-if="column.datasetOrTableFlag">
-                         <label>{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')}}</label>
-                         <md-select ng-model="column.aggregationSelected">
-                            <md-option ng-repeat="func in cockpitModule_generalOptions.aggregationFunctions" ng-value="func.value">
-                            	{{func.label}}
-                            </md-option>
-                         </md-select>
-                   	</md-input-container>        
-
-                   	<md-switch ng-model="column.datasetOrTableFlag" aria-label="Enabled Dataset calculated fields" ng-change="resetFormula()">
-                         	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag')}}
-                          	<md-tooltip md-delay=500>
-                           	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag.hint')}}
-                       	</md-tooltip>
-					</md-switch>
-	          		
-	   			</div>
-		   			
-	   			<md-whiteframe class="md-whiteframe-1dp" layout="column" flex>
-					<md-toolbar>
-				      <div class="md-toolbar-tools">
-				        <h2>{{::translate.load('sbi.cockpit.table.formula')}}</h2>
-				       </div>
-				    </md-toolbar>
-					<div layout="column" flex>
-						<div layout="row">
-			   				 <md-button class="md-raised" flex aria-label="{{op}}" ng-repeat = "op in operators" ng-click = "addOperator(op)" >
-			   				 	{{op}}
-			   				 	<md-tooltip md-delay=700>
-						        	{{op}}
-						        </md-tooltip>
-			   				 </md-button>
-			   				 <md-button class="md-raised" flex aria-label="{{br}}" ng-repeat = "br in brackets" ng-click = "addBracket(br)" >
-			   				 	{{br}}
-			   				 	<md-tooltip md-delay=700>
-						        	{{br}}
-						        </md-tooltip>
-			   				 </md-button>
-			   				 <md-button class="md-raised" flex aria-label="cancel" ng-click="deleteLast()">
-			   				 	&larr;
-			   				 	<md-tooltip md-delay=700>
-						        	{{::translate.load('sbi.generic.cancel')}}
-						        </md-tooltip>
-			   				 </md-button>
-						</div>
-						<textarea flex ng-model="formula"  rows=4  md-select-on-focus  ng-keydown="checkInput($event)"></textarea>
-					</div>
-					</md-whiteframe>
-		   		</div>
-	    	</div>
-		</md-dialog-content>
+		<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
+	            <div class="md-toolbar-tools">
+	                <h2 class="ng-binding">Calculated Field </h2>
+	            </div>
+	        </md-toolbar>
+	        <md-dialog-content layout="row" class="calculatedFieldEditor">
+	    <md-card layout="column" flex="20" flex-sm="30" flex-xs="40" class="left">
+	        <md-card-content layout="column" class="noPadding">
+	           <md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!column.datasetOrTableFlag">
+		   		   	<md-list-item class="md-2-line" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
+		   		   		<div class="md-list-item-text"><h3>{{meas.aliasToShow}}</h3>
+		   		   		<p>{{meas.alias}} ({{meas.aggregationSelected}})</p></div>			   		   		 
+	   		   			<md-divider></md-divider>
+	   		   		</md-list-item>
+	   		   	</md-list>
+	   		   	<md-list style="overflow: auto;" class="noPadding" ng-if="column.datasetOrTableFlag">
+		   		   	<md-list-item ng-repeat="column in datasetColumnsList" ng-click="addMeasures(column)">
+		   		   		{{column.alias}}
+	   		   			<md-divider></md-divider>
+	   		   		</md-list-item>
+	   		   	</md-list>
+	
+	        </md-card-content>
+	    </md-card>
+	    <md-card layout="column" flex="80" flex-sm="70" flex-xs="60" class="right">
+	        <md-card-content>
+	            <div layout="row">
+	                <md-input-container flex>
+	                    <label>Alias</label>
+	                    <input name="name" type="text" ng-model="calculatedField.alias" required>
+	                </md-input-container>
+	            </div>
+	             <md-menu-bar>
+	                <md-menu ng-repeat="type in availableFormulaTypes track by $index">
+	                    <button ng-click="$mdOpenMenu()">{{type}}</button>
+	                    <md-menu-content>
+	                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
+	                            <md-button ng-click="addFormula(formula)" title="{{formula.description}}">
+	                                <span ng-if="formula.description" class="functionDescription">{{formula.syntax | limitTo:50}}</span>
+	                            </md-button>
+	                        </md-menu-item>
+	                    </md-menu-content>
+	                </md-menu>
+	                <md-menu class="validationMenu">
+	                	<button>{{translate.load("kn.qbe.calculatedfield.validate")}} <i class="fa fa-check-circle"></i></button>
+	                </md-menu>
+	            </md-menu-bar>
 				
-		<md-dialog-actions layout="row" style="box-shadow:0px -1px 2px #ccc">
-	      	<span flex></span>
-	      	<md-button class="md-raised" ng-click="cancelConfiguration()" >
-	        	{{::translate.load('sbi.generic.cancel')}}
-	      	</md-button>
-	      	<md-button class="md-raised md-primary" ng-click="saveColumnConfiguration()"  >
-	        	{{::translate.load('sbi.generic.save')}}
-	    	</md-button>
-		</md-dialog-actions>
+	            <md-card-content class="noPadding">
+	            
+	                <textarea id="formula" ui-codemirror="editorOptions" ng-model="calculatedField.formula" ui-refresh="calculatedField.formula" flex style="width:100%;"></textarea>
+	            </md-card-content>
+	
+	        </md-card-content>
+	    </md-card>
+	    </md-dialog-content>
 	</md-dialog>
+	 
 </div>
