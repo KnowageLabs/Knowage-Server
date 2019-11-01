@@ -316,14 +316,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(subscriptions);
 		}
 		if (isAbleTo(SpagoBIConstants.FINAL_USERS_MANAGEMENT, funcs)) {
-			JSONObject createDoc = createMenuItem("people", HREF_USERS, messageBuilder.getMessage("menu.Users", locale), true, null);
+			JSONObject createDoc = createMenuItem("fa fa-2x fa-users", HREF_USERS, messageBuilder.getMessage("menu.Users", locale), true, null);
 			tempMenuList.put(createDoc);
 		}
 
 		// workspace is added unconditionally
 		if (isAbleTo(SpagoBIConstants.SEE_MY_WORKSPACE, funcs)) {
 			JSONObject workspace = new JSONObject();
-			workspace.put(ICON_CLS, "fa fa-2x fa-briefcase");
+			workspace.put(ICON_CLS, "fa fa-2x fa-book");
 			workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
 			workspace.put(ICON_ALIGN, "top");
 			workspace.put(SCALE, "large");
@@ -383,7 +383,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
-			glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-download");
+			glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-book");
 			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.technical", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
@@ -519,19 +519,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
-		}
-
-		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
-			JSONObject i18n = new JSONObject();
-			i18n.put(ICON_CLS, "fa fa-2x fa-flag");
-			i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
-			i18n.put(ICON_ALIGN, "top");
-			i18n.put(SCALE, "large");
-			i18n.put(TARGET, "_self");
-			i18n.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
-			i18n.put(FIRST_URL, contextName + HREF_I18N);
-			i18n.put(LINK_TYPE, "execDirectUrl");
-			tempMenuList.put(i18n);
 		}
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
