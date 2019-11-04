@@ -1176,32 +1176,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 //				$scope.dataset.executed = true;
 //			}
 //    	}else{
-    		angular.copy($scope.datasetInPreview, $scope.dataset);
-
-			$scope.driversAreSet = function(){
-				var preparedDriver = driversExecutionService.prepareDriversForSending($scope.drivers);
-				for(var k in preparedDriver) {
-					var currDriverDescValArr = preparedDriver[k];
-					if(typeof currDriverDescValArr == 'undefined') {
-						return false;
-					} else {
-						if (currDriverDescValArr.length == 0) {
-							return false;
-						} else {
-							var allValuesSet = true;
-							for (var i in currDriverDescValArr) {
-								var curr = currDriverDescValArr[i];
-								if (curr.value == undefined) {
-									allValuesSet = false;
-								}
-								return allValuesSet;
-							}
-						}
-					}
-				}
-				return true;
-			}
-
+    		angular.copy($scope.datasetInPreview, $scope.dataset)
 
     		$scope.previewDS = function() {
     			var config = { datasetLabel: $scope.dataset.label };
@@ -1216,7 +1191,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	        $scope.urlParams = $httpParamSerializer(config);
 				if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
 					if(driversExecutionService.hasMandatoryDrivers($scope.drivers)){
-						if($scope.driversAreSet()) $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+						if(driversExecutionServicee.driversAreSet($scope.drivers)) $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 						}else{
 							$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 						}
