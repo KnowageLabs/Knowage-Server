@@ -3348,33 +3348,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 		}
 
-		$scope.driversAreSet = function(){
-			var preparedDriver = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
-			for(var k in preparedDriver) {
-				var currDriverDescValArr = preparedDriver[k];
-				if(typeof currDriverDescValArr == 'undefined') {
-					return false;
-				} else {
-					if (currDriverDescValArr.length == 0) {
-						return false;
-					} else {
-						var allValuesSet = true;
-						for (var i in currDriverDescValArr) {
-							var curr = currDriverDescValArr[i];
-							if (curr.value == undefined) {
-								allValuesSet = false;
-							}
-							return allValuesSet;
-						}
-					}
-				}
-			}
-			return true;
-		}
-
-		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && $scope.driversAreSet()) {
+		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
 			$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
-		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !$scope.driversAreSet()) {
+		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
 			$mdDialog.show({
 				  scope:$scope,
 				  preserveScope: true,

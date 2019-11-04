@@ -430,6 +430,31 @@
 					}
 				return transformedDrivers;
 			}
+
+			executionService.driversAreSet = function(drivers){
+				var preparedDriver = executionService.prepareDriversForSending(drivers);
+				for(var k in preparedDriver) {
+					var currDriverDescValArr = preparedDriver[k];
+					if(typeof currDriverDescValArr == 'undefined') {
+						return false;
+					} else {
+						if (currDriverDescValArr.length == 0) {
+							return false;
+						} else {
+							var allValuesSet = true;
+							for (var i in currDriverDescValArr) {
+								var curr = currDriverDescValArr[i];
+								if (curr.value == undefined) {
+									allValuesSet = false;
+								}
+								return allValuesSet;
+							}
+						}
+					}
+				}
+				return true;
+			}
+
   return executionService;
 
 		}])
