@@ -50,7 +50,7 @@ angular.module('chartInitializer')
 		var selectionsAndParams = renderObj.selectionsAndParams;
 
 		chartConfConf = chartConf;
-		if(renderObj.chartTemplate.accessibility){
+		if(renderObj.chartTemplate.accessibility && renderObj.chartTemplate.accessibility.sonification){
 			chartConf.accessibility = renderObj.chartTemplate.accessibility;
 			for (var i = 0; i < chartConf.series.length; i++) {
 				chartConf.series[i].id = i+1;
