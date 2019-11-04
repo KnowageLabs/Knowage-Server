@@ -61,6 +61,11 @@
 
 			if (!localFeature.get('isSimpleMarker')){
 				var userColor = (configMarker.style) ? configMarker.style.color : "grey";
+				if (props[mts.getActiveIndicator()]
+						&& props[mts.getActiveIndicator()].thresholdsConfig
+						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
+					userColor = mts.getColorByThresholds(value, props);
+				}
 				style = mts.getChoroplethStyles(value, parentLayer, userColor);
 				thematized = true;
 			}
