@@ -3348,7 +3348,43 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 		}
 
-		$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
+		$scope.driversAreSet = function(){
+			var preparedDriver = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
+			for(var k in preparedDriver) {
+				var currDriverDescValArr = preparedDriver[k];
+				if(typeof currDriverDescValArr == 'undefined') {
+					return false;
+				} else {
+					if (currDriverDescValArr.length == 0) {
+						return false;
+					} else {
+						var allValuesSet = true;
+						for (var i in currDriverDescValArr) {
+							var curr = currDriverDescValArr[i];
+							if (curr.value == undefined) {
+								allValuesSet = false;
+							}
+							return allValuesSet;
+						}
+					}
+				}
+			}
+			return true;
+		}
+
+		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && $scope.driversAreSet()) {
+			$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
+		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !$scope.driversAreSet()) {
+			$mdDialog.show({
+				  scope:$scope,
+				  preserveScope: true,
+			      controller: DatasetPreviewController,
+			      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
+			      clickOutsideToClose:false,
+			      escapeToClose :false
+			    });
+		}
+
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
@@ -3383,7 +3419,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							        .ariaLabel('Info Dialog No Data Returned Dataset Preview')
 							        .ok($scope.translate.load('sbi.federationdefinition.template.button.gotIt'))
 							    );
-					} else {
+					} else if(!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) {
 						$mdDialog.show({
 							  scope:$scope,
 							  preserveScope: true,
