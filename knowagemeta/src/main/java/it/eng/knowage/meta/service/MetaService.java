@@ -333,13 +333,47 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@POST
+	@Path("moveBusinessClass")
+	public String moveBusinessClass(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
+		JSONObject oldJsonModel = createJson(model);
+
+		applyDiff(jsonRoot, model);
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		Integer index = json.getInt("index");
+		Integer direction = json.getInt("direction");
+
+		moveBusinessClass(model, index, direction);
+		JSONObject jsonModel = createJson(model);
+
+		return getPatch(oldJsonModel, jsonModel);
+	}
+
+	/**
+	 * @param model
+	 * @param index
+	 * @param direction
+	 */
+	private void moveBusinessClass(Model model, Integer index, Integer direction) {
+
+		List<BusinessColumnSet> businessClasses = model.getBusinessModels().get(0).getTables();
+		BusinessColumnSet businessClass = businessClasses.get(index);
+		businessClasses.remove(businessClass);
+		businessClasses.add(index + direction, businessClass);
+
+	}
+
+	@POST
 	@Path("/addBusinessRelation")
 	public Response addBusinessRelation(@Context HttpServletRequest req) {
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-
+			setProfileDialectThreadLocal(model);
 			JSONObject oldJsonModel = createJson(model);
 
 			applyDiff(jsonRoot, model);
@@ -896,7 +930,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteBusinessRelation")
-	public Response deleteBusinessRelation(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public String deleteBusinessRelation(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
 
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
@@ -932,10 +966,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 
 		JSONObject jsonModel = createJson(model);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
-		return Response.ok(patch.toString()).build();
+		return getPatch(oldJsonModel, jsonModel);
 
 	}
 
@@ -1057,15 +1089,25 @@ public class MetaService extends AbstractSpagoBIResource {
 		businessModelInitializer.addColumn(physicalColumn, currBM);
 
 		JSONObject jsonModel = createJson(model);
+
+		return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
+	}
+
+	/**
+	 * @param oldJsonModel
+	 * @param jsonModel
+	 * @return
+	 * @throws IOException
+	 */
+	private String getPatch(JSONObject oldJsonModel, JSONObject jsonModel) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
-
-		return Response.ok(patch.toString()).build();
+		return patch.toString();
 	}
 
 	@POST
 	@Path("/moveBusinessColumn")
-	public Response moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+	public String moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
@@ -1077,16 +1119,24 @@ public class MetaService extends AbstractSpagoBIResource {
 		Integer index = json.getInt("index");
 		Integer direction = json.getInt("direction");
 
+		moveColumn(model, businessModelUniqueName, index, direction);
+		JSONObject jsonModel = createJson(model);
+
+		return getPatch(oldJsonModel, jsonModel);
+	}
+
+	/**
+	 * @param model
+	 * @param businessModelUniqueName
+	 * @param index
+	 * @param direction
+	 */
+	private void moveColumn(Model model, String businessModelUniqueName, Integer index, Integer direction) {
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		List<BusinessColumn> columns = currBM.getColumns();
 		BusinessColumn movingColumn = columns.get(index);
 		columns.remove(movingColumn);
 		columns.add(index + direction, movingColumn);
-		JSONObject jsonModel = createJson(model);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
-
-		return Response.ok(patch.toString()).build();
 	}
 
 	@POST

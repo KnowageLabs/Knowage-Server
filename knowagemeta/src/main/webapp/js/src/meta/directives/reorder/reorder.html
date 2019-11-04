@@ -1,0 +1,15 @@
+<div layout="row">
+	<md-button  ng-if="isFirst" class="md-secondary md-icon-button" type="button" aria-label="none" disabled>
+	</md-button>
+	
+	<md-button  ng-if="!isFirst" class="md-secondary md-icon-button" type="button" aria-label="UP" ng-click="upFunc()">
+		<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+	</md-button>
+	
+	<md-button  ng-if="!isLast" class="md-secondary md-icon-button" aria-label="DOWN" type="button" ng-click="downFunc()">
+		<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+	</md-button>
+	
+	<md-button  ng-if="isLast" class="md-secondary md-icon-button" aria-label="none" type="button" disabled >
+	</md-button>
+</div>

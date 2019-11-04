@@ -228,6 +228,14 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			return true
 		}
 	};
+	$scope.moveBusinessClass = function(index,direction){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "moveBusinessClass",metaModelServices.createRequestRest({index:index,direction:direction}))
+		   .then(function(response){
+				metaModelServices.applyPatch(response.data);
+		   },function(response){
+			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+		   })
+	}
 	$scope.moveBusinessColumn=function(index,direction,businessModel){
 		sbiModule_restServices.promisePost("1.0/metaWeb", "moveBusinessColumn",metaModelServices.createRequestRest({businessModelUniqueName:businessModel.uniqueName,index:index,direction:direction}))
 		   .then(function(response){

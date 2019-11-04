@@ -13,6 +13,7 @@
 				     	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
 				     	</md-button>
+				     	<reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder>
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
 					<div ng-if="openedItems.indexOf(bm.uniqueName) !== -1">

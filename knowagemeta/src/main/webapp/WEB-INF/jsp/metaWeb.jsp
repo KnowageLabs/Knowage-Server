@@ -62,6 +62,9 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/controllers/businessModelSqlFilterController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/interceptors/businessViewFilterInterceptor.js"></script>
 	
+	<!-- DIRECTIVES -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/directives/reorder/reorder.js"></script>
+	
 	<base href="/" /> <!-- mandatory for HTML5 and $location usage -->
 	
 </head>
