@@ -139,8 +139,10 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					String styles[] = fv.get(i).split("\\s*=\\s*");
 					if (styles.length == 2) {
 						cssw.writeStyle(styles[0], styles[1] + "!important");
+
 					}
 				}
+				cssw.writeStyle("padding", "3px");
 				style = sw.toString();
 				attributes.put("style", style);
 			}
