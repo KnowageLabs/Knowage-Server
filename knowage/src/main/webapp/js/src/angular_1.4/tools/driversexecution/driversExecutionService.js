@@ -208,6 +208,7 @@
 							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
 							parameter.parameterValue = '';
+							parameter.parameterDescription = {};
 						}
 					}else {
 						if(parameter.multivalue) {
