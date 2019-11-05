@@ -67,6 +67,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 		try {
 			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(getTableName()).where(filter)
 					.toSql(getDataSource());
+			logger.info("Summary row query [ "+summaryRowQuery+" ]");
 			// summary row query result is 1, no need to calculate total results number, so calculateTotalResultsNumber is set to false
 			return getDataSource().executeStatement(summaryRowQuery, -1, -1, maxRowCount, false);
 		} catch (DataBaseException e) {

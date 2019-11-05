@@ -91,6 +91,16 @@ span.functionDescription {
 	        </md-card-content>
 	    </md-card>
 	    </md-dialog-content>
+	    
+	    	<md-dialog-actions layout="row" style="box-shadow:0px -1px 2px #ccc">
+	      	<span flex></span>
+	      	<md-button class="md-raised" ng-click="cancelConfiguration()" >
+	        	{{::translate.load('sbi.generic.cancel')}}
+	      	</md-button>
+	      	<md-button class="md-raised md-primary" ng-click="saveColumnConfiguration()"  >
+	        	{{::translate.load('sbi.generic.save')}}
+	    	</md-button>
+		</md-dialog-actions>
 	</md-dialog>
 	 
 </div>
