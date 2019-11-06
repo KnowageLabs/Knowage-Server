@@ -36,8 +36,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 public class ExcelExportJob extends AbstractExportJob {
@@ -54,7 +54,6 @@ public class ExcelExportJob extends AbstractExportJob {
 		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
 		OutputStream exportFileOS = getDataOutputStream();
-		DataIterator iterator = null;
 		try {
 
 			IDataSet dataSet = getDataSet();
@@ -125,12 +124,11 @@ public class ExcelExportJob extends AbstractExportJob {
 				}
 			}
 			// FILL CELL RECORD
-
-			iterator = dataSet.iterator();
-			int i = 0;
-			while (iterator.hasNext()) {
+			dataSet.loadData();
+			IDataStore dataStore = dataSet.getDataStore();
+			for (int i = 0; i < Integer.MAX_VALUE && i < dataStore.getRecordsCount(); i++) {
 				try {
-					IRecord dataSetRecord = iterator.next();
+					IRecord dataSetRecord = dataStore.getRecordAt(i);
 
 					XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
 
@@ -183,8 +181,6 @@ public class ExcelExportJob extends AbstractExportJob {
 					String msg = "Error generating Excel file";
 					logger.error(msg, e);
 					throw new IllegalStateException(msg, e);
-				} finally {
-					i++;
 				}
 			}
 
@@ -196,9 +192,9 @@ public class ExcelExportJob extends AbstractExportJob {
 			logger.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
-			if (iterator != null) {
-				iterator.close();
-			}
+//			if (iterator != null) {
+//				iterator.close();
+//			}
 			if (exportFileOS != null) {
 				try {
 					exportFileOS.close();
