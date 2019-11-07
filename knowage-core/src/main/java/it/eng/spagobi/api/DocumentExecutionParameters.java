@@ -3,6 +3,27 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
@@ -28,26 +49,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Path("/1.0/documentExeParameters")
 @ManageAuthorization
@@ -359,9 +360,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 												// the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-					if ((treeLovParentNodeName == "lovroot")
-							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString())
-									.equalsIgnoreCase(treeLovNodeValue))) {
+					if ((treeLovParentNodeName == "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
+							&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
 					}
 
@@ -468,7 +468,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 			String[] visiblecolumns;
 
-			if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
+			if (MODE_COMPLETE.equalsIgnoreCase(mode) || MODE_EXTRA.equalsIgnoreCase(mode)) {
 				visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
 				for (int j = 0; j < visiblecolumns.length; j++) {
 					visiblecolumns[j] = visiblecolumns[j].toUpperCase();
@@ -496,8 +496,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 	 * DATE RANGE
 	 */
 
-	private JSONObject manageDataRange(BIObjectParameter biObjectParameter, String executionRole, HttpServletRequest req) throws EMFUserError,
-			SerializationException, JSONException, IOException {
+	private JSONObject manageDataRange(BIObjectParameter biObjectParameter, String executionRole, HttpServletRequest req)
+			throws EMFUserError, SerializationException, JSONException, IOException {
 		Integer parID = biObjectParameter.getParID();
 		Assert.assertNotNull(parID, "parID");
 		ParameterUse param = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(parID, executionRole);
