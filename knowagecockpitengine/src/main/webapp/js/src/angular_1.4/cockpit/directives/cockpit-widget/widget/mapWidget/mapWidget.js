@@ -507,6 +507,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			layer.setVisible(layerDef.defaultVisible);
 
+			// Setting default for isStatic property
+			if (!layerDef.hasOwnProperty("isStatic")) {
+				layerDef.isStatic = false;
+			}
+
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 			$scope.values[layerDef.name] = data; //add values to internal object

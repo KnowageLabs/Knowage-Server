@@ -19,11 +19,12 @@
 			<thead>
 				<tr>
 					<th ng-if="newModel.content.layers.length > 1"></th>
-					<th>Type</th>
-					<th>Name</th>
-					<th>Label</th>
-					<th>Target</th>
-					<th>Default visible</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColType')}}</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColName')}}</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColLabel')}}</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColStatic')}}</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColTarget')}}</th>
+					<th>{{translate.load('sbi.cockpit.map.edit.layerColDefaultVisible')}}</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -47,10 +48,13 @@
 				            <input ng-model="layer.alias">
 		          		</md-input-container></td>
 					<td>
-						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)"/>
+						<md-switch ng-model="layer.isStatic" aria-label="static" ng-change="setStatic(layer)"/>
 					</td>
 					<td>
-						<md-switch ng-model="layer.defaultVisible" aria-label="default visible"/>
+						<md-switch ng-disabled="layer.isStatic" ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)"/>
+					</td>
+					<td>
+						<md-switch ng-disabled="layer.isStatic" ng-model="layer.defaultVisible" aria-label="default visible"/>
 					</td>
 					<td class="colorPickerTd" style="text-align:right;">
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">

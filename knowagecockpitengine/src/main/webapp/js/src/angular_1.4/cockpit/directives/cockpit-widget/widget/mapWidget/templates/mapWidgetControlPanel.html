@@ -6,7 +6,7 @@
       	<span flex></span>
     </md-toolbar>
 
-	<div ng-repeat="layer in ngModel.content.layers">
+	<div ng-repeat="layer in ngModel.content.layers | filter:{isStatic:false}">
 <!-- 		<div style="font-size: 6px;"> -->
 <!-- 			{{ layer }} -->
 <!-- 		</div> -->

@@ -481,6 +481,13 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
+	$scope.setStatic = function(newLayer) {
+		if (newLayer.isStatic) {
+			newLayer.defaultVisible = true;
+			newLayer.targetDefault = false;
+		}
+	}
+
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get(".", "layers")
