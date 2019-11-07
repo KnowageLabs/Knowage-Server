@@ -551,7 +551,7 @@
 							var temp = [];
 							var first=false;
 							for(var k in fields){
-								if(fields[k]!='recNo' && fields[k]!='recCk'){
+								if(fields[k]!='recNo' && fields[k]!='recCk' && !fields[k].hidden){
 									var tempCol = {'headerName': fields[k].header, 'field':fields[k].name }
 									if(!first) {
 										tempCol.headerCheckboxSelection = paramDialogCtrl.tempParameter.multivalue;
