@@ -186,6 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.init = function(element,width,height){
 			$scope.element = element[0];
+			$scope.reinit();
 		}
 
 		$scope.reinit = function(){
