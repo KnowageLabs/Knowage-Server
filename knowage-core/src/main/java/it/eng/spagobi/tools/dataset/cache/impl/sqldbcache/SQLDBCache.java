@@ -47,6 +47,7 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -233,8 +234,8 @@ public class SQLDBCache implements ICache {
 	}
 
 	@Override
-	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups,
-			List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
+	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter, List<Projection> groups,
+			List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
 			throws DataBaseException {
 		logger.debug("IN");
 		Assert.assertNotNull(dataSet, "Dataset cannot be null");
@@ -250,8 +251,8 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	private IDataStore getInternal(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
+	private IDataStore getInternal(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
 		logger.debug("IN");
 
 		try {
@@ -270,8 +271,8 @@ public class SQLDBCache implements ICache {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
+	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<AbstractSelectionField> projections, Filter filter,
+			List<Projection> groups, List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
 			Set<String> indexes) throws DataBaseException {
 
 		IDataStore toReturn = null;

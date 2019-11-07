@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
@@ -69,11 +70,12 @@ public class ExtendedSolrQuery extends SolrQuery {
 		return this;
 	}
 
-	public ExtendedSolrQuery fields(List<Projection> projections) {
+	public ExtendedSolrQuery fields(List<AbstractSelectionField> projections) {
 		if(!projections.isEmpty()) {
 			setFields(null);
-			for (Projection projection : projections) {
-				addField(projection.getName());
+			for (AbstractSelectionField projection : projections) {
+				Projection proj = (Projection) projection;
+				addField(proj.getName());
 			}
 		}
 		return this;
@@ -102,7 +104,12 @@ public class ExtendedSolrQuery extends SolrQuery {
 		return this;
 	}
 
-	public SolrQuery jsonFacets(List<Projection> projections, List<Projection> groups, List<Sorting> sortings) throws JSONException {
+	public SolrQuery jsonFacets(List<AbstractSelectionField> projectionsAbs, List<Projection> groups, List<Sorting> sortings) throws JSONException {
+		List<Projection> projections = new ArrayList<Projection>();
+		for (AbstractSelectionField projection : projectionsAbs) {
+			projections.add((Projection)projection);
+		}
+
 		List<Projection> measures = getMeasures(projections, groups);
 		JSONObject jsonFacet = getMeasureFacet(measures);
 
@@ -216,9 +223,10 @@ public class ExtendedSolrQuery extends SolrQuery {
 		return facets(facets);
 	}
 
-	public ExtendedSolrQuery stats(List<Projection> projections) {
+	public ExtendedSolrQuery stats(List<AbstractSelectionField> projections) {
 		if(!projections.isEmpty()) {
-			for (Projection projection : projections) {
+			for (AbstractSelectionField proj : projections) {
+				Projection projection = (Projection) proj;
 				setGetFieldStatistics(projection.getName());
 				if(AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregationFunction().getName())) {
 					addStatsFieldCalcDistinct(projection.getName(), true);

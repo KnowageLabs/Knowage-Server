@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -43,8 +44,8 @@ class RealtimeEvaluationStrategy extends CachedEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		try {
 			return manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 		} catch (DataBaseException e) {

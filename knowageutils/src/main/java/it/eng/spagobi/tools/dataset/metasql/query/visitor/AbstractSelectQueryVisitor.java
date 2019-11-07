@@ -30,7 +30,9 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
@@ -276,6 +278,45 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		}
 	}
 
+	/**
+	 * @param projection
+	 * @param useAlias   enables the output of an alias. Column name is used as alias if related flag is true.
+	 */
+	protected void append(DataStoreCalculatedField projection, boolean useAlias) {
+		String aliasDelimiter = database.getAliasDelimiter();
+		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+
+		String name = projection.getName();
+		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+				: aliasDelimiter + name + aliasDelimiter;
+
+		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
+		if (!isValidAggregationFunction) {
+			queryBuilder.append(columnName);
+		} else {
+			queryBuilder.append(aggregationFunction.apply(columnName));
+		}
+
+		String alias = projection.getAlias();
+		if (useAlias) {
+			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasDelimiter);
+				queryBuilder.append(alias);
+				queryBuilder.append(aliasDelimiter);
+			} else if (useNameAsAlias || isValidAggregationFunction) {
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasDelimiter);
+				queryBuilder.append(name);
+				queryBuilder.append(aliasDelimiter);
+			}
+		}
+	}
+
 	public boolean isCalculatedColumn(String columnName) {
 		return columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER);
 	}
@@ -337,7 +378,19 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		} else if (query.hasSelectCount()) {
 			queryBuilder.append("COUNT(*) ");
 		} else {
-			List<Projection> projections = query.getProjections();
+			List<AbstractSelectionField> projectionsAbs = query.getProjections();
+			List<Projection> projections = new ArrayList<Projection>();
+			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
+			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
+				if(!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
+				Projection proj = (Projection) abstractSelectionField;
+				projections.add(proj);
+				}
+				else {
+					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
+					projectionsCalcFields.add(projCalc);
+				}
+			}
 			if (projections == null || projections.isEmpty()) {
 				return;
 			}
@@ -346,6 +399,13 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			for (int i = 1; i < projections.size(); i++) {
 				queryBuilder.append(", ");
 				append(projections.get(i), true);
+			}
+
+			// added another management for calculated fields
+
+			for (int i = 0; i < projectionsCalcFields.size(); i++) {
+				queryBuilder.append(", ");
+				append(projectionsCalcFields.get(i), true);
 			}
 
 			List<Projection> groups = query.getGroups();

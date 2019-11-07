@@ -17,11 +17,11 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	private IDataSet dataset;
 	private boolean isRealTime = true;
 	private Map<String, String> parameters;
-	private List<Projection> projections;
+	private List<AbstractSelectionField> projections;
 	private Filter filters;
 	private List<Projection> groups;
 	private List<Sorting> sortings;
-	private List<Projection> summaryRowProjections;
+	private List<AbstractSelectionField> summaryRowProjections;
 	private final Integer offset = -1;
 	private final Integer fetchSize = -1;
 	private final Integer maxRowCount = -1;
@@ -33,18 +33,18 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	/**
 	 * @param dataset
 	 * @param parameters
-	 * @param projections
+	 * @param projections2
 	 * @param filters
 	 * @param groups
 	 * @param sortings
 	 * @param summaryRowProjections
 	 */
-	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<Projection> projections, Filter filters, List<Projection> groups,
-			List<Sorting> sortings, List<Projection> summaryRowProjections) {
+	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<AbstractSelectionField> projections2, Filter filters, List<Projection> groups,
+			List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections) {
 		super();
 		this.dataset = dataset;
 		this.parameters = parameters;
-		this.projections = projections;
+		this.projections = projections2;
 		this.filters = filters;
 		this.groups = groups;
 		this.sortings = sortings;
@@ -134,7 +134,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getProjections()
 	 */
 	@Override
-	public List<Projection> getProjections() {
+	public List<AbstractSelectionField> getProjections() {
 		return this.projections;
 	}
 
@@ -154,7 +154,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getSummaryRowProjections()
 	 */
 	@Override
-	public List<Projection> getSummaryRowProjections() {
+	public List<AbstractSelectionField> getSummaryRowProjections() {
 		return this.summaryRowProjections;
 	}
 
@@ -204,7 +204,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @param projections
 	 *            the projections to set
 	 */
-	public void setProjections(List<Projection> projections) {
+	public void setProjections(List<AbstractSelectionField> projections) {
 		this.projections = projections;
 	}
 
@@ -228,7 +228,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @param summaryRowProjections
 	 *            the summaryRowProjections to set
 	 */
-	public void setSummaryRowProjections(List<Projection> summaryRowProjections) {
+	public void setSummaryRowProjections(List<AbstractSelectionField> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;
 	}
 

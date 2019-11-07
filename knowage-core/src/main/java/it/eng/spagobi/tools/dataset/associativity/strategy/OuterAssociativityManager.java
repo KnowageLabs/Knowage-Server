@@ -41,6 +41,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGroupException;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
@@ -336,7 +337,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			dataSet.setParametersMap(parametersValues);
 			dataSet.resolveParameters();
 
-			List<Projection> listProj = new ArrayList<Projection>();
+			List<AbstractSelectionField> listProj = new ArrayList<AbstractSelectionField>();
 			listProj.add(projections);
 
 			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);

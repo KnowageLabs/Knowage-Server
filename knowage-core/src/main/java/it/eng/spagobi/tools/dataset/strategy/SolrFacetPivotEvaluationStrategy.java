@@ -31,6 +31,7 @@ import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrFacetPivotDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -46,8 +47,8 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> columns) {
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> columns) {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
 		SolrQuery solrQuery;

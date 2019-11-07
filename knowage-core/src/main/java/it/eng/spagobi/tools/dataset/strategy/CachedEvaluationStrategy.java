@@ -37,6 +37,7 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -56,8 +57,8 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
 		IDataStore dataStore;
 		try {
@@ -83,7 +84,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+	protected IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
 		throw new UnsupportedOperationException("Summary row is already included in the datastore from the execution, so this method should not be called");
 	}
 
@@ -92,8 +93,8 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		return true;
 	}
 
-	protected IDataStore manageDatasetNotInCache(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
+	protected IDataStore manageDatasetNotInCache(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
 		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
 		datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy(), indexes);

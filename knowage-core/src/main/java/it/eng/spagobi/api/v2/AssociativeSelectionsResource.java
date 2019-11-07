@@ -64,6 +64,7 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
@@ -363,7 +364,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
-		List<Projection> minMaxProjections = new ArrayList<>();
+		List<AbstractSelectionField> minMaxProjections = new ArrayList<>();
 
 		List<Filter> noMinMaxFilters = new ArrayList<>();
 
@@ -417,7 +418,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			logger.debug("MIN/MAX filter values calculated");
 
 			for (int i = 0; i < minMaxProjections.size(); i++) {
-				Projection projection = minMaxProjections.get(i);
+				Projection projection = (Projection) minMaxProjections.get(i);
 				String alias = projection.getAlias();
 				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
 
@@ -445,7 +446,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> projections,
 			Filter filter, int maxRowCount,UserProfile userprofile) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();

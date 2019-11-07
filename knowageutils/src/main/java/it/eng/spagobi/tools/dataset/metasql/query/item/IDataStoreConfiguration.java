@@ -20,7 +20,7 @@ public interface IDataStoreConfiguration {
 
 	Map<String, String> getParameters();
 
-	List<Projection> getProjections();
+	List<AbstractSelectionField> getProjections();
 
 	Filter getFilter();
 
@@ -28,7 +28,7 @@ public interface IDataStoreConfiguration {
 
 	List<Sorting> getSortings();
 
-	List<Projection> getSummaryRowProjections();
+	List<AbstractSelectionField> getSummaryRowProjections();
 
 	Integer getOffset();
 

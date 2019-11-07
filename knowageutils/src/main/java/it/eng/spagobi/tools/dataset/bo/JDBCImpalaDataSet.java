@@ -21,6 +21,7 @@ package it.eng.spagobi.tools.dataset.bo;
 import java.util.List;
 
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 
 /**
@@ -37,9 +38,9 @@ public class JDBCImpalaDataSet extends JDBCDataSet {
 	private void transformAliases() {
 		if (selectQuery != null) {
 			IMetaData metaData = dataStore.getMetaData();
-			List<Projection> projections = selectQuery.getProjections();
+			List<AbstractSelectionField> projections = selectQuery.getProjections();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
-				metaData.getFieldMeta(i).setAlias(projections.get(i).getAlias());
+				metaData.getFieldMeta(i).setAlias(((Projection) projections.get(i)).getAlias());
 			}
 		}
 	}

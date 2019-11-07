@@ -28,6 +28,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -43,8 +44,8 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 	}
 
 	@Override
-	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		logger.debug("IN");
 
 		IDataStore pagedDataStore;
@@ -63,7 +64,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 	}
 
 	@Override
-	protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+	protected IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
 		try {
 			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(getTableName()).where(filter)
 					.toSql(getDataSource());

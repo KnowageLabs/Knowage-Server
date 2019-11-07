@@ -80,6 +80,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
@@ -269,8 +270,8 @@ public class DatasetManagementAPI {
 		return tableName;
 	}
 
-	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
+	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> projections, Filter filter,
+			List<Projection> groups, List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
 			Set<String> indexes) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
@@ -728,7 +729,7 @@ public class DatasetManagementAPI {
 		List<Filter> newFilters = new ArrayList<>(filters);
 
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
-		List<Projection> minMaxProjections = new ArrayList<>();
+		List<AbstractSelectionField> minMaxProjections = new ArrayList<>();
 
 		List<Filter> noMinMaxFilters = new ArrayList<>();
 
@@ -779,7 +780,7 @@ public class DatasetManagementAPI {
 			logger.debug("MIN/MAX filter values calculated");
 
 			for (int i = 0; i < minMaxProjections.size(); i++) {
-				Projection projection = minMaxProjections.get(i);
+				Projection projection = (Projection) minMaxProjections.get(i);
 				String alias = projection.getAlias();
 				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
 
@@ -807,13 +808,13 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> minMaxProjections,
 			Filter filter, int maxRowCount) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
 		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
-		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
+		return strategy.executeSummaryRowQuery(minMaxProjections, filter, maxRowCount);
 	}
 
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {

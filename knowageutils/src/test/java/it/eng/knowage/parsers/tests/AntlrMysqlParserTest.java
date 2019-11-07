@@ -19,7 +19,7 @@ public class AntlrMysqlParserTest extends TestCase {
 
 	public static void main( String[] args )
 	{
-		String query = "select SUM(col1)/AVG(col2) as prova from pippo";
+		String query = "select SUM(col1)/AVG(col2) as prova , CONCAT(first_name, \" \", last_name) AS Name from pippo";
 		CharStream inputStream = CharStreams.fromString(query);
 
 		MySqlLexer tokenSource = new MySqlLexer(new CaseChangingCharStream(inputStream, true));
