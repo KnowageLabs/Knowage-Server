@@ -21,8 +21,9 @@
 		   					</md-subheader>
 		   					<md-card-content>
 		   						<div layout="row">
-		   							<md-switch flex="20" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-switch>
-		   							<md-switch flex="20" ng-model="newModel.settings.table.enabled">{{::translate.load('kn.cockpit.discovery.enabledatatable')}}</md-switch>
+		   							<md-switch flex="15" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-switch>
+		   							<md-switch flex="15" ng-model="newModel.settings.table.enabled">{{::translate.load('kn.cockpit.discovery.enabledatatable')}}</md-switch>
+		   							<md-switch flex="15" ng-model="newModel.settings.hideTextSearch">{{::translate.load('kn.cockpit.discovery.hidetextsearch')}}</md-switch>
 		   							<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>{{::translate.load('kn.cockpit.discovery.pagination.items')}}</label>
 								        <input ng-model="newModel.settings.pagination.itemsNumber" type="number" min="0" />
@@ -38,6 +39,32 @@
 							      	</md-input-container>
 		   						</div>
 		   					</md-card-content>
+		   					<md-subheader class="noPadding">
+		   						<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
+		   							<md-switch ng-model="newModel.settings.defaultTextSearch"></md-switch> <span layout-padding>Default Text search</span><span flex></span>
+		   						</div>
+		   					</md-subheader>
+		   					<md-card-content ng-if="newModel.settings.defaultTextSearch">
+		   						<div layout="row">
+		   							<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>{{::translate.load('kn.cockpit.discovery.defaultsearchtype')}}</label>
+								        <md-select ng-model="newModel.settings.defaultTextSearchType" >
+											<md-option ng-repeat="type in defaultTextSearchType" ng-value="type.value">{{type.label}}</md-option>
+										</md-select>
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;" ng-if="newModel.settings.defaultTextSearchType == 'static'">
+							        	<label>{{::translate.load('kn.cockpit.discovery.defaultsearchstatic')}}</label>
+								        <input ng-model="newModel.settings.defaultTextSearchValue" type="text" />
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;" ng-if="newModel.settings.defaultTextSearchType == 'driver'" class="md-block">
+										<label>{{::translate.load("sbi.cockpit.cross.analyticaldriver")}}</label>
+										<md-select ng-model="newModel.settings.defaultTextSearchValue">
+											<md-option></md-option>
+											<md-option ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option> 
+										</md-select>
+									</md-input-container>
+		   						</div>
+		   						</md-card-content>
 	   					</md-card>
 		   				<md-card ng-show="newModel.dataset.dsId">
 		   					<md-subheader class="noPadding">

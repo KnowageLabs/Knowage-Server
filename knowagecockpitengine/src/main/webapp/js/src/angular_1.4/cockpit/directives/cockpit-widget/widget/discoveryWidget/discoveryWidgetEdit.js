@@ -29,12 +29,16 @@ function discoveryWidgetEditControllerFunction(
 		cockpitModule_generalServices,
 		cockpitModule_generalOptions,
 		mdPanelRef,
+		cockpitModule_analyticalDrivers,
 		$mdDialog
 		){
 	$scope.translate=sbiModule_translate;
+	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.newModel = angular.copy(model);
 	$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
+	$scope.defaultTextSearchType = [{label: $scope.translate.load('kn.cockpit.discovery.defaultsearchstatic'),value:'static'},
+		{label:$scope.translate.load('kn.cockpit.discovery.defaultsearchanalytic'),value:'driver'}];
 
 	$scope.columnsGrid = {
 		angularCompileRows: true,

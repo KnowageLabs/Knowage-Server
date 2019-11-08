@@ -459,6 +459,9 @@
     	.discoveryCardsContainer {
     		height: calc(100% - 70px);
     	}
+    	.discoveryCardsContainer.noSearch {
+    		height: 100%;
+    	}
     	.discoveryFiltersCard {
     		&.sidenav-add, &.sidenav-remove {
     			transition: max-width .4s linear;
@@ -1222,6 +1225,9 @@
     }
 
 	.htmlWidgetConfiguration {
+		section {
+			height: 100%;
+		}
 		position: absolute;
    		width: 90%;
    		height: 90%;
@@ -3112,27 +3118,7 @@
 			}
 		}
 	}
-	.htmlWidgetConfiguration {
-		section {
-			height: 100%;
-		}
-   		.htmlEditor {
-   			.CodeMirror {
-				height: 500px;
-			}
-   		}
-		.CodeMirror {
-			width: 100%;
-		}
-		.widgetId {
-			text-transform: none;
-		}
-		.availableFunctions {
-			.description {
-				font-size: $mediumFontSize;
-			}
-		}
-	}
+	
 	cockpit-selector-widget {
 		.cockpitSelectorWidget {
 			height: 100%;
