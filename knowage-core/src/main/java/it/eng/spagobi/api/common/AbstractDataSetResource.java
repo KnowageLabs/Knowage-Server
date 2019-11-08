@@ -25,8 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +42,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.parsers.CaseChangingCharStream;
+import it.eng.knowage.parsers.MySqlLexer;
+import it.eng.knowage.parsers.MySqlParser;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -240,7 +248,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			String stringFeed = gridDataFeed.toString();
 			return stringFeed;
-		} catch (ParametersNotValorizedException p) {
+		}
+		catch (ValidationException v) {
+			throw v;
+		}
+		catch (ParametersNotValorizedException p) {
 			throw p;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -304,7 +316,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-			throws JSONException {
+			throws JSONException,ValidationException {
 		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 		addProjections(dataSet, categories, columnAliasToName, projections);
 		addProjections(dataSet, measures, columnAliasToName, projections);
@@ -312,7 +324,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<AbstractSelectionField> projections)
-			throws JSONException {
+			throws JSONException,ValidationException {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			addProjection(dataSet, projections, category, columnAliasToName);
@@ -320,7 +332,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
-			throws JSONException {
+			throws JSONException,ValidationException {
 
 		String functionObj = catOrMeasure.optString("funct");
 		// check if it is an array
@@ -341,7 +353,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private AbstractSelectionField getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
-			throws JSONException {
+			throws JSONException,ValidationException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(functName);
@@ -351,6 +363,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			function = AggregationFunctions.get("NONE");
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("datasetOrTableFlag")) {
+
+				validateFormula(columnName);
+
 				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName);
 				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
 			}
@@ -360,6 +375,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 		} else {
 			if (jsonObject.has("datasetOrTableFlag")) {
+
+				validateFormula(columnName);
+
 				projection = new DataStoreCalculatedField(function, dataSet, columnName, columnAlias);
 			}
 			else {
@@ -367,6 +385,19 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 		}
 		return projection;
+	}
+
+	private void validateFormula (String formula) throws ValidationException {
+
+		CharStream inputStream = CharStreams.fromString(formula);
+		MySqlLexer tokenSource = new MySqlLexer(new CaseChangingCharStream(inputStream, true));
+ 		TokenStream tokenStream = new CommonTokenStream(tokenSource);
+		MySqlParser mySqlParser = new MySqlParser(tokenStream);
+
+		if (mySqlParser.getNumberOfSyntaxErrors()>0) {
+			throw new ValidationException();
+		}
+
 	}
 
 	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
