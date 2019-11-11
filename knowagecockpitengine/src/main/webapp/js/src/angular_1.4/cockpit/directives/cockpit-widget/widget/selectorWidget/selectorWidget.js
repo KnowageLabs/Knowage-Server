@@ -222,7 +222,7 @@ angular.module('cockpitModule')
 			updateModel();
 
 			$scope.showSelection = false;
-			if(datasetRecords.activeValues){
+			if(datasetRecords.activeValues  && !Array.isArray(datasetRecords.activeValues) ){
 				datasetRecords.activeValues.then(function(activeValues){
 					var tempActs = [];
 					for(var k in activeValues.rows){

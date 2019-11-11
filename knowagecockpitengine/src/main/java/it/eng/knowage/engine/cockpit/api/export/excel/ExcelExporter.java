@@ -1426,6 +1426,24 @@ public class ExcelExporter {
 									measure.put("columnName", name);
 								}
 								measure.put("funct", column.getString("funcSummary"));
+
+								boolean hidden = false;
+
+								if (column.has("style")) {
+
+									JSONObject style = column.optJSONObject("style");
+									if (style != null) {
+
+										String	hideSummary = style.optString("hideSummary");
+
+										if (hideSummary!= null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+											hidden = true;
+										}
+
+									}
+
+								}
+								if (!hidden)
 								measures.put(measure);
 							}
 						}
