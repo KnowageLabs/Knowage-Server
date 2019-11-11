@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -25,15 +31,15 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-import java.util.List;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
+/**
+ * TODo : Rename to Monitoring
+ *
+ * @author Marco Libanori
+ *
+ */
 @Path("/2.0/workspace/scheduler")
 @ManageAuthorization
-public class SchedulerResource extends AbstractSpagoBIResource {
+public class MonitoringResource extends AbstractSpagoBIResource {
 
 	List recentsList = null;
 

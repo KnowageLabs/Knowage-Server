@@ -3,7 +3,6 @@
 	<PRODUCT_TYPE label="KnowageBD" active="true">
 		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowageqbeengine" />
@@ -14,7 +13,6 @@
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
 		<ENGINE label="knowageofficeengine" />	
-		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowageprocessengine" />
@@ -36,7 +34,6 @@
 	<PRODUCT_TYPE label="KnowageLI" active="true">
 		<ENGINE label="knowagesvgviewerengine" />
 		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageqbeengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">
 		<ENGINE label="knowagedataminingengine" />
