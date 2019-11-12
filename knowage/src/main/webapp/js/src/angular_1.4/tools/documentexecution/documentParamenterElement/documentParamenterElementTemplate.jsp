@@ -39,7 +39,10 @@
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
-				<md-chips ng-model="parameter.parameterDescription" readonly="true">					 
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					<md-chip-template>
+				    	<strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>					 
 				</md-chips>
 			</div>
 		</div>
@@ -60,7 +63,10 @@
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
-				<md-chips ng-model="parameter.parameterDescription" readonly="true">			        
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
 				</md-chips>
 			</div>
 		</div>
