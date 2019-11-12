@@ -373,6 +373,8 @@ angular.module('cockpitModule')
 					item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 					item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 					item.ds=$scope.ngModel.dataset.label;
+
+                 if (nature == "init")
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
 				}else{
 					if(selections && !angular.equals($scope.defaultValues, selections)){
