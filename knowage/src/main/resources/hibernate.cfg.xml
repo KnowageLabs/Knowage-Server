@@ -8,20 +8,18 @@
 
 		<property name="hibernate.connection.datasource">java:/comp/env/jdbc/knowage</property>
 
+		<!-- <property name="hibernate.dialect">${hibernate.dialect}</property> -->
 
-       	<property name="hibernate.dialect">${hibernate.dialect}</property>
-                  
-               <!-- 
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
-        
-        -->
-        
+		<!-- 
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
+		 -->
+
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
 		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
