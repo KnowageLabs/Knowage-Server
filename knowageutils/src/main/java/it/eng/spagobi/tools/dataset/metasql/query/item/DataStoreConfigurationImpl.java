@@ -21,7 +21,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	private Filter filters;
 	private List<Projection> groups;
 	private List<Sorting> sortings;
-	private List<Projection> summaryRowProjections;
+	private List<List<Projection>> summaryRowProjections;
 	private final Integer offset = -1;
 	private final Integer fetchSize = -1;
 	private final Integer maxRowCount = -1;
@@ -40,7 +40,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @param summaryRowProjections
 	 */
 	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<Projection> projections, Filter filters, List<Projection> groups,
-			List<Sorting> sortings, List<Projection> summaryRowProjections) {
+			List<Sorting> sortings, List<List<Projection>> summaryRowProjections) {
 		super();
 		this.dataset = dataset;
 		this.parameters = parameters;
@@ -154,7 +154,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getSummaryRowProjections()
 	 */
 	@Override
-	public List<Projection> getSummaryRowProjections() {
+	public List<List<Projection>> getSummaryRowProjections() {
 		return this.summaryRowProjections;
 	}
 
@@ -228,7 +228,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @param summaryRowProjections
 	 *            the summaryRowProjections to set
 	 */
-	public void setSummaryRowProjections(List<Projection> summaryRowProjections) {
+	public void setSummaryRowProjections(List<List<Projection>> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;
 	}
 

@@ -227,8 +227,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			timing.stop();
 
+			List<List<Projection>> summaryRowArray = getSummaryRowArray(summaryRow, dataSet, columnAliasToName);
+
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
-					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+					where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
 			IDataWriter dataWriter = getDataStoreWriter();
 
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
@@ -245,6 +247,53 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			totalTiming.stop();
 			logger.debug("OUT");
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private List<List<Projection>> getSummaryRowArray(String summaryJson, IDataSet dataSet, Map<String, String> columnAliasToName) throws JSONException {
+		if (summaryJson != null && !summaryJson.isEmpty()) {
+
+			List<List<Projection>> returnList = new ArrayList<List<Projection>>();
+			JSONObject summaryRowObject = new JSONObject(summaryJson);
+
+			if(summaryRowObject != null) {
+
+				//	JSONObject summaryRowObject=summaryRowObject.optJSONObject(summaryJson);      // old way
+
+				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+
+				List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
+
+				summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+
+				returnList.add(summaryRowProjections);
+
+				return returnList;
+
+			}
+			else {
+				JSONArray measuresArray;  // new way
+
+				measuresArray=summaryRowObject.optJSONArray(summaryJson);
+
+				for (int i = 0; i < measuresArray.length(); i++) {
+
+					JSONObject jsonObj = measuresArray.getJSONObject(i);
+
+					JSONArray summaryRowMeasuresObject = jsonObj.getJSONArray("measures");
+
+					List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
+
+					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+
+					returnList.add(summaryRowProjections);
+
+					return returnList;
+
+				}
+			}
+		}
+		return null;
 	}
 
 	private void applyOptions(IDataSet dataSet, Map<String, Object> options) {
@@ -357,7 +406,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct")); // caso in cui ci siano facets complesse (coupled
-																												// proj)
+		// proj)
 	}
 
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {

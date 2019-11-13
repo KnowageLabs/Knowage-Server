@@ -407,6 +407,9 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
+			//List<List<Projection>> listToProjections = new ArrayList<List<Projection>>();
+			//listToProjections.add(minMaxProjections);
+
 			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1,   userprofile);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";

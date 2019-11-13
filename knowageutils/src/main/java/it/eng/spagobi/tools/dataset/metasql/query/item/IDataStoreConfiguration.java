@@ -28,7 +28,7 @@ public interface IDataStoreConfiguration {
 
 	List<Sorting> getSortings();
 
-	List<Projection> getSummaryRowProjections();
+	List<List<Projection>> getSummaryRowProjections();
 
 	Integer getOffset();
 

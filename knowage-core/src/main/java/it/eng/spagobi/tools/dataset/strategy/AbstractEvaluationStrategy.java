@@ -52,19 +52,23 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	@Override
 	public IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		IDataStore dataStore;
 		if (isUnsatisfiedFilter(filter)) {
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
 			dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-				IDataStore summaryRowDataStore = executeSummaryRow(summaryRowProjections, dataStore.getMetaData(), filter, maxRowCount);
-				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
+				for (List<Projection> listProj : summaryRowProjections) {
+
+				IDataStore summaryRowDataStore = executeSummaryRow(listProj, dataStore.getMetaData(), filter, maxRowCount);
+				appendSummaryRowToPagedDataStore(projections, listProj, dataStore, summaryRowDataStore);
+				}
 			}
 		}
 		return dataStore;
 	}
+
 
 	@Override
 	public IDataStore executeSummaryRowQuery(List<Projection> summaryRowProjections, Filter filter, int maxRowCount) {
@@ -72,7 +76,8 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	}
 
 	protected abstract IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
+
 
 	protected abstract IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);
 
@@ -94,6 +99,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	private void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
 			IDataStore summaryRowDataStore) {
+
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
@@ -132,5 +138,6 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
 			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
 		}
+
 	}
 }
