@@ -69,7 +69,38 @@
 					       			</md-select>
 							    </md-input-container>
 							</div>
-				   			 <div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;"></div>
+							
+							<!-- COLUMNS DEFINITION TABLE -->
+				   			<div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px;"></div>
+				   			
+				   			<!-- SUMMARY ROWS DEFINITION -->
+				   			<md-subheader class="noPadding">
+				   			 	<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
+		   							<md-switch ng-model="newModel.settings.summary.enabled"></md-switch> <span layout-padding>Summary row</span>
+		   							<span flex></span>
+									<md-button ng-click="addSummaryRow()" ng-disabled="!newModel.settings.summary.enabled">Add</md-button>
+		   						</div>
+							</md-subheader>
+							<div ng-if="newModel.settings.summary.enabled && newModel.settings.summary && newModel.settings.summary.list.length > 0" layout="column">
+								<div ng-repeat="summaryRow in newModel.settings.summary.list track by $index" layout="row" style="padding:8px;" layout-align="start center">
+									<md-input-container flex class="md-block">
+					       				<label>Label</label>
+			          					<input type="text" ng-model="summaryRow.label"/>
+							    	</md-input-container>
+									<md-input-container flex class="md-block" ng-if="!$first">
+					       				<label>Aggregation</label>
+			          					<md-select ng-model="summaryRow.aggregation">
+				       					</md-select>
+							    	</md-input-container>
+							    	<md-checkbox layout-align="space-around center" ng-model="newModel.settings.summary.style.pinnedOnly" class="md-block" ng-if="$first">
+										{{::translate.load('sbi.cockpit.table.summary.pinnedonly')}}
+									</md-checkbox>
+							    	<md-button class="md-icon-button" ng-click="removeSummaryRow($index)" ng-if="!$first">
+							    		<md-icon md-font-icon="fa fa-trash"></md-icon>
+							    	</md-button>
+								</div>
+							</div>
+							
 				     	</md-card-content>
 				    </md-card>
 				</md-tab>
@@ -213,15 +244,14 @@
 		        	<md-card>
 					<md-toolbar class="ternaryToolbar" >
 						<div class="md-toolbar-tools" layout="row">
-							<md-switch ng-model="newModel.settings.summary.enabled" ng-click="toggleSummary()">{{::translate.load('sbi.cockpit.widget.table.summary')}}</md-switch>
-							<span flex></span>
+							{{::translate.load('sbi.cockpit.widget.table.summary')}}
 						</div>
 					</md-toolbar>
 					
 					<md-card-content >
 						<div flex layout=column >
 							<div flex layout="row" >
-								<md-input-container flex class="md-block">
+								<!--md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
 									<input class="input_class" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.title" />
 								</md-input-container>
@@ -229,7 +259,7 @@
 									<md-checkbox layout-align="space-around center" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.style.pinnedOnly" class="md-block">
 										{{::translate.load('sbi.cockpit.table.summary.pinnedonly')}}
 									</md-checkbox>
-								</div>
+								</div-->
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
 									<md-select ng-disabled ="!newModel.settings.summary.enabled" aria-label="aria-label" ng-model="newModel.settings.summary.style['font-family']">

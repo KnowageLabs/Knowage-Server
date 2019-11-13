@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
 						if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 							tempCol.pinnedRowCellRenderer = SummaryRowRenderer,
-							tempCol.pinnedRowCellRendererParams = {"title":$scope.ngModel.settings.summary.title, "style": $scope.ngModel.settings.summary.style};
+							tempCol.pinnedRowCellRendererParams = {"summaryRows":$scope.ngModel.settings.summary.list, "style": $scope.ngModel.settings.summary.style};
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.width) {
 							tempCol.width = parseInt($scope.ngModel.content.columnSelectedOfDataset[c].style.width);
@@ -257,9 +257,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || (params.colDef.style && params.colDef.style['font-style']) || "";
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
-            	if(params.title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+            	var title = params.summaryRows[params.rowIndex].label;
+            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
-            		if((!params.style || !params.style['pinnedOnly']) && params.title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+params.title+'</b>';
+            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             		this.eGui.innerHTML += params.valueFormatted || params.value;
 	    		}
             }
@@ -307,8 +308,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
-					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length-1));
-					$scope.advancedTableGrid.api.setPinnedBottomRowData([datasetRecords.rows[datasetRecords.rows.length-1]]);
+					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length - $scope.ngModel.settings.summary.list.length));
+					$scope.advancedTableGrid.api.setPinnedBottomRowData(datasetRecords.rows.slice( -$scope.ngModel.settings.summary.list.length));
 				}
 				else {
 					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
