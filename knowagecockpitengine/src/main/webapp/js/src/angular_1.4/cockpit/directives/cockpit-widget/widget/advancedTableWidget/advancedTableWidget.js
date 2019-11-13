@@ -308,8 +308,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
-					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length - $scope.ngModel.settings.summary.list.length));
-					$scope.advancedTableGrid.api.setPinnedBottomRowData(datasetRecords.rows.slice( -$scope.ngModel.settings.summary.list.length));
+					var rowsNumber = 1;
+					if($scope.ngModel.settings.summary.list) rowsNumber = $scope.ngModel.settings.summary.list.length;
+					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows.slice(0,datasetRecords.rows.length - rowsNumber));
+					$scope.advancedTableGrid.api.setPinnedBottomRowData(datasetRecords.rows.slice( -rowsNumber));
 				}
 				else {
 					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
