@@ -58,12 +58,10 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 	public static final String ENTITIES = "entities";
 
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(GetTreeAction.class);
-
+	public static transient Logger logger = Logger.getLogger(GetTreeAction.class);
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
-
 
 		String queryId = null;
 		String datamartName = null;
@@ -74,7 +72,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 		QbeTreeFilter treeFilter = null;
 
 		ExtJsQbeTreeBuilder qbeBuilder = null;
-		JSONObject node=new JSONObject();
+		JSONObject node = new JSONObject();
 		JSONArray nodes = null;
 		logger.debug("IN");
 
@@ -86,15 +84,16 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			queryId = getAttributeAsString(QUERY_ID);
 			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
 
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
 			logger.debug("Filtering entities list ...");
 			entityFilter = new QbeTreeAccessModalityEntityFilter();
 			logger.debug("Apply entity filter [" + entityFilter.getClass().getName() + "]");
-			if(queryId != null) {
+			if (queryId != null) {
 				logger.debug("Filtering on query [" + queryId + "] selectd entities");
 				query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
-				if(query != null){
+				if (query != null) {
 					entityFilter = new QbeTreeQueryEntityFilter(entityFilter, query);
 				}
 			}
@@ -107,20 +106,19 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			fieldFilter = new QbeTreeOrderFieldFilter(fieldFilter);
 			logger.debug("Apply field filter [" + fieldFilter.getClass().getName() + "]");
 
-			treeFilter = new  QbeTreeFilter(entityFilter, fieldFilter);
+			treeFilter = new QbeTreeFilter(entityFilter, fieldFilter);
 
 			qbeBuilder = new ExtJsQbeTreeBuilder(treeFilter);
 
 			datamartName = getAttributeAsString(DATAMART_NAME);
 
-
-			if (datamartName != null) {
-//				if(datamartName.equals("null"))
-//					datamartName="";
+			if (datamartName != null && !datamartName.equals("null")) {
+				// if(datamartName.equals("null"))
+				// datamartName="";
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName, userProfile);
 
 			} else {
-			 nodes = new JSONArray();
+				nodes = new JSONArray();
 				Iterator<String> it = getDataSource().getModelStructure(userProfile).getModelNames().iterator();
 				while (it.hasNext()) {
 					String modelName = it.next();
@@ -131,24 +129,22 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 					}
 				}
 
-
 			}
 
 			node.put(ENTITIES, nodes);
 
 			try {
-				writeBackToClient( new JSONSuccess(node) );
+				writeBackToClient(new JSONSuccess(node));
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
 			}
 
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
 			logger.debug("OUT");
 		}
-
 
 	}
 }
