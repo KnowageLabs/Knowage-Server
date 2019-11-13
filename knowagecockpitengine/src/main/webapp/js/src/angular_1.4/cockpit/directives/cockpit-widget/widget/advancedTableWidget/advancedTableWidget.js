@@ -490,7 +490,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
 			var iconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'icon';
 			var previewIconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == 'icon';
-			if($scope.cliccable==false || node.colDef.measure=='MEASURE') return;
+			if($scope.cliccable==false) return;
+			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn) return;
 			if(!previewIconEnabled && !iconEnabled && (node.value == "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
 			if(iconEnabled && node.colDef.crossIcon) {
