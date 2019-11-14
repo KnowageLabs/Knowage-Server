@@ -21,6 +21,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
+	$scope.availableSummaryAggregations = ["NONE","SUM","AVG","COUNT","COUNT_DISTINCT"];
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
 	$scope.allHidden = false;
 	for(var k in $scope.newModel.content.columnSelectedOfDataset){

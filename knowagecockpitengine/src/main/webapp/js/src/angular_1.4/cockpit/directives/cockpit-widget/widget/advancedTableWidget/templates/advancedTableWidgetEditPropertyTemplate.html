@@ -76,20 +76,24 @@
 				   			<!-- SUMMARY ROWS DEFINITION -->
 				   			<md-subheader class="noPadding">
 				   			 	<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
-		   							<md-switch ng-model="newModel.settings.summary.enabled"></md-switch> <span layout-padding>Summary row</span>
+		   							<md-switch ng-model="newModel.settings.summary.enabled"></md-switch> <span layout-padding>{{::translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.summaryrow')}}</span>
 		   							<span flex></span>
-									<md-button ng-click="addSummaryRow()" ng-disabled="!newModel.settings.summary.enabled">Add</md-button>
+									<md-button ng-click="addSummaryRow()" ng-disabled="!newModel.settings.summary.enabled">
+										{{::translate.load('sbi.cockpit.widget.table.summary.add')}}
+										<md-tooltip md-delay="1000">{{::translate.load('sbi.cockpit.widget.table.summary.addtooltip')}}</md-tooltip>
+									</md-button>
 		   						</div>
 							</md-subheader>
 							<div ng-if="newModel.settings.summary.enabled && newModel.settings.summary && newModel.settings.summary.list.length > 0" layout="column">
 								<div ng-repeat="summaryRow in newModel.settings.summary.list track by $index" layout="row" style="padding:8px;" layout-align="start center">
 									<md-input-container flex class="md-block">
-					       				<label>Label</label>
+					       				<label>{{::translate.load('sbi.generic.label')}}</label>
 			          					<input type="text" ng-model="summaryRow.label"/>
 							    	</md-input-container>
 									<md-input-container flex class="md-block" ng-if="!$first">
-					       				<label>Aggregation</label>
+					       				<label>{{::translate.load('sbi.cockpit.widgets.table.column.aggregation')}}</label>
 			          					<md-select ng-model="summaryRow.aggregation">
+			          						<md-option ng-repeat="func in availableSummaryAggregations" ng-value="func">{{func}}</md-option>
 				       					</md-select>
 							    	</md-input-container>
 							    	<md-checkbox layout-align="space-around center" ng-model="newModel.settings.summary.style.pinnedOnly" class="md-block" ng-if="$first">
@@ -251,15 +255,6 @@
 					<md-card-content >
 						<div flex layout=column >
 							<div flex layout="row" >
-								<!--md-input-container flex class="md-block">
-									<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
-									<input class="input_class" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.title" />
-								</md-input-container>
-								<div flex layout="row" layout-align="start center">
-									<md-checkbox layout-align="space-around center" ng-disabled="!newModel.settings.summary.enabled" ng-model="newModel.settings.summary.style.pinnedOnly" class="md-block">
-										{{::translate.load('sbi.cockpit.table.summary.pinnedonly')}}
-									</md-checkbox>
-								</div-->
 								<md-input-container flex class="md-block">
 									<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
 									<md-select ng-disabled ="!newModel.settings.summary.enabled" aria-label="aria-label" ng-model="newModel.settings.summary.style['font-family']">
