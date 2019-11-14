@@ -1604,7 +1604,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		 *
 		 */
 		if (path.contains("properties")) {
-			String regex = "(?<=properties\\/\\d\\/).*?(?=\\/value)";
+			String regex = "(?<=properties\\/\\d{1,10}\\/).*?(?=\\/value)";
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(path);
 			path = matcher.replaceAll("value");
