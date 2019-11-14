@@ -48,7 +48,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.restServices = sbiModule_restServices;
 	$scope.showCkanIntegration = sbiModule_user.functionalities.indexOf("CkanIntegrationFunctionality")>-1;
 
-	$scope.selectedDataset = undefined;
+	$scope.selectedDataSet = undefined;
 	$scope.showDatasettInfo = false;
 	$scope.currentTab = "myDataSet";
     $scope.previewDatasetModel=[];
@@ -287,7 +287,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 
 	$scope.isSelectedDatasetValid = function() {
-		return $scope.selectedDataset !== undefined;
+		return $scope.selectedDataSet !== undefined;
 	};
 
 	$scope.setDetailOpen = function(isOpen) {
@@ -303,10 +303,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.selectDataset= function (dataset) {
-		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
-		$scope.selectedDataset = dataset;
+		var alreadySelected = (dataset !== undefined && $scope.selectedDataSet === dataset);
+		$scope.selectedDataSet = dataset;
 		if (alreadySelected) {
-			$scope.selectedDataset=undefined;
+			$scope.selectedDataSet=undefined;
 			$scope.setDetailOpen(!$scope.showDatasetDetail);
 		} else {
 			$scope.setDetailOpen(dataset !== undefined);
@@ -450,6 +450,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     $scope.showQbeDataset= function(dataset){
 		var label= dataset.label;
+		$scope.selectedDataSet = {};
+		angular.copy(dataset, $scope.selectedDataSet);
 		var url= datasetParameters.qbeFromDataSetServiceUrl
 		       +'&dataset_label='+label
 		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
@@ -475,7 +477,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.showExportDriverPanel = true;
     	$scope.dataset = dataset;
     	$scope.formatValueForExport = format;
-    	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataset).then(function(){
+    	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
     		if($scope.drivers && $scope.drivers.length > 0){
     			$scope.dataset.parametersData = {};
     			$scope.dataset.parametersData.documentParameters = $scope.drivers;
@@ -813,7 +815,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.switchDatasetsTab = function(datasetsTab) {
     	var oldTab = angular.copy($scope.currentDatasetsTab);
     	$scope.currentDatasetsTab = datasetsTab;
-    	if($scope.selectedDataset !== undefined){
+    	if($scope.selectedDataSet !== undefined){
     		$scope.selectDataset(undefined);
          }
     	if($scope.selectedCkan !== undefined){
@@ -1153,6 +1155,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.drivers = response.data.filterStatus;
 				selectedDataset.drivers = $scope.drivers;
+				$scope.selectedDataSet.drivers = [];
+				angular.copy($scope.drivers, $scope.selectedDataSet.drivers);
 		})
 		return promise;
 	}
@@ -1191,7 +1195,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	        $scope.urlParams = $httpParamSerializer(config);
 				if($scope.datasetInPreview && $scope.datasetInPreview.dsTypeCd.toLowerCase() == "qbe"){
 					if(driversExecutionService.hasMandatoryDrivers($scope.drivers)){
-						if(driversExecutionServicee.driversAreSet($scope.drivers)) $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
+						if(driversExecutionService.driversAreSet($scope.drivers)) $scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 						}else{
 							$scope.previewUrl = $sce.trustAsResourceUrl(sbiModule_config.contextName + '/restful-services/2.0/datasets/preview?'+ $scope.urlParams);
 						}
