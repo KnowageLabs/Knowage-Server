@@ -1,5 +1,13 @@
 .CodeMirror {
 	font-size: $mediumFontSize;
+  &.cm-s-eclipse {
+    span.cm-field {
+      color: $darkTextColor;
+      border: 1px solid $bordersColor;
+      border-radius: 2px;
+      background-color: lighten($bordersColor,10%);
+    }
+  }
 }
 
 .codeMirrorScriptEditor {

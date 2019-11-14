@@ -81,422 +81,15 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	$scope.formula = "";
 	$scope.formulaElement = [];
 
-	$scope.functions = [
-		  {
-			    "syntax": "Sum( Field )",
-			    "description": "Returns the total sum of a numeric field.",
-			    "body": "Sum(field)",
-			    "name": "Sum",
-			    "arguments": [
-			      {
-			        "name": "Field",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Field type Number",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "aggregation"
-			  },
-			  {
-			    "syntax": "Min( Field )",
-			    "description": "Returns the smallest value of a numeric field.",
-			    "body": "Min(field)",
-			    "name": "Min",
-			    "arguments": [
-			      {
-			        "name": "Field",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Field type Number",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "aggregation"
-			  },
-			  {
-			    "syntax": "MAx( Field )",
-			    "description": "Returns the largest value of a numeric field.",
-			    "body": "Max(field)",
-			    "name": "Max",
-			    "arguments": [
-			      {
-			        "name": "Field",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Field type Number",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "aggregation"
-			  },
-			  {
-			    "syntax": "Count( Field )",
-			    "description": "Returns the number of rows that matches the specific criteria.",
-			    "body": "Count(field)",
-			    "name": "Count",
-			    "arguments": [
-			      {
-			        "name": "Field",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Field of any type or *",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Integer",
-			    "type": "aggregation"
-			  },
-			  {
-			    "syntax": "Avg( Field )",
-			    "description": "Returns the average value of a numeric field.",
-			    "body": "Avg(field)",
-			    "name": "Average",
-			    "arguments": [
-			      {
-			        "name": "Field",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Field type Number",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "aggregation"
-			  },
-			  {
-			    "syntax": "Concat(expression1, expression2, expression3,...)",
-			    "description": "If expression is a numeric value, it will be converted to a binary string. \n\t\t\tIf all expressions are nonbinary strings, this function will return a nonbinary string. \n\t\t\tIf any of the expressions is a binary string, this function will return a binary string. \n\t\t\tIf any of the expressions is a NULL, this function will return a NULL value..",
-			    "body": "Concat(expressionParams)",
-			    "name": "Concat",
-			    "arguments": [
-			      {
-			        "name": "Expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Expression than returns string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Length(string)",
-			    "description": "Returns a length of a string",
-			    "body": "Length(string)",
-			    "name": "Length",
-			    "arguments": [
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Expression than returns string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Locate(substring, string, start)",
-			    "description": "Returns a position of a subtring in the string",
-			    "body": "Locate(${substring}, ${string}, ${start})",
-			    "name": "Locate",
-			    "arguments": [
-			      {
-			        "name": "Substring",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Substring to search in a string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "substring"
-			      },
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "String that will be searched",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "string"
-			      },
-			      {
-			        "name": "Start",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "The starting position for the search.Position 1 is default",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "start"
-			      }
-			    ],
-			    "output": "Integer",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Locate(substring, string, start)",
-			    "description": "Returns a position of a subtring in the field",
-			    "body": "Locate(${substring}, ${string}, ${start})",
-			    "name": "Locate",
-			    "arguments": [
-			      {
-			        "name": "Substring",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Substring to search in a string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "substring"
-			      },
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "String that will be searched",
-			        "hidden": false,
-			        "type": "field",
-			        "placeholder": "string"
-			      },
-			      {
-			        "name": "Start",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "The starting position for the search.Position 1 is default",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "start"
-			      }
-			    ],
-			    "output": "Integer",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Lower(string)",
-			    "description": "Convert the string value to lower case.",
-			    "body": "Lower(string)",
-			    "name": "Lower",
-			    "arguments": [
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Expression than returns string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Upper(string)",
-			    "description": "Convert the string value to upper case.",
-			    "body": "Upper(string)",
-			    "name": "Upper",
-			    "arguments": [
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Expression than returns string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Trim(string)",
-			    "description": "The TRIM function trims the specified character from a string. \n\t\t\tThe keywords LEADING, TRAILING, BOTH are all optional, if not specified BOTH is assumed. \n\t\t\tIf the char to be trimmed is not specified, it will be assumed to be space (or blank).",
-			    "body": "Trim(string)",
-			    "name": "Trim",
-			    "arguments": [
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "Expression than returns string",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "Substring(string, start_pos, number_of_chars))",
-			    "description": "Returns a substring of a string.",
-			    "body": "Substring(${string}, ${start_pos}, ${number_of_chars})",
-			    "name": "Substring",
-			    "arguments": [
-			      {
-			        "name": "String",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "String to extract from",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "string"
-			      },
-			      {
-			        "name": "Start positions",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "The position to start extraction from. The first position in string is 1",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "start_pos"
-			      },
-			      {
-			        "name": "Number of chars",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "The number of characters to extract",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": "number_of_chars"
-			      }
-			    ],
-			    "output": "String",
-			    "type": "string"
-			  },
-			  {
-			    "syntax": "CURRENT_DATE()",
-			    "description": "Returns the current date on the database",
-			    "body": "CURRENT_DATE()",
-			    "name": "Current date",
-			    "arguments": null,
-			    "output": "String",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "CURRENT_TIME()",
-			    "description": "Returns the current time on the database",
-			    "body": "CURRENT_TIME()",
-			    "name": "Current time",
-			    "arguments": null,
-			    "output": "String",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "Hour( Datetime_expression )",
-			    "description": "Returns the hour part for a given date.",
-			    "body": "Hour(datetime_expression)",
-			    "name": "Hour",
-			    "arguments": [
-			      {
-			        "name": "datetime_expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "datetime expression",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "Second( Datetime_expression )",
-			    "description": "Returns  the seconds part of a time/datetime .",
-			    "body": "Second(datetime_expression)",
-			    "name": "Second",
-			    "arguments": [
-			      {
-			        "name": "datetime_expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "datetime expression",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "Year( Date_expression )",
-			    "description": "Returns  the year part for a given date  .",
-			    "body": "Year(date_expression)",
-			    "name": "Year",
-			    "arguments": [
-			      {
-			        "name": "date_expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "date expression",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "Month( Date_expression )",
-			    "description": "Returns  the month part for a given date  .",
-			    "body": "Month(date_expression)",
-			    "name": "Month",
-			    "arguments": [
-			      {
-			        "name": "date_expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "date expression",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "time"
-			  },
-			  {
-			    "syntax": "Day( Date_expression )",
-			    "description": "Returns  the day part for a given date  .",
-			    "body": "Day(date_expression)",
-			    "name": "Day",
-			    "arguments": [
-			      {
-			        "name": "date_expression",
-			        "expected_value": "",
-			        "default_value": "",
-			        "argument_description": "date expression",
-			        "hidden": false,
-			        "type": null,
-			        "placeholder": ""
-			      }
-			    ],
-			    "output": "Number",
-			    "type": "time"
-			  }
-			];
+	$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
+	$scope.functions.push({
+	      "syntax":"VariabileTest",
+	      "description":"no description.",
+	      "body":"$V{variabileTest}",
+	      "name":"VariabileTest",
+	      "output":"Number",
+	      "type":"variable"
+	   })
 
 	$scope.availableFormulaTypes = [];
 	 angular.forEach($scope.functions, function(value, key) {
@@ -520,6 +113,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
         theme: 'eclipse',
         lineWrapping: true,
         lineNumbers: true,
+        mode: 'calculatedFieldMode',
         onLoad: $scope.codemirrorLoaded
     };
 
@@ -532,6 +126,23 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 
     $scope.addFormula = function(formula) {
         $scope.addTextInCodemirror(formula.body);
+    }
+
+    $scope.addMeasures = function(field) {
+        var text = '$F{' + field.name + '}';
+        var suffix = "";
+        var prefix = "";
+        $scope._editor.focus();
+        if ($scope._editor.somethingSelected()) {
+            $scope._editor.replaceSelection(prefix + text + suffix);
+            return
+        }
+        var position = $scope._editor.getCursor();
+        var line = $scope._editor.getLine(position.line);
+        if (line.charAt(position.ch - 1) == '}') {
+            prefix = ',';
+        }
+        $scope.addTextInCodemirror(prefix + text + suffix);
     }
 
 	if($scope.model.dataset.dsId != undefined){
@@ -559,7 +170,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
     }
 
 
-	$scope.checkInput=function(event){
+	/*$scope.checkInput=function(event){
 		console.log(event);
 		if(event.key == "Backspace"){
 			event.preventDefault();
@@ -600,7 +211,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		} else {
 			event.preventDefault();
 		}
-	}
+	}*/
 
 	$scope.reloadValue = function(){
 		$scope.formulaElement = angular.copy(actualItem.formulaArray);
@@ -660,7 +271,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		$scope.column.aggregationSelected = $scope.column.datasetOrTableFlag ? 'SUM' : 'NONE';
 	}
 
-	$scope.checkBrackets = function(){
+	/*$scope.checkBrackets = function(){
 		var countOpenBrackets = 0;
 		var countCloseBrackets = 0;
 		for(var i=0;i<$scope.formulaElement.length;i++){
@@ -750,7 +361,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 			}
 
 		}
-	}
+	}*/
 	$scope.showAction = function(text) {
 		var toast = $mdToast.simple()
 		.content(text)
