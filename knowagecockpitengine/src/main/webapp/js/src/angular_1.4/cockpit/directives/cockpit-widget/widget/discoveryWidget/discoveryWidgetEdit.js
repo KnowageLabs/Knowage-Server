@@ -40,6 +40,24 @@ function discoveryWidgetEditControllerFunction(
 	$scope.defaultTextSearchType = [{label: $scope.translate.load('kn.cockpit.discovery.defaultsearchstatic'),value:'static'},
 		{label:$scope.translate.load('kn.cockpit.discovery.defaultsearchanalytic'),value:'driver'}];
 
+	$scope.checkSelectedColumnsConsistency = function(){
+		if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
+			$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
+			if($scope.newModel.content.columnSelectedOfDataset){
+				for(var k in $scope.newModel.content.columnSelectedOfDataset){
+					for(var j in $scope.local.metadata.fieldsMeta){
+						if($scope.local.metadata.fieldsMeta[j].name == $scope.newModel.content.columnSelectedOfDataset[k].name){
+							$scope.newModel.content.columnSelectedOfDataset[k].type = $scope.local.metadata.fieldsMeta[j].type;
+							$scope.newModel.content.columnSelectedOfDataset[k].properties = $scope.local.metadata.fieldsMeta[j].properties;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	$scope.checkSelectedColumnsConsistency();
+
 	$scope.columnsGrid = {
 		angularCompileRows: true,
 		enableColResize: false,
@@ -152,10 +170,6 @@ function discoveryWidgetEditControllerFunction(
 	function refreshRow(cell){
 		if(cell.node.data.fieldType == 'MEASURE') $scope.newModel.content.columnSelectedOfDataset[cell.rowIndex].facet = false;
 		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
-	}
-
-	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
-		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
 	}
 
 	$scope.colorPickerPropertyTh = {
