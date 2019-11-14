@@ -388,7 +388,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	}
 
 	$scope.$watch('newModel.settings.summary.enabled',function(newValue,oldValue){
-		if(newValue != oldValue){
+		if(newValue){
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
 		}
 	})

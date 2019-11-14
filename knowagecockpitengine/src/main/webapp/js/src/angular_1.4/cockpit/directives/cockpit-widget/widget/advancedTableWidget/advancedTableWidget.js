@@ -64,6 +64,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
 		}else $scope.ngModel.settings.page = 1;
 
+		if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
+			if(!$scope.ngModel.settings.summary.list) $scope.ngModel.settings.summary.list = [{"label":$scope.ngModel.settings.summary.title}];
+		}
 		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
 		function getColumns(fields) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;

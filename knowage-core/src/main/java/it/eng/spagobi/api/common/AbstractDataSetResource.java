@@ -195,11 +195,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					((VersionedDataSet) dataSet).setWrappedDataset(solrDS);
 				}
 
-				if (summaryRow != null && !summaryRow.isEmpty()) {
-					JSONObject summaryRowObject = new JSONObject(summaryRow);
-					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
-				}
+//				if (summaryRow != null && !summaryRow.isEmpty()) {
+//					JSONObject summaryRowObject = new JSONObject(summaryRow);
+//					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+//					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+//				}
 			}
 
 			List<Filter> filters = new ArrayList<>(0);
@@ -254,13 +254,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (summaryJson != null && !summaryJson.isEmpty()) {
 
 			List<List<Projection>> returnList = new ArrayList<List<Projection>>();
-			JSONObject summaryRowObject = new JSONObject(summaryJson);
+			JSONArray summaryRowObject = new JSONArray(summaryJson);
 
-			if(summaryRowObject != null) {
+			if(summaryRowObject != null && summaryRowObject.length()==1) {
 
-				//	JSONObject summaryRowObject=summaryRowObject.optJSONObject(summaryJson);      // old way
+				  // old way
 
-				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+				JSONObject summaryRowObjectArray = summaryRowObject.getJSONObject(0);
+				JSONArray summaryRowMeasuresObject = summaryRowObjectArray.getJSONArray("measures");
 
 				List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
 
@@ -271,14 +272,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				return returnList;
 
 			}
-			else {
-				JSONArray measuresArray;  // new way
+			else {		 // new way
 
-				measuresArray=summaryRowObject.optJSONArray(summaryJson);
 
-				for (int i = 0; i < measuresArray.length(); i++) {
+				for (int i = 0; i < summaryRowObject.length(); i++) {
 
-					JSONObject jsonObj = measuresArray.getJSONObject(i);
+					JSONObject jsonObj = summaryRowObject.getJSONObject(i);
 
 					JSONArray summaryRowMeasuresObject = jsonObj.getJSONArray("measures");
 

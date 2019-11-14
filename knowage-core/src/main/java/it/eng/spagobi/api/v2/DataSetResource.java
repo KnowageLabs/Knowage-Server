@@ -593,7 +593,13 @@ public class DataSetResource extends AbstractDataSetResource {
 				aggregations = jsonAggregations != null ? jsonAggregations.toString() : null;
 
 				JSONObject jsonSummaryRow = jsonBody.optJSONObject("summaryRow");
-				summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
+				if (jsonSummaryRow!=null) {
+					summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
+				}
+				else {
+					JSONArray jsonSummaryRowArray=jsonBody.optJSONArray("summaryRow");
+					summaryRow = jsonSummaryRowArray != null ? jsonSummaryRowArray.toString() : null;
+				}
 
 				JSONObject jsonOptions = jsonBody.optJSONObject("options");
 				options = jsonOptions != null ? jsonOptions.toString() : null;
