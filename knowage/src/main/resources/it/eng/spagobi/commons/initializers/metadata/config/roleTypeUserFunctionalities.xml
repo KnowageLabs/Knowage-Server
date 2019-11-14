@@ -144,8 +144,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileAttributeManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="ProfileAttributeManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="SyncronizeRolesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ViewMyFolderAdmin" roleType="ADMIN" />
@@ -177,8 +175,6 @@
 		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="ProfileManagement" roleType="DEV_ROLE" />
 <!--		
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" />
