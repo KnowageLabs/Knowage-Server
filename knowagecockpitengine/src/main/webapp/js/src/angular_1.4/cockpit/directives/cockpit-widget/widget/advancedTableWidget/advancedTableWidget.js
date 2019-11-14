@@ -263,8 +263,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	var title = params.summaryRows[params.rowIndex].label;
             	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
+            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
+            			var tempValue = $filter('number')(params.value,0);
+            		}else var tempValue = params.valueFormatted || params.value;
             		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
-            		this.eGui.innerHTML += params.valueFormatted || params.value;
+            		this.eGui.innerHTML += tempValue;
 	    		}
             }
 		};
