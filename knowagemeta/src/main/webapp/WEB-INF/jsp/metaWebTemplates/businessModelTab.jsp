@@ -122,7 +122,7 @@
 					
 				
 					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories | filterByMainCategory">
-						<div layout="row" ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp" layout-align="start center">
+						<div layout="row" ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp | filterByDataType" layout-align="start center">
 							<md-input-container class="md-block" flex
 							ng-class=" {'md-icon-right' : (getPropertyAttributes(prop).value=='temporal dimension' || getPropertyAttributes(prop).value=='time dimension')  }"
 							ng-init="getPropertyAttributes(prop).value= (getPropertyAttributes(prop).value==undefined || getPropertyAttributes(prop).value==null) ? getPropertyAttributes(prop).propertyType.defaultValue : getPropertyAttributes(prop).value"
@@ -130,9 +130,11 @@
 								<label>{{getPropertyAttributes(prop).propertyType.name}}</label>
 								<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length!=0">
 									<md-option ng-repeat="admissibleValue in getPropertyAttributes(prop).propertyType.admissibleValues | filterByProductType:prop " value="{{admissibleValue}}" >
-										{{admissibleValue}}
+										{{admissibleValue |format:prop}}
 									</md-option>
 								</md-select>
+								
+								
 								
 								<input ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length==0 
 								&& getPropertyKey(prop)!='structural.attribute'

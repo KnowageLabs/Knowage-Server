@@ -1,9 +1,20 @@
 var app = angular.module('metaManager', [ 'ngMaterial', 'angular_table','sbiModule', 'componentTreeModule', 'expander-box','associator-directive','angular-list-detail' ]);
 
-app.config(function($mdThemingProvider, $locationProvider) {
+app.config(function($mdThemingProvider, $locationProvider ,$mdDateLocaleProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 	$locationProvider.html5Mode(true);
+
+	$mdDateLocaleProvider.parseDate = function(dateString) {
+        var m = moment(dateString, 'L', true);
+        return m.isValid() ? m.toDate() : new Date(NaN);
+    };
+    $mdDateLocaleProvider.formatDate = function(date,format) {
+
+
+    	if(!format) format = 'L';
+        return moment(date).locale(locale).format(format);
+    };
 });
 
 app.factory("dialogScope",function(){
@@ -315,6 +326,70 @@ angular.module('metaManager').filter('filterByCategory', function(sbiModule_user
 			}
 		});
 		return filtered;
+	};
+});
+
+angular.module('metaManager').filter('filterByDataType', function($filter) {
+
+
+	return function(items) {
+
+		var filtered = [];
+
+		var dataType = $filter('filter')(items,'structural.datatype')
+		var dataTypeValue;
+		if(dataType.length > 0){
+			dataTypeValue = dataType[0]['structural.datatype'].value
+		}
+
+
+
+		var isOneOfDataTypes = function(dataType,types){
+			for(var i =0;i < types.length ; i++){
+				if(dataType && dataType.toLowerCase() == types[i]){
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+
+		angular.forEach(items, function(item) {
+
+			if(!isOneOfDataTypes(dataTypeValue,['date','timestamp']) && item['structural.dateformat']){
+
+			}else if(!isOneOfDataTypes(dataTypeValue,['time']) && item['structural.timeformat']){
+
+			}else if(isOneOfDataTypes(dataTypeValue,['date','time','timestamp']) && item['structural.format']){
+
+			}else{
+				filtered.push(item)
+			}
+
+
+		});
+
+		return filtered;
+	};
+});
+
+angular.module('metaManager').filter('format', function($mdDateLocale) {
+
+
+
+	return function(item,prop) {
+
+
+		var formatted = item;
+		var date = new Date().toDateString();
+		if(prop["structural.dateformat"]||prop["structural.timeformat"]){
+
+			return $mdDateLocale.formatDate(new Date(date),item)
+		}
+
+		return formatted;
 	};
 });
 

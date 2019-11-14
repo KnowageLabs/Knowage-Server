@@ -126,6 +126,14 @@
       description="The numeric format to use if the value is numeric"
       category="Structural" defaultValue="#,###" />
       
+      <type id="structural.dateformat" name="Format Date"
+      description="The date format to use if the value is date"
+      category="Structural" defaultValue="LLLL" />
+      
+      <type id="structural.timeformat" name="Format Time"
+      description="The time format to use if the value is time"
+      category="Structural" defaultValue="LT" />
+      
       <type id="structural.attribute" name="Profile attribute"
       description="A profile attribute used to filter"
       category="Structural" defaultValue="" />
@@ -179,6 +187,24 @@
         <value>#.###</value>
         <value>$#,##0.00</value>
         <value>€#,##0.00</value>
+      </admissibleValuesOf>
+      
+       <admissibleValuesOf typeId="structural.dateformat">
+        <value>LLLL</value>
+        <value>llll</value>
+        <value>LLL</value>
+        <value>lll</value>
+        <value>DD/MM/YYYY HH:MM:SS</value>
+        <value>DD/MM/YYYY HH:MM</value>
+        <value>LL</value>
+        <value>ll</value>
+        <value>L</value>
+        <value>l</value>
+      </admissibleValuesOf>
+      
+       <admissibleValuesOf typeId="structural.timeformat">
+        <value>LT</value>
+        <value>LTS</value>
       </admissibleValuesOf>
             
       <admissibleValuesOf typeId="structural.aggtype">

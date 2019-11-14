@@ -233,6 +233,104 @@ public class PageResource {
 		// Put here methods to guarantee the backward compatibility with old versions of the metamodel
 		addProfileFilterConditionProperty(model);
 		addCustomFunctionProperty(model);
+		addDateFormatProperty(model);
+		addTimeFormatProperty(model);
+
+	}
+
+	/**
+	 * @param model
+	 */
+	private void addDateFormatProperty(Model model) {
+		ModelFactory FACTORY = ModelFactory.eINSTANCE;
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		ModelPropertyType propertyType = null;
+		ModelProperty property;
+		ModelPropertyCategory structuralCategory = model.getPropertyCategory("Structural");
+		List<BusinessTable> businessTables = businessModel.getBusinessTables();
+
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.dateformat");
+		if (propertyType != null) {
+			// model has already the property, we can skip the check
+			return;
+		} else {
+
+			// inject property type
+			propertyType = FACTORY.createModelPropertyType();
+			propertyType.setId("structural.dateformat");
+			propertyType.setName("Format Date");
+			propertyType.setDescription("The date format to use if the value is date");
+			propertyType.setCategory(structuralCategory);
+			propertyType.getAdmissibleValues().add("LLLL");
+			propertyType.getAdmissibleValues().add("llll");
+			propertyType.getAdmissibleValues().add("LLL");
+			propertyType.getAdmissibleValues().add("lll");
+			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:MM:SS");
+			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:MM");
+			propertyType.getAdmissibleValues().add("LL");
+			propertyType.getAdmissibleValues().add("ll");
+			propertyType.getAdmissibleValues().add("L");
+			propertyType.getAdmissibleValues().add("l");
+			propertyType.setDefaultValue("LLLL");
+
+			model.getPropertyTypes().add(propertyType);
+
+			// apply the property to every simple business column
+			for (BusinessTable businessTable : businessTables) {
+				List<SimpleBusinessColumn> simpleBusinessColumns = businessTable.getSimpleBusinessColumns();
+				for (SimpleBusinessColumn simpleBusinessColumn : simpleBusinessColumns) {
+
+					property = FACTORY.createModelProperty();
+					property.setPropertyType(propertyType);
+					// add property on simple business column
+					simpleBusinessColumn.getProperties().put(property.getPropertyType().getId(), property);
+				}
+			}
+		}
+
+	}
+
+	private void addTimeFormatProperty(Model model) {
+		ModelFactory FACTORY = ModelFactory.eINSTANCE;
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		ModelPropertyType propertyType = null;
+		ModelProperty property;
+		ModelPropertyCategory structuralCategory = model.getPropertyCategory("Structural");
+		List<BusinessTable> businessTables = businessModel.getBusinessTables();
+
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.timeformat");
+		if (propertyType != null) {
+			// model has already the property, we can skip the check
+			return;
+		} else {
+
+			// inject property type
+			propertyType = FACTORY.createModelPropertyType();
+			propertyType.setId("structural.timeformat");
+			propertyType.setName("Format Time");
+			propertyType.setDescription("The date format to use if the value is time");
+			propertyType.setCategory(structuralCategory);
+			propertyType.getAdmissibleValues().add("LT");
+			propertyType.getAdmissibleValues().add("LTS");
+
+			propertyType.setDefaultValue("LT");
+
+			model.getPropertyTypes().add(propertyType);
+
+			// apply the property to every simple business column
+			for (BusinessTable businessTable : businessTables) {
+				List<SimpleBusinessColumn> simpleBusinessColumns = businessTable.getSimpleBusinessColumns();
+				for (SimpleBusinessColumn simpleBusinessColumn : simpleBusinessColumns) {
+
+					property = FACTORY.createModelProperty();
+					property.setPropertyType(propertyType);
+					// add property on simple business column
+					simpleBusinessColumn.getProperties().put(property.getPropertyType().getId(), property);
+				}
+			}
+		}
 
 	}
 

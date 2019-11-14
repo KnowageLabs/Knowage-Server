@@ -68,5 +68,9 @@
 	
 %>
 
+<script type="text/javascript">
+var locale = '<%=locale.getLanguage()%>_<%=locale.getCountry()%>';
+</script>
+
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
