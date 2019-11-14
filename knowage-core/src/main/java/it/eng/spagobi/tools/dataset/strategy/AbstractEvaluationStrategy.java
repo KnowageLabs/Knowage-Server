@@ -19,6 +19,7 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,10 +59,11 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
 			dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 				for (List<Projection> listProj : summaryRowProjections) {
 
-				IDataStore summaryRowDataStore = executeSummaryRow(listProj, dataStore.getMetaData(), filter, maxRowCount);
+				IDataStore summaryRowDataStore = executeSummaryRow(listProj,dataStoreToUseMeta, filter, maxRowCount);
 				appendSummaryRowToPagedDataStore(projections, listProj, dataStore, summaryRowDataStore);
 				}
 			}
@@ -136,6 +138,12 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		// copy metadata from summary row
 		for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
 			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+			if (pagedMetaData.getFieldMeta(projectionIndex) != null && (pagedMetaData.getFieldMeta(projectionIndex).getType() == Double.class)) {
+				pagedMetaData.getFieldMeta(projectionIndex).setType(Double.class);
+			} else if (pagedMetaData.getFieldMeta(projectionIndex) != null && pagedMetaData.getFieldMeta(projectionIndex).getType() == BigDecimal.class) {
+				pagedMetaData.getFieldMeta(projectionIndex).setType(BigDecimal.class);
+			}
+			else
 			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
 		}
 
