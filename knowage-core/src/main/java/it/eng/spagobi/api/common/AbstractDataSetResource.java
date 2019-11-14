@@ -287,9 +287,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 					returnList.add(summaryRowProjections);
 
-					return returnList;
-
 				}
+				return returnList;
 			}
 		}
 		return null;
