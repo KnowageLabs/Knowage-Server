@@ -21,12 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	app.config(function($mdDateLocaleProvider) {
       
-        $mdDateLocaleProvider.parseDate = function(dateString) {
-            var m = moment(dateString, 'L', true);
+        $mdDateLocaleProvider.parseDate = function(dateString,format) {
+        	if(!format) format = 'L';
+            var m = moment(dateString, format, true);
             return m.isValid() ? m.toDate() : new Date(NaN);
         };
-        $mdDateLocaleProvider.formatDate = function(date) {
-            return moment(date).locale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>').format('L');
+        $mdDateLocaleProvider.formatDate = function(date,format) {
+        	if(!format) format = 'L';
+            return moment(date).locale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>').format(format);
         };
     });
 	

@@ -52,7 +52,38 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
 		}
         return ordered;
     };
+})
+.filter('format', function($mdDateLocale) {
+
+
+
+	return function(item,field,row) {
+
+
+		var formatted = item;
+		var isOneOfDataTypes = function(dataType,types){
+			for(var i =0;i < types.length ; i++){
+				if(dataType && dataType.toLowerCase() == types[i]){
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if(isOneOfDataTypes(field.dataType,['java.sql.date'])){
+
+			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY"),field.format)
+		}else if(isOneOfDataTypes(field.dataType,['java.sql.timestamp'])){
+			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY HH:mm:ss.SSS"),field.format)
+		}else if(isOneOfDataTypes(field.dataType,['java.sql.time'])){
+			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"HH:mm:ss"),field.format)
+		}
+
+		return formatted;
+	};
 });
+
 function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action){
 
 	$scope.smartPreview = true;

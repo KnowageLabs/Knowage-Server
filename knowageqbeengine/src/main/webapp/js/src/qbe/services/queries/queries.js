@@ -40,6 +40,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"funct":query.fields[i].funct,
         					"fieldType" : query.fields[i].fieldType,
         					"dataType": query.fields[i].dataType,
+        					"format": query.fields[i].format,
              		    	"visible":query.fields[i].visible,
              		    	"distinct":query.distinct,
              		    	"group":query.fields[i].group,

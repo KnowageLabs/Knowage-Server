@@ -232,7 +232,7 @@
 	   		</div>   		
 	    	</md-toolbar>
 	    
-   		<div dir-paginate="row in field.data | itemsPerPage: itemsPerPage"  total-items="results" current-page="start" class="qbeCustomRow">{{row.value}}&nbsp;</div>
+   		<div dir-paginate="row in field.data | itemsPerPage: itemsPerPage "  total-items="results" current-page="start" class="qbeCustomRow">{{row.value |format:field:row }}&nbsp;</div>
 	    
 	   	<md-toolbar class="secondaryToolbar">
 	   		<div class="md-toolbar-tools">
