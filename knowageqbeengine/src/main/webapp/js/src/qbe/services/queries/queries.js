@@ -92,7 +92,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      			var columns = [];
      			var data = [];
      			angular.copy(response.data.rows,data);
-     			createColumnsForPreview(columns, response.data.metaData.fields);
+     			createColumnsForPreview(columns, response.data.metaData.fields,queryModel);
      			$rootScope.$broadcast('queryExecuted', {"columns":columns, "data":data, "results":response.data.results});
      		}
 
@@ -104,11 +104,13 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		return promise;
 	}
 
-	var createColumnsForPreview=function(columns, fields){
+	var createColumnsForPreview=function(columns, fields,queryModel){
     	for(i=1;i<fields.length;i++){
     	 var column={};
     	 column.label=fields[i].header;
     	 column.name=fields[i].name;
+    	 column.dataType = queryModel[i-1].dataType;
+    	 column.format = queryModel[i-1].format;
     	 columns.push(column);
     	}
 

@@ -288,7 +288,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				position: $mdPanel.newPanelPosition().absolute().center().top("50%"),
 				panelClass :"layout-row",
 				fullscreen :true,
-				controller: function($scope,mdPanelRef,sbiModule_translate){
+				controller: function($scope,mdPanelRef,sbiModule_translate,$mdDateLocale){
 
 
 					var gridOptions = {
@@ -303,11 +303,44 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					    	rowData: previewModel
 						};
 
+
+
 					    function getColumns(fields) {
 							var columns = [];
 							for(var f in fields){
 								if(typeof fields[f] != 'object') continue;
-								var tempCol = {"headerName":fields[f].label,"field":fields[f].name, "tooltipField":fields[f].name};
+								var tempCol = {
+										"headerName":fields[f].label,
+										"field":fields[f].name,
+										"tooltipField":fields[f].name,
+										"dataType":fields[f].dataType,
+										"format":fields[f].format,
+										"valueFormatter":function(params){
+
+
+											var formatted = params.value;
+											var isOneOfDataTypes = function(dataType,types){
+												for(var i =0;i < types.length ; i++){
+													if(dataType && dataType.toLowerCase() == types[i]){
+														return true;
+													}
+												}
+
+												return false;
+											}
+
+											if(isOneOfDataTypes(params.colDef.dataType,['java.sql.date'])){
+
+												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY"),params.colDef.format)
+											}else if(isOneOfDataTypes(params.colDef.dataType,['java.sql.timestamp'])){
+												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY HH:mm:ss.SSS"),params.colDef.format)
+											}else if(isOneOfDataTypes(params.colDef.dataType,['java.sql.time'])){
+												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"HH:mm:ss"),params.colDef.format)
+											}
+
+											return formatted;
+											},
+										};
 
 								columns.push(tempCol);
 							}
