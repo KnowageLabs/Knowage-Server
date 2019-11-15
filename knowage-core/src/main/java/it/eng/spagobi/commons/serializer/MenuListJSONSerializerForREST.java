@@ -323,7 +323,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		// workspace is added unconditionally
 		if (isAbleTo(SpagoBIConstants.SEE_MY_WORKSPACE, funcs)) {
 			JSONObject workspace = new JSONObject();
-			workspace.put(ICON_CLS, "fa fa-2x fa-book");
+			workspace.put(ICON_CLS, "fa fa-2x fa-briefcase");
 			workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
 			workspace.put(ICON_ALIGN, "top");
 			workspace.put(SCALE, "large");
