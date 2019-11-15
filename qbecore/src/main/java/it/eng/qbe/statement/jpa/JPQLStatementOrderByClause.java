@@ -44,10 +44,13 @@ public class JPQLStatementOrderByClause extends AbstractStatementOrderByClause {
 			if (dialect.toLowerCase().contains("oracle") && !isSubquery) {
 				StringBuffer buffer;
 				buffer = new StringBuffer();
-				buffer.append(JPQLStatementConstants.STMT_KEYWORD_ORDER_BY);
-				buffer.append(" 1 ");
-				buffer.append(JPQLStatementConstants.STMT_KEYWORD_ASCENDING);
-				orderBy = buffer.toString();
+				if (!dialect.equals("org.hibernatespatial.oracle.CustomOracleSpatialDialect")) {
+					buffer.append(JPQLStatementConstants.STMT_KEYWORD_ORDER_BY);
+					buffer.append(" 1 ");
+					buffer.append(JPQLStatementConstants.STMT_KEYWORD_ASCENDING);
+					orderBy = buffer.toString();
+				}
+
 			}
 
 		}
