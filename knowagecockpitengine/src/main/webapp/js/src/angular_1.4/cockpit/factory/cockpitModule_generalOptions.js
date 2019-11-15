@@ -156,7 +156,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 
 		 ],
 		 calculatedFieldsFunctions: [
-			   {
+			   /*{
 				      "syntax":"Sum( Field )",
 				      "description":"Returns the total sum of a numeric field.",
 				      "body":"Sum(field)",
@@ -569,7 +569,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      ],
 				      "output":"Number",
 				      "type":"time"
-				   }
+				   }*/
 				]
 	}
 });

@@ -65,6 +65,20 @@ span.functionDescription {
 	                    <label>Alias</label>
 	                    <input name="name" type="text" ng-model="calculatedField.alias" required>
 	                </md-input-container>
+	                <md-input-container flex="30" ng-if="column.datasetOrTableFlag">
+                         <label>{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')}}</label>
+                         <md-select ng-model="column.aggregationSelected">
+                            <md-option ng-repeat="func in cockpitModule_generalOptions.aggregationFunctions" ng-value="func.value">
+                            	{{func.label}}
+                            </md-option>
+                         </md-select>
+                   	</md-input-container> 
+	                <md-switch ng-model="column.datasetOrTableFlag" aria-label="Enabled Dataset calculated fields" ng-change="resetFormula()">
+                         	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag')}}
+                          	<md-tooltip md-delay=500>
+                           	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag.hint')}}
+                       	</md-tooltip>
+					</md-switch>
 	            </div>
 	             <md-menu-bar>
 	                <md-menu ng-repeat="type in availableFormulaTypes track by $index">

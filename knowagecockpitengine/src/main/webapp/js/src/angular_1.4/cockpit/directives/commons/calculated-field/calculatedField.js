@@ -82,7 +82,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	$scope.formulaElement = [];
 
 	$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
-	$scope.functions.push({
+	/*$scope.functions.push({
 	      "syntax":"VariabileTest",
 	      "description":"no description.",
 	      "body":"$V{variabileTest}",
@@ -90,7 +90,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	      "output":"Number",
 	      "type":"variable"
 	   })
-
+	*/
 	$scope.availableFormulaTypes = [];
 	 angular.forEach($scope.functions, function(value, key) {
          if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
@@ -140,7 +140,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
         var position = $scope._editor.getCursor();
         var line = $scope._editor.getLine(position.line);
         if (line.charAt(position.ch - 1) == '}') {
-            prefix = ',';
+            prefix = ' ';
         }
         $scope.addTextInCodemirror(prefix + text + suffix);
     }
