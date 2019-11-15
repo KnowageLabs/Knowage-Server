@@ -49,6 +49,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"temporal":query.fields[i].temporal,
              		    	"type":query.fields[i].type,
              		    	"iconCls":query.fields[i].iconCls ? query.fields[i].iconCls : query.fields[i].fieldType,
+             		    	"longDescription":query.fields[i].longDescription,
              		    	"filters": [],
              		    	"havings": []
              		    }
