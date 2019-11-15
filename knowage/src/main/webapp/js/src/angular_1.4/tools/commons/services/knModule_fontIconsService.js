@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular
 		.module("knModule")
 		.service("knModule_fontIconsService",knModule_fontIconsService)
-		
+
 		function knModule_fontIconsService(){
 			var self=this;
 			self.icons=[
@@ -33,13 +33,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"archive","className":"fa fa-archive","unicode":"\uf187"},{"label":"area chart","className":"fa fa-area-chart","unicode":"\uf1fe"},{"label":"bar chart","className":"fa fa-bar-chart","unicode":"\uf080"},
 						{"label":"pie chart","className":"fa fa-pie-chart","unicode":"\uf200"},{"label":"line chart","className":"fa fa-line-chart","unicode":"\uf201"},{"label":"bidirectional arrows","className":"fa fa-arrows","unicode":"\uf047"},
 						{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},
-						{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"},{"label":"bolt","className":"fa fa-bolt","unicode":"\uf0e7"},{"label":"circle","className":"fa fa-plus-circle","unicode":"\uf055"},
+						{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"},{"label":"bolt","className":"fa fa-bolt","unicode":"\uf0e7"},{"label":"circle plus","className":"fa fa-plus-circle","unicode":"\uf055"},
+						{"label":"circle","className":"fa fa-circle","unicode":"\uf111"},{"label":"circle minus","className":"fa fa-minus-circle","unicode":"\uf056"},
 						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"},{"label":"check","className":"fa fa-check","unicode":"\uf00c"},{"label":"times","className":"fa fa-times","unicode":"\uf00d"},
 						{"label":"warning","className":"fa fa-warning","unicode":"\uf071"},{"label":"exclamation","className":"fa fa-exclamation-circle","unicode":"\uf06a"},
 						{"label":"plus","className":"fa fa-plus","unicode":"\uf067"},{"label":"bars","className":"fa fa-bars","unicode":"\uf0c9"},{"label":"minus","className":"fa fa-minus","unicode":"\uf068"},
 						{"label":"down","className":"fa fa-chevron-down","unicode":"\uf078"},{"label":"right","className":"fa fa-chevron-right","unicode":"\uf054"},{"label":"left","className":"fa fa-chevron-left","unicode":"\uf053"},
 						{"label":"up","className":"fa fa-chevron-up","unicode":"\uf077"},{"label":"arrow down","className":"fa fa-arrow-down","unicode":"\uf063"},{"label":"arrow up","className":"fa fa-arrow-up","unicode":"\uf062"},
-						{"label":"arrow right","className":"fa fa-arrow-right","unicode":"\uf061"},{"label":"arrow left","className":"fa fa-arrow-left","unicode":"\uf060"},{"label":"thumbs up","className":"fa fa-thumbs-up","unicode":"\uf164"},{"label":"thumbs down","className":"fa fa-thumbs-down","unicode":"\uf165"},{"label":"folder open","className":"fa fa-folder-open","unicode":"\uf07c"},
+						{"label":"arrow right","className":"fa fa-arrow-right","unicode":"\uf061"},{"label":"arrow left","className":"fa fa-arrow-left","unicode":"\uf060"},{"label":"thumbs up","className":"fa fa-thumbs-up","unicode":"\uf164"},
+						{"label":"thumbs down","className":"fa fa-thumbs-down","unicode":"\uf165"},{"label":"folder open","className":"fa fa-folder-open","unicode":"\uf07c"},
 						{"label":"filter","className":"fa fa-filter","unicode":"\uf0b0"},{"label":"external link","className":"fa fa-external-link","unicode":"\uf08e"}]
 				},{"name":"Appliances","className":"ai",
 					"icons":[

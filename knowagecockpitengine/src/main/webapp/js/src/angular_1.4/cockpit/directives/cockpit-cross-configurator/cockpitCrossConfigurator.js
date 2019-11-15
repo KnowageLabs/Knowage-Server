@@ -159,12 +159,14 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		for(var k in newParamsList){
 			newParamsListNames.push(newParamsList[k].name);
 		}
-		for(var p in $scope.ngModel.preview.parameters){
-			if(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name)!= -1){
-				newParamsListNames.splice(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name),1);
-			}else{
-				$scope.previewParamWarning.removed.push($scope.ngModel.preview.parameters[p].name);
-				$scope.ngModel.preview.parameters.splice(p,1);
+		if($scope.ngModel.preview){
+			for(var p in $scope.ngModel.preview.parameters){
+				if(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name)!= -1){
+					newParamsListNames.splice(newParamsListNames.indexOf($scope.ngModel.preview.parameters[p].name),1);
+				}else{
+					$scope.previewParamWarning.removed.push($scope.ngModel.preview.parameters[p].name);
+					$scope.ngModel.preview.parameters.splice(p,1);
+				}
 			}
 		}
 		for(var i in newParamsListNames){

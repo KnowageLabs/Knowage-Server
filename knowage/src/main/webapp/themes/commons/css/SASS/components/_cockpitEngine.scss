@@ -1430,6 +1430,7 @@
         	}
         	#editModeMenuSpeedDial, #viewModeMenuSpeedDial {
         		md-fab-speed-dial {
+        			z-index: 501;
         			&.md-is-open {
         				md-fab-trigger {
 		        			.md-fab{
