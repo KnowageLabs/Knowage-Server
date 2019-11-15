@@ -231,10 +231,46 @@ public class PageResource {
 
 	public void checkBackwardCompatibility(Model model) {
 		// Put here methods to guarantee the backward compatibility with old versions of the metamodel
+		removeColumnTypes(model);
+		removeTableTypes(model);
 		addProfileFilterConditionProperty(model);
 		addCustomFunctionProperty(model);
 		addDateFormatProperty(model);
 		addTimeFormatProperty(model);
+
+	}
+
+	/**
+	 * @param model
+	 */
+	private void removeColumnTypes(Model model) {
+		ModelPropertyType propertyType = null;
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.columntype");
+		if (propertyType != null) {
+			// model has already the property, we can skip the check
+			propertyType.getAdmissibleValues().remove("hour_id");
+			propertyType.getAdmissibleValues().remove("the_date");
+			propertyType.getAdmissibleValues().remove("calendar");
+			propertyType.getAdmissibleValues().remove("temporal_id");
+
+		}
+
+	}
+
+	/**
+	 * @param model
+	 */
+	private void removeTableTypes(Model model) {
+		ModelPropertyType propertyType = null;
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.tabletype");
+		if (propertyType != null) {
+			// model has already the property, we can skip the check
+			propertyType.getAdmissibleValues().remove("temporal dimension");
+			propertyType.getAdmissibleValues().remove("time dimension");
+
+		}
 
 	}
 

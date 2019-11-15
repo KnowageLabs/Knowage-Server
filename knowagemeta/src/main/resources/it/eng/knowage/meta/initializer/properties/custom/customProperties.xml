@@ -89,8 +89,6 @@
         <value>generic</value>      
         <value>cube</value>
         <value>dimension</value>
-        <value>temporal dimension</value>
-        <value>time dimension</value>
         <value>geographic dimension</value>
       </admissibleValuesOf>
     </typesValues>
@@ -171,10 +169,6 @@
       <admissibleValuesOf typeId="structural.columntype">
         <value>measure</value>
         <value>attribute</value>
-        <value>calendar</value>
-        <value>temporal_id</value>
-        <value>the_date</value>
-        <value>hour_id</value>
       </admissibleValuesOf>
       
       <admissibleValuesOf typeId="structural.format">
