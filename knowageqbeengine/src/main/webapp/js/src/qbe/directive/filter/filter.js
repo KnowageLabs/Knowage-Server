@@ -56,6 +56,10 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		if(item.leftOperandValue==$scope.field.id) return item
 	}
 
+	$scope.isloadTemporalFiltersVisible = function(dataType){
+		return sbiModule_user.functionalities.indexOf("Timespan")>-1 && ( dataType.toLowerCase() == "java.sql.date" || dataType.toLowerCase() == "java.sql.timestamp");
+	}
+
 	$scope.targetTypes = angular.copy(filters_service.getTargetTypes);
 	if($scope.pars.length>0){
 		$scope.targetTypes.push({name:sbiModule_translate.load("kn.qbe.filters.target.types.param"),value:"parameter"})
@@ -117,51 +121,44 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		var entities = [];
 		var temporalFilter = {};
 
-		entity_service.getEntitiyTree(sbiModule_inputParams.modelName).then(function(response){
-			entities = response.data.entities;
-			for (var i = 0; i < entities.length; i++) {
-				if(entities[i].iconCls=='temporal_dimension'){
-					for (var j = 0; j < entities[i].children.length; j++) {
-						if(entities[i].children[j].iconCls=='the_date'){
-							temporalFilter.id=entities[i].children[j].id;
-							temporalFilter.ld=entities[i].children[j].attributes.longDescription;
-						}
-					}
-				}
-		}
 		$scope.filterIndex = checkForIndex();
 		$scope.showTable = false;
 		$scope.targetOption = "default";
+		for(var i =0; i< $scope.selectedTemporalFilter.definition.length;i++){
+
+
 		var object = {
 				"filterId": "Filter"+$scope.filterIndex,
 				"filterDescripion": "Filter"+$scope.filterIndex,
 				"filterInd": $scope.filterIndex,
 				"promptable": false,
-				"leftOperandValue": temporalFilter.id,
-				"leftOperandDescription": temporalFilter.ld,
-				"leftOperandLongDescription": temporalFilter.ld,
+				"leftOperandValue": $scope.ngModel.field.id,
+				"leftOperandDescription": $scope.ngModel.field.longDescription,
+				"leftOperandLongDescription": $scope.ngModel.field.longDescription,
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
 				"leftOperandAlias": null,
 				"leftOperandDataType": "",
 				"operator": "BETWEEN",
-				"rightOperandValue": [$scope.selectedTemporalFilter.definition[0].from, $scope.selectedTemporalFilter.definition[0].to],
-				"rightOperandDescription": $scope.selectedTemporalFilter.definition[0].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[0].to+" 00:00:00",
-				"rightOperandLongDescription": $scope.selectedTemporalFilter.definition[0].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[0].to+" 00:00:00",
+				"rightType" : "manual",
+				"rightOperandValue": [$scope.selectedTemporalFilter.definition[i].from, $scope.selectedTemporalFilter.definition[i].to],
+				"rightOperandDescription": $scope.selectedTemporalFilter.definition[i].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[i].to+" 00:00:00",
+				"rightOperandLongDescription": $scope.selectedTemporalFilter.definition[i].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[i].to+" 00:00:00",
 				"rightOperandType": "Static Content",
 				"rightOperandDefaultValue": [""],
 				"rightOperandLastValue": [""],
 				"rightOperandAlias": null,
 				"rightOperandDataType": "",
-				"booleanConnector": "AND",
+				"booleanConnector": i == 0 ? "AND" : "OR",
 				"deleteButton": false
 			}
 		$scope.filters.push(object);
+		}
 		console.log($scope.filters);
 		$mdDialog.cancel();
 
-		});
+
 	}
 
 	$scope.addNewFilter= function (){

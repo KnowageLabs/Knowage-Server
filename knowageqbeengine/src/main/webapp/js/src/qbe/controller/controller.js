@@ -762,6 +762,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			field.entity = field_copy.attributes.entity;
 			field.iconCls = field_copy.attributes.iconCls;
 			field.dataType = field_copy.dataType;
+			field.longDescription = field_copy.attributes.longDescription;
 			field.format = field_copy.format;
 			field.color = field_copy.color;
 			field.visible= true;
