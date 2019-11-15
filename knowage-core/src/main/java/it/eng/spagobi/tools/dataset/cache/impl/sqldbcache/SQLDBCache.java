@@ -234,7 +234,7 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups,
-			List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
+			List<Sorting> sortings, List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
 			throws DataBaseException {
 		logger.debug("IN");
 		Assert.assertNotNull(dataSet, "Dataset cannot be null");
@@ -251,7 +251,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	private IDataStore getInternal(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException {
 		logger.debug("IN");
 
 		try {
@@ -271,7 +271,7 @@ public class SQLDBCache implements ICache {
 
 	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
+			List<Projection> groups, List<Sorting> sortings, List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
 			Set<String> indexes) throws DataBaseException {
 
 		IDataStore toReturn = null;

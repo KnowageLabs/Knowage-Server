@@ -83,8 +83,9 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere
 	 */
 
+
 	IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException;
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException;
 
 	public void refresh(IDataSet dataSet);
 
@@ -163,5 +164,6 @@ public interface ICache {
 	UserProfile getUserProfile();
 
 	void setUserProfile(UserProfile userProfile);
+
 
 }

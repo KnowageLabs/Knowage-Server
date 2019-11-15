@@ -35,7 +35,7 @@ public class DatastoreConfigurationBuilder {
 
 	private IDataSet dataset;
 	private Map<String, String> parameters;
-	private List<Projection> summaryRowProjections;
+	private List<List<Projection>> summaryRowProjections;
 	private List<Sorting> sortings;
 	private List<Projection> groups;
 	private Filter filter;
@@ -107,7 +107,7 @@ public class DatastoreConfigurationBuilder {
 	 * @param summaryRowProjections
 	 * @return
 	 */
-	public DatastoreConfigurationBuilder setSummaryRow(List<Projection> summaryRowProjections) {
+	public DatastoreConfigurationBuilder setSummaryRow(List<List<Projection>> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;
 		return this;
 	}

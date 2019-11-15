@@ -19,6 +19,7 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,19 +53,24 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	@Override
 	public IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		IDataStore dataStore;
 		if (isUnsatisfiedFilter(filter)) {
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
 			dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-				IDataStore summaryRowDataStore = executeSummaryRow(summaryRowProjections, dataStore.getMetaData(), filter, maxRowCount);
-				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
+				for (List<Projection> listProj : summaryRowProjections) {
+
+				IDataStore summaryRowDataStore = executeSummaryRow(listProj,dataStoreToUseMeta, filter, maxRowCount);
+				appendSummaryRowToPagedDataStore(projections, listProj, dataStore, summaryRowDataStore);
+				}
 			}
 		}
 		return dataStore;
 	}
+
 
 	@Override
 	public IDataStore executeSummaryRowQuery(List<Projection> summaryRowProjections, Filter filter, int maxRowCount) {
@@ -72,7 +78,8 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	}
 
 	protected abstract IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
+
 
 	protected abstract IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);
 
@@ -94,6 +101,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	private void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
 			IDataStore summaryRowDataStore) {
+
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
@@ -130,7 +138,14 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		// copy metadata from summary row
 		for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
 			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+			if (pagedMetaData.getFieldMeta(projectionIndex) != null && (pagedMetaData.getFieldMeta(projectionIndex).getType() == Double.class)) {
+				pagedMetaData.getFieldMeta(projectionIndex).setType(Double.class);
+			} else if (pagedMetaData.getFieldMeta(projectionIndex) != null && pagedMetaData.getFieldMeta(projectionIndex).getType() == BigDecimal.class) {
+				pagedMetaData.getFieldMeta(projectionIndex).setType(BigDecimal.class);
+			}
+			else
 			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
 		}
+
 	}
 }

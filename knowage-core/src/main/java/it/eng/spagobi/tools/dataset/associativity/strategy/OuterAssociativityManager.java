@@ -302,7 +302,6 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 					Filter where = getWhereFilter(noMinMaxFilters, likeFiltersArray);
 
-
 					IDataStore dataStore = getSummaryRowDataStore(projection.getDataset(), true, datasetParameters.get(projection.getDataset().getLabel()), projection, where, -1,   userprofile);
 					if (dataStore == null) {
 						String errorMessage2 = "Error in getting min and max filters values";
@@ -338,6 +337,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 			List<Projection> listProj = new ArrayList<Projection>();
 			listProj.add(projections);
+			//List<List<Projection>> arrayOfProj = new ArrayList<List<Projection>>();
+			//arrayOfProj.add(listProj);
 
 			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);
 			return strategy.executeSummaryRowQuery(listProj, filter, maxRowCount);

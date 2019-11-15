@@ -44,7 +44,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 
 	@Override
 	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		logger.debug("IN");
 
 		IDataStore pagedDataStore;

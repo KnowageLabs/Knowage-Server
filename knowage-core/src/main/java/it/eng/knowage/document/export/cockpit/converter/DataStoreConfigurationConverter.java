@@ -217,9 +217,10 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getSummaryRowProjections()
 	 */
 	@Override
-	public List<Projection> getSummaryRowProjections() {
+	public List<List<Projection>> getSummaryRowProjections() {
 		// TODO Auto-generated method stub
-		return new ArrayList<>();
+		List<List<Projection>> newL = new ArrayList<List<Projection>>();
+		return newL;
 	}
 
 	/*
