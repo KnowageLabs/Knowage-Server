@@ -220,7 +220,7 @@ function cockpitChartWidgetControllerFunction(
 	$scope.chartType =  $scope.ngModel.content.chartTemplate ? $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase() : "bar";
 	$scope.d3Charts = ["wordcloud","parallel","sunburst","chord"]
 	$scope.init=function(element,width,height){
-		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
+		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE" || $scope.ngModel.content.chartTemplate.CHART.type == "BUBBLE"){
 	    	  for (var i = 0; i < $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length; i++) {
 	    		  for (var j = 0; j < $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS.length; j++) {
 						if($scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].axis == $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].alias && $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].labels){
@@ -743,7 +743,7 @@ function cockpitChartWidgetControllerFunction(
 
 				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
 
-				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE"){
+				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE" || chartTemplateFake.type == "BUBBLE"){
 					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
 					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
 										if(chartTemplateFake.VALUES.SERIE[i].axis == chartTemplateFake.AXES_LIST.AXIS[j].alias && chartTemplateFake.AXES_LIST.AXIS[j].labels){

@@ -281,7 +281,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					 }
 				}
 			} else if(chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "SUNBURST" ||
-						chartType.toUpperCase() == "BAR" || chartType.toUpperCase() == "LINE"  ||
+						chartType.toUpperCase() == "BAR" || chartType.toUpperCase() == "BUBBLE" || chartType.toUpperCase() == "LINE"  ||
 							chartType.toUpperCase() == "PIE" ||
 							chartType.toUpperCase() == "RADAR" ) {
 				if(index<0){
@@ -300,6 +300,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		case 'radar':
 		case 'scatter':
 		case 'sunburst':
+		case 'bubble':
 
 		return true;
 			break;
@@ -398,6 +399,9 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					case 'bar':
 						base = StructureTabService.getBaseTemplate($scope.selectedChartType);
 						break;
+					case 'bubble':
+						base = StructureTabService.getBubbleTemplate();
+						break;
 					case 'pie':
 						base = StructureTabService.getBaseTemplate($scope.selectedChartType);
 						break;
@@ -413,7 +417,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					temp.column = item.alias;
 					temp.name = item.alias;
 					temp.precision = Number(item.precision);
-					if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
+					if($scope.chartTemplate.type.toUpperCase()=="SCATTER" || $scope.chartTemplate.type.toUpperCase()=="BUBBLE"){
 						temp.fakeSerie = false;
 					}
 					var checkForSameAxis = findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
@@ -507,7 +511,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				}
 
 			}
-			if($scope.chartTemplate.type == 'SCATTER'){
+			if($scope.chartTemplate.type.toUpperCase() == 'SCATTER'  || $scope.chartTemplate.type.toUpperCase()=="BUBBLE"){
 				for (j=0; j<allSeries.length; j++) {
 					if(allSeries[j].fakeSerie){
 						$scope.indexSerie = j

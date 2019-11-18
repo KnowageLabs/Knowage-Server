@@ -388,7 +388,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         }
                     }else{
                         var data = {};
-                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name) || 
+                        if(!cockpitModule_widgetSelection.isLastTimestampedSelection(config.dataset.label, config.content.selectedColumn.name) ||
                             	cockpitModule_properties.TAINTED_ASSOCIATIONS[config.dataset.label]){
                         data.activeValues = wi.loadDatasetRecords(config, options, false);
                         }
@@ -440,6 +440,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.categ.max.heatmap = 2;
 		minMaxCategoriesSeries.categ.min.radar = 1;
 		minMaxCategoriesSeries.categ.min.bar = 1;
+		minMaxCategoriesSeries.categ.max.bubble = 1;
+		minMaxCategoriesSeries.categ.min.bubble = 1;
 		minMaxCategoriesSeries.categ.min.pie = 1;
 
 		minMaxCategoriesSeries.serie.min.parallel = 2;
@@ -454,6 +456,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.max.heatmap = 1;
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
+		minMaxCategoriesSeries.serie.min.bubble = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
 
 		return minMaxCategoriesSeries;

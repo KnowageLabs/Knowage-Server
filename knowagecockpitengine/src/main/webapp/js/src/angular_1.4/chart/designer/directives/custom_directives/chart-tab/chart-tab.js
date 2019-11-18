@@ -84,6 +84,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 1;
 			break;
+		case 'bubble':
+			$scope.minMaxCategories.min = 1;
+			$scope.minMaxCategories.max = 1;
+			$scope.minMaxSeries.min = 1;
+			break;
 		case 'bar':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 1;
@@ -137,49 +142,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 
 
 	var setConfigurationButtons = function(type) {
-
-		switch (type) {
-		case 'parallel':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'sunburst':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'scatter':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'treemap':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'wordcloud':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'gauge':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'line':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'heatmap':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'radar':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'bar':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'pie':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		case 'chord':
-			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
-			break;
-		default:
-			break;
-		}
-
-}
+		$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
+	}
 
 	var checkDocumentType = function(){
 
@@ -383,7 +347,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				categoriesLimit = 2;
 			}
 			//if there are more than 2 selected categories trim down to first two categories, since 2 is the exact number of categories a chord/heatmap must take, max for parallel is 2
-			if($scope.categories.length>2){
+			if(categoriesLimit > 0 && $scope.categories.length>2){
 				var newCategories = [];
 				for (var i = 0; i < categoriesLimit; i++) {
 					if(i<2){
@@ -401,7 +365,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				seriesLimit = 4;
 			}
 			var series = $scope.chartTemplate.VALUES.SERIE;
-			if(series.length>1) {
+			if(seriesLimit > 0 && series.length>1) {
 				var newSeries = [];
 				for (var i = 0; i < seriesLimit; i++) {
 					if(i<1){
@@ -415,115 +379,64 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		$scope.selectedChartType = chart;
 		var styleName = $scope.chartTemplate.styleName;
 		var serie = "";
+		serie = $scope.chartTemplate.VALUES.SERIE;
 		switch (chart) {
 		case 'parallel':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getParallelTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-
 			break;
 		case 'sunburst':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getSunburstTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-
 			break;
 		case 'scatter':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getScatterTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-
 			break;
 		case 'treemap':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy( StructureTabService.getTreemapTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownSeriesToSizeNeededByChartType();
-
 			break;
 		case 'wordcloud':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getWordCloudTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			ifNeededTrimDownSeriesToSizeNeededByChartType();
-
 			break;
 		case 'gauge':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getGaugeTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-
 			break;
 		case 'line':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.type="LINE";
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
-
 			break;
 		case 'heatmap':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getHeatmapTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			//$scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-
 			break;
 		case 'radar':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getRadarTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-
 			break;
 		case 'bar':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
-			$scope.chartTemplate.VALUES.SERIE = serie;
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
 			$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
+			break;
+		case 'bubble':
+			angular.copy(StructureTabService.getBubbleTemplate(), $scope.chartTemplate);
+			$scope.chartTemplate.type="BUBBLE";
 			break;
 		case 'pie':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.type="PIE";
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			ifNeededTrimDownSeriesToSizeNeededByChartType();
-
 			break;
 		case 'chord':
-			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getChordTemplate(), $scope.chartTemplate);
-			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			$scope.chartTemplate.VALUES.SERIE = serie;
-			ifNeededTrimDownCategoriesToSizeNeededByChartType();
-			ifNeededTrimDownSeriesToSizeNeededByChartType();
-
 			break;
 		default:
 			break;
 		}
+		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
+		$scope.chartTemplate.VALUES.SERIE = serie;
+		ifNeededTrimDownCategoriesToSizeNeededByChartType();
+		ifNeededTrimDownSeriesToSizeNeededByChartType();
 		$scope.changeStyle(styleName);
 		$scope.chartTemplate.styleName = $scope.clearStyleTag(styleName);
 

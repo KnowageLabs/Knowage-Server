@@ -18,7 +18,7 @@
 	</md-input-container>
 </div>
 
-<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' || selectedChartType == 'bar' ">
+<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' || selectedChartType == 'bar' || selectedChartType == 'bubble' ">
 <md-input-container class="md-block">
 	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMin")}}</label>
 	<input  step="any" name="axis_min"
@@ -70,6 +70,7 @@
 
 <md-input-container class="md-block" flex 
 ng-if="(selectedChartType == 'bar' || 
+selectedChartType == 'bubble' || 
 selectedChartType == 'line' || 
 selectedChartType == 'radar' || selectedChartType == 'scatter') && disableHtmlElementForChartJs()"> 
 		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>

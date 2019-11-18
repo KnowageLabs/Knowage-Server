@@ -243,6 +243,12 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			Array.prototype.push.apply(data, options);
 			return data;
 			break;
+		case 'bubble':
+			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"}]
+			Array.prototype.push.apply(data, legend);
+			Array.prototype.push.apply(data, options);
+			return data;
+			break;
 		case 'pie':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
 			    {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"},
@@ -564,6 +570,225 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			}
 
 		return barLine.CHART;
+	}
+
+	this.getBubbleTemplate = function(type) {
+		var bubble  = {
+				   "CHART":{
+					      "TITLE":{
+					         "style": {
+					        	 "align":"",
+					        	 "color":"",
+					        	 "fontFamily":"",
+					        	 "fontSize":"",
+					        	 "fontWeight":""
+					         },
+					         "text":""
+						  },
+						  "TOOLTIP":{
+							  "borderWidth":0,
+							  "borderRadius":0,
+						  },
+					      "VALUES":{
+					         "CATEGORY":{
+					            "name":"",
+					            "column":"",
+					            "orderColumn":"",
+					            "orderType":"",
+					            "stackedType":"",
+					            "stacked":"",
+					            "groupby":"",
+					            "groupbyNames":""
+					         },
+					         "SERIE":[
+					        	 {
+					                 "axis":"Y",
+					                 "color":"",
+					                 "column":"",
+					                 "groupingFunction":"SUM",
+					                 "name":"",
+					                 "orderType":"",
+					                 "postfixChar":"",
+					                 "precision":0,
+					                 "prefixChar":"",
+					                 "showValue":true,
+					                 "showAbsValue":false,
+					                 "showPercentage":false,
+					                 "showCategoryValue":false,
+					                 "scaleFactor":"empty",
+					                 "type":"",
+					                 "dataLabels":{
+					                 "style": {
+				                		 "color":"",
+				                		 "fontFamily":"",
+				                		 "fontWeight":"",
+				                		 "fontSize":"",
+				                		 "fontStyle":"",
+					                 	},
+					                 },
+					                 "TOOLTIP":{
+					                    "backgroundColor":"",
+					                    "showAbsValueTooltip":false,
+						                "showPercentageTooltip":true,
+					                    "style":{
+							            	   "align":"",
+							            	   "color":"",
+							            	   "fontFamily":"",
+							            	   "fontSize":"",
+							            	   "fontWeight":""
+							               },
+					                 },
+					              }
+					         ]
+					      },
+
+					      "AXES_LIST":{
+					    	  "AXIS":[
+					    		  {
+
+					               "id":"Y",
+					               "alias":"Y",
+					               "type":"Serie",
+					               "position":"",
+					               "min":'auto',
+					               "max":'auto',
+					               "style":{
+					            	   "rotate":"",
+					            	   "align":"",
+					            	   "color":"",
+					            	   "fontFamily":"",
+					            	   "fontSize":"",
+					            	   "fontWeight":""
+					               },
+					               "labels":{
+									   "precision":2,
+										"scaleFactor": "empty",
+					               },
+					               "MAJORGRID":{
+					                  "interval":"",
+					                  "style":{
+					                	  "typeLine":"",
+					                	  "color":""
+					                  }
+					               },
+					               "MINORGRID":{
+					            	  "interval":"",
+					                  "style":{
+					                	  "typeLine":"",
+					                	  "color":""
+					                  }
+					               },
+
+					            },{
+
+						               "id":"X",
+						               "alias":"X",
+						               "type":"Category",
+						               "position":"",
+						               "step" : "",
+						               "style":{
+						            	   "rotate":"",
+						            	   "align":"",
+						            	   "color":"",
+						            	   "fontFamily":"",
+						            	   "fontSize":"",
+						            	   "fontWeight":""
+						               },
+						               "TITLE":{
+							                  "text":"",
+							                  "style":{
+							                	  "align":"",
+							                	  "color":"",
+							                	  "fontFamily":"",
+							                	  "fontWeight":"",
+							                	  "fontSize":""
+							                  }
+							               }
+						            }
+
+					         ]
+					      },
+					      "COLORPALETTE":{
+					    	  "COLOR":[
+
+							         ]
+					      },
+
+					      "height":100,
+					      "width":100,
+					      "isCockpitEngine":"",
+					      "style":{
+		                	  "backgroundColor":"#FFFFFF",
+		                	  "fontFamily":"",
+		                	  "fontWeight":"",
+		                	  "fontSize":""
+		                  },
+		                  "styleName": "default",
+					      "SUBTITLE":{
+					    	  "style":{
+			                	  "align":"",
+			                	  "color":"",
+			                	  "fontFamily":"",
+			                	  "fontWeight":"",
+			                	  "fontSize":""
+			                  },
+					         "text":""
+					      },
+					      "EMPTYMESSAGE":{
+					    	  "style":{
+			                	  "color":"",
+			                	  "fontFamily":"",
+			                	  "fontWeight":"",
+			                	  "fontSize":""
+			                  },
+			                  "position":{
+			                	  "align": "",
+			                	  "verticalAlign": "middle"
+			                  },
+					         "text":""
+					      },
+					      "LEGEND":{
+					         "layout":"",
+					         "position":"top",
+					         "show":false,
+					         "style":{
+			                	  "align":"",
+			                	  "color":"",
+			                	  "fontFamily":"",
+			                	  "fontWeight":"",
+			                	  "fontSize":"",
+			                	  "borderWidth":"",
+			                	  "backgroundColor":""
+			                  },
+					         "TITLE":{
+					            "text":"",
+					            "style":{
+				                	  "align":"",
+				                	  "color":"",
+				                	  "fontFamily":"",
+				                	  "fontWeight":"",
+				                	  "fontSize":""
+				                  }
+					         }
+					      },
+					      "heightDimType":"percentage",
+					      "widthDimType":"percentage",
+					      "borderVisible":false,
+					   }
+					}
+		var axisTitle = {
+				"text":"",
+                "style":{
+                	"align":"",
+                	"color":"",
+                	"fontFamily":"",
+                	"fontWeight":"",
+                	"fontSize":""
+                }
+		};
+
+		bubble.CHART.AXES_LIST.AXIS[0].TITLE = axisTitle;
+		return bubble.CHART;
 	}
 
 	this.getGaugeTemplate = function() {
@@ -2541,6 +2766,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		case 'bar':
 			angular.copy(StructureTabService.getBaseTemplate(type), baseTemplate);
 			break;
+		case 'bubble':
+			angular.copy(StructureTabService.getBubbleTemplate(), baseTemplate);
+			break;
 		case 'pie':
 			angular.copy(StructureTabService.getBaseTemplate(type), baseTemplate);
 			baseTemplate.type="PIE";
@@ -2679,7 +2907,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		}
 
 
-		if(template.CHART.type.toLowerCase()== "bar"|| template.CHART.type.toLowerCase()=="line"){
+		if(template.CHART.type.toLowerCase()== "bar"|| template.CHART.type.toLowerCase()=="line" || template.CHART.type.toLowerCase()=="bubble"){
 			var category = {column:categories[0].column,groupby:"", groupbyNames:"",name:categories[0].name, orderColumn:categories[0].orderColumn,orderType:categories[0].orderType,stacked:categories[0].stacked,stackedType:categories[0].stackedType}
 			var groupby = "";
 			if(categories.length>1)

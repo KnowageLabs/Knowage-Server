@@ -63,6 +63,15 @@ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selecte
 	</md-input-container>
 </div>
 
+<div layout="row" flex layout-margin
+ng-if="selectedChartType == 'bubble'">
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.series.bubble.dimension')}}</label>
+		<md-select ng-model="detailsForSeriesItem.bubbleDimension"> 
+			<md-option ng-repeat="measure in allMeasures" value="{{measure.alias || measure.id}}">{{measure.alias || measure.id}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
 <!-- Color for the particular series item 
 <div layout="row" flex layout-margin
 ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
@@ -117,6 +126,7 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && 
 selectedChartType != 'treemap' && 
 selectedChartType != 'bar' && 
+selectedChartType != 'bubble' && 
 selectedChartType != 'line' && 
 selectedChartType != 'radar' && selectedChartType != 'scatter') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex> 

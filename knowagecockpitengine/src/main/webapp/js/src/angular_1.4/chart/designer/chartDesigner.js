@@ -86,6 +86,9 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 			if($scope.selectedChartType == 'scatter'){
 				$scope.attachSeriesToTemplate();
 			}
+			if($scope.selectedChartType == 'bubble' ){
+				$scope.attachSeriesToTemplateBubble();
+			}
 
 			$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 			if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
@@ -199,7 +202,9 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		if($scope.selectedChartType == 'scatter'){
 			$scope.attachSeriesToTemplate();
 		}
-
+		if($scope.selectedChartType == 'bubble' ){
+			$scope.attachSeriesToTemplateBubble();
+		}
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		var chartObj = angular.copy($scope.chartTemplate);
 		var chartTemp = {}
@@ -220,21 +225,15 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 	}
 
 	$scope.attachSeriesToTemplate = function() {
-
 		var valueSeries = $scope.chartTemplate.VALUES.SERIE;
 		var totalSeries = $scope.allMeasures;
-
 		for(var i = 0; i < totalSeries.length; i++){
-
-			if(findInArray(valueSeries,'column',totalSeries[i].alias) == -1){
-
+			var index = findInArray(valueSeries,'column',totalSeries[i].alias);
+			if(index == -1){
 				valueSeries.push({axis:"Y",color:"",column:totalSeries[i].alias,groupingFunction:"NONE", name:totalSeries[i].alias,orderType:"",postfixChar:"",
 					precision:2,prefixChar:"",scaleFactor:"empty",showAbsValue:"false",showPercentage:false, showValue: "",type:"",fakeSerie:true})
-
 			}
-
 		}
-
 	}
 
 	$scope.attachCategoriesToTemplate = function(advancedTrue) {
@@ -364,7 +363,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 				$scope.chartTemplate.styleName = $scope.clearStyleTag($scope.chartTemplate.styleName);
 			}
 		}
-		if($scope.chartTemplate.type == "SCATTER" || $scope.chartTemplate.type == "BAR" || $scope.chartTemplate.type == "LINE"){
+		if($scope.chartTemplate.type == "SCATTER" || $scope.chartTemplate.type == "BAR" || $scope.chartTemplate.type == "LINE" || $scope.chartTemplate.type == "BUBBLE"){
 	    	  for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 	    		  for (var j = 0; j < $scope.chartTemplate.AXES_LIST.AXIS.length; j++) {
 						if($scope.chartTemplate.VALUES.SERIE[i].axis == $scope.chartTemplate.AXES_LIST.AXIS[j].alias && $scope.chartTemplate.AXES_LIST.AXIS[j].labels){
@@ -412,5 +411,17 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 				}
 		  }
 		return f;
+	}
+
+	$scope.attachSeriesToTemplateBubble = function() {
+		var valueSeries = $scope.chartTemplate.VALUES.SERIE;
+		var totalSeries = $scope.allMeasures;
+		for(var i = 0; i < valueSeries.length; i++){
+			var index = findInArray(totalSeries,'alias',valueSeries[i].bubbleDimension);
+			if(index != -1){
+				valueSeries.push({axis:"Y",color:"",column:totalSeries[index].alias,groupingFunction:valueSeries[i].groupingFunction, name:totalSeries[index].alias,orderType:"",postfixChar:"",
+					precision:2,prefixChar:"",scaleFactor:"empty",showAbsValue:"false",showPercentage:false, showValue: "",type:"",fakeSerie:true})
+			}
+		}
 	}
 }
