@@ -73,7 +73,7 @@ function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockp
 	}
 }
 
-function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,promise,model,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
+function calculatedFieldDialogController($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,promise,model,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.model = model;
@@ -127,21 +127,31 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
     $scope.addFormula = function(formula) {
         $scope.addTextInCodemirror(formula.body);
     }
+    $scope.validateFormula = function() {
+    	sbiModule_restServices.promisePost('2.0/data','validateFormula',{
+    		"formula": $scope.formula.trim()
+    	})
+    	.then(function(response){
+
+    	},function(error){
+
+    	})
+    }
 
     $scope.addMeasures = function(field) {
-        var text = '$F{' + field.name + '}';
-        var suffix = "";
-        var prefix = "";
+        var text = field.name;
+        var suffix = $scope.column.datasetOrTableFlag ? ' ' : ') ';
+        var prefix = $scope.column.datasetOrTableFlag ? '' : field.aggregationSelected+'(';
         $scope._editor.focus();
         if ($scope._editor.somethingSelected()) {
             $scope._editor.replaceSelection(prefix + text + suffix);
             return
         }
         var position = $scope._editor.getCursor();
-        var line = $scope._editor.getLine(position.line);
-        if (line.charAt(position.ch - 1) == '}') {
-            prefix = ' ';
-        }
+//        var line = $scope._editor.getLine(position.line);
+//        if (line.charAt(position.ch - 1) == '}') {
+//            prefix = ' ';
+//        }
         $scope.addTextInCodemirror(prefix + text + suffix);
     }
 
@@ -152,8 +162,8 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 	$scope.column = {};
 	$scope.measuresList = [];
     $scope.datasetColumnsList = [];
-	$scope.operators = ['+','-','*','/'];
-	$scope.brackets = ['(',')'];
+	//$scope.operators = ['+','-','*','/'];
+	//$scope.brackets = ['(',')'];
 
     for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
         var obj = $scope.localDataset.metadata.fieldsMeta[i];
@@ -218,7 +228,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		$scope.column.alias = angular.copy(actualItem.aliasToShow);
 		$scope.column.aggregationSelected = actualItem.aggregationSelected && angular.copy(actualItem.aggregationSelected);
 		$scope.column.datasetOrTableFlag = actualItem.datasetOrTableFlag ? angular.copy(actualItem.datasetOrTableFlag) : false;
-		$scope.redrawFormula();
+		//$scope.redrawFormula();
 	}
 
 	$scope.checkAggregation = function(obj){
@@ -267,7 +277,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 
 	$scope.resetFormula = function(){
 		$scope.formula = '';
-		$scope.formulaElement = [];
+		//$scope.formulaElement = [];
 		$scope.column.aggregationSelected = $scope.column.datasetOrTableFlag ? 'SUM' : 'NONE';
 	}
 

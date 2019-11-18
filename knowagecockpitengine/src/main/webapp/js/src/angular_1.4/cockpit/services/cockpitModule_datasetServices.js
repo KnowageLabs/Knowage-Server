@@ -1052,17 +1052,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					if(ngModel.type == "table"){
 						if(col.isCalculated) {
 							obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
-							obj["columnName"] = '';
-							for(var f in col.formulaArray){
-								if(col.formulaArray[f].type == 'measure' && !col.datasetOrTableFlag){
-									//in case of non aggregated measures, default summary row aggregation is set to SUM in all formula's fields
-									obj["columnName"] += (!col.datasetOrTableFlag && col.formulaArray[f].aggregation == 'NONE') ? 'SUM' : col.formulaArray[f].aggregation;
-									obj["columnName"] += '("'+col.formulaArray[f].value+'") ';
-								}else{
-									if(col.formulaArray[f].type == 'measure' && col.datasetOrTableFlag) obj["columnName"] += '"'+col.formulaArray[f].value+'" ';
-									else obj["columnName"] += col.formulaArray[f].value+" ";
-								}
-							}
+							//obj["columnName"] = '';
+//							for(var f in col.formulaArray){
+//								if(col.formulaArray[f].type == 'measure' && !col.datasetOrTableFlag){
+//									//in case of non aggregated measures, default summary row aggregation is set to SUM in all formula's fields
+//									obj["columnName"] += (!col.datasetOrTableFlag && col.formulaArray[f].aggregation == 'NONE') ? 'SUM' : col.formulaArray[f].aggregation;
+//									obj["columnName"] += '("'+col.formulaArray[f].value+'") ';
+//								}else{
+//									if(col.formulaArray[f].type == 'measure' && col.datasetOrTableFlag) obj["columnName"] += '"'+col.formulaArray[f].value+'" ';
+//									else obj["columnName"] += col.formulaArray[f].value+" ";
+//								}
+//							}
+							obj["columnName"] = col.formula;
 
 						}else obj["columnName"] = col.name;
 					}else obj["columnName"] = col.alias;
