@@ -530,6 +530,28 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	}
 
+	$scope.hasSpatialField = function(fields){
+
+		if(fields){
+			for(var i =0;i<fields.length;i++){
+				if($scope.isSpatial(fields[i])){
+					return true;
+				}
+			}
+		}
+
+		return false;
+
+	}
+
+	$scope.getFilteredFormulas = function(formulas,fields){
+		if(!$scope.hasSpatialField(fields)){
+			return $filter('filter')(formulas,{type:"!space"})
+		}
+
+		return formulas;
+	}
+
 	var isInLineCalculatedField = function(field){
 		return field.attributes.type === "inLineCalculatedField"
 	}
@@ -931,6 +953,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	$scope.showCalculatedField = function(cf,ev){
     	$scope.cfSelectedField= angular.copy(cf);
     	$scope.originalCFname = "";
+    	$scope.filteredFormulas = $scope.getFilteredFormulas($scope.formulas,$scope.editQueryObj.fields)
     	$mdDialog.show({
             controller: function ($scope, $mdDialog) {
 
@@ -992,7 +1015,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     $scope.getEntityTree = function(){
     	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
    			$scope.entityModel = response.data;
-   			$scope.filteredFormulas = byNotExistingMembersFilter($scope.formulas,'type',['space'],{space:'geographic_dimension'},$scope.entityModel.entities,'iconCls')
+
    		}, function(response){
    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
    		});
