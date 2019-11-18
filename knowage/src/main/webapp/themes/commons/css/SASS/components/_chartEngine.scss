@@ -44,6 +44,10 @@
 	@include custom-background-image('../img/chart/types/chart_bar.png');
 }
 
+.bubble{
+	@include custom-background-image('../img/chart/types/chart_bubble.png');
+}
+
 .pie{
 	@include custom-background-image('../img/chart/types/chart_pie.png');
 }
@@ -90,6 +94,10 @@
 
 .bar_preview{
 	@include custom-preview-image('../img/chart/preview/bar chart (double).png');
+}
+
+.bubble_preview{
+	@include custom-preview-image('../img/chart/preview/bubble_chart.png');
 }
 
 .pie_preview{
