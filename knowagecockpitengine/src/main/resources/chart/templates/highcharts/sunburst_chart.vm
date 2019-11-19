@@ -72,10 +72,9 @@
   			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
 		
-		#if($chart.height != '')
+         #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
         #end
-        
         #*
     		Dimension type (pixels or percentage) parameter for height of the chart
     		is provided. 
@@ -84,18 +83,24 @@
     				
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-     	#if($chart.heightDimType)
+    	
+    	
+    	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
        	 	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
         #end
         
-        #if($chart.width != '')
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
     		width: $chart.width,
     	#end
     	
-    	#if($chart.widthDimType)
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
         	widthDimType: '$chart.widthDimType',
-        #end		
-		
+  	   	#else 
+	  	   	widthDimType: 'pixels',
+        #end
+        
 		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',
