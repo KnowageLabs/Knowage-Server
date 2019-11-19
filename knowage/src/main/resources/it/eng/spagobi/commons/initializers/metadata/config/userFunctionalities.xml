@@ -53,7 +53,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
-    <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -245,6 +246,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageLI" name="MapWidgetUse" description="MapWidgetUse" />
 		
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
@@ -289,5 +291,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
 	
 </USER_FUNCTIONALITIES>

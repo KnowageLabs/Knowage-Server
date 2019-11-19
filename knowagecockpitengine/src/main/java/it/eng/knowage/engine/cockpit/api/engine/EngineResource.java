@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.engine.cockpit.api.engine;
 
-import it.eng.knowage.engine.cockpit.CockpitEngine;
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DISCOVERY_WIDGET_USE;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.MAP_WIDGET_USE;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +38,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.CockpitEngine;
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 @ManageAuthorization
 @Path("/1.0/engine")
@@ -102,4 +111,151 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		return toReturn;
 	}
 
+	@GET
+	@Path("/widget")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<Widget> getEngine() throws EMFInternalError {
+
+		List<Widget> ret = new ArrayList<Widget>();
+		UserProfile profile = UserProfileManager.getProfile();
+		Collection functionalities = profile.getFunctionalities();
+
+		ret.add(Widget.builder().withName("Text").withDescKey("sbi.cockpit.editor.newwidget.description.text").withImg("1.png").withCssClass("fa fa-font")
+				.withType("text").withTag("text").build());
+
+		ret.add(Widget.builder().withName("Image").withDescKey("sbi.cockpit.editor.newwidget.description.image").withImg("2.png")
+				.withCssClass("fa fa-picture-o").withType("image").withTag("image").build());
+
+		ret.add(Widget.builder().withName("Chart").withDescKey("sbi.cockpit.editor.newwidget.description.chart").withImg("4.png")
+				.withCssClass("fa fa-bar-chart").withType("chart").withTag("chart").build());
+
+		ret.add(Widget.builder().withName("Html").withDescKey("sbi.cockpit.editor.newwidget.description.html").withImg("4.png").withCssClass("fa fa-code")
+				.withType("html").withTag("html").build());
+
+		ret.add(Widget.builder().withName("Table").withDescKey("sbi.cockpit.editor.newwidget.description.table").withImg("5.png").withCssClass("fa fa-table")
+				.withType("table").withTag("table").build());
+
+		ret.add(Widget.builder().withName("Cross Table").withDescKey("sbi.cockpit.editor.newwidget.description.cross").withImg("6.png")
+				.withCssClass("fa fa-table").withType("static-pivot-table").withTag("table").withTag("pivot").withTag("cross").build());
+
+		ret.add(Widget.builder().withName("Document").withDescKey("sbi.cockpit.editor.newwidget.description.document").withImg("7.png")
+				.withCssClass("fa fa-file").withType("document").withTag("document").withTag("datasource").build());
+
+		if (functionalities.contains(MAP_WIDGET_USE)) {
+
+			ret.add(Widget.builder().withName("Map").withDescKey("sbi.cockpit.editor.newwidget.description.map").withImg("7.png").withCssClass("fa fa-map")
+					.withType("map").withTag("map").build());
+		}
+
+		ret.add(Widget.builder().withName("Active Selections").withDescKey("sbi.cockpit.editor.newwidget.description.selection").withImg("8.png")
+				.withCssClass("fa fa-check-square-o").withType("selection").withTag("selection").build());
+
+		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
+				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
+
+		if (functionalities.contains(DISCOVERY_WIDGET_USE)) {
+
+			ret.add(Widget.builder().withName("Discovery").withDescKey("sbi.cockpit.editor.newwidget.description.discovery")/* TODO : .withImg(???) */
+					.withCssClass("fa fa-rocket").withType("discovery").withTag("discovery").build());
+		}
+
+		return ret;
+	}
+
+}
+
+/**
+ * POJO for widget menu item in available widgets dialog.
+ *
+ * @author Marco Libanori
+ */
+class Widget {
+
+	static class Builder {
+		private String name;
+		private String descKey;
+		private List<String> tags = new ArrayList<String>();
+		private String img;
+		private String cssClass;
+		private String type;
+
+		public Builder withName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder withDescKey(String descKey) {
+			this.descKey = descKey;
+			return this;
+		}
+
+		public Builder withImg(String img) {
+			this.img = img;
+			return this;
+		}
+
+		public Builder withCssClass(String cssClass) {
+			this.cssClass = cssClass;
+			return this;
+		}
+
+		public Builder withType(String type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder withTag(String tag) {
+			this.tags.add(tag);
+			return this;
+		}
+
+		public Widget build() {
+			return new Widget(name, descKey, img, cssClass, type, tags);
+		}
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	final String name;
+	final String descKey;
+	final List<String> tags = new ArrayList<String>();
+	final String img;
+	final String cssClass;
+	final String type;
+
+	private Widget(String name, String descKey, String img, String cssClass, String type, List<String> tags) {
+		super();
+		this.name = name;
+		this.descKey = descKey;
+		this.tags.addAll(tags);
+		this.img = img;
+		this.cssClass = cssClass;
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDescKey() {
+		return descKey;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public String getCssClass() {
+		return cssClass;
+	}
+
+	public String getType() {
+		return type;
+	}
 }

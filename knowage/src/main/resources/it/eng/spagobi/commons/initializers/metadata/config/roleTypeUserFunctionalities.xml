@@ -367,6 +367,18 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="MODEL_ADMIN" />	
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AlertManagement" roleType="ADMIN" />
-    <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="NotifyContextBrokerAction" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="NotifyContextBrokerAction" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DiscoveryWidgetUse" roleType="ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DiscoveryWidgetUse" roleType="DEV_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DiscoveryWidgetUse" roleType="MODEL_ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DiscoveryWidgetUse" roleType="TEST_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DiscoveryWidgetUse" roleType="USER"/>
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="DEV_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="MODEL_ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="TEST_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="USER"/>
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

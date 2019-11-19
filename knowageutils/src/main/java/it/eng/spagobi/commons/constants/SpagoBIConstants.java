@@ -561,6 +561,9 @@ public class SpagoBIConstants {
 
 	public static final String MEASURES_CATALOGUE_MANAGEMENT = "MeasuresCatalogueManagement";
 
+	public static final String MAP_WIDGET_USE = "MapWidgetUse";
+	public static final String DISCOVERY_WIDGET_USE = "DiscoveryWidgetUse";
+
 	// Cockpit
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
 	public static final String MANAGE_ANALYTICAL_WIDGET = "AnalyticalWidget";
