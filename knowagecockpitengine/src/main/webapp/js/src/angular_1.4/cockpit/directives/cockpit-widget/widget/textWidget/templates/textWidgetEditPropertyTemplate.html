@@ -7,8 +7,13 @@
 	      </div>
 	    </md-toolbar>
 	    <md-content flex layout="column">
-			<md-tabs flex md-border-bottom>
-		      
+			<md-tabs flex md-border-bottom md-selected="1">
+		      	
+		      	<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]">
+		   			</multi-dataset-selector>
+		     	</md-tab>
+		      	
 				<md-tab label="{{translate.load('sbi.cockpit.widget.text.editor')}}">
 					<div class="noPadding" layout="row" >
 						<md-card  flex>
@@ -86,11 +91,6 @@
 		        		<cockpit-style-configurator widget ng-model="localModel.style">
 		        	</cockpit-style-configurator>
 		        </md-tab>
-		        
-		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]">
-		   			</multi-dataset-selector>
-		     	</md-tab>
 		     	
 		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
 					<cockpit-cross-configurator widget ng-cloak ng-model="localModel"></cockpit-cross-configurator>

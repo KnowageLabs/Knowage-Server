@@ -7,7 +7,15 @@
 	      </div>
 	    </md-toolbar>
 	    <md-content flex layout="column">
-			<md-tabs flex md-border-bottom>
+			<md-tabs flex md-border-bottom md-selected="1">
+				<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		        	<md-card>
+		        		<md-card-content>
+		   					<dataset-selector ng-model="newModel.dataset.dsId" on-change="handleDsChange('datasetChanged',dsId)" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
+		   				</md-card-content>
+		   			</md-card>	
+		     	</md-tab>
+		     	
 				<md-tab label="Editor Html">
 					<section layout="row">
 					<md-content class="noPadding" layout="row" layout-fill>
@@ -75,16 +83,10 @@
 				    
 					    </section>
 		        </md-tab>
+		        
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
 		        </md-tab>
-		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		        	<md-card>
-		        		<md-card-content>
-		   					<dataset-selector ng-model="newModel.dataset.dsId" on-change="handleDsChange('datasetChanged',dsId)" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
-		   				</md-card-content>
-		   			</md-card>	
-		     	</md-tab>
 		     	
 		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
