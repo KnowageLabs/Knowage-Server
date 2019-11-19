@@ -99,6 +99,7 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageSI -->
@@ -124,6 +125,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageER -->
@@ -144,6 +146,7 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		
+
 		<!-- Authorizations for KnowagePM -->
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
@@ -161,6 +164,7 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SELF_SERVICE_KPI" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageLI -->
@@ -185,6 +189,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowagePA -->
