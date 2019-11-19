@@ -111,7 +111,7 @@ author:...
 		  engine = request.getParameter("ENGINE");
 		}
 	   
-	   formulaDAO = new FormulaDAOXmlImpl();
+	   formulaDAO = new FormulaDAOXmlImpl(userProfile);
 	   formulas = formulaDAO.getAll();
 	   String formulasJson = StringUtils.escape(objectMapper.writeValueAsString(formulas),'\\','\\');
 	   

@@ -18,12 +18,15 @@
 package it.eng.spagobi.engines.qbe.query.formula.DAO.Impl;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUnmarshallerWrapper;
 import it.eng.spagobi.engines.qbe.query.formula.DAO.IFormulaDAO;
 import it.eng.spagobi.engines.qbe.query.formula.mapping.Formula;
@@ -38,9 +41,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 public class FormulaDAOXmlImpl implements IFormulaDAO {
 
 	public static transient Logger logger = Logger.getLogger(FormulaDAOXmlImpl.class);
+	private final IEngUserProfile userProfile;
 
-	public FormulaDAOXmlImpl() {
-
+	public FormulaDAOXmlImpl(IEngUserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 	@Override
@@ -61,6 +65,8 @@ public class FormulaDAOXmlImpl implements IFormulaDAO {
 			if (xmlFile != null && xmlFile.exists()) {
 				Formulas temp = unmarshaller.unmarshall(xmlFile, Formulas.class);
 				logger.debug("File " + xmlFile.getName() + " unmarshalled");
+
+				applyFilter(temp);
 				formulas.setFormulas(temp.getFormulas());
 			}
 
@@ -68,10 +74,28 @@ public class FormulaDAOXmlImpl implements IFormulaDAO {
 		} catch (JAXBException e) {
 			logger.error("Error while loading formulas ", e);
 			throw new SpagoBIEngineRuntimeException("Error while loading formulas ", e);
+		} catch (EMFInternalError e) {
+			logger.error("Error while loading formulas ", e);
+			throw new SpagoBIEngineRuntimeException("Error while loading formulas ", e);
 		} finally {
 			logger.debug("OUT");
 		}
 
+	}
+
+	/**
+	 * @param temp
+	 * @throws EMFInternalError
+	 */
+	private void applyFilter(Formulas temp) throws EMFInternalError {
+		Iterator<Formula> it = temp.getFormulas().iterator();
+
+		while (it.hasNext()) {
+			if (it.next().getType().equals("time") && !this.userProfile.getFunctionalities().contains("Time_functions")) {
+				it.remove();
+			}
+
+		}
 	}
 
 }
