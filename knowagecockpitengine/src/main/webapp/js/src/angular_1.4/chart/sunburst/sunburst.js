@@ -357,16 +357,16 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			levels: levels,
 			events:{
 				// TODO: Cross Navigation functionality on Sunburst Chart
-//				click: function(event){
-//					if(!exportWebApp){
-//						if(chartConf.chart.isCockpit){
-//							handleCockpitSelection(event);
-//						 } else if(event.point.node.children.length==0){
-//				            	var params=getCrossParamsForTreemap(event.point,chartConf);
-//				            	handleCrossNavigationTo(params);
-//						 }
-//					}
-//				}
+			click: function(event){
+					if(!exportWebApp){
+						if(chartConf.chart.isCockpit){
+							handleCockpitSelection(event);
+						 } else if(event.point.node.children.length==0){
+				            	var params=getCrossParamsForTreemap(event.point,chartConf);
+				            	handleCrossNavigationTo(params);
+						 }
+					}
+				}
 			}
 		}],
 		subtitle: {
