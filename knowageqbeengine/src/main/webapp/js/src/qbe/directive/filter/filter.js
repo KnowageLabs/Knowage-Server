@@ -121,11 +121,11 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		var entities = [];
 		var temporalFilter = {};
 
-		$scope.filterIndex = checkForIndex();
+
 		$scope.showTable = false;
 		$scope.targetOption = "default";
 		for(var i =0; i< $scope.selectedTemporalFilter.definition.length;i++){
-
+			$scope.filterIndex = checkForIndex();
 
 		var object = {
 				"filterId": "Filter"+$scope.filterIndex,
@@ -143,14 +143,14 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"operator": "BETWEEN",
 				"rightType" : "manual",
 				"rightOperandValue": [$scope.selectedTemporalFilter.definition[i].from, $scope.selectedTemporalFilter.definition[i].to],
-				"rightOperandDescription": $scope.selectedTemporalFilter.definition[i].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[i].to+" 00:00:00",
-				"rightOperandLongDescription": $scope.selectedTemporalFilter.definition[i].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[i].to+" 00:00:00",
+				"rightOperandDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
+				"rightOperandLongDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
 				"rightOperandType": "Static Content",
 				"rightOperandDefaultValue": [""],
 				"rightOperandLastValue": [""],
 				"rightOperandAlias": null,
 				"rightOperandDataType": "",
-				"booleanConnector": i == 0 ? "AND" : "OR",
+				"booleanConnector": "OR",
 				"deleteButton": false
 			}
 		$scope.filters.push(object);
@@ -160,6 +160,15 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 
 	}
+
+	$scope.createRightOperandDescription = function(from,to,dataType){
+		if(dataType==='java.sql.Timestamp'){
+			return from + " 00:00:00 " + " ---- " + to + " 00:00:00 " ;
+		}
+		return from + " ---- " + to ;
+	}
+
+
 
 	$scope.addNewFilter= function (){
 		$scope.filterIndex = checkForIndex();
