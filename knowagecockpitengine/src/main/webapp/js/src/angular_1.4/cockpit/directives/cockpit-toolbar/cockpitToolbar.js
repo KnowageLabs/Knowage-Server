@@ -224,7 +224,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						type : "selector"
 					},{
 						name:"Discovery",
-						description: 'discovery',
+						description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.discovery"),
 						tags : ["discovery"],
 						class: "fa fa-rocket",
 						type : "discovery"
