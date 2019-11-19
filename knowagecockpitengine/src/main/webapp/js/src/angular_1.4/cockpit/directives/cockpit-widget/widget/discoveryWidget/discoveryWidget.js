@@ -199,10 +199,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.refreshWidget(null, 'init');
 		}
 
+		$scope.orderFacets = function(facets){
+			var orderedFacets = {};
+			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+				for(var j in facets){
+					if($scope.ngModel.content.columnSelectedOfDataset[k].name == j){
+						orderedFacets[j] = facets[j];
+						break;
+					}
+				}
+			}
+			return orderedFacets;
+		}
+
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 			$scope.showWidgetSpinner();
 			if(datasetRecords){
-				$scope.facets = datasetRecords.facets;
+				$scope.facets = $scope.orderFacets(datasetRecords.facets);
 				$scope.metaData = datasetRecords.metaData;
 				if($scope.ngModel.settings.table && $scope.ngModel.settings.table.enabled){
 					$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
