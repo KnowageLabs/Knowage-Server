@@ -565,6 +565,9 @@
 	<CONFIG label="internal.exporting.pdf.landscape"      name="Landscape printing for PDF"
 		description="Boolean value (true or false) to set landscape mode for PDF printing." isActive="true"
 		valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="PYTHON_ADDRESS"      name="Python address"
+		description="Python service address" isActive="true"
+		valueCheck="localhost:5000" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	
 </CONFIGS>
 

@@ -228,7 +228,14 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						tags : ["discovery"],
 						class: "fa fa-rocket",
 						type : "discovery"
-				  }];
+				  },{
+						name:"Python",
+						description: 'python',
+						tags : ["python"],
+						class: "fa fa-file-text",
+						type : "python"
+				  }
+				  ];
 
 		    	  $scope.saveConfiguration=function(){
 		    		  $mdDialog.hide();

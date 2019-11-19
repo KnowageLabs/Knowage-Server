@@ -1,43 +1,48 @@
-<md-card  class="flexCard htmlWidgetConfiguration" >
+<md-card  class="flexCard pythonWidgetConfiguration" >
 	<md-card-content flex layout="column" class="noPadding">
 	    <md-toolbar> 
 	      <div class="md-toolbar-tools">
-	        <h2>{{translate.load('kn.cockpit.html.editwidget')}}</h2>
+	        <h2>{{translate.load('kn.cockpit.python.configuration')}}</h2>
 	        <span flex></span>
 	      </div>
 	    </md-toolbar>
 	    <md-content flex layout="column">
 			<md-tabs flex md-border-bottom>
-				<md-tab label="Editor Html">
-					<section layout="row">
+				<md-tab label="Python Editor">
+				
+					<!-- INIZIO EDITOR -->
+					
 					<md-content class="noPadding" layout="row" layout-fill>
 						<div layout="column" flex>
+						
 							<md-card>
-								<md-toolbar class="ternaryToolbar clickable" ng-click="toggleCss()"> 
-							      <div class="md-toolbar-tools">
-							        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
-							        <span flex></span>
-							        <md-button class="md-icon-button" >
-							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
-							        </md-button>
-							      </div>
-							    </md-toolbar>
-								<md-card-content class="noPadding" ng-if="newModel.cssOpened">
-								<div layout="row" layout-align="center center">
-									<div class="kn-info" flex=80>{{translate.load('kn.cockpit.html.cssprefix')}} <span class="widgetId">#[kn-widget-id]</span></div>
-								</div>
-								<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
+						     	<md-card-content layout="row" layout-align="space-around center">
+						     		<md-input-container flex class="md-block">
+									  <label>{{translate.load('kn.cockpit.python.outputType')}}</label>
+									  <md-select ng-model="newModel.pythonOutputType">
+								          <md-option ng-repeat="key in newModel.keys" value="{{newModel.types[key]}}">{{key}}</md-option>
+								      </md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block" ng-if="newModel.pythonOutputType == 'img'">
+									  <label>{{translate.load('kn.cockpit.python.outputFileName')}}</label>
+									  <input type="text" ng-model="newModel.pythonOutput">
+									</md-input-container>
+									<md-input-container flex class="md-block" ng-if="newModel.pythonOutputType == 'html'">
+									  <label>{{translate.load('kn.cockpit.python.outputVariableName')}}</label>
+									  <input type="text" ng-model="newModel.pythonOutput">
+									</md-input-container>
 								</md-card-content>
-							</md-cward>
-							<md-card class="htmlEditor">
+							</md-card>
+						
+							<md-card class="pythonEditor">
 								<md-toolbar class="ternaryToolbar"> 
 							      <div class="md-toolbar-tools"> 
-							        <h2>{{translate.load('kn.cockpit.html.html')}}</h2>
+							        <h2>{{translate.load('kn.cockpit.python.pythonScript')}}</h2>
 							        <span flex></span>
 							      </div>
 							    </md-toolbar>
 								<md-card-content class="noPadding">
-								<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="newModel.htmlToRender" flex></textarea>
+								<textarea id="python" ui-codemirror="editorOptionsPython" ng-model="newModel.pythonCode" ui-refresh="newModel.pythonCode" flex></textarea>
 								</md-card-content>
 							</md-card>
 						</div>
@@ -45,7 +50,7 @@
 					      <md-toolbar class="secondaryToolbar">
 					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.html.availabletags')}}</h1>
 					      </md-toolbar>
-					  		<md-subheader class="expandableSubheader" ng-repeat-start="tag in helper.tags" layout="row" ng-click="toggleTag(tag)">{{tag.label}}<i class="fa" ng-class="{'fa-chevron-up':tag.opened,'fa-chevron-down':!tag.opened}"></i></md-subheader>
+					  		<md-subheader class="expandableSubheader" ng-repeat-start="tag in helper" layout="row" ng-click="toggleTag(tag)">{{tag.label}}<i class="fa" ng-class="{'fa-chevron-up':tag.opened,'fa-chevron-down':!tag.opened}"></i></md-subheader>
 					  		<div layout="column" style="background-color: white;" ng-if="tag.opened">
 						  		<p layout-padding class="description">
 						          {{tag.description}}
@@ -72,8 +77,9 @@
 							<md-divider ng-repeat-end></md-divider>
 					    </div>
 				    </md-content>
-				    
-					    </section>
+
+				<!-- FINE EDITOR -->
+
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
@@ -85,15 +91,13 @@
 		   				</md-card-content>
 		   			</md-card>	
 		     	</md-tab>
-		     	
-		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
+		        <md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
 		     	
 		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
 					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
 				</md-tab>
-		        
 	      	</md-tabs>
 	    </md-content>
     </md-card-content>
