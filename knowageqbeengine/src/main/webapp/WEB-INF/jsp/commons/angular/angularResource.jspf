@@ -77,12 +77,15 @@ author:...
     ObjectMapper objectMapper = new ObjectMapper();
     ExecutionSession es = new ExecutionSession(request, request.getSession());
     JSONArray paramsJsonArray = new JSONArray();
-
+    
+    
 	
 
     
    	//load user profile 
    	IEngUserProfile userProfile  = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+   
+   	String mappings = userProfile.getFunctionalities().contains("Qbe_calendar") ? "mappings.js" : "mappings2.js";
    	String language =(String) request.getParameter(SpagoBIConstants.SBI_LANGUAGE);
    	String country =(String) request.getParameter(SpagoBIConstants.SBI_COUNTRY);
    	locale = new Locale(language,country);
@@ -102,6 +105,8 @@ author:...
    		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
    		
    	}
+   	
+   	
 
 	   
 	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );

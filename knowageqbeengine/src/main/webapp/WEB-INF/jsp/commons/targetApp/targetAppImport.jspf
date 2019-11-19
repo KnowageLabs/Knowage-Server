@@ -9,8 +9,8 @@
 
 <!-- services -->
 <script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/multiConditionTemplateRetriver.js"%>"></script> 
-<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/parsingHelper.js"%>"></script> 
-<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/mappings.js"%>"></script>
+<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/parsingHelper.js"%>"></script>
+<script type="text/javascript" src="<%= servicesPath + "/multiConditionTemplateRetriver/" + mappings%>"></script>
 <script type="text/javascript" src="<%= servicesPath + "/dateService.js"%>"></script>  
 
 
