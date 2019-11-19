@@ -90,6 +90,7 @@ function discoveryWidgetEditControllerFunction(
 	}
 	function onRowDragEnd(event){
 		moveInArray($scope.newModel.content.columnSelectedOfDataset, $scope.startingDragRow, event.overIndex);
+		$scope.columnsGrid.api.redrawRows();
 	}
 
 	function CustomHeader() {}
