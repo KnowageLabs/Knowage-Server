@@ -302,7 +302,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
 	try{
 		$scope.highcharts = Highcharts != undefined ? true : false;
-	} catch {
+	} catch (ex) {
 		$scope.highcharts =  false;
 	}
 
