@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -533,8 +534,7 @@ public class DataSetResource extends AbstractDataSetResource {
 						}
 					} else if (SimpleFilterOperator.NOT_IN.equals(operator)) {
 						filter = new NotInFilter(projections, valueObjects);
-					}
-					else if (SimpleFilterOperator.LIKE.equals(operator)) {
+					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
 						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
 						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
@@ -797,11 +797,10 @@ public class DataSetResource extends AbstractDataSetResource {
 		return new DatasetTagsResource();
 	}
 
-
 	@POST
 	@Path("/validateFormula")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String validateFormulaJson(String body) {
+	public Response validateFormulaJson(String body) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -811,12 +810,19 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				formulaString = jsonBody.getString("formula");
 
-			}
+				try {
+					String toReturn = validateFormula(formulaString);
+					return Response.ok(toReturn).build();
+				} catch (ValidationException v) {
+					throw new SpagoBIRestServiceException(buildLocaleFromSession(), v);
 
+				}
+			}
 			timing.stop();
-			return validateFormula(formulaString);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
+		return null;
+
 	}
 }

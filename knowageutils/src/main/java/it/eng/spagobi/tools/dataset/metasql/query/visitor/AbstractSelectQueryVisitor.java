@@ -355,7 +355,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		String aliasDelimiter = database.getAliasDelimiter();
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
-		String name = projection.getName();
+		String name = projection.getFormula();
 		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
 				: aliasDelimiter + name + aliasDelimiter;
 
