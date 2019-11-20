@@ -28,8 +28,8 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      		console.log("[POST]: SUCCESS!");
      		var counter = 1;
      		for (var i = 0; i < query.fields.length; i++) {
-     			if(query.fields[i].visible){
-         			var key = "column_"+counter;
+
+
          			var queryObject = {
              		    	"id":query.fields[i].id,
              		    	"name":query.fields[i].field,
@@ -54,18 +54,25 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"havings": []
              		    }
 
-         			for (var j = 0; j < response.data.rows.length; j++) {
-         				var row = {
-         						"value":response.data.rows[j][key],
-         						"id":response.data.rows[j].id
-         				}
-         				queryObject.data.push(row);
-    				}
+         			if(query.fields[i].visible){
+         				var key = "column_"+counter;
+         				for (var j = 0; j < response.data.rows.length; j++) {
+             				var row = {
+             						"value":response.data.rows[j][key],
+             						"id":response.data.rows[j].id
+             				}
+             				queryObject.data.push(row);
+        				}
+
+         				counter++
+
+         			}
+
 
          			queryModel.push(queryObject);
-         			counter++
 
-     			}
+
+
 
 			}
 

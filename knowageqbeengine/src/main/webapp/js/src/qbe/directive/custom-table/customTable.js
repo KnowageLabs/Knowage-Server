@@ -173,7 +173,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
                 	field.index = $scope.ngModel.indexOf(field);
                 	field.alias = $scope.alias;
                     $mdDialog.hide();
-                    $rootScope.$broadcast('setAlias', field);
                 }
 
                 $scope.cancel = function(){
@@ -202,26 +201,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('addTemporalParameter', field);
 	}
 
-	$scope.group = function(id, entity, group) {
-		$rootScope.$emit('group', {
-			"fieldId" : id,
-			"entity" : entity,
-			"group" : !group
-		});
-	};
-
-	$scope.setVisible = function (id, entity, visible) {
-		for (var i = 0; i < $scope.ngModel.length; i++) {
-			if($scope.ngModel[i].id==id){
-				$scope.ngModel[i].visible = !visible;
-			}
+	$scope.group = function(field) {
+		if(field.group){
+			field.funct = "";
 		}
-		$rootScope.$broadcast('setVisible',{
-			"fieldId" : id,
-			"entity" : entity,
-			"visible" : !visible
-		});
-	}
+	};
 	$scope.modifyCalculatedField = function (row) {
 		$rootScope.$broadcast('showCalculatedField',row);
 	}
@@ -248,7 +232,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		    default:
 		    	data.ordering = "NONE";
 		}
-		$rootScope.$broadcast('orderField', {"id":data.id, "order":data.ordering});
+
 	}
 
 	$scope.openFiltersAdvanced = function (){
@@ -257,7 +241,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.executeRequest = function () {
 		$scope.firstExecution = true;
-		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage, "fields": $scope.ngModel});
+		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage/*, "fields": $scope.ngModel*/});
 	}
 
 	$scope.$on('queryExecuted', function (event, data) {
@@ -447,6 +431,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.$watch('ngModel',function(newValue,oldValue){
 		if(newValue[0]){
 			$scope.isChecked = newValue[0].distinct;
+
 		}
 	},true);
 
@@ -458,7 +443,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		for ( var field in $scope.ngModel) {
 			$scope.ngModel[field].visible = true;
 		}
-		$rootScope.$broadcast('showHiddenColumns', true);
 	}
 
 	$scope.idIndex = Array.apply(null, {length: 25}).map(Number.call, Number);
@@ -485,7 +469,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"group",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-checkbox ng-model=row.group aria-label="Checkbox"></md-checkbox>';
+	                            		return '<md-checkbox ng-model=row.group ng-checked="scopeFunctions.group(row)" aria-label="Checkbox"></md-checkbox>';
 	                            	}
 	                        	},
 	                        	{
@@ -493,7 +477,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"ordering",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select  ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -501,7 +485,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -509,7 +493,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"visible",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-checkbox ng-checked="scopeFunctions.isVisible(row)" ng-click="scopeFunctions.setVisibility(row)"  aria-label="Checkbox"></md-checkbox>';
+	                            		return '<md-checkbox  ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
 	                            	}
 	                        	}
 	]
@@ -621,15 +605,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				}
 			}
 		},
-		isVisible : function (row) {
-			for (var i = 0; i < $scope.ngModel.length; i++) {
-				if($scope.ngModel[i].id==row.id && $scope.ngModel[i].visible==true){
-					return true;
-				}
-			}
-		},
-		setVisibility : function (row) {
-			$scope.setVisible(row.id, row.entity, row.visible);
+		group: function(row){
+			$scope.group(row)
 		},
 		modifyCalculatedField : function (row){
 			$scope.modifyCalculatedField(row);

@@ -160,6 +160,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		queryHandler(newValue,oldValue);
 	},true)
 
+	$scope.$watch('queryModel',function(newValue,oldValue){
+		toEditQueryObj(newValue,$scope.editQueryObj)
+	},true)
+
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 
 		if(query.fields.length>0){
@@ -247,6 +251,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     };
 
+    $rootScope.$on('modelChanged' , function(event,data){
+    	toEditQueryObj(data,$scope.editQueryObj)
+    })
+
     $rootScope.$on('addFieldOnClick', function (event, data) {
     	if(data.connector) return;
     	$scope.addField(data);
@@ -275,7 +283,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			$scope.bodySend.pars = data.pars;
 		}
 		$scope.query.fields[indexOfFieldInQuery].group = false;
-		//$scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
 	});
 
 	$rootScope.$on('applyFunctionForParams', function (event, data) {
@@ -285,21 +292,19 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 	});
 
-	$rootScope.$on('smartView', function (event, data) {
-		var temp = []
+	var toEditQueryObj = function(customTableModel,editQueryObj){
+		for (var i = 0; i < customTableModel.length; i++) {
 
-		for (var i = 0; i < data.length; i++) {
-			for (var j = 0; j < $scope.editQueryObj.fields.length; j++) {
-				if($scope.editQueryObj.fields[j].alias==data[i].alias){
-					$scope.editQueryObj.fields[j].group = data[i].group;
-					$scope.editQueryObj.fields[j].funct = data[i].funct;
-					$scope.editQueryObj.fields[j].visible = data[i].visible;
-					$scope.editQueryObj.fields[j].distinct = data[i].distinct;
-					$scope.editQueryObj.fields[j].order = data[i].ordering;
-					$scope.editQueryObj.fields[j].alias = data[i].alias;
-				}
-			}
+					editQueryObj.fields[i].group = customTableModel[i].group;
+					editQueryObj.fields[i].funct = customTableModel[i].funct;
+					editQueryObj.fields[i].visible = customTableModel[i].visible;
+					editQueryObj.fields[i].distinct = customTableModel[i].distinct;
+					editQueryObj.fields[i].order = customTableModel[i].ordering;
+					editQueryObj.fields[i].alias = customTableModel[i].alias;
 		}
+	}
+
+	$rootScope.$on('smartView', function (event, data) {
 
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
@@ -309,36 +314,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	});
 
 	$scope.$on('executeQuery', function (event, data) {
-		if(data.fields != undefined  && !query_service.smartView && data.fields.length>0){
-			for (var i = 0; i < data.fields.length; i++) {
-				$scope.editQueryObj.fields[i].group = data.fields[i].group;
-				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
-				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
-				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
-				$scope.editQueryObj.fields[i].order = data.fields[i].ordering;
-			}
-		}
-
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
-	});
-
-	$scope.$on('setVisible', function (event, data) {
-		 var indexOfEntity = findWithAttr($scope.entityModel.entities,'text', data.entity);
-		  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
-		  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
-		  $scope.isNotChangedFromHidingField = false;
-		  $scope.editQueryObj.fields[indexOfFieldInQuery].visible = data.visible;
-	});
-
-	$scope.$on('setAlias', function (event, data) {
-		$scope.editQueryObj.fields[data.index].alias = data.alias;
-
-	});
-
-	$scope.$on('showHiddenColumns', function (event, data) {
-		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
-			  $scope.editQueryObj.fields[i].visible = true;
-		}
 	});
 
 	$scope.$on('orderField', function (event, data) {
@@ -438,19 +414,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 
 
-
-	});
-
-	$rootScope.$on('group', function (event, data) {
-
-	  var indexOfEntity = findWithAttr($scope.entityModel.entities,'text', data.entity);
-	  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
-	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
-	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
-	  $scope.editQueryObj.fields[indexOfFieldInQuery].funct = "";
-	  if(query_service.smartView){
-		  //$scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
-	  }
 
 	});
 
@@ -593,16 +556,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     $scope.fieldsFunctions = [
 
-//        {
-//        	"label": "havings",
-//        	"icon": "fa fa-check-square-o",
-//        	"visible": function (item){
-//        		return true;
-//        	},
-//        	"action": function(item, event) {
-//            	$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
-//        	}
-//        },
     	{
         	"label": "filters",
         	"icon": "fa fa-filter",
@@ -756,7 +709,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		$scope.show = false;
 		var config = {
 				attachTo:  angular.element(document.body),
-				//panelClass :"layout-column",
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterVisualizationTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
