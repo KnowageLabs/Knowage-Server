@@ -1307,36 +1307,46 @@ public class DatasetManagementAPI {
 				for (int i = 0; i < parameters.size(); i++) {
 					JSONObject parameter = parameters.get(i);
 					if (paramName.equals(parameter.optString("namePar"))) {
-						boolean isMultiValue = parameter.optBoolean("multiValuePar");
-						String paramValue = paramValues.get(paramName);
-						String[] values = null;
-						if (paramValue == null) {
-							values = new String[0];
-						} else {
-							values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
-						}
-
-						String typePar = parameter.optString("typePar");
-						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
-						List<String> newValues = new ArrayList<>();
-						for (int j = 0; j < values.length; j++) {
-							String value = values[j].trim();
-							if (!value.isEmpty()) {
-								if (!value.startsWith(delim) && !value.endsWith(delim)) {
-									newValues.add(delim + value + delim);
-								} else {
-									newValues.add(value);
-								}
-							}
-						}
-						newParamValues.put(paramName, StringUtils.join(newValues, ","));
+						String[] values = getValuesAsArray(paramValues, paramName, parameter);
+						List<String> encapsulatedValues = encapsulateValues(parameter, values);
+						newParamValues.put(paramName, StringUtils.join(encapsulatedValues, ","));
 						break;
 					}
 				}
 			}
 			dataSet.setParamsMap(newParamValues);
 		}
+	}
+
+	private String[] getValuesAsArray(Map<String, String> paramValues, String paramName, JSONObject parameter) {
+		boolean isMultiValue = parameter.optBoolean("multiValuePar");
+		String paramValue = paramValues.get(paramName);
+		if (paramValue == null) {
+			return new String[0];
+		}
+		if (paramValue.startsWith("'") && paramValue.endsWith("'")) {
+			// patch for KNOWAGE-4600: An error occurs when propagating a driver value with commas through cross navigation
+			return Arrays.asList(paramValue).toArray(new String[0]);
+		}
+		return isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+	}
+
+	private List<String> encapsulateValues(JSONObject parameter, String[] values) {
+		String typePar = parameter.optString("typePar");
+		String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+		List<String> newValues = new ArrayList<>();
+		for (int j = 0; j < values.length; j++) {
+			String value = values[j].trim();
+			if (!value.isEmpty()) {
+				if (!value.startsWith(delim) && !value.endsWith(delim)) {
+					newValues.add(delim + value + delim);
+				} else {
+					newValues.add(value);
+				}
+			}
+		}
+		return newValues;
 	}
 
 	@SuppressWarnings("unchecked")
