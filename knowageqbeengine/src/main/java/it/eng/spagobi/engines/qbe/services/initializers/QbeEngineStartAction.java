@@ -96,14 +96,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
 			} catch (Throwable t) {
 				SpagoBIEngineStartupException serviceException;
-				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
 				Throwable rootException = t;
 				while (rootException.getCause() != null) {
 					rootException = rootException.getCause();
 				}
 				String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-				msg += "\nThe root cause of the error is: " + str;
-				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
+				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, str, t);
 
 				if (rootException instanceof QbeTemplateParseException) {
 					QbeTemplateParseException e = (QbeTemplateParseException) rootException;
