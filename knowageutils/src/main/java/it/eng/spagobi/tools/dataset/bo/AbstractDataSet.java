@@ -373,54 +373,68 @@ public abstract class AbstractDataSet implements IDataSet {
 				for (int i = 0; i < parameters.size(); i++) {
 					JSONObject parameter = parameters.get(i);
 					if (paramName.equals(parameter.optString("namePar"))) {
-						boolean isMultiValue = parameter.optBoolean("multiValuePar");
-						String paramValue = paramValues.get(paramName);
-						String[] values = null;
-						if (isMultiValue) {
-							List<String> list = new ArrayList<String>();
-							boolean paramValueConsumed = false;
-							try {
-								JSONArray jsonArray = new JSONArray(paramValue);
-								for (int j = 0; j < jsonArray.length(); j++) {
-									list.add(jsonArray.getString(j));
-								}
-								paramValueConsumed = true;
-							} catch (JSONException e) {
-								paramValueConsumed = false;
-							}
-							if (!paramValueConsumed) {
-								list.add(paramValue);
-							}
-							values = list.toArray(new String[0]);
-							if (values!= null && values.length == 1 && !values[0].isEmpty()) {
-							String	valuesString = values[0];
-							values = valuesString.split(",");
-							}
-						} else {
-							values = Arrays.asList(paramValue).toArray(new String[0]);
-						}
-
-						String typePar = parameter.optString("typePar");
-						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
-						List<String> newValues = new ArrayList<>();
-						for (int j = 0; j < values.length; j++) {
-							String value = values[j].trim();
-							if (!value.isEmpty()) {
-								if (!value.startsWith(delim) && !value.endsWith(delim)) {
-									newValues.add(delim + value + delim);
-								} else {
-									newValues.add(value);
-								}
-							}
-						}
-						paramValues.put(paramName, org.apache.commons.lang3.StringUtils.join(newValues, ","));
+						String[] values = getValuesAsArray(paramValues, paramName, parameter);
+						List<String> encapsulatedValues = encapsulateValues(parameter, values);
+						paramValues.put(paramName, org.apache.commons.lang3.StringUtils.join(encapsulatedValues, ","));
 						break;
 					}
 				}
 			}
 			setParamsMap(paramValues);
 		}
+	}
+
+	private String[] getValuesAsArray(Map<String, String> paramValues, String paramName, JSONObject parameter) {
+		boolean isMultiValue = parameter.optBoolean("multiValuePar");
+		String paramValue = paramValues.get(paramName);
+		String[] values = null;
+		if (isMultiValue) {
+			List<String> list = new ArrayList<String>();
+			boolean paramValueConsumed = false;
+			try {
+				JSONArray jsonArray = new JSONArray(paramValue);
+				for (int j = 0; j < jsonArray.length(); j++) {
+					list.add(jsonArray.getString(j));
+				}
+				paramValueConsumed = true;
+			} catch (JSONException e) {
+				paramValueConsumed = false;
+			}
+			if (!paramValueConsumed) {
+				list.add(paramValue);
+			}
+			values = list.toArray(new String[0]);
+			if (values != null && values.length == 1 && !values[0].isEmpty()) {
+				String valuesString = values[0];
+				if (valuesString.startsWith("'") && valuesString.endsWith("'")) {
+					// patch for KNOWAGE-4600: An error occurs when propagating a driver value with commas through cross navigation.
+					// Do nothing, keep values as it is
+				} else {
+					values = valuesString.split(",");
+				}
+			}
+		} else {
+			values = Arrays.asList(paramValue).toArray(new String[0]);
+		}
+		return values;
+	}
+
+	private List<String> encapsulateValues(JSONObject parameter, String[] values) {
+		String typePar = parameter.optString("typePar");
+		String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+		List<String> newValues = new ArrayList<>();
+		for (int j = 0; j < values.length; j++) {
+			String value = values[j].trim();
+			if (!value.isEmpty()) {
+				if (!value.startsWith(delim) && !value.endsWith(delim)) {
+					newValues.add(delim + value + delim);
+				} else {
+					newValues.add(value);
+				}
+			}
+		}
+		return newValues;
 	}
 
 	@Override
