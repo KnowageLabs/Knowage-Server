@@ -76,6 +76,7 @@
                 			|| newFilter.filterOperator == '>='
                 			|| newFilter.filterOperator == 'like'
                 			|| newFilter.filterOperator == 'IN'
+                			|| newFilter.filterOperator == 'not IN'
                 			"> 
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss</label>

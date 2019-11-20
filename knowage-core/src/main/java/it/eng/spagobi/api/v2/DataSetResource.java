@@ -90,6 +90,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.PlaceholderFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
@@ -530,7 +531,10 @@ public class DataSetResource extends AbstractDataSetResource {
 						} else {
 							filter = new InFilter(projections, valueObjects);
 						}
-					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
+					} else if (SimpleFilterOperator.NOT_IN.equals(operator)) {
+						filter = new NotInFilter(projections, valueObjects);
+					}
+					else if (SimpleFilterOperator.LIKE.equals(operator)) {
 						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
 						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
@@ -793,4 +797,26 @@ public class DataSetResource extends AbstractDataSetResource {
 		return new DatasetTagsResource();
 	}
 
+
+	@POST
+	@Path("/validateFormula")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String validateFormulaJson(String body) {
+		try {
+			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
+
+			String formulaString = "";
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+
+				formulaString = jsonBody.getString("formula");
+
+			}
+
+			timing.stop();
+			return validateFormula(formulaString);
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		}
+	}
 }

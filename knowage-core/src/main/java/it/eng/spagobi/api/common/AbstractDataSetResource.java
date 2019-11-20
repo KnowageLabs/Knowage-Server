@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +44,9 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.parsers.CaseChangingCharStream;
-import it.eng.knowage.parsers.MySqlLexer;
-import it.eng.knowage.parsers.MySqlParser;
+import it.eng.knowage.parsers.SQLiteLexer;
+import it.eng.knowage.parsers.SQLiteParser;
+import it.eng.knowage.parsers.ThrowingErrorListener;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -96,6 +98,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
+	private static final String VALIDATION_OK = "OK";
+	private static final String VALIDATION_KO = "KO";
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -364,7 +368,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("datasetOrTableFlag")) {
 
-				validateFormula(columnName);
+				String response = validateFormula(columnName);
+				if (response.equalsIgnoreCase(VALIDATION_KO)) throw new ValidationException();
 
 				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName);
 				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
@@ -376,7 +381,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		} else {
 			if (jsonObject.has("datasetOrTableFlag")) {
 
-				validateFormula(columnName);
+				String response = validateFormula(columnName);
+				if (response.equalsIgnoreCase(VALIDATION_KO)) throw new ValidationException();
 
 				projection = new DataStoreCalculatedField(function, dataSet, columnName, columnAlias);
 			}
@@ -387,17 +393,30 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projection;
 	}
 
-	private void validateFormula (String formula) throws ValidationException {
 
+	public String validateFormula (String formula) throws ValidationException {
+
+		formula = "select ".concat(formula);
 		CharStream inputStream = CharStreams.fromString(formula);
-		MySqlLexer tokenSource = new MySqlLexer(new CaseChangingCharStream(inputStream, true));
- 		TokenStream tokenStream = new CommonTokenStream(tokenSource);
-		MySqlParser mySqlParser = new MySqlParser(tokenStream);
+		SQLiteLexer tokenSource = new SQLiteLexer(new CaseChangingCharStream(inputStream, true));
+		TokenStream tokenStream = new CommonTokenStream(tokenSource);
+ 		SQLiteParser sQLiteParser = new SQLiteParser(tokenStream);
 
-		if (mySqlParser.getNumberOfSyntaxErrors()>0) {
-			throw new ValidationException();
+ 		sQLiteParser.addErrorListener(ThrowingErrorListener.INSTANCE);
+ 		try {
+		ParseTree root = sQLiteParser.select_stmt();
+
+ 		}
+ 		catch (Exception e){
+ 			return VALIDATION_KO;
+ 		}
+		if (sQLiteParser.getNumberOfSyntaxErrors()>0) {
+			return VALIDATION_KO;
+
 		}
 
+
+		return VALIDATION_OK;
 	}
 
 	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {

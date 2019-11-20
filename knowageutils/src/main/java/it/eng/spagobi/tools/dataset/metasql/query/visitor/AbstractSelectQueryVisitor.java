@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
@@ -153,6 +154,74 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		sb.append("')");
 
 		return sb.toString();
+	}
+
+	@Override
+	public void visit(NotInFilter item) {
+		if (item.getOperands().isEmpty()) {
+			visit(new UnsatisfiedFilter());
+		} else {
+			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+				queryBuilder.append("(");
+				visit(transformToAndOrFilters(item));
+				queryBuilder.append(")");
+			} else {
+				append(item);
+			}
+		}
+	}
+
+	private boolean hasNullOperand(NotInFilter item) {
+		boolean hasNullOperand = false;
+		if (item != null) {
+			for (Object operand : item.getOperands()) {
+				if (operand == null) {
+					hasNullOperand = true;
+					break;
+				}
+			}
+		}
+		return hasNullOperand;
+	}
+
+	protected void append(NotInFilter item) {
+		List<Projection> projections = item.getProjections();
+		String openBracket = projections.size() > 1 ? "(" : "";
+		String closeBracket = projections.size() > 1 ? ")" : "";
+
+		queryBuilder.append(openBracket);
+
+		append(projections.get(0), false);
+		for (int i = 1; i < projections.size(); i++) {
+			queryBuilder.append(",");
+			append(projections.get(i), false);
+		}
+
+		queryBuilder.append(closeBracket);
+
+		queryBuilder.append(" ");
+		queryBuilder.append(item.getOperator());
+		queryBuilder.append(" (");
+
+		List<Object> operands = item.getOperands();
+		for (int i = 0; i < operands.size(); i++) {
+			if (i % projections.size() == 0) { // 1st item of tuple of values
+				if (i >= projections.size()) { // starting from 2nd tuple of values
+					queryBuilder.append(",");
+				}
+				queryBuilder.append(openBracket);
+			}
+			if (i % projections.size() != 0) {
+				queryBuilder.append(",");
+			}
+			append(operands.get(i));
+			if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+				queryBuilder.append(closeBracket);
+			}
+		}
+
+		queryBuilder.append(")");
 	}
 
 	@Override

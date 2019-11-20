@@ -128,7 +128,8 @@ function calculatedFieldDialogController($scope,sbiModule_translate,sbiModule_re
         $scope.addTextInCodemirror(formula.body);
     }
     $scope.validateFormula = function() {
-    	sbiModule_restServices.promisePost('2.0/data','validateFormula',{
+    	sbiModule_restServices.restToRootProject();
+    	sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
     		"formula": $scope.formula.trim()
     	})
     	.then(function(response){

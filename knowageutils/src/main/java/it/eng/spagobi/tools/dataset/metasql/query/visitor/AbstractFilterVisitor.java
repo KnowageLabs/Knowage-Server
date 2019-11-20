@@ -19,12 +19,26 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import it.eng.spagobi.tools.dataset.metasql.query.item.*;
-import org.apache.log4j.Logger;
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.CompoundFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 
 public abstract class AbstractFilterVisitor implements IFilterVisitor {
 
@@ -47,6 +61,9 @@ public abstract class AbstractFilterVisitor implements IFilterVisitor {
             visit((BetweenFilter) item);
         } else if (item instanceof InFilter) {
             visit((InFilter) item);
+        }
+         else if (item instanceof NotInFilter) {
+                visit((NotInFilter) item);
         } else if (item instanceof LikeFilter) {
             visit((LikeFilter) item);
         } else if (item instanceof NullaryFilter) {
@@ -109,6 +126,25 @@ public abstract class AbstractFilterVisitor implements IFilterVisitor {
         return new OrFilter(andFilters);
     }
 
+    protected Filter transformToAndOrFilters(NotInFilter item) {
+        List<Projection> projections = item.getProjections();
+        List<Object> operands = item.getOperands();
+
+        int columnCount = projections.size();
+        int tupleCount = operands.size() / columnCount;
+
+        AndFilter[] andFilters = new AndFilter[tupleCount];
+        for (int tupleIndex = 0; tupleIndex < tupleCount; tupleIndex++) {
+            UnaryFilter[] equalFilters = new UnaryFilter[columnCount];
+            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+                equalFilters[columnIndex] = new UnaryFilter(projections.get(columnIndex), SimpleFilterOperator.EQUALS_TO,
+                        operands.get(columnIndex + tupleIndex * columnCount));
+            }
+
+            andFilters[tupleIndex] = new AndFilter(equalFilters);
+        }
+        return new OrFilter(andFilters);
+    }
     protected abstract String getFormattedTimestamp(Timestamp timestamp);
 
     protected abstract String getFormattedDate(Date date);
