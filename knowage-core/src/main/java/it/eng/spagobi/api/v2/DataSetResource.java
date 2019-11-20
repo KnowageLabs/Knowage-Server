@@ -800,7 +800,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/validateFormula")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response validateFormulaJson(String body) {
+	public String validateFormulaJson(String body) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -812,7 +812,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				try {
 					String toReturn = validateFormula(formulaString);
-					return Response.ok(toReturn).build();
+					JSONObject okResponse = new JSONObject();
+					okResponse.put("msg", "ok");
+					return okResponse.toString();
 				} catch (ValidationException v) {
 					throw new SpagoBIRestServiceException(buildLocaleFromSession(), v);
 

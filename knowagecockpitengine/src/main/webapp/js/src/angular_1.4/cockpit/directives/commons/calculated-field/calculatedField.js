@@ -76,7 +76,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
 		$scope.localDataset = {};
+		$scope.alias = actualItem && actualItem.alias;
 		$scope.formula = (actualItem && actualItem.formula) || "";
+		$scope.datasetOrTableFlag = actualItem && actualItem.datasetOrTableFlag;
+		$scope.aggregationSelected = (actualItem && actualItem.aggregationSelected) || "NONE";
 		$scope.reloadCodemirror = false;
 
 		$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
@@ -126,15 +129,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		"formula": $scope.formula.trim()
 	    	})
 	    	.then(function(response){
-	    		if(response.errors){
-					Toastify({
-						text: result.errors[0].message,
-						duration: 10000,
-						close: true,
-						className: 'kn-warningToast',
-						stopOnFocus: true
-					}).showToast();
-	    		}else{
 	    			Toastify({
 						text: "Validation Successful",
 						duration: 10000,
@@ -142,16 +136,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						className: 'kn-successToast',
 						stopOnFocus: true
 					}).showToast();
-	    		}
-	    	},function(error){
-
+	    	},function(response){
+	    		Toastify({
+					text: response.data.errors[0].message,
+					duration: 10000,
+					close: true,
+					className: 'kn-warningToast',
+					stopOnFocus: true
+				}).showToast();
 	    	})
 	    }
 
 	    $scope.addMeasures = function(field) {
 	        var text = field.name;
-	        var suffix = $scope.column.datasetOrTableFlag ? '" ' : '") ';
-	        var prefix = $scope.column.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
+	        var suffix = $scope.datasetOrTableFlag ? '" ' : '") ';
+	        var prefix = $scope.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
 	        $scope._editor.focus();
 	        if ($scope._editor.somethingSelected()) {
 	            $scope._editor.replaceSelection(prefix + text + suffix);
@@ -165,7 +164,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 		}
 
-		$scope.column = {};
 		$scope.measuresList = [];
 	    $scope.datasetColumnsList = [];
 
@@ -184,6 +182,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 		$scope.saveColumnConfiguration=function(){
+			$scope.validateFormula();
 			if($scope.formula == ""){
 				Toastify({
 					text: $scope.translate.load('sbi.cockpit.table.errorformula0'),
@@ -194,13 +193,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}).showToast();
 				return;
 			}
+			if(!$scope.alias){
+				Toastify({
+					text: $scope.translate.load('Enter a valid alias name'),
+					duration: 10000,
+					close: true,
+					className: 'kn-warningToast',
+					stopOnFocus: true
+				}).showToast();
+				return;
+			}
 
 			$scope.result = {};
-			$scope.result.alias = $scope.column.alias != undefined ? $scope.column.alias : "NewCalculatedField";
+			$scope.result.alias = $scope.alias != undefined ? $scope.alias : "NewCalculatedField";
 			$scope.result.formula = $scope.formula;
-			$scope.result.aggregationSelected = $scope.column.aggregationSelected || 'NONE';
+			$scope.result.aggregationSelected = $scope.aggregationSelected || 'NONE';
 			$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
-			$scope.result.datasetOrTableFlag = $scope.column.datasetOrTableFlag;
+			$scope.result.datasetOrTableFlag = $scope.datasetOrTableFlag;
 			$scope.result.aliasToShow = $scope.result.alias;
 			$scope.result.fieldType = 'MEASURE';
 			$scope.result.isCalculated = true;
@@ -214,7 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.resetFormula = function(){
 			$scope.formula = '';
-			$scope.column.aggregationSelected = $scope.column.datasetOrTableFlag ? 'SUM' : 'NONE';
+			$scope.aggregationSelected = $scope.datasetOrTableFlag ? 'SUM' : 'NONE';
 		}
 	}
 
