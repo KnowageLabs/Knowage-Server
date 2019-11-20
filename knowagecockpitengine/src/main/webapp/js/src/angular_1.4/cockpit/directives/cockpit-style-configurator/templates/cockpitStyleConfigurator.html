@@ -82,6 +82,7 @@
 			<md-input-container class="md-block" flex >
 				<label>{{translate.load("sbi.cockpit.style.borders.style")}}</label>
 				<md-select ng-model="ngModel.border['border-style']" ng-disabled="!ngModel.borders">
+					<md-option></md-option>
 					<md-option ng-repeat=" bsize in bordersSize" ng-value="bsize.value">{{bsize.label}} <span ng-class="bsize.exampleClass"></span></md-option>
 				</md-select>
 			</md-input-container>
