@@ -17,10 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -30,6 +26,10 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -53,7 +53,8 @@ public class MeasureFormatter {
 			measuresInfo = new ArrayList<MeasureInfo>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
-				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"),obj.getString("format"));
+				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"), obj.getString("format"),
+						obj.optBoolean("excludeFromTotalAndSubtotal"));
 				measuresInfo.add(mi);
 			}
 		}

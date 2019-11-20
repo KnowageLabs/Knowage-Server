@@ -167,7 +167,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		$scope.applyI18N(dataToSend);
 		$scope.options = dataToSend;
-		
+
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					var fatherElement = angular.element($scope.subCockpitWidget);
@@ -384,7 +384,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				lstValues.push(columnValue);
 			}
 		}
-		
+
 		var measureId = '';
 		if (measureRef != ""){
 			var measureHeads = measureRef.split("_S_");
@@ -937,6 +937,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.selectedColumn.fieldType = selectedColumn.nature.toUpperCase();
 		$scope.selectedColumn.widgetType = "staticPivotTable";
 		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined)?true:selectedColumn.showHeader;
+		$scope.selectedColumn.excludeFromTotalAndSubtotal = (selectedColumn.excludeFromTotalAndSubtotal==undefined)?false:selectedColumn.excludeFromTotalAndSubtotal;
 
 
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;

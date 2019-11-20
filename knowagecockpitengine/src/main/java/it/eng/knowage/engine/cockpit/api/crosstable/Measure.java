@@ -23,14 +23,25 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 
 public class Measure extends Field {
+	Boolean excludeFromTotalAndSubtotal;
 	IAggregationFunction function = null;
 
-	public Measure(String entityId, String alias, String sortingId, String iconCls, String nature, String function, JSONObject config) {
+	public Measure(String entityId, String alias, String sortingId, String iconCls, String nature, String function, Boolean excludeFromTotalAndSubtotal,
+			JSONObject config) {
 		super(entityId, alias, sortingId, iconCls, nature, config);
 		this.function = AggregationFunctions.get(function);
+		this.excludeFromTotalAndSubtotal = excludeFromTotalAndSubtotal;
 	}
 
 	public IAggregationFunction getAggregationFunction() {
 		return function;
+	}
+
+	public Boolean getExcludeFromTotalAndSubtotal() {
+		return excludeFromTotalAndSubtotal;
+	}
+
+	public void setExcludeFromTotalAndSubtotal(Boolean excludeFromTotalAndSubtotal) {
+		this.excludeFromTotalAndSubtotal = excludeFromTotalAndSubtotal;
 	}
 }

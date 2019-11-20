@@ -54,7 +54,8 @@ public class MeasureJSONDeserializer implements IDeserializer {
 			} else if (o instanceof JSONObject) {
 				measureJSON = (JSONObject) o;
 			} else {
-				Assert.assertUnreachable("Object to be deserialized must be of type string or of type JSONObject, not of type [" + o.getClass().getName() + "]");
+				Assert.assertUnreachable(
+						"Object to be deserialized must be of type string or of type JSONObject, not of type [" + o.getClass().getName() + "]");
 			}
 
 			try {
@@ -71,10 +72,9 @@ public class MeasureJSONDeserializer implements IDeserializer {
 	}
 
 	private Measure deserializeMeasure(JSONObject obj) throws JSONException {
-		return new Measure(obj.getString(FieldsSerializationConstants.ID), obj.getString(FieldsSerializationConstants.ALIAS),
-				null,
+		return new Measure(obj.getString(FieldsSerializationConstants.ID), obj.getString(FieldsSerializationConstants.ALIAS), null,
 				obj.getString(FieldsSerializationConstants.ICON_CLS), obj.getString(FieldsSerializationConstants.NATURE),
-				obj.getString(FieldsSerializationConstants.FUNCTION), obj);
+				obj.getString(FieldsSerializationConstants.FUNCTION), obj.optBoolean(FieldsSerializationConstants.EXCLUDE_FROM_TOTAL_AND_SUBTOTAL), obj);
 	}
 
 }

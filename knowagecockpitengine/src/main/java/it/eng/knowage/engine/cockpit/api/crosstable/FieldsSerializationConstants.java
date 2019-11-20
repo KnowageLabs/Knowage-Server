@@ -30,6 +30,7 @@ public class FieldsSerializationConstants {
 	public static final String STYLE = "style";
 	public static final String VALUES = "values";
 	public static final String FUNCTION = "funct";
+	public static final String EXCLUDE_FROM_TOTAL_AND_SUBTOTAL = "excludeFromTotalAndSubtotal";
 	public static final String SERIENAME = "seriename";
 	public static final String COLOR = "color";
 	public static final String SHOWCOMMA = "showcomma";
