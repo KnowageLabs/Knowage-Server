@@ -1063,7 +1063,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 //									else obj["columnName"] += col.formulaArray[f].value+" ";
 //								}
 //							}
-							obj["columnName"] = col.formula;
+							obj["formula"] = col.formula;
 
 						}else obj["columnName"] = col.name;
 					}else obj["columnName"] = col.alias;
