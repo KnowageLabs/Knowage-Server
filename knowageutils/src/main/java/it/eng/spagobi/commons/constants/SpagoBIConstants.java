@@ -563,6 +563,7 @@ public class SpagoBIConstants {
 
 	public static final String MAP_WIDGET_USE = "MapWidgetUse";
 	public static final String DISCOVERY_WIDGET_USE = "DiscoveryWidgetUse";
+	public static final String DOCUMENT_WIDGET_USE = "DocumentWidgetUse";
 
 	// Cockpit
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";

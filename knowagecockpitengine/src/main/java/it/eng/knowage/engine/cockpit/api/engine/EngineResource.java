@@ -18,6 +18,7 @@
 package it.eng.knowage.engine.cockpit.api.engine;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DISCOVERY_WIDGET_USE;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.MAP_WIDGET_USE;
 
 import java.util.ArrayList;
@@ -138,8 +139,11 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Cross Table").withDescKey("sbi.cockpit.editor.newwidget.description.cross").withImg("6.png")
 				.withCssClass("fa fa-table").withType("static-pivot-table").withTag("table").withTag("pivot").withTag("cross").build());
 
-		ret.add(Widget.builder().withName("Document").withDescKey("sbi.cockpit.editor.newwidget.description.document").withImg("7.png")
-				.withCssClass("fa fa-file").withType("document").withTag("document").withTag("datasource").build());
+		if (functionalities.contains(DOCUMENT_WIDGET_USE)) {
+
+			ret.add(Widget.builder().withName("Document").withDescKey("sbi.cockpit.editor.newwidget.description.document").withImg("7.png")
+					.withCssClass("fa fa-file").withType("document").withTag("document").withTag("datasource").build());
+		}
 
 		if (functionalities.contains(MAP_WIDGET_USE)) {
 
