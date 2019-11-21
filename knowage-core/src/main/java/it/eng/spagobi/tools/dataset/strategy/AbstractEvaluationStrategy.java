@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -93,8 +94,8 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		return filter instanceof UnsatisfiedFilter;
 	}
 
-	private void appendSummaryRowToPagedDataStore(List<AbstractSelectionField> projections, List<AbstractSelectionField> summaryRowProjections, IDataStore pagedDataStore,
-			IDataStore summaryRowDataStore) {
+	private void appendSummaryRowToPagedDataStore(List<AbstractSelectionField> projections, List<AbstractSelectionField> summaryRowProjections,
+			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
@@ -103,13 +104,36 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		// calc a map for summaryRowProjections -> projections
 		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
 		for (int i = 0; i < summaryRowProjections.size(); i++) {
-			Projection summaryRowProjection = (Projection) summaryRowProjections.get(i);
+			Projection summaryRowProjection = null;
+			DataStoreCalculatedField summaryRowCalculatedField = null;
+			if (summaryRowProjections.get(i) instanceof Projection)
+				summaryRowProjection = (Projection) summaryRowProjections.get(i);
+			else if (summaryRowProjections.get(i) instanceof DataStoreCalculatedField)
+				summaryRowCalculatedField = (DataStoreCalculatedField) summaryRowProjections.get(i);
+
 			for (int j = 0; j < projections.size(); j++) {
-				Projection projection = (Projection) projections.get(j);
-				String projectionAlias = projection.getAlias();
-				if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
-					projectionToSummaryRowProjection.put(j, i);
-					break;
+
+				AbstractSelectionField selections = projections.get(j);
+
+				if (selections instanceof Projection) {
+					Projection proj = (Projection) selections;
+					String projectionAlias = proj.getAlias();
+					if (summaryRowProjection != null
+							&& (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias))) {
+						projectionToSummaryRowProjection.put(j, i);
+						break;
+					}
+				} else {
+
+					if (selections instanceof DataStoreCalculatedField) {
+						DataStoreCalculatedField calcs = (DataStoreCalculatedField) selections;
+						String projectionAlias = calcs.getAlias();
+						if (summaryRowCalculatedField != null && (summaryRowCalculatedField.getAlias().equals(projectionAlias)
+								|| summaryRowCalculatedField.getName().equals(projectionAlias))) {
+							projectionToSummaryRowProjection.put(j, i);
+							break;
+						}
+					}
 				}
 			}
 		}

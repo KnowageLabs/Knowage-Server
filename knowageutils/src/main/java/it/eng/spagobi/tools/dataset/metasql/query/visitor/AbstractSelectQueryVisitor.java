@@ -347,9 +347,10 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		}
 	}
 
+	// TODO: improve auto columns detection using ANTLR VISITOR
 	/**
-	 * @param projection
-	 * @param useAlias   enables the output of an alias. Column name is used as alias if related flag is true.
+	 * @param DataStoreCalculatedField
+	 * @param useAlias                 enables the output of an alias. Column name is used as alias if related flag is true.
 	 */
 	protected void append(DataStoreCalculatedField projection, boolean useAlias) {
 		String aliasDelimiter = database.getAliasDelimiter();
@@ -451,11 +452,10 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			List<Projection> projections = new ArrayList<Projection>();
 			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
-				if(!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
-				Projection proj = (Projection) abstractSelectionField;
-				projections.add(proj);
-				}
-				else {
+				if (!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
+					Projection proj = (Projection) abstractSelectionField;
+					projections.add(proj);
+				} else {
 					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
 					projectionsCalcFields.add(projCalc);
 				}
