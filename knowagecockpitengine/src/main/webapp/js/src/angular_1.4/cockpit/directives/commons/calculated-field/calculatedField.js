@@ -160,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.addMeasures = function(field) {
 	        var text = field.name;
 	        var prefix = $scope.calculatedField.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
-	        var suffix = $scope.calculatedField.datasetOrTableFlag ? '" ' : '") ';
+	        var suffix = $scope.calculatedField.datasetOrTableFlag ? '"' : '") ';
 	        $scope._editor.focus();
 	        if ($scope._editor.somethingSelected()) {
 	            $scope._editor.replaceSelection(prefix + text + suffix);

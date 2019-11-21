@@ -13,14 +13,14 @@ span.functionDescription {
 	    <md-dialog-content layout="row" class="calculatedFieldEditor">
 	    	<md-card layout="column" flex="20" flex-sm="30" flex-xs="40" class="left" ng-if="measuresList.length > 0 || datasetColumnsList.length > 0">
 	        	<md-card-content layout="column" class="noPadding">
-	           		<md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!datasetOrTableFlag">
+	           		<md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!calculatedField.datasetOrTableFlag">
 		   		   		<md-list-item class="md-2-line" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
 		   		   			<div class="md-list-item-text"><h3>{{meas.aliasToShow}}</h3>
 		   		   			<p>{{meas.alias}} ({{meas.aggregationSelected}})</p></div>			   		   		 
 	   		   				<md-divider></md-divider>
 	   		   			</md-list-item>
 	   		   		</md-list>
-	   		   		<md-list style="overflow: auto;" class="noPadding" ng-if="datasetOrTableFlag">
+	   		   		<md-list style="overflow: auto;" class="noPadding" ng-if="calculatedField.datasetOrTableFlag">
 		   		   		<md-list-item ng-repeat="dmeas in datasetColumnsList" ng-click="addMeasures(dmeas)">
 		   		   			{{dmeas.alias}}
 	   		   				<md-divider></md-divider>
@@ -51,7 +51,7 @@ span.functionDescription {
 						</md-switch>
 	            	</div>
 		             <md-menu-bar>
-		                <md-menu ng-repeat="type in availableFormulaTypes track by $index">
+		                <md-menu ng-repeat="type in availableFormulaTypes track by $index" ng-if="calculatedField.datasetOrTableFlag">
 		                    <button ng-click="$mdOpenMenu()">{{type}}</button>
 		                    <md-menu-content>
 		                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
