@@ -18,19 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableHelper;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import org.apache.log4j.Logger;
-
-import javax.naming.NamingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,10 +27,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableHelper;
+import it.eng.spagobi.tools.dataset.utils.InlineViewUtility;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer {
 
 	private static final Logger logger = Logger.getLogger(InlineViewAssociativeDatasetContainer.class);
-
 
 	public InlineViewAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);
@@ -51,15 +52,12 @@ public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer 
 
 	@Override
 	protected String getTableName() {
-		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String subQueryAlias = "";
 		try {
-			subQueryAlias = DataBaseFactory.getDataBase(dataSet.getDataSource()).getSubQueryAlias();
+			return InlineViewUtility.getTableName(dataSet);
 		} catch (DataBaseException e) {
-			logger.error("Error while retrieving Database type");
+			logger.error("Error occured while getting table name", e);
+			throw new SpagoBIRuntimeException("Error occured while getting table name", e);
 		}
-
-		return "(" + querableBehaviour.getStatement() + ") " + subQueryAlias;
 	}
 
 	@Override
