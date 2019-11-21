@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		$scope.formulaLoading = false;
 		    		resolve();
 		    	},function(response){
-		    		$scope.toastifyMsg('warning',response.data.errors[0].message);
+		    		$scope.toastifyMsg('warning',$scope.translate.load(response.data.errors[0].message));
 		    		$scope.formulaLoading = false;
 		    		reject(response.data.errors[0].message);
 		    	})

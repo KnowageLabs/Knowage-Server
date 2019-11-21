@@ -108,6 +108,7 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -816,7 +817,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					okResponse.put("msg", "ok");
 					return okResponse.toString();
 				} catch (ValidationException v) {
-					throw new SpagoBIRestServiceException(buildLocaleFromSession(), v);
+					throw new ValidationServiceException(buildLocaleFromSession(), v);
 
 				}
 			}
