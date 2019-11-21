@@ -36,7 +36,37 @@
 					<md-icon md-font-icon="fa fa-play"></md-icon>
 				</md-button>
 				
-				<export-menu ng-show="ngModel.length>0" ></export-menu>
+				<md-menu ng-show="ngModel.length>0" >
+					<md-button  
+						class="kn-list-action-button md-icon-button"  
+						ng-click="openMenu($mdOpenMenu,$event)"
+						>
+					<md-tooltip> {{translate.load("kn.qbe.export.menu.tooltip")}}</md-tooltip>
+					<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+					</md-button>
+					<md-menu-content>
+						<md-menu-item >
+							<md-button
+							ng-click="removeColumns(ngModel)"
+							>{{translate.load("kn.qbe.selectgridpanel.buttons.tt.deleteall")}}</md-button>
+						</md-menu-item>
+						<md-menu-item >
+							<md-button
+							ng-click="deleteAllFilters()"
+							>{{translate.load("kn.qbe.filtergridpanel.buttons.tt.delete")}}</md-button>
+						</md-menu-item>
+						<md-menu-item >
+							<export-menu  ></export-menu>
+						</md-menu-item>	
+		
+					</md-menu-content>		
+				
+				</md-menu>
+				
+				
+				
+				
+				
 				
 	   		</div>
 	   	</md-toolbar>
@@ -225,7 +255,7 @@
 		      </md-menu-content>
 		      
 	    	</md-menu>
-	    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumn(field)">
+	    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumns([field])">
 	    		<md-tooltip md-direction="top">{{translate.load("kn.qbe.custom.table.delete.column")}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
 	      	</md-button>

@@ -125,6 +125,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
 	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
 
+	$scope.deleteAllFilters = function(){
+		$scope.filters.length = 0;
+	}
+
 	$scope.moveRight = function(currentOrder, column) {
 
 		var newOrder = currentOrder + 1;
@@ -210,11 +214,13 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('showCalculatedField',row);
 	}
 
-	$scope.removeColumn = function(field) {
-		$rootScope.$emit('removeColumn', {
-			"id" : field.id,
-			"entity" : field.entity
-		});
+	$scope.removeColumns = function(fields) {
+		var toRemove = [];
+		for(var i in fields){
+			toRemove.push({"id" : fields[i].id,"entity" : fields[i].entity
+			})
+		}
+		$rootScope.$emit('removeColumns', toRemove);
 	};
 
 	$scope.toggleOrder = function (data) {
@@ -582,7 +588,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		orderingValues: ["NONE", "ASC", "DESC"],
 		temporalFunctions: $scope.tmpFunctions,
 		deleteField : function (row) {
-			$scope.removeColumn(row);
+			$scope.removeColumns([row]);
 		},
 		moveUp : function (row) {
 			$scope.moveLeft(row.order, row);

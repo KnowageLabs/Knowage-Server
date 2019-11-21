@@ -404,13 +404,17 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 
 
-	$rootScope.$on('removeColumn', function (event, data) {
-	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.id);
-	  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
-	  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
-		  $scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
-		  $scope.queryModel.splice(indexOfFieldInModel, 1);
+	$rootScope.$on('removeColumns', function (event, data) {
+		for(var i in data){
+			var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data[i].id);
+			  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data[i].id);
+			  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
+				  $scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
+				  $scope.queryModel.splice(indexOfFieldInModel, 1);
+				}
+
 		}
+
 
 
 
