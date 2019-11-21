@@ -25,3 +25,33 @@
     }
   }
 }
+
+.calculatedFieldEditor{
+  md-menu-bar {
+    padding: 0;
+    background-color: #f2f2f2;
+    margin-top: 15px;
+    .validationMenu {
+      float: right;
+    }
+  }
+  .CodeMirror-wrap {
+    border: 1px solid #ccc;
+    width: 100%;
+    }
+  .CodeMirror {
+    width: 100%;
+    .CodeMirror-gutter {
+      width: 29px !important;
+    }
+    .CodeMirror-sizer {
+      margin-left: 30px !important;
+    }
+  }
+  .CodeMirror-gutter-wrapper {
+    left: -30px;
+  }
+  .CodeMirror-linenumber.CodeMirror-gutter-elt {
+    width: auto !important;
+  }
+}

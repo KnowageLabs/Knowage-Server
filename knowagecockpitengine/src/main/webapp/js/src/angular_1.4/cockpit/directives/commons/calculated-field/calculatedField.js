@@ -71,17 +71,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,promise,model,actualItem,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout){
+	function calculatedFieldDialogController($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
 		$scope.localDataset = {};
-		$scope.alias = actualItem && actualItem.alias;
-		$scope.formula = (actualItem && actualItem.formula) || "";
-		$scope.datasetOrTableFlag = actualItem && actualItem.datasetOrTableFlag;
-		$scope.aggregationSelected = (actualItem && actualItem.aggregationSelected) || "NONE";
-		$scope.reloadCodemirror = false;
+		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
+		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
 
+		//premade functions for codemirror menu bar
 		$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
 		$scope.availableFormulaTypes = [];
 		 angular.forEach($scope.functions, function(value, key) {
@@ -89,6 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     });
 
 		//codemirror initializer
+		$scope.reloadCodemirror = false;
 	    $scope.codemirrorLoaded = function(_editor) {
 	        $scope._doc = _editor.getDoc();
 	        $scope._editor = _editor;
@@ -114,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        $scope._editor.replaceRange(text, position);
 	    }
 
-	    if($scope.formula) {
+	    if($scope.calculatedField.formula) {
 	    	$timeout(function(){
 	    		$scope.reloadCodemirror = true;
 	    	},0)
@@ -123,34 +122,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.addFormula = function(formula) {
 	        $scope.addTextInCodemirror(formula.body);
 	    }
-	    $scope.validateFormula = function() {
-	    	sbiModule_restServices.restToRootProject();
-	    	sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
-	    		"formula": $scope.formula.trim()
-	    	})
-	    	.then(function(response){
-	    			Toastify({
-						text: "Validation Successful",
-						duration: 10000,
-						close: true,
-						className: 'kn-successToast',
-						stopOnFocus: true
-					}).showToast();
-	    	},function(response){
-	    		Toastify({
-					text: response.data.errors[0].message,
-					duration: 10000,
-					close: true,
-					className: 'kn-warningToast',
-					stopOnFocus: true
-				}).showToast();
+
+	    $scope.toastifyMsg = function(type,msg){
+	    	Toastify({
+				text: msg,
+				duration: 10000,
+				close: true,
+				className: 'kn-' + type + 'Toast',
+				stopOnFocus: true
+			}).showToast();
+	    }
+
+	    $scope.validateFormula = function(save) {
+	    	return $q(function(resolve, reject) {
+	    		if(!$scope.calculatedField.formula) {
+	    			$scope.toastifyMsg('warning',"No formula");
+	    			reject();
+	    			return;
+	    		}
+	    		$scope.formulaLoading = true;
+	    		sbiModule_restServices.restToRootProject();
+		    	sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
+		    		"formula": $scope.calculatedField.formula.trim()
+		    	})
+		    	.then(function(response){
+		    		if(!save) $scope.toastifyMsg('success',"Validation Successful");
+		    		$scope.formulaLoading = false;
+		    		resolve();
+		    	},function(response){
+		    		$scope.toastifyMsg('warning',response.data.errors[0].message);
+		    		$scope.formulaLoading = false;
+		    		reject(response.data.errors[0].message);
+		    	})
 	    	})
 	    }
 
 	    $scope.addMeasures = function(field) {
 	        var text = field.name;
-	        var suffix = $scope.datasetOrTableFlag ? '" ' : '") ';
-	        var prefix = $scope.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
+	        var prefix = $scope.calculatedField.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
+	        var suffix = $scope.calculatedField.datasetOrTableFlag ? '" ' : '") ';
 	        $scope._editor.focus();
 	        if ($scope._editor.somethingSelected()) {
 	            $scope._editor.replaceSelection(prefix + text + suffix);
@@ -182,48 +192,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 		$scope.saveColumnConfiguration=function(){
-			$scope.validateFormula();
-			if($scope.formula == ""){
-				Toastify({
-					text: $scope.translate.load('sbi.cockpit.table.errorformula0'),
-					duration: 10000,
-					close: true,
-					className: 'kn-warningToast',
-					stopOnFocus: true
-				}).showToast();
-				return;
-			}
-			if(!$scope.alias){
-				Toastify({
-					text: $scope.translate.load('Enter a valid alias name'),
-					duration: 10000,
-					close: true,
-					className: 'kn-warningToast',
-					stopOnFocus: true
-				}).showToast();
-				return;
-			}
+			$scope.validateFormula(true)
+			.then(function(success){
+				if($scope.calculatedField.formula == ""){
+					$scope.toastifyMsg('warning',$scope.translate.load('sbi.cockpit.table.errorformula0'));
+					return;
+				}
+				if(!$scope.calculatedField.alias){
+					$scope.toastifyMsg('warning',$scope.translate.load('Enter a valid alias name'));
+					return;
+				}
 
-			$scope.result = {};
-			$scope.result.alias = $scope.alias != undefined ? $scope.alias : "NewCalculatedField";
-			$scope.result.formula = $scope.formula;
-			$scope.result.aggregationSelected = $scope.aggregationSelected || 'NONE';
-			$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
-			$scope.result.datasetOrTableFlag = $scope.datasetOrTableFlag;
-			$scope.result.aliasToShow = $scope.result.alias;
-			$scope.result.fieldType = 'MEASURE';
-			$scope.result.isCalculated = true;
-			$scope.result.type = "java.lang.Integer";
-			promise.resolve($scope.result);
-			$mdDialog.hide();
+				$scope.result = angular.copy($scope.calculatedField);
+				if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
+				$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
+				$scope.result.aliasToShow = $scope.result.alias;
+				$scope.result.fieldType = 'MEASURE';
+				$scope.result.isCalculated = true;
+				$scope.result.type = "java.lang.Integer";
+				promise.resolve($scope.result);
+				$mdDialog.hide();
+			},function(error){
+				return;
+			})
+
 		}
 		$scope.cancelConfiguration=function(){
 			$mdDialog.cancel();
 		}
 
 		$scope.resetFormula = function(){
-			$scope.formula = '';
-			$scope.aggregationSelected = $scope.datasetOrTableFlag ? 'SUM' : 'NONE';
+			$scope.calculatedField.formula = '';
+			$scope.calculatedField.aggregationSelected = $scope.calculatedField.datasetOrTableFlag ? 'SUM' : 'NONE';
 		}
 	}
 
