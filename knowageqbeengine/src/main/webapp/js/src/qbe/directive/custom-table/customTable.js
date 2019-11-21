@@ -201,9 +201,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('addTemporalParameter', field);
 	}
 
-	$scope.group = function(field) {
+	$scope.groupChanged = function(field) {
 		if(field.group){
-			field.funct = "";
+			field.funct = "NONE";
 		}
 	};
 	$scope.modifyCalculatedField = function (row) {
@@ -469,7 +469,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"group",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-checkbox ng-model=row.group ng-checked="scopeFunctions.group(row)" aria-label="Checkbox"></md-checkbox>';
+	                            		return '<md-checkbox  ng-model="row.group"  ng-change="scopeFunctions.groupChanged(row)" aria-label="Checkbox"></md-checkbox>';
 	                            	}
 	                        	},
 	                        	{
@@ -605,8 +605,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				}
 			}
 		},
-		group: function(row){
-			$scope.group(row)
+		groupChanged: function(row){
+			$scope.groupChanged(row)
 		},
 		modifyCalculatedField : function (row){
 			$scope.modifyCalculatedField(row);

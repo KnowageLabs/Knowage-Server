@@ -480,7 +480,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}else if($scope.isSpatial(field)){
 			return "COUNT"
 		}else{
-			return "";
+			return "NONE";
 		}
 	}
 
