@@ -1384,7 +1384,7 @@
           },  
 			showCheckbox: true,
         #end
-        	turboThreshold: 5000
+        	turboThreshold: 15000
 		},
     	scatter: {
                 marker: {
