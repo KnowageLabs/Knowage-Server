@@ -22,15 +22,15 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				var targetUrl="";
 				if(navObj.length==0){
 
-					sbiModule_logger.log("No cross navigation defined for the object");
-					/*$mdDialog.show(
+					sbiModule_logger.log("No cross navigations available from this document for the current user");
+					$mdDialog.show(
 							  $mdDialog
 							    .alert({
-							        title: 'Attention',
-							        textContent: 'The document doesn\'t have cross navigations defined!',
-							        ok: 'Close'
+							        title: sbiModule_translate.load("sbi.generic.warning"),
+							        textContent: sbiModule_translate.load("sbi.crossnavigation.runtime.noTargetsAvailable"),
+							        ok: sbiModule_translate.load("sbi.general.close")
 							      })
-							);*/
+							);
 					return;
 				}
 
