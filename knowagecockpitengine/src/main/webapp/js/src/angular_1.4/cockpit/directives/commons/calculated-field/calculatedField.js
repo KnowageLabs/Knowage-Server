@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.validateFormula = function(save) {
 	    	return $q(function(resolve, reject) {
 	    		if(!$scope.calculatedField.formula) {
-	    			$scope.toastifyMsg('warning',"No formula");
+	    			$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
 	    			reject();
 	    			return;
 	    		}
@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		"formula": $scope.calculatedField.formula.trim()
 		    	})
 		    	.then(function(response){
-		    		if(!save) $scope.toastifyMsg('success',"Validation Successful");
+		    		if(!save) $scope.toastifyMsg('success',$scope.translate.load("kn.cockpit.calculatedfield.validation.success"));
 		    		$scope.formulaLoading = false;
 		    		resolve();
 		    	},function(response){
@@ -194,15 +194,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.saveColumnConfiguration=function(){
 			$scope.validateFormula(true)
 			.then(function(success){
-				if($scope.calculatedField.formula == ""){
-					$scope.toastifyMsg('warning',$scope.translate.load('sbi.cockpit.table.errorformula0'));
-					return;
-				}
 				if(!$scope.calculatedField.alias){
-					$scope.toastifyMsg('warning',$scope.translate.load('Enter a valid alias name'));
+					$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noalias"));
 					return;
 				}
-
 				$scope.result = angular.copy($scope.calculatedField);
 				if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
 				$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;

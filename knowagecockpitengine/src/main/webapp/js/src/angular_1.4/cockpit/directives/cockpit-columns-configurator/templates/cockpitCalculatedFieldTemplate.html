@@ -1,13 +1,8 @@
-<style>
-span.functionDescription {
-    font-size: .7rem;
-}
-</style>
 <div layout-fill class="overlayGray" layout="row" layout-align="center center">
 	<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80 calculatedField">
 		<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
 	    	<div class="md-toolbar-tools">
-	        	<h2 class="ng-binding">Calculated Field </h2>
+	        	<h2 class="ng-binding">{{::translate.load('sbi.crosstab.calculatefieldwizard.title')}}</h2>
 	        </div>
 	    </md-toolbar>
 	    <md-dialog-content layout="row" class="calculatedFieldEditor">
@@ -32,7 +27,7 @@ span.functionDescription {
 	        	<md-card-content>
 	            	<div layout="row">
 	                	<md-input-container flex>
-	                    	<label>Alias</label>
+	                    	<label>{{::translate.load('sbi.cockpit.widgets.table.column.alias')}}</label>
 	                    	<input name="name" type="text" ng-model="calculatedField.alias" required>
 	                	</md-input-container>
 	                	<md-input-container flex="30" ng-if="calculatedField.datasetOrTableFlag">
@@ -63,7 +58,7 @@ span.functionDescription {
 		                </md-menu>
 		                <md-menu class="validationMenu">
 	                		<button ng-click="validateFormula()" ng-disabled="formulaLoading">
-	                			<span>Validate 
+	                			<span>{{::translate.load('sbi.crosstab.calculatefieldwizard.validate')}}
 	                				<i class="fa fa-check-circle" ng-if="!formulaLoading"></i>
 	                				 <md-progress-circular style="display: inline-block" ng-if="formulaLoading" md-diameter="15px" md-mode='indeterminate'></md-progress-circular>
 	                			</span>

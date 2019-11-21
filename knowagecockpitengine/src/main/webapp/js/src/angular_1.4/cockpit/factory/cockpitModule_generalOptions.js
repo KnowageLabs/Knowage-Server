@@ -158,7 +158,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 		 calculatedFieldsFunctions: [
 			   {
 				      "syntax":"SUM( Field )",
-				      "description":"Returns the total sum of a numeric field.",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.sum"),
 				      "body":"SUM(field)",
 				      "name":"Sum",
 				      "arguments":[
@@ -166,7 +166,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				            "name":"Field",
 				            "expected_value":"",
 				            "default_value":"",
-				            "argument_description":"Field type Number",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
 				            "hidden":false,
 				            "type":null,
 				            "placeholder":""
@@ -177,7 +177,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				   },
 				   {
 				      "syntax":"MIN( Field )",
-				      "description":"Returns the smallest value of a numeric field.",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.min"),
 				      "body":"MIN(field)",
 				      "name":"Min",
 				      "arguments":[
@@ -185,7 +185,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				            "name":"Field",
 				            "expected_value":"",
 				            "default_value":"",
-				            "argument_description":"Field type Number",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
 				            "hidden":false,
 				            "type":null,
 				            "placeholder":""
@@ -196,7 +196,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				   },
 				   {
 				      "syntax":"MAX( Field )",
-				      "description":"Returns the largest value of a numeric field.",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.max"),
 				      "body":"MAX(field)",
 				      "name":"Max",
 				      "arguments":[
@@ -204,7 +204,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				            "name":"Field",
 				            "expected_value":"",
 				            "default_value":"",
-				            "argument_description":"Field type Number",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
 				            "hidden":false,
 				            "type":null,
 				            "placeholder":""
@@ -215,7 +215,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				   },
 				   {
 				      "syntax":"COUNT( Field )",
-				      "description":"Returns the number of rows that matches the specific criteria.",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.count"),
 				      "body":"COUNT(field)",
 				      "name":"Count",
 				      "arguments":[
@@ -223,7 +223,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				            "name":"Field",
 				            "expected_value":"",
 				            "default_value":"",
-				            "argument_description":"Field of any type or *",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.any"),
 				            "hidden":false,
 				            "type":null,
 				            "placeholder":""
@@ -234,7 +234,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				   },
 				   {
 				      "syntax":"AVG( Field )",
-				      "description":"Returns the average value of a numeric field.",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.avg"),
 				      "body":"AVG(field)",
 				      "name":"Average",
 				      "arguments":[
@@ -242,7 +242,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				            "name":"Field",
 				            "expected_value":"",
 				            "default_value":"",
-				            "argument_description":"Field type Number",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
 				            "hidden":false,
 				            "type":null,
 				            "placeholder":""
