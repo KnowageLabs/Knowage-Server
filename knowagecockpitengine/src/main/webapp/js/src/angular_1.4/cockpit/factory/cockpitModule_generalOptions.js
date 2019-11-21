@@ -156,10 +156,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 
 		 ],
 		 calculatedFieldsFunctions: [
-			   /*{
-				      "syntax":"Sum( Field )",
+			   {
+				      "syntax":"SUM( Field )",
 				      "description":"Returns the total sum of a numeric field.",
-				      "body":"Sum(field)",
+				      "body":"SUM(field)",
 				      "name":"Sum",
 				      "arguments":[
 				         {
@@ -176,9 +176,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":"aggregation"
 				   },
 				   {
-				      "syntax":"Min( Field )",
+				      "syntax":"MIN( Field )",
 				      "description":"Returns the smallest value of a numeric field.",
-				      "body":"Min(field)",
+				      "body":"MIN(field)",
 				      "name":"Min",
 				      "arguments":[
 				         {
@@ -195,9 +195,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":"aggregation"
 				   },
 				   {
-				      "syntax":"Max( Field )",
+				      "syntax":"MAX( Field )",
 				      "description":"Returns the largest value of a numeric field.",
-				      "body":"Max(field)",
+				      "body":"MAX(field)",
 				      "name":"Max",
 				      "arguments":[
 				         {
@@ -214,9 +214,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":"aggregation"
 				   },
 				   {
-				      "syntax":"Count( Field )",
+				      "syntax":"COUNT( Field )",
 				      "description":"Returns the number of rows that matches the specific criteria.",
-				      "body":"Count(field)",
+				      "body":"COUNT(field)",
 				      "name":"Count",
 				      "arguments":[
 				         {
@@ -233,9 +233,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":"aggregation"
 				   },
 				   {
-				      "syntax":"Avg( Field )",
+				      "syntax":"AVG( Field )",
 				      "description":"Returns the average value of a numeric field.",
-				      "body":"Avg(field)",
+				      "body":"AVG(field)",
 				      "name":"Average",
 				      "arguments":[
 				         {
@@ -250,7 +250,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      ],
 				      "output":"Number",
 				      "type":"aggregation"
-				   },
+				   },/*
 				   {
 				      "syntax":"Concat(expression1, expression2, expression3,...)",
 				      "description":"If expression is a numeric value, it will be converted to a binary string. \n\t\t\tIf all expressions are nonbinary strings, this function will return a nonbinary string. \n\t\t\tIf any of the expressions is a binary string, this function will return a binary string. \n\t\t\tIf any of the expressions is a NULL, this function will return a NULL value..",
