@@ -30,6 +30,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
@@ -40,6 +41,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.json.JSONObject;
 
+import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
+import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelProperty;
@@ -94,7 +97,7 @@ public class PageResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void getPage(@PathParam("pagename") String pageName) {
+	public void getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) {
 		String dispatchUrl = urls.get(pageName);
 
 		try {
@@ -182,6 +185,9 @@ public class PageResource {
 				EmfXmiSerializer serializer = new EmfXmiSerializer();
 				Model model = serializer.deserialize(is);
 				checkBackwardCompatibility(model);
+
+				updateModelName(model, businessModelName);
+
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 				model.eAdapters().add(new ECrossReferenceAdapter());
 
@@ -214,6 +220,18 @@ public class PageResource {
 			DbTypeThreadLocal.unset();
 			logger.debug("OUT");
 		}
+	}
+
+	private void updateModelName(Model model, String name) {
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		businessModel.setName(name);
+		// Get Package Name
+		String packageName = businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).getValue();
+		// removing previous business model's name
+		packageName = packageName.substring(0, packageName.lastIndexOf("."));
+		// append logical name of the model to the package name to avoid same class load problem
+		packageName = packageName + "." + JavaKeywordsUtils.transformToJavaPropertyName(name);
+		businessModel.getProperties().get(JpaProperties.MODEL_PACKAGE).setValue(packageName.toLowerCase());
 	}
 
 	/**
