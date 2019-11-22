@@ -514,8 +514,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				List paramDescrLst = new ArrayList();
 				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
 				Object paramDescriptionValues = objParameter.getAnalyticalDocumentParameter().getParameterValuesDescription();
-logger.error("paramValues "+ paramValues.toString());
-				logger.error("paramDescriptionValues "+ paramDescriptionValues.toString());
 				if (paramValues instanceof List) {
 
 					List<String> valuesList = (List) paramValues;
