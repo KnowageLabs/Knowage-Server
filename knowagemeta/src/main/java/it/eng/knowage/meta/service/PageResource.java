@@ -223,6 +223,7 @@ public class PageResource {
 	}
 
 	private void updateModelName(Model model, String name) {
+		model.setName(name);
 		BusinessModel businessModel = model.getBusinessModels().get(0);
 		businessModel.setName(name);
 		// Get Package Name
