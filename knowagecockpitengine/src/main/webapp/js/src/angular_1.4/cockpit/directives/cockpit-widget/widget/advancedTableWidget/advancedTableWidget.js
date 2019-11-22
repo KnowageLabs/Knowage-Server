@@ -326,7 +326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;
-					if($scope.ngModel.settings.page > Math.ceil($scope.totalRows / $scope.ngModel.settings.pagination.itemsNumber)){
+					if($scope.totalRows > 0 && $scope.ngModel.settings.page > Math.ceil($scope.totalRows / $scope.ngModel.settings.pagination.itemsNumber)){
 						$scope.ngModel.settings.page = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber);
 						$scope.refreshWidget();
 						return;
@@ -395,7 +395,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		function changeSorting(){
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
-				$scope.showWidgetSpinner()
+				$scope.showWidgetSpinner();
 				var sorting = $scope.advancedTableGrid.api.getSortModel();
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
