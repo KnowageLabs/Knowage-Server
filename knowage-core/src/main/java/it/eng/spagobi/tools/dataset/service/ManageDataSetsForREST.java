@@ -1295,6 +1295,10 @@ public class ManageDataSetsForREST {
 		Assert.assertNotNull(solrType, "Solr type cannot be null");
 		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap, userProfile)
 				: new FacetSolrDataSet(config, parametersMap);
+
+		// Force schema read from Solr
+		res.forceSchemaRead(config);
+
 		return res;
 	}
 
