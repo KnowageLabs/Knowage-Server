@@ -236,27 +236,6 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				],
 				'tag':"[kn-parameter='%%parameter%%']"},
 			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag3'),
-				'name': 'repeater',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag3.desc'),
-				'hidden': !datasetId ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
-				'inputs': [
-					{	'name':'limit',
-						'type': 'number',
-						'flex':'flex-100',
-						'replacer':'limit="***"'}
-				],
-				'tag':'<div kn-repeat="true" %%limit%%></div>'},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag4'),
-				'name': 'repeatIndex',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag4.desc'),
-				'hidden': !datasetId ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
-				'tag':'[kn-repeat-index]'
-				},
-			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag5'),
 				'name': 'if',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag5.desc'),
@@ -266,36 +245,6 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'area',
 						'flex':'flex-100'}
 				]},
-				{
-					'label':sbiModule_translate.load('kn.cockpit.html.tag8'),
-					'name': 'calc',
-					'description': sbiModule_translate.load('kn.cockpit.html.tag8.desc'),
-					'inputs': [
-						{   'name':'calc',
-							'type': 'area',
-							'flex':'flex-100'},
-					 	{   'name':'min',
-							'type': 'text',
-							'flex':'flex',
-							'replacer':" min='***'"},
-					 	{   'name':'max',
-							'type': 'text',
-							'flex':'flex',
-							'replacer':" max='***'"},
-					 	{   'name':'precision',
-							'type': 'number',
-							'flex':'flex',
-							'replacer':" precision='***'"},
-						{   'name':'format',
-							'label': 'Format to locale',
-							'type': 'check',
-							'flex':'flex-100',
-					 		'replacer':" format"
-						}
-					],
-				 	'tag':"[kn-calc=(%%calc%%)%%min%%%%max%%%%precision%%%%format%%]"
-				 },
-
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag6'),
 				'name': 'cross',
@@ -319,20 +268,6 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'flex':'flex-100',
 						'replacer':'kn-selection-value=\"***\"'}
 				]
-				},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag9'),
-				'name': 'preview',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag9.desc'),
-				'hidden': !availableDatasets ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodatasetavailable'),
-				'tag':'<div kn-preview%%dataset%%></div>',
-				'inputs': [
-					{	'name':'dataset',
-						'type': 'select',
-						'flex':'flex',
-						'replacer':'=\"***\"',
-						'options': availableDatasets}]
 				},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag10'),

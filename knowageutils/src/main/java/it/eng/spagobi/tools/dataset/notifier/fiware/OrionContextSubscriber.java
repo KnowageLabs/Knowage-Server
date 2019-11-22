@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import it.eng.spagobi.commons.bo.UserProfile;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
@@ -35,7 +34,9 @@ import org.joda.time.DurationFieldType;
 import org.joda.time.MutableDateTime;
 import org.json.JSONException;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
@@ -111,6 +112,34 @@ public class OrionContextSubscriber {
 		this.realtimeNgsiConsumer = dataSet.isRealtimeNgsiConsumer();
 	}
 
+	public OrionContextSubscriber(PythonDataSet dataSet, UserProfile profile, String spagoBInotifyAddress) {
+		Helper.checkNotNull(dataSet, "dataSet");
+
+		this.profile = profile;
+
+		label = dataSet.getLabel();
+		if (label == null || label.isEmpty()) {
+			throw new NGSISubscribingException("No label associated with dataset");
+		}
+
+		signature = dataSet.getSignature();
+		if (signature == null || signature.isEmpty()) {
+			throw new NGSISubscribingException("No signature associated with dataset");
+		}
+
+		authToken = dataSet.getOAuth2Token();
+
+		this.proxy = dataSet.getDataProxy();
+		this.dataReader = dataSet.getDataReader();
+
+		Helper.checkNotNull(proxy, "proxy");
+		Helper.checkNotNull(dataReader, "dataReader");
+
+		this.spagoBInotifyAddress = spagoBInotifyAddress;
+
+		this.realtimeNgsiConsumer = dataSet.isRealtimeNgsiConsumer();
+	}
+
 	/**
 	 * Called from {@link RESTDataSet}
 	 *
@@ -119,6 +148,12 @@ public class OrionContextSubscriber {
 	 * @param label
 	 */
 	public OrionContextSubscriber(RESTDataSet dataSet, UserProfile profile) {
+		this(dataSet, profile, null);
+
+		initSpagoBInotifyAddress();
+	}
+
+	public OrionContextSubscriber(PythonDataSet dataSet, UserProfile profile) {
 		this(dataSet, profile, null);
 
 		initSpagoBInotifyAddress();
@@ -142,8 +177,7 @@ public class OrionContextSubscriber {
 		} else {
 			String subscriptionId = sendSubscription();
 			// In this mode (listening after subscription) I lose the first notification with all context elements
-			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, profile, label, signature,
-					realtimeNgsiConsumer,
+			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, profile, label, signature, realtimeNgsiConsumer,
 					dataReader);
 			manager.addOperatorIfAbsent(subscriptionKey, newOperator);
 		}
