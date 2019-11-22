@@ -28,6 +28,7 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
         scope: {
             ngModel: '=',
         	expression: '=',
+        	advancedFilters:'=',
             filters: '=',
             isTemporal: '='
 
@@ -84,7 +85,7 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
 	};
 });
 
-function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action,filters_service,expression_service){
 
 	$scope.smartPreview = true;
 
@@ -126,7 +127,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
 
 	$scope.deleteAllFilters = function(){
-		$scope.filters.length = 0;
+		for(var i = 0;i< $scope.filters.length;i++){
+			filters_service.deleteFilter($scope.filters,$scope.filters[i],$scope.expression,$scope.advancedFilters);
+			i--;
+		}
+
+		expression_service.generateExpressions($scope.filters,$scope.expression,$scope.advancedFilters)
 	}
 
 	$scope.moveRight = function(currentOrder, column) {

@@ -60,11 +60,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	
 		</div>
 		<div flex layout="column">
+		
 			<qbe-custom-table 
 			
 			ng-drop="true" 
 			ng-drop-success="onDropComplete($data,$event)" 
-			ng-model="queryModel" expression="expression" 
+			ng-model="queryModel" 
+			expression="editQueryObj.expression" 
+			advanced-filters="advancedFilters"
 			filters="filters" 
 			is-temporal ="(entityModel.entities | filter:'temporal_dimension').length > 0 " >
 				<div layout="row">

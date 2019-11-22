@@ -36,7 +36,7 @@
 					<md-icon md-font-icon="fa fa-play"></md-icon>
 				</md-button>
 				
-				<md-menu ng-show="ngModel.length>0" >
+				<md-menu  ng-if="filters.length>0 || ngModel.length>0">
 					<md-button  
 						class="kn-list-action-button md-icon-button"  
 						ng-click="openMenu($mdOpenMenu,$event)"
@@ -45,17 +45,17 @@
 					<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
 					</md-button>
 					<md-menu-content>
-						<md-menu-item >
+						<md-menu-item ng-if="ngModel.length>0">
 							<md-button
 							ng-click="removeColumns(ngModel)"
 							>{{translate.load("kn.qbe.selectgridpanel.buttons.tt.deleteall")}}</md-button>
 						</md-menu-item>
-						<md-menu-item >
+						<md-menu-item ng-if="filters.length>0">
 							<md-button
 							ng-click="deleteAllFilters()"
 							>{{translate.load("kn.qbe.filtergridpanel.buttons.tt.delete")}}</md-button>
 						</md-menu-item>
-						<md-menu-item >
+						<md-menu-item ng-if="ngModel.length>0">
 							<export-menu  ></export-menu>
 						</md-menu-item>	
 		
