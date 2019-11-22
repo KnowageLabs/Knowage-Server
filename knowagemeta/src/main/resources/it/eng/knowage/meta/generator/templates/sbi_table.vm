@@ -43,6 +43,11 @@ ${jpaTable.importStatements}
     #end
     )
 #end
+#if($isUpdatable)
+	@org.hibernate.annotations.Entity(
+		dynamicUpdate = true
+	)
+#end
 public class ${jpaTable.className} implements Serializable {
 
 private static final long serialVersionUID = 1L;

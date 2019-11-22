@@ -311,6 +311,10 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					continue;
 				}
 				Column column = registryConf.getColumnConfiguration(attributeName);
+				if (!column.isEditable()) {
+					logger.debug("Skip column [" + attributeName + "] because it is not editable");
+					continue;
+				}
 				List columnDepends = new ArrayList();
 				if (column.getDependences() != null && !"".equals(column.getDependences())) {
 					String[] dependences = column.getDependences().split(",");
