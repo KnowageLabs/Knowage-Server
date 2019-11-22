@@ -49,12 +49,14 @@ public class QuartzInitializer implements InitializerIFace {
 	private static final String JDBC_ORACLE = "jdbc:oracle";
 	private static final String JDBC_POSTGRESQL = "jdbc:postgresql";
 	private static final String JDBC_MYSQL = "jdbc:mysql";
+	private static final String JDBC_MARIADB = "jdbc:mariadb";
 	private static final String JDBC_SQLSERVER = "jdbc:sqlserver";
 
 	private static final Map<String, String> JDBC_URL_PREFIX_2_DELEGATE_CLASS = new HashMap<String, String>();
 
 	static {
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_MYSQL, "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
+		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_MARIADB, "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_SQLSERVER, "org.quartz.impl.jdbcjobstore.MSSQLDelegate");
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_POSTGRESQL, "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_ORACLE, "org.quartz.impl.jdbcjobstore.oracle.OracleDelegate");
@@ -100,7 +102,7 @@ public class QuartzInitializer implements InitializerIFace {
 
 	/**
 	 * Try to figure out which Delegate class to use.
-	 * 
+	 *
 	 * @param properties Actual Quartz configuration
 	 */
 	private void determineDelegateClass(Properties properties) {
