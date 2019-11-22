@@ -53,7 +53,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	}
 
 	@Override
-	public IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+	public IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		IDataStore dataStore;
 		if (isUnsatisfiedFilter(filter)) {
@@ -73,7 +73,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		return executeSummaryRow(summaryRowProjections, dataSet.getMetadata(), filter, maxRowCount);
 	}
 
-	protected abstract IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+	protected abstract IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
 
 	protected abstract IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);

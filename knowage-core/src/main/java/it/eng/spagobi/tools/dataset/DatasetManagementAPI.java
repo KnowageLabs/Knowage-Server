@@ -270,9 +270,9 @@ public class DatasetManagementAPI {
 		return tableName;
 	}
 
-	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
-			Set<String> indexes) throws JSONException {
+	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> projections,
+			Filter filter, List<AbstractSelectionField> list, List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset,
+			int fetchSize, int maxRowCount, Set<String> indexes) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -280,7 +280,7 @@ public class DatasetManagementAPI {
 			dataSet.resolveParameters();
 
 			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
-			return strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			return strategy.executeQuery(projections, filter, list, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 
 		} finally {
 			totalTiming.stop();
@@ -808,8 +808,8 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> minMaxProjections,
-			Filter filter, int maxRowCount) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<AbstractSelectionField> minMaxProjections, Filter filter, int maxRowCount) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 

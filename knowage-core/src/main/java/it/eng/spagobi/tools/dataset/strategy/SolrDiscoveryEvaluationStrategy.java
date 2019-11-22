@@ -46,6 +46,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -61,7 +62,7 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
@@ -133,10 +134,17 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
 		throw new IllegalArgumentException("The function " + aggregationFunction.getName() + " is not valid here");
 	}
 
-	private Map<String, String> getFacetsWithAggregation(List<Projection> groups) {
+	private Map<String, String> getFacetsWithAggregation(List<AbstractSelectionField> groups) {
 		Map<String, String> facets = new HashMap<>(groups.size());
-		for (Projection facet : groups) {
-			facets.put(facet.getName(), facet.getAggregationFunction().getName().toLowerCase());
+		for (AbstractSelectionField facet : groups) {
+
+			if (facet instanceof Projection) {
+				Projection proj = (Projection) facet;
+				facets.put(proj.getName(), proj.getAggregationFunction().getName().toLowerCase());
+			} else {
+				DataStoreCalculatedField proj = (DataStoreCalculatedField) facet;
+				facets.put(proj.getName(), proj.getAggregationFunction().getName().toLowerCase());
+			}
 		}
 		return facets;
 	}

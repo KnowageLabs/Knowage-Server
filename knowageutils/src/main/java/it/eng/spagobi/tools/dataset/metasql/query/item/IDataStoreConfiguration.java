@@ -24,7 +24,7 @@ public interface IDataStoreConfiguration {
 
 	Filter getFilter();
 
-	List<Projection> getGroups();
+	List<AbstractSelectionField> getGroups();
 
 	List<Sorting> getSortings();
 

@@ -19,7 +19,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	private Map<String, String> parameters;
 	private List<AbstractSelectionField> projections;
 	private Filter filters;
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 	private List<Sorting> sortings;
 	private List<AbstractSelectionField> summaryRowProjections;
 	private final Integer offset = -1;
@@ -39,8 +39,8 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @param sortings
 	 * @param summaryRowProjections
 	 */
-	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<AbstractSelectionField> projections2, Filter filters, List<Projection> groups,
-			List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections) {
+	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<AbstractSelectionField> projections2, Filter filters,
+			List<AbstractSelectionField> groups, List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections) {
 		super();
 		this.dataset = dataset;
 		this.parameters = parameters;
@@ -94,7 +94,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getGroups()
 	 */
 	@Override
-	public List<Projection> getGroups() {
+	public List<AbstractSelectionField> getGroups() {
 		return this.groups;
 	}
 
@@ -169,64 +169,56 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	}
 
 	/**
-	 * @param dataset
-	 *            the dataset to set
+	 * @param dataset the dataset to set
 	 */
 	public void setDataset(IDataSet dataset) {
 		this.dataset = dataset;
 	}
 
 	/**
-	 * @param filters
-	 *            the filters to set
+	 * @param filters the filters to set
 	 */
 	public void setFilters(Filter filters) {
 		this.filters = filters;
 	}
 
 	/**
-	 * @param groups
-	 *            the groups to set
+	 * @param groups the groups to set
 	 */
-	public void setGroups(List<Projection> groups) {
+	public void setGroups(List<AbstractSelectionField> groups) {
 		this.groups = groups;
 	}
 
 	/**
-	 * @param parameters
-	 *            the parameters to set
+	 * @param parameters the parameters to set
 	 */
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
-	 * @param projections
-	 *            the projections to set
+	 * @param projections the projections to set
 	 */
 	public void setProjections(List<AbstractSelectionField> projections) {
 		this.projections = projections;
 	}
 
 	/**
-	 * @param isRealTime
-	 *            the isRealTime to set
+	 * @param isRealTime the isRealTime to set
 	 */
 	public void setRealTime(boolean isRealTime) {
 		this.isRealTime = isRealTime;
 	}
 
 	/**
-	 * @param sortings
-	 *            the sortings to set
+	 * @param sortings the sortings to set
 	 */
 	public void setSortings(List<Sorting> sortings) {
 		this.sortings = sortings;
 	}
 
 	/**
-	 * @param summaryRowProjections
-	 *            the summaryRowProjections to set
+	 * @param summaryRowProjections the summaryRowProjections to set
 	 */
 	public void setSummaryRowProjections(List<AbstractSelectionField> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;

@@ -477,7 +477,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 				append(projectionsCalcFields.get(i), true);
 			}
 
-			List<Projection> groups = query.getGroups();
+			List<AbstractSelectionField> groups = query.getGroups();
 			List<Sorting> sortings = query.getSortings();
 			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
 				for (Sorting sorting : sortings) {
@@ -530,16 +530,27 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void buildGroupBy(SelectQuery query) {
-		List<Projection> groups = query.getGroups();
+		List<AbstractSelectionField> groups = query.getGroups();
 		if (groups == null || groups.isEmpty()) {
 			return;
 		}
 
 		queryBuilder.append(" GROUP BY ");
-		append(groups.get(0), false);
+
+		if (groups.get(0) instanceof Projection) {
+			append((Projection) groups.get(0), false);
+		} else {
+			append((DataStoreCalculatedField) groups.get(0), false);
+		}
+
 		for (int i = 1; i < groups.size(); i++) {
 			queryBuilder.append(",");
-			append(groups.get(i), false);
+
+			if (groups.get(i) instanceof Projection) {
+				append((Projection) groups.get(i), false);
+			} else {
+				append((DataStoreCalculatedField) groups.get(i), false);
+			}
 		}
 
 		List<Sorting> sortings = query.getSortings();
@@ -547,10 +558,19 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			for (Sorting sorting : sortings) {
 				Projection projection = sorting.getProjection();
 				boolean projectionAlreadyDefined = false;
-				for (Projection g : groups) {
-					if (g.getDataset().equals(projection.getDataset()) && g.getName().equals(projection.getName())) {
-						projectionAlreadyDefined = true;
-						break;
+				for (AbstractSelectionField g : groups) {
+					if (g instanceof Projection) {
+						Projection proj = (Projection) g;
+						if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+							projectionAlreadyDefined = true;
+							break;
+						}
+					} else {
+						DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
+						if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+							projectionAlreadyDefined = true;
+							break;
+						}
 					}
 				}
 				if (!projectionAlreadyDefined) {

@@ -40,6 +40,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -52,10 +53,14 @@ public class ExtendedSolrQuery extends SolrQuery {
 	private static final Logger logger = Logger.getLogger(ExtendedSolrQuery.class);
 
 	public ExtendedSolrQuery(SolrQuery initialQuery) {
-		if (initialQuery.getQuery() != null) setQuery(initialQuery.getQuery());
-		if (initialQuery.getFilterQueries() != null) setFilterQueries(initialQuery.getFilterQueries());
-		if (initialQuery.getFields() != null) setFields(initialQuery.getFields());
-		if (initialQuery.getSorts() != null) setSorts(initialQuery.getSorts());
+		if (initialQuery.getQuery() != null)
+			setQuery(initialQuery.getQuery());
+		if (initialQuery.getFilterQueries() != null)
+			setFilterQueries(initialQuery.getFilterQueries());
+		if (initialQuery.getFields() != null)
+			setFields(initialQuery.getFields());
+		if (initialQuery.getSorts() != null)
+			setSorts(initialQuery.getSorts());
 	}
 
 	public ExtendedSolrQuery filter(Filter filter) {
@@ -63,7 +68,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	public ExtendedSolrQuery filter(Filter filter, List<String> highlightFields) {
-		if(filter != null) {
+		if (filter != null) {
 			SolrFilterVisitor visitor = new SolrFilterVisitor(highlightFields);
 			visitor.apply(this, filter);
 		}
@@ -71,7 +76,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	public ExtendedSolrQuery fields(List<AbstractSelectionField> projections) {
-		if(!projections.isEmpty()) {
+		if (!projections.isEmpty()) {
 			setFields(null);
 			for (AbstractSelectionField projection : projections) {
 				Projection proj = (Projection) projection;
@@ -81,40 +86,63 @@ public class ExtendedSolrQuery extends SolrQuery {
 		return this;
 	}
 
-	public ExtendedSolrQuery jsonFacets(List<Projection> groups, int limit) throws JsonProcessingException {
+	public ExtendedSolrQuery jsonFacets(List<AbstractSelectionField> groups, int limit) throws JsonProcessingException {
 		if (!groups.isEmpty()) {
 			Map<String, JsonFacet> jsonFacetMap = new HashMap<>(groups.size());
-			for(Projection group : groups) {
-				JsonFacet jsonFacet;
-				if(group instanceof CoupledProjection) {
-					jsonFacet = new AggregationJsonFacet(group.getName(), group.getAggregationFunction(), ((CoupledProjection)group).getAggregatedProjection().getName());
+
+			for (AbstractSelectionField group : groups) {
+
+				if (group instanceof Projection) {
+
+					Projection proj = (Projection) group;
+					JsonFacet jsonFacet;
+					if (group instanceof CoupledProjection) {
+						jsonFacet = new AggregationJsonFacet(proj.getName(), proj.getAggregationFunction(),
+								((CoupledProjection) group).getAggregatedProjection().getName());
+					} else {
+						String type = proj.getType().getName();
+						if (type.equalsIgnoreCase("java.lang.String")) {
+							jsonFacet = new CountJsonFacet(proj.getName(), limit, 0);
+						} else {
+							jsonFacet = new CountJsonFacet(proj.getName(), limit);
+						}
+					}
+					jsonFacetMap.put(proj.getName(), jsonFacet);
 				} else {
-					String type = group.getType().getName();
-					if (type.equalsIgnoreCase("java.lang.String")) {
-						jsonFacet = new CountJsonFacet(group.getName(), limit, 0);
+					DataStoreCalculatedField proj = (DataStoreCalculatedField) group;
+					JsonFacet jsonFacet;
+					if (group instanceof CoupledProjection) {
+						jsonFacet = new AggregationJsonFacet(proj.getName(), proj.getAggregationFunction(),
+								((CoupledProjection) group).getAggregatedProjection().getName());
+					} else {
+						String type = proj.getType().getName();
+						if (type.equalsIgnoreCase("java.lang.String")) {
+							jsonFacet = new CountJsonFacet(proj.getName(), limit, 0);
+						} else {
+							jsonFacet = new CountJsonFacet(proj.getName(), limit);
+						}
 					}
-					else {
-						jsonFacet = new CountJsonFacet(group.getName(), limit);
-					}
+					jsonFacetMap.put(proj.getName(), jsonFacet);
+
 				}
-				jsonFacetMap.put(group.getName(), jsonFacet);
 			}
+
 			add("json.facet", new ObjectMapper().writeValueAsString(jsonFacetMap));
 		}
 		return this;
 	}
 
-	public SolrQuery jsonFacets(List<AbstractSelectionField> projectionsAbs, List<Projection> groups, List<Sorting> sortings) throws JSONException {
-		List<Projection> projections = new ArrayList<Projection>();
+	public SolrQuery jsonFacets(List<AbstractSelectionField> projectionsAbs, List<AbstractSelectionField> groups, List<Sorting> sortings) throws JSONException {
+		List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>();
 		for (AbstractSelectionField projection : projectionsAbs) {
-			projections.add((Projection)projection);
+			projections.add(projection);
 		}
 
-		List<Projection> measures = getMeasures(projections, groups);
+		List<AbstractSelectionField> measures = getMeasures(projections, groups);
 		JSONObject jsonFacet = getMeasureFacet(measures);
 
-		List<Projection> unsortedGroups = getUnsortedGroups(groups, sortings);
-		for (Projection unsortedGroup : unsortedGroups) {
+		List<AbstractSelectionField> unsortedGroups = getUnsortedGroups(groups, sortings);
+		for (AbstractSelectionField unsortedGroup : unsortedGroups) {
 			jsonFacet = getJsonFacet(unsortedGroup, jsonFacet);
 		}
 
@@ -127,31 +155,68 @@ public class ExtendedSolrQuery extends SolrQuery {
 		return this;
 	}
 
-	private List<Projection> getMeasures(List<Projection> projections, List<Projection> groups) {
-		Map<String, Projection> measureMap = new HashMap<>();
-		for(Projection projection : projections) {
-			measureMap.put(projection.getName(), projection);
+	private List<AbstractSelectionField> getMeasures(List<AbstractSelectionField> projections, List<AbstractSelectionField> groups) {
+		Map<String, AbstractSelectionField> measureMap = new HashMap<>();
+		for (AbstractSelectionField projection : projections) {
+			if (projection instanceof Projection) {
+				Projection pr = (Projection) projection;
+				measureMap.put(pr.getName(), pr);
+			} else {
+				DataStoreCalculatedField pr = (DataStoreCalculatedField) projection;
+				measureMap.put(pr.getName(), pr);
+			}
+
 		}
-		for(Projection group : groups){
-			measureMap.remove(group.getName());
+		for (AbstractSelectionField group : groups) {
+
+			if (group instanceof Projection) {
+				Projection pr = (Projection) group;
+				measureMap.remove(pr.getName());
+			} else {
+				DataStoreCalculatedField pr = (DataStoreCalculatedField) group;
+				measureMap.remove(pr.getName());
+			}
 		}
-		return Arrays.asList(measureMap.values().toArray(new Projection[0]));
+		return Arrays.asList(measureMap.values().toArray(new AbstractSelectionField[0]));
 	}
 
-	private JSONObject getMeasureFacet(List<Projection> measures) throws JSONException {
+	private JSONObject getMeasureFacet(List<AbstractSelectionField> measures) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-		for (Projection measure : measures) {
-			IAggregationFunction aggregationFunction = measure.getAggregationFunction();
-			String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + measure.getAliasOrName();
-			if(AggregationFunctions.COUNT.equals(aggregationFunction.getName())){
-				JSONObject value = new JSONObject();
-				value.put("type", "query");
-				value.put("field", measure.getName());
-				jsonObject.put(key, value);
-			}else {
-				String value = String.format("%s(%s)", getAggregationFunction(aggregationFunction), measure.getName());
-				jsonObject.put(key, value);
+		for (AbstractSelectionField measure : measures) {
+
+			if (measure instanceof Projection) {
+
+				Projection pr = (Projection) measure;
+				IAggregationFunction aggregationFunction = pr.getAggregationFunction();
+				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getAliasOrName();
+				if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
+					JSONObject value = new JSONObject();
+					value.put("type", "query");
+					value.put("field", pr.getName());
+					jsonObject.put(key, value);
+				} else {
+					String value = String.format("%s(%s)", getAggregationFunction(aggregationFunction), pr.getName());
+					jsonObject.put(key, value);
+				}
 			}
+
+			else {
+
+				DataStoreCalculatedField pr = (DataStoreCalculatedField) measure;
+				IAggregationFunction aggregationFunction = pr.getAggregationFunction();
+				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getAliasOrName();
+				if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
+					JSONObject value = new JSONObject();
+					value.put("type", "query");
+					value.put("field", pr.getName());
+					jsonObject.put(key, value);
+				} else {
+					String value = String.format("%s(%s)", getAggregationFunction(aggregationFunction), pr.getName());
+					jsonObject.put(key, value);
+				}
+
+			}
+
 		}
 		return jsonObject;
 	}
@@ -164,30 +229,46 @@ public class ExtendedSolrQuery extends SolrQuery {
 		}
 	}
 
-	private List<Projection> getUnsortedGroups(List<Projection> groups, List<Sorting> sortings) {
+	private List<AbstractSelectionField> getUnsortedGroups(List<AbstractSelectionField> groups, List<Sorting> sortings) {
 		Set<String> sorted = new HashSet<>();
 		for (Sorting sorting : sortings) {
 			sorted.add(sorting.getProjection().getName());
 		}
-		List<Projection> unsortedGroups = new ArrayList<>(groups.size() - sortings.size());
-		for (Projection group : groups) {
-			if(!sorted.contains(group.getName())){
-				unsortedGroups.add(group);
+		List<AbstractSelectionField> unsortedGroups = new ArrayList<>(groups.size() - sortings.size());
+		for (AbstractSelectionField group : groups) {
+			if (group instanceof Projection) {
+				Projection pr = (Projection) group;
+				if (!sorted.contains(pr.getName())) {
+					unsortedGroups.add(group);
+				}
+			} else {
+				DataStoreCalculatedField pr = (DataStoreCalculatedField) group;
+				if (!sorted.contains(pr.getName())) {
+					unsortedGroups.add(group);
+				}
 			}
 		}
 		return unsortedGroups;
 	}
 
-	private JSONObject getJsonFacet(Projection projection, JSONObject jsonFacet) throws JSONException {
-		String fieldFacets = projection.getAliasOrName();
-		String field = projection.getName();
-
+	private JSONObject getJsonFacet(AbstractSelectionField projection, JSONObject jsonFacet) throws JSONException {
+		String fieldFacets = "";
+		String field = "";
+		if (projection instanceof Projection) {
+			Projection proj = (Projection) projection;
+			fieldFacets = proj.getAliasOrName();
+			field = proj.getName();
+		} else {
+			DataStoreCalculatedField proj = (DataStoreCalculatedField) projection;
+			fieldFacets = proj.getAliasOrName();
+			field = proj.getName();
+		}
 		JSONObject innerFacet = new JSONObject();
 		innerFacet.put("type", "terms");
 		innerFacet.put("field", field);
 		innerFacet.put("limit", 10);
 		innerFacet.put("missing", true);
-		if(jsonFacet.length() > 0) {
+		if (jsonFacet.length() > 0) {
 			innerFacet.put("facet", jsonFacet);
 		}
 
@@ -207,7 +288,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	public ExtendedSolrQuery facets(List<Projection> groups) {
 		if (!groups.isEmpty()) {
 			String[] facetFields = new String[groups.size()];
-			for(int i = 0; i < groups.size(); i++) {
+			for (int i = 0; i < groups.size(); i++) {
 				facetFields[i] = groups.get(i).getName();
 			}
 			addFacetField(facetFields);
@@ -224,11 +305,11 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	public ExtendedSolrQuery stats(List<AbstractSelectionField> projections) {
-		if(!projections.isEmpty()) {
+		if (!projections.isEmpty()) {
 			for (AbstractSelectionField proj : projections) {
 				Projection projection = (Projection) proj;
 				setGetFieldStatistics(projection.getName());
-				if(AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregationFunction().getName())) {
+				if (AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregationFunction().getName())) {
 					addStatsFieldCalcDistinct(projection.getName(), true);
 				}
 			}
@@ -237,7 +318,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	public ExtendedSolrQuery sorts(List<Sorting> sortings) {
-		if(!sortings.isEmpty()) {
+		if (!sortings.isEmpty()) {
 			for (Sorting sorting : sortings) {
 				SolrQuery.ORDER order = sorting.isAscending() ? SolrQuery.ORDER.asc : SolrQuery.ORDER.desc;
 				String item = sorting.getProjection().getName();

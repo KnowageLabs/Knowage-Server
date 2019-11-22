@@ -30,7 +30,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 
 /**
@@ -100,7 +99,7 @@ public class ConverterFactory {
 	 * @param dataset
 	 * @return
 	 */
-	public static IConverter<List<Projection>, JSONObject> getGroupConverter(IDataSet dataset) {
+	public static IConverter<List<AbstractSelectionField>, JSONObject> getGroupConverter(IDataSet dataset) {
 		// TODO Auto-generated method stub
 		return new GroupConverter(dataset);
 	}

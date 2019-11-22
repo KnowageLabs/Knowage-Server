@@ -25,7 +25,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
@@ -84,8 +83,9 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere
 	 */
 
-	IDataStore get(UserProfile userProfile, IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) throws DataBaseException;
+	IDataStore get(UserProfile userProfile, IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups,
+			List<Sorting> sortings, List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
+			throws DataBaseException;
 
 	public void refresh(IDataSet dataSet);
 

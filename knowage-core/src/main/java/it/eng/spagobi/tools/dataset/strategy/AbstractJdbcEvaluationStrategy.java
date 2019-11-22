@@ -30,7 +30,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -44,7 +43,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 	}
 
 	@Override
-	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<AbstractSelectionField> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		logger.debug("IN");
 
@@ -68,7 +67,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 		try {
 			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(getTableName()).where(filter)
 					.toSql(getDataSource());
-			logger.info("Summary row query [ "+summaryRowQuery+" ]");
+			logger.info("Summary row query [ " + summaryRowQuery + " ]");
 			// summary row query result is 1, no need to calculate total results number, so calculateTotalResultsNumber is set to false
 			return getDataSource().executeStatement(summaryRowQuery, -1, -1, maxRowCount, false);
 		} catch (DataBaseException e) {

@@ -48,7 +48,7 @@ public class SelectQuery {
 
 	private Filter where;
 
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 
 	private Filter having;
 
@@ -100,7 +100,7 @@ public class SelectQuery {
 		return where;
 	}
 
-	public List<Projection> getGroups() {
+	public List<AbstractSelectionField> getGroups() {
 		return groups;
 	}
 
@@ -189,11 +189,11 @@ public class SelectQuery {
 		return this;
 	}
 
-	public SelectQuery groupBy(Projection... projections) {
+	public SelectQuery groupBy(AbstractSelectionField... projections) {
 		return groupBy(Arrays.asList(projections));
 	}
 
-	public SelectQuery groupBy(Collection<Projection> projections) {
+	public SelectQuery groupBy(Collection<AbstractSelectionField> projections) {
 		if (projections != null) {
 			this.groups.addAll(projections);
 		}
@@ -251,7 +251,7 @@ public class SelectQuery {
 	public boolean hasAggregationFunction() {
 		boolean hasAggregationFunction = false;
 		for (AbstractSelectionField projectio : projections) {
-			Projection projection = (Projection)projectio;
+			Projection projection = (Projection) projectio;
 			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 			if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 				hasAggregationFunction = true;

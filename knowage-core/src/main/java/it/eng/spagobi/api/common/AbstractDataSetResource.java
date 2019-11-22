@@ -174,7 +174,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
 
 			List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(0);
-			List<Projection> groups = new ArrayList<Projection>(0);
+			List<AbstractSelectionField> groups = new ArrayList<AbstractSelectionField>(0);
 			List<Sorting> sortings = new ArrayList<Sorting>(0);
 			List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
 			Map<String, String> columnAliasToName = new HashMap<String, String>();
@@ -442,9 +442,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return columnAlias;
 	}
 
-	protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName, boolean forceGroups)
-			throws JSONException {
-		ArrayList<Projection> groups = new ArrayList<>(0);
+	protected List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName,
+			boolean forceGroups) throws JSONException {
+		ArrayList<AbstractSelectionField> groups = new ArrayList<>(0);
 
 		// hasAggregationInCategory se categoria di aggregazione del for ha una funzione di aggregazione
 
@@ -455,7 +455,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String functionName = category.optString("funct");
 			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category) || hasCountAggregation(functionName)) {
 				AbstractSelectionField projection = getProjection(dataSet, category, columnAliasToName);
-				groups.add((Projection) projection);
+				groups.add(projection);
 			}
 		}
 
@@ -464,8 +464,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				JSONObject measure = measures.getJSONObject(i);
 				String functionName = measure.optString("funct");
 				if (hasNoneAggregation(functionName)) {
-					AbstractSelectionField projection = getProjection(dataSet, measure, columnAliasToName);
-					groups.add((Projection) projection);
+					AbstractSelectionField selection = getProjection(dataSet, measure, columnAliasToName);
+
+					if (selection instanceof Projection) {
+						groups.add(selection);
+					} else if (selection instanceof DataStoreCalculatedField) {
+						groups.add(selection);
+					}
+
 				}
 			}
 		}

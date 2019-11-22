@@ -25,7 +25,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreConfigurationImpl;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 
 /**
@@ -38,7 +37,7 @@ public class DatastoreConfigurationBuilder {
 	private Map<String, String> parameters;
 	private List<AbstractSelectionField> summaryRowProjections;
 	private List<Sorting> sortings;
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 	private Filter filter;
 	private List<AbstractSelectionField> projections;
 
@@ -82,7 +81,7 @@ public class DatastoreConfigurationBuilder {
 	 * @param groups
 	 * @return
 	 */
-	public DatastoreConfigurationBuilder setGroups(List<Projection> groups) {
+	public DatastoreConfigurationBuilder setGroups(List<AbstractSelectionField> groups) {
 		this.groups = groups;
 		return this;
 	}

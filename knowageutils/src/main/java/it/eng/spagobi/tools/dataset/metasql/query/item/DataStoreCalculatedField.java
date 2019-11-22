@@ -55,6 +55,7 @@ public class DataStoreCalculatedField extends AbstractCalculatedField {
 //		}
 
 		this.formula = formula;
+		this.name = formula;
 
 		this.alias = alias;
 //		this.type = fieldMetaData.getType();
