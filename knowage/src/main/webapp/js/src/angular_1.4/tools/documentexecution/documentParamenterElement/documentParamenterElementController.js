@@ -544,10 +544,8 @@
 				            postSort : postSort
 						}
 
-
 						paramDialogCtrl.filterDataset = function(){
-							var tempParametersList = $filter('filter')(paramDialogCtrl.tableData,paramDialogCtrl.paramSearchText);
-							paramDialogCtrl.lookoutGridOptions.api.setRowData(tempParametersList);
+							paramDialogCtrl.lookoutGridOptions.api.setQuickFilter(paramDialogCtrl.paramSearchText);
 						}
 
 						function resizeColumns(grid){
