@@ -40,7 +40,7 @@ String bmId= request.getParameter("bmId");
 <script> 
 var datasourceId='<%= datasourceId%>';
 var bmId='<%= bmId%>';
-var bmName='<%= bmName%>';
+var bmName='<%= StringEscapeUtils.escapeJavaScript(bmName) %>';
 var translatedModel=<%= translatedModel%>;
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
