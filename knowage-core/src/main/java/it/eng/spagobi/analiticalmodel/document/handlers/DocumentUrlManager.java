@@ -719,7 +719,7 @@ public class DocumentUrlManager {
 				}
 			}
 
-		logger.debug("descrs is "+ descrs.toString());
+		
 		} catch (JSONException e) {
 			logger.error("Cannot get " + nameUrl + " values from JSON object", e);
 			throw new SpagoBIServiceException("Cannot retrieve values for biparameter " + biparam.getLabel(), e);
@@ -729,6 +729,7 @@ public class DocumentUrlManager {
 			logger.debug("Updating values of biparameter " + biparam.getLabel() + " to " + values.toString());
 			biparam.setParameterValues(values);
 			biparam.setParameterValuesDescription(descrs);
+			logger.debug("descrs is 1 "+ descrs.toString());
 
 		} else {
 			logger.debug("Erasing values of biparameter " + biparam.getLabel());
