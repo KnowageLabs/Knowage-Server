@@ -484,6 +484,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
 		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true);
+		logger.debug("descriptions___ is [" + parameters.get(0).toString() + "]");
+		
 		for (DocumentParameters objParameter : parameters) {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
@@ -874,6 +876,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 				parameter.setParameterValues(values);
 				parameter.setParameterValuesDescription(descriptions);
+				logger.debug("description  is [" + descriptions + "]");
+		
 
 			}
 		}
