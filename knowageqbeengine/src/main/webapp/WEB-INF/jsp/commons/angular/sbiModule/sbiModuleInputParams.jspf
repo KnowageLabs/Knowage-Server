@@ -24,7 +24,7 @@ angular.module('sbiModule')
 			
 		}
 		return {
-			modelName:'<%=request.getParameter("MODEL_NAME")%>',
+			modelName:'<%=StringEscapeUtils.escapeJavaScript(request.getParameter("MODEL_NAME"))%>',
 			dataSourceLabel:'<%=request.getParameter("DATA_SOURCE_LABEL")%>',
 			dataSourceForWritingLabel:'<%=request.getParameter("DEFAULT_DATASOURCE_FOR_WRITING_LABEL")%>',
 			params:angular.fromJson('<%=paramsJsonArray%>')
