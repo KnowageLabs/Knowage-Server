@@ -669,6 +669,7 @@ public class DocumentUrlManager {
 		Assert.assertNotNull(biparam, "Parameter in input is null!!");
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		String nameUrl = biparam.getParameterUrlName();
+		logger.debug("JsonObject is "+ jsonObject.toString());
 		List values = new ArrayList();
 		List descrs = new ArrayList();
 		try {
