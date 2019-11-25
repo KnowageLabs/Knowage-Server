@@ -36,6 +36,8 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	private Set<SbiCrossNavigationPar> sbiCrossNavigationPars;
 
 	private boolean newRecord;
+	private Integer fromDocId;
+	private Integer toDocId;
 
 	/**
 	 * @return the id
@@ -45,8 +47,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -60,13 +61,11 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	/**
 	 * @return the description
@@ -112,8 +111,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param newRecord
-	 *            the newRecord to set
+	 * @param newRecord the newRecord to set
 	 */
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
@@ -127,11 +125,40 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parameters
-	 *            the parameters to set
+	 * @param parameters the parameters to set
 	 */
 	public void setSbiCrossNavigationPars(Set<SbiCrossNavigationPar> sbiCrossNavigationPars) {
 		this.sbiCrossNavigationPars = sbiCrossNavigationPars;
+	}
+
+	/**
+	 *
+	 * @return the fromDocId
+	 */
+	public Integer getFromDocId() {
+		return fromDocId;
+	}
+
+	/**
+	 * @param id of the document from which the cross navigation starts
+	 */
+	public void setFromDocId(Integer fromDocId) {
+		this.fromDocId = fromDocId;
+	}
+
+	/**
+	 *
+	 * @return the toDocId
+	 */
+	public Integer getToDocId() {
+		return toDocId;
+	}
+
+	/**
+	 * @param id of the document in which the cross navigation ends
+	 */
+	public void setToDocId(Integer toDocId) {
+		this.toDocId = toDocId;
 	}
 
 }

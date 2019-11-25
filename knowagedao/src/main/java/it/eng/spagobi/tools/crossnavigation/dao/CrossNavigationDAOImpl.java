@@ -34,7 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -42,12 +41,10 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
@@ -55,7 +52,6 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
-import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
@@ -82,6 +78,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					sn.setDescription(cn.getDescription());
 					sn.setBreadcrumb(cn.getBreadcrumb());
 					sn.setType(cn.getType());
+					sn.setFromDocId(cn.getFromDocId());
+					sn.setToDocId(cn.getToDocId());
 					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
 						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
 						sn.setToDoc(cnp.getToKey().getSbiObject().getLabel());
@@ -136,6 +134,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setDescription(nd.getSimpleNavigation().getDescription());
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
+				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
+				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
@@ -167,6 +167,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setDescription(nd.getSimpleNavigation().getDescription());
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
+				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
+				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {
@@ -260,10 +262,10 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							nd.getToPars().get(i).getLinks().add(fromSp);
 						}
 					}
-
+					
 					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel()));
-
+							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), toDoc.getBiobjId()));
+					
 				}
 				return nd;
 			}
@@ -363,47 +365,29 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
 				List<SbiCrossNavigationPar> cnParams = crit.list();
 
-				Map<Integer, JSONObject> validCrossNavIdToCrossNavJSON = new HashMap<Integer, JSONObject>(); // valid cross nav id --> cross nav info in JSON
-				List<Integer> nonValidCrossNavIds = new ArrayList<Integer>(); // list of non valid cross nav id
+				Map<Integer, JSONObject> mapCrossIdToJsonCnParam = new HashMap<Integer, JSONObject>();
 
 				for (SbiCrossNavigationPar cnParam : cnParams) {
 					// from cross navigation item get the document with input params like cross navigation toKeyId value in input params
 					Integer crossId = cnParam.getSbiCrossNavigation().getId();
 
-					if (!validCrossNavIdToCrossNavJSON.containsKey(crossId) && !nonValidCrossNavIds.contains(crossId)) {
+					JSONObject jsonCnParam = mapCrossIdToJsonCnParam.get(crossId);
+					if (jsonCnParam == null) {
 						SbiObjects sbiObj = cnParam.getToKey().getSbiObject();
 						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(sbiObj, session);
-						UserProfile userProfile = UserProfileManager.getProfile();
-						boolean canExecute = false;
-						try {
-							canExecute = ObjectsAccessVerifier.canExec(biObject, userProfile);
-						} catch (EMFInternalError e) {
-							throw new SpagoBIRuntimeException("Error while trying to see if user can execute the target document [" + biObject.getLabel() + "]",
-									e);
-						}
 
-						if (canExecute) {
-							JSONObject jsonCnParam = new JSONObject();
-							jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
-							jsonCnParam.put("documentId", sbiObj.getBiobjId());
-							jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
-							jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
-							jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
-							jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
-							jsonCnParam.put("crossId", crossId);
-							jsonCnParam.put("navigationParams", new JSONObject());
-							validCrossNavIdToCrossNavJSON.put(crossId, jsonCnParam);
-						} else {
-							// user cannot execute target document, we put it in a list to avoid further iterations on it
-							logger.debug("User " + userProfile.getUserId() + " cannot execute document " + biObject.getLabel()
-									+ ", skipping relevant cross navigation option.");
-							nonValidCrossNavIds.add(crossId);
-							continue;
-						}
+						jsonCnParam = new JSONObject();
+						jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
+						jsonCnParam.put("documentId", sbiObj.getBiobjId());
+						jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
+						jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
+						jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
+						jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
+						jsonCnParam.put("crossId", crossId);
+						jsonCnParam.put("navigationParams", new JSONObject());
 
+						mapCrossIdToJsonCnParam.put(crossId, jsonCnParam);
 					}
-
-					JSONObject jsonCnParam = validCrossNavIdToCrossNavJSON.get(crossId);
 
 					JSONObject jsonNavParam = new JSONObject();
 
@@ -433,7 +417,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 
 				JSONArray results = new JSONArray();
-				for (JSONObject jsonDoc : validCrossNavIdToCrossNavJSON.values()) {
+				for (JSONObject jsonDoc : mapCrossIdToJsonCnParam.values()) {
 					results.put(jsonDoc);
 				}
 				return results;

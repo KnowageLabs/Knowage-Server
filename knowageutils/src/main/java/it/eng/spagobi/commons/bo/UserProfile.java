@@ -50,7 +50,7 @@ public class UserProfile implements IEngUserProfile {
 	private static transient Logger logger = Logger.getLogger(UserProfile.class);
 
 	private enum PREDEFINED_PROFILE_ATTRIBUTES {
-		USER_ID("user_id"), USER_ROLES("user_roles"), TENANT_ID("TENANT_ID");
+		USER_ID("user_id"), USER_ROLES("user_roles"), TENANT_ID("TENANT_ID"), USER_SESSION_ROLES("user_session_roles");
 
 		private String name;
 
@@ -142,6 +142,9 @@ public class UserProfile implements IEngUserProfile {
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_ROLES.getName(), concatenateRolesForINClause());
 		// putting tenant id as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.TENANT_ID.getName(), this.organization);
+		// putting default role as a predefined profile attribute:
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_SESSION_ROLES.getName(),
+				this.defaultRole != null ? "'" + this.defaultRole + "'" : concatenateRolesForINClause());
 	}
 
 	private String concatenateRolesForINClause() {
@@ -421,6 +424,10 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("IN " + defaultRole);
 		this.defaultRole = defaultRole;
 		logger.debug("OUT");
+
+		// putting default role as a predefined profile attribute:
+		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_SESSION_ROLES.getName(),
+				this.defaultRole != null ? "'" + this.defaultRole + "'" : concatenateRolesForINClause());
 	}
 
 	public Map getUserAttributes() {
