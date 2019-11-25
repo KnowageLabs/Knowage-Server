@@ -1113,17 +1113,41 @@ div.lower i  {
 							</md-card>
 							
 						</md-content>
+								
+						<!-- PYTHON DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Python'">
+							
+							<md-card layout-padding style="margin-top:0">
+								
+								<label>Script</label>
+							   	<md-input-container class="md-block">
+							    	
+							    	
+									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python'" ng-model="selectedDataSet.restRequestBody" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+												ui-codemirror-opts="editorOptionsPython" rows="8" md-select-on-focus
+											 	ng-change="setFormDirty()">
+								 	</textarea>
+									
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Python' && !selectedDataSet.restRequestBody">
+       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+   						 			</div> 
+									
+								</md-input-container>
+							   																	
+							</md-card>
+						
+						</md-content>	
 							
 						<!-- REST DATASET (1) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr' || selectedDataSet.dsTypeCd=='Python' ">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'">
 							
 							<md-card layout-padding style="margin-top:0">
 								
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Address</label>
-										<input ng-model="selectedDataSet.restAddress" ng-required ="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python' || selectedDataSet.dsTypeCd=='Solr'" ng-change="setFormDirty()">
-										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python' || selectedDataSet.dsTypeCd=='Solr') && !selectedDataSet.restAddress">
+										<input ng-model="selectedDataSet.restAddress" ng-required ="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr') && !selectedDataSet.restAddress">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 									</md-input-container>
@@ -1139,10 +1163,9 @@ div.lower i  {
                                 	</md-input-container>
                                 </div>
 								
-								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python' || selectedDataSet.dsTypeCd=='Solr'">
+								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'">
 									<md-input-container class="md-block">
 										<label ng-if="selectedDataSet.dsTypeCd=='REST'">Request body</label>
-										<label ng-if="selectedDataSet.dsTypeCd=='Python'">Script</label>
 										<label ng-if="selectedDataSet.dsTypeCd=='Solr'">Query</label>
 								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="2000" rows="3" 
 								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
@@ -1157,13 +1180,13 @@ div.lower i  {
 								</div>
 
 								
-								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python'">
+								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST'">
 							       
 							       <md-input-container class="md-block" > 
 								       
 								       	<label>HTTP methods</label>
 								       	
-								       	<md-select 	placeholder ="HTTP methods" ng-required = "selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python'"
+								       	<md-select 	placeholder ="HTTP methods" ng-required = "selectedDataSet.dsTypeCd=='REST'"
 								        			ng-model="selectedDataSet.restHttpMethod"
 								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in httpMethods" value="{{l.value}}">
@@ -1171,7 +1194,7 @@ div.lower i  {
 									        </md-option>
 								       	</md-select>  
 										
-										<div  ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python') && !selectedDataSet.restHttpMethod">
+										<div  ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='REST') && !selectedDataSet.restHttpMethod">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>								
 		       						 									        
@@ -1311,11 +1334,11 @@ div.lower i  {
 							
 								
 						<!-- REST DATASET: JSON Path items | NGSI checkbox -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python'" style="padding: 0 8 0 8">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
 							
 							<md-card layout-padding style="margin:0 0 8 0">
 							
-								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python'" >											
+								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST'" >											
 																			
 									<md-input-container class="md-block" style="float:left; width:75%">
 								    	<label>JSON Path Items</label>
@@ -1332,7 +1355,7 @@ div.lower i  {
 									
 								</div>
 								
-								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Python'" >
+								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST'" >
 									<div flex=50 layout="row" layout-align="start center">
 						           	
 				                  		<label>

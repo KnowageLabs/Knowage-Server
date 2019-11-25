@@ -45,6 +45,13 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
 
+	sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_ADDRESS')
+	.then(function(response){
+		$scope.pythonAddress = response.data;
+	}, function(error){
+		//todo
+	});
+
 	$scope.maxSizeStr = maxSizeStr;
 
 	$scope.csvEncodingDefault = "UTF-8";
@@ -2969,6 +2976,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	   lineNumbers: true
 	 };
 
+	 $scope.editorOptionsPython = {
+        theme: 'eclipse',
+        lineWrapping: true,
+        lineNumbers: true,
+        mode: {name: "python"},
+        //onLoad: $scope.codemirrorLoaded
+	};
+
 	 $scope.codemirrorSparqlOptions = {
 		   mode: 'application/sparql-query',
 		   lineWrapping : true,
@@ -3336,6 +3351,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			//----------------------
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
+
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset?label=' + $scope.selectedDataSet.label;
+    			$scope.selectedDataSet.restHttpMethod = "POST";
+    			$scope.selectedDataSet.restJsonPathItems = "$[*]";
+    			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+    		}
 
 		}
 
@@ -3874,7 +3896,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		}
     		}
     	}
-    	else if (dsType.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
+    	else if (dsType.toLowerCase()=="rest" || dsTypeCd.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];

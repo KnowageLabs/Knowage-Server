@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
+import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -84,8 +85,19 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 		this.address = address;
 		this.method = method;
-		this.requestBody = requestBody;
 		this.requestHeaders = new HashMap<String, String>(requestHeaders);
+
+		// ------------ send request body in json format
+		this.requestHeaders.put("Content-Type", "application/json"); // set request content type as application/json
+		JSONObject json = new JSONObject();
+		try {
+			json.put("data", requestBody); // build json
+		} catch (Exception e) {
+			// todo
+		}
+		this.requestBody = json.toString(); // send body as json
+		// ------------
+
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
@@ -113,8 +125,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody,
-					query);
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new RESTDataProxyException(
