@@ -357,11 +357,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		velocityContext = new VelocityContext();
 		velocityContext.put("jpaTable", jpaTable);
 		velocityContext.put("sqlFilter", Constants.SQL_FILTER);
-		if (jpaTable.getPhysicalType().equalsIgnoreCase("View")) {
-			velocityContext.put("isUpdatable", false); //$NON-NLS-1$
-		} else {
-			velocityContext.put("isUpdatable", isUpdatableMapping); //$NON-NLS-1$
-		}
+		velocityContext.put("isUpdatable", isUpdatableMapping);
 
 		File outputDir = new File(srcDir, StringUtils.strReplaceAll(jpaTable.getPackage(), ".", "/"));
 		outputDir.mkdirs();
