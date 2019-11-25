@@ -820,6 +820,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							+ "&bmName=" + $scope.selectedBusinessModel.name
 							+ (($scope.selectedBusinessModel.tablePrefixLike) ? "&tablePrefixLike=" + $scope.selectedBusinessModel.tablePrefixLike : "")
 							+ (($scope.selectedBusinessModel.tablePrefixNotLike) ? "&tablePrefixNotLike=" + $scope.selectedBusinessModel.tablePrefixNotLike : "")
+							+ (($scope.togenerate) ? "&toGenerate=" + $scope.togenerate : "")
 						}
 				}).then(function(){
 					//refresh

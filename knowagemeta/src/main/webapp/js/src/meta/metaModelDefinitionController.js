@@ -110,10 +110,13 @@ function metaModelDefinitionControllerFunction($location, $scope, $httpParamSeri
 
 		var tablesFilters = {
 				'tablePrefixLike' : queryParameters['tablePrefixLike'],
-				'tablePrefixNotLike' : queryParameters['tablePrefixNotLike']
+				'tablePrefixNotLike' : queryParameters['tablePrefixNotLike'],
+				'toGenerate' : queryParameters['toGenerate']
 		};
 
 		var queryString = $httpParamSerializer(tablesFilters);
+
+		if (!queryParameters['toGenerate'] || (queryParameters['toGenerate'] && !angular.equals(queryParameters['toGenerate'], "true"))) {
 
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId + ((queryString) ? '?' + queryString : ""))
 				.then(
@@ -123,6 +126,7 @@ function metaModelDefinitionControllerFunction($location, $scope, $httpParamSeri
 						function(response) {
 							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
 						});
+		}
 	}
 
 	$scope.loadDatasourceTable();
