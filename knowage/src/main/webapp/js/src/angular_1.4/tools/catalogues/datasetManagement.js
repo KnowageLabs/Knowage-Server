@@ -76,6 +76,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 	});
 
+	$scope.$watch("selectedDataSet.restRequestBody",function(newValue,oldValue){
+		//debugger;
+	});
+
 	var getAllTags = function(){
 		sbiModule_restServices.promiseGet("2.0/tags","")
 		.then(function(response) {
@@ -2526,13 +2530,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			}
 
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset?label=' + $scope.selectedDataSet.label;
+    			$scope.selectedDataSet.restHttpMethod = "POST";
+    			$scope.selectedDataSet.restJsonPathItems = "$[*]";
+    			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+    		}
 
 			//----------------------
 			// JSON PATH ATTRIBUTES
 			//----------------------
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
-
 		}
 		else if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="custom") {
 
@@ -3774,8 +3783,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
     $scope.saveWithoutMetadata = function () {
-    	$scope.selectedDataSet.isFromSaveNoMetadata = true;
-    	$scope.isFromSaveNoMetadata = true;
+//    	$scope.selectedDataSet.isFromSaveNoMetadata = true;
+//    	$scope.isFromSaveNoMetadata = true;
     	$scope.saveDataset();
     }
 

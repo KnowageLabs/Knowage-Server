@@ -30,6 +30,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
@@ -86,23 +87,23 @@ public class RESTDataProxy extends AbstractDataProxy {
 		this.address = address;
 		this.method = method;
 		this.requestHeaders = new HashMap<String, String>(requestHeaders);
-
-		// ------------ send request body in json format
-		this.requestHeaders.put("Content-Type", "application/json"); // set request content type as application/json
-		JSONObject json = new JSONObject();
-		try {
-			json.put("data", requestBody); // build json
-		} catch (Exception e) {
-			// todo
-		}
-		this.requestBody = json.toString(); // send body as json
-		// ------------
-
+		this.requestHeaders.put("Content-Type", "application/json");
+		this.requestBody = buildBodyAsJson(requestBody);
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
 		this.ngsi = ngsi;
 		manageHeadersNGSI();
+	}
+
+	private String buildBodyAsJson(String requestBody) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("data", requestBody);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Cannot build request body as Json", t);
+		}
+		return json.toString();
 	}
 
 	private void manageHeadersNGSI() {

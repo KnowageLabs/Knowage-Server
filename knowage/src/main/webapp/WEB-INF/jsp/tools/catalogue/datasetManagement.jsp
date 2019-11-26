@@ -1122,7 +1122,6 @@ div.lower i  {
 								<label>Script</label>
 							   	<md-input-container class="md-block">
 							    	
-							    	
 									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python'" ng-model="selectedDataSet.restRequestBody" ui-codemirror="{ onLoad : codemirrorLoaded }" 
 												ui-codemirror-opts="editorOptionsPython" rows="8" md-select-on-focus
 											 	ng-change="setFormDirty()">
