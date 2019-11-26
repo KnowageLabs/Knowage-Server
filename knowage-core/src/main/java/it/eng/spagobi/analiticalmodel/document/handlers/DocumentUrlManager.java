@@ -669,7 +669,6 @@ public class DocumentUrlManager {
 		Assert.assertNotNull(biparam, "Parameter in input is null!!");
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		String nameUrl = biparam.getParameterUrlName();
-		logger.debug("JsonObject is "+ jsonObject.toString());
 		List values = new ArrayList();
 		List descrs = new ArrayList();
 		try {
@@ -719,7 +718,6 @@ public class DocumentUrlManager {
 				}
 			}
 
-		
 		} catch (JSONException e) {
 			logger.error("Cannot get " + nameUrl + " values from JSON object", e);
 			throw new SpagoBIServiceException("Cannot retrieve values for biparameter " + biparam.getLabel(), e);
@@ -729,7 +727,6 @@ public class DocumentUrlManager {
 			logger.debug("Updating values of biparameter " + biparam.getLabel() + " to " + values.toString());
 			biparam.setParameterValues(values);
 			biparam.setParameterValuesDescription(descrs);
-			logger.debug("descrs is 1 "+ descrs.toString());
 
 		} else {
 			logger.debug("Erasing values of biparameter " + biparam.getLabel());

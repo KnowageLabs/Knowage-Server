@@ -42,7 +42,6 @@ public class BIObjectParameter implements Serializable {
 
 	private Integer id = null;
 
-	static private Logger logger = Logger.getLogger(BIObjectParameter.class);
 	/* BIOBJ_ID NUMBER N Business Intelligence Object identifier */
 	private Integer biObjectID = null;
 
@@ -469,7 +468,6 @@ public class BIObjectParameter implements Serializable {
 	 *            the new parameter values description
 	 */
 	public void setParameterValuesDescription(List parameterValuesDescription) {
-		logger.debug("parameterValuesDescription in biobjpar " + parameterValuesDescription.toString());
 		this.parameterValuesDescription = parameterValuesDescription;
 	}
 
