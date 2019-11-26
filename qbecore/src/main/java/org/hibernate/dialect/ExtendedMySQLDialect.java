@@ -22,8 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 import org.json.JSONObject;
 
 import it.eng.qbe.utility.CustomFunctionsSingleton;
@@ -42,7 +44,8 @@ public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 		// UserProfile userProfile = ProfileSingleton.getInstance().getUserProfile();
 
 		// List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
-
+		registerFunction("date_add_interval", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "date_add(?1 , INTERVAL ?2 ?3)"));
+		registerFunction("TIMESTAMPDIFF", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "TIMESTAMPDIFF(?1 ,?2 ?3)"));
 		JSONObject jsonObject = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
 		List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader().getCustomDefinedFunctionListFromJSON(jsonObject, "mysql");
 

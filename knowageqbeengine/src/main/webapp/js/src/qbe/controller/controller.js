@@ -493,7 +493,8 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 
 	$scope.isSpatial = function(field){
-		return this.filterFilter(this.entityModel.entities,{children:{id:field.id}})[0].iconCls == "geographic_dimension";
+		var filtered = this.filterFilter(this.entityModel.entities,{children:{id:field.id}})
+		return filtered.lenght>0 && filtered[0].iconCls == "geographic_dimension";
 
 	}
 

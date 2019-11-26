@@ -415,6 +415,404 @@
 		<type>time</type>
 	</formula>
 	
+	<formula >
+		<name>getQuarter</name>
+		<syntax>getQuarter( Date_expression )</syntax>
+			<body>getQuarter(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns quarter number for a given date  . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>getWeek</name>
+		<syntax>getWeek( Date_expression )</syntax>
+			<body>getWeek(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Return the number of the week of the year . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>getDayOfTheWeek</name>
+		<syntax>getDayOfTheWeek( Date_expression )</syntax>
+			<body>getDayOfTheWeek(date_expression)</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			 Return the name of the day . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>addDays</name>
+		<syntax>addDays( Date_expression ,number_of_days)</syntax>
+			<body>addDays(${date_expression},${number_of_days})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_days</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date number_of_days</argument_description>
+				<placeholder>number_of_days</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns addition of date and number of days . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>addHours</name>
+		<syntax>addHours( Date_expression ,number_of_hours)</syntax>
+			<body>addHours(${date_expression},${number_of_hours})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_hours</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_hours</argument_description>
+				<placeholder>number_of_hours</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns addition of date and number of hours . 
+		</description>
+		<type>time</type>
+	</formula>
+	<formula >
+		<name>addMonths</name>
+		<syntax>addMonths( Date_expression ,number_of_months)</syntax>
+			<body>addMonths(${date_expression},${number_of_months})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_months</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_months</argument_description>
+				<placeholder>number_of_months</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns addition of date and number of months . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>addYears</name>
+		<syntax>addYears( Date_expression ,number_of_years)</syntax>
+			<body>addYears(${date_expression},${number_of_years})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_years</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_years</argument_description>
+				<placeholder>number_of_years</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns addition of date and number of years . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	
+	
+	<formula >
+		<name>subtractDays</name>
+		<syntax>subtractDays( Date_expression ,number_of_days)</syntax>
+			<body>subtractDays(${date_expression},${number_of_days})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_days</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date number_of_days</argument_description>
+				<placeholder>number_of_days</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns subtraction of date and number of days . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>subtractHours</name>
+		<syntax>subtractHours( Date_expression ,number_of_hours)</syntax>
+			<body>subtractHours(${date_expression},${number_of_hours})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_hours</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_hours</argument_description>
+				<placeholder>number_of_hours</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns subtraction of date and number of hours . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>subtractMonths</name>
+		<syntax>subtractMonths( Date_expression ,number_of_months)</syntax>
+			<body>subtractMonths(${date_expression},${number_of_months})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_months</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_months</argument_description>
+				<placeholder>number_of_months</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns subtraction of date and number of months . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>subtractYears</name>
+		<syntax>subtractYears( Date_expression ,number_of_years)</syntax>
+			<body>subtractYears(${date_expression},${number_of_years})</body>
+			<argument>
+				<name>date_expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>date expression</argument_description>
+				<placeholder>date_expression</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>number_of_years</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>number_of_years</argument_description>
+				<placeholder>number_of_years</placeholder>
+				<type>int</type>
+			</argument>
+			
+			
+		
+		<output>date</output>
+		<description>
+			 Returns subtraction of date and number of years . 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>dateDiffInDays</name>
+		<syntax>dateDiffInDays( Starting_date ,Ending_date)</syntax>
+			<body>dateDiffInDays(${starting_date},${ending_date})</body>
+			<argument>
+				<name>starting_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>starting date</argument_description>
+				<placeholder>starting_date</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>ending_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>ending_date</argument_description>
+				<placeholder>ending_date</placeholder>
+				<type>field</type>
+			</argument>
+
+		<output>date</output>
+		<description>
+			 Returns difference between dates in days. 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>dateDiffInHours</name>
+		<syntax>dateDiffInHours( Starting_date ,Ending_date)</syntax>
+			<body>dateDiffInHours(${starting_date},${ending_date})</body>
+			<argument>
+				<name>starting_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>starting date</argument_description>
+				<placeholder>starting_date</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>ending_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>ending_date</argument_description>
+				<placeholder>ending_date</placeholder>
+				<type>field</type>
+			</argument>
+
+		<output>date</output>
+		<description>
+			 Returns difference between dates in hours. 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>dateDiffInMinutes</name>
+		<syntax>dateDiffInMinutes( Starting_date ,Ending_date)</syntax>
+			<body>dateDiffInMinutes(${starting_date},${ending_date})</body>
+			<argument>
+				<name>starting_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>starting date</argument_description>
+				<placeholder>starting_date</placeholder>
+				<type>field</type>
+			</argument>
+			
+			<argument>
+				<name>ending_date</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>ending_date</argument_description>
+				<placeholder>ending_date</placeholder>
+				<type>field</type>
+			</argument>
+
+		<output>date</output>
+		<description>
+			 Returns difference between dates in minutes. 
+		</description>
+		<type>time</type>
+	</formula>
+	
+	
+	
 	<formula>
 		<name>Distance</name>
 		<syntax>distance (Geom1, Geom2, Tol, Unit)</syntax>

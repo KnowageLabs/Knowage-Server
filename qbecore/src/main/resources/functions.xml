@@ -49,5 +49,81 @@
 		<PostgreSQLDialect code=" (EXTRACT ('year' FROM (current_date)) - EXTRACT ('year' FROM ($1))) " />
 		<!--<IngresDialect code=" ... " /> -->
 	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="getQuarter" desc="getQuarter" nParams="1">
+		<MySQLInnoDBDialect code=" QUARTER($1) " />
+		<OracleDialect code=" TO_CHAR($1, 'Q') " />
+		
+		
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="getWeek" desc=" return the number of the week of the year" nParams="1">
+		<MySQLInnoDBDialect code=" WEEKOFYEAR($1) " />
+		<OracleDialect code=" TO_CHAR($1, 'WW') " />
+		
+		
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="getDayOfTheWeek" desc="  return the name of the day" nParams="1">
+		<MySQLInnoDBDialect code=" DAYNAME($1) " />
+		<OracleDialect code=" TO_CHAR($1, 'DY') " />
+		
+		
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="addDays" desc=" adding days" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,$2,DAY) " />
+		<OracleDialect code=" ($1+ $2) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="addHours" desc=" adding housr" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,$2,HOUR) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="addMonths" desc=" adding months" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,$2,MONTH) " />
+		
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="addYears" desc=" adding years" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,$2,YEAR) " />
+		
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="subtractDays" desc=" subtract days" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,DAY) " />
+		<OracleDialect code=" ($1+ $2) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="subtractHours" desc=" subtract hours" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,HOUR) " />
+		
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="subtractMonths" desc=" subtract months" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,MONTH) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="subtractYears" desc=" subtract years" nParams="2">
+		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,YEAR) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="dateDiffInDays" desc=" difference in days" nParams="2">
+		<MySQLInnoDBDialect code=" DATEDIFF($1,$2) " />				
+		<OracleDialect code=" (CASE WHEN ( $1 is NULL OR $2 is NULL) THEN 0 ELSE ROUND($2 - $1,0) END) " />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="dateDiffInHours" desc=" difference in hours" nParams="2">
+		<MySQLInnoDBDialect code=" DATEDIFF($1,$2)*24 + (hour($1) - hour($2))" />
+	</FUNCTION>
+	
+	<FUNCTION group="Date Functions" name="dateDiffInMinutes" desc=" difference in minutes" nParams="2">
+		<MySQLInnoDBDialect code=" datediff($1,$2)*24*60 + (hour($1)-hour($2))*60 + minute($1) - minute($2) " />
+	</FUNCTION>
+	
+	
+	
+	
+	
+	
 </INLINE_FUNCTIONS>
  
