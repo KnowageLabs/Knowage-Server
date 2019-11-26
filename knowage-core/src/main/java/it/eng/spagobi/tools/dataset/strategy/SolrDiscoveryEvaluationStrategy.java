@@ -96,13 +96,26 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
 		for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 			String fieldName = dataStore.getMetaData().getFieldName(i);
 			for (AbstractSelectionField proj : summaryRowProjections) {
-				Projection projection = (Projection) proj;
-				if (projection.getName().equals(fieldName)) {
-					Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
-					IField field = new Field(value);
-					dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
-					summaryRow.appendField(field);
-					break;
+				if (proj instanceof Projection) {
+					Projection projection = (Projection) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
+				}
+
+				else {
+					DataStoreCalculatedField projection = (DataStoreCalculatedField) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
 				}
 			}
 		}

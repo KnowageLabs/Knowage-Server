@@ -79,8 +79,13 @@ public class ExtendedSolrQuery extends SolrQuery {
 		if (!projections.isEmpty()) {
 			setFields(null);
 			for (AbstractSelectionField projection : projections) {
-				Projection proj = (Projection) projection;
-				addField(proj.getName());
+				if (projection instanceof Projection) {
+					Projection proj = (Projection) projection;
+					addField(proj.getName());
+				} else {
+					DataStoreCalculatedField proj = (DataStoreCalculatedField) projection;
+					addField(proj.getName());
+				}
 			}
 		}
 		return this;

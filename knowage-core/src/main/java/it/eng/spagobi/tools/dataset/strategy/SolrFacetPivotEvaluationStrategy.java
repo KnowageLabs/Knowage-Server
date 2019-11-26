@@ -19,23 +19,48 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.json.JSONException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrFacetPivotDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
@@ -51,8 +76,32 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
 		SolrQuery solrQuery;
+		boolean hasCalculatedFields = false;
+		List<AbstractSelectionField> prjList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> grpList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> calcuList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> calcuGrpList = new ArrayList<AbstractSelectionField>();
 		try {
-			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(projections, groups, sortings);
+			for (AbstractSelectionField entry : projections) {
+				if (entry instanceof DataStoreCalculatedField) {
+					hasCalculatedFields = true;
+					calcuList.add(entry);
+				} else {
+					prjList.add(entry);
+				}
+
+			}
+			for (AbstractSelectionField entry : groups) {
+				if (entry instanceof DataStoreCalculatedField) {
+					hasCalculatedFields = true;
+					calcuGrpList.add(entry);
+				} else {
+					grpList.add(entry);
+				}
+
+			}
+
+			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(prjList, grpList, sortings);
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException(e);
 		}
@@ -66,7 +115,192 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 		dataSet.loadData(offset, fetchSize, maxRowCount);
 		IDataStore dataStore = dataSet.getDataStore();
+
+		if (hasCalculatedFields) {
+			try {
+				dataStore = appendCalculatedFieldColumn(calcuList, calcuGrpList, dataStore);
+			} catch (Throwable t) {
+				throw new RuntimeException("An unexpected error occured while loading datastore", t);
+			}
+		}
 		dataStore.setCacheDate(getDate());
 		return dataStore;
+	}
+
+	private IDataStore appendCalculatedFieldColumn(List<AbstractSelectionField> calcFieldList, List<AbstractSelectionField> groupdFieldList,
+			IDataStore pagedDataStore) throws URISyntaxException {
+		IDataStore datastoresToAdd = new DataStore();
+		for (AbstractSelectionField abstractSelectionField : calcFieldList) {
+
+			DataStoreCalculatedField field = (DataStoreCalculatedField) abstractSelectionField;
+
+			IMetaData pagedMetaData = pagedDataStore.getMetaData();
+			pagedMetaData.addFiedMeta(new FieldMetadata(field.getAlias(), BigDecimal.class));
+
+			// build new datastore calculated fields columns
+
+			XmlDataReader dataReader = new XmlDataReader();
+			SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+
+			List<File> imports = new ArrayList<File>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+			File scriptFile = new File(url.toURI());
+			imports.add(scriptFile);
+
+			Map<String, Object> bindings = new HashMap<String, Object>();
+
+			// add columns to result datastore
+
+			datastoresToAdd.setMetaData(pagedMetaData);
+
+			for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
+				Record newRecord = new Record();
+				newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+
+				// method that calculates formula result getting each real value field
+
+				String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
+
+				Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
+				String data = (o == null) ? "" : o.toString();
+
+				IField fieldNew = new Field(new BigDecimal(data));
+				newRecord.appendField(fieldNew);
+
+				datastoresToAdd.appendRecord(newRecord);
+			}
+
+		}
+		// IDataStore columnsDataStore = new
+		return datastoresToAdd;
+
+	}
+
+	public String transformFormula(Record record, IMetaData metadata, String formula) {
+//		String regex = "\\(.*?\\)";
+//		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+//		Matcher matcher = pattern.matcher(formula);
+//		List<String> allMatches = new ArrayList<String>();
+//		while (matcher.find()) {
+//			allMatches.add(matcher.group());
+//		}
+
+		formula = formula.replaceAll("\"", "");
+
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+
+			if (formula.contains(metadata.getFieldName(i))) {
+
+				formula = formula.replaceAll(metadata.getFieldName(i), record.getFieldAt(i).getValue().toString());
+
+			}
+
+		}
+
+		return formula;
+
+	}
+
+	@Override
+	protected IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+
+		List<AbstractSelectionField> prjList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> calcList = new ArrayList<AbstractSelectionField>();
+		for (AbstractSelectionField entry : summaryRowProjections) {
+			if (entry instanceof DataStoreCalculatedField) {
+				calcList.add(entry);
+			} else {
+				prjList.add(entry);
+			}
+		}
+
+		IDataStore dataStore = new DataStore(metaData);
+		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
+		SolrQuery solrQuery;
+		try {
+			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(prjList, null, null);
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while loading datastore", t);
+		}
+		SolrClient solrClient = new HttpSolrClient.Builder(solrDataSet.getSolrUrlWithCollection()).build();
+		Map<String, FieldStatsInfo> fieldStatsInfo;
+		try {
+			fieldStatsInfo = solrClient.query(solrQuery).getFieldStatsInfo();
+		} catch (SolrServerException | IOException e) {
+			throw new RuntimeException(e);
+		}
+		IRecord summaryRow = new Record(dataStore);
+		for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
+			String fieldName = dataStore.getMetaData().getFieldName(i);
+			for (AbstractSelectionField proj : prjList) {
+				if (proj instanceof Projection) {
+					Projection projection = (Projection) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
+				}
+
+				else {
+					DataStoreCalculatedField projection = (DataStoreCalculatedField) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
+				}
+			}
+		}
+		try {
+			dataStore = appendCalculatedFieldColumn(calcList, null, dataStore);
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while loading datastore", t);
+		}
+		dataStore.appendRecord(summaryRow);
+		dataStore.getMetaData().setProperty("resultNumber", 1);
+
+		return null;
+	}
+
+	private Object getValue(FieldStatsInfo fieldStats, IAggregationFunction aggregationFunction) {
+		if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
+			return fieldStats.getCount();
+		}
+		if (AggregationFunctions.COUNT_DISTINCT.equals(aggregationFunction.getName())) {
+			return fieldStats.getCountDistinct();
+		}
+		if (AggregationFunctions.MIN.equals(aggregationFunction.getName())) {
+			return fieldStats.getMin();
+		}
+		if (AggregationFunctions.MAX.equals(aggregationFunction.getName())) {
+			return fieldStats.getMax();
+		}
+		if (AggregationFunctions.SUM.equals(aggregationFunction.getName())) {
+			return fieldStats.getSum();
+		}
+		if (AggregationFunctions.AVG.equals(aggregationFunction.getName())) {
+			return fieldStats.getMean();
+		}
+		throw new IllegalArgumentException("The function " + aggregationFunction.getName() + " is not valid here");
+	}
+
+	private Map<String, String> getFacetsWithAggregation(List<AbstractSelectionField> groups) {
+		Map<String, String> facets = new HashMap<>(groups.size());
+		for (AbstractSelectionField facet : groups) {
+
+			if (facet instanceof Projection) {
+				Projection proj = (Projection) facet;
+				facets.put(proj.getName(), proj.getAggregationFunction().getName().toLowerCase());
+			} else {
+				DataStoreCalculatedField proj = (DataStoreCalculatedField) facet;
+				facets.put(proj.getName(), proj.getAggregationFunction().getName().toLowerCase());
+			}
+		}
+		return facets;
 	}
 }

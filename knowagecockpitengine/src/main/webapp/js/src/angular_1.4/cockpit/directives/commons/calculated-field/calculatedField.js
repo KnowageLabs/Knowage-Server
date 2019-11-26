@@ -11,21 +11,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 (function(){
 
 	angular.module('cockpitModule').directive('calculatedField',function(){
-		   return{
-			   template: '<span><button ng-if="!selectedItem" class="md-button md-knowage-theme" ng-click="addNewCalculatedField()">{{translate.load("sbi.cockpit.widgets.table.calculatedFields.add")}}</button>'+
-			   			 '<md-button ng-if="selectedItem" class="md-icon-button" ng-click="addNewCalculatedField()">'+
-			   			 '<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button><span>',
-			   replace: true,
-			   scope:{
-				   ngModel:"=",
-				   selectedItem : "=?"
-			   },
-			    controller: calculatedFieldController,
-		   }
+		return{
+			template: '<span><button ng-if="!selectedItem" class="md-button md-knowage-theme" ng-click="addNewCalculatedField()">{{translate.load("sbi.cockpit.widgets.table.calculatedFields.add")}}</button>'+
+			'<md-button ng-if="selectedItem" class="md-icon-button" ng-click="addNewCalculatedField()">'+
+			'<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button><span>',
+			replace: true,
+			scope:{
+				ngModel:"=",
+				selectedItem : "=?"
+			},
+			controller: calculatedFieldController,
+		}
 	});
 
 	function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
@@ -43,22 +43,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				escapeToClose :true,
 				preserveScope: true,
 				autoWrap:false,
-	            locals: {
-	                promise: deferred,
-	                model:$scope.ngModel,
-	                actualItem : $scope.currentRow
-	                },
+				locals: {
+					promise: deferred,
+					model:$scope.ngModel,
+					actualItem : $scope.currentRow
+				},
 				//fullscreen: true,
 				controller: calculatedFieldDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
 					if($scope.currentRow != undefined){
 						$scope.currentRow.aliasToShow = result.alias;
-	                    $scope.currentRow.formula = result.formula;
-	                    $scope.currentRow.aggregationSelected = result.aggregationSelected;
-	                    $scope.currentRow.funcSummary = result.funcSummary;
-	                    $scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
-	                    $scope.currentRow.alias = result.alias;
+						$scope.currentRow.formula = result.formula;
+						$scope.currentRow.aggregationSelected = result.aggregationSelected;
+						$scope.currentRow.funcSummary = result.funcSummary;
+						$scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
+						$scope.currentRow.alias = result.alias;
 					}else{
 						$scope.ngModel.content.columnSelectedOfDataset.push(result);
 
@@ -82,114 +82,121 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//premade functions for codemirror menu bar
 		$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
 		$scope.availableFormulaTypes = [];
-		 angular.forEach($scope.functions, function(value, key) {
-	         if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
-	     });
+		angular.forEach($scope.functions, function(value, key) {
+			if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
+		});
 
 		//codemirror initializer
 		$scope.reloadCodemirror = false;
-	    $scope.codemirrorLoaded = function(_editor) {
-	        $scope._doc = _editor.getDoc();
-	        $scope._editor = _editor;
-	        _editor.focus();
-	        $scope._doc.markClean()
-	        _editor.on("beforeChange", function() {});
-	        _editor.on("change", function() {});
-	    };
+		$scope.codemirrorLoaded = function(_editor) {
+			$scope._doc = _editor.getDoc();
+			$scope._editor = _editor;
+			_editor.focus();
+			$scope._doc.markClean()
+			_editor.on("beforeChange", function() {});
+			_editor.on("change", function() {});
+		};
 
-	    //codemirror options
-	    $scope.editorOptions = {
-	        theme: 'eclipse',
-	        lineWrapping: true,
-	        lineNumbers: true,
-	        mode: 'calculatedFieldMode',
-	        onLoad: $scope.codemirrorLoaded
-	    };
+		//codemirror options
+		$scope.editorOptions = {
+				theme: 'eclipse',
+				lineWrapping: true,
+				lineNumbers: true,
+				mode: 'calculatedFieldMode',
+				onLoad: $scope.codemirrorLoaded
+		};
 
-	    $scope.addTextInCodemirror = function(text) {
-	        $scope._editor.focus();
-	        var position = $scope._editor.getCursor();
-	        var line = $scope._editor.getLine(position.line);
-	        $scope._editor.replaceRange(text, position);
-	    }
+		$scope.addTextInCodemirror = function(text) {
+			$scope._editor.focus();
+			var position = $scope._editor.getCursor();
+			var line = $scope._editor.getLine(position.line);
+			$scope._editor.replaceRange(text, position);
+		}
 
-	    if($scope.calculatedField.formula) {
-	    	$timeout(function(){
-	    		$scope.reloadCodemirror = true;
-	    	},0)
-	    }
+		if($scope.calculatedField.formula) {
+			$timeout(function(){
+				$scope.reloadCodemirror = true;
+			},0)
+		}
 
-	    $scope.addFormula = function(formula) {
-	        $scope.addTextInCodemirror(formula.body);
-	    }
+		$scope.addFormula = function(formula) {
+			$scope.addTextInCodemirror(formula.body);
+		}
 
-	    $scope.toastifyMsg = function(type,msg){
-	    	Toastify({
+		$scope.toastifyMsg = function(type,msg){
+			Toastify({
 				text: msg,
 				duration: 10000,
 				close: true,
 				className: 'kn-' + type + 'Toast',
 				stopOnFocus: true
 			}).showToast();
-	    }
+		}
 
-	    $scope.validateFormula = function(save) {
-	    	return $q(function(resolve, reject) {
-	    		if(!$scope.calculatedField.formula) {
-	    			$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
-	    			reject();
-	    			return;
-	    		}
-	    		$scope.formulaLoading = true;
-	    		sbiModule_restServices.restToRootProject();
-		    	sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
-		    		"formula": $scope.calculatedField.formula.trim()
-		    	})
-		    	.then(function(response){
-		    		if(!save) $scope.toastifyMsg('success',$scope.translate.load("kn.cockpit.calculatedfield.validation.success"));
-		    		$scope.formulaLoading = false;
-		    		resolve();
-		    	},function(response){
-		    		$scope.toastifyMsg('warning',$scope.translate.load(response.data.errors[0].message));
-		    		$scope.formulaLoading = false;
-		    		reject(response.data.errors[0].message);
-		    	})
-	    	})
-	    }
+		$scope.validateFormula = function(save) {
+			return $q(function(resolve, reject) {
+				if(!$scope.calculatedField.formula) {
+					$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
+					reject();
+					return;
+				}
+				$scope.formulaLoading = true;
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
+					"formula": $scope.calculatedField.formula.trim()
+				})
+				.then(function(response){
+					if(!save) $scope.toastifyMsg('success',$scope.translate.load("kn.cockpit.calculatedfield.validation.success"));
+					$scope.formulaLoading = false;
+					resolve();
+				},function(response){
+					$scope.toastifyMsg('warning',$scope.translate.load(response.data.errors[0].message));
+					$scope.formulaLoading = false;
+					reject(response.data.errors[0].message);
+				})
+			})
+		}
 
-	    $scope.addMeasures = function(field) {
-	        var text = field.name;
-	        var prefix = $scope.calculatedField.datasetOrTableFlag ? '"' : field.aggregationSelected+'("';
-	        var suffix = $scope.calculatedField.datasetOrTableFlag ? '"' : '") ';
-	        $scope._editor.focus();
-	        if ($scope._editor.somethingSelected()) {
-	            $scope._editor.replaceSelection(prefix + text + suffix);
-	            return
-	        }
-	        var position = $scope._editor.getCursor();
-	        $scope.addTextInCodemirror(prefix + text + suffix);
-	    }
+		$scope.addMeasures = function(field) {
+			var text = field.name;
+
+			var prefix = $scope.calculatedField.datasetOrTableFlag  ? '"' : field.aggregationSelected+'("';
+			var suffix = $scope.calculatedField.datasetOrTableFlag  ? '"' : '") ';
+
+			if ($scope.isSolrDataset()) {
+				prefix = '"';
+				suffix = '"';
+			}
+
+			$scope._editor.focus();
+			if ($scope._editor.somethingSelected()) {
+				$scope._editor.replaceSelection(prefix + text + suffix);
+				return
+			}
+			var position = $scope._editor.getCursor();
+			$scope.addTextInCodemirror(prefix + text + suffix);
+		}
 
 		if($scope.model.dataset.dsId != undefined){
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 		}
 
 		$scope.measuresList = [];
-	    $scope.datasetColumnsList = [];
+		$scope.datasetColumnsList = [];
 
-	    for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
-	        var obj = $scope.localDataset.metadata.fieldsMeta[i];
-	        if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-	            $scope.datasetColumnsList.push(obj);
-	        }
-	    }
+		for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
+			var obj = $scope.localDataset.metadata.fieldsMeta[i];
+			if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+				$scope.datasetColumnsList.push(obj);
+			}
+		}
 
-	    for(var i in $scope.model.content.columnSelectedOfDataset){
-	        var obj = $scope.model.content.columnSelectedOfDataset[i];
-	        if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-	            $scope.measuresList.push(obj);
-	        }
-	    }
+		for(var i in $scope.model.content.columnSelectedOfDataset){
+			var obj = $scope.model.content.columnSelectedOfDataset[i];
+			if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+				$scope.measuresList.push(obj);
+			}
+		}
 
 		$scope.saveColumnConfiguration=function(){
 			$scope.validateFormula(true)
@@ -219,6 +226,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.resetFormula = function(){
 			$scope.calculatedField.formula = '';
 			$scope.calculatedField.aggregationSelected = $scope.calculatedField.datasetOrTableFlag ? 'SUM' : 'NONE';
+		}
+
+		$scope.isSolrDataset = function() {
+			if($scope.model.dataset.dsId != undefined) {
+				if (cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).type == "SbiSolrDataSet") {
+					return true;
+				}           
+
+			}
+			return false;
 		}
 	}
 

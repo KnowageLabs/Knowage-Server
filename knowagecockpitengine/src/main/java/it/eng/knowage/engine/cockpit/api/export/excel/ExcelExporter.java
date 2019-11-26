@@ -187,7 +187,8 @@ public class ExcelExporter {
 		return mimeType;
 	}
 
-	public byte[] getBinaryDataPivot(Integer documentId, String documentLabel, String templateString, String options) throws JSONException, SerializationException {
+	public byte[] getBinaryDataPivot(Integer documentId, String documentLabel, String templateString, String options)
+			throws JSONException, SerializationException {
 
 		JSONObject optionsObj = new JSONObject(options);
 
@@ -333,7 +334,6 @@ public class ExcelExporter {
 		}
 	}
 
-
 	private void exportWidgetCrossTab(String templateString, String widgetId, Workbook wb, JSONObject optionsObj) throws SerializationException {
 		try {
 			JSONObject template = new JSONObject(templateString);
@@ -382,7 +382,8 @@ public class ExcelExporter {
 				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 				JSONObject styleJSON = (!optionsObj.isNull("style") ? optionsObj.getJSONObject("style") : new JSONObject());
-				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"), optionsObj.getJSONObject("metadata"), styleJSON);
+				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"),
+						optionsObj.getJSONObject("metadata"), styleJSON);
 
 				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
@@ -400,7 +401,6 @@ public class ExcelExporter {
 			logger.error("Unable to load template", e);
 		}
 	}
-
 
 	private JSONObject getWidgetById(JSONObject template, String widgetId) {
 		try {
@@ -434,8 +434,6 @@ public class ExcelExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-
-
 			if (getRealtimeFromTableWidget(datasetId, configuration)) {
 				logger.debug("nearRealtime = true");
 				map.put("nearRealtime", true);
@@ -451,7 +449,7 @@ public class ExcelExporter {
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
 				JSONObject jsOptions = new JSONObject();
-				jsOptions.put("solrFacetPivot",true);
+				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
 			}
 
@@ -521,7 +519,8 @@ public class ExcelExporter {
 
 			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
 
-			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"), datastoreObjData.getJSONObject("metaData"), styleJSON);
+			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
+					datastoreObjData.getJSONObject("metaData"), styleJSON);
 
 			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
@@ -532,8 +531,7 @@ public class ExcelExporter {
 
 			exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
 
-		}
-		else {
+		} else {
 			try {
 				JSONObject metadata = dataStore.getJSONObject("metaData");
 				JSONArray columns = metadata.getJSONArray("fields");
@@ -654,7 +652,8 @@ public class ExcelExporter {
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
-					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
+					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")
+							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
 						if (arrayHeader.get(columnName) != null) {
 							columnName = arrayHeader.get(columnName);
 						}
@@ -849,8 +848,7 @@ public class ExcelExporter {
 					datastoreObj.put("datastoreObjData", datastoreObjData);
 					excelSheets.add(datastoreObj);
 
-				}
-				else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
+				} else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
@@ -899,10 +897,9 @@ public class ExcelExporter {
 					if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
 						JSONObject jsOptions = new JSONObject();
-						jsOptions.put("solrFacetPivot",true);
+						jsOptions.put("solrFacetPivot", true);
 						body.put("options", jsOptions);
 					}
-
 
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 
@@ -1011,11 +1008,12 @@ public class ExcelExporter {
 									DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 									DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
 									Date dateToconvert = parsedDateTime.toDate();
-									SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+									SimpleDateFormat sdf = new SimpleDateFormat(
+											SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 									valuesToChange = sdf.format(dateToconvert).toString();
 
 								}
-								if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+								if (valuesToChange != null && valuesToChange.length() > 0 && !valuesToChange.contains(",")) {
 									valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 									valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 								}
@@ -1122,7 +1120,7 @@ public class ExcelExporter {
 		JSONObject datasetObj = widget.getJSONObject("dataset");
 		int datasetId = datasetObj.getInt("dsId");
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-
+		String datasetLabel = dataset.getLabel();
 		boolean isSortingDefined = sortingColumn != null && !sortingColumn.isEmpty() && sortingOrder != null && !sortingOrder.isEmpty();
 		boolean isSortingUsed = false;
 
@@ -1138,8 +1136,8 @@ public class ExcelExporter {
 				JSONArray rowsJSON = columns.getJSONArray("rows");
 				JSONArray columnsJSON = columns.getJSONArray("columns");
 
-			    for (int i = 0 ; i < measuresJSON.length(); i++) {  // looping over measures
-			        JSONObject measureObj = measuresJSON.getJSONObject(i);
+				for (int i = 0; i < measuresJSON.length(); i++) { // looping over measures
+					JSONObject measureObj = measuresJSON.getJSONObject(i);
 					JSONObject measuress = new JSONObject();
 					measuress.put("id", measureObj.getString("id"));
 					measuress.put("alias", measureObj.getString("alias"));
@@ -1147,81 +1145,88 @@ public class ExcelExporter {
 					measuress.put("orderType", "");
 					measuress.put("columnName", measureObj.getString("id"));
 					measures.put(measuress);
-			    }
-
-			    for (int i = 0 ; i < rowsJSON.length(); i++) {  // looping over rows
-			        JSONObject attributesObj = rowsJSON.getJSONObject(i);
-					JSONObject attributess = new JSONObject();
-					attributess.put("id", attributesObj.getString("id"));
-					attributess.put("alias", attributesObj.getString("alias"));
-					attributess.put("orderType", "");
-					attributess.put("columnName", attributesObj.getString("id"));
-					categories.put(attributess);
-			    }
-
-			    for (int i = 0 ; i < columnsJSON.length(); i++) {  // looping over columns
-			        JSONObject attributesObj = columnsJSON.getJSONObject(i);
-					JSONObject attributess = new JSONObject();
-					attributess.put("id", attributesObj.getString("id"));
-					attributess.put("alias", attributesObj.getString("alias"));
-					attributess.put("orderType", "");
-					attributess.put("columnName", attributesObj.getString("id"));
-					categories.put(attributess);
-			    }
-
-
-
-			}else {
-
-			JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-			if (columns != null) {
-				for (int i = 0; i < columns.length(); i++) {
-					JSONObject column = columns.getJSONObject(i);
-
-					String aliasToShow = column.optString("aliasToShow");
-					if (aliasToShow != null && aliasToShow.isEmpty()) {
-						aliasToShow = column.getString("alias");
-					}
-
-					JSONObject categoryOrMeasure = new JSONObject();
-					categoryOrMeasure.put("id", column.getString("alias"));
-					categoryOrMeasure.put("alias", aliasToShow);
-
-					String formula = column.optString("formula");
-					String name = formula.isEmpty() ? column.optString("name") : formula;
-					categoryOrMeasure.put("columnName", name);
-					if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
-						categoryOrMeasure.put("orderType", sortingOrder);
-						isSortingUsed = true;
-					} else {
-						categoryOrMeasure.put("orderType", "");
-					}
-					if (column.has("facet")) {
-						categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
-					}
-					String fieldType = column.getString("fieldType");
-					if ("ATTRIBUTE".equalsIgnoreCase(fieldType)) {
-
-						if (isSolrDataset && !column.has("facet")) categoryOrMeasure.put("funct", "NONE");
-						categories.put(categoryOrMeasure);
-					} else if ("MEASURE".equalsIgnoreCase(fieldType)) {
-						categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
-						measures.put(categoryOrMeasure);
-					} else {
-						throw new SpagoBIRuntimeException("Unsupported field type");
-					}
 				}
 
-				if (isSortingDefined && !isSortingUsed) {
-					JSONObject category = new JSONObject();
-					category.put("alias", sortingColumn);
-					category.put("columnName", sortingColumn);
-					category.put("id", sortingColumn);
-					category.put("orderType", sortingOrder);
-					categories.put(category);
+				for (int i = 0; i < rowsJSON.length(); i++) { // looping over rows
+					JSONObject attributesObj = rowsJSON.getJSONObject(i);
+					JSONObject attributess = new JSONObject();
+					attributess.put("id", attributesObj.getString("id"));
+					attributess.put("alias", attributesObj.getString("alias"));
+					attributess.put("orderType", "");
+					attributess.put("columnName", attributesObj.getString("id"));
+					categories.put(attributess);
+				}
+
+				for (int i = 0; i < columnsJSON.length(); i++) { // looping over columns
+					JSONObject attributesObj = columnsJSON.getJSONObject(i);
+					JSONObject attributess = new JSONObject();
+					attributess.put("id", attributesObj.getString("id"));
+					attributess.put("alias", attributesObj.getString("alias"));
+					attributess.put("orderType", "");
+					attributess.put("columnName", attributesObj.getString("id"));
+					categories.put(attributess);
+				}
+
+			} else {
+
+				JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+				if (columns != null) {
+					for (int i = 0; i < columns.length(); i++) {
+						JSONObject column = columns.getJSONObject(i);
+
+						String aliasToShow = column.optString("aliasToShow");
+						if (aliasToShow != null && aliasToShow.isEmpty()) {
+							aliasToShow = column.getString("alias");
+						}
+
+						JSONObject categoryOrMeasure = new JSONObject();
+						categoryOrMeasure.put("id", column.getString("alias"));
+						categoryOrMeasure.put("alias", aliasToShow);
+
+						String formula = column.optString("formula");
+						String name = formula.isEmpty() ? column.optString("name") : formula;
+						if (column.has("formula")) {
+							categoryOrMeasure.put("columnName", aliasToShow);
+							categoryOrMeasure.put("formula", formula);
+						} else {
+							categoryOrMeasure.put("columnName", name);
+						}
+						if (column.has("formula") && datasetLabel.equalsIgnoreCase("SolRDataset")) {
+							categoryOrMeasure.put("datasetOrTableFlag", false);
+						}
+						if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
+							categoryOrMeasure.put("orderType", sortingOrder);
+							isSortingUsed = true;
+						} else {
+							categoryOrMeasure.put("orderType", "");
+						}
+						if (column.has("facet")) {
+							categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
+						}
+						String fieldType = column.getString("fieldType");
+						if ("ATTRIBUTE".equalsIgnoreCase(fieldType)) {
+
+							if (isSolrDataset && !column.has("facet"))
+								categoryOrMeasure.put("funct", "NONE");
+							categories.put(categoryOrMeasure);
+						} else if ("MEASURE".equalsIgnoreCase(fieldType)) {
+							categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
+							measures.put(categoryOrMeasure);
+						} else {
+							throw new SpagoBIRuntimeException("Unsupported field type");
+						}
+					}
+
+					if (isSortingDefined && !isSortingUsed) {
+						JSONObject category = new JSONObject();
+						category.put("alias", sortingColumn);
+						category.put("columnName", sortingColumn);
+						category.put("id", sortingColumn);
+						category.put("orderType", sortingOrder);
+						categories.put(category);
+					}
 				}
 			}
-		}
 		}
 		JSONObject datasetJsn = getDatasetFromWidget(widget, configuration);
 		String datasetName = datasetJsn.getString("name");
@@ -1259,7 +1264,7 @@ public class ExcelExporter {
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
 			newParameters = getReplacedParameters(params, datasetId);
 		}
-		if (cockpitSelectionsDatasetParameters != null && cockpitSelectionsDatasetParameters.length()>0 && parameters.length() != 0) {
+		if (cockpitSelectionsDatasetParameters != null && cockpitSelectionsDatasetParameters.length() > 0 && parameters.length() != 0) {
 
 			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
 
@@ -1282,7 +1287,7 @@ public class ExcelExporter {
 								SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 								valuesToChange = sdf.format(dateToconvert).toString();
 							}
-							if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+							if (valuesToChange != null && valuesToChange.length() > 0 && !valuesToChange.contains(",")) {
 								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 							}
@@ -1608,24 +1613,21 @@ public class ExcelExporter {
 		return selections;
 	}
 
-
 	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
 		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
 
-		for (int s=0; s<sortKeyMap.size(); s++) {
-			Map <String, Object> sMap = sortKeyMap.get(s);
+		for (int s = 0; s < sortKeyMap.size(); s++) {
+			Map<String, Object> sMap = sortKeyMap.get(s);
 			NodeComparator nc = new NodeComparator();
 
-			nc.setParentValue((String)sMap.get("parentValue"));
-			nc.setMeasureLabel((String)sMap.get("measureLabel"));
-			if (sMap.get("direction")!= null) {
+			nc.setParentValue((String) sMap.get("parentValue"));
+			nc.setMeasureLabel((String) sMap.get("measureLabel"));
+			if (sMap.get("direction") != null) {
 				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
 				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
 			}
 		}
 		return sortKeys;
 	}
-
-
 
 }
