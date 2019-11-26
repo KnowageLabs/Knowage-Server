@@ -45,7 +45,6 @@ public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 
 		// List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
 		registerFunction("date_add_interval", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "date_add(?1 , INTERVAL ?2 ?3)"));
-		registerFunction("TIMESTAMPDIFF", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "TIMESTAMPDIFF(?1 ,?2 ?3)"));
 		JSONObject jsonObject = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
 		List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader().getCustomDefinedFunctionListFromJSON(jsonObject, "mysql");
 
