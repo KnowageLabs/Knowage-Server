@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,9 +214,10 @@ public class SolrDataSet extends RESTDataSet {
 	}
 
 	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(JSONArray solrFields) {
-		String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
-		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
+		List<String> fields = Arrays.asList(solrConfiguration.getSolrQuery().getFields().split(","));
+		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.size());
 		for (int i = 0; i < solrFields.length(); i++) {
+
 			JSONObject solrField = null;
 			try {
 				solrField = solrFields.getJSONObject(i);
@@ -223,6 +225,10 @@ public class SolrDataSet extends RESTDataSet {
 				String name = solrField.optString("name");
 				String type = solrField.optString("type", "string");
 				boolean multiValued = solrField.optBoolean("multiValued", false);
+
+				if (!fields.contains(name)) {
+					continue;
+				}
 
 				String jsonPathType = JSONPathDataReader.JSONPathAttribute.getJsonPathTypeFromSolrFieldType(type);
 				jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(name, "$." + name, jsonPathType, multiValued));
