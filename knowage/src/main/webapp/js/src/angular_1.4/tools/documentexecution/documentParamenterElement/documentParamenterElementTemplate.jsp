@@ -106,7 +106,7 @@
 	<!-- manual number input -->
 	<div class="textInput" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}>{{i18n.getI18n(parameter.label)}}</label> 
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
