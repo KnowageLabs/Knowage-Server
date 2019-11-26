@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-cookies.js"></script>
 
 <!-- angular-material-->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
 
 <!-- angular tree -->
 <link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
@@ -91,3 +91,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	
+<!-- AG GRID -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<script>agGrid.initialiseAgGridWithAngular1(angular);</script>

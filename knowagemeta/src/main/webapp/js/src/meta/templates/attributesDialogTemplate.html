@@ -1,0 +1,58 @@
+<md-dialog>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Attributes Details</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+		<div layout="column" flex>
+			<md-card class="noPadding">
+				<md-card-content>
+					<div layout="row">
+						<md-input-container flex class="noPadding"> 
+							<label>Name</label>
+							<input type="text" ng-model="selectedAttribute.name">
+						</md-input-container>
+					</div>
+					<div layout="row">
+						<md-input-container flex class="noPadding"> 
+							<label>Description</label>
+							<input type="text" ng-model="selectedAttribute.description">
+						</md-input-container>
+					</div>
+				</md-card-content>
+			</md-card>
+			<md-card class="noPadding">
+				<md-subheader class="noPadding">
+					<div layout="row" layout-align="start center" style="height:48px;">
+						<span layout-padding>Structural</span>
+					</div>
+				</md-subheader>
+				<md-card-content>
+					<div layout="row" layout-wrap>
+						<md-input-container flex="50" class="noPadding" ng-repeat="(key, value) in selectedAttribute.properties"> 
+							<label>{{thisObject(value).propertyType.name}}</label>
+							<md-select ng-model="thisObject(value).value" ng-if="!value['physical.physicaltable']">
+								<md-option ng-repeat="option in thisObject(value).propertyType.admissibleValues" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<input type="text" ng-disabled="true" ng-if="value['physical.physicaltable']" ng-model="thisObject(value).value" />
+							<div ng-if="thisObject(value).propertyType.description" class="hint">{{thisObject(value).propertyType.description}}</div>
+						</md-input-container>
+					</div>
+				</md-card-content>
+			</md-card>
+		</div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()" >
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="save()" >
+        Save
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

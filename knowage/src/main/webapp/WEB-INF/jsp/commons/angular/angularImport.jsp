@@ -184,5 +184,6 @@ if(importAngularMaterialForExport == null) {
 
 <!-- AG GRID -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid-community/dist/ag-grid-community.min.js")%>"></script>
+<script>agGrid.initialiseAgGridWithAngular1(angular);</script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js")%>"></script>
 	

@@ -6,17 +6,17 @@
 			<div class="metaModelBusinessList" ng-if="meta.businessModels.length>0">
 				<md-subheader>{{translate.load('sbi.meta.businessclass')}}</md-subheader>
 		   		<div class="md-dense" ng-repeat="bm in meta.businessModels" >
-			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}">
+			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}" style="height: 32px;padding-right: 8px;">
 			   			<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bm)}}"></md-icon> {{bm.name}}</span>
 				   		<span flex></span>
 				     	<span class="businessListProperties">{{bm.columns.length}} properties</span>
-				     	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
+				     	<!-- md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
-				     	</md-button>
-				     	<reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder>
+				     	</md-button-->
+				     	<!-- reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder-->
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
-					<div ng-if="openedItems.indexOf(bm.uniqueName) !== -1">
+					<!-- div ng-if="openedItems.indexOf(bm.uniqueName) !== -1">
 						<md-card>
 							<md-card-content class="noPadding">
 								<ul>
@@ -41,7 +41,7 @@
 							</md-card-content>
 						</md-card>
 						<md-divider></md-divider>
-					</div>
+					</div-->
 			   	</div>
 		   	</div>
 	      	
@@ -175,8 +175,9 @@
 			
 			<md-tab id="attributesTab" md-active="tabResource.selectedBusinessTab=='attributesTab'" md-on-select="tabResource.selectedBusinessTab='attributesTab'" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
 				<md-content  ng-if="tabResource.selectedBusinessTab=='attributesTab'" layout  layout-fill ng-controller="businessModelAttributeController">
-					<angular-table  id="bmAttr" ng-model="attributesList" columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
-					 </angular-table>
+					<!--  angular-table  id="bmAttr" ng-model="attributesList" columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
+					 </angular-table-->
+					 <div ag-grid="attributesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
 				</md-content>
 			</md-tab>
 			

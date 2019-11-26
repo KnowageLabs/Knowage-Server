@@ -9,6 +9,10 @@ $aggrid-border-color: #d9dcde;
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.editableCell {
 		cursor: pointer;
+		i:not(.fa){
+			min-height: 18px;
+    		display: inline-block;
+		}
 	}
 	.ag-body-viewport.ag-layout-auto-height{
 		height: auto;
