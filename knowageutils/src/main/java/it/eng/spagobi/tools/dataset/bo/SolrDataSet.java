@@ -37,7 +37,6 @@ import it.eng.spagobi.tools.dataset.common.datareader.CompositeSolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
@@ -90,7 +89,6 @@ public class SolrDataSet extends RESTDataSet {
 		initDataReader(jsonConf, resolveParams);
 
 	}
-
 
 	public void initConf(JSONObject jsonConf, boolean resolveParams, UserProfile userProfile) {
 
@@ -210,29 +208,27 @@ public class SolrDataSet extends RESTDataSet {
 		}
 		solrConfiguration.setSolrFields(solrFields.toString());
 
-		Map<String, String> solrFieldTypes = getSolrFieldTypes(solrFields);
-		return getJsonPathAttributes(solrFieldTypes);
+		return getJsonPathAttributes(solrFields);
 
 	}
 
-	private Map<String, String> getSolrFieldTypes(JSONArray solrFields) {
-		Map<String, String> solrFieldTypes = new HashMap<>(solrFields.length());
-		for (int i = 0; i < solrFields.length(); i++) {
-			JSONObject solrField = solrFields.optJSONObject(i);
-			String name = solrField.optString("name");
-			String type = solrField.optString("type");
-			solrFieldTypes.put(name, type);
-		}
-		return solrFieldTypes;
-	}
-
-	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(Map<String, String> solrFieldTypes) {
+	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(JSONArray solrFields) {
 		String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
 		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
-		for (String field : fields) {
-			String solrFieldType = solrFieldTypes.containsKey(field) ? solrFieldTypes.get(field) : "string";
-			String jsonPathType = JSONPathDataReader.JSONPathAttribute.getJsonPathTypeFromSolrFieldType(solrFieldType);
-			jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(field, "$." + field, jsonPathType));
+		for (int i = 0; i < solrFields.length(); i++) {
+			JSONObject solrField = null;
+			try {
+				solrField = solrFields.getJSONObject(i);
+
+				String name = solrField.optString("name");
+				String type = solrField.optString("type", "string");
+				boolean multiValued = solrField.optBoolean("multiValued", false);
+
+				String jsonPathType = JSONPathDataReader.JSONPathAttribute.getJsonPathTypeFromSolrFieldType(type);
+				jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(name, "$." + name, jsonPathType, multiValued));
+			} catch (JSONException e) {
+				throw new RuntimeException("Cannot parse Solr schema: " + String.valueOf(solrField), e);
+			}
 		}
 		return jsonPathAttributes;
 	}
@@ -361,12 +357,12 @@ public class SolrDataSet extends RESTDataSet {
 			if (filterQueries != null && !filterQueries.isEmpty()) {
 				String[] array = new String[filterQueries.size()];
 				for (int i = 0; i < array.length; i++) {
-					if (filterQueries!= null && filterQueries.get(i) != null && filterQueries.get(i).getSecond() !=null && filterQueries.get(i).getSecond().contains(",")) {
+					if (filterQueries != null && filterQueries.get(i) != null && filterQueries.get(i).getSecond() != null
+							&& filterQueries.get(i).getSecond().contains(",")) {
 						String multivalue = filterQueries.get(i).getSecond().replace(",", " OR ");
 						multivalue = "(" + multivalue + ")";
 						array[i] = filterQueries.get(i).getFirst() + ":" + multivalue;
-					}
-					else
+					} else
 						array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
 				}
 				solrQuery.setFilterQueries(array);

@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Marco Libanori
  */
 public class JSONDataWriter implements IDataWriter {
 
@@ -243,9 +245,17 @@ public class JSONDataWriter implements IDataWriter {
 			return toReturn;
 
 		} else {
-			String result = "";
+			Object result = "";
 			if (field.getValue() != null) {
-				if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
+				if (fieldMetaData.isMultiValue()) {
+					JSONArray _result = new JSONArray();
+					List list = (List) field.getValue();
+
+					for (Object obj : list) {
+						_result.put(obj);
+					}
+					result = _result;
+				} else if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = TIMESTAMP_FORMATTER.format(field.getValue());
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
@@ -515,8 +525,7 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	/**
-	 * @param setRenderer
-	 *            the setRenderer to set
+	 * @param setRenderer the setRenderer to set
 	 */
 	public void setSetRenderer(boolean setRenderer) {
 		this.setRenderer = setRenderer;

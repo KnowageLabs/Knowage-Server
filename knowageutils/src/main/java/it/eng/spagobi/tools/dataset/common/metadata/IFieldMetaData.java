@@ -20,7 +20,9 @@ package it.eng.spagobi.tools.dataset.common.metadata;
 import java.util.Map;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Marco Libanori
  *
  */
 public interface IFieldMetaData {
@@ -62,4 +64,8 @@ public interface IFieldMetaData {
 	Map getProperties();
 
 	void setProperties(Map properties);
+
+	boolean isMultiValue();
+
+	void setMultiValue(boolean multiValue);
 }
