@@ -180,7 +180,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		List<Content> versionsToShow = new ArrayList<Content>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
-
 		try {
 			versions = businessModelsDAO.loadMetaModelVersions(bmId);
 			for (Content version : versions) {
@@ -191,16 +190,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				}
 				versionsToShow.add(version);
 			}
-			// last filemodel
-			boolean togenerate = false;
-			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
-			if (lastFileModelContent != null && lastFileModelContent.getFileName() != null) {
-				if (lastFileModelContent.getFileModel() != null
-						&& (lastFileModelContent.getContent() == null || lastFileModelContent.getFileName().endsWith(LOG_SUFFIX))) {
-					togenerate = true;
-				}
 
-			}
+			boolean togenerate = isBusinessModelToBeGenerated(bmId);
+
 			// return versions;
 			resultAsMap.put("versions", versionsToShow);
 			resultAsMap.put("togenerate", togenerate);
@@ -213,6 +205,20 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 		return Response.ok(resultAsMap).build();
+	}
+
+	private boolean isBusinessModelToBeGenerated(Integer businessModelId) {
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		Content activeContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+		// @formatter:off
+		if (
+				activeContent != null // model may have no active version, in case it is new
+				&& activeContent.getFileModel() != null // model must have a model file
+				&& (activeContent.getContent() == null || activeContent.getFileName().endsWith(LOG_SUFFIX))) {
+			return true;
+		}
+		// @formatter:on
+		return false;
 	}
 
 	/**
