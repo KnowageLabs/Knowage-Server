@@ -6,14 +6,14 @@
 			<div class="metaModelBusinessList" ng-if="meta.businessModels.length>0">
 				<md-subheader>{{translate.load('sbi.meta.businessclass')}}</md-subheader>
 		   		<div class="md-dense" ng-repeat="bm in meta.businessModels" >
-			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}" style="height: 32px;padding-right: 8px;">
+			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}" style="padding-right: 8px;">
 			   			<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bm)}}"></md-icon> {{bm.name}}</span>
 				   		<span flex></span>
 				     	<span class="businessListProperties">{{bm.columns.length}} properties</span>
 				     	<!-- md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
 				     	</md-button-->
-				     	<!-- reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder-->
+				     	<reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder>
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
 					<!-- div ng-if="openedItems.indexOf(bm.uniqueName) !== -1">

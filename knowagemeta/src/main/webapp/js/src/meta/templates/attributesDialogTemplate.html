@@ -1,7 +1,7 @@
 <md-dialog>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Attributes Details</h2>
+        <h2>{{translate.load('sbi.glossary.attributedetail')}}</h2>
       </div>
     </md-toolbar>
     <md-dialog-content>
@@ -10,13 +10,13 @@
 				<md-card-content>
 					<div layout="row">
 						<md-input-container flex class="noPadding"> 
-							<label>Name</label>
+							<label>{{translate.load('sbi.generic.name')}}</label>
 							<input type="text" ng-model="selectedAttribute.name">
 						</md-input-container>
 					</div>
 					<div layout="row">
 						<md-input-container flex class="noPadding"> 
-							<label>Description</label>
+							<label>{{translate.load('sbi.glossary.description')}}</label>
 							<input type="text" ng-model="selectedAttribute.description">
 						</md-input-container>
 					</div>
@@ -25,7 +25,7 @@
 			<md-card class="noPadding">
 				<md-subheader class="noPadding">
 					<div layout="row" layout-align="start center" style="height:48px;">
-						<span layout-padding>Structural</span>
+						<span layout-padding>{{translate.load('sbi.generic.structural')}}</span>
 					</div>
 				</md-subheader>
 				<md-card-content>
@@ -49,10 +49,10 @@
     <md-dialog-actions layout="row">
       <span flex></span>
       <md-button class="md-raised" ng-click="cancel()" >
-        Cancel
+        {{translate.load('sbi.generic.cancel')}}
       </md-button>
       <md-button class="md-raised md-primary" ng-click="save()" >
-        Save
+        {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-dialog-actions>
 </md-dialog>
