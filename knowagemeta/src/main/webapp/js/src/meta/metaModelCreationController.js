@@ -477,13 +477,13 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	function editableCellWithIcon(params){
 		var startString = '<i class="'+$scope.getIcon(params.data)+'"></i> <i class="fa fa-edit"></i>'
 		if(typeof(params.value) !== 'undefined' && params.value != ""){
-			return startString + '<i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
+			return startString + '<i class="truncated" style="width: calc(100% - 32px)">'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
 		}else return startString+'<i></i>';
 	}
 
 	function editableCell(params){
 		if(typeof(params.value) !== 'undefined' && params.value != ""){
-			return '<i class="fa fa-edit"></i><i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
+			return '<i class="fa fa-edit"></i><i class="truncated" style="width: calc(100% - 12px)">'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>';
 		}else return '<i class="fa fa-edit"></i><i></i>';
 	}
 

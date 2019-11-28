@@ -9,6 +9,15 @@ $aggrid-border-color: #d9dcde;
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.editableCell {
 		cursor: pointer;
+		span {
+			display: inline-flex;
+    		justify-content: flex-start;
+    		align-items: center;
+    		width: 100%;
+		}
+		i.fa{
+			padding-right: 4px;
+		}
 		i:not(.fa){
 			min-height: 18px;
     		display: inline-block;
