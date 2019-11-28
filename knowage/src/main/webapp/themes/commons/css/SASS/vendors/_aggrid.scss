@@ -99,6 +99,21 @@ $aggrid-border-color: #d9dcde;
 		height: 100%;
 	}
 	&.ag-theme-knowage:not(.ag-theme-knowage-default){
+		.ag-cell{
+			&.singlePinnedButton {
+				span {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					.md-button {
+						padding: 0;
+					    height: 24px;
+					    min-height: 24px;
+					    width: 24px;
+					}
+				}
+			}
+		}
 		&.ag-theme-knowage-secondary {
 			.ag-header {
 			    background-color: $secondaryColor;

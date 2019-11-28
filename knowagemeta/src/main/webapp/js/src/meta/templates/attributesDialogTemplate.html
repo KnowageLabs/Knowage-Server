@@ -101,8 +101,8 @@
 						<md-input-container flex="50" class="noPadding md-block" ng-if="['INTEGER','DOUBLE','DECIMAL','BIGINT'].indexOf(properties['structural.datatype'].value) != -1"> 
 							<label>{{properties['structural.format'].propertyType.name}}</label>
 							<md-select ng-model="properties['structural.format'].value">
-								<md-option ng-repeat="option in properties['structural.format].propertyType.admissibleValues" ng-value="option">
-									{{getExampleDate(option)}}
+								<md-option ng-repeat="option in properties['structural.format'].propertyType.admissibleValues" ng-value="option">
+									{{option}}
 								</md-option>
 							</md-select>
 							<div class="hint">{{properties['structural.format'].propertyType.description}}</div>

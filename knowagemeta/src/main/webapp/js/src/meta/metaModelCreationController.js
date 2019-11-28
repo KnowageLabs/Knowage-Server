@@ -437,7 +437,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	    		{"headerName":sbiModule_translate.load("sbi.execution.subobjects.visibility"),"field":"Visibility",cellRenderer:visibilityCheckboxRenderer,width: 40},
 	    		{"headerName":sbiModule_translate.load("sbi.generic.type"),"field":"type","editable":true,cellRenderer:typeEditableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['attribute','measure']} , width: 50},
 	    		{"headerName":sbiModule_translate.load("sbi.generic.descr"),"field":"description","editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
-	    		{"headerName":"",cellRenderer: buttonRenderer,"field":"id","cellStyle":{"border":"none !important","text-align": "center","display":"inline-flex","justify-content":"center"},width: 20}],
+	    		{"headerName":"",cellRenderer: buttonRenderer,"field":"id","cellClass":"singlePinnedButton","cellStyle":{"border":"none !important","text-align": "center","display":"inline-flex","justify-content":"center"},width: 20,pinned: 'right'}],
 	    	rowData : $scope.selectedBusinessModel.columns
 		};
 
