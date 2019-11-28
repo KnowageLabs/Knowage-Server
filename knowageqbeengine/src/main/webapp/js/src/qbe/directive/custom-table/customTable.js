@@ -72,12 +72,12 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
 			return false;
 		}
 
-		if(isOneOfDataTypes(field.dataType,['java.sql.date'])){
+		if(row.dateFormatJava && row.dateFormatJava == "dd/MM/yyyy"){
 
 			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY"),field.format)
-		}else if(isOneOfDataTypes(field.dataType,['java.sql.timestamp'])){
+		}else if(row.dateFormatJava && row.dateFormatJava == "dd/MM/yyyy HH:mm:ss.SSS"){
 			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY HH:mm:ss.SSS"),field.format)
-		}else if(isOneOfDataTypes(field.dataType,['java.sql.time'])){
+		}else if(row.dateFormatJava && row.dateFormatJava == "HH:mm:ss.SSS"){
 			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"HH:mm:ss"),field.format)
 		}
 
@@ -311,6 +311,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 										"tooltipField":fields[f].name,
 										"dataType":fields[f].dataType,
 										"format":fields[f].format,
+										"dateFormatJava":fields[f].dateFormatJava,
 										"valueFormatter":function(params){
 
 
@@ -325,12 +326,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 												return false;
 											}
 
-											if(isOneOfDataTypes(params.colDef.dataType,['java.sql.date'])){
+
+
+											if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "dd/MM/yyyy"){
 
 												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY"),params.colDef.format)
-											}else if(isOneOfDataTypes(params.colDef.dataType,['java.sql.timestamp'])){
+											}else if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "dd/MM/yyyy HH:mm:ss.SSS"){
 												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY HH:mm:ss.SSS"),params.colDef.format)
-											}else if(isOneOfDataTypes(params.colDef.dataType,['java.sql.time'])){
+											}else if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "HH:mm:ss.SSS"){
 												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"HH:mm:ss"),params.colDef.format)
 											}
 

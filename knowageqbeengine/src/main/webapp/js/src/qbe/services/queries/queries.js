@@ -59,7 +59,8 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          				for (var j = 0; j < response.data.rows.length; j++) {
              				var row = {
              						"value":response.data.rows[j][key],
-             						"id":response.data.rows[j].id
+             						"id":response.data.rows[j].id,
+             						"dateFormatJava":response.data.metaData.fields[i+1].dateFormatJava
              				}
              				queryObject.data.push(row);
         				}
@@ -119,6 +120,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
     	 column.name=fields[i].name;
     	 column.dataType = queryModel[i-1].dataType;
     	 column.format = queryModel[i-1].format;
+    	 column.dateFormatJava = fields[i].dateFormatJava;
     	 columns.push(column);
     	}
 

@@ -922,6 +922,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                    	angular.copy($scope.cfSelectedField.id.expression,$scope.calculatedFieldOutput.formula) ;
                    	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
                 	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
+                	$scope.calculatedFieldOutput.format =$scope.cfSelectedField.id.format;
                 	$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;
             	}
                 $scope.hide = function() {
@@ -937,10 +938,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
             			"nature":angular.copy($scope.calculatedFieldOutput.nature),
             			"expression":$scope.calculatedFieldOutput.formula,
             			"expressionSimple":$scope.calculatedFieldOutput.expression,
+            			"format": $scope.calculatedFieldOutput.format
                 	}
 
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
                 	$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
+                	$scope.calculatedFieldOutput.format = $scope.calculatedFieldOutput.format;
                 	$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
                 	$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
