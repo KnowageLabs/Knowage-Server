@@ -161,4 +161,5 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
 		}
 		return facets;
 	}
+
 }

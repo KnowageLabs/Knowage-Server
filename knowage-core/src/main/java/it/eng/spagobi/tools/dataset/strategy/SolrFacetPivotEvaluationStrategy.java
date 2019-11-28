@@ -51,6 +51,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
@@ -118,7 +119,9 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 		if (hasCalculatedFields) {
 			try {
-				dataStore = appendCalculatedFieldColumn(calcuList, calcuGrpList, dataStore);
+				for (AbstractSelectionField abstractSelectionField : calcuList) {
+					dataStore = appendCalculatedFieldColumn(abstractSelectionField, calcuGrpList, dataStore);
+				}
 			} catch (Throwable t) {
 				throw new RuntimeException("An unexpected error occured while loading datastore", t);
 			}
@@ -127,50 +130,97 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		return dataStore;
 	}
 
-	private IDataStore appendCalculatedFieldColumn(List<AbstractSelectionField> calcFieldList, List<AbstractSelectionField> groupdFieldList,
+	private IDataStore appendCalculatedFieldColumn(AbstractSelectionField abstractSelectionField, List<AbstractSelectionField> groupdFieldList,
 			IDataStore pagedDataStore) throws URISyntaxException {
+
 		IDataStore datastoresToAdd = new DataStore();
-		for (AbstractSelectionField abstractSelectionField : calcFieldList) {
 
-			DataStoreCalculatedField field = (DataStoreCalculatedField) abstractSelectionField;
+		DataStoreCalculatedField field = (DataStoreCalculatedField) abstractSelectionField;
 
-			IMetaData pagedMetaData = pagedDataStore.getMetaData();
-			pagedMetaData.addFiedMeta(new FieldMetadata(field.getAlias(), BigDecimal.class));
+		IMetaData pagedMetaData = pagedDataStore.getMetaData();
+		pagedMetaData.addFiedMeta(new FieldMetadata(field.getAlias(), BigDecimal.class));
 
-			// build new datastore calculated fields columns
+		// build new datastore calculated fields columns
 
-			XmlDataReader dataReader = new XmlDataReader();
-			SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+		XmlDataReader dataReader = new XmlDataReader();
+		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 
-			List<File> imports = new ArrayList<File>();
-			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
-			File scriptFile = new File(url.toURI());
-			imports.add(scriptFile);
+		List<File> imports = new ArrayList<File>();
+		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+		File scriptFile = new File(url.toURI());
+		imports.add(scriptFile);
 
-			Map<String, Object> bindings = new HashMap<String, Object>();
+		Map<String, Object> bindings = new HashMap<String, Object>();
 
-			// add columns to result datastore
+		// add columns to result datastore
 
-			datastoresToAdd.setMetaData(pagedMetaData);
+		datastoresToAdd.setMetaData(pagedMetaData);
 
-			for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
-				Record newRecord = new Record();
-				newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+		for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
+			Record newRecord = new Record();
+			newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
 
-				// method that calculates formula result getting each real value field
+			// method that calculates formula result getting each real value field
 
-				String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
+			String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
 
-				Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
-				String data = (o == null) ? "" : o.toString();
+			Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
+			String data = (o == null) ? "" : o.toString();
 
-				IField fieldNew = new Field(new BigDecimal(data));
-				newRecord.appendField(fieldNew);
+			IField fieldNew = new Field(new BigDecimal(data));
+			newRecord.appendField(fieldNew);
 
-				datastoresToAdd.appendRecord(newRecord);
-			}
-
+			datastoresToAdd.appendRecord(newRecord);
 		}
+
+		// IDataStore columnsDataStore = new
+		return datastoresToAdd;
+
+	}
+
+	private IDataStore appendCalculatedFieldColumnToSummaryRow(AbstractSelectionField abstractSelectionField, List<AbstractSelectionField> groupdFieldList,
+			IDataStore pagedDataStore) throws URISyntaxException {
+
+		IDataStore datastoresToAdd = new DataStore();
+
+		DataStoreCalculatedField field = (DataStoreCalculatedField) abstractSelectionField;
+
+		IMetaData pagedMetaData = pagedDataStore.getMetaData();
+		pagedMetaData.addFiedMeta(new FieldMetadata(field.getAlias(), BigDecimal.class));
+
+		// build new datastore calculated fields columns
+
+		XmlDataReader dataReader = new XmlDataReader();
+		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+
+		List<File> imports = new ArrayList<File>();
+		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+		File scriptFile = new File(url.toURI());
+		imports.add(scriptFile);
+
+		Map<String, Object> bindings = new HashMap<String, Object>();
+
+		// add columns to result datastore
+
+		datastoresToAdd.setMetaData(pagedMetaData);
+
+		for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
+			Record newRecord = new Record();
+			newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+
+			// method that calculates formula result getting each real value field
+
+			String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
+
+			Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
+			String data = (o == null) ? "" : o.toString();
+
+			IField fieldNew = new Field(new BigDecimal(data));
+			newRecord.appendField(fieldNew);
+
+			datastoresToAdd.appendRecord(newRecord);
+		}
+
 		// IDataStore columnsDataStore = new
 		return datastoresToAdd;
 
@@ -218,7 +268,8 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		SolrQuery solrQuery;
 		try {
-			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).filter(filter).jsonFacets(prjList, null, null);
+			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(prjList).filter(filter).stats(prjList);
+			logger.debug("Solr query for summary row: " + solrQuery);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while loading datastore", t);
 		}
@@ -232,6 +283,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		IRecord summaryRow = new Record(dataStore);
 		for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 			String fieldName = dataStore.getMetaData().getFieldName(i);
+			boolean found = false;
 			for (AbstractSelectionField proj : prjList) {
 				if (proj instanceof Projection) {
 					Projection projection = (Projection) proj;
@@ -240,6 +292,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 						IField field = new Field(value);
 						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
 						summaryRow.appendField(field);
+						found = true;
 						break;
 					}
 				}
@@ -251,20 +304,69 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 						IField field = new Field(value);
 						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
 						summaryRow.appendField(field);
+						found = true;
 						break;
 					}
 				}
 			}
+			if (!found) {
+				summaryRow.appendField(null);
+			}
 		}
+
+		dataStore.appendRecord(summaryRow);
+		dataStore.getMetaData().setProperty("resultNumber", 1);
 		try {
-			dataStore = appendCalculatedFieldColumn(calcList, null, dataStore);
+			for (AbstractSelectionField abstractSelectionField : calcList) {
+				dataStore = appendCalculatedFieldColumnToSummaryRow(abstractSelectionField, null, dataStore);
+			}
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while loading datastore", t);
 		}
-		dataStore.appendRecord(summaryRow);
-		dataStore.getMetaData().setProperty("resultNumber", 1);
+		IDataStore dataStoreFinal = new DataStore();
+		Record newRecord = new Record();
+		MetaData meta = new MetaData();
 
-		return null;
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+
+			for (AbstractSelectionField entry : summaryRowProjections) {
+				if (entry instanceof DataStoreCalculatedField) {
+					if (metaData.getFieldName(i).equals(((DataStoreCalculatedField) entry).getAlias())) {
+						int realIndex = 0;
+						for (int j = 0; j < dataStore.getMetaData().getFieldCount(); j++) {
+							if (dataStore.getMetaData().getFieldName(j).equals(((DataStoreCalculatedField) entry).getAlias())) {
+								realIndex = j;
+							}
+						}
+
+						IField field = dataStore.getRecordAt(0).getFieldAt(realIndex);
+						meta.addFiedMeta(metaData.getFieldMeta(i));
+						newRecord.appendField(field);
+					}
+				} else {
+					if (metaData.getFieldName(i).equals(((Projection) entry).getAlias())) {
+						if (metaData.getFieldAlias(i).equalsIgnoreCase(((Projection) entry).getName())) {
+							int realIndex = 0;
+							for (int j = 0; j < dataStore.getMetaData().getFieldCount(); j++) {
+								if (dataStore.getMetaData().getFieldName(j).equals(((Projection) entry).getName())) {
+									realIndex = j;
+								}
+							}
+							IField field = dataStore.getRecordAt(0).getFieldAt(realIndex);
+							meta.addFiedMeta(metaData.getFieldMeta(i));
+							newRecord.appendField(field);
+
+						}
+					}
+				}
+
+			}
+
+		}
+
+		dataStoreFinal.setMetaData(meta);
+		dataStoreFinal.appendRecord(newRecord);
+		return dataStoreFinal;
 	}
 
 	private Object getValue(FieldStatsInfo fieldStats, IAggregationFunction aggregationFunction) {
@@ -303,4 +405,5 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		}
 		return facets;
 	}
+
 }

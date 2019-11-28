@@ -440,17 +440,18 @@ public class ExcelExporter {
 			}
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
-			JSONObject summaryRow = getSummaryRowFromWidget(widget);
-			if (summaryRow != null) {
-				logger.debug("summaryRow = " + summaryRow);
-				cockpitSelections.put("summaryRow", summaryRow);
-			}
 
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
 				JSONObject jsOptions = new JSONObject();
 				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
+			}
+
+			JSONObject summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
+			if (summaryRow != null) {
+				logger.debug("summaryRow = " + summaryRow);
+				cockpitSelections.put("summaryRow", summaryRow);
 			}
 
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
@@ -814,7 +815,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONObject summaryRow = getSummaryRowFromWidget(widget);
+					JSONObject summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -865,7 +866,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONObject summaryRow = getSummaryRowFromWidget(widget);
+					JSONObject summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -1398,7 +1399,7 @@ public class ExcelExporter {
 		return newValue;
 	}
 
-	private JSONObject getSummaryRowFromWidget(JSONObject widget) throws JSONException {
+	private JSONObject getSummaryRowFromWidget(JSONObject widget, boolean isSolrDataset) throws JSONException {
 		JSONObject settings = widget.optJSONObject("settings");
 		if (settings != null) {
 			JSONObject summary = settings.optJSONObject("summary");
@@ -1420,6 +1421,11 @@ public class ExcelExporter {
 									// calculated field case
 									measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
 								}
+								if (column.has("formula")) {
+									measure.put("formula", column.getString("formula"));
+								} else {
+									measure.put("columnName", column.getString("name"));
+								}
 								if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
 									// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be changed to
 									// be SUM instead
@@ -1428,7 +1434,8 @@ public class ExcelExporter {
 								} else {
 									String formula = column.optString("formula");
 									String name = formula.isEmpty() ? column.optString("name") : formula;
-									measure.put("columnName", name);
+									if (column.has("formula") && isSolrDataset)
+										measure.put("datasetOrTableFlag", false);
 								}
 								measure.put("funct", column.getString("funcSummary"));
 								measures.put(measure);
