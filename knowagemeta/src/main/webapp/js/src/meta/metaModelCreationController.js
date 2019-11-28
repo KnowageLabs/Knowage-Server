@@ -229,6 +229,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	}
 
 	function resizeColumns(params){
+		if($scope.meta.businessModels) $scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
 		params.api.sizeColumnsToFit();
 	}
 
