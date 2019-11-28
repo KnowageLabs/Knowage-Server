@@ -943,7 +943,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
-							}else if(model.type == 'text'){
+							}else if(model.type == 'text' || model.type == 'html'){
 								var OBJ = {};
 								OBJ[par] = columnValue;
 								otherOutputParameters.push(OBJ);
