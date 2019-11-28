@@ -277,6 +277,7 @@ public class PageResource {
 
 			propertyType.getAdmissibleValues().add("DECIMAL");
 			propertyType.getAdmissibleValues().add("BIGINT");
+			propertyType.getAdmissibleValues().add("FLOAT");
 		}
 
 	}

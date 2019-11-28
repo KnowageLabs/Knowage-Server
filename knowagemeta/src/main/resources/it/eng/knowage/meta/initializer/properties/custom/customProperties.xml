@@ -228,6 +228,7 @@
         <value>TIMESTAMP</value>
         <value>DECIMAL</value>
         <value>BIGINT</value>
+        <value>FLOAT</value>
       </admissibleValuesOf>
       
 <!--       <admissibleValuesOf typeId="style.alignment"> -->
