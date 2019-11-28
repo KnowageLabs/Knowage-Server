@@ -2,17 +2,17 @@
 	<list label="translate.load('sbi.meta.businessclass')+'/'+translate.load('sbi.meta.businessview')" layout="column"> 
 		 <md-content class="noMargin" >
 		 	<!-- BUSINESS CLASSES -->
-		 	
 			<div class="metaModelBusinessList" ng-if="meta.businessModels.length>0">
 				<md-subheader>{{translate.load('sbi.meta.businessclass')}}</md-subheader>
-		   		<div class="md-dense" ng-repeat="bm in meta.businessModels" >
+				<div ag-grid="businessClassesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+		   		<!-- div class="md-dense" ng-repeat="bm in meta.businessModels" >
 			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}" style="padding-right: 8px;">
 			   			<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bm)}}"></md-icon> {{bm.name}}</span>
 				   		<span flex></span>
 				     	<span class="businessListProperties">{{bm.columns.length}} properties</span>
 				     	<!-- md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
-				     	</md-button-->
+				     	</md-button>
 				     	<reorder is-first="$first" is-last="$last" up-func="moveBusinessClass($index,-1)" down-func="moveBusinessClass($index,1)"></reorder>
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
@@ -41,11 +41,11 @@
 							</md-card-content>
 						</md-card>
 						<md-divider></md-divider>
-					</div-->
+					</div>
 			   	</div>
 		   	</div>
 	      	
-	      	<div class="metaModelBusinessList" ng-if="meta.businessViews.length>0">
+	      	<!--div class="metaModelBusinessList" ng-if="meta.businessViews.length>0">
 	      		<md-subheader>{{translate.load('sbi.meta.businessview')}}</md-subheader>
 		      <div class="md-dense" ng-repeat="bv in meta.businessViews" >
 		      	<div class="selectable" ng-click="selectBusinessModel(bv)" layout="row" layout-align="start center" ng-class="{'selected':bv == selectedBusinessModel}">
@@ -71,7 +71,7 @@
 		        	</md-card>
 		        	<md-divider></md-divider>
 		        </div>
-		      </div>
+		      </div-->
 	      	</div>
 		  </md-content>
 	</list>
@@ -80,8 +80,8 @@
 	
 	<extra-list-button>
 		<md-menu>
-			<md-button aria-label="Create" ng-click="$mdOpenMenu($event)">
-			  {{translate.load('sbi.general.add')}}
+			<md-button class="md-fab md-mini" style="top:10px;" aria-label="Create" ng-click="$mdOpenMenu($event)">
+			  <md-icon md-font-icon="fa fa-plus"></md-icon>
 			</md-button>
 			<md-menu-content width="4">
 			  <md-menu-item>
@@ -99,8 +99,7 @@
 			</md-menu-content>
 		</md-menu>
 	</extra-list-button>
-	
-	
+
 	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >
 	
 		<md-tabs flex >
@@ -115,7 +114,7 @@
 						
 						<md-input-container ng-if="selectedBusinessModel.physicalTable!=undefined" >
 							<label>{{translate.load("sbi.meta.table.physical")}}</label>
-							 <input ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].name" disabled>
+							<input ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].name" disabled>
 							 
 						</md-input-container>
 					</expander-box>	
@@ -301,6 +300,9 @@
 		
 	</detail>
 	<extra-button ng-if="selectedBusinessModel.name!=undefined">
+		<!-- md-button ng-if="selectedBusinessModel.columns!=undefined" ng-click="addToCurrentBusiness()">
+				Add attribute
+		</md-button-->
 		<md-button ng-if="selectedBusinessModel.columns!=undefined" ng-click="deleteCurrentBusiness()">
 				{{translate.load('sbi.generic.delete')}}
 		</md-button>

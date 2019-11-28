@@ -168,8 +168,8 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.selectBusinessModel = function(node) {
 		$scope.tabResource.selectedBusinessTab="propertiestab";
 		$scope.selectedBusinessModel = node;
-		angular.copy(parametersBuilder.extractCategories($scope.selectedBusinessModel.properties),
-				$scope.currentBusinessModelParameterCategories);
+		$scope.$apply();
+		angular.copy(parametersBuilder.extractCategories($scope.selectedBusinessModel.properties), $scope.currentBusinessModelParameterCategories);
 	};
 
 	$scope.getBusinessModelType=function(bm){
@@ -192,6 +192,56 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			}
 		}
 	};
+
+	//Ag-grid table revamp
+	$scope.businessClassesGrid = {
+		angularCompileRows: true,
+		domLayout: 'autoHeight',
+		enableColResize: false,
+        enableSorting: false,
+        enableFilter: false,
+        rowDragManaged: true,
+        headerHeight: 0,
+        onRowDragEnter: rowDragEnter,
+        onRowDragEnd: onRowDragEnd,
+        onGridReady: resizeColumns,
+        onGridSizeChanged: resizeColumns,
+        rowSelection: 'single',
+        onRowClicked: rowSelection,
+        columnDefs: [{"headerName":sbiModule_translate.load("sbi.generic.name"),"field":"name",rowDrag: true,cellRenderer: fullWidthRow }],
+    	rowData : $scope.meta.businessModels
+	};
+
+	function moveInArray(arr, fromIndex, toIndex) {
+        var element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+    }
+
+	function rowDragEnter(event){
+		$scope.startingDragRow = event.overIndex;
+	}
+	function onRowDragEnd(event){
+		var diff = event.overIndex - $scope.startingDragRow;
+		$scope.moveBusinessClass($scope.startingDragRow,diff);
+		//moveInArray($scope.meta.businessModels, $scope.startingDragRow, event.overIndex);
+		//$scope.businessClassesGrid.api.redrawRows();
+	}
+
+	function resizeColumns(params){
+		params.api.sizeColumnsToFit();
+	}
+
+	function fullWidthRow(params){
+		return '<div layout="row" layout-align="start center">'+
+			   	'<i class="fa fa-bar"></i> <span>'+params.value+'</span><span flex></span>'+
+			   	'<span class="miniChip" style="padding: 0 8px; height: 20px;line-height:20px;">'+params.data.columns.length+ ' '+$scope.translate.load('sbi.glossary.attributes') +'</span>'+
+			   '</div>';
+	}
+
+	function rowSelection(params){
+		$scope.selectBusinessModel(params.data);
+	}
 
 	$scope.businessModelIconType={
 			"generic" :"fa fa-table",
@@ -358,6 +408,16 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 
 function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sbiModule_translate, sbiModule_config, sbiModule_restServices, parametersBuilder,sbiModule_config,metaModelServices ){
 
+	$scope.moveBusinessColumn=function(index,direction,businessModel){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "moveBusinessColumn",metaModelServices.createRequestRest({businessModelUniqueName:businessModel.uniqueName,index:index,direction:direction}))
+		   .then(function(response){
+				metaModelServices.applyPatch(response.data);
+				$scope.attributesGrid.api.redrawRows();
+		   },function(response){
+			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+		   })
+	}
+
 	//Ag-grid table revamp
 	$scope.attributesGrid = {
 			angularCompileRows: true,
@@ -372,7 +432,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	        onCellEditingStopped: refreshRow,
 	        singleClickEdit: true,
 	        stopEditingWhenGridLosesFocus: true,
-	        columnDefs: [{"headerName":sbiModule_translate.load("sbi.generic.name"),"field":"name",rowDrag: true, "editable":true,cellRenderer:editableCellWithIcon, cellClass: 'editableCell',width: 80},
+	        columnDefs: [{"headerName":sbiModule_translate.load("sbi.generic.name"),"field":"name",rowDrag: true, "editable":true,cellRenderer:editableCellWithIcon, cellClass: 'editableCell',width: 90},
 	    		{"headerName":sbiModule_translate.load("sbi.meta.model.table.primaryKey"),"field":"identifier",cellRenderer:checkboxRenderer,width: 40},
 	    		{"headerName":sbiModule_translate.load("sbi.execution.subobjects.visibility"),"field":"Visibility",cellRenderer:visibilityCheckboxRenderer,width: 40},
 	    		{"headerName":sbiModule_translate.load("sbi.generic.type"),"field":"type","editable":true,cellRenderer:typeEditableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['attribute','measure']} , width: 50},
@@ -391,8 +451,10 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 		$scope.startingDragRow = event.overIndex;
 	}
 	function onRowDragEnd(event){
-		moveInArray($scope.selectedBusinessModel.columns, $scope.startingDragRow, event.overIndex);
-		$scope.attributesGrid.api.redrawRows();
+		var diff = event.overIndex - $scope.startingDragRow;
+		//moveInArray($scope.selectedBusinessModel.columns, $scope.startingDragRow, event.overIndex);
+		$scope.moveBusinessColumn($scope.startingDragRow,diff,$scope.selectedBusinessModel);
+		//$scope.attributesGrid.api.redrawRows();
 	}
 
 	function resizeColumns(params){
@@ -465,7 +527,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	}
 
 	$scope.toggleAttributeVisibility = function(index){
-		$scope.selectedBusinessModel.columns[index].properties['structural.visible']['value'] = !$scope.selectedBusinessModel.columns[index].properties['structural.visible']['value'];
+		$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'] = !$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'];
 	}
 
 	$scope.openDetails = function(index, ev){
@@ -478,7 +540,11 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 		      locals: {attribute:$scope.selectedBusinessModel.columns[index]}
 		    })
 	        .then(function(attribute) {
-	        	$scope.selectedBusinessModel.columns[index] = attribute;
+	        	if(attribute.deleteAttribute){
+	        		$scope.selectedBusinessModel.columns.splice(index,1);
+	        	}else{
+	        		$scope.selectedBusinessModel.columns[index] = attribute;
+	        	}
 	        	$scope.attributesGrid.api.setRowData($scope.selectedBusinessModel.columns);
 	        }, function() {
         });
@@ -487,9 +553,23 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	function detailsDialogContent($scope, $mdDialog, attribute){
   		$scope.translate=sbiModule_translate;
   		$scope.selectedAttribute = angular.copy(attribute);
-
+  		var utilityMap = [];
+  		$scope.properties = {};
+  		for(var k in $scope.selectedAttribute.properties){
+  			utilityMap.push(Object.keys($scope.selectedAttribute.properties[k])[0]);
+  			$scope.properties[Object.keys($scope.selectedAttribute.properties[k])[0]] = $scope.selectedAttribute.properties[k][Object.keys($scope.selectedAttribute.properties[k])[0]];
+  		}
   		$scope.thisObject = function(targetObj){
   			return targetObj[Object.keys(targetObj)[0]];
+  		}
+
+  		$scope.getExampleDate = function(date){
+  			return moment().format(date);
+  		}
+
+  		$scope.deleteAttribute = function(){
+  	    	$scope.selectedAttribute.deleteAttribute = true;
+  			$mdDialog.hide($scope.selectedAttribute);
   		}
 
   		$scope.cancel = function(){

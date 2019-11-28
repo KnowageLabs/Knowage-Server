@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
 
 <!-- moment JS -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/moment/min/moment-with-locales.js")%>"></script>  
+<script type="text/javascript" src="<%=GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.js"></script>  
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
