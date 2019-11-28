@@ -553,6 +553,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 
 	function detailsDialogContent($scope, $mdDialog, attribute){
   		$scope.translate=sbiModule_translate;
+  		$scope.sbiModule_config = sbiModule_config;
   		$scope.selectedAttribute = angular.copy(attribute);
   		var utilityMap = [];
   		$scope.properties = {};

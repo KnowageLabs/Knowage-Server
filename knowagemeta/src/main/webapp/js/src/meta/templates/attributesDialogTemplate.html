@@ -51,7 +51,7 @@
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['behavioural.notEnabledRoles'].propertyType.name}}</label>
 							<md-select ng-model="properties['behavioural.notEnabledRoles'].value">
-								<md-option ng-repeat="option in properties['behavioural.notEnabledRoles'].propertyType.admissibleValues" ng-value="option">
+								<md-option ng-repeat="option in sbiModule_config.avaiableRoles track by $index" ng-value="option">
 									{{option}}
 								</md-option>
 							</md-select>
@@ -65,7 +65,7 @@
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.attribute'].propertyType.name}}</label>
 							<md-select ng-model="properties['structural.attribute'].value">
-								<md-option ng-repeat="option in properties['structural.attribute'].propertyType.admissibleValues" ng-value="option">
+								<md-option ng-repeat="option in sbiModule_config.profileAttributes" ng-value="option">
 									{{option}}
 								</md-option>
 							</md-select>
