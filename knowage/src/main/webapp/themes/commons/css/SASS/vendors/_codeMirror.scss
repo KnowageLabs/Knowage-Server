@@ -2,6 +2,12 @@
 	font-size: $mediumFontSize;
 }
 
+.fullHeightEditor {
+  .CodeMirror {
+    height: 100%;
+  }
+}
+
 .codeMirrorScriptEditor {
   pre {
     white-space: pre-wrap;

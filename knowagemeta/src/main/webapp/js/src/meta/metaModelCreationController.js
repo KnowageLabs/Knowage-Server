@@ -466,7 +466,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 		for(var k in attribute.properties){
 			if(attribute.properties[k].hasOwnProperty('structural.datatype')){
 				if (attribute.properties[k]['structural.datatype'].value == 'VARCHAR') return 'fa fa-font';
-				else if (['INTEGER','DOUBLE','DECIMAL','BIGINT'].indexOf(attribute.properties[k]['structural.datatype'].value) != -1) return 'fa fa-barcode';
+				else if (['INTEGER','DOUBLE','DECIMAL','BIGINT','FLOAT'].indexOf(attribute.properties[k]['structural.datatype'].value) != -1) return 'fa fa-barcode';
 				else if (['DATE','TIME','TIMESTAMP'].indexOf(attribute.properties[k]['structural.datatype'].value) != -1) return 'fa fa-calendar';
 				else return 'fa fa-circle-o';
 				break;
