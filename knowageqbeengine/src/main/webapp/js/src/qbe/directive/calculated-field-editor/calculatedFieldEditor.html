@@ -21,7 +21,7 @@
                 </md-input-container>
                 <md-input-container flex>
                     <label>{{translate.load("kn.qbe.calculatedfield.type")}}</label>
-                    <md-select ng-model="calculatedField.type" required>
+                    <md-select ng-model="calculatedField.type" required ng-change="typeChanged(calculatedField)">
                     	<md-option ng-repeat="type in availableTypes" value="{{type}}">{{type}}</md-option>
                     </md-select>
                 </md-input-container>

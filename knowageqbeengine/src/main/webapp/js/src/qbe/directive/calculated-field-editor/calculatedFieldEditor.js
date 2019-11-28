@@ -67,6 +67,11 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
                 $scope.reloadCodemirror = true;
             }, 500)
 
+            $scope.typeChanged = function(calculatedField){
+            	if(calculatedField.type!=='DATE')
+            		calculatedField.format = undefined;
+            }
+
          //   if (!$scope.selectedEntity) $scope.selectedEntity = $scope.entities[0];
 
             angular.forEach($scope.functions, function(value, key) {
