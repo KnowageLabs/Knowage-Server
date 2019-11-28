@@ -256,6 +256,28 @@ public class PageResource {
 		addCustomFunctionProperty(model);
 		addDateFormatProperty(model);
 		addTimeFormatProperty(model);
+		addDataTypeProperty(model);
+
+	}
+
+	/**
+	 * @param model
+	 */
+	private void addDataTypeProperty(Model model) {
+		ModelFactory FACTORY = ModelFactory.eINSTANCE;
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		ModelPropertyType propertyType = null;
+		ModelProperty property;
+		ModelPropertyCategory structuralCategory = model.getPropertyCategory("Structural");
+		List<BusinessTable> businessTables = businessModel.getBusinessTables();
+
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.datatype");
+		if (propertyType != null) {
+
+			propertyType.getAdmissibleValues().add("DECIMAL");
+			propertyType.getAdmissibleValues().add("BIGINT");
+		}
 
 	}
 
