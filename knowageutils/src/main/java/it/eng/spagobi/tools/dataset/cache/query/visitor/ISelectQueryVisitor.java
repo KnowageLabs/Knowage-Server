@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.OrFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.UnaryFilter;
@@ -38,6 +39,8 @@ public interface ISelectQueryVisitor {
 	void visit(BetweenFilter item);
 
 	void visit(InFilter item);
+
+	void visit(NotInFilter item);
 
 	void visit(LikeFilter item);
 

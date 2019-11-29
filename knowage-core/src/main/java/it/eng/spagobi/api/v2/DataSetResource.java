@@ -76,6 +76,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.PlaceholderFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
@@ -509,6 +510,8 @@ public class DataSetResource extends AbstractDataSetResource {
 						} else {
 							filter = new InFilter(projections, valueObjects);
 						}
+					} else if (SimpleFilterOperator.NOT_IN.equals(operator)) {
+						filter = new NotInFilter(projections, valueObjects);
 					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
 						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString());
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
@@ -562,7 +565,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			timing.stop();
 			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
 		} catch (Exception e) {
-			logger.error("Error while getting Data for dataset "+label,e);
+			logger.error("Error while getting Data for dataset " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
 	}

@@ -117,9 +117,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.newFilterColumnDS.push("");
 		$scope.newFilterCurrenteSelectedDS = {};
 
-		$scope.operatorsTypeString = ['=','!=','IN','like','is null','is not null','min','max'];
-		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','IN','is null','is not null','!=','min','max','range'];
-		$scope.operatorsTypeDate = ['=','!=','IN','is null','is not null','min','max','range'];
+		$scope.operatorsTypeString = ['=','!=','IN','like','is null','is not null','min','max','not IN'];
+		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','IN','is null','is not null','!=','min','max','range','not IN'];
+		$scope.operatorsTypeDate = ['=','!=','IN','is null','is not null','min','max','range','not IN'];
 
 		$scope.zeroOperandOperators = ['is null', 'is not null', 'min', 'max'];
 		$scope.oneOperandOperators = ['=', '!=', 'like', '<','>','<=','>=','IN'];

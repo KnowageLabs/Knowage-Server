@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.CompoundFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.OrFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
@@ -202,8 +203,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		if (item.getOperands().isEmpty()) {
 			visit(new UnsatisfiedFilter());
 		} else {
-			if (hasNullOperand(item)
-					|| !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
 					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
 				queryBuilder.append("(");
 				visit(transformToAndOrFilters(item));
@@ -216,9 +216,9 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	private boolean hasNullOperand(InFilter item) {
 		boolean hasNullOperand = false;
-		if(item != null){
+		if (item != null) {
 			for (Object operand : item.getOperands()) {
-				if(operand == null){
+				if (operand == null) {
 					hasNullOperand = true;
 					break;
 				}
@@ -228,6 +228,94 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	}
 
 	protected Filter transformToAndOrFilters(InFilter item) {
+		List<Projection> projections = item.getProjections();
+		List<Object> operands = item.getOperands();
+
+		int columnCount = projections.size();
+		int tupleCount = operands.size() / columnCount;
+
+		AndFilter[] andFilters = new AndFilter[tupleCount];
+		for (int tupleIndex = 0; tupleIndex < tupleCount; tupleIndex++) {
+			UnaryFilter[] equalFilters = new UnaryFilter[columnCount];
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+				equalFilters[columnIndex] = new UnaryFilter(projections.get(columnIndex), SimpleFilterOperator.EQUALS_TO,
+						operands.get(columnIndex + tupleIndex * columnCount));
+			}
+
+			andFilters[tupleIndex] = new AndFilter(equalFilters);
+		}
+		return new OrFilter(andFilters);
+	}
+
+	@Override
+	public void visit(NotInFilter item) {
+		if (item.getOperands().isEmpty()) {
+			visit(new UnsatisfiedFilter());
+		} else {
+			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+				queryBuilder.append("(");
+				visit(transformToAndOrFilters(item));
+				queryBuilder.append(")");
+			} else {
+				append(item);
+			}
+		}
+	}
+
+	private boolean hasNullOperand(NotInFilter item) {
+		boolean hasNullOperand = false;
+		if (item != null) {
+			for (Object operand : item.getOperands()) {
+				if (operand == null) {
+					hasNullOperand = true;
+					break;
+				}
+			}
+		}
+		return hasNullOperand;
+	}
+
+	protected void append(NotInFilter item) {
+		List<Projection> projections = item.getProjections();
+		String openBracket = projections.size() > 1 ? "(" : "";
+		String closeBracket = projections.size() > 1 ? ")" : "";
+
+		queryBuilder.append(openBracket);
+
+		append(projections.get(0), false);
+		for (int i = 1; i < projections.size(); i++) {
+			queryBuilder.append(",");
+			append(projections.get(i), false);
+		}
+
+		queryBuilder.append(closeBracket);
+
+		queryBuilder.append(" ");
+		queryBuilder.append(item.getOperator());
+		queryBuilder.append(" (");
+
+		List<Object> operands = item.getOperands();
+		for (int i = 0; i < operands.size(); i++) {
+			if (i % projections.size() == 0) { // 1st item of tuple of values
+				if (i >= projections.size()) { // starting from 2nd tuple of values
+					queryBuilder.append(",");
+				}
+				queryBuilder.append(openBracket);
+			}
+			if (i % projections.size() != 0) {
+				queryBuilder.append(",");
+			}
+			append(operands.get(i));
+			if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+				queryBuilder.append(closeBracket);
+			}
+		}
+
+		queryBuilder.append(")");
+	}
+
+	protected Filter transformToAndOrFilters(NotInFilter item) {
 		List<Projection> projections = item.getProjections();
 		List<Object> operands = item.getOperands();
 
@@ -303,8 +391,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	/**
 	 * @param projection
-	 * @param useAlias
-	 *            enables the output of an alias. Column name is used as alias if related flag is true.
+	 * @param useAlias   enables the output of an alias. Column name is used as alias if related flag is true.
 	 */
 	protected void append(Projection projection, boolean useAlias) {
 		String aliasDelimiter = database.getAliasDelimiter();
@@ -373,6 +460,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			visit((BetweenFilter) item);
 		} else if (item instanceof InFilter) {
 			visit((InFilter) item);
+		} else if (item instanceof NotInFilter) {
+			visit((NotInFilter) item);
 		} else if (item instanceof LikeFilter) {
 			visit((LikeFilter) item);
 		} else if (item instanceof NullaryFilter) {
