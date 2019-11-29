@@ -103,6 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.configs = {}; 		//layers with configuration
 		$scope.columnsConfig = {} 	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
+		$scope.layerVisibility = [];
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -504,7 +505,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				// Default visibility for layers that don't specify one
 				layerDef.defaultVisible = true;
 			}
-			layer.setVisible(layerDef.defaultVisible);
+			if ($scope.layerVisibility[label] == undefined) {
+				$scope.layerVisibility[label] = layerDef.defaultVisible;
+			}
+			layer.setVisible($scope.layerVisibility[label]);
 
 			// Setting default for isStatic property
 			if (!layerDef.hasOwnProperty("isStatic")) {
@@ -774,12 +778,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var l = $scope.getLayerByName(n);
 				if (!l) return; //do nothing
 				var toggle = !l.getVisible();
-				l.setVisible(!l.getVisible());
+				$scope.layerVisibility[n] = toggle;
+				l.setVisible(toggle);
 			} else {
 				console.log("Mutual exclusion, layer selected: "+n);
 				var l = $scope.getLayerByName(n);
 				if (!l) return; //do nothing
-				l.setVisible(true);
+				$scope.layerVisibility[n] = true;
+				l.setVisible($scope.layerVisibility[n]);
 				for(var i in $scope.ngModel.content.layers) {
 					var layerName = $scope.ngModel.content.layers[i].name;
 					console.log(layerName);
@@ -787,7 +793,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						console.log("setting to false");
 						var l_tmp = $scope.getLayerByName(layerName);
 						if (!l_tmp) return; //do nothing
-						l_tmp.setVisible(false);
+						$scope.layerVisibility[layerName] = false;
+						l_tmp.setVisible($scope.layerVisibility[layerName]);
 					}
 				}
 			}
