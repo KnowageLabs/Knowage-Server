@@ -1119,15 +1119,25 @@ div.lower i  {
 							
 							<md-card layout-padding style="margin-top:0">
 								
+								<div flex=100>
+									<md-input-container class="md-block">
+								    	<label>Dataframe variable name</label>
+										<input ng-model="selectedDataSet.dataframeName" ng-required ="selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='Python') && !selectedDataSet.dataframeName">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+									</md-input-container>
+								</div>
+								
 								<label>Script</label>
 							   	<md-input-container class="md-block">
 							    	
-									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python'" ng-model="selectedDataSet.restRequestBody" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python'" ng-model="selectedDataSet.pythonScript" ui-codemirror="{ onLoad : codemirrorLoaded }" 
 												ui-codemirror-opts="editorOptionsPython" rows="8" md-select-on-focus
 											 	ng-change="setFormDirty()">
 								 	</textarea>
 									
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Python' && !selectedDataSet.restRequestBody">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Python' && !selectedDataSet.pythonScript">
        						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
    						 			</div> 
 									

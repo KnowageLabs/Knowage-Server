@@ -75,15 +75,12 @@ public class StringUtilities {
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with the correspondent value in the string passed at input.
 	 *
-	 * @param str
-	 *            The string to be modified (tipically a query)
-	 * @param parameters
-	 *            The IEngUserProfile object
+	 * @param str        The string to be modified (tipically a query)
+	 * @param parameters The IEngUserProfile object
 	 *
 	 * @return The statement with profile attributes replaced by their values.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static String substituteParametersInString(String str, Map parameters) throws Exception {
 		logger.debug("IN");
@@ -102,10 +99,8 @@ public class StringUtilities {
 	/**
 	 * returns the first index chars
 	 *
-	 * @param str
-	 *            string to cut
-	 * @param index
-	 *            number of char to take
+	 * @param str   string to cut
+	 * @param index number of char to take
 	 * @return the left part of tre string
 	 */
 	public static String left(String str, int index) {
@@ -120,12 +115,9 @@ public class StringUtilities {
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with the correspondent value in the string passed at input.
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param parameters
-	 *            Profile attributes map
-	 * @param parametersStartIndex
-	 *            The start index for query parsing (useful for recursive calling)
+	 * @param statement            The string to be modified (tipically a query)
+	 * @param parameters           Profile attributes map
+	 * @param parametersStartIndex The start index for query parsing (useful for recursive calling)
 	 *
 	 * @return The statement with profile attributes replaced by their values.
 	 *
@@ -228,11 +220,9 @@ public class StringUtilities {
 	 * Find the attribute values in case of multi value attribute. The sintax is: {splitter character{list of values separated by the splitter}}. Examples:
 	 * {;{value1;value2;value3....}} {|{value1|value2|value3....}}
 	 *
-	 * @param attributeValue
-	 *            The String representing the list of attribute values
+	 * @param attributeValue The String representing the list of attribute values
 	 * @return The array of attribute values
-	 * @throws Exception
-	 *             in case of sintax error
+	 * @throws Exception in case of sintax error
 	 */
 	public static String[] findAttributeValues(String attributeValue) throws Exception {
 		logger.debug("IN");
@@ -263,8 +253,7 @@ public class StringUtilities {
 	/**
 	 * Quote.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 *
 	 * @return the string
 	 */
@@ -292,17 +281,13 @@ public class StringUtilities {
 	/**
 	 * Substitutes parameters with sintax "$P{parameter_name}" whose value is set in the map.
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param valuesMap
-	 *            Map name-value
-	 * @param surroundWithQuotes
-	 *            flag: if true, the replacement will be surrounded by quotes if they are missing
+	 * @param statement          The string to be modified (tipically a query)
+	 * @param valuesMap          Map name-value
+	 * @param surroundWithQuotes flag: if true, the replacement will be surrounded by quotes if they are missing
 	 *
 	 * @return The statement with profile attributes replaced by their values.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static String substituteParametersInString(String statement, Map valuesMap, Map parType, boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
@@ -359,14 +344,10 @@ public class StringUtilities {
 	/**
 	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input.
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param userProfile
-	 *            The IEngUserProfile object
-	 * @param profileAttributeStartIndex
-	 *            The start index for query parsing (useful for recursive calling)
-	 * @param surroundWithQuotes
-	 *            Flag: if true, the replacement will be surrounded by quotes if they are missing
+	 * @param statement                  The string to be modified (tipically a query)
+	 * @param userProfile                The IEngUserProfile object
+	 * @param profileAttributeStartIndex The start index for query parsing (useful for recursive calling)
+	 * @param surroundWithQuotes         Flag: if true, the replacement will be surrounded by quotes if they are missing
 	 *
 	 * @return The statement with parameters replaced by their values.
 	 * @throws Exception
@@ -495,17 +476,13 @@ public class StringUtilities {
 	 * Substitutes parameters with sintax "$P{parameter_name}" whose value is set in the map. This is only for dataset, had to duplicate to handle null values,
 	 * in case ogf null does not throw an exception but substitute null!
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param valuesMap
-	 *            Map name-value
-	 * @param surroundWithQuotes
-	 *            flag: if true, the replacement will be surrounded by quotes if they are missing
+	 * @param statement          The string to be modified (tipically a query)
+	 * @param valuesMap          Map name-value
+	 * @param surroundWithQuotes flag: if true, the replacement will be surrounded by quotes if they are missing
 	 *
 	 * @return The statement with profile attributes replaced by their values.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parType, boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
@@ -525,17 +502,13 @@ public class StringUtilities {
 	}
 
 	/**
-	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input. Only for datatset parameters, had
+	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input. Only for dataset parameters, had
 	 * to duplicate to handle null values, not throw an exception but put null!
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param userProfile
-	 *            The IEngUserProfile object
-	 * @param profileAttributeStartIndex
-	 *            The start index for query parsing (useful for recursive calling)
-	 * @param surroundWithQuotes
-	 *            Flag: if true, the replacement will be surrounded by quotes if they are missing
+	 * @param statement                  The string to be modified (tipically a query)
+	 * @param userProfile                The IEngUserProfile object
+	 * @param profileAttributeStartIndex The start index for query parsing (useful for recursive calling)
+	 * @param surroundWithQuotes         Flag: if true, the replacement will be surrounded by quotes if they are missing
 	 *
 	 * @return The statement with parameters replaced by their values.
 	 * @throws Exception
@@ -734,12 +707,9 @@ public class StringUtilities {
 	/**
 	 * Check the correct validity of the parameter value
 	 *
-	 * @param replacement
-	 *            : the parameter
-	 * @param parType
-	 *            : the parameter type
-	 * @param attribute
-	 *            : the attribute
+	 * @param replacement : the parameter
+	 * @param parType     : the parameter type
+	 * @param attribute   : the attribute
 	 * @return
 	 */
 	private static String checkParType(String replacement, String parType, String attribute) throws NumberFormatException {
@@ -976,10 +946,10 @@ public class StringUtilities {
 
 			String[] returnedValues = values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
 
-			Character ch1 = values.charAt( values.lastIndexOf(suffix)-1);
-			Character ch2 = values.charAt( values.lastIndexOf(suffix));
-			if (ch1.equals(ch2)) {  // case when '' is present as last value
-				String[] returnedValuesEmpty = new String[returnedValues.length+1];
+			Character ch1 = values.charAt(values.lastIndexOf(suffix) - 1);
+			Character ch2 = values.charAt(values.lastIndexOf(suffix));
+			if (ch1.equals(ch2)) { // case when '' is present as last value
+				String[] returnedValuesEmpty = new String[returnedValues.length + 1];
 				for (int i = 0; i < returnedValues.length; i++) {
 					returnedValuesEmpty[i] = returnedValues[i];
 				}
@@ -992,7 +962,6 @@ public class StringUtilities {
 			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
 		}
 	}
-
 
 	/**
 	 * Parse special characters with String replacement

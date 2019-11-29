@@ -238,13 +238,13 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
 		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
 
-		for (int s=0; s<sortKeyMap.size(); s++) {
-			Map <String, Object> sMap = sortKeyMap.get(s);
+		for (int s = 0; s < sortKeyMap.size(); s++) {
+			Map<String, Object> sMap = sortKeyMap.get(s);
 			NodeComparator nc = new NodeComparator();
 
-			nc.setParentValue((String)sMap.get("parentValue"));
-			nc.setMeasureLabel((String)sMap.get("measureLabel"));
-			if (sMap.get("direction")!= null) {
+			nc.setParentValue((String) sMap.get("parentValue"));
+			nc.setMeasureLabel((String) sMap.get("measureLabel"));
+			if (sMap.get("direction") != null) {
 				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
 				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
 			}
@@ -439,14 +439,10 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	/**
 	 * Build the sql statement to query the temporary table
 	 *
-	 * @param crosstabDefinition
-	 *            definition of the crosstab
-	 * @param descriptor
-	 *            the temporary table descriptor
-	 * @param dataSource
-	 *            the datasource
-	 * @param tableName
-	 *            the temporary table name
+	 * @param crosstabDefinition definition of the crosstab
+	 * @param descriptor         the temporary table descriptor
+	 * @param dataSource         the datasource
+	 * @param tableName          the temporary table name
 	 * @return the sql statement to query the temporary table
 	 */
 	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, List<WhereField> filters,
@@ -614,8 +610,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			this.recordTemporaryTable(tableName, dataSource);
 
 			/**
-			 * Do not remove comments from the following line: we cannot change the datatset state, since we are only temporarily persisting the dataset, but
-			 * the dataset itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We will use
+			 * Do not remove comments from the following line: we cannot change the dataset state, since we are only temporarily persisting the dataset, but the
+			 * dataset itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We will use
 			 * TemporaryTableManager to store this kind of information.
 			 *
 			 * dataset.setDataSourceForReading(getEngineInstance(). getDataSourceForWriting()); dataset.setPersisted(true);

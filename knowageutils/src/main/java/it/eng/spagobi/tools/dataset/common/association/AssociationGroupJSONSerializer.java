@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,41 +30,41 @@ import org.json.JSONObject;
  *
  */
 public class AssociationGroupJSONSerializer {
-	
-	
-	public  AssociationGroup deserialize(String o) throws JSONException {
+
+	public AssociationGroup deserialize(String o) throws JSONException {
 		JSONObject associationGroupJSON = new JSONObject(o);
 		return deserialize(associationGroupJSON);
 	}
-	
+
 	public AssociationGroup deserialize(JSONObject o) throws JSONException {
-		AssociationGroup associationGroup = new AssociationGroup(); 
+		AssociationGroup associationGroup = new AssociationGroup();
 		AssociationJSONSerializer associationSerializer = new AssociationJSONSerializer();
 		JSONArray associationsJSON = o.getJSONArray("associations");
 		List<Association> associations = associationSerializer.deserialize(associationsJSON);
 		associationGroup.addAssociations(associations);
 		return associationGroup;
 	}
-	
+
 	public JSONArray serialize(Collection<AssociationGroup> associationGroups) throws JSONException {
 		JSONArray a = new JSONArray();
-		for(AssociationGroup associationGroup : associationGroups) {
-			a.put( serialize(associationGroup) );
+		for (AssociationGroup associationGroup : associationGroups) {
+			a.put(serialize(associationGroup));
 		}
 		return a;
 	}
+
 	public JSONObject serialize(AssociationGroup associationGroup) throws JSONException {
 		JSONObject o = new JSONObject();
 		AssociationJSONSerializer associationSerializer = new AssociationJSONSerializer();
-		o.put("datasets", serializeDatatsets(associationGroup));
-		o.put("associations", associationSerializer.serialize( associationGroup.getAssociations() ));
+		o.put("datasets", serializeDatasets(associationGroup));
+		o.put("associations", associationSerializer.serialize(associationGroup.getAssociations()));
 		return o;
 	}
-	
-	public JSONArray serializeDatatsets(AssociationGroup associationGroup) {
+
+	public JSONArray serializeDatasets(AssociationGroup associationGroup) {
 		JSONArray a = new JSONArray();
 		Set<String> datasets = associationGroup.getDataSetLabels();
-		for(String dataset : datasets) {
+		for (String dataset : datasets) {
 			a.put(dataset);
 		}
 		return a;

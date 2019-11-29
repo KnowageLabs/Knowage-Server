@@ -2457,6 +2457,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					versNum:"",
 					trasfTypeCd: "",
 					restAddress: "",
+					pythonScript: "",
+					dataframeName: "",
 					solrCollection: "",
 					restDirectlyJSONAttributes: "",
 					restFetchSize: "",
@@ -2529,13 +2531,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.selectedDataSet.restRequestAdditionalParameters = $scope.restRequestAdditionalParameters;
 
 			}
-
-			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset?label=' + $scope.selectedDataSet.label;
-    			$scope.selectedDataSet.restHttpMethod = "POST";
-    			$scope.selectedDataSet.restJsonPathItems = "$[*]";
-    			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
-    		}
 
 			//----------------------
 			// JSON PATH ATTRIBUTES
@@ -3362,10 +3357,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset?label=' + $scope.selectedDataSet.label;
-    			$scope.selectedDataSet.restHttpMethod = "POST";
+    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+    			$scope.selectedDataSet.parameters = true;
     		}
 
 		}
@@ -3783,8 +3778,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
     $scope.saveWithoutMetadata = function () {
-//    	$scope.selectedDataSet.isFromSaveNoMetadata = true;
-//    	$scope.isFromSaveNoMetadata = true;
+    	$scope.selectedDataSet.isFromSaveNoMetadata = true;
+    	$scope.isFromSaveNoMetadata = true;
     	$scope.saveDataset();
     }
 

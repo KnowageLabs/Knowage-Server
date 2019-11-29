@@ -30,11 +30,6 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
-import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
-import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -87,6 +82,8 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -95,7 +92,10 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -155,15 +155,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {
 				datasetInsert(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {
-				datatsetTest(dsDao, locale);
+				datasetTest(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
-				datatsetDelete(dsDao, locale);
+				datasetDelete(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
-				datatsetVersionDelete(dsDao, locale);
+				datasetVersionDelete(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
-				datatsetAllVersionsDelete(dsDao, locale);
+				datasetAllVersionsDelete(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
-				datatsetVersionRestore(dsDao, locale);
+				datasetVersionRestore(dsDao, locale);
 			} else if (serviceType == null) {
 				setUsefulItemsInSession(dsDao, locale);
 			}
@@ -494,7 +494,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 	}
 
-	private void datatsetTest(IDataSetDAO dsDao, Locale locale) {
+	private void datasetTest(IDataSetDAO dsDao, Locale locale) {
 		try {
 			JSONObject dataSetJSON = getDataSetResultsAsJSON();
 			if (dataSetJSON != null) {
@@ -514,7 +514,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void datatsetDelete(IDataSetDAO dsDao, Locale locale) {
+	private void datasetDelete(IDataSetDAO dsDao, Locale locale) {
 		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 		IDataSet ds = dsDao.loadDataSetById(dsID);
 		HashMap<String, String> logParam = new HashMap();
@@ -572,7 +572,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void datatsetVersionDelete(IDataSetDAO dsDao, Locale locale) {
+	private void datasetVersionDelete(IDataSetDAO dsDao, Locale locale) {
 		Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
 		Integer dsId = getAttributeAsInteger(DataSetConstants.DS_ID);
 		try {
@@ -589,7 +589,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void datatsetAllVersionsDelete(IDataSetDAO dsDao, Locale locale) {
+	private void datasetAllVersionsDelete(IDataSetDAO dsDao, Locale locale) {
 		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 		try {
 			dsDao.deleteAllInactiveDataSetVersions(dsID);
@@ -601,7 +601,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void datatsetVersionRestore(IDataSetDAO dsDao, Locale locale) {
+	private void datasetVersionRestore(IDataSetDAO dsDao, Locale locale) {
 		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 		Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
 		try {
