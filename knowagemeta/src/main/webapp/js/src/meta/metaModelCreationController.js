@@ -310,7 +310,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessClassController,
 			preserveScope: true,
-			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels},
+			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels, businessClassesGrid: $scope.businessClassesGrid},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessClass.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,
