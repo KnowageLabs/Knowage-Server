@@ -87,7 +87,8 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * The Constructor.
 	 *
-	 * @param profile SpagoBIUserProfile
+	 * @param profile
+	 *            SpagoBIUserProfile
 	 */
 	public UserProfile(SpagoBIUserProfile profile) {
 		logger.debug("IN");
@@ -374,7 +375,8 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the functionalities.
 	 *
-	 * @param functs the new functionalities
+	 * @param functs
+	 *            the new functionalities
 	 */
 	public void setFunctionalities(Collection functs) {
 		this.functionalities = functs;
@@ -383,7 +385,8 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the attributes.
 	 *
-	 * @param attrs the new attributes
+	 * @param attrs
+	 *            the new attributes
 	 */
 	public void setAttributes(Map attrs) {
 		this.userAttributes = attrs;
@@ -407,7 +410,8 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the roles.
 	 *
-	 * @param rols the new roles
+	 * @param rols
+	 *            the new roles
 	 */
 	public void setRoles(Collection rols) {
 		this.roles = rols;
@@ -455,7 +459,8 @@ public class UserProfile implements IEngUserProfile {
 	 * To be used by external engines ONLY. The user unique identifier must be a JWT token expiring in SCHEDULER_JWT_TOKEN_EXPIRE_HOURS hours containing a claim
 	 * SsoServiceInterface.USER_ID: the value of this claim must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name.
 	 *
-	 * @param userUniqueIdentifier The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
+	 * @param userUniqueIdentifier
+	 *            The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
 	 * @return the user profile for the scheduler
 	 */
 	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {
@@ -487,7 +492,7 @@ public class UserProfile implements IEngUserProfile {
 				"MetaModelLifecycleManagement", "MetaModelsCatalogueManagement", "ModifyRefresh", "MultisheetCockpit", "NotifyContextBrokerAction",
 				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
 				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
-				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement" };
+				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
 		return Arrays.asList(functionalities);
 	}
 
