@@ -319,7 +319,9 @@
 		    			if (source.getFeatures()[0].get("isWKT")){
 
 							var geometry = source.getFeatures()[0].getGeometry();
-							if (geometry instanceof ol.geom.GeometryCollection) {
+							if ((geometry instanceof ol.geom.GeometryCollection)
+									|| (geometry instanceof ol.geom.Polygon)) {
+
 								var coords = [];
 
 								// Center the map on all coordinates of all geometries
@@ -342,8 +344,10 @@
 										return array[index] / length;
 									});
 
+							} else if(geometry instanceof ol.geom.Point) {
+								coord = geometry.getCoordinates();
 							} else {
-								coord = geometry.getCoordinates()[0];
+								console.log("Cannot determine the center of geomerty: " + geometry);
 							}
 
 		    			} else {
