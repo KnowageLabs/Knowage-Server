@@ -580,7 +580,113 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
   		$scope.save = function(){
   			$mdDialog.hide($scope.selectedAttribute);
   		}
-  	}
+  	}//	$scope.existsBusinessModel = function(i) {
+//		return ($scope.selectedBusinessModel.columns[i].physicalColumn!=undefined &&  angular.equals( $scope.selectedBusinessModel.columns[i].physicalColumn.name, $scope.selectedBusinessModel.columns[i].uniqueName));
+//	}
+//
+//	$scope.isBusinessModelColumnPK = function(i) {
+//		if($scope.selectedBusinessModel.columns[i].physicalColumn!=undefined &&  angular.equals( $scope.selectedBusinessModel.columns[i].physicalColumn.name, $scope.selectedBusinessModel.columns[i].uniqueName)){
+//			return $scope.selectedBusinessModel.columns[i].identifier;
+//		}else return false;
+//	}
+//
+//	$scope.toggleBusinessModelColumnPK = function(i) {
+//		var row = $scope.attributesList[i];
+//		$scope.selectedBusinessModel.columns[i].identifier = !$scope.selectedBusinessModel.columns[i].identifier;
+//	}
+
+//	$scope.selectedBusinessModelAttributes = [
+//	                              			{
+//	                              				label : sbiModule_translate.load("sbi.generic.name"),
+//	                              				name : "name",
+//	                              				transformer: function(row){
+//	                              					var bc=$scope.selectedBusinessModelAttributesScopeFunctions.BusinessColumnFromPc(row);
+//	                              					if(bc==null){
+//	                              						return row;
+//	                              					}else{
+//	                              						return bc.name;
+//	                              					}
+//
+//	                              				}
+//	                              			},
+//	                              			{
+//	                              				label : sbiModule_translate.load("sbi.meta.model.table.primaryKey"),
+//	                              				name : "identifier",
+//	                              				transformer : function(row) {
+//	                              					return "<md-checkbox ng-disabled='!scopeFunctions.existsBusinessModel(row)' ng-checked='scopeFunctions.isBusinessModelColumnPK(row)' ng-click='scopeFunctions.toggleBusinessModelColumnPK(row)' aria-label='isPrimaryKey'></md-checkbox>"
+//	                              					// return "<md-checkbox ng-model='row.identifier'
+//	                              					// aria-label='isPrimaryKey'></md-checkbox>"
+//	                              				}
+//	                              			},
+//	                              			{
+//	                              				label : sbiModule_translate.load("sbi.meta.model.inuse"),
+//	                              				name : "added",
+//	                              				transformer : function(row) {
+//	                              					return "<md-checkbox ng-checked='scopeFunctions.existsBusinessModel(row)' ng-click='scopeFunctions.toggleBusinessModel(row)' aria-label='isPrimaryKey'></md-checkbox>"
+//	                              				}
+//	                              			}
+//
+//	                              	];
+
+	// add referenced table if is a business view
+//	if($scope.selectedBusinessModel.hasOwnProperty("joinRelationships")){
+//		$scope.selectedBusinessModelAttributes.push({
+//			label : sbiModule_translate.load("sbi.meta.model.sourcetable"),
+//			name : "tableName",
+//		});
+//	}
+//
+//
+//
+//
+//
+//	$scope.isPresentInCalculatedColumn=function(bc,businessModel){
+//		for(var i=0;i<businessModel.calculatedBusinessColumns.length;i++){
+//			for(var j=0;j<businessModel.calculatedBusinessColumns[i].referencedColumns.length;j++){
+//				if(angular.equals(businessModel.calculatedBusinessColumns[i].referencedColumns[j].uniqueName,bc.uniqueName)){
+//					return businessModel.calculatedBusinessColumns[i].uniqueName;
+//				}
+//			}
+//		}
+//		return false
+//	}
+
+//	$scope.isPresentInOlapHierarchy=function(businessColumn,businessClass){
+//		var olapModels = $scope.meta.olapModels;
+//		for (var i=0; i< olapModels.length; i++){
+//			var dimensions = olapModels[i].dimensions
+//			for (var j=0; j < dimensions.length; j++){
+//				var hierarchies = dimensions[j].hierarchies;
+//				for (var k=0; k < hierarchies.length; k++){
+//					var levels = hierarchies[k].levels;
+//					for (var z=0; z < levels.length; z++ ){
+//						if (angular.equals(levels[z].column.uniqueName,businessColumn.uniqueName)){
+//							return hierarchies[k].name;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return false;
+//	}
+//
+//	$scope.createBusinessColumnFromPhysicalColumns=function(pc,businessModel){
+//		sbiModule_restServices.promisePost("1.0/metaWeb", "createBusinessColumn",metaModelServices.createRequestRest({physicalTableName:pc.tableName,physicalColumnName:pc.name,businessModelUniqueName:businessModel.uniqueName}))
+//		   .then(function(response){
+//				metaModelServices.applyPatch(response.data);
+//		   },function(response){
+//			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+//		   })
+//	}
+//
+//	$scope.deleteBusinessColumn=function(businessColumnUniqueName,businessModel){
+//		sbiModule_restServices.promisePost("1.0/metaWeb", "deleteBusinessColumn",metaModelServices.createRequestRest({businessColumnUniqueName:businessColumnUniqueName ,businessModelUniqueName:businessModel.uniqueName}))
+//		.then(function(response){
+//			metaModelServices.applyPatch(response.data);
+//		},function(response){
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+//		})
+//	}
 
 }
 
