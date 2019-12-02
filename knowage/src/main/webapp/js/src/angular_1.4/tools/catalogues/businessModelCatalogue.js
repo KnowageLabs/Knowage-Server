@@ -105,6 +105,27 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	}
 
+	$scope.getAllDatasets = function() {
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt")
+		.then(function(response) {
+			$scope.datasetsListTemp = angular.copy(response.data.root);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
+	}
+	$scope.getAllDatasets();
+
+	$scope.checkIfDataSetsUseBM = function() {
+		var canDeleteBM = true;
+		if($scope.datasetsListTemp != undefined) {
+			for(var i = 0; i < $scope.datasetsListTemp.length; i++) {
+				if($scope.datasetsListTemp[i].qbeDatamarts != undefined && $scope.datasetsListTemp[i].qbeDatamarts == $scope.selectedBusinessModel.name) {
+					canDeleteBM = false;
+				}
+			}
+		}
+		return canDeleteBM;
+	}
 
 
 	$scope.cancel = function(){
@@ -424,39 +445,48 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
-		 var id = item.id;
+		 if($scope.checkIfDataSetsUseBM()) {
+			 var id = item.id;
+				var confirm = $mdDialog
+				.confirm()
+				.title(sbiModule_translate.load("sbi.businessModelsCatalogue.confirm.delete"))
+				.content(
+						sbiModule_translate
+						.load("sbi.businessModelsCatalogue.confirm.delete.content"))
+						.ariaLabel('Lucky day').ok(
+								sbiModule_translate.load("sbi.general.continue")).cancel(
+										sbiModule_translate.load("sbi.general.cancel"));
 
-			var confirm = $mdDialog
-			.confirm()
-			.title(sbiModule_translate.load("sbi.businessModelsCatalogue.confirm.delete"))
-			.content(
-					sbiModule_translate
-					.load("sbi.businessModelsCatalogue.confirm.delete.content"))
-					.ariaLabel('Lucky day').ok(
-							sbiModule_translate.load("sbi.general.continue")).cancel(
-									sbiModule_translate.load("sbi.general.cancel"));
+				$mdDialog.show(confirm).then(function() {
 
-			$mdDialog.show(confirm).then(function() {
+					sbiModule_restServices.promiseDelete("2.0/businessmodels",id)
+					.then(function(response) {
+						removeFromBMs(id,"left");
+						 if($scope.selectedBusinessModel.id == id){
+							 $scope.selectedBusinessModel={};
+						 }
+						 $scope.selectedBusinessModels=[];
+						 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
 
-				sbiModule_restServices.promiseDelete("2.0/businessmodels",id)
-				.then(function(response) {
-					removeFromBMs(id,"left");
-					 if($scope.selectedBusinessModel.id == id){
-						 $scope.selectedBusinessModel={};
-					 }
-					 $scope.selectedBusinessModels=[];
-					 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
+					}, function(response) {
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					});
+
+				}, function() {
 
 				});
-
-			}, function() {
-
-			});
-
-
+		 } else {
+			 $mdDialog
+				.show(
+						$mdDialog.alert()
+					        .clickOutsideToClose(true)
+					        .title('Cannot delete')
+					        .textContent(sbiModule_translate.load("sbi.businessModelsCatalogue.cannot.delete"))
+					        .ariaLabel('Cannot delete BM')
+					        .ok('Ok')
+				    );
+		 }
 	 }
 
 		//calling service method DELETE/{bmId}/versions/{vId} deleting single version of selected model
