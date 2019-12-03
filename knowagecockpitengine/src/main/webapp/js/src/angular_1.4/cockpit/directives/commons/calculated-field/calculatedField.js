@@ -211,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.result.aliasToShow = $scope.result.alias;
 				$scope.result.fieldType = 'MEASURE';
 				$scope.result.isCalculated = true;
-				$scope.result.type = "java.lang.Integer";
+				$scope.result.type = "java.lang.Double";
 				promise.resolve($scope.result);
 				$mdDialog.hide();
 			},function(error){
