@@ -100,8 +100,17 @@ public class PythonDataProxy extends AbstractDataProxy {
 			json.put("script", pythonScript);
 			json.put("df_name", dataframeName);
 			if (parameters != null) {
-				JSONObject jsonParameters = new JSONObject(parameters.substring(1, parameters.length() - 1));
-				json.put("parameters", jsonParameters);
+				ArrayList<JSONObject> parametersList = new ArrayList<JSONObject>();
+				int start = 1, end = parameters.indexOf('}'), i = 1;
+				while (end != -1) {
+					String param = parameters.substring(start, end + 1);
+					JSONObject jsonParameter = new JSONObject(param);
+					parametersList.add(jsonParameter);
+					// json.put("parameter" + String.valueOf(i++), jsonParameter);
+					start = end + 2;
+					end = parameters.indexOf('}', start);
+				}
+				json.put("parameters", parametersList);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Cannot build request body as Json", t);

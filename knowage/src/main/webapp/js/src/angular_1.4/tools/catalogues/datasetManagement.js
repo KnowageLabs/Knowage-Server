@@ -76,7 +76,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 	});
 
-	$scope.$watch("selectedDataSet.restRequestBody",function(newValue,oldValue){
+	$scope.$watch("selectedDataSet.pythonScript",function(newValue,oldValue){
 		//debugger;
 	});
 
@@ -2985,7 +2985,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         lineWrapping: true,
         lineNumbers: true,
         mode: {name: "python"},
-        //onLoad: $scope.codemirrorLoaded
 	};
 
 	 $scope.codemirrorSparqlOptions = {
