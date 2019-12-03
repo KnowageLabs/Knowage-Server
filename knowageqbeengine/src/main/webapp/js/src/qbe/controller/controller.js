@@ -486,7 +486,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 
 	var getFunct =function(field){
-		if(isColumnType(field,"measure")){
+
+		if(field.aggtype && field.aggtype!==""){
+			return field.aggtype
+		}else if(isColumnType(field,"measure")){
 			return "SUM"
 		}else if($scope.isSpatial(field)){
 			return "COUNT"
