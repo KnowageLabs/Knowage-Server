@@ -305,18 +305,28 @@
 		}
 
 		ms.updateCoordinatesAndZoom = function(model, map, l, setValues){
-		    	var coord;
-		    	var zoom;
-		    	var source;
+				var coord;
+				var zoom;
+				var source;
 
-		    	if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0){
-		    		if (l.getSource() && l.getSource().getSource)
-		    			source = l.getSource().getSource(); //cluster case
-		    		else
-		    			source = l.getSource();
+				/*
+				 * WORKAROUND : Fix center point for widgets with WKT layer saved
+				 * before the commit 44eff10
+				 */
+				if (!(model.content.currentView.center instanceof Array)
+						|| (model.content.currentView.center instanceof Array
+								&& isNaN(model.content.currentView.center[0]))) {
+					model.content.currentView.center = [0,0];
+				}
 
-		    		if (source.getFeatures().length>0){
-		    			if (source.getFeatures()[0].get("isWKT")){
+				if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0){
+					if (l.getSource() && l.getSource().getSource)
+						source = l.getSource().getSource(); //cluster case
+					else
+						source = l.getSource();
+
+					if (source.getFeatures().length>0){
+						if (source.getFeatures()[0].get("isWKT")){
 
 							var geometry = source.getFeatures()[0].getGeometry();
 							if ((geometry instanceof ol.geom.GeometryCollection)
