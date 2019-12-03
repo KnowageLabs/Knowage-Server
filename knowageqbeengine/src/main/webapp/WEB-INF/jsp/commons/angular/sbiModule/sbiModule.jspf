@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       
         $mdDateLocaleProvider.parseDate = function(dateString,format) {
         	if(!format) format = 'L';
-            var m = moment(dateString, format, true);
+            var m = moment(dateString, format,'<%=locale.getLanguage()%>_<%=locale.getCountry()%>', true);
             return m.isValid() ? m.toDate() : new Date(NaN);
         };
         $mdDateLocaleProvider.formatDate = function(date,format) {
