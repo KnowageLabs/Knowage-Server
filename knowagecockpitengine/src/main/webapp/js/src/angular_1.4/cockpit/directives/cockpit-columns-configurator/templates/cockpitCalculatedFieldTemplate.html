@@ -8,14 +8,15 @@
 	    <md-dialog-content layout="row" class="calculatedFieldEditor">
 	    	<md-card layout="column" flex="20" flex-sm="30" flex-xs="40" class="left" ng-if="measuresList.length > 0 || datasetColumnsList.length > 0">
 	        	<md-card-content layout="column" class="noPadding">
-	           		<md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!calculatedField.datasetOrTableFlag && !isSolrDataset()">
-		   		   		<md-list-item class="md-2-line" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
-		   		   			<div class="md-list-item-text"><h3>{{meas.aliasToShow}}</h3>
-		   		   			<p>{{meas.alias}} ({{meas.aggregationSelected}})</p></div>			   		   		 
+	           		<md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!calculatedField.datasetOrTableFlag || isSolrDataset()">
+		   		   		<md-list-item ng-class="{'md-2-line':!isSolrDataset()}" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
+		   		   			<div ng-class="{'md-list-item-text':!isSolrDataset()}"><h3 ng-if="!isSolrDataset()">{{meas.aliasToShow}}</h3>
+		   		   			<span ng-if="isSolrDataset()">{{meas.aliasToShow}}</span>
+		   		   			<p ng-if="!isSolrDataset()">{{meas.alias}} ({{meas.aggregationSelected}})</p></div>					   		   		 
 	   		   				<md-divider></md-divider>
 	   		   			</md-list-item>
 	   		   		</md-list>
-	   		   		<md-list style="overflow: auto;" class="noPadding" ng-if="calculatedField.datasetOrTableFlag || isSolrDataset()">
+	   		   		<md-list style="overflow: auto;" class="noPadding" ng-if="calculatedField.datasetOrTableFlag && !isSolrDataset()">
 		   		   		<md-list-item ng-repeat="dmeas in datasetColumnsList" ng-click="addMeasures(dmeas)">
 		   		   			{{dmeas.alias}}
 	   		   				<md-divider></md-divider>
