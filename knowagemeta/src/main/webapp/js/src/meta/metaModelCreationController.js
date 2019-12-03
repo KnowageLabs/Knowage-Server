@@ -423,7 +423,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 
 				for(var i in $scope.unUsedColumns){
 					for(var j in $scope.selectedBusinessModel.columns){
-						if($scope.unUsedColumns[i].name === $scope.selectedBusinessModel.columns[j].uniqueName){
+						if($scope.unUsedColumns[i] && $scope.unUsedColumns[i].name === $scope.selectedBusinessModel.columns[j].uniqueName){
 							$scope.unUsedColumns.splice(i,1);
 						}
 					}
