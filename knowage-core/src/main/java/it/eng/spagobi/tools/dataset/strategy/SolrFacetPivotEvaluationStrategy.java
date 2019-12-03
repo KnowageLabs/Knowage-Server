@@ -194,11 +194,9 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 
 		List<File> imports = new ArrayList<File>();
-		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 		File scriptFile = new File(url.toURI());
 		imports.add(scriptFile);
-
-		Map<String, Object> bindings = new HashMap<String, Object>();
 
 		// add columns to result datastore
 
@@ -210,9 +208,12 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 			// method that calculates formula result getting each real value field
 
-			String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
+			String resultingCalculation = field.getFormula().replaceAll("\"", "");
+			// transformFormula(newRecord, pagedMetaData, field.getFormula());
 
-			Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
+			Map<String, Object> bindings = findBindings(newRecord, pagedMetaData, field.getFormula());
+
+			Object o = scriptManager.runScript(resultingCalculation, "groovy", bindings, imports);
 			String data = (o == null) ? "" : o.toString();
 
 			IField fieldNew = new Field(new BigDecimal(data));
@@ -221,20 +222,11 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 			datastoresToAdd.appendRecord(newRecord);
 		}
 
-		// IDataStore columnsDataStore = new
 		return datastoresToAdd;
 
 	}
 
 	public String transformFormula(Record record, IMetaData metadata, String formula) {
-//		String regex = "\\(.*?\\)";
-//		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-//		Matcher matcher = pattern.matcher(formula);
-//		List<String> allMatches = new ArrayList<String>();
-//		while (matcher.find()) {
-//			allMatches.add(matcher.group());
-//		}
-
 		formula = formula.replaceAll("\"", "");
 
 		for (int i = 0; i < metadata.getFieldCount(); i++) {
@@ -248,6 +240,27 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		}
 
 		return formula;
+
+	}
+
+	public Map<String, Object> findBindings(Record record, IMetaData metadata, String formula) {
+
+		Map<String, Object> bindings = new HashMap<String, Object>();
+		bindings.put("parameters", new HashMap());
+
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+
+			if (formula.contains(metadata.getFieldName(i))) {
+
+				BigDecimal value = new BigDecimal(record.getFieldAt(i).getValue().toString());
+
+				bindings.put(metadata.getFieldName(i), value);
+
+			}
+
+		}
+
+		return bindings;
 
 	}
 
