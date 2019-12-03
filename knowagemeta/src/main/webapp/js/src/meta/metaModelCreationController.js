@@ -579,7 +579,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	$scope.isAttributeVisible = function(index){
 		for(var k in $scope.selectedBusinessModel.columns[index].properties){
 			if ($scope.selectedBusinessModel.columns[index].properties[k].hasOwnProperty('structural.visible')){
-				if ($scope.selectedBusinessModel.columns[index].properties[k]['structural.visible'].value) return true;
+				if ($scope.selectedBusinessModel.columns[index].properties[k]['structural.visible'].value=='true') return true;
 				break;
 			}
 			return false;
