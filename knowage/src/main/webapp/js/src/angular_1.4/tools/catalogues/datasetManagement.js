@@ -3933,11 +3933,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
 					$scope.isCategoryRequired = false;
 
-					if($scope.isFromSaveNoMetadata == true) {
-						$scope.selectedDataSet.isFromSaveNoMetadata = false;
-						$scope.isFromSaveNoMetadata = false;
-						$scope.saveDataset();
-					}
+					/*
+					 * This seems a workaround for something i don't know.
+					 * I comment it hoping to see what it fixed.
+					 */
+					// if($scope.isFromSaveNoMetadata == true) {
+					// 	$scope.selectedDataSet.isFromSaveNoMetadata = false;
+					// 	$scope.isFromSaveNoMetadata = false;
+					// 	$scope.saveDataset();
+					//}
 
 					// SCHEDULING
 					if ($scope.selectedDataSet.isScheduled) {
