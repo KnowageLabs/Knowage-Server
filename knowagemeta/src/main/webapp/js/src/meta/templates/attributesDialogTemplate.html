@@ -58,11 +58,6 @@
 							<div class="hint">{{properties['behavioural.notEnabledRoles'].propertyType.description}}</div>
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
-							<label>{{properties['physical.physicaltable'].propertyType.name}}</label>
-							<input type="text" ng-disabled="true" ng-model="properties['physical.physicaltable'].value" />
-							<div class="hint">{{properties['physical.physicaltable'].propertyType.description}}</div>
-						</md-input-container>
-						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.attribute'].propertyType.name}}</label>
 							<md-select ng-model="properties['structural.attribute'].value">
 								<md-option ng-repeat="option in sbiModule_config.profileAttributes" ng-value="option">
@@ -70,6 +65,16 @@
 								</md-option>
 							</md-select>
 							<div class="hint">{{properties['structural.attribute'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['physical.physicaltable'].propertyType.name}}</label>
+							<input type="text" ng-disabled="true" ng-model="properties['physical.physicaltable'].value" />
+							<div class="hint">{{properties['physical.physicaltable'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{translate.load('sbi.meta.business.columns.physicalColumn')}}</label>
+							<input type="text" ng-disabled="true" ng-model="physicalColumn.name" />
+							<div class="hint">{{translate.load('sbi.meta.business.columns.physicalColumn.hint')}}</div>
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.filtercondition'].propertyType.name}}</label>
