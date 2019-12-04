@@ -1,0 +1,78 @@
+<div layout="row" flex layout-wrap ng-controller="variablesController" layout-align="space-around center">
+
+	<md-card flex>
+		<md-toolbar class="secondaryToolbar" >
+			<div class="md-toolbar-tools" layout="row">
+				<h2>{{::translate.load('kn.variables.definition')}}</h2>
+				<span flex></span>
+				<md-button class="md-fab md-mini" ng-click="addVariable($event);">
+					<md-tooltip>{{::translate.load('kn.variables.addvariable')}}</md-tooltip>
+		            <md-icon md-font-icon="fa fa-plus"></md-icon>
+		        </md-button>
+			</div>
+		</md-toolbar> 
+		<md-card-content layout="column" flex>
+			<div layout="row" style="width:100%" layout-align="center center" ng-if="variables.length == 0">
+				<div class="kn-info" flex="60">{{::translate.load('kn.variables.novariablesinfo')}}</div>
+			</div>
+			
+			<div layout="row" style="width:100%" layout-align="start center" ng-repeat="variable in variables track by $index">
+				<md-input-container class="md-block" flex="25">
+					<label>{{::translate.load('kn.variables.name')}}</label>
+					<input type="text" ng-model="variable.name" />
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex="25">
+					<label>{{::translate.load('kn.variables.type')}}</label>
+					<md-select ng-model="variable.type">
+						<md-option ng-repeat="varType in variableTypes" ng-value="varType.value">{{varType.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex ng-if="variable.type == 'profile'">
+					<label>{{::translate.load('kn.variables.attribute')}}</label>
+					<md-select ng-model="variable.attribute">
+						<md-option ng-repeat="attribute in profileAttributes" ng-value="attribute.value">{{attribute.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex ng-if="variable.type == 'driver'">
+					<label>{{::translate.load('kn.variables.driver')}}</label>
+					<md-select ng-model="variable.driver">
+						<md-option ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option> 
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex ng-if="variable.type == 'dataset'">
+					<label>{{::translate.load('sbi.cockpit.cross.outputParameter.dataset')}}</label>
+					<md-select ng-model="variable.dataset">
+						<md-option ng-repeat="ds in availableDatasets" ng-value="ds.dsId">{{ds.name}}</md-option> 
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex ng-if="variable.type == 'dataset'" ng-show="variable.dataset">
+					<label>{{::translate.load('sbi.cockpit.dataset.columnname')}}</label>
+					<md-select ng-model="variable.column">
+						<md-option value=""></md-option>
+						<md-option ng-repeat="col in availableColumns(variable.dataset).metadata.fieldsMeta" ng-value="col.name">{{col.name}}</md-option> 
+					</md-select>
+					<div class="hint">{{::translate.load('kn.variables.columnhint')}}</div>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex ng-if="variable.type == 'static'">
+					<label>{{::translate.load('kn.variables.value')}}</label>
+					<input type="text" ng-model="variable.value" />
+				</md-input-container>
+				
+				<span flex ng-if="!variable.type"></span>
+				
+				<md-button class="md-icon-button" ng-click="removeVariable($index)">
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
+					<md-tooltip md-delay="500">{{::translate.load('kn.variables.remove')}}</md-tooltip>
+				</md-button>
+			</div>
+			
+		</md-card-content>
+	</md-card>
+
+</div>

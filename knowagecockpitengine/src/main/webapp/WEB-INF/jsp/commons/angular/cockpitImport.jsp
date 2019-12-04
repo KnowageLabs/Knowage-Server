@@ -52,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_mapThematizerServices.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_exportWidgetService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_helperDescriptors.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_variableService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/services/knModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/services/knModule_fontIconsService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js")%>"></script>

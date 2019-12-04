@@ -19,7 +19,9 @@ angular
 	.module('cockpitModule')
 	.controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout","sbiModule_user",datasetManagerController])
 	.controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout",documentManagerController])
-	.controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_nearRealtimeServices", associationGroupController]);
+	.controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_nearRealtimeServices", associationGroupController])
+	.controller("variablesController", variablesController);
+
 
 function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,$timeout,sbiModule_user){
 	$scope.displayDatasetCard=false;
@@ -637,3 +639,47 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		$scope.$broadcast("refreshFrequencyNearRTData")
 		    	}
 };
+
+function variablesController($scope, sbiModule_translate, cockpitModule_template, cockpitModule_analyticalDrivers){
+
+	$scope.variables = cockpitModule_template.configuration.variables;
+	$scope.cockpitModule_template = cockpitModule_template;
+	$scope.translate = sbiModule_translate;
+	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
+
+	$scope.$watch('cockpitModule_template.configuration.datasets',function(newValue, oldValue){
+		$scope.availableDatasets = newValue;
+	})
+
+	$scope.availableColumns = function(id){
+		for(var k in $scope.tmpAvaiableDataset){
+			if($scope.tmpAvaiableDataset[k].id.dsId == id){
+				return $scope.tmpAvaiableDataset[k];
+			}
+		}
+	}
+
+	$scope.variableTypes = [
+		{"value":"static", "label":sbiModule_translate.load('sbi.cockpit.cross.outputParameters.type.static')},
+		{"value":"dataset", "label":"Dataset"},
+		{"value":"driver", "label":sbiModule_translate.load('sbi.cockpit.cross.analyticaldriver')},
+		{"value":"profile", "label":"Profile"}]
+
+	$scope.profileAttributes = [
+		{"value":"country", "label": "Country"},
+		{"value":"user_id", "label": "User ID"},
+		{"value":"name", "label": "User Name"},
+		{"value":"TENANT_ID", "label": "Tenant"},
+		{"value":"language", "label": "Language"},
+		{"value":"user_roles", "label": "User Roles"},
+		{"value":"email", "label": "User email"}]
+
+	$scope.addVariable = function(ev){
+		$scope.variables.push({});
+	};
+
+	$scope.removeVariable = function(i){
+		$scope.variables.splice(i,1);
+	}
+
+}
