@@ -122,6 +122,7 @@ abstract class AbstractExportJob implements Job {
 			throw new JobExecutionException(e);
 		}
 
+		export(context);
 		Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
 
 		try {
@@ -141,20 +142,6 @@ abstract class AbstractExportJob implements Job {
 			deleteJobDirectory();
 
 			String msg = String.format("Error creating file \"%s\"!", metadataFile);
-			logger.error(msg, e);
-			throw new JobExecutionException(e);
-		}
-
-		export(context);
-
-		Path perJobIdReadyPlaceholderFile = ExportPathBuilder.getInstance().getPerJobIdReadyPlaceholderFile(resourcePathAsStr, userProfile, id);
-		try {
-			Files.createFile(perJobIdReadyPlaceholderFile);
-		} catch (Exception e) {
-
-			deleteJobDirectory();
-
-			String msg = String.format("Error creating file \"%s\"!", perJobIdReadyPlaceholderFile);
 			logger.error(msg, e);
 			throw new JobExecutionException(e);
 		}

@@ -134,7 +134,6 @@ public class ExportResource {
 					java.nio.file.Path downloadPlaceholderPath = curr.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
 					java.nio.file.Path metadataPath = curr.resolve(ExportPathBuilder.METADATA_FILENAME);
 					java.nio.file.Path dataPath = curr.resolve(ExportPathBuilder.DATA_FILENAME);
-					java.nio.file.Path readyPath = curr.resolve(ExportPathBuilder.READY_FILENAME);
 
 					boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
 
@@ -149,10 +148,6 @@ public class ExportResource {
 					}
 
 					if (!Files.isRegularFile(dataPath)) {
-						continue;
-					}
-
-					if (!Files.isRegularFile(readyPath)) {
 						continue;
 					}
 
