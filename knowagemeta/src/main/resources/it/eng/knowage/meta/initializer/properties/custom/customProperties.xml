@@ -229,6 +229,7 @@
         <value>DECIMAL</value>
         <value>BIGINT</value>
         <value>FLOAT</value>
+        <value>SMALLINT</value>
       </admissibleValuesOf>
       
 <!--       <admissibleValuesOf typeId="style.alignment"> -->
