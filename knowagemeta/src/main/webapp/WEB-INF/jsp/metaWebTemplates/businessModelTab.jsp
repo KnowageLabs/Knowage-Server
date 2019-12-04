@@ -179,7 +179,7 @@
 					 	<md-button class="md-fab md-mini"  aria-label="Create" ng-click="addUnusedColumns($event)">
 			  			<md-icon md-font-icon="fa fa-plus"></md-icon>
 					</md-button>
-					 <div ag-grid="attributesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+					 <div ag-grid="attributesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage ag-full-dimensions noPadding" style="width:100%;"></div>
 				</md-content>
 			</md-tab>
 			
