@@ -152,7 +152,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			Iterator iterHibSnaps = hibSnaps.iterator();
 			while (iterHibSnaps.hasNext()) {
 				Object[] hibSnap = (Object[]) iterHibSnaps.next();
-				SnapshotMainInfo snap = new Snapshot();
+				SnapshotMainInfo snap = new SnapshotMainInfo();
 				snap.setId((Integer) hibSnap[0]);
 				snap.setBiobjId((Integer) hibSnap[1]);
 				snap.setName((String) hibSnap[2]);
