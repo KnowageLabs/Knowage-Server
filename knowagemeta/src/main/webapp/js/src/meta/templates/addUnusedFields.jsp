@@ -8,8 +8,15 @@
     </md-toolbar>
   	
     <md-dialog-content > 
-    <md-card>
+    <div layout="row" layout-align="center center" ng-if="!hasUnUsedColumns()">
+				<div class="kn-noItems" flex="60" flex-xs="100">
+					<p class="ng-binding">{{translate.load('sbi.no.columns.to.add')}}</p>
+				</div>
+	</div>
+    <md-card ng-if="hasUnUsedColumns()">
+    
     	<md-card-content>
+    	
    			<div ng-repeat="column in unUsedColumns" >
         	
    				<div layout="row">
@@ -33,7 +40,7 @@
 			      <md-button ng-click="cancel()">
 			       {{translate.load('sbi.generic.cancel')}}
 			      </md-button>
-			      <md-button ng-click="save()" >
+			      <md-button ng-click="save()" ng-if="hasUnUsedColumns()">
 			       {{translate.load('sbi.generic.save')}}
 			      </md-button>
    			 </md-dialog-actions>

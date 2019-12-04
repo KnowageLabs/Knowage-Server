@@ -132,6 +132,9 @@
         	{{translate.load('sbi.glossary.delete.attribute')}}
       	</md-button-->
       	<span flex></span>
+      	<md-button class="md-raised md-primary" ng-click="delete(selectedAttribute)" >
+        	{{translate.load('cache.manager.delete')}}
+      	</md-button>
       	<md-button class="md-raised" ng-click="cancel()" >
         	{{translate.load('sbi.generic.cancel')}}
       	</md-button>
@@ -139,8 +142,6 @@
         	{{translate.load('sbi.generic.save')}}
       	</md-button>
       	
-      	<md-button class="md-raised md-primary" ng-click="delete(selectedAttribute)" >
-        	{{translate.load('cache.manager.delete')}}
-      	</md-button>
+      	
     </md-dialog-actions>
 </md-dialog>

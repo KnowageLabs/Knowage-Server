@@ -419,15 +419,30 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 				$scope.selectedBusinessModel = selectedBusinessModel;
 				$scope.translate = sbiModule_translate;
 				$scope.physicalTable = physicalModels[$scope.selectedBusinessModel.physicalTable.physicalTableIndex];
-				$scope.unUsedColumns = angular.copy($scope.physicalTable.columns);
+				$scope.allColumns = angular.copy($scope.physicalTable.columns)
+				$scope.unUsedColumns = [];
 
-				for(var i in $scope.unUsedColumns){
-					for(var j in $scope.selectedBusinessModel.columns){
-						if($scope.unUsedColumns[i] && $scope.unUsedColumns[i].name === $scope.selectedBusinessModel.columns[j].uniqueName){
-							$scope.unUsedColumns.splice(i,1);
+				var contains = function(item,itemPropertyName,array,arrayItemPropertyName){
+					for(var i in array){
+						if(item[itemPropertyName] === array[i][arrayItemPropertyName]){
+							return true;
 						}
 					}
+
+					return false;
 				}
+
+				$scope.hasUnUsedColumns = function(){
+					return $scope.unUsedColumns && $scope.unUsedColumns.length > 0;
+				}
+
+				for(var i in $scope.allColumns){
+					if(!contains($scope.allColumns[i],"name",$scope.selectedBusinessModel.columns,"uniqueName")){
+						$scope.unUsedColumns.push($scope.allColumns[i])
+					}
+
+				}
+
 
 				console.log($scope.selectedBusinessModel)
 				console.log(physicalModels)

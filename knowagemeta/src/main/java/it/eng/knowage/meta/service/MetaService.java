@@ -1075,6 +1075,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response createBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1122,6 +1123,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public String moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1156,6 +1158,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response deleteBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1165,7 +1168,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
-		if (columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
+		if (columnToDelete == null || columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
 			// cannot delete because is an identifier
 			JSONObject jsonObject = new JSONObject();
 			JSONArray jsonArray = new JSONArray();
