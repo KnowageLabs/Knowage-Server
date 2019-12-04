@@ -17,24 +17,16 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 
-public class Snapshot implements Serializable {
+public class Snapshot extends SnapshotMainInfo {
 
 	static private Logger logger = Logger.getLogger(Snapshot.class);
 
-	private Integer id = null;
-	private Integer biobjId = null;
-	private String name = null;
-	private String description = null;
-	private Date dateCreation = null;
 	private String time = null;
 	private Integer binId = null;
 	private byte[] content = null;
@@ -50,101 +42,6 @@ public class Snapshot implements Serializable {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
-	}
-
-	/**
-	 * Gets the id.
-	 *
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id.
-	 *
-	 * @param id
-	 *            the new id
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	/**
-	 * Gets the biobj id.
-	 *
-	 * @return the biobj id
-	 */
-	public Integer getBiobjId() {
-		return biobjId;
-	}
-
-	/**
-	 * Sets the biobj id.
-	 *
-	 * @param biobjId
-	 *            the new biobj id
-	 */
-	public void setBiobjId(Integer biobjId) {
-		this.biobjId = biobjId;
-	}
-
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Sets the name.
-	 *
-	 * @param name
-	 *            the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Gets the description.
-	 *
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 *
-	 * @param description
-	 *            the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Gets the date creation.
-	 *
-	 * @return the date creation
-	 */
-	public Date getDateCreation() {
-		return dateCreation;
-	}
-
-	/**
-	 * Sets the date creation.
-	 *
-	 * @param dateCreation
-	 *            the new date creation
-	 */
-	public void setDateCreation(Date dateCreation) {
-		this.dateCreation = dateCreation;
 	}
 
 	/**

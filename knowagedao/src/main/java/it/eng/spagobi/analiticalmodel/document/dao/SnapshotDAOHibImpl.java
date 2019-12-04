@@ -35,6 +35,7 @@ import org.hibernate.Transaction;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.bo.SnapshotMainInfo;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -113,6 +114,50 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				/**
 				 * We mustn't set Content in this point, it should stay Null, only in that way functionality of Exporting Snapshot will work
 				 */
+
+				snaps.add(snap);
+			}
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return snaps;
+	}
+
+	@Override
+	public List<SnapshotMainInfo> getSnapshotMainInfos(Integer idBIObj) throws EMFUserError {
+		List<SnapshotMainInfo> snaps = new ArrayList<SnapshotMainInfo>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select ss.snapId, ss.sbiObject.biobjId, ss.name, ss.description, ss.creationDate from SbiSnapshots ss where ss.sbiObject.biobjId = ?";
+
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, idBIObj.intValue());
+
+			List hibSnaps = query.list();
+			Iterator iterHibSnaps = hibSnaps.iterator();
+			while (iterHibSnaps.hasNext()) {
+				Object[] hibSnap = (Object[]) iterHibSnaps.next();
+				SnapshotMainInfo snap = new Snapshot();
+				snap.setId((Integer) hibSnap[0]);
+				snap.setBiobjId((Integer) hibSnap[1]);
+				snap.setName((String) hibSnap[2]);
+				snap.setDescription((String) hibSnap[3]);
+				snap.setDateCreation((Date) hibSnap[4]);
 
 				snaps.add(snap);
 			}
