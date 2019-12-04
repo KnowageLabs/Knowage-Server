@@ -126,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.ds.description")}}</label>
-								<input name="description" ng-model="SelectedConstraint.description" ng-maxlength="160" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+								<input name="description" ng-model="SelectedConstraint.description" ng-maxlength="400" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
 								<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
 									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
 									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
