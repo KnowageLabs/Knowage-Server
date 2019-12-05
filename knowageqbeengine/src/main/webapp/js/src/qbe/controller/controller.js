@@ -370,6 +370,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			return str.join("&");
 
 		}
+		item.pars = JSON.stringify($scope.pars);
 		sbiModule_action.promisePost('SET_CATALOGUE_ACTION',queryParam,item, conf).then(function(response){
 			$scope.getSQL();
 		}, function(response){

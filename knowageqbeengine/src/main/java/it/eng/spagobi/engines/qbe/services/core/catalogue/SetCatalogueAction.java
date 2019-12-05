@@ -108,6 +108,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	public static final String AMBIGUOUS_WARING = "ambiguousWarinig";
 	public static final String CATALOGUE_ERRORS = "catalogueErrors";
 	public static final String QUERY_STRING = "queryString";
+	public static final String PARS = "pars";
 
 	public static final String MESSAGE = "message";
 	public static final String MESSAGE_SAVE = "save";
@@ -159,7 +160,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					logger.debug("The previous oldQueryGraph is " + oldQueryGraph);
 				}
 			}
-
+			JSONArray parameters = getAttributeAsJSONArray(PARS);
+			addParameters(parameters);
 			// get the cataologue from the request
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
 			if (jsonEncodedCatalogue == null) {
