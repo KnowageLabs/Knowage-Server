@@ -521,12 +521,16 @@
 						objPost.MODE = 'extra';
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
 
-						paramDialogCtrl.columns = [{"headerName":"Label","field":"label",headerCheckboxSelection: paramDialogCtrl.tempParameter.multivalue, checkboxSelection: paramDialogCtrl.tempParameter.multivalue},
+						paramDialogCtrl.columns = [
+							{"headerName":"Label",
+								"field":"label",
+								headerCheckboxSelection: paramDialogCtrl.tempParameter.multivalue,
+								headerCheckboxSelectionFilteredOnly: true,
+								checkboxSelection: paramDialogCtrl.tempParameter.multivalue},
 							{"headerName":"Description","field":"description"}];
 
 						paramDialogCtrl.lookoutGridOptions = {
 				            enableColResize: false,
-				            enableFilter: false,
 				            enableSorting: true,
 				            pagination: true,
 				            paginationAutoPageSize: true,
@@ -537,11 +541,10 @@
 				            defaultColDef: {
 				            	suppressMovable: true,
 				            	tooltip: function (params) {
-				                    return params.value;
+				            		return params.value;
 				                },
 				            },
-				            columnDefs: paramDialogCtrl.columns,
-				            postSort : postSort
+				            columnDefs: paramDialogCtrl.columns
 						}
 
 						paramDialogCtrl.filterDataset = function(){
@@ -552,21 +555,6 @@
 							grid.api.sizeColumnsToFit();
 						}
 
-						function postSort(nodes){
-
-						    function move(toIndex, fromIndex) {
-						    	nodes.splice(toIndex, 0, nodes.splice(fromIndex, 1)[0]);
-						    }
-
-						    var nextInsertPos = 0;
-						    for (var i = 0; i < nodes.length; i++) {
-						        if (nodes[i].selected) {
-						            move(nextInsertPos, i)
-						            nextInsertPos++;
-						        }
-						    }
-						}
-
 						function getColumnsDefs(fields){
 							var temp = [];
 							var first=false;
@@ -575,6 +563,7 @@
 									var tempCol = {'headerName': fields[k].header, 'field':fields[k].name }
 									if(!first) {
 										tempCol.headerCheckboxSelection = paramDialogCtrl.tempParameter.multivalue;
+										tempCol.headerCheckboxSelectionFilteredOnly = true,
 										tempCol.checkboxSelection = paramDialogCtrl.tempParameter.multivalue;
 										first = true;
 									}
