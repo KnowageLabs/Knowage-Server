@@ -466,6 +466,8 @@
 	
 	<DOMAIN valueCd="Solr" valueNm="SbiSolrDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiSolrDataSet"/>
 	
+	<DOMAIN valueCd="Python" valueNm="SbiPythonDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPythonDataSet"/>
+	
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		

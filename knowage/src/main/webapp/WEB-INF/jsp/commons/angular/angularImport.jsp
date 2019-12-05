@@ -152,6 +152,9 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerCommunicationService.js")%>"></script> 
 
+<!-- codemirror -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/js/lib/codeMirror/pythonMode.js")%>"></script>
+
 <!-- dataset save -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/dataset-save/datasetSaveModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/workspace/scripts/directive/dataset-save/datasetSave.js")%>"></script>

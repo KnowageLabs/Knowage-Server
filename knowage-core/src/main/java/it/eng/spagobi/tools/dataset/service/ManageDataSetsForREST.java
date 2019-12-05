@@ -76,6 +76,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
@@ -93,6 +94,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
@@ -135,7 +137,7 @@ public class ManageDataSetsForREST {
 
 		}
 
-		return datatsetTest(json, userProfile);
+		return datasetTest(json, userProfile);
 	}
 
 	/**
@@ -636,6 +638,8 @@ public class ManageDataSetsForREST {
 			toReturn = dataSet;
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_REST_TYPE)) {
 			toReturn = manageRESTDataSet(savingDataset, jsonDsConfig, json);
+		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PYTHON_TYPE)) {
+			toReturn = managePythonDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SPARQL)) {
 			toReturn = manageSPARQLDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
@@ -1263,6 +1267,21 @@ public class ManageDataSetsForREST {
 		return res;
 	}
 
+	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+		for (String sa : PythonDataSetConstants.REST_STRING_ATTRIBUTES) {
+			config.put(sa, json.optString(sa));
+		}
+		for (String ja : PythonDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+			config.put(ja, new JSONObject(json.getString(ja)));
+		}
+		for (String ja : PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
+			config.put(ja, new JSONArray(json.getString(ja)));
+		}
+		PythonDataSet res = new PythonDataSet(config);
+		res.setLabel(json.optString(DataSetConstants.LABEL));
+		return res;
+	}
+
 	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
 		for (String sa : SPARQLDatasetConstants.SPARQL_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
@@ -1509,7 +1528,7 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	private String datatsetTest(JSONObject json, UserProfile userProfile) {
+	private String datasetTest(JSONObject json, UserProfile userProfile) {
 		try {
 			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile);
 			if (dataSetJSON != null) {

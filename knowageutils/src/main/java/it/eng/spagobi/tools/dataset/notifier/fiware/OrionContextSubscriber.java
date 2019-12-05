@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import it.eng.spagobi.commons.bo.UserProfile;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
@@ -35,6 +34,7 @@ import org.joda.time.DurationFieldType;
 import org.joda.time.MutableDateTime;
 import org.json.JSONException;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
@@ -142,8 +142,7 @@ public class OrionContextSubscriber {
 		} else {
 			String subscriptionId = sendSubscription();
 			// In this mode (listening after subscription) I lose the first notification with all context elements
-			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, profile, label, signature,
-					realtimeNgsiConsumer,
+			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, profile, label, signature, realtimeNgsiConsumer,
 					dataReader);
 			manager.addOperatorIfAbsent(subscriptionKey, newOperator);
 		}

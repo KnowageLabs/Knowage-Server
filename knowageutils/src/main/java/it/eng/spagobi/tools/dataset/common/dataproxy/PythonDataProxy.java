@@ -24,11 +24,13 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
+import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
@@ -40,9 +42,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities.Response;
  * @author fabrizio
  *
  */
-public class RESTDataProxy extends AbstractDataProxy {
+public class PythonDataProxy extends AbstractDataProxy {
 
-	private static final String NGSI_LIMIT = "1000";
 	private static final int OFFSET_NOT_DEFINED = -1;
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
@@ -55,18 +56,19 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private final String offsetParam;
 	private final String fetchSizeParam;
 	private final String maxResultsParam;
-	private final boolean ngsi;
 
-	public RESTDataProxy(String address, HttpMethod method, String requestBody, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
-			String maxResultsParam, boolean ngsi) {
+	public PythonDataProxy(String address, String pythonScript, String dataframeName, String parameters, Map<String, String> requestHeaders, String offsetParam,
+			String fetchSizeParam, String maxResultsParam) {
 		Helper.checkNotNull(address, "address");
 		Helper.checkNotEmpty(address, "address");
-		Helper.checkNotNull(method, "method");
 		// cab be empty
 		Helper.checkNotNull(requestHeaders, "requestHeaders");
 		// can be null, can't empty
-		if (requestBody != null) {
-			Helper.checkNotEmpty(requestBody, "requestBody");
+		if (pythonScript != null) {
+			Helper.checkNotEmpty(pythonScript, "pythonScript");
+		}
+		if (dataframeName != null) {
+			Helper.checkNotEmpty(dataframeName, "dataframeName");
 		}
 
 		// offset and fetch size must exist together
@@ -83,28 +85,37 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 
 		this.address = address;
-		this.method = method;
+		this.method = HttpMethod.valueOf("Post");
 		this.requestHeaders = new HashMap<String, String>(requestHeaders);
-		this.requestBody = requestBody;
+		this.requestHeaders.put("Content-Type", "application/json");
+		this.requestBody = buildBodyAsJson(pythonScript, dataframeName, parameters);
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
-		this.ngsi = ngsi;
-		manageHeadersNGSI();
 	}
 
-	private void manageHeadersNGSI() {
-		if (!ngsi) {
-			return;
-		}
-
-		// add NGSI headers if they are not present
-		String[][] ngsiHeaders = new String[][] { { "Accept", "application/json" } };
-		for (String[] header : ngsiHeaders) {
-			if (!requestHeaders.containsKey(header[0])) {
-				requestHeaders.put(header[0], header[1]);
+	private String buildBodyAsJson(String pythonScript, String dataframeName, String parameters) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("script", pythonScript);
+			json.put("df_name", dataframeName);
+			if (parameters != null) {
+				ArrayList<JSONObject> parametersList = new ArrayList<JSONObject>();
+				int start = 1, end = parameters.indexOf('}'), i = 1;
+				while (end != -1) {
+					String param = parameters.substring(start, end + 1);
+					JSONObject jsonParameter = new JSONObject(param);
+					parametersList.add(jsonParameter);
+					// json.put("parameter" + String.valueOf(i++), jsonParameter);
+					start = end + 2;
+					end = parameters.indexOf('}', start);
+				}
+				json.put("parameters", parametersList);
 			}
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Cannot build request body as Json", t);
 		}
+		return json.toString();
 	}
 
 	@Override
@@ -145,10 +156,6 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 		if (maxResultsParam != null && maxResults != MAX_RESULT_NOT_DEFINED) {
 			res.add(new NameValuePair(maxResultsParam, Integer.toString(maxResults)));
-		} else {
-			if (ngsi) {
-				res.add(new NameValuePair("limit", NGSI_LIMIT));
-			}
 		}
 
 		return res;

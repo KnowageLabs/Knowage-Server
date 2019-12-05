@@ -172,7 +172,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 		    },
 		    function(response) { //failed
-		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+		    	if (cockpitModule_properties.EDIT_MODE == false) {
+		    		$scope.pythonOutput = 'Python Error';
+		    	}
+		    	else {
+			    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+		    	}
 		    });
 
 		}
