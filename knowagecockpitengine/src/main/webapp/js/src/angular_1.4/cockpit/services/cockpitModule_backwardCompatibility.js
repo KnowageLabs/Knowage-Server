@@ -104,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 				if(model.type=='selector'){
-					if(model.settings.modalityValue == 'multiValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'multiDropdown';
+					if(model.settings && model.settings.modalityValue == 'multiValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'multiDropdown';
 				}
 			}
 
