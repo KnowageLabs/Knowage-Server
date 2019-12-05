@@ -500,7 +500,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.filterAggreagtionFunctions(row)" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -566,7 +566,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
             },
             visible: function (item) {
 
-            	return item.fieldType == 'measure' ? true : false;
+            	return item.funct && item.func != '' && item.funct !="NONE" ? true : false;
             }
 
       	},
@@ -593,6 +593,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
        ];
 
 	$scope.basicViewScopeFunctions = {
+		filterAggreagtionFunctions: function (row){
+
+			if(row.fieldType=='attribute') return [ "NONE", "MIN", "MAX", "COUNT", "COUNT_DISTINCT" ];
+			else return [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
+		},
 		aggregationFunctions: $scope.aggFunctions,
 		orderingValues: ["NONE", "ASC", "DESC"],
 		temporalFunctions: $scope.tmpFunctions,
