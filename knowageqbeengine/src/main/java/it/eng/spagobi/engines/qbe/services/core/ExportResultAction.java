@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
@@ -78,6 +79,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	public static final String MIME_TYPE = "MIME_TYPE";
 	public static final String QUERY = "query";
 	public static final String RESPONSE_TYPE = "RESPONSE_TYPE";
+	public static final String PARS = "pars";
 
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
@@ -125,7 +127,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			queryJSON = getAttributeAsJSONObject(QUERY);
 			logger.debug(QUERY + ": " + queryJSON);
-
+			JSONArray parameters = getAttributeAsJSONArray(PARS);
+			addParameters(parameters);
 			Assert.assertNotNull(getEngineInstance(),
 					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 

@@ -51,6 +51,7 @@
 					exportResultAction.actionName = "EXPORT_RESULT_ACTION";
 					exportResultAction.queryParams.MIME_TYPE = mimeType;
 					exportResultAction.formParams.query = query;
+					exportResultAction.formParams.pars = bodySend.pars;
 					exportResultAction.conf.responseType = 'arraybuffer';
 					exportResultAction.executeAction().then(function(response){
 

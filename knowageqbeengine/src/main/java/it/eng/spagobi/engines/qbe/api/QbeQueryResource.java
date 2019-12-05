@@ -322,6 +322,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		try {
 			jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray pars = jsonEncodedReq.optJSONArray(DataSetConstants.PARS);
+			addParameters(pars);
 			catalogue = jsonEncodedReq.getJSONArray("catalogue");
 			if (catalogue == null) {
 				catalogue = jsonEncodedReq.getJSONArray("qbeJSONQuery");
