@@ -9,6 +9,11 @@
 	</md-toolbar>
 		
 	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" layout="column" flex>
+		<div layout="row" layout-align="center center" ng-if="paramDialogCtrl.error">
+			<div class="kn-error" flex="60">
+				{{paramDialogCtrl.error}}
+			</div>
+		</div>
 		<div>
 			<md-input-container md-no-float class="md-block">
 		      <md-icon md-font-icon="fa fa-search"></md-icon>

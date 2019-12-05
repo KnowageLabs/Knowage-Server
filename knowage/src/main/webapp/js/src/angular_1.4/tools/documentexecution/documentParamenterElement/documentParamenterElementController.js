@@ -371,6 +371,8 @@
 				controller : function($mdDialog, parameter, toggleCheckboxParameter, checkboxParameterExists,sbiModule_translate,sbiModule_messaging) {
 					var paramDialogCtrl = this;
 
+					var MAX_SELECTION_NUMBER = 5;
+					paramDialogCtrl.error = false;
 					paramDialogCtrl.toggleCheckboxParameter = toggleCheckboxParameter;
 					paramDialogCtrl.checkboxParameterExists = checkboxParameterExists;
 
@@ -407,6 +409,10 @@
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
 							var parameterValueArray = [];
 							if(paramDialogCtrl.lookoutGridOptions.api.getSelectedRows()) paramDialogCtrl.selectedTableItems = paramDialogCtrl.lookoutGridOptions.api.getSelectedRows();
+							if(paramDialogCtrl.selectedTableItems.length > MAX_SELECTION_NUMBER){
+								paramDialogCtrl.error = sbiModule_translate.load('kn.parameters.lookup.error.max').replace("{0}", MAX_SELECTION_NUMBER);
+								return;
+							}
 							if(paramDialogCtrl.tempParameter.multivalue) {
 
 								var parameterValueArrayToShow = [];
