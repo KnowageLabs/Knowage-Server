@@ -49,6 +49,11 @@ public class JPQLStatementConditionalOperators {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "=" + rightHandValues[0];
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_EQUALS_TO, new IConditionalOperator() {
 			public String getName() {
@@ -59,6 +64,11 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "!=" + rightHandValues[0];
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.GREATER_THAN, new IConditionalOperator() {
@@ -71,6 +81,11 @@ public class JPQLStatementConditionalOperators {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + ">" + rightHandValues[0];
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.EQUALS_OR_GREATER_THAN, new IConditionalOperator() {
 			public String getName() {
@@ -81,6 +96,11 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + ">=" + rightHandValues[0];
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.LESS_THAN, new IConditionalOperator() {
@@ -93,6 +113,11 @@ public class JPQLStatementConditionalOperators {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "<" + rightHandValues[0];
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.EQUALS_OR_LESS_THAN, new IConditionalOperator() {
 			public String getName() {
@@ -103,6 +128,11 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "<=" + rightHandValues[0];
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.STARTS_WITH, new IConditionalOperator() {
@@ -123,6 +153,11 @@ public class JPQLStatementConditionalOperators {
 				}
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.LIKE, new IConditionalOperator() {
 			public String getName() {
@@ -140,6 +175,11 @@ public class JPQLStatementConditionalOperators {
 					rightHandValue = "' || " + rightHandValue + " || '";
 				}
 				return leftHandValue + " like '" + rightHandValue + "'";
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_STARTS_WITH, new IConditionalOperator() {
@@ -160,6 +200,11 @@ public class JPQLStatementConditionalOperators {
 				}
 				return leftHandValue + " not like '" + rightHandValue + "'";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.ENDS_WITH, new IConditionalOperator() {
 			public String getName() {
@@ -178,6 +223,11 @@ public class JPQLStatementConditionalOperators {
 					rightHandValue = "%' || " + rightHandValue + " || '";
 				}
 				return leftHandValue + " like '" + rightHandValue + "'";
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_ENDS_WITH, new IConditionalOperator() {
@@ -198,6 +248,11 @@ public class JPQLStatementConditionalOperators {
 				}
 				return leftHandValue + " not like '" + rightHandValue + "'";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.CONTAINS, new IConditionalOperator() {
 			public String getName() {
@@ -216,6 +271,11 @@ public class JPQLStatementConditionalOperators {
 					rightHandValue = "%' || " + rightHandValue + " || '%";
 				}
 				return leftHandValue + " like '" + rightHandValue + "'";
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_CONTAINS, new IConditionalOperator() {
@@ -236,6 +296,11 @@ public class JPQLStatementConditionalOperators {
 				}
 				return leftHandValue + " not like '" + rightHandValue + "'";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.IS_NULL, new IConditionalOperator() {
 			public String getName() {
@@ -246,6 +311,11 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValue) {
 				return leftHandValue + " IS NULL";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_NULL, new IConditionalOperator() {
 			public String getName() {
@@ -255,6 +325,11 @@ public class JPQLStatementConditionalOperators {
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValue) {
 				return leftHandValue + " IS NOT NULL";
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 
@@ -269,6 +344,11 @@ public class JPQLStatementConditionalOperators {
 						"When BEETWEEN operator is used the operand must contain minValue and MaxValue");
 				return leftHandValue + " BETWEEN " + rightHandValues[0] + " AND " + rightHandValues[1];
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_BETWEEN, new IConditionalOperator() {
 			public String getName() {
@@ -280,6 +360,11 @@ public class JPQLStatementConditionalOperators {
 				Assert.assertTrue(rightHandValues != null && rightHandValues.length == 2,
 						"When BEETWEEN operator is used the operand must contain minValue and MaxValue");
 				return leftHandValue + " NOT BETWEEN " + rightHandValues[0] + " AND " + rightHandValues[1];
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 
@@ -293,6 +378,11 @@ public class JPQLStatementConditionalOperators {
 				String rightHandValue = StringUtils.join(rightHandValues, ",");
 				return leftHandValue + " IN (" + rightHandValue + ")";
 			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
+			}
 		});
 		conditionalOperators.put(CriteriaConstants.NOT_IN, new IConditionalOperator() {
 			public String getName() {
@@ -303,6 +393,11 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				String rightHandValue = StringUtils.join(rightHandValues, ",");
 				return leftHandValue + " NOT IN (" + rightHandValue + ")";
+			}
+
+			@Override
+			public String apply(String leftHandValue, String[] rightHandValues, String param) {
+				return this.apply(leftHandValue, rightHandValues);
 			}
 		});
 		// handling spatial operators
@@ -353,6 +448,15 @@ class SpatialOperator implements IConditionalOperator {
 	public String apply(String leftHandValue, String[] rightHandValues) {
 		Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 		return hqlname + "(" + leftHandValue + ", " + rightHandValues[0] + ")" + (negate ? "!" : "") + "='TRUE'";
+	}
+
+	@Override
+	public String apply(String leftHandValue, String[] rightHandValues, String param) {
+		if (param == null || param.equals("")) {
+			return this.apply(leftHandValue, rightHandValues);
+		}
+
+		return hqlname + "(" + leftHandValue + ", " + rightHandValues[0] + ", '" + param + "')" + (negate ? "!" : "") + "='TRUE'";
 	}
 
 }
