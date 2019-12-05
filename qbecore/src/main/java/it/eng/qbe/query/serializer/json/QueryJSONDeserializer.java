@@ -197,9 +197,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						field = dataSource.getModelStructure().getField(fieldUniqueName);
 						Assert.assertNotNull(field,
 								String.format("Impossible to retrieve a field named %s from datamart-structure. Please check select clause: %s",
-										fieldUniqueName,
-										fieldsJSON.toString()));
-						
+										fieldUniqueName, fieldsJSON.toString()));
+
 						if (StringUtilities.isEmpty(alias))
 							alias = "Column_" + (i + 1);
 
@@ -314,6 +313,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		WhereField.Operand leftOperand;
 		WhereField.Operand rightOperand;
 		String operator;
+		String operatorParameter;
 		String booleanConnector;
 
 		logger.debug("IN");
@@ -338,6 +338,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 							operandAlias);
 
 					operator = filterJSON.getString(QuerySerializationConstants.FILTER_OPERATOR);
+					operatorParameter = filterJSON.optString(QuerySerializationConstants.FILTER_OPERATOR_PARAMETER);
 
 					operandValuesJSONArray = filterJSON.getJSONArray(QuerySerializationConstants.FILTER_RO_VALUE);
 					operandValues = JSONUtils.asStringArray(operandValuesJSONArray);
@@ -359,7 +360,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					Assert.assertTrue(!StringUtilities.isEmpty(operator), "Undefined operator for filter: " + filterJSON.toString());
 					Assert.assertTrue(!"NONE".equalsIgnoreCase(operator), "Undefined operator NONE for filter: " + filterJSON.toString());
 
-					query.addWhereField(filterId, filterDescription, promptable, leftOperand, operator, rightOperand, booleanConnector, temporalOperand);
+					query.addWhereField(filterId, filterDescription, promptable, leftOperand, operator, operatorParameter, rightOperand, booleanConnector,
+							temporalOperand);
 
 				} catch (JSONException e) {
 					throw new SerializationException("An error occurred while filter [" + filtersJOSN.toString() + "] of query [" + query.getId() + "]", e);

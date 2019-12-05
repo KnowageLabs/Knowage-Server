@@ -111,5 +111,6 @@ public class QuerySerializationConstants {
 	public static final String TEMPORAL = "TEMPORAL";
 	public static final String CALENDAR = "calendar";
 	public static final String CALENDAR_FILTER = "calendarFilter";
+	public static final String FILTER_OPERATOR_PARAMETER = "operatorParameter";
 
 }
