@@ -20,32 +20,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		.service("cockpitModule_variableService", cockpitModule_variableService)
 
 	function cockpitModule_variableService(sbiModule_translate,sbiModule_user, cockpitModule_template,$q,cockpitModule_analyticalDrivers,cockpitModule_datasetServices, cockpitModule_widgetSelection){
-		this.getVariableValue = function(variableName){
+		this.getVariableValue = function(variable){
 			return $q(function(resolve, reject) {
-				var selectedVariable;
-				for(var k in cockpitModule_template.configuration.variables){
-					if(cockpitModule_template.configuration.variables[k].name == variableName){
-						selectedVariable = cockpitModule_template.configuration.variables[k];
-						break;
-					}
-				}
-				if(selectedVariable.type == 'static') resolve( selectedVariable.value );
-				if(selectedVariable.type == 'driver') resolve( cockpitModule_analyticalDrivers[selectedVariable.driver] );
-				if(selectedVariable.type == 'profile') resolve( sbiModule_user.attributes[selectedVariable.attribute] );
-				if(selectedVariable.type == 'dataset') {
-					var tempDataset = cockpitModule_datasetServices.getDatasetById(selectedVariable.dataset);
+//				var selectedVariable;
+//				for(var k in cockpitModule_template.configuration.variables){
+//					if(cockpitModule_template.configuration.variables[k].name == variableName){
+//						selectedVariable = cockpitModule_template.configuration.variables[k];
+//						break;
+//					}
+//				}
+				if(variable.type == 'static') resolve( variable.value );
+				if(variable.type == 'driver') resolve( cockpitModule_analyticalDrivers[variable.driver] );
+				if(variable.type == 'profile') resolve( sbiModule_user.attributes[variable.attribute] );
+				if(variable.type == 'dataset') {
+					var tempDataset = cockpitModule_datasetServices.getDatasetById(variable.dataset);
 					var tempColumn = {content:{columnSelectedOfDataset:[]}}
 					for(var j in tempDataset.metadata.fieldsMeta){
-						if(selectedVariable.column && tempDataset.metadata.fieldsMeta[j].name == selectedVariable.column){
+						if(variable.column && tempDataset.metadata.fieldsMeta[j].name == variable.column){
 							tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
 							break;
-						}else if(!selectedVariable.column){
+						}else if(!variable.column){
 							tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
 						}
 					}
-					cockpitModule_datasetServices.loadDatasetRecordsById(selectedVariable.dataset, 0, 1,undefined, undefined,tempColumn).then(
+					cockpitModule_datasetServices.loadDatasetRecordsById(variable.dataset, 0, 1,undefined, undefined,tempColumn).then(
 						function(response){
-							if(selectedVariable.column) resolve(response.rows[0].column_1);
+							if(variable.column) resolve(response.rows[0].column_1);
 							else resolve(response.rows);
 						},function(error){
 							reject(error)
