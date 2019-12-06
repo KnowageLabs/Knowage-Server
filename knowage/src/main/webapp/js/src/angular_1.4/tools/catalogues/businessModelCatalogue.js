@@ -115,19 +115,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	$scope.getAllDatasets();
 
-	$scope.checkIfDataSetsUseBM = function() {
-		var canDeleteBM = true;
-		if($scope.datasetsListTemp != undefined) {
-			for(var i = 0; i < $scope.datasetsListTemp.length; i++) {
-				if($scope.datasetsListTemp[i].qbeDatamarts != undefined && $scope.datasetsListTemp[i].qbeDatamarts == $scope.selectedBusinessModel.name) {
-					canDeleteBM = false;
-				}
-			}
-		}
-		return canDeleteBM;
-	}
-
-
 	$scope.cancel = function(){
 		$scope.showMe = false;
 		$scope.isDirty = false;
@@ -445,7 +432,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
-		 if($scope.checkIfDataSetsUseBM()) {
 			 var id = item.id;
 				var confirm = $mdDialog
 				.confirm()
@@ -476,17 +462,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				}, function() {
 
 				});
-		 } else {
-			 $mdDialog
-				.show(
-						$mdDialog.alert()
-					        .clickOutsideToClose(true)
-					        .title('Cannot delete')
-					        .textContent(sbiModule_translate.load("sbi.businessModelsCatalogue.cannot.delete"))
-					        .ariaLabel('Cannot delete BM')
-					        .ok('Ok')
-				    );
-		 }
+
 	 }
 
 		//calling service method DELETE/{bmId}/versions/{vId} deleting single version of selected model

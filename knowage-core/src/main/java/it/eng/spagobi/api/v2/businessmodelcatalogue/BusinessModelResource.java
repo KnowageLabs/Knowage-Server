@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -42,6 +43,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
+import org.json.JSONObjectDeserializator;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
@@ -58,7 +60,9 @@ import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.dao.SpagoBIDAOMetaModelNameExistingException;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -90,7 +94,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		List<MetaModel> businessModelList = null;
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
-
 		try {
 			if (getUserProfile().getFunctionalities().contains(SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT)) {
 				businessModelList = businessModelsDAO.loadAllMetaModels();
@@ -465,11 +468,35 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
-
+		IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+		List<IDataSet> dataSets;
+		Map<String, Object> configurationMap = null;
+		String sbiQbeDS = "SbiQbeDataSet";
+		String qbeDatamarts = "qbeDatamarts";
 		try {
+			dsDao.setUserProfile(getUserProfile());
+			dataSets = dsDao.loadFilteredDatasetByTypeList(getUserProfile().getUserId().toString(), sbiQbeDS);
+			MetaModel businessModel = businessModelsDAO.loadMetaModelById(bmId);
+			for (IDataSet dataSet : dataSets) {
+				try {
+					configurationMap = JSONObjectDeserializator.getHashMapFromString(dataSet.getConfiguration());
+				} catch (Exception e) {
+					logger.debug("Configuration cannot be transformed from string to map");
+					throw new SpagoBIRestServiceException("Configuration cannot be transformed from string to map", buildLocaleFromSession(), e);
+				}
+
+				if (businessModel.getName().equals(configurationMap.get(qbeDatamarts))) {
+					throw new SpagoBIRuntimeException("This business model cannot be deleted because there are datasets that were created on top of it");
+				}
+			}
+
 			businessModelsDAO.eraseMetaModel(bmId);
 
 			return Response.ok().build();
+		} catch (SpagoBIRuntimeException e) {
+			logger.error("An error occurred while deleting business model with id:" + bmId, e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+
 		} catch (Exception e) {
 			logger.error("An error occurred while deleting business model with id:" + bmId, e);
 			throw new SpagoBIRestServiceException("An error occurred while deleting business model with id:" + bmId, buildLocaleFromSession(), e);

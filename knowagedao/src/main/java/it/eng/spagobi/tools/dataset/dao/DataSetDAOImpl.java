@@ -1804,12 +1804,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setMaxResults(fetchSize);
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
-			if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
-				for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
-					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
-					toReturn.add(guiDataSet);
-				}
-			}
+			addGuiDataSet(toReturn, sbiDatasetVersions);
 
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -1823,6 +1818,83 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	@Override
+	public List<IDataSet> loadFilteredDatasetByTypeList(String owner, String dsType) {
+		List<IDataSet> toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		toReturn = null;
+		session = null;
+		transaction = null;
+		try {
+			StringBuffer statement = new StringBuffer("from SbiDataSet h where h.active = true");
+			toReturn = new ArrayList<IDataSet>();
+			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			// if not admin filter by category and owner
+			List idsCat = null;
+			if (!isAdmin) {
+				List<Domain> devCategories = new LinkedList<Domain>();
+				fillDevCategories(devCategories);
+
+				idsCat = createIdsCatogriesList(devCategories);
+
+				if (idsCat == null || idsCat.size() == 0) {
+					statement.append(" and h.owner = :owner");
+				} else {
+					statement.append(" and (h.category.valueId IN (:idsCat) or h.owner = :owner)");
+				}
+			}
+			if (dsType != null)
+				statement.append(" and h.type = :dsType");
+
+			Query listQuery = session.createQuery(statement.toString());
+			if (idsCat != null && idsCat.size() > 0) {
+				listQuery.setParameterList("idsCat", idsCat);
+			}
+			if (!isAdmin) {
+				listQuery.setString("owner", owner);
+			}
+
+			if (dsType != null)
+				listQuery.setString("dsType", dsType);
+
+			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
+			addGuiDataSet(toReturn, sbiDatasetVersions);
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	private void addGuiDataSet(List<IDataSet> toReturn, List<SbiDataSet> sbiDatasetVersions) {
+		if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
+			for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
+				IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
+				toReturn.add(guiDataSet);
+			}
+		}
 	}
 
 	@Override
