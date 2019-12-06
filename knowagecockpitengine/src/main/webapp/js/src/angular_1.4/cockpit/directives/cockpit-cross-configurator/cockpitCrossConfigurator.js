@@ -193,10 +193,8 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		else if(dataType.includes(".num")){
 			typeToPut = "number";
 		}
-
 		var par = {"name" : propt, "enabled" : false, "type" : undefined, "dataset" : undefined, "column" : undefined, "dataType": typeToPut};
 		$scope.outputParametersList.push(par);
-
 	}
 
 	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table'){
@@ -287,7 +285,18 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
 
 	$scope.initModel=function(){
-		angular.copy(angular.merge({},$scope.cockpitCross,$scope.ngModel),$scope.ngModel)
+		angular.copy(angular.merge({},$scope.cockpitCross,$scope.ngModel),$scope.ngModel);
+
+		//Check if an output parameter has been deleted
+		if($scope.ngModel && $scope.ngModel.cross){
+			var tempOutPutArray = [];
+			for(var j in $scope.outputParametersList){
+				tempOutPutArray.push($scope.outputParametersList[j].name);
+			}
+			for(var k in $scope.ngModel.cross.outputParametersList){
+				if(tempOutPutArray.indexOf(k) == -1) delete $scope.ngModel.cross.outputParametersList[k];
+			}
+		}
 	}
 
 	$scope.resetCross=function(){
