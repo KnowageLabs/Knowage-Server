@@ -560,6 +560,9 @@
 			body.parameters={};
 
 			for(var i =0 ; i<execProperties.parametersData.documentParameters.length; i++){
+				if(execProperties.parametersData.documentParameters[i].parameterValue==undefined){
+					execProperties.parametersData.documentParameters[i].parameterValue = "";
+				}
 				var parValue = execProperties.parametersData.documentParameters[i].parameterValue.constructor == Array ? execProperties.parametersData.documentParameters[i].parameterValue.join(","): execProperties.parametersData.documentParameters[i].parameterValue;
 				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = parValue;
 			}
@@ -657,7 +660,7 @@
 		$scope.isCloseDocumentButtonVisible=function(){
 			return $crossNavigationScope.isCloseDocumentButtonVisible();
 		};
-		
+
 		if($scope.browser.name == 'internet explorer'){
 			document.getElementById('documentFrame').onload = function() {
 				$scope.iframeOnload();
