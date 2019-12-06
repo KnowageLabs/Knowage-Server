@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					return false;
 				}
 			}
-			if(!v1[3] && v2[3]) return false;
+			//Check for literal versions
+			//if(!v1[3] && v2[3]) return false;
 			return true;
 		}
 
