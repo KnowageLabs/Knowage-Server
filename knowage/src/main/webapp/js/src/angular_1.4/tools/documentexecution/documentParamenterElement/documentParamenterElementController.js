@@ -371,7 +371,7 @@
 				controller : function($mdDialog, parameter, toggleCheckboxParameter, checkboxParameterExists,sbiModule_translate,sbiModule_messaging) {
 					var paramDialogCtrl = this;
 
-					var MAX_SELECTION_NUMBER = 5;
+					var MAX_SELECTION_NUMBER = 50;
 					paramDialogCtrl.error = false;
 					paramDialogCtrl.toggleCheckboxParameter = toggleCheckboxParameter;
 					paramDialogCtrl.checkboxParameterExists = checkboxParameterExists;
