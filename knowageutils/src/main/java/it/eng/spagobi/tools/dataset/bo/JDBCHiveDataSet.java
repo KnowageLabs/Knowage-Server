@@ -18,18 +18,23 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCHiveDataReader;
 
+public class JDBCHiveDataSet extends JDBCDataSet {
 
-public class JDBCHiveDataSet extends AbstractJDBCDataset {
-	
-    public JDBCHiveDataSet() {
+	public JDBCHiveDataSet() {
 		super();
-		setDataReader( new JDBCHiveDataReader() );
+		setDataReader(createDataReader());
 	}
-	    
-    public JDBCHiveDataSet(SpagoBiDataSet dataSetConfig) {
-   		super(dataSetConfig);
-   		setDataReader( new JDBCHiveDataReader() );
-   	}
+
+	public JDBCHiveDataSet(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
+		setDataReader(createDataReader());
+	}
+
+	@Override
+	protected AbstractDataReader createDataReader() {
+		return new JDBCHiveDataReader();
+	}
 }

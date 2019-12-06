@@ -18,17 +18,23 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCOrientDbDataReader;
 
-public class JDBCOrientDbDataSet extends AbstractJDBCDataset {
-	
-    public JDBCOrientDbDataSet() {
+public class JDBCOrientDbDataSet extends JDBCDataSet {
+
+	public JDBCOrientDbDataSet() {
 		super();
-		setDataReader( new JDBCOrientDbDataReader() );
+		setDataReader(createDataReader());
 	}
-	    
-    public JDBCOrientDbDataSet(SpagoBiDataSet dataSetConfig) {
-   		super(dataSetConfig);
-   		setDataReader( new JDBCOrientDbDataReader() );
-   	}
+
+	public JDBCOrientDbDataSet(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
+		setDataReader(createDataReader());
+	}
+
+	@Override
+	protected AbstractDataReader createDataReader() {
+		return new JDBCOrientDbDataReader();
+	}
 }
