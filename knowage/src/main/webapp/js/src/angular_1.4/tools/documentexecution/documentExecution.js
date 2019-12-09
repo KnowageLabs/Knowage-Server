@@ -557,8 +557,26 @@
 			body.documentId=$scope.executionInstance.OBJECT_ID;
 			body.documentLabel=$scope.executionInstance.OBJECT_LABEL;
 			body.exportType="CSV";
-			body.parameters=driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 
+			body.parameters={};
+
+			for(var i =0 ; i<execProperties.parametersData.documentParameters.length; i++){
+				if(execProperties.parametersData.documentParameters[i].parameterValue==undefined){
+					execProperties.parametersData.documentParameters[i].parameterValue = "";
+				}
+
+				var parValue = execProperties.parametersData.documentParameters[i].parameterValue.constructor == Array ? execProperties.parametersData.documentParameters[i].parameterValue.join(","): execProperties.parametersData.documentParameters[i].parameterValue;
+				if(execProperties.parametersData.documentParameters[i].type == 'DATE'){
+					var dateToSubmitFilter = $filter('date')(execProperties.parametersData.documentParameters[i].parameterValue, sbiModule_config.serverDateFormat);
+					if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
+						execProperties.parametersData.documentParameters[i].parameterValue = dateToSubmitFilter[0];
+					}else{
+						execProperties.parametersData.documentParameters[i].parameterValue = dateToSubmitFilter;
+					}
+
+				}
+				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = parValue;
+			}
 
 			$scope.sbiModule_messaging.showInfoMessage("The download has started in background. You will find the result file in your download page.");
 			$scope.sbiModule_restServices.promisePost("2.0/export","cockpitData",body).then(function(response){
