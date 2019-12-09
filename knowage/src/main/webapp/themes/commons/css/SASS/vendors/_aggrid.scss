@@ -280,6 +280,9 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-header-cell {
+		.ag-cell-label-container{
+			height: 100%;
+		}
 		.ag-header-cell-label {
 			.cellContainer {
 				display: flex;
