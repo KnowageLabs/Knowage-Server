@@ -21,7 +21,10 @@
 <form>
 
 	<md-dialog-content layout="column" layout-padding layout-margin>
-		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logo.png" width="234" layout-margin />
+		<div layout="row" style="width:100%" layout-align="center center">
+			<img src="<%=contextName %>/themes/commons/img/defaultTheme/logo.svg" width="200" layout-margin />
+		</div>
+		 	 
 		 	 <div layout-padding>
 				<p>Version: <%= Version.getVersionForDatabase() %></p>
 				<p >
