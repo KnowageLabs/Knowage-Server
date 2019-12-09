@@ -4561,3 +4561,6 @@ ALTER TABLE SBI_USER ADD CONSTRAINT FOREIGN KEY FK_SBI_USER_1 (DEFAULT_ROLE_ID) 
 
 --29/11/2019 Andrijana Predojevic
 DELETE FROM sbi_role_type_user_func WHERE user_funct_id IN (SELECT user_funct_id FROM sbi_user_func WHERE name IN ('ProfileAttributeManagement','ProfileManagement')) AND role_type_id = (SELECT value_id FROM sbi_domains WHERE DOMAIN_CD='ROLE_TYPE' AND value_cd='DEV_ROLE')
+
+--02/12/2019 Davide Vernassa
+ALTER TABLE SBI_CROSS_NAVIGATION ADD COLUMN POPUP_OPTIONS VARCHAR(4000) NULL DEFAULT NULL AFTER BREADCRUMB;
