@@ -407,28 +407,28 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 
 			// commented out because of KNOWAGE-3900: it is breaking member's name syntax
-//			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-//			Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
-//			try {
-//				if (!jsonParameters.isNull(objParameter.getId())) {
-//					Integer paruseId = objParameter.getParameterUseId();
-//					if (parameterUse == null) {
-//						parameterUse = parameterUseDAO.loadByUseID(paruseId);
-//					}
-//					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
-//							&& parameterUse.getValueSelection().equals("man_in")) {
-//						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
-//						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
-//						if (objParameter.isMultivalue()) {
-//							jsonParamRet = jsonParamRet.replaceAll("\"", "'");
-//						}
-//						jsonParameters.put(objParameter.getId(), jsonParamRet);
-//					}
-//
-//				}
-//			} finally {
-//				crossNavParameterMonitor.stop();
-//			}
+			// // CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+			// Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
+			// try {
+			// if (!jsonParameters.isNull(objParameter.getId())) {
+			// Integer paruseId = objParameter.getParameterUseId();
+			// if (parameterUse == null) {
+			// parameterUse = parameterUseDAO.loadByUseID(paruseId);
+			// }
+			// if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
+			// && parameterUse.getValueSelection().equals("man_in")) {
+			// int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
+			// String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+			// if (objParameter.isMultivalue()) {
+			// jsonParamRet = jsonParamRet.replaceAll("\"", "'");
+			// }
+			// jsonParameters.put(objParameter.getId(), jsonParamRet);
+			// }
+			//
+			// }
+			// } finally {
+			// crossNavParameterMonitor.stop();
+			// }
 
 		}
 
@@ -776,6 +776,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"); // uses the original value for list and %
 					}
 				}
+				toReturn.put(key, ValuesLstDecoded);
+			} else if (valueObj instanceof JSONObject) {
+				JSONObject valuesLst = (JSONObject) valueObj;
+				JSONArray ValuesLstDecoded = new JSONArray();
+
+				Iterator keysObject = valuesLst.keys();
+				while (keysObject.hasNext()) {
+					String keyObj = (String) keysObject.next();
+					Object valueOb = valuesLst.get(keyObj);
+					String value = String.valueOf(valueOb);
+					// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
+					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
+						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
+					} else {
+						ValuesLstDecoded.put(value); // uses the original value for list and %
+					}
+				}
+
 				toReturn.put(key, ValuesLstDecoded);
 			}
 		}
@@ -1147,9 +1165,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
 	 *
-	 * @param id          of document
-	 * @param id          of subObject
-	 * @param id          of a metaData
+	 * @param id
+	 *            of document
+	 * @param id
+	 *            of subObject
+	 * @param id
+	 *            of a metaData
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError
