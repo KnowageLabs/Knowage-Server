@@ -847,7 +847,7 @@ public class ExcelExporter {
 					if (body != null) {
 						logger.debug("Export cockpit crosstab body.toString(): " + body.toString());
 					}
-					JSONObject datastoreObjData = getDatastore(datasetLabel, null, body.toString());
+					JSONObject datastoreObjData = getDatastore(datasetLabel, map, body.toString());
 
 					datastoreObj.put("datastoreObjData", datastoreObjData);
 					excelSheets.add(datastoreObj);
