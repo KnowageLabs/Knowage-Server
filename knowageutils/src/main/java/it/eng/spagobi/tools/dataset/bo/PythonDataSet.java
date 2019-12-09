@@ -117,7 +117,6 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 	private void initDataProxy(JSONObject jsonConf) {
 		String address = getProp(PythonDataSetConstants.REST_ADDRESS, jsonConf, false);
-		String requestBody = getProp(PythonDataSetConstants.REST_REQUEST_BODY, jsonConf, true);
 
 		Map<String, String> requestHeaders;
 		try {
