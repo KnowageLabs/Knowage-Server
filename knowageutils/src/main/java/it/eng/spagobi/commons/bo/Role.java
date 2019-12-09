@@ -41,6 +41,7 @@ public class Role implements Serializable {
 	private String organization = null;
 	private Boolean isPublic;
 
+	private boolean isAbleToEditPythonScripts;
 	private boolean isAbleToSaveSubobjects;
 	private boolean isAbleToSeeSubobjects;
 	private boolean isAbleToSeeViewpoints;
@@ -96,6 +97,15 @@ public class Role implements Serializable {
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
 
 	/**
+	 * Checks if is able to edit python scripts.
+	 *
+	 * @return true, if is able to edit python scripts
+	 */
+	public boolean isAbleToEditPythonScripts() {
+		return isAbleToEditPythonScripts;
+	}
+
+	/**
 	 * Checks if is able to save subobjects.
 	 *
 	 * @return true, if is able to save subobjects
@@ -120,6 +130,15 @@ public class Role implements Serializable {
 	 */
 	public boolean isAbleToSeeSubobjects() {
 		return isAbleToSeeSubobjects;
+	}
+
+	/**
+	 * Sets the check if is able to edit python scripts.
+	 *
+	 * @param isAbleToSeeSubobjects the new check if is able to edit python scripts
+	 */
+	public void setIsAbleToEditPythonScripts(boolean isAbleToEditPythonScripts) {
+		this.isAbleToEditPythonScripts = isAbleToEditPythonScripts;
 	}
 
 	/**

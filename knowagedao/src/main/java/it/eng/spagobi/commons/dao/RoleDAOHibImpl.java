@@ -797,6 +797,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			SbiAuthorizations f = fr.getSbiAuthorizations();
 
 			String name = f.getName();
+			if (name.equals("EDIT_PYTHON_SCRIPTS")) {
+				role.setIsAbleToEditPythonScripts(true);
+			}
 			if (name.equals("SAVE_SUBOBJECTS")) {
 				role.setIsAbleToSaveSubobjects(true);
 			}

@@ -479,6 +479,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		aRole.setIsAbleToSaveIntoPersonalFolder(true);
 		aRole.setIsAbleToSaveMetadata(true);
 		aRole.setIsAbleToSaveRememberMe(true);
+		aRole.setIsAbleToEditPythonScripts(true);
 		aRole.setIsAbleToSaveSubobjects(true);
 		aRole.setIsAbleToSeeDocumentBrowser(true);
 		aRole.setIsAbleToSeeFavourites(true);
@@ -932,7 +933,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	 * When modifying a tenant if a datasource remains with no tenant delete it
 	 *
 	 * @param aSession
-	 * @param          ids: id of <tenant,dataource> modified
+	 * @param ids:     id of <tenant,dataource> modified
 	 * @throws EMFUserError
 	 */
 
