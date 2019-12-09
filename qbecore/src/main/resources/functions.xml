@@ -86,7 +86,7 @@
 	
 	<FUNCTION group="Date Functions" name="addMonths" desc=" adding months" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,$2,MONTH) " />
-		<OracleDialect code=" to_char(add_months($1,$2),'dd/mm/yyyy hh:mm:ss') " />
+		<OracleDialect code=" add_months($1,$2) " />
 		<PostgreSQLDialect code=" date_add_interval($1,$2,MONTH) " />
 		
 	</FUNCTION>
@@ -125,19 +125,17 @@
 	
 	<FUNCTION group="Date Functions" name="dateDiffInDays" desc=" difference in days" nParams="2">
 		<MySQLInnoDBDialect code=" DATEDIFF($1,$2) " />				
-		<OracleDialect code=" EXTRACT(DAY FROM ($1 - $2)) " />
+		<OracleDialect code=" cast((round ( CAST($1 AS date)- CAST($2 AS date),0))as int) " />
 		<PostgreSQLDialect code=" date_diff( $1 , $2, 'day') " />
 	</FUNCTION>
-	
 	<FUNCTION group="Date Functions" name="dateDiffInHours" desc=" difference in hours" nParams="2">
 		<MySQLInnoDBDialect code=" DATEDIFF($1,$2)*24 + (hour($1) - hour($2))" />
-		<OracleDialect code=" EXTRACT(DAY FROM ($1 - $2))*24 + (EXTRACT(HOUR FROM $1) -EXTRACT(HOUR FROM $2)) " />
+		<OracleDialect code=" cast((round ( (CAST($1 AS date)- CAST($2 AS date))*24,0))as int) " />
 		<PostgreSQLDialect code=" date_diff( $1 , $2, 'day')*24 + date_diff( $1 , $2, 'hour')" />
 	</FUNCTION>
-	
 	<FUNCTION group="Date Functions" name="dateDiffInMinutes" desc=" difference in minutes" nParams="2">
 		<MySQLInnoDBDialect code=" datediff($1,$2)*24*60 + (hour($1)-hour($2))*60 + minute($1) - minute($2) " />
-		<OracleDialect code=" EXTRACT(DAY FROM ($1 - $2))*24*60 + ((EXTRACT(HOUR FROM $1) -EXTRACT(HOUR FROM $2))*60) + (EXTRACT(MINUTE FROM $1) - EXTRACT(MINUTE FROM $2))" />
+		<OracleDialect code=" cast ((round ( (CAST($1 AS date)- CAST($2 AS date))*24*60,0)) as int)" />
 		<PostgreSQLDialect code=" date_diff( $1 , $2, 'day')*24*60 + date_diff( $1 , $2, 'hour')*60 + date_diff( $1 , $2, 'minute')" />
 	</FUNCTION>
 
