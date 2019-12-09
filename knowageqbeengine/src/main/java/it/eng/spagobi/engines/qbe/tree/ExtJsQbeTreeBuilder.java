@@ -365,6 +365,7 @@ public class ExtJsQbeTreeBuilder {
 		// DatamartProperties datamartProperties =
 		// dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");
+		String aggtype = field.getPropertyAsString("aggtype");
 		String format = field.getPropertyAsString("format");
 		String fieldLabel = getFieldLabel(field);
 		String longDescription = QueryJSONSerializer.getFieldLongDescription(field, getDatamartLabels(), null);
@@ -380,6 +381,7 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("text", fieldLabel);
 			fieldNode.put("iconCls", iconCls);
 			fieldNode.put("dataType", field.getType());
+			fieldNode.put("aggtype", aggtype);
 			fieldNode.put("format", format);
 			fieldNode.put("leaf", true);
 			fieldNode.put("qtip", fieldTooltip);

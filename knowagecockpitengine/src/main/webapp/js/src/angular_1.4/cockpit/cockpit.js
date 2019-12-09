@@ -114,7 +114,7 @@ function cockpitMasterControllerWrapper(
 
 
 cockpitApp.controller("cockpitMasterController",cockpitMasterControllerFunction);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_backwardCompatibility,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences,$sce){
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_backwardCompatibility,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences,$sce, cockpitModule_variableService){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
@@ -123,6 +123,21 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	var initGeneralCss = $scope.$watch('cockpitModule_template.configuration.cssToRender',function(newValue,oldValue){
 		$scope.trustedGeneralCss = $sce.trustAsHtml(newValue);
 	})
+
+	$scope.variablesInit = function(){
+		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
+			if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
+			cockpitModule_template.configuration.variables.forEach(function(variable){
+				cockpitModule_variableService.getVariableValue(variable).then(
+						function(response){
+							cockpitModule_properties.VARIABLES[variable.name] = response;
+						},function(error){
+							console.error('error during the variables recovery.')
+						}
+					)
+			})
+		}
+	}
 
 	$scope.initializedSheets = [0]; // first sheet is always loaded
 
@@ -175,6 +190,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 			cockpitModule_nearRealtimeServices.init();
 			cockpitModule_realtimeServices.init();
 		}
+		$scope.variablesInit();
 	},function(){
 		console.error("error when load dataset list")
 	});

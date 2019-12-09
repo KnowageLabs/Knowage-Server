@@ -2,9 +2,11 @@
  *
  */
 
-function addBusinessClassController($scope,$mdDialog,sbiModule_translate,businessModel,physicalModel,metaModelServices,sbiModule_restServices){
+function addBusinessClassController($scope,$mdDialog,sbiModule_translate,businessModel,physicalModel,businessClassesGrid,metaModelServices,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
+	$scope.businessClassesGrid = businessClassesGrid;
 	$scope.physicalModel=physicalModel;
+	$scope.businessModel=businessModel;
 	$scope.tmpBnssModel={physicalModel:{columns:[]},selectedColumns:[]};
 	$scope.changePhYModel=function(){
 		$scope.tmpBnssModel.selectedColumns=[];
@@ -33,6 +35,7 @@ function addBusinessClassController($scope,$mdDialog,sbiModule_translate,busines
 			sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessClass",obj2snd)
 			.then(function(response){
 				metaModelServices.applyPatch(response.data);
+				$scope.businessClassesGrid.api.setRowData(businessModel);
 			    $mdDialog.hide();
 			}
 			,function(response){

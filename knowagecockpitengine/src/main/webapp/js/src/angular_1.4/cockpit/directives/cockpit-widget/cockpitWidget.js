@@ -930,8 +930,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						else if(content.type == 'dynamic'){
 							if(content.column){
 								if(model.type!='static-pivot-table'){
+									var valToAdd = '';
 									var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-									var valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+									if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
 								}else {
 									if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
 										var valToAdd = modalColumn;

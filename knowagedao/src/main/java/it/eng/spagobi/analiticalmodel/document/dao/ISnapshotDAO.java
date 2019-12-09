@@ -22,6 +22,7 @@ import java.util.Map;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.bo.SnapshotMainInfo;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 public interface ISnapshotDAO extends ISpagoBIDao {
@@ -60,6 +61,21 @@ public interface ISnapshotDAO extends ISpagoBIDao {
 	 *             the EMF user error
 	 */
 	public List getSnapshots(Integer idBIObj) throws EMFUserError;
+
+	/**
+	 * Gets the list of the snapshot main details.
+	 *
+	 * Every item of the return list contains only a subset of
+	 *
+	 * @param idBIObj
+	 *            the id of the biobject parent
+	 *
+	 * @return List of {@link SnapshotMainInfo} objects
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public List<SnapshotMainInfo> getSnapshotMainInfos(Integer idBIObj) throws EMFUserError;
 
 	/**
 	 * Delete a snapshot.

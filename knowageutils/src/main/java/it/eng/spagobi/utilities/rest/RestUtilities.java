@@ -17,17 +17,42 @@
  */
 package it.eng.spagobi.utilities.rest;
 
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
-import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
-import it.eng.spagobi.utilities.json.JSONUtils;
-import org.apache.commons.httpclient.*;
+import java.io.BufferedReader;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.http.util.Asserts;
@@ -36,12 +61,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.*;
-import java.net.URI;
-import java.util.*;
-import java.util.Map.Entry;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
 
@@ -122,8 +149,7 @@ public class RestUtilities {
 	 *
 	 * <b>Warning:</b> this method does not provide protection against XSS attaks. Use it only if you know what you are doing.
 	 *
-	 * @param request
-	 *            the HttpServletRequest request
+	 * @param request the HttpServletRequest request
 	 * @return the body
 	 * @throws IOException
 	 */
@@ -154,8 +180,7 @@ public class RestUtilities {
 	 *
 	 * Reads the body of a request and return it as a JSONObject <b>Fiters content against XSS attacks</b>
 	 *
-	 * @param request
-	 *            the HttpServletRequest request
+	 * @param request the HttpServletRequest request
 	 * @return
 	 * @throws IOException
 	 * @throws JSONException
@@ -176,8 +201,7 @@ public class RestUtilities {
 	 *
 	 * Reads the body of a request and return it as a JSONOArray <b>Fiters content against XSS attacks</b>
 	 *
-	 * @param request
-	 *            the HttpServletRequest request
+	 * @param request the HttpServletRequest request
 	 * @return
 	 * @throws IOException
 	 * @throws JSONException
@@ -420,7 +444,7 @@ public class RestUtilities {
 
 		String user = System.getProperty("http.proxyUser");
 		String password = System.getProperty("http.proxyPassword");
-		if(user != null && password != null) {
+		if (user != null && password != null) {
 			Credentials credentials = new UsernamePasswordCredentials(user, password);
 			AuthScope authScope = new AuthScope(proxyHost, p);
 			client.getState().setProxyCredentials(authScope, credentials);

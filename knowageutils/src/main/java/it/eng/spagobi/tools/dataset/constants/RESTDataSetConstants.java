@@ -21,22 +21,21 @@ package it.eng.spagobi.tools.dataset.constants;
 
 public class RESTDataSetConstants {
 
-    public static final String REST_JSON_PATH_ATTRIBUTES = "restJsonPathAttributes";
-    public static final String[] REST_JSON_ARRAY_ATTRIBUTES = { REST_JSON_PATH_ATTRIBUTES };
-    public static final String REST_REQUEST_HEADERS = "restRequestHeaders";
-    public static final String[] REST_JSON_OBJECT_ATTRIBUTES = { REST_REQUEST_HEADERS };
-    public static final String REST_REQUEST_BODY = "restRequestBody";
-    public static final String REST_JSON_PATH_ITEMS = "restJsonPathItems";
-    public static final String REST_HTTP_METHOD = "restHttpMethod";
-    public static final String REST_ADDRESS = "restAddress";
-    public static final String REST_JSON_DIRECTLY_ATTRIBUTES = "restDirectlyJSONAttributes";
-    public static final String REST_NGSI = "restNGSI";
-    public static final String REST_OFFSET = "restOffset";
-    public static final String REST_FETCH_SIZE = "restFetchSize";
-    public static final String REST_MAX_RESULTS = "restMaxResults";
-    public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_REQUEST_BODY, REST_HTTP_METHOD,
-            REST_JSON_PATH_ITEMS, REST_JSON_DIRECTLY_ATTRIBUTES, REST_NGSI, REST_OFFSET, REST_FETCH_SIZE,
-            REST_MAX_RESULTS };
-    public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length
-            + REST_JSON_OBJECT_ATTRIBUTES.length + REST_JSON_ARRAY_ATTRIBUTES.length];
+	public static final String REST_JSON_PATH_ATTRIBUTES = "restJsonPathAttributes";
+	public static final String[] REST_JSON_ARRAY_ATTRIBUTES = { REST_JSON_PATH_ATTRIBUTES };
+	public static final String REST_REQUEST_HEADERS = "restRequestHeaders";
+	public static final String[] REST_JSON_OBJECT_ATTRIBUTES = { REST_REQUEST_HEADERS };
+	public static final String REST_REQUEST_BODY = "restRequestBody";
+	public static final String REST_JSON_PATH_ITEMS = "restJsonPathItems";
+	public static final String REST_HTTP_METHOD = "restHttpMethod";
+	public static final String REST_ADDRESS = "restAddress";
+	public static final String REST_JSON_DIRECTLY_ATTRIBUTES = "restDirectlyJSONAttributes";
+	public static final String REST_NGSI = "restNGSI";
+	public static final String REST_OFFSET = "restOffset";
+	public static final String REST_FETCH_SIZE = "restFetchSize";
+	public static final String REST_MAX_RESULTS = "restMaxResults";
+	public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_REQUEST_BODY, REST_HTTP_METHOD, REST_JSON_PATH_ITEMS,
+			REST_JSON_DIRECTLY_ATTRIBUTES, REST_NGSI, REST_OFFSET, REST_FETCH_SIZE, REST_MAX_RESULTS };
+	public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length + REST_JSON_OBJECT_ATTRIBUTES.length
+			+ REST_JSON_ARRAY_ATTRIBUTES.length];
 }

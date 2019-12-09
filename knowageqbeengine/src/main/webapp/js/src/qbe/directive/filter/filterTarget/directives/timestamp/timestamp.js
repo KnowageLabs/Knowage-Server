@@ -57,6 +57,8 @@
 						$scope.time = dateService.getFullDateHour($scope.filter.rightOperandDescription)
 										+ ":"
 										+ dateService.getFullDateMinutes($scope.filter.rightOperandDescription)
+					}else{
+						$scope.date = new Date();
 					}
 
 

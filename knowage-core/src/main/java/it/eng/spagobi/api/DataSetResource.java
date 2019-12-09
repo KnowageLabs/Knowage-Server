@@ -225,6 +225,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			for (IDataSet dataset : dataSets) {
 
+				if (dataset == null)
+					continue;
+
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				ISchedulerDAO schedulerDAO;
 

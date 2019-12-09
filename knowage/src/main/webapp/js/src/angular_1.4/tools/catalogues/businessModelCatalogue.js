@@ -105,7 +105,15 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	}
 
-
+	$scope.getAllDatasets = function() {
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt")
+		.then(function(response) {
+			$scope.datasetsListTemp = angular.copy(response.data.root);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
+	}
+	$scope.getAllDatasets();
 
 	$scope.cancel = function(){
 		$scope.showMe = false;
@@ -424,38 +432,36 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
-		 var id = item.id;
+			 var id = item.id;
+				var confirm = $mdDialog
+				.confirm()
+				.title(sbiModule_translate.load("sbi.businessModelsCatalogue.confirm.delete"))
+				.content(
+						sbiModule_translate
+						.load("sbi.businessModelsCatalogue.confirm.delete.content"))
+						.ariaLabel('Lucky day').ok(
+								sbiModule_translate.load("sbi.general.continue")).cancel(
+										sbiModule_translate.load("sbi.general.cancel"));
 
-			var confirm = $mdDialog
-			.confirm()
-			.title(sbiModule_translate.load("sbi.businessModelsCatalogue.confirm.delete"))
-			.content(
-					sbiModule_translate
-					.load("sbi.businessModelsCatalogue.confirm.delete.content"))
-					.ariaLabel('Lucky day').ok(
-							sbiModule_translate.load("sbi.general.continue")).cancel(
-									sbiModule_translate.load("sbi.general.cancel"));
+				$mdDialog.show(confirm).then(function() {
 
-			$mdDialog.show(confirm).then(function() {
+					sbiModule_restServices.promiseDelete("2.0/businessmodels",id)
+					.then(function(response) {
+						removeFromBMs(id,"left");
+						 if($scope.selectedBusinessModel.id == id){
+							 $scope.selectedBusinessModel={};
+						 }
+						 $scope.selectedBusinessModels=[];
+						 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
 
-				sbiModule_restServices.promiseDelete("2.0/businessmodels",id)
-				.then(function(response) {
-					removeFromBMs(id,"left");
-					 if($scope.selectedBusinessModel.id == id){
-						 $scope.selectedBusinessModel={};
-					 }
-					 $scope.selectedBusinessModels=[];
-					 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
+					}, function(response) {
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					});
+
+				}, function() {
 
 				});
-
-			}, function() {
-
-			});
-
 
 	 }
 

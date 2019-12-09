@@ -134,7 +134,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			if(finalPromise) {
 				finalPromise.then(function(){},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
-					for(var i =0;i<$scope.previousVersionRelations.length;i++){
+					for(var i in $scope.previousVersionRelations){
 						var relationship = $scope.previousVersionRelations[i]
 						$scope.filteredRelations[i].isConsidered = relationship.isConsidered;
 
@@ -247,7 +247,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$scope.onDropComplete=function(field,evt){
 		if(field.connector) return;
-		$scope.addField(field);
+		if(field.children){
+			for(var i in field.children){
+				$scope.addField(field.children[i])
+			}
+		}else{
+			$scope.addField(field);
+		}
+
 
     };
 
@@ -363,6 +370,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			return str.join("&");
 
 		}
+		item.pars = JSON.stringify($scope.pars);
 		sbiModule_action.promisePost('SET_CATALOGUE_ACTION',queryParam,item, conf).then(function(response){
 			$scope.getSQL();
 		}, function(response){
@@ -479,7 +487,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 
 	var getFunct =function(field){
-		if(isColumnType(field,"measure")){
+
+		if(field.aggtype && field.aggtype!==""){
+			return field.aggtype
+		}else if(isColumnType(field,"measure")){
 			return "SUM"
 		}else if($scope.isSpatial(field)){
 			return "COUNT"
@@ -494,7 +505,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$scope.isSpatial = function(field){
 		var filtered = this.filterFilter(this.entityModel.entities,{children:{id:field.id}})
-		return filtered.lenght>0 && filtered[0].iconCls == "geographic_dimension";
+		return filtered.length>0 && filtered[0].iconCls == "geographic_dimension";
 
 	}
 

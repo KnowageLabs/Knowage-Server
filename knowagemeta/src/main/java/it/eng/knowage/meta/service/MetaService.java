@@ -1075,11 +1075,28 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response createBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
 
 		JSONObject json = jsonRoot.getJSONObject("data");
+		JSONArray columns = json.getJSONArray("columns");
+		for (int i = 0; i < columns.length(); i++) {
+			addColumn(model, columns.getJSONObject(i));
+		}
+
+		JSONObject jsonModel = createJson(model);
+
+		return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
+	}
+
+	/**
+	 * @param model
+	 * @param json
+	 * @throws JSONException
+	 */
+	private void addColumn(Model model, JSONObject json) throws JSONException {
 		String physicalTableName = json.getString("physicalTableName");
 		String physicalColumnName = json.getString("physicalColumnName");
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
@@ -1087,10 +1104,6 @@ public class MetaService extends AbstractSpagoBIResource {
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 		businessModelInitializer.addColumn(physicalColumn, currBM);
-
-		JSONObject jsonModel = createJson(model);
-
-		return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
 	}
 
 	/**
@@ -1110,6 +1123,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public String moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1144,6 +1158,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response deleteBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1153,7 +1168,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
-		if (columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
+		if (columnToDelete == null || columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
 			// cannot delete because is an identifier
 			JSONObject jsonObject = new JSONObject();
 			JSONArray jsonArray = new JSONArray();

@@ -138,7 +138,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
-				"leftOperandAlias": null,
+				"leftOperandAlias": $scope.ngModel.field.name,
 				"leftOperandDataType": "",
 				"operator": "BETWEEN",
 				"rightType" : "manual",

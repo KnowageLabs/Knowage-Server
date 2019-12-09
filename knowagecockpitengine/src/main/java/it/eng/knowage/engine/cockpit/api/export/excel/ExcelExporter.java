@@ -187,7 +187,8 @@ public class ExcelExporter {
 		return mimeType;
 	}
 
-	public byte[] getBinaryDataPivot(Integer documentId, String documentLabel, String templateString, String options) throws JSONException, SerializationException {
+	public byte[] getBinaryDataPivot(Integer documentId, String documentLabel, String templateString, String options)
+			throws JSONException, SerializationException {
 
 		JSONObject optionsObj = new JSONObject(options);
 
@@ -333,7 +334,6 @@ public class ExcelExporter {
 		}
 	}
 
-
 	private void exportWidgetCrossTab(String templateString, String widgetId, Workbook wb, JSONObject optionsObj) throws SerializationException {
 		try {
 			JSONObject template = new JSONObject(templateString);
@@ -382,7 +382,8 @@ public class ExcelExporter {
 				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 				JSONObject styleJSON = (!optionsObj.isNull("style") ? optionsObj.getJSONObject("style") : new JSONObject());
-				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"), optionsObj.getJSONObject("metadata"), styleJSON);
+				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"),
+						optionsObj.getJSONObject("metadata"), styleJSON);
 
 				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
@@ -400,7 +401,6 @@ public class ExcelExporter {
 			logger.error("Unable to load template", e);
 		}
 	}
-
 
 	private JSONObject getWidgetById(JSONObject template, String widgetId) {
 		try {
@@ -434,8 +434,6 @@ public class ExcelExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-
-
 			if (getRealtimeFromTableWidget(datasetId, configuration)) {
 				logger.debug("nearRealtime = true");
 				map.put("nearRealtime", true);
@@ -451,10 +449,12 @@ public class ExcelExporter {
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
 				JSONObject jsOptions = new JSONObject();
-				jsOptions.put("solrFacetPivot",true);
+				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
 			}
-
+			if (body != null) {
+				logger.debug("Export single widget cockpitSelections.toString(): " + cockpitSelections.toString());
+			}
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 
 			if (datastore != null) {
@@ -521,7 +521,8 @@ public class ExcelExporter {
 
 			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
 
-			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"), datastoreObjData.getJSONObject("metaData"), styleJSON);
+			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
+					datastoreObjData.getJSONObject("metaData"), styleJSON);
 
 			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
@@ -532,8 +533,7 @@ public class ExcelExporter {
 
 			exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
 
-		}
-		else {
+		} else {
 			try {
 				JSONObject metadata = dataStore.getJSONObject("metaData");
 				JSONArray columns = metadata.getJSONArray("fields");
@@ -654,7 +654,8 @@ public class ExcelExporter {
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
-					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
+					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")
+							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
 						if (arrayHeader.get(columnName) != null) {
 							columnName = arrayHeader.get(columnName);
 						}
@@ -843,14 +844,15 @@ public class ExcelExporter {
 						logger.debug("limit = " + limit);
 						map.put("limit", limit);
 					}
-
+					if (body != null) {
+						logger.debug("Export cockpit crosstab body.toString(): " + body.toString());
+					}
 					JSONObject datastoreObjData = getDatastore(datasetLabel, null, body.toString());
 
 					datastoreObj.put("datastoreObjData", datastoreObjData);
 					excelSheets.add(datastoreObj);
 
-				}
-				else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
+				} else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
@@ -899,11 +901,12 @@ public class ExcelExporter {
 					if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
 						JSONObject jsOptions = new JSONObject();
-						jsOptions.put("solrFacetPivot",true);
+						jsOptions.put("solrFacetPivot", true);
 						body.put("options", jsOptions);
 					}
-
-
+					if (body != null) {
+						logger.debug("Export cockpit body.toString(): " + body.toString());
+					}
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 
 					if (datastoreObj != null) {
@@ -1011,11 +1014,12 @@ public class ExcelExporter {
 									DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 									DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
 									Date dateToconvert = parsedDateTime.toDate();
-									SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+									SimpleDateFormat sdf = new SimpleDateFormat(
+											SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 									valuesToChange = sdf.format(dateToconvert).toString();
 
 								}
-								if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+								if (valuesToChange != null && valuesToChange.length() > 0 && !valuesToChange.contains(",")) {
 									valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 									valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 								}
@@ -1138,7 +1142,7 @@ public class ExcelExporter {
 				JSONArray rowsJSON = columns.getJSONArray("rows");
 				JSONArray columnsJSON = columns.getJSONArray("columns");
 
-				for (int i = 0 ; i < measuresJSON.length(); i++) {  // looping over measures
+				for (int i = 0; i < measuresJSON.length(); i++) { // looping over measures
 					JSONObject measureObj = measuresJSON.getJSONObject(i);
 					JSONObject measuress = new JSONObject();
 					measuress.put("id", measureObj.getString("id"));
@@ -1149,7 +1153,7 @@ public class ExcelExporter {
 					measures.put(measuress);
 				}
 
-				for (int i = 0 ; i < rowsJSON.length(); i++) {  // looping over rows
+				for (int i = 0; i < rowsJSON.length(); i++) { // looping over rows
 					JSONObject attributesObj = rowsJSON.getJSONObject(i);
 					JSONObject attributess = new JSONObject();
 					attributess.put("id", attributesObj.getString("id"));
@@ -1159,7 +1163,7 @@ public class ExcelExporter {
 					categories.put(attributess);
 				}
 
-				for (int i = 0 ; i < columnsJSON.length(); i++) {  // looping over columns
+				for (int i = 0; i < columnsJSON.length(); i++) { // looping over columns
 					JSONObject attributesObj = columnsJSON.getJSONObject(i);
 					JSONObject attributess = new JSONObject();
 					attributess.put("id", attributesObj.getString("id"));
@@ -1169,9 +1173,7 @@ public class ExcelExporter {
 					categories.put(attributess);
 				}
 
-
-
-			}else {
+			} else {
 
 				JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
 				if (columns != null) {
@@ -1202,7 +1204,8 @@ public class ExcelExporter {
 						String fieldType = column.getString("fieldType");
 						if ("ATTRIBUTE".equalsIgnoreCase(fieldType)) {
 
-							if (isSolrDataset && !column.has("facet")) categoryOrMeasure.put("funct", "NONE");
+							if (isSolrDataset && !column.has("facet"))
+								categoryOrMeasure.put("funct", "NONE");
 							categories.put(categoryOrMeasure);
 						} else if ("MEASURE".equalsIgnoreCase(fieldType)) {
 							categoryOrMeasure.put("funct", column.getString("aggregationSelected"));
@@ -1245,6 +1248,9 @@ public class ExcelExporter {
 		String datasetName = dataset.getString("name");
 		Integer datasetId = dataset.getInt("dsId");
 		JSONObject newParameters = new JSONObject();
+		for (int i = 0; i < parameters.length(); i++) {
+			newParameters.put(parameters.names().getString(i), "");
+		}
 		if (actualSelectionMap.containsKey(datasetName)) {
 			JSONObject actualSelections = actualSelectionMap.get(datasetName);
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
@@ -1259,7 +1265,7 @@ public class ExcelExporter {
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
 			newParameters = getReplacedParameters(params, datasetId);
 		}
-		if (cockpitSelectionsDatasetParameters != null && cockpitSelectionsDatasetParameters.length()>0 && parameters.length() != 0) {
+		if (cockpitSelectionsDatasetParameters != null && cockpitSelectionsDatasetParameters.length() > 0 && parameters.length() != 0) {
 
 			for (int i = 0; i < cockpitSelectionsDatasetParameters.length(); i++) {
 
@@ -1282,7 +1288,7 @@ public class ExcelExporter {
 								SimpleDateFormat sdf = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 								valuesToChange = sdf.format(dateToconvert).toString();
 							}
-							if (valuesToChange!=null && valuesToChange.length()>0 && !valuesToChange.contains(",")) {
+							if (valuesToChange != null && valuesToChange.length() > 0 && !valuesToChange.contains(",")) {
 								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 							}
@@ -1400,204 +1406,208 @@ public class ExcelExporter {
 			JSONObject summary = settings.optJSONObject("summary");
 			if (settings.has("summary") && summary.has("enabled") && summary.optBoolean("enabled")) {
 
-				JSONArray listArray = summary.getJSONArray("list");
+				if (summary.has("list")) {
+					JSONArray listArray = summary.getJSONArray("list");
 
-				if (listArray.length()>1) {
-					for (int jj = 0; jj < listArray.length(); jj++) {
+					if (listArray.length() > 1) {
+						for (int jj = 0; jj < listArray.length(); jj++) {
 
-						JSONObject aggrObj = listArray.getJSONObject(jj);
+							JSONObject aggrObj = listArray.getJSONObject(jj);
 
-						if (!aggrObj.has("aggregation")) {
+							if (!aggrObj.has("aggregation")) {
 
-							JSONArray measures = new JSONArray();
-							JSONObject content = widget.optJSONObject("content");
-							if (content != null) {
-								JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-								if (columns != null) {
-									for (int i = 0; i < columns.length(); i++) {
-										JSONObject column = columns.getJSONObject(i);
-										if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-											JSONObject measure = new JSONObject();
-											measure.put("id", column.getString("alias"));
-											measure.put("alias", column.getString("aliasToShow"));
-											if (column.has("datasetOrTableFlag")) {
-												// calculated field case
-												measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-											}
-											if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-												// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be changed to
-												// be SUM instead
-												String formula = getSummaryRowFormula(column);
-												measure.put("columnName", formula);
-											} else {
-												String formula = column.optString("formula");
-												String name = formula.isEmpty() ? column.optString("name") : formula;
-												measure.put("columnName", name);
-											}
-											measure.put("funct", column.getString("funcSummary"));
+								JSONArray measures = new JSONArray();
+								JSONObject content = widget.optJSONObject("content");
+								if (content != null) {
+									JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+									if (columns != null) {
+										for (int i = 0; i < columns.length(); i++) {
+											JSONObject column = columns.getJSONObject(i);
+											if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+												JSONObject measure = new JSONObject();
+												measure.put("id", column.getString("alias"));
+												measure.put("alias", column.getString("aliasToShow"));
+												if (column.has("datasetOrTableFlag")) {
+													// calculated field case
+													measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
+												}
+												if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
+													// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must
+													// be
+													// changed to
+													// be SUM instead
+													String formula = getSummaryRowFormula(column);
+													measure.put("columnName", formula);
+												} else {
+													String formula = column.optString("formula");
+													String name = formula.isEmpty() ? column.optString("name") : formula;
+													measure.put("columnName", name);
+												}
+												measure.put("funct", column.getString("funcSummary"));
 
-											boolean hidden = false;
+												boolean hidden = false;
 
-											if (column.has("style")) {
+												if (column.has("style")) {
 
-												JSONObject style = column.optJSONObject("style");
-												if (style != null) {
+													JSONObject style = column.optJSONObject("style");
+													if (style != null) {
 
-													String	hideSummary = style.optString("hideSummary");
+														String hideSummary = style.optString("hideSummary");
 
-													if (hideSummary!= null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-														hidden = true;
+														if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+															hidden = true;
+														}
+
 													}
 
 												}
-
+												if (!hidden)
+													measures.put(measure);
 											}
-											if (!hidden)
-												measures.put(measure);
 										}
 									}
 								}
-							}
-							JSONObject summaryRow = new JSONObject();
-							summaryRow.put("measures", measures);
+								JSONObject summaryRow = new JSONObject();
+								summaryRow.put("measures", measures);
 
-							JSONObject dataset = widget.optJSONObject("dataset");
-							if (dataset != null) {
-								int dsId = dataset.getInt("dsId");
-								summaryRow.put("dataset", dsId);
-							}
+								JSONObject dataset = widget.optJSONObject("dataset");
+								if (dataset != null) {
+									int dsId = dataset.getInt("dsId");
+									summaryRow.put("dataset", dsId);
+								}
 
-							jsonArrayForSummary.put(summaryRow);
+								jsonArrayForSummary.put(summaryRow);
 
+							} else {
 
-						}
-						else {
+								JSONArray measures = new JSONArray();
+								JSONObject content = widget.optJSONObject("content");
+								if (content != null) {
+									JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+									if (columns != null) {
+										for (int i = 0; i < columns.length(); i++) {
+											JSONObject column = columns.getJSONObject(i);
+											if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+												JSONObject measure = new JSONObject();
+												measure.put("id", column.getString("alias"));
+												measure.put("alias", column.getString("aliasToShow"));
+												if (column.has("datasetOrTableFlag")) {
+													// calculated field case
+													measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
+												}
+												if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
+													// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must
+													// be
+													// changed to
+													// be SUM instead
+													String formula = getSummaryRowFormula(column);
+													measure.put("columnName", formula);
+												} else {
+													String formula = column.optString("formula");
+													String name = formula.isEmpty() ? column.optString("name") : formula;
+													measure.put("columnName", name);
+												}
+												measure.put("funct", aggrObj.get("aggregation"));
 
-							JSONArray measures = new JSONArray();
-							JSONObject content = widget.optJSONObject("content");
-							if (content != null) {
-								JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-								if (columns != null) {
-									for (int i = 0; i < columns.length(); i++) {
-										JSONObject column = columns.getJSONObject(i);
-										if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-											JSONObject measure = new JSONObject();
-											measure.put("id", column.getString("alias"));
-											measure.put("alias", column.getString("aliasToShow"));
-											if (column.has("datasetOrTableFlag")) {
-												// calculated field case
-												measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-											}
-											if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-												// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be changed to
-												// be SUM instead
-												String formula = getSummaryRowFormula(column);
-												measure.put("columnName", formula);
-											} else {
-												String formula = column.optString("formula");
-												String name = formula.isEmpty() ? column.optString("name") : formula;
-												measure.put("columnName", name);
-											}
-											measure.put("funct", aggrObj.get("aggregation"));
+												boolean hidden = false;
 
-											boolean hidden = false;
+												if (column.has("style")) {
 
-											if (column.has("style")) {
+													JSONObject style = column.optJSONObject("style");
+													if (style != null) {
 
-												JSONObject style = column.optJSONObject("style");
-												if (style != null) {
+														String hideSummary = style.optString("hideSummary");
 
-													String	hideSummary = style.optString("hideSummary");
+														if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+															hidden = true;
+														}
 
-													if (hideSummary!= null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-														hidden = true;
 													}
 
 												}
-
+												if (!hidden)
+													measures.put(measure);
 											}
-											if (!hidden)
-												measures.put(measure);
 										}
 									}
 								}
+								JSONObject summaryRow = new JSONObject();
+								summaryRow.put("measures", measures);
+
+								JSONObject dataset = widget.optJSONObject("dataset");
+								if (dataset != null) {
+									int dsId = dataset.getInt("dsId");
+									summaryRow.put("dataset", dsId);
+								}
+
+								jsonArrayForSummary.put(summaryRow);
+
 							}
-							JSONObject summaryRow = new JSONObject();
-							summaryRow.put("measures", measures);
-
-							JSONObject dataset = widget.optJSONObject("dataset");
-							if (dataset != null) {
-								int dsId = dataset.getInt("dsId");
-								summaryRow.put("dataset", dsId);
-							}
-
-							jsonArrayForSummary.put(summaryRow);
-
 
 						}
+					} else {
+						JSONArray measures = new JSONArray();
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+							if (columns != null) {
+								for (int i = 0; i < columns.length(); i++) {
+									JSONObject column = columns.getJSONObject(i);
+									if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+										JSONObject measure = new JSONObject();
+										measure.put("id", column.getString("alias"));
+										measure.put("alias", column.getString("aliasToShow"));
+										if (column.has("datasetOrTableFlag")) {
+											// calculated field case
+											measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
+										}
+										if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
+											// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be
+											// changed
+											// to
+											// be SUM instead
+											String formula = getSummaryRowFormula(column);
+											measure.put("columnName", formula);
+										} else {
+											String formula = column.optString("formula");
+											String name = formula.isEmpty() ? column.optString("name") : formula;
+											measure.put("columnName", name);
+										}
+										measure.put("funct", column.getString("funcSummary"));
 
-					}
-				}
-				else {
-					JSONArray measures = new JSONArray();
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-						if (columns != null) {
-							for (int i = 0; i < columns.length(); i++) {
-								JSONObject column = columns.getJSONObject(i);
-								if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-									JSONObject measure = new JSONObject();
-									measure.put("id", column.getString("alias"));
-									measure.put("alias", column.getString("aliasToShow"));
-									if (column.has("datasetOrTableFlag")) {
-										// calculated field case
-										measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-									}
-									if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-										// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be changed to
-										// be SUM instead
-										String formula = getSummaryRowFormula(column);
-										measure.put("columnName", formula);
-									} else {
-										String formula = column.optString("formula");
-										String name = formula.isEmpty() ? column.optString("name") : formula;
-										measure.put("columnName", name);
-									}
-									measure.put("funct", column.getString("funcSummary"));
+										boolean hidden = false;
 
-									boolean hidden = false;
+										if (column.has("style")) {
 
-									if (column.has("style")) {
+											JSONObject style = column.optJSONObject("style");
+											if (style != null) {
 
-										JSONObject style = column.optJSONObject("style");
-										if (style != null) {
+												String hideSummary = style.optString("hideSummary");
 
-											String	hideSummary = style.optString("hideSummary");
+												if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+													hidden = true;
+												}
 
-											if (hideSummary!= null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-												hidden = true;
 											}
 
 										}
-
+										if (!hidden)
+											measures.put(measure);
 									}
-									if (!hidden)
-										measures.put(measure);
 								}
 							}
 						}
-					}
-					JSONObject summaryRow = new JSONObject();
-					summaryRow.put("measures", measures);
+						JSONObject summaryRow = new JSONObject();
+						summaryRow.put("measures", measures);
 
-					JSONObject dataset = widget.optJSONObject("dataset");
-					if (dataset != null) {
-						int dsId = dataset.getInt("dsId");
-						summaryRow.put("dataset", dsId);
-					}
+						JSONObject dataset = widget.optJSONObject("dataset");
+						if (dataset != null) {
+							int dsId = dataset.getInt("dsId");
+							summaryRow.put("dataset", dsId);
+						}
 
-					jsonArrayForSummary.put(summaryRow);
+						jsonArrayForSummary.put(summaryRow);
+					}
 				}
 				return jsonArrayForSummary;
 			}
@@ -1768,24 +1778,21 @@ public class ExcelExporter {
 		return selections;
 	}
 
-
 	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
 		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
 
-		for (int s=0; s<sortKeyMap.size(); s++) {
-			Map <String, Object> sMap = sortKeyMap.get(s);
+		for (int s = 0; s < sortKeyMap.size(); s++) {
+			Map<String, Object> sMap = sortKeyMap.get(s);
 			NodeComparator nc = new NodeComparator();
 
-			nc.setParentValue((String)sMap.get("parentValue"));
-			nc.setMeasureLabel((String)sMap.get("measureLabel"));
-			if (sMap.get("direction")!= null) {
+			nc.setParentValue((String) sMap.get("parentValue"));
+			nc.setMeasureLabel((String) sMap.get("measureLabel"));
+			if (sMap.get("direction") != null) {
 				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
 				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
 			}
 		}
 		return sortKeys;
 	}
-
-
 
 }

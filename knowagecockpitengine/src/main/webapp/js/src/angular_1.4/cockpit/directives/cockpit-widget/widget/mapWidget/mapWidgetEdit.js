@@ -147,16 +147,17 @@ function mapWidgetEditControllerFunction(
 
   	}
 
-  	$scope.setModalColumn = function(column, layer){
-  		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
-  		layer.modalSelectionColumn = column.alias;
-  		for(var i in columnsList){
-  			if(columnsList[i].alias !== column.alias){
-  				columnsList[i].properties.modal = false;
-  			}
-  		}
+	$scope.setModalColumn = function(column, layer){
+		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
+		layer.modalSelectionColumn = (column.properties.modal) ? column.alias : undefined;
 
-  	}
+		for(var i in columnsList){
+			if(columnsList[i].alias !== column.alias){
+				columnsList[i].properties.modal = false;
+			}
+		}
+
+	}
 
   	$scope.deleteColumn = function(layer,column){
   		layer.splice(layer.indexOf(column),1);

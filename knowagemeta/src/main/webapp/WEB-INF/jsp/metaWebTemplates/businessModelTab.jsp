@@ -173,10 +173,13 @@
 			</md-tab>
 			
 			<md-tab id="attributesTab" md-active="tabResource.selectedBusinessTab=='attributesTab'" md-on-select="tabResource.selectedBusinessTab='attributesTab'" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
-				<md-content  ng-if="tabResource.selectedBusinessTab=='attributesTab'" layout  layout-fill ng-controller="businessModelAttributeController">
+				<md-content  ng-if="tabResource.selectedBusinessTab=='attributesTab'" layout="column"  layout-fill ng-controller="businessModelAttributeController">
 					<!--  angular-table  id="bmAttr" ng-model="attributesList" columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
 					 </angular-table-->
-					 <div ag-grid="attributesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+					 	<md-button class="md-fab md-mini"  aria-label="Create" ng-click="addUnusedColumns($event)">
+			  			<md-icon md-font-icon="fa fa-plus"></md-icon>
+					</md-button>
+					 <div ag-grid="attributesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage ag-full-dimensions noPadding" style="width:100%;"></div>
 				</md-content>
 			</md-tab>
 			

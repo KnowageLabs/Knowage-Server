@@ -414,12 +414,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        <md-content layout-fill ng-include="baseScriptPath+'/directives/cockpit-data-configuration/templates/CockpitDataConfigurationAssociationGroup.html'">
 		        </md-content>
 		 	</md-tab>
+		 	<md-tab label="Variables"  md-on-select="refreshFrequencyNearRTData()" >
+		        <md-content layout-fill ng-include="baseScriptPath+'/directives/cockpit-data-configuration/templates/CockpitDataConfigurationVariables.html'">
+		        </md-content>
+		 	</md-tab>
 		 	<md-tab label="{{translate.load('sbi.cockpit.template')}}">
 		        <md-content ng-controller="dataAssociationController">
 		        	<md-card>
 		        		<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
-								<md-switch ng-model="showIndented">{{translate.load("sbi.documentdetails.templates.smartvisualization")}}</md-switch>
+								<md-switch ng-model="showIndented">{{translate.load("sbi.cockpit.template.smartvisualization")}}</md-switch>
 							</div>
 						</md-toolbar>
 		        		<md-card-content>

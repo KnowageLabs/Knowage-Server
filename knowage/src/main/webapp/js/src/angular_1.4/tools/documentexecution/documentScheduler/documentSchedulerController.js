@@ -1,7 +1,8 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
 
-	documentExecutionModule.directive('documentScheduler', ['sbiModule_config', function(sbiModule_config){
+	documentExecutionModule.directive('documentScheduler', ['sbiModule_config', 'sbiModule_dateServices',
+			function(sbiModule_config, sbiModule_dateServices) {
 		return {
 			restrict: 'E',
 			templateUrl: sbiModule_config.dynamicResourcesBasePath
@@ -12,14 +13,26 @@
 
 
 	var documentSchedulerCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteServices, $mdDialog
-			,sbiModule_restServices,docExecute_urlViewPointService,execProperties,docExecute_paramRolePanelService,$filter,sbiModule_download) {
+			,sbiModule_restServices,docExecute_urlViewPointService,execProperties,docExecute_paramRolePanelService,$filter
+			,sbiModule_download,sbiModule_dateServices) {
 
 		$scope.column = [
-                        {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
-                        {label:sbiModule_translate.load("sbi.generic.descr"),name:"description"},
-                        {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"dateCreation",transformer:function(data){
-                        	return $filter('date')(data, sbiModule_config.dateFormat);
-                       	 }}];
+				{
+					label:sbiModule_translate.load("sbi.generic.name"),
+					name:"name"
+				}, {
+					label:sbiModule_translate.load("sbi.generic.descr"),
+					name:"description"
+				},{
+					label:sbiModule_translate.load("sbi.generic.creationdate"),
+					name:"dateCreation",
+					transformer:function(data) {
+						date = new Date(data);
+						return sbiModule_dateServices.formatDate(date)
+							+ " " + sbiModule_dateServices.formatDate(date,'HH:mm');
+					}
+				}
+			];
 
 		$scope.closeFilter = function(){
 			$mdDialog.cancel();

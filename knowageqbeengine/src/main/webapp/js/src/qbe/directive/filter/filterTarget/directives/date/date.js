@@ -28,6 +28,10 @@ angular.module('targetApp').directive('date', function(targetAppBasePath,_dateSe
 			templateUrl:targetAppBasePath +"/directives/date/date.html",
 			controller:function($scope,$filter){
 				var dateService = _dateService_;
+				$scope.$watch('date',function(){
+					$scope.fillInput();
+				})
+
 				$scope.fillInput = function(){
 					var date = $scope.date.getDate();
 					var month = $scope.date.getMonth()+1;
@@ -45,6 +49,8 @@ angular.module('targetApp').directive('date', function(targetAppBasePath,_dateSe
 						$scope.date = new Date(	dateService.getYear($scope.filter.rightOperandDescription),
 												dateService.getMonth($scope.filter.rightOperandDescription),
 												dateService.getDate($scope.filter.rightOperandDescription));
+					}else{
+						$scope.date = new Date();
 					}
 
 

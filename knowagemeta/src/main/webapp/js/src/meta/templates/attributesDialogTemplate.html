@@ -58,11 +58,6 @@
 							<div class="hint">{{properties['behavioural.notEnabledRoles'].propertyType.description}}</div>
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
-							<label>{{properties['physical.physicaltable'].propertyType.name}}</label>
-							<input type="text" ng-disabled="true" ng-model="properties['physical.physicaltable'].value" />
-							<div class="hint">{{properties['physical.physicaltable'].propertyType.description}}</div>
-						</md-input-container>
-						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.attribute'].propertyType.name}}</label>
 							<md-select ng-model="properties['structural.attribute'].value">
 								<md-option ng-repeat="option in sbiModule_config.profileAttributes" ng-value="option">
@@ -70,6 +65,16 @@
 								</md-option>
 							</md-select>
 							<div class="hint">{{properties['structural.attribute'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['physical.physicaltable'].propertyType.name}}</label>
+							<input type="text" ng-disabled="true" ng-model="properties['physical.physicaltable'].value" />
+							<div class="hint">{{properties['physical.physicaltable'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{translate.load('sbi.meta.business.columns.physicalColumn')}}</label>
+							<input type="text" ng-disabled="true" ng-model="physicalColumn.name" />
+							<div class="hint">{{translate.load('sbi.meta.business.columns.physicalColumn.hint')}}</div>
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.filtercondition'].propertyType.name}}</label>
@@ -108,12 +113,8 @@
 							<div class="hint">{{properties['structural.format'].propertyType.description}}</div>
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
-							<label>{{properties['structural.customFunction'].propertyType.name}}</label>
-							<md-select ng-model="properties['structural.customFunction'].value">
-								<md-option ng-repeat="option in properties['structural.customFunction'].propertyType.admissibleValues" ng-value="option">
-									{{getExampleDate(option)}}
-								</md-option>
-							</md-select>
+							<label>{{properties['structural.customFunction'].propertyType.name}}</label>							
+							<input ng-model="properties['structural.customFunction'].value">								
 							<div class="hint">{{properties['structural.customFunction'].propertyType.description}}</div>
 						</md-input-container>
 					</div>
@@ -127,11 +128,16 @@
         	{{translate.load('sbi.glossary.delete.attribute')}}
       	</md-button-->
       	<span flex></span>
+      	<md-button class="md-raised md-primary" ng-click="delete(selectedAttribute)" >
+        	{{translate.load('cache.manager.delete')}}
+      	</md-button>
       	<md-button class="md-raised" ng-click="cancel()" >
         	{{translate.load('sbi.generic.cancel')}}
       	</md-button>
       	<md-button class="md-raised md-primary" ng-click="save()" >
         	{{translate.load('sbi.generic.save')}}
       	</md-button>
+      	
+      	
     </md-dialog-actions>
 </md-dialog>

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function(){
 angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpitModule_widgetServices,cockpitModule_properties){
@@ -38,7 +38,7 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
                              angular.element(element[0].querySelector("#gridsterContainer>ul")).append(clone);
                              $compile(angular.element(element[0].querySelector("#gridsterContainer>ul")))(scope);
                          });
-                    	 
+
                     	 angular.element(document).ready(function () {
                     		 scope.$on('gridster-mobile-changed', function(gridster,sizes) {
                     			 if(cockpitModule_properties.all_widget_initialized!=true){
@@ -52,7 +52,7 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
                     						var options =angular.element(widEle).scope().getOptions == undefined? {} :  angular.element(widEle).scope().getOptions();
                     						cockpitModule_widgetServices.refreshWidget(angular.element(widEle.firstElementChild),gridster.currentScope.sheet.widgets[i],'gridster-resized',options);
                     					}
-                    					
+
                     				}
                     				angular.element(document.getElementsByTagName('md-card-content')).removeClass('fadeOut');
                     				angular.element(document.getElementsByTagName('md-card-content')).addClass('fadeIn');
@@ -64,11 +64,12 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
 	   }
 });
 
-function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template){
+function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$timeout){
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
-	
+	cockpitModule_properties.cockpitSpinner = false;
+
 	if($scope.cockpitModule_template.configuration && $scope.cockpitModule_template.configuration.style){
 		var tempBgStyle = $scope.cockpitModule_template.configuration.style;
 		$scope.backgroundStyle={
@@ -76,18 +77,22 @@ function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridster
 				"background-position": "center",
 				"background-repeat": "no-repeat",
 			    "min-height": "100%"
-				
+
 		};
 		if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
 		if(tempBgStyle.sheetsBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.sheetsBackgroundColor;
 		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
-		
+
 		$rootScope.showCockpitSpinner = function(){
-			$scope.cockpitSpinner = true;
+			$timeout(function(){
+				cockpitModule_properties.cockpitSpinner = true;
+			},0)
 		}
-		
+
 		$rootScope.hideCockpitSpinner = function(){
-			$scope.cockpitSpinner = false;
+			$timeout(function(){
+				cockpitModule_properties.cockpitSpinner = false;
+			},0)
 		}
 	}
 };

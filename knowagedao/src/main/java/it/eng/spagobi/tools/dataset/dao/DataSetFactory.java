@@ -61,6 +61,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
@@ -256,6 +257,8 @@ public class DataSetFactory {
 				fds.setDsType(FILE_DS_TYPE);
 			} else if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(type)) {
 				ds = manageRESTDataSet(jsonConf);
+			} else if (DataSetConstants.DS_PYTHON_TYPE.equalsIgnoreCase(type)) {
+				ds = managePythonDataSet(jsonConf);
 			} else if (DataSetConstants.DS_SPARQL.equalsIgnoreCase(type)) {
 				ds = manageSPARQLDataSet(jsonConf);
 			} else if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(type)) {
@@ -833,6 +836,10 @@ public class DataSetFactory {
 				ds = manageRESTDataSet(jsonConf);
 			}
 
+			if (DataSetConstants.DS_PYTHON_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
+				ds = managePythonDataSet(jsonConf);
+			}
+
 			if (DataSetConstants.DS_SPARQL.equalsIgnoreCase(sbiDataSet.getType())) {
 				ds = manageSPARQLDataSet(jsonConf);
 			}
@@ -1118,6 +1125,12 @@ public class DataSetFactory {
 	private static RESTDataSet manageRESTDataSet(JSONObject jsonConf) {
 		RESTDataSet res = new RESTDataSet(jsonConf);
 		res.setDsType(DataSetConstants.DS_REST_NAME);
+		return res;
+	}
+
+	private static PythonDataSet managePythonDataSet(JSONObject jsonConf) {
+		PythonDataSet res = new PythonDataSet(jsonConf);
+		res.setDsType(DataSetConstants.DS_PYTHON_NAME);
 		return res;
 	}
 
