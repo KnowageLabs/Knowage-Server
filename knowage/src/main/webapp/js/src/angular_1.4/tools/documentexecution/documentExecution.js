@@ -557,15 +557,9 @@
 			body.documentId=$scope.executionInstance.OBJECT_ID;
 			body.documentLabel=$scope.executionInstance.OBJECT_LABEL;
 			body.exportType="CSV";
-			body.parameters={};
+			body.parameters=driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 
-			for(var i =0 ; i<execProperties.parametersData.documentParameters.length; i++){
-				if(execProperties.parametersData.documentParameters[i].parameterValue==undefined){
-					execProperties.parametersData.documentParameters[i].parameterValue = "";
-				}
-				var parValue = execProperties.parametersData.documentParameters[i].parameterValue.constructor == Array ? execProperties.parametersData.documentParameters[i].parameterValue.join(","): execProperties.parametersData.documentParameters[i].parameterValue;
-				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = parValue;
-			}
+
 			$scope.sbiModule_messaging.showInfoMessage("The download has started in background. You will find the result file in your download page.");
 			$scope.sbiModule_restServices.promisePost("2.0/export","cockpitData",body).then(function(response){
 
