@@ -602,6 +602,12 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				})
 			}
 
+			$scope.showNewsButton = function(){
+				sbiModule_restServices.promiseGet("2.0", "newsRead/total").then(function(response){
+					$scope.totalNewsNumber = response.data;
+				})
+			}
+			$scope.showNewsButton();
 
 			$scope.news = function(){
 
