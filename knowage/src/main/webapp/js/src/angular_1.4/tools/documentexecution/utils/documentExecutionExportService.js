@@ -303,7 +303,7 @@
 						}, function errorCallback(response) {
 							$mdToast.cancel(exportingToast);
 							dee.exporting = false;
-							sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+							sbiModule_messaging.showErrorMessage(response.errors[0] ? response.errors[0].message : response.message, 'Error');
 						});
 					},function(e){
 						dee.exporting = false;
