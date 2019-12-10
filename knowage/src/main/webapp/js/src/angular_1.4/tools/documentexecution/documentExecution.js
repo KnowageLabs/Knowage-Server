@@ -575,7 +575,7 @@
 					}
 
 				}
-				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = parValue;
+				body.parameters[execProperties.parametersData.documentParameters[i].urlName] = execProperties.parametersData.documentParameters[i].parameterValue.constructor == Array ? execProperties.parametersData.documentParameters[i].parameterValue.join(","): execProperties.parametersData.documentParameters[i].parameterValue;;
 			}
 
 			$scope.sbiModule_messaging.showInfoMessage("The download has started in background. You will find the result file in your download page.");
