@@ -1110,28 +1110,35 @@
 	
 	<formula>
 		<name>Case</name>
-		<syntax>Case when Exp then val else val2 end </syntax>
-		<body>Case when ${Exp} then ${val} else ${val2} end</body>
+		<syntax>Case expression when condition then return_expression else else_expression end </syntax>
+		<body>Case ${expression} when ${condition}  then ${return_expression} else ${else_expression} end</body>
 		<argument>
-			<name>Exp</name>
+			<name>Expression</name>
 			<expected_value/>
 			<default_value/>
-			<argument_description>Exp</argument_description>
-			<placeholder>Exp</placeholder>
+			<argument_description>Expression</argument_description>
+			<placeholder>expression</placeholder>
 		</argument>
 		<argument>
-			<name>val</name>
+			<name>condition</name>
 			<expected_value/>
 			<default_value/>
-			<argument_description>val</argument_description>
-			<placeholder>val</placeholder>
+			<argument_description>condition</argument_description>
+			<placeholder>condition</placeholder>
 		</argument>
 		<argument>
-			<name>val2</name>
+			<name>return_expression</name>
 			<expected_value/>
 			<default_value/>
-			<argument_description>val2</argument_description>
-			<placeholder>val2</placeholder>
+			<argument_description>return_expression</argument_description>
+			<placeholder>return_expression</placeholder>
+		</argument>
+		<argument>
+			<name>else_expression</name>
+			<expected_value/>
+			<default_value/>
+			<argument_description>else_expression</argument_description>
+			<placeholder>else_expression</placeholder>
 		</argument>
 		<output>Object</output>
 		<description>Returns the result if condition is true.</description>
