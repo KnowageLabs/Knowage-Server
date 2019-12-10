@@ -363,7 +363,7 @@
 														execProperties.parametersData.documentParameters[z].mandatory &&
 														(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
 																execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
-													console.log('setting default value ', response.data.result.root[0].value);
+												//	console.log('setting default value ', response.data.result.root[0].value);
 													execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 															[response.data.result.root[0].value]	: response.data.result.root[0].value;
 												}else{
@@ -398,7 +398,7 @@
 										errorMes = response.data.RemoteException.message;
 									}
 									//documentExecuteServices.showToast('Error LOV " '+ lovParamName +' " : ' + errorMes);
-									var idRowParameter = driversDependencyService.getArrayIndexByDriverUrlName(lovParamName, execProperties.parametersData.documentParameters);
+									var idRowParameter = getArrayIndexByDriverUrlName(lovParamName, execProperties.parametersData.documentParameters);
 									execProperties.parametersData.documentParameters[idRowParameter].lovNotDefine=true;
 									execProperties.parametersData.documentParameters[idRowParameter].defaultValues = [];
 									execProperties.parametersData.documentParameters[idRowParameter].parameterValue = [];

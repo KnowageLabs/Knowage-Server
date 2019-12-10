@@ -781,6 +781,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		for(var aggregationIndex in cockpitModule_template.configuration.aggregations){
 			var aggregation = cockpitModule_template.configuration.aggregations[aggregationIndex];
 			if(angular.equals(cockpitModule_template.configuration.aggregations[aggregationIndex].datasets, datasets)){
+				for (var k in aggregation.selection) {
+					if (aggregation.selection[k].length == 0) {
+						delete aggregation.selection[k];
+					}
+				}
 				var selections = angular.copy(aggregation.selection);
 
 				var dsLabels = Object.keys(cockpitModule_template.configuration.filters);
