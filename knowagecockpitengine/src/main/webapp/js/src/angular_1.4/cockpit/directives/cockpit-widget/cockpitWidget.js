@@ -528,7 +528,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 			}
 		}
-
+		$rootScope.hideCockpitSpinner();
 
 	}
 
@@ -548,6 +548,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			options.label = label;
 			$scope.refreshWidget(options,'filters');
 		}
+		$rootScope.hideCockpitSpinner();
 	}
 
 	$scope.safeApply=function(){
@@ -1132,7 +1133,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 				}
 			}
-			$rootScope.hideCockpitSpinner();
+			//$rootScope.hideCockpitSpinner();
 		}
 
 	}
