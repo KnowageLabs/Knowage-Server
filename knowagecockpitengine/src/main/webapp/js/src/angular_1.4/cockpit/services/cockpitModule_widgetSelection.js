@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template,$q,$mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_nearRealtimeServices,sbiModule_messaging,cockpitModule_utilstServices){
+angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template,$q,$mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_nearRealtimeServices,sbiModule_messaging,cockpitModule_utilstServices,$rootScope){
 	var ws=this;
 
 	this.getSelectionLoadAssociative = function(){
@@ -726,6 +726,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost("2.0/associativeSelections","",body)
 			.then(function(response){
+				$rootScope.hideCockpitSpinner
 				var index = ws.currentSelectionContainsAss(response.data);
 				if(index==-1){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection.push(response.data);
@@ -733,9 +734,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection[index] = response.data;
 				}
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
+				$rootScope.hideCockpitSpinner();
 				defer.resolve(response.data);
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
+				$rootScope.hideCockpitSpinner();
 				defer.reject();
 			})
 		}else{
