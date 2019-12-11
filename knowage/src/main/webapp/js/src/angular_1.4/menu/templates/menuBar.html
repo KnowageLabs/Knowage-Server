@@ -30,7 +30,7 @@
 				</ul>
 			</li>
 			
-			<li ng-repeat="link in links">
+			<li ng-repeat="link in links" ng-if="link.linkType!='news' || (link.linkType=='news' && totalNewsNumber != 0)">
 				<a href="#" ng-click="menuCall(link.firstUrl,link.linkType)"> 
 					<i ng-if="link.iconCls" ng-class="['icon', link.iconCls]"></i> 
 					<i ng-if="!link.iconCls" class="icon fa fa-2x fa-link"></i> 

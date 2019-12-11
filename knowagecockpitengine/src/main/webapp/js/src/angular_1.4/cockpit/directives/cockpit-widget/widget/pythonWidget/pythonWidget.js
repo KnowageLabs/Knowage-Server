@@ -65,8 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$timeout,
 			$http,
 			$sce,
+			$location,
 			sbiModule_translate,
 			sbiModule_restServices,
+			sbiModule_config,
 			cockpitModule_properties,
 			cockpitModule_generalServices,
 			cockpitModule_datasetServices,
@@ -158,6 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': encodedUserId,
+		        		  'knowage-address': $scope.knowageAddress,
 		        		  'Dataset-name': dataset_label,
 		        		  'parameters': [] },
 		        data: { 'script' : $scope.ngModel.pythonCode,
@@ -183,6 +186,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.init = function (element, width, height) {
+			var knowageHost = $location.$$host;
+			var knowagePort = $location.$$port;
+			$scope.knowageAddress = knowageHost + ":" + knowagePort;
 			$scope.showWidgetSpinner();
 			$scope.refresh(element, width, height, null, 'init');
 		}

@@ -20,6 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		.service("cockpitModule_variableService", cockpitModule_variableService)
 
 	function cockpitModule_variableService(sbiModule_translate,sbiModule_user, cockpitModule_template,$q,cockpitModule_analyticalDrivers,cockpitModule_datasetServices, cockpitModule_widgetSelection){
+		function formatDataset(dataset){
+			tempRows = {};
+			dataset.rows.forEach(function(row,i){
+				tempRows[row.column_1] = row.column_2;
+			})
+			return tempRows;
+		}
+
 		this.getVariableValue = function(variable){
 			return $q(function(resolve, reject) {
 //				var selectedVariable;
@@ -43,10 +51,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
 						}
 					}
-					cockpitModule_datasetServices.loadDatasetRecordsById(variable.dataset, 0, 1,undefined, undefined,tempColumn).then(
+					cockpitModule_datasetServices.loadDatasetRecordsById(variable.dataset, 0, -1,undefined, undefined,tempColumn).then(
 						function(response){
 							if(variable.column) resolve(response.rows[0].column_1);
-							else resolve(response.rows);
+							else resolve(formatDataset(response));
 						},function(error){
 							reject(error)
 					})

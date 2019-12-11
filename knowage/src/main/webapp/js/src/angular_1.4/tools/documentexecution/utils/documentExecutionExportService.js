@@ -303,7 +303,7 @@
 						}, function errorCallback(response) {
 							$mdToast.cancel(exportingToast);
 							dee.exporting = false;
-							sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+							sbiModule_messaging.showErrorMessage(response.errors[0] ? response.errors[0].message : response.message, 'Error');
 						});
 					},function(e){
 						dee.exporting = false;
@@ -535,8 +535,8 @@
 				}
 
 
-			} 
-			
+			}
+
 			var body = {
 					user_id: sbiModule_user.userUniqueIdentifier,
 					outputType: exportType,
@@ -544,10 +544,16 @@
 					DOCUMENT_LABEL: execProperties.executionInstance.OBJECT_LABEL,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
-					parametersDataArray : execProperties.parametersData.documentParameters,
+					parametersDataArray : angular.copy(execProperties.parametersData.documentParameters),
 					widgetsPivot : widgetsPivot
 
 			};
+
+
+			for (var i = 0; i < body.parametersDataArray.length; i++){
+				if(body.parametersDataArray[i].children)
+					delete body.parametersDataArray[i].children;
+			}
 
 			for (var parameter in parameters) {
 				if (parameters.hasOwnProperty(parameter)) {
@@ -555,7 +561,7 @@
 				}
 			}
 
-		
+
 			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
 			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
 			var cockpitSelections = {};

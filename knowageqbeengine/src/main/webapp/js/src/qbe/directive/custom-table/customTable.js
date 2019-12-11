@@ -87,7 +87,7 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
 
 function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action,filters_service,expression_service){
 
-	$scope.smartPreview = true;
+	$scope.smartPreview = query_service.smartView;
 
 	$scope.completeResult = false;
 

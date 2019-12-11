@@ -365,6 +365,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToCreateSelfServiceGeoreport(bo.isAbleToCreateSelfServiceGeoreport());
 		role.setAbleToCreateSelfServiceKpi(bo.isAbleToCreateSelfServiceKpi());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
+		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
 		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());

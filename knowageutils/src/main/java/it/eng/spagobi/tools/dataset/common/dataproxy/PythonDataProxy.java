@@ -106,7 +106,6 @@ public class PythonDataProxy extends AbstractDataProxy {
 					String param = parameters.substring(start, end + 1);
 					JSONObject jsonParameter = new JSONObject(param);
 					parametersList.add(jsonParameter);
-					// json.put("parameter" + String.valueOf(i++), jsonParameter);
 					start = end + 2;
 					end = parameters.indexOf('}', start);
 				}

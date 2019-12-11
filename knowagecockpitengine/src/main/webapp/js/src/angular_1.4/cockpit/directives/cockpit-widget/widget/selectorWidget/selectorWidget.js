@@ -201,6 +201,7 @@ angular.module('cockpitModule')
 			$scope.aggregated = true;
 			if(Object.keys($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.label)).length == 0){
 				$scope.aggregated = false;
+				$scope.oldSelectedValues = null;
 			}
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
