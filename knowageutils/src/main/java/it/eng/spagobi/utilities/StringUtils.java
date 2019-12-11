@@ -78,13 +78,17 @@ public class StringUtils {
 	/**
 	 * Replace parameters.
 	 *
-	 * @param filterCondition         the filter condition
-	 * @param parameterTypeIdentifier the parameter type identifier
-	 * @param parameters              the parameters
+	 * @param filterCondition
+	 *            the filter condition
+	 * @param parameterTypeIdentifier
+	 *            the parameter type identifier
+	 * @param parameters
+	 *            the parameters
 	 *
 	 * @return the string
 	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static String replaceParameters(String filterCondition, String parameterTypeIdentifier, Properties parameters) throws IOException {
 		String result = filterCondition;
@@ -106,16 +110,22 @@ public class StringUtils {
 	/**
 	 * Replace parameters.
 	 *
-	 * @param filterCondition         the filter condition
-	 * @param parameterTypeIdentifier the parameter type identifier
-	 * @param parameters              the parameters
+	 * @param filterCondition
+	 *            the filter condition
+	 * @param parameterTypeIdentifier
+	 *            the parameter type identifier
+	 * @param parameters
+	 *            the parameters
 	 *
 	 * @return the string
 	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static String replaceParameters(String filterCondition, String parameterTypeIdentifier, Map parameters) throws IOException {
 		String result = filterCondition;
+
+		logger.debug("query string:  " + filterCondition);
 		Set params;
 		Map paramsFromEnv = new HashMap<>();
 		Map parTypeMap = new HashMap<>();
@@ -123,12 +133,18 @@ public class StringUtils {
 		Iterator it = params.iterator();
 		while (it.hasNext()) {
 			String parameterName = (String) it.next();
+			logger.debug("parameterName:  " + parameterName);
 			if (!parameters.containsKey(parameterName)) {
+				logger.error("No value for the parameter: " + parameterName);
 				throw new IOException("No value for the parameter: " + parameterName);
 			}
 			String parameterValue = parameters.get(parameterName) == null ? null : parameters.get(parameterName).toString();
+
+			logger.debug("parameterValue:  " + parameterValue);
 			String parameterType = parameters.get(parameterName + SpagoBIConstants.PARAMETER_TYPE) == null ? null
 					: parameters.get(parameterName + SpagoBIConstants.PARAMETER_TYPE).toString();
+
+			logger.debug("parameterType:  " + parameterType);
 			paramsFromEnv.put(parameterName, parameterValue);
 			parTypeMap.put(parameterName, parameterType);
 
@@ -150,12 +166,15 @@ public class StringUtils {
 	/**
 	 * Gets the parameters.
 	 *
-	 * @param str                     the str
-	 * @param parameterTypeIdentifier the parameter type identifier
+	 * @param str
+	 *            the str
+	 * @param parameterTypeIdentifier
+	 *            the parameter type identifier
 	 *
 	 * @return the parameters
 	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Set getParameters(String str, String parameterTypeIdentifier) throws IOException {
 		Set parameters = new HashSet();
@@ -172,17 +191,20 @@ public class StringUtils {
 			} else {
 				parameter = str.substring(beginIndex + 2, endIndex).trim();
 			}
+			logger.debug("Parameter name : " + parameter);
 			parameters.add(parameter);
 			fromIndex = endIndex;
 		}
 
+		logger.debug("parameters set size: " + parameters.size());
 		return parameters;
 	}
 
 	/**
 	 * Escapes the input string as a HQL static operand. At the time being, it replaces "'" with "''"
 	 *
-	 * @param parameter the parameter to be escaped
+	 * @param parameter
+	 *            the parameter to be escaped
 	 * @return the escaped String
 	 */
 	public static String escapeHQL(String parameter) {
@@ -196,7 +218,8 @@ public class StringUtils {
 	/**
 	 * Joins the input string array into a unique string using the specified separator
 	 *
-	 * @param strings   The strings to be joined
+	 * @param strings
+	 *            The strings to be joined
 	 * @param separator
 	 * @return Joins the input string array into a unique string using the specified separator
 	 */
@@ -213,7 +236,8 @@ public class StringUtils {
 	/**
 	 * Joins the input collection of string into a unique string using the specified separator
 	 *
-	 * @param strings   The collection to be joined
+	 * @param strings
+	 *            The collection to be joined
 	 * @param separator
 	 * @return Joins the input collection of string into a unique string using the specified separator
 	 */
@@ -232,9 +256,11 @@ public class StringUtils {
 	/**
 	 * Joins the input collection of string into a unique string using the specified separator
 	 *
-	 * @param objects   The collection to be joined
+	 * @param objects
+	 *            The collection to be joined
 	 * @param separator
-	 * @param prefix    The prefix to be applied on each element
+	 * @param prefix
+	 *            The prefix to be applied on each element
 	 * @return Joins the input collection of string into a unique string using the specified separator
 	 */
 	public static String join(Collection<Object> objects, String separator, String prefix) {
@@ -253,7 +279,8 @@ public class StringUtils {
 	/**
 	 * escape all the occurences of '. As escape char use ' so all the ' in the original string will be replaced with ''
 	 *
-	 * @param the string that must be escaped
+	 * @param the
+	 *            string that must be escaped
 	 *
 	 * @return the escaped string
 	 */
@@ -264,9 +291,12 @@ public class StringUtils {
 	/**
 	 * escape all the occurences of c. As escape char use escapeChar so all the c in the original string will be replaced with escapeChar + c
 	 *
-	 * @param str        the string that must be escaped
-	 * @param c          the char to escape
-	 * @param escapeChar the char that will be use to escape
+	 * @param str
+	 *            the string that must be escaped
+	 * @param c
+	 *            the char to escape
+	 * @param escapeChar
+	 *            the char that will be use to escape
 	 *
 	 * @return the escaped string
 	 */
