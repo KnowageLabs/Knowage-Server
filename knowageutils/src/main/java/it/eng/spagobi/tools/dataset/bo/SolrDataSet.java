@@ -50,6 +50,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 public class SolrDataSet extends RESTDataSet {
 
+	private static final String SOLR_DEFAULT_QUERY = "*:*";
 	public static final String DATASET_TYPE = "SbiSolrDataSet";
 	private static final Logger logger = Logger.getLogger(SolrDataSet.class);
 	private int facetsLimitOption = 10;
@@ -109,7 +110,7 @@ public class SolrDataSet extends RESTDataSet {
 			SolrQuery solrQuery = new SolrQuery();
 			String query = getProp(SolrDataSetConstants.SOLR_QUERY, jsonConf, true, resolveParams);
 			if (query == null || query.isEmpty()) {
-				query = "*.*";
+				query = SOLR_DEFAULT_QUERY;
 			}
 			solrQuery.setQuery(query);
 			String fieldList = getProp(SolrDataSetConstants.SOLR_FIELD_LIST, jsonConf, true, resolveParams);
@@ -147,7 +148,7 @@ public class SolrDataSet extends RESTDataSet {
 			SolrQuery solrQuery = new SolrQuery();
 			String query = getProp(SolrDataSetConstants.SOLR_QUERY, jsonConf, true, resolveParams);
 			if (query == null || query.isEmpty()) {
-				query = "*.*";
+				query = SOLR_DEFAULT_QUERY;
 			}
 			solrQuery.setQuery(query);
 			String fieldList = getProp(SolrDataSetConstants.SOLR_FIELD_LIST, jsonConf, true, resolveParams);
