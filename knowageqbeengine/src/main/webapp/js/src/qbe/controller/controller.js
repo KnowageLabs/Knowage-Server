@@ -461,7 +461,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "field":field.attributes.field,
 				   "funct":getFunct(field,"measure"),
 				   "color":field.color,
-				   "group":isColumnType(field,"attribute")&&!$scope.isSpatial(field),
+				   "group":getGroup(field),
 				   "order":"NONE",
 				   "include":true,
 				   "visible":true,
@@ -488,7 +488,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	var getFunct =function(field){
 
-		if(field.group){
+		if(getGroup(field)){
 			return "NONE"
 		}else if(field.aggtype && field.aggtype!==""){
 			return field.aggtype
@@ -499,6 +499,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}else{
 			return "NONE";
 		}
+	}
+
+	var getGroup = function(field){
+		return isColumnType(field,"attribute")&&!$scope.isSpatial(field)
 	}
 
 	var isColumnType = function(field,columnType){
