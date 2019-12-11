@@ -1132,7 +1132,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 				}
 			}
-			$rootScope.hideCockpitSpinner();
 		}
 
 	}
