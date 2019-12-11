@@ -49,7 +49,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	.then(function(response){
 		$scope.pythonAddress = response.data;
 	}, function(error){
-		//todo
+		$scope.pythonAddress = "";
 	});
 
 	$scope.maxSizeStr = maxSizeStr;
@@ -174,6 +174,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	// Manage the Dataset type combobox items
 	$scope.filterDatasetTypes = function (item) {
+		if (item.VALUE_CD == 'Python') {
+			if ($scope.pythonAddress != undefined && $scope.pythonAddress != "")
+				return true;
+			else {
+				return false;
+			}
+		}
 	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated';
 	};
 
