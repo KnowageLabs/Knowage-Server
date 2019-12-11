@@ -942,7 +942,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                 $scope.hide = function() {
                 	if($scope.originalCFname!=""){
                 		for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
-							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname) $scope.editQueryObj.fields.splice(i);
+							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname){
+								$scope.editQueryObj.fields.splice(i,1);
+								$scope.queryModel.splice(i,1);
+							}
 						}
                 	}
                 	//parameters to add in the calculatedFieldOutput object to prepare it for the sending
