@@ -29,6 +29,7 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
             ngModel: '=',
         	expression: '=',
         	advancedFilters:'=',
+        	distinct:'=',
             filters: '=',
             isTemporal: '='
 
@@ -450,9 +451,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 	},true);
 
-	$scope.distinctSelected = function (){
-		$rootScope.$broadcast('distinctSelected');
-	}
 
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {

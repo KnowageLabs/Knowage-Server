@@ -615,10 +615,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
 	})
 
-	$scope.$on('distinctSelected',function(){
-    	 $scope.editQueryObj.distinct =  !$scope.editQueryObj.distinct;
-    })
-
 	$scope.$on('openDialogForParams',function(event){
 		$scope.openDialogForParams($scope.pars,$scope.editQueryObj.filters, $scope.editQueryObj.expression,$scope.advancedFilters);
 	})
