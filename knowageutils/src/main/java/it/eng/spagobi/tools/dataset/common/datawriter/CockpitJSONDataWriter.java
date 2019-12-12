@@ -26,8 +26,11 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 		Object value = field.getValue();
 		if (value != null) {
 			Class type = fieldMetaData.getType();
+			boolean multiValue = fieldMetaData.isMultiValue();
 			String typeName = type.getName();
-			if (Timestamp.class.isAssignableFrom(type)) {
+			if (multiValue) {
+				result = value;
+			} else if (Timestamp.class.isAssignableFrom(type)) {
 				result = TIMESTAMP_FORMATTER.format(value);
 			} else if ("oracle.sql.TIMESTAMP".equals(typeName)) {
 				String s = value.toString();

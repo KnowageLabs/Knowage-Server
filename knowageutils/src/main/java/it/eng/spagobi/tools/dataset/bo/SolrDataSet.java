@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -332,6 +333,10 @@ public class SolrDataSet extends RESTDataSet {
 			sb.append("/");
 		sb.append(solrConfiguration.getCollection());
 		return sb.toString();
+	}
+
+	public void setSolrQuery(SolrQuery solrQuery) {
+		setSolrQuery(solrQuery, Collections.EMPTY_MAP);
 	}
 
 	public void setSolrQuery(SolrQuery solrQuery, Map<String, String> facets) {

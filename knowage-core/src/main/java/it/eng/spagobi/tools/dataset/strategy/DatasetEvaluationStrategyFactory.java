@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package it.eng.spagobi.tools.dataset.strategy;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
@@ -27,54 +28,55 @@ import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.utilities.assertion.Assert;
-import org.apache.log4j.Logger;
 
 public class DatasetEvaluationStrategyFactory {
 
-    private static final Logger logger = Logger.getLogger(DatasetEvaluationStrategyFactory.class);
+	private static final Logger logger = Logger.getLogger(DatasetEvaluationStrategyFactory.class);
 
-    /**
-     * @param strategyType
-     * @param dataSet
-     * @param userProfile
-     * @return the evaluation strategy
-     */
-    public static IDatasetEvaluationStrategy get(DatasetEvaluationStrategyType strategyType, IDataSet dataSet, UserProfile userProfile){
-        Assert.assertNotNull(strategyType, "Strategy type cannot be null");
-        Assert.assertNotNull(dataSet, "Dataset cannot be null");
+	/**
+	 * @param strategyType
+	 * @param dataSet
+	 * @param userProfile
+	 * @return the evaluation strategy
+	 */
+	public static IDatasetEvaluationStrategy get(DatasetEvaluationStrategyType strategyType, IDataSet dataSet, UserProfile userProfile) {
+		Assert.assertNotNull(strategyType, "Strategy type cannot be null");
+		Assert.assertNotNull(dataSet, "Dataset cannot be null");
 
-        switch (strategyType) {
+		switch (strategyType) {
 
-            case PERSISTED:
-                return new PersistedEvaluationStrategy(dataSet);
-            case FLAT:
-                return new FlatEvaluationStrategy(dataSet);
-            case INLINE_VIEW:
-                return new InlineViewEvaluationStrategy(dataSet);
-            case CACHED:
-                Assert.assertNotNull(userProfile, "User profile cannot be null to build " + CachedEvaluationStrategy.class);
-                ICache cache = null;
-                try {
-                    cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-                } catch (Exception e) {
-                    throw new CacheException(e);
-                }
-                return new CachedEvaluationStrategy(userProfile, dataSet, cache);
-            case REALTIME:
-                Assert.assertNotNull(userProfile, "User profile cannot be null to build " + RealtimeEvaluationStrategy.class);
-                ICache cacheRT = null;
-                try {
-                    cacheRT = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-                } catch (Exception e) {
-                    throw new CacheException(e);
-                }
-                return new RealtimeEvaluationStrategy(userProfile, dataSet, cacheRT);
-            case SOLR:
-                return new SolrEvaluationStrategy(dataSet);
-            case SOLR_FACET_PIVOT:
-                return new SolrFacetPivotEvaluationStrategy(dataSet);
-            default:
-                throw new IllegalArgumentException("The strategy " + strategyType + " is not valid");
-        }
-    }
+		case PERSISTED:
+			return new PersistedEvaluationStrategy(dataSet);
+		case FLAT:
+			return new FlatEvaluationStrategy(dataSet);
+		case INLINE_VIEW:
+			return new InlineViewEvaluationStrategy(dataSet);
+		case CACHED:
+			Assert.assertNotNull(userProfile, "User profile cannot be null to build " + CachedEvaluationStrategy.class);
+			ICache cache = null;
+			try {
+				cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+			} catch (Exception e) {
+				throw new CacheException(e);
+			}
+			return new CachedEvaluationStrategy(userProfile, dataSet, cache);
+		case REALTIME:
+			Assert.assertNotNull(userProfile, "User profile cannot be null to build " + RealtimeEvaluationStrategy.class);
+			ICache cacheRT = null;
+			try {
+				cacheRT = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+			} catch (Exception e) {
+				throw new CacheException(e);
+			}
+			return new RealtimeEvaluationStrategy(userProfile, dataSet, cacheRT);
+		case SOLR:
+			return new SolrEvaluationStrategy(dataSet);
+		case SOLR_FACET_PIVOT:
+			return new SolrFacetPivotEvaluationStrategy(dataSet);
+		case SOLR_SIMPLE:
+			return new SolrSimpleEvaluationStrategy(dataSet);
+		default:
+			throw new IllegalArgumentException("The strategy " + strategyType + " is not valid");
+		}
+	}
 }

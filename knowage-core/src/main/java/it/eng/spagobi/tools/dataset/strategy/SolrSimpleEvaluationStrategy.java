@@ -16,23 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -42,18 +37,21 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-class SolrEvaluationStrategy extends AbstractSolrStrategy {
+/**
+ * Simple query strategy for Solr dataset.
+ *
+ * @author Marco Libanori
+ */
+public class SolrSimpleEvaluationStrategy extends AbstractSolrStrategy {
 
-	private static final Logger logger = Logger.getLogger(SolrEvaluationStrategy.class);
-
-	public SolrEvaluationStrategy(IDataSet dataSet) {
+	public SolrSimpleEvaluationStrategy(IDataSet dataSet) {
 		super(dataSet);
 	}
 
@@ -62,14 +60,8 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
-		SolrQuery solrQuery;
-		try {
-			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter, solrDataSet.getTextFields())
-					.jsonFacets(groups, solrDataSet.getFacetsLimitOption());
-		} catch (JsonProcessingException e) {
-			throw new SpagoBIRuntimeException(e);
-		}
-		solrDataSet.setSolrQuery(solrQuery, getFacetsWithAggregation(groups));
+		SolrQuery solrQuery = solrDataSet.getSolrQuery();
+		solrDataSet.setSolrQuery(solrQuery);
 		dataSet.loadData(offset, fetchSize, maxRowCount);
 		IDataStore dataStore = dataSet.getDataStore();
 		dataStore.setCacheDate(getDate());
@@ -91,12 +83,13 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 		}
 		IRecord summaryRow = new Record(dataStore);
 		for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
 			String fieldName = dataStore.getMetaData().getFieldName(i);
 			for (Projection projection : summaryRowProjections) {
 				if (projection.getName().equals(fieldName)) {
 					Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
 					IField field = new Field(value);
-					dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+					fieldMeta.setType(value.getClass());
 					summaryRow.appendField(field);
 					break;
 				}
@@ -108,11 +101,4 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 		return dataStore;
 	}
 
-	private Map<String, String> getFacetsWithAggregation(List<Projection> groups) {
-		Map<String, String> facets = new HashMap<>(groups.size());
-		for (Projection facet : groups) {
-			facets.put(facet.getName(), facet.getAggregationFunction().getName().toLowerCase());
-		}
-		return facets;
-	}
 }
