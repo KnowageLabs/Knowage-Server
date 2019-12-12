@@ -19,7 +19,16 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import it.eng.spagobi.tools.dataset.metasql.query.item.*;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 
 public interface IFilterVisitor {
 
@@ -30,6 +39,8 @@ public interface IFilterVisitor {
     void visit(BetweenFilter item);
 
     void visit(InFilter item);
+
+    void visit(NotInFilter item);
 
     void visit(LikeFilter item);
 

@@ -31,13 +31,14 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 
 /**
  * @author Dragan Pirkovic
  *
  */
-public class GroupConverter extends CommonJSON implements IConverter<List<Projection>, JSONObject> {
+public class GroupConverter extends CommonJSON implements IConverter<List<AbstractSelectionField>, JSONObject> {
 
 	private final IDataSet dataset;
 
@@ -54,7 +55,7 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Projec
 	 * @see it.eng.knowage.document.export.cockpit.IConverter#convert(java.lang.Object)
 	 */
 	@Override
-	public List<Projection> convert(JSONObject aggregations) {
+	public List<AbstractSelectionField> convert(JSONObject aggregations) {
 		Map<String, String> columnAliasToName = new HashMap<String, String>();
 
 		try {
@@ -79,9 +80,9 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Projec
 		return dataSet instanceof SolrDataSet;
 	}
 
-	private List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName, boolean forceGroups)
-			throws JSONException {
-		ArrayList<Projection> groups = new ArrayList<>(0);
+	private List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName,
+			boolean forceGroups) throws JSONException {
+		ArrayList<AbstractSelectionField> groups = new ArrayList<>(0);
 
 		// hasAggregationInCategory se categoria di aggregazione del for ha una funzione di aggregazione
 

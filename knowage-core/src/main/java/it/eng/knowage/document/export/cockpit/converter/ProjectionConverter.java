@@ -28,13 +28,14 @@ import org.json.JSONObject;
 
 import it.eng.knowage.document.export.cockpit.IConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 
 /**
  * @author Dragan Pirkovic
  *
  */
-public class ProjectionConverter extends CommonJSON implements IConverter<List<Projection>, JSONObject> {
+public class ProjectionConverter extends CommonJSON implements IConverter<List<AbstractSelectionField>, JSONObject> {
 
 	/**
 	 * @param dataset
@@ -49,7 +50,7 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<P
 	 * @see it.eng.knowage.document.export.cockpit.IConverter#convert(java.lang.Object)
 	 */
 	@Override
-	public List<Projection> convert(JSONObject aggregations) {
+	public List<AbstractSelectionField> convert(JSONObject aggregations) {
 		Map<String, String> columnAliasToName = new HashMap<String, String>();
 
 		try {
@@ -63,15 +64,15 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<P
 		return null;
 	}
 
-	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
-		ArrayList<Projection> projections = new ArrayList<>(categories.length() + measures.length());
+		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 		addProjections(dataSet, categories, columnAliasToName, projections);
 		addProjections(dataSet, measures, columnAliasToName, projections);
 		return projections;
 	}
 
-	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<Projection> projections)
+	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<AbstractSelectionField> projections)
 			throws JSONException {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
@@ -79,7 +80,7 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<P
 		}
 	}
 
-	private void addProjection(IDataSet dataSet, ArrayList<Projection> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
+	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
 			throws JSONException {
 
 		String functionObj = catOrMeasure.optString("funct");

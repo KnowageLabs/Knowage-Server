@@ -1069,16 +1069,18 @@ color-picker {
   }
 }
 
-.kn-infoToast, .kn-warningToast {
+.toastify {
   font-family: 'Roboto', 'Arial', 'Sanf-serif';
   font-size: .8rem;
-}
-
-.kn-infoToast {
-  background: $secondaryColor;
-}
-.kn-warningToast {
-  background: $negativeColor;
+  &.kn-infoToast {
+    background: $secondaryColor;
+  }
+  &.kn-successToast {
+    background: $positiveColor;
+  }
+  &.kn-warningToast {
+    background: $negativeColor;
+  }
 }
 
 .kn-grid-container {
@@ -1126,6 +1128,10 @@ color-picker {
       
     }
   }
+}
+
+span.functionDescription {
+    font-size: .7rem;
 }
 
 md-dialog {

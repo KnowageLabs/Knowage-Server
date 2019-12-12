@@ -47,10 +47,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
 
 				if(col.isCalculated == true){
-					obj["columnName"] = col.formula;
-				}else{
-					obj["columnName"] = col.name;
+					obj["formula"] = col.formula;
 				}
+					obj["columnName"] = col.name;
+				
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){

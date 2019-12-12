@@ -1,5 +1,5 @@
 <md-content class="filters" layout="column" layout-fill ng-cloak>
-	<md-card ng-if="ngModelShared.filters!=undefined && !canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" >
+	<md-card ng-if="ngModelShared.filters!=undefined" >
 		<md-card-content layout="column" class="noPadding">
 			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true" layout-padding>
 				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
@@ -76,6 +76,7 @@
                 			|| newFilter.filterOperator == '>='
                 			|| newFilter.filterOperator == 'like'
                 			|| newFilter.filterOperator == 'IN'
+                			|| newFilter.filterOperator == 'not IN'
                 			"> 
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss</label>
@@ -130,9 +131,8 @@
 
 		</md-card-content>
 	</md-card>
-	<div layout="row" ng-if="!ngModelShared.filters || canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" layout-align="center center">
-		<div ng-if="!ngModelShared.filters" class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>
-		<div ng-if="canUseSolrDataset(ngModelShared.dataset, ngModelShared.type)" class="kn-noItems">{{translate.load('sbi.cockpit.table.filters.unusable')}}</div>
+	<div layout="row" ng-if="!ngModelShared.filters" layout-align="center center">
+		<div ng-if="!ngModelShared.filters" class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>		
 	</div>
 	
 </md-content>

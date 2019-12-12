@@ -64,6 +64,7 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
@@ -141,7 +142,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			JSONObject associationGroupObject = new JSONObject(associationGroupString);
 			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
-			fixAssociationGroup(associationGroup);   // fixes qbe dataset columns
+			fixAssociationGroup(associationGroup); // fixes qbe dataset columns
 
 			// parse documents
 			Set<String> documents = new HashSet<>();
@@ -198,8 +199,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
-
-
 			DataSetResource dataRes = new DataSetResource();
 			List<SimpleFilter> filtersList = new ArrayList<SimpleFilter>();
 			IDataSet dataSetInFilter = null;
@@ -210,20 +209,19 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 				if (jsonArray instanceof JSONArray) {
 
-
 					for (int i = 0; i < jsonArray.length(); i++) { // looking for filter embedded in array
 						JSONObject filterJsonObject = jsonArray.optJSONObject(i);
 						if (filterJsonObject != null && filterJsonObject.has("filterOperator")) {
-							dataSetInFilter= getDataSetDAO().loadDataSetByLabel(filterJsonObject.optString("dataset"));
+							dataSetInFilter = getDataSetDAO().loadDataSetByLabel(filterJsonObject.optString("dataset"));
 							filterJsonObject.optString("filterOperator");
 							firstFilterValues = filterJsonObject.getJSONArray("filterVals");
-							SimpleFilter firstSimpleFilter =  dataRes.getFilter(filterJsonObject.optString("filterOperator"), firstFilterValues, filterJsonObject.optString("colName"), dataSetInFilter, null);
+							SimpleFilter firstSimpleFilter = dataRes.getFilter(filterJsonObject.optString("filterOperator"), firstFilterValues,
+									filterJsonObject.optString("colName"), dataSetInFilter, null);
 							filtersList.add(firstSimpleFilter);
 						}
 					}
 				}
 			}
-
 
 			// get datasets from selections
 			List<SimpleFilter> selectionsFilters = new ArrayList<>();
@@ -280,18 +278,18 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			logger.debug("Selections list: " + selectionsFilters);
 
-			Map<String,String> datasetSelectionParameters = selectionsFilters.get(selectionsFilters.size()-1).getDataset().getParamsMap();
+			Map<String, String> datasetSelectionParameters = selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getParamsMap();
 
-			if (datasetSelectionParameters==null || datasetSelectionParameters.isEmpty()) {
+			if (datasetSelectionParameters == null || datasetSelectionParameters.isEmpty()) {
 
-				datasetSelectionParameters =  datasetParameters.get(selectionsFilters.get(selectionsFilters.size()-1).getDataset().getLabel());
+				datasetSelectionParameters = datasetParameters.get(selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getLabel());
 			}
-			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size()-1).getDataset(), true, datasetSelectionParameters, filtersList, selectionsFilters,userprofile);
-
+			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size() - 1).getDataset(), true, datasetSelectionParameters,
+					filtersList, selectionsFilters, userprofile);
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
-			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, selectionsFilters,filtersList, nearRealtimeDatasets,
-					datasetParameters, documents);
+			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, selectionsFilters, filtersList,
+					nearRealtimeDatasets, datasetParameters, documents);
 
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
 			manager.process();
@@ -354,16 +352,17 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			}
 		}
 	}
+
 	// FIXME
 	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
-			List<SimpleFilter> likeFilters,UserProfile userprofile) throws JSONException {
+			List<SimpleFilter> likeFilters, UserProfile userprofile) throws JSONException {
 
 		logger.debug("IN");
 
 		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
-		List<Projection> minMaxProjections = new ArrayList<>();
+		List<AbstractSelectionField> minMaxProjections = new ArrayList<>();
 
 		List<Filter> noMinMaxFilters = new ArrayList<>();
 
@@ -407,10 +406,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
-			//List<List<Projection>> listToProjections = new ArrayList<List<Projection>>();
-			//listToProjections.add(minMaxProjections);
-
-			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1,   userprofile);
+			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1, userprofile);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);
@@ -420,7 +416,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			logger.debug("MIN/MAX filter values calculated");
 
 			for (int i = 0; i < minMaxProjections.size(); i++) {
-				Projection projection = minMaxProjections.get(i);
+				Projection projection = (Projection) minMaxProjections.get(i);
 				String alias = projection.getAlias();
 				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
 
@@ -448,12 +444,12 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
-			Filter filter, int maxRowCount,UserProfile userprofile) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<AbstractSelectionField> projections, Filter filter, int maxRowCount, UserProfile userprofile) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
-		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet,   userprofile);
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
 		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
 	}
 

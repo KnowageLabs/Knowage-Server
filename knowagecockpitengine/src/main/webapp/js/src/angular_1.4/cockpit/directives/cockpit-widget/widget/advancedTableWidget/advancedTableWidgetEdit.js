@@ -410,10 +410,10 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
             $scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
             return;
         }
-        if(!$scope.checkAggregation()){
-            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
-            return;
-        }
+//        if(!$scope.checkAggregation()){
+//            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
+//            return;
+//        }
         if(!$scope.checkAliases()){
             $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
             return;

@@ -440,11 +440,6 @@ public class ExcelExporter {
 			}
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
-			JSONArray summaryRow = getSummaryRowFromWidget(widget);
-			if (summaryRow != null) {
-				logger.debug("summaryRow = " + summaryRow);
-				cockpitSelections.put("summaryRow", summaryRow);
-			}
 
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
@@ -452,9 +447,13 @@ public class ExcelExporter {
 				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
 			}
-			if (body != null) {
-				logger.debug("Export single widget cockpitSelections.toString(): " + cockpitSelections.toString());
+
+			JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
+			if (summaryRow != null) {
+				logger.debug("summaryRow = " + summaryRow);
+				cockpitSelections.put("summaryRow", summaryRow);
 			}
+
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 
 			if (datastore != null) {
@@ -816,7 +815,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONArray summaryRow = getSummaryRowFromWidget(widget);
+					JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -869,7 +868,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONArray summaryRow = getSummaryRowFromWidget(widget);
+					JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -1126,7 +1125,7 @@ public class ExcelExporter {
 		JSONObject datasetObj = widget.getJSONObject("dataset");
 		int datasetId = datasetObj.getInt("dsId");
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-
+		String datasetLabel = dataset.getLabel();
 		boolean isSortingDefined = sortingColumn != null && !sortingColumn.isEmpty() && sortingOrder != null && !sortingOrder.isEmpty();
 		boolean isSortingUsed = false;
 
@@ -1191,7 +1190,15 @@ public class ExcelExporter {
 
 						String formula = column.optString("formula");
 						String name = formula.isEmpty() ? column.optString("name") : formula;
-						categoryOrMeasure.put("columnName", name);
+						if (column.has("formula")) {
+							categoryOrMeasure.put("columnName", aliasToShow);
+							categoryOrMeasure.put("formula", formula);
+						} else {
+							categoryOrMeasure.put("columnName", name);
+						}
+						if (column.has("formula") && datasetLabel.equalsIgnoreCase("SolRDataset")) {
+							categoryOrMeasure.put("datasetOrTableFlag", false);
+						}
 						if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 							categoryOrMeasure.put("orderType", sortingOrder);
 							isSortingUsed = true;
@@ -1399,7 +1406,7 @@ public class ExcelExporter {
 		return newValue;
 	}
 
-	private JSONArray getSummaryRowFromWidget(JSONObject widget) throws JSONException {
+	private JSONArray getSummaryRowFromWidget(JSONObject widget, boolean isSolrDataset) throws JSONException {
 		JSONObject settings = widget.optJSONObject("settings");
 		JSONArray jsonArrayForSummary = new JSONArray();
 		if (settings != null) {

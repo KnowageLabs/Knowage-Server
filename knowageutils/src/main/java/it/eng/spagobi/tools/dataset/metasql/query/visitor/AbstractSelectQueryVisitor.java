@@ -30,10 +30,13 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
@@ -151,6 +154,74 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		sb.append("')");
 
 		return sb.toString();
+	}
+
+	@Override
+	public void visit(NotInFilter item) {
+		if (item.getOperands().isEmpty()) {
+			visit(new UnsatisfiedFilter());
+		} else {
+			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+				queryBuilder.append("(");
+				visit(transformToAndOrFilters(item));
+				queryBuilder.append(")");
+			} else {
+				append(item);
+			}
+		}
+	}
+
+	private boolean hasNullOperand(NotInFilter item) {
+		boolean hasNullOperand = false;
+		if (item != null) {
+			for (Object operand : item.getOperands()) {
+				if (operand == null) {
+					hasNullOperand = true;
+					break;
+				}
+			}
+		}
+		return hasNullOperand;
+	}
+
+	protected void append(NotInFilter item) {
+		List<Projection> projections = item.getProjections();
+		String openBracket = projections.size() > 1 ? "(" : "";
+		String closeBracket = projections.size() > 1 ? ")" : "";
+
+		queryBuilder.append(openBracket);
+
+		append(projections.get(0), false);
+		for (int i = 1; i < projections.size(); i++) {
+			queryBuilder.append(",");
+			append(projections.get(i), false);
+		}
+
+		queryBuilder.append(closeBracket);
+
+		queryBuilder.append(" ");
+		queryBuilder.append(item.getOperator());
+		queryBuilder.append(" (");
+
+		List<Object> operands = item.getOperands();
+		for (int i = 0; i < operands.size(); i++) {
+			if (i % projections.size() == 0) { // 1st item of tuple of values
+				if (i >= projections.size()) { // starting from 2nd tuple of values
+					queryBuilder.append(",");
+				}
+				queryBuilder.append(openBracket);
+			}
+			if (i % projections.size() != 0) {
+				queryBuilder.append(",");
+			}
+			append(operands.get(i));
+			if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+				queryBuilder.append(closeBracket);
+			}
+		}
+
+		queryBuilder.append(")");
 	}
 
 	@Override
@@ -276,6 +347,46 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		}
 	}
 
+	// TODO: improve auto columns detection using ANTLR VISITOR
+	/**
+	 * @param DataStoreCalculatedField
+	 * @param useAlias                 enables the output of an alias. Column name is used as alias if related flag is true.
+	 */
+	protected void append(DataStoreCalculatedField projection, boolean useAlias) {
+		String aliasDelimiter = database.getAliasDelimiter();
+		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+
+		String name = projection.getFormula();
+		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+				: aliasDelimiter + name + aliasDelimiter;
+
+		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
+		if (!isValidAggregationFunction) {
+			queryBuilder.append(columnName);
+		} else {
+			queryBuilder.append(aggregationFunction.apply(columnName));
+		}
+
+		String alias = projection.getAlias();
+		if (useAlias) {
+			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasDelimiter);
+				queryBuilder.append(alias);
+				queryBuilder.append(aliasDelimiter);
+			} else if (useNameAsAlias || isValidAggregationFunction) {
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasDelimiter);
+				queryBuilder.append(name);
+				queryBuilder.append(aliasDelimiter);
+			}
+		}
+	}
+
 	public boolean isCalculatedColumn(String columnName) {
 		return columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER);
 	}
@@ -337,7 +448,18 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		} else if (query.hasSelectCount()) {
 			queryBuilder.append("COUNT(*) ");
 		} else {
-			List<Projection> projections = query.getProjections();
+			List<AbstractSelectionField> projectionsAbs = query.getProjections();
+			List<Projection> projections = new ArrayList<Projection>();
+			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
+			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
+				if (!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
+					Projection proj = (Projection) abstractSelectionField;
+					projections.add(proj);
+				} else {
+					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
+					projectionsCalcFields.add(projCalc);
+				}
+			}
 			if (projections == null || projections.isEmpty()) {
 				return;
 			}
@@ -348,7 +470,14 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 				append(projections.get(i), true);
 			}
 
-			List<Projection> groups = query.getGroups();
+			// added another management for calculated fields
+
+			for (int i = 0; i < projectionsCalcFields.size(); i++) {
+				queryBuilder.append(", ");
+				append(projectionsCalcFields.get(i), true);
+			}
+
+			List<AbstractSelectionField> groups = query.getGroups();
 			List<Sorting> sortings = query.getSortings();
 			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
 				for (Sorting sorting : sortings) {
@@ -401,16 +530,27 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void buildGroupBy(SelectQuery query) {
-		List<Projection> groups = query.getGroups();
+		List<AbstractSelectionField> groups = query.getGroups();
 		if (groups == null || groups.isEmpty()) {
 			return;
 		}
 
 		queryBuilder.append(" GROUP BY ");
-		append(groups.get(0), false);
+
+		if (groups.get(0) instanceof Projection) {
+			append((Projection) groups.get(0), false);
+		} else {
+			append((DataStoreCalculatedField) groups.get(0), false);
+		}
+
 		for (int i = 1; i < groups.size(); i++) {
 			queryBuilder.append(",");
-			append(groups.get(i), false);
+
+			if (groups.get(i) instanceof Projection) {
+				append((Projection) groups.get(i), false);
+			} else {
+				append((DataStoreCalculatedField) groups.get(i), false);
+			}
 		}
 
 		List<Sorting> sortings = query.getSortings();
@@ -418,10 +558,19 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			for (Sorting sorting : sortings) {
 				Projection projection = sorting.getProjection();
 				boolean projectionAlreadyDefined = false;
-				for (Projection g : groups) {
-					if (g.getDataset().equals(projection.getDataset()) && g.getName().equals(projection.getName())) {
-						projectionAlreadyDefined = true;
-						break;
+				for (AbstractSelectionField g : groups) {
+					if (g instanceof Projection) {
+						Projection proj = (Projection) g;
+						if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+							projectionAlreadyDefined = true;
+							break;
+						}
+					} else {
+						DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
+						if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+							projectionAlreadyDefined = true;
+							break;
+						}
 					}
 				}
 				if (!projectionAlreadyDefined) {

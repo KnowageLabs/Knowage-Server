@@ -149,6 +149,7 @@ public class SpagoBIConstants {
 	public static final String NUMBER_TYPE_FILTER = "NUM";
 	public static final String STRING_TYPE_FILTER = "STRING";
 	public static final String DATE_TYPE_FILTER = "DATE";
+	public static final String DOCUMENT_WIDGET_USE = "DocumentWidgetUse";
 
 	// DATE RANGE
 
@@ -565,7 +566,6 @@ public class SpagoBIConstants {
 
 	public static final String MAP_WIDGET_USE = "MapWidgetUse";
 	public static final String DISCOVERY_WIDGET_USE = "DiscoveryWidgetUse";
-	public static final String DOCUMENT_WIDGET_USE = "DocumentWidgetUse";
 
 	// Cockpit
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";

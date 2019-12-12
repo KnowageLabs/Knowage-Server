@@ -17,11 +17,11 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	private IDataSet dataset;
 	private boolean isRealTime = true;
 	private Map<String, String> parameters;
-	private List<Projection> projections;
+	private List<AbstractSelectionField> projections;
 	private Filter filters;
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 	private List<Sorting> sortings;
-	private List<List<Projection>> summaryRowProjections;
+	private List<List<AbstractSelectionField>> summaryRowProjections;
 	private final Integer offset = -1;
 	private final Integer fetchSize = -1;
 	private final Integer maxRowCount = -1;
@@ -33,18 +33,18 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	/**
 	 * @param dataset
 	 * @param parameters
-	 * @param projections
+	 * @param projections2
 	 * @param filters
 	 * @param groups
 	 * @param sortings
 	 * @param summaryRowProjections
 	 */
-	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<Projection> projections, Filter filters, List<Projection> groups,
-			List<Sorting> sortings, List<List<Projection>> summaryRowProjections) {
+	public DataStoreConfigurationImpl(IDataSet dataset, Map<String, String> parameters, List<AbstractSelectionField> projections2, Filter filters,
+			List<AbstractSelectionField> groups, List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections) {
 		super();
 		this.dataset = dataset;
 		this.parameters = parameters;
-		this.projections = projections;
+		this.projections = projections2;
 		this.filters = filters;
 		this.groups = groups;
 		this.sortings = sortings;
@@ -94,7 +94,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getGroups()
 	 */
 	@Override
-	public List<Projection> getGroups() {
+	public List<AbstractSelectionField> getGroups() {
 		return this.groups;
 	}
 
@@ -134,7 +134,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getProjections()
 	 */
 	@Override
-	public List<Projection> getProjections() {
+	public List<AbstractSelectionField> getProjections() {
 		return this.projections;
 	}
 
@@ -154,7 +154,7 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getSummaryRowProjections()
 	 */
 	@Override
-	public List<List<Projection>> getSummaryRowProjections() {
+	public List<List<AbstractSelectionField>> getSummaryRowProjections() {
 		return this.summaryRowProjections;
 	}
 
@@ -169,66 +169,58 @@ public class DataStoreConfigurationImpl implements IDataStoreConfiguration {
 	}
 
 	/**
-	 * @param dataset
-	 *            the dataset to set
+	 * @param dataset the dataset to set
 	 */
 	public void setDataset(IDataSet dataset) {
 		this.dataset = dataset;
 	}
 
 	/**
-	 * @param filters
-	 *            the filters to set
+	 * @param filters the filters to set
 	 */
 	public void setFilters(Filter filters) {
 		this.filters = filters;
 	}
 
 	/**
-	 * @param groups
-	 *            the groups to set
+	 * @param groups the groups to set
 	 */
-	public void setGroups(List<Projection> groups) {
+	public void setGroups(List<AbstractSelectionField> groups) {
 		this.groups = groups;
 	}
 
 	/**
-	 * @param parameters
-	 *            the parameters to set
+	 * @param parameters the parameters to set
 	 */
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
-	 * @param projections
-	 *            the projections to set
+	 * @param projections the projections to set
 	 */
-	public void setProjections(List<Projection> projections) {
+	public void setProjections(List<AbstractSelectionField> projections) {
 		this.projections = projections;
 	}
 
 	/**
-	 * @param isRealTime
-	 *            the isRealTime to set
+	 * @param isRealTime the isRealTime to set
 	 */
 	public void setRealTime(boolean isRealTime) {
 		this.isRealTime = isRealTime;
 	}
 
 	/**
-	 * @param sortings
-	 *            the sortings to set
+	 * @param sortings the sortings to set
 	 */
 	public void setSortings(List<Sorting> sortings) {
 		this.sortings = sortings;
 	}
 
 	/**
-	 * @param summaryRowProjections
-	 *            the summaryRowProjections to set
+	 * @param summaryRowProjections the summaryRowProjections to set
 	 */
-	public void setSummaryRowProjections(List<List<Projection>> summaryRowProjections) {
+	public void setSummaryRowProjections(List<List<AbstractSelectionField>> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;
 	}
 

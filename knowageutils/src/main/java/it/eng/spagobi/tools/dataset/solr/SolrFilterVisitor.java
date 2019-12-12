@@ -19,18 +19,30 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
-import it.eng.spagobi.tools.dataset.metasql.query.item.*;
-import it.eng.spagobi.tools.dataset.metasql.query.visitor.AbstractFilterVisitor;
-import it.eng.spagobi.utilities.assertion.Assert;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.util.ClientUtils;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.util.ClientUtils;
+
+import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.CompoundFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.visitor.AbstractFilterVisitor;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SolrFilterVisitor extends AbstractFilterVisitor {
 
@@ -217,5 +229,11 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         SimpleDateFormat dateFormat = new SimpleDateFormat(SOLR_DATE_FORMAT);
         return dateFormat.format(date);
     }
+
+	@Override
+	public void visit(NotInFilter item) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

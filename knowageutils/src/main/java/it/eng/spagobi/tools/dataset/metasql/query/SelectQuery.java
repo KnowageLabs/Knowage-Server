@@ -26,6 +26,7 @@ import java.util.List;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -40,14 +41,14 @@ public class SelectQuery {
 	private boolean selectAll;
 	private boolean selectCount;
 	private boolean selectDistinct;
-	private List<Projection> projections;
+	private List<AbstractSelectionField> projections;
 
 	private String schema;
 	private String tableName;
 
 	private Filter where;
 
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 
 	private Filter having;
 
@@ -83,7 +84,7 @@ public class SelectQuery {
 		return selectDistinct;
 	}
 
-	public List<Projection> getProjections() {
+	public List<AbstractSelectionField> getProjections() {
 		return projections;
 	}
 
@@ -99,7 +100,7 @@ public class SelectQuery {
 		return where;
 	}
 
-	public List<Projection> getGroups() {
+	public List<AbstractSelectionField> getGroups() {
 		return groups;
 	}
 
@@ -157,11 +158,11 @@ public class SelectQuery {
 		return select(projection);
 	}
 
-	public SelectQuery select(Projection... projections) {
+	public SelectQuery select(AbstractSelectionField... projections) {
 		return select(Arrays.asList(projections));
 	}
 
-	public SelectQuery select(Collection<Projection> projections) {
+	public SelectQuery select(Collection<AbstractSelectionField> projections) {
 		if (projections != null) {
 			this.projections.addAll(projections);
 		}
@@ -188,11 +189,11 @@ public class SelectQuery {
 		return this;
 	}
 
-	public SelectQuery groupBy(Projection... projections) {
+	public SelectQuery groupBy(AbstractSelectionField... projections) {
 		return groupBy(Arrays.asList(projections));
 	}
 
-	public SelectQuery groupBy(Collection<Projection> projections) {
+	public SelectQuery groupBy(Collection<AbstractSelectionField> projections) {
 		if (projections != null) {
 			this.groups.addAll(projections);
 		}
@@ -249,7 +250,8 @@ public class SelectQuery {
 
 	public boolean hasAggregationFunction() {
 		boolean hasAggregationFunction = false;
-		for (Projection projection : projections) {
+		for (AbstractSelectionField projectio : projections) {
+			Projection projection = (Projection) projectio;
 			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 			if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 				hasAggregationFunction = true;

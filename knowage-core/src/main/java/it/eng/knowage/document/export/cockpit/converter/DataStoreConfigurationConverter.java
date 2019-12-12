@@ -31,9 +31,9 @@ import it.eng.knowage.document.export.cockpit.IConverter;
 import it.eng.knowage.document.export.cockpit.converter.datastoreconf.DatastoreConfigurationBuilder;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 
 /**
@@ -54,8 +54,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	}
 
 	/**
-	 * @param jsonConfiguration
-	 *            the jsonConfiguration to set
+	 * @param jsonConfiguration the jsonConfiguration to set
 	 */
 	public void setJsonConfiguration(IJsonConfiguration jsonConfiguration) {
 		this.jsonConfiguration = jsonConfiguration;
@@ -125,7 +124,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getGroups()
 	 */
 	@Override
-	public List<Projection> getGroups() {
+	public List<AbstractSelectionField> getGroups() {
 		if (jsonConfiguration != null) {
 			try {
 				return ConverterFactory.getGroupConverter(getDataset()).convert(jsonConfiguration.getAggregations());
@@ -182,7 +181,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getProjections()
 	 */
 	@Override
-	public List<Projection> getProjections() {
+	public List<AbstractSelectionField> getProjections() {
 		if (jsonConfiguration != null) {
 			try {
 				return ConverterFactory.getProjectionConverter(getDataset()).convert(jsonConfiguration.getAggregations());
@@ -217,10 +216,11 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 * @see it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration#getSummaryRowProjections()
 	 */
 	@Override
-	public List<List<Projection>> getSummaryRowProjections() {
+	public List<List<AbstractSelectionField>> getSummaryRowProjections() {
 		// TODO Auto-generated method stub
-		List<List<Projection>> newL = new ArrayList<List<Projection>>();
+		List<List<AbstractSelectionField>> newL = new ArrayList<List<AbstractSelectionField>>();
 		return newL;
+
 	}
 
 	/*

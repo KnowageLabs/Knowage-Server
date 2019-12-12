@@ -20,15 +20,15 @@ public interface IDataStoreConfiguration {
 
 	Map<String, String> getParameters();
 
-	List<Projection> getProjections();
+	List<AbstractSelectionField> getProjections();
 
 	Filter getFilter();
 
-	List<Projection> getGroups();
+	List<AbstractSelectionField> getGroups();
 
 	List<Sorting> getSortings();
 
-	List<List<Projection>> getSummaryRowProjections();
+	List<List<AbstractSelectionField>> getSummaryRowProjections();
 
 	Integer getOffset();
 

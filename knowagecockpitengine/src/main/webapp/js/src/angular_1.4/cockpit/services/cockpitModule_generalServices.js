@@ -206,6 +206,11 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
   		return basePath + templatesUrl + template + (format || '.html');
   	}
 
+	//get tools location
+	gs.getToolsUrl = function(){
+		var basePath = sbiModule_config.host;
+		return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/tools/commons/';
+  	}
 
 	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){
 		$scope.translate = sbiModule_translate;

@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreConfigurationImpl;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.IDataStoreConfiguration;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 
 /**
@@ -35,11 +35,11 @@ public class DatastoreConfigurationBuilder {
 
 	private IDataSet dataset;
 	private Map<String, String> parameters;
-	private List<List<Projection>> summaryRowProjections;
+	private List<List<AbstractSelectionField>> summaryRowProjections;
 	private List<Sorting> sortings;
-	private List<Projection> groups;
+	private List<AbstractSelectionField> groups;
 	private Filter filter;
-	private List<Projection> projections;
+	private List<AbstractSelectionField> projections;
 
 	/**
 	 * @param dataset
@@ -63,7 +63,7 @@ public class DatastoreConfigurationBuilder {
 	 * @param projections
 	 * @return
 	 */
-	public DatastoreConfigurationBuilder setProjections(List<Projection> projections) {
+	public DatastoreConfigurationBuilder setProjections(List<AbstractSelectionField> projections) {
 		this.projections = projections;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class DatastoreConfigurationBuilder {
 	 * @param groups
 	 * @return
 	 */
-	public DatastoreConfigurationBuilder setGroups(List<Projection> groups) {
+	public DatastoreConfigurationBuilder setGroups(List<AbstractSelectionField> groups) {
 		this.groups = groups;
 		return this;
 	}
@@ -107,7 +107,7 @@ public class DatastoreConfigurationBuilder {
 	 * @param summaryRowProjections
 	 * @return
 	 */
-	public DatastoreConfigurationBuilder setSummaryRow(List<List<Projection>> summaryRowProjections) {
+	public DatastoreConfigurationBuilder setSummaryRow(List<List<AbstractSelectionField>> summaryRowProjections) {
 		this.summaryRowProjections = summaryRowProjections;
 		return this;
 	}

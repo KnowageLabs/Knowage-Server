@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -89,6 +90,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NotInFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.PlaceholderFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
@@ -105,6 +107,7 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -529,6 +532,8 @@ public class DataSetResource extends AbstractDataSetResource {
 						} else {
 							filter = new InFilter(projections, valueObjects);
 						}
+					} else if (SimpleFilterOperator.NOT_IN.equals(operator)) {
+						filter = new NotInFilter(projections, valueObjects);
 					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
 						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
@@ -787,4 +792,34 @@ public class DataSetResource extends AbstractDataSetResource {
 		return new DatasetTagsResource();
 	}
 
+	@POST
+	@Path("/validateFormula")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String validateFormulaJson(String body) {
+		try {
+			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
+
+			String formulaString = "";
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+
+				formulaString = jsonBody.getString("formula");
+
+				try {
+					String toReturn = validateFormula(formulaString);
+					JSONObject okResponse = new JSONObject();
+					okResponse.put("msg", "ok");
+					return okResponse.toString();
+				} catch (ValidationException v) {
+					throw new ValidationServiceException(buildLocaleFromSession(), v);
+
+				}
+			}
+			timing.stop();
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		}
+		return null;
+
+	}
 }
