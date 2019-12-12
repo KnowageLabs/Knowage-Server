@@ -257,8 +257,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.updateDates = function (){
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				if(cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type].label == 'date' || cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type].label == 'timestamp'){
-					if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
-						if($scope.facets && $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name]) $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name].metaData.momentDateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+					if($scope.ngModel.content.columnSelectedOfDataset[c].dateFormat) {
+						if($scope.facets && $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name]) $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name].metaData.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].dateFormat;
 					}
 					if($scope.facets && $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name]) $scope.facets[$scope.ngModel.content.columnSelectedOfDataset[c].name].metaData.type = 'date';
 				}
@@ -289,8 +289,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								tempCol.suppressSizeToFit = true;
 							}
 						}
-						if($scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat) {
-							tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].momentDateFormat;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].dateFormat) {
+							tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].dateFormat;
 						}
 						if(tempCol.paramType == 'date' || tempCol.paramType == 'timestamp'){
 							tempCol.valueFormatter = dateTimeFormatter;
