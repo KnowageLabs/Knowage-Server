@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.constants;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 
@@ -89,6 +90,7 @@ public class DataSetConstants {
 	public static final String FEDERATED = "Federated";
 	public static final String FLAT = "Flat";
 	public static final String DS_REST_NAME = "REST";
+	public static final String DS_PYTHON_NAME = "Python";
 	public static final String DS_SOLR_NAME = "Solr";
 	public static final String SPARQL = "SPARQL";
 
@@ -110,6 +112,7 @@ public class DataSetConstants {
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
+	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
 	public static final String DS_SPARQL = "SbiSPARQLDataSet";
 
@@ -164,6 +167,7 @@ public class DataSetConstants {
 		name2Code.put("Flat", DataSetConstants.DS_FLAT);
 		name2Code.put("Federated", DataSetConstants.DS_FEDERATED);
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
+		name2Code.put(DS_PYTHON_NAME, DS_PYTHON_TYPE);
 		name2Code.put("SPARQL", DataSetConstants.DS_SPARQL);
 
 		// add all REST attributes
@@ -196,6 +200,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
 		code2name.put(DataSetConstants.DS_FEDERATED, "Federated");
 		code2name.put(DS_REST_TYPE, DS_REST_NAME);
+		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 	}
 

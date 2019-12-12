@@ -620,6 +620,9 @@ public class UserUtilities {
 			List<String> roleFunctionalities = new ArrayList<>();
 			Role virtualRole = getVirtualRole(roles, organization);
 
+			if (virtualRole.isAbleToEditPythonScripts()) {
+				roleFunctionalities.add(SpagoBIConstants.EDIT_PYTHON_SCRIPTS);
+			}
 			if (virtualRole.isAbleToSaveSubobjects()) {
 				roleFunctionalities.add(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
 			}
@@ -813,6 +816,10 @@ public class UserUtilities {
 				roleDAO.setTenant(organization);
 				Role anotherRole = roleDAO.loadByName(roleName);
 				if (anotherRole != null) {
+					if (anotherRole.isAbleToEditPythonScripts()) {
+						logger.debug("User has role " + roleName + " that is able to edit python scripts.");
+						virtualRole.setIsAbleToEditPythonScripts(true);
+					}
 					if (anotherRole.isAbleToSaveSubobjects()) {
 						logger.debug("User has role " + roleName + " that is able to save subobjects.");
 						virtualRole.setIsAbleToSaveSubobjects(true);

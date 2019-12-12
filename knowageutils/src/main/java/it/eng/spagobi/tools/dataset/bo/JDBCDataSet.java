@@ -18,24 +18,11 @@
 
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
-import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
-import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.naming.NamingException;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 
 /**
  * @authors Angelo Bernabei angelo.bernabei@eng.it Giulio Gavardi giulio.gavardi@eng.it Andrea Gioia andrea.gioia@eng.it Alberto Ghedin alberto.ghedin@eng.it
@@ -52,14 +39,16 @@ public class JDBCDataSet extends AbstractJDBCDataset {
 	 */
 	public JDBCDataSet() {
 		super();
-		setDataReader(new JDBCStandardDataReader());
-	}
-
-	public JDBCDataSet(JDBCDataSet jdbcDataset) {
-		super(jdbcDataset);
+		setDataReader(createDataReader());
 	}
 
 	public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 	}
+
+	@Override
+	protected AbstractDataReader createDataReader() {
+		return new JDBCStandardDataReader();
+	}
+
 }

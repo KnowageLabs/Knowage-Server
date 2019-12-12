@@ -35,10 +35,6 @@ public class ExportPathBuilder {
 	 * Filename of the placeholder to put in a directory to indicate the file is already downloaded.
 	 */
 	public static final String DOWNLOADED_PLACEHOLDER_FILENAME = "downloaded";
-	/**
-	 * Filename of the placeholder to put in a directory to indicate the file is ready for download.
-	 */
-	public static final String READY_FILENAME = "ready";
 
 	private static final ExportPathBuilder INSTANCE = new ExportPathBuilder();
 
@@ -72,10 +68,6 @@ public class ExportPathBuilder {
 
 	public java.nio.file.Path getPerJobIdDownloadedPlaceholderFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) {
 		return getPerJobExportPath(resourcePathAsStr, userProfile, id).resolve(DOWNLOADED_PLACEHOLDER_FILENAME);
-	}
-
-	public java.nio.file.Path getPerJobIdReadyPlaceholderFile(final String resourcePathAsStr, final UserProfile userProfile, final UUID id) {
-		return getPerJobExportPath(resourcePathAsStr, userProfile, id).resolve(READY_FILENAME);
 	}
 
 }

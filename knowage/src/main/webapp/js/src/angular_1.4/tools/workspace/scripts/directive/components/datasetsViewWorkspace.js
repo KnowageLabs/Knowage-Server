@@ -544,6 +544,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.previewDataset = function(dataset){
     	console.info("DATASET FOR PREVIEW: ",dataset);
     	$scope.datasetInPreview=dataset;
+	$scope.selectedDataSet = dataset;
     	$scope.disableBack=true;
     	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
 	    	/**

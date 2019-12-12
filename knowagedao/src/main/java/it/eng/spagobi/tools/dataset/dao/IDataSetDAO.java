@@ -163,4 +163,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	 */
 	@Deprecated
 	public SbiDataSet copyDataSet(SbiDataSet hibDataSet);
+
+	public List<IDataSet> loadFilteredDatasetByTypeList(String string, String qbeDsType);
 }

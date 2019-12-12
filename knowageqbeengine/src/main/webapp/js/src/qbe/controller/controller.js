@@ -134,7 +134,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			if(finalPromise) {
 				finalPromise.then(function(){},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
-					for(var i =0;i<$scope.previousVersionRelations.length;i++){
+					for(var i in $scope.previousVersionRelations){
 						var relationship = $scope.previousVersionRelations[i]
 						$scope.filteredRelations[i].isConsidered = relationship.isConsidered;
 
@@ -247,7 +247,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$scope.onDropComplete=function(field,evt){
 		if(field.connector) return;
-		$scope.addField(field);
+		if(field.children){
+			for(var i in field.children){
+				$scope.addField(field.children[i])
+			}
+		}else{
+			$scope.addField(field);
+		}
+
 
     };
 
@@ -363,6 +370,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			return str.join("&");
 
 		}
+		item.pars = JSON.stringify($scope.pars);
 		sbiModule_action.promisePost('SET_CATALOGUE_ACTION',queryParam,item, conf).then(function(response){
 			$scope.getSQL();
 		}, function(response){
@@ -453,7 +461,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				   "field":field.attributes.field,
 				   "funct":getFunct(field,"measure"),
 				   "color":field.color,
-				   "group":isColumnType(field,"attribute")&&!$scope.isSpatial(field),
+				   "group":getGroup(field),
 				   "order":"NONE",
 				   "include":true,
 				   "visible":true,
@@ -479,7 +487,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 
 	var getFunct =function(field){
-		if(isColumnType(field,"measure")){
+
+		if(getGroup(field)){
+			return "NONE"
+		}else if(field.aggtype && field.aggtype!==""){
+			return field.aggtype
+		}else if(isColumnType(field,"measure")){
 			return "SUM"
 		}else if($scope.isSpatial(field)){
 			return "COUNT"
@@ -488,12 +501,17 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 	}
 
+	var getGroup = function(field){
+		return isColumnType(field,"attribute")&&!$scope.isSpatial(field)
+	}
+
 	var isColumnType = function(field,columnType){
 		return field.iconCls==columnType || isCalculatedFieldColumnType(field,columnType)
 	}
 
 	$scope.isSpatial = function(field){
-		return this.filterFilter(this.entityModel.entities,{children:{id:field.id}})[0].iconCls == "geographic_dimension";
+		var filtered = this.filterFilter(this.entityModel.entities,{children:{id:field.id}})
+		return filtered.length>0 && filtered[0].iconCls == "geographic_dimension";
 
 	}
 
@@ -596,10 +614,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     $scope.$on('openFilters',function(event,field){
 		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
 	})
-
-	$scope.$on('distinctSelected',function(){
-    	 $scope.editQueryObj.distinct =  !$scope.editQueryObj.distinct;
-    })
 
 	$scope.$on('openDialogForParams',function(event){
 		$scope.openDialogForParams($scope.pars,$scope.editQueryObj.filters, $scope.editQueryObj.expression,$scope.advancedFilters);
@@ -921,12 +935,17 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
                    	angular.copy($scope.cfSelectedField.id.expression,$scope.calculatedFieldOutput.formula) ;
                    	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
                 	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
+                	$scope.calculatedFieldOutput.format =$scope.cfSelectedField.id.format;
                 	$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;
+                	$scope.calculatedFieldOutput.formula = $scope.cfSelectedField.id.expression;
             	}
                 $scope.hide = function() {
                 	if($scope.originalCFname!=""){
                 		for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
-							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname) $scope.editQueryObj.fields.splice(i);
+							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname){
+								$scope.editQueryObj.fields.splice(i,1);
+								$scope.queryModel.splice(i,1);
+							}
 						}
                 	}
                 	//parameters to add in the calculatedFieldOutput object to prepare it for the sending
@@ -936,10 +955,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
             			"nature":angular.copy($scope.calculatedFieldOutput.nature),
             			"expression":$scope.calculatedFieldOutput.formula,
             			"expressionSimple":$scope.calculatedFieldOutput.expression,
+            			"format": $scope.calculatedFieldOutput.format
                 	}
 
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
                 	$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
+                	$scope.calculatedFieldOutput.format = $scope.calculatedFieldOutput.format;
                 	$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
                 	$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;

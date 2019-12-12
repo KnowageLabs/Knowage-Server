@@ -18,7 +18,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			"SbiQbeDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.qbe'),
 			"SbiSolrDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.solr'),
 			"SbiSPARQLDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.sparql'),
-			"SbiRESTDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.rest')
+			"SbiRESTDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.rest'),
+			"SbiPythonDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.python')
 	}
 
 	this.isDatasetFromTemplateLoaded = false;

@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					return false;
 				}
 			}
-			if(!v1[3] && v2[3]) return false;
+			//Check for literal versions
+			//if(!v1[3] && v2[3]) return false;
 			return true;
 		}
 
@@ -103,7 +104,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
+				if(model.type=='selector'){
+					if(model.settings && model.settings.modalityValue == 'multiValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'multiDropdown';
+				}
 			}
+
+			if(!self.compareVersion("7.3.0",model.knowageVersion)){
+				if(model.type=='table' || model.type=='discovery'){
+					for(var k in model.content.columnSelectedOfDataset){
+						if(model.content.columnSelectedOfDataset[k].momentDateFormat){
+							model.content.columnSelectedOfDataset[k].dateFormat = model.content.columnSelectedOfDataset[k].momentDateFormat;
+							delete model.content.columnSelectedOfDataset[k].momentDateFormat;
+						}
+						if(model.content.columnSelectedOfDataset[k].dateFormat) {
+							model.content.columnSelectedOfDataset[k].dateFormat.replace(/DD\/MM\/YYYY HH:MM:SS/g,'DD/MM/YYYY HH:mm:SS');
+							model.content.columnSelectedOfDataset[k].dateFormat.replace(/DD\/MM\/YYYY HH:MM/g,'DD/MM/YYYY HH:mm');
+						}
+					}
+				}
+			}
+
+			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
 
 			model.knowageVersion = currentVersion;
 			return model;

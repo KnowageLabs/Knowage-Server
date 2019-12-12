@@ -102,6 +102,9 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.filters==undefined){
 		template.configuration.filters={};
 	}
+	if(template.configuration.variables==undefined){
+		template.configuration.variables=[];
+	}
 
     var cockpitSelections = JSON.parse('<%=initialSelections%>');
 	if(cockpitSelections.aggregations && cockpitSelections.aggregations.length > 0) {
@@ -218,10 +221,9 @@ var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
 
 <title>Cockpit engine</title>
 </head> 
-
-		<body class="kn-cockpit " id="kn-cockpit" ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterControllerWrapper" layout="column" style="background-image:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor||'#fff'}}; background-size:{{cockpitModule_template.configuration.style.imageBackgroundSize||'contain'}}; background-repeat: no-repeat; background-position: center;" >
-	
-	<cockpit-toolbar config="configurator"></cockpit-toolbar>
-	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>
-</body>
+	<body class="kn-cockpit " id="kn-cockpit" ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterControllerWrapper" layout="column" style="background-image:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor||'#fff'}}; background-size:{{cockpitModule_template.configuration.style.imageBackgroundSize||'contain'}}; background-repeat: no-repeat; background-position: center;" >
+		<style ng-bind-html="trustedGeneralCss"></style>
+		<cockpit-toolbar config="configurator"></cockpit-toolbar>
+		<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>
+	</body>
 </html>

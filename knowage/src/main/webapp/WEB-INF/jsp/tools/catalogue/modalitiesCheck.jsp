@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 								<label>{{label}}</label>
-								<input name="firstValue" ng-model="SelectedConstraint.firstValue" ng-maxlength="160" ng-change="setDirty()" ng-maxlength="400" ng-pattern="regex.xss">
+								<input name="firstValue" ng-model="SelectedConstraint.firstValue" ng-maxlength="400" ng-change="setDirty()" ng-pattern="regex.xss">
 								<div ng-messages="attributeForm.firstValue.$error" role="alert" ng-messages-multiple>
 									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
 									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 400</div>
@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
-								<input name="secondValue" ng-model="SelectedConstraint.secondValue" ng-maxlength="400" ng-change="setDirty()" ng-maxlength="400" ng-pattern="regex.xss">
+								<input name="secondValue" ng-model="SelectedConstraint.secondValue" ng-maxlength="400" ng-change="setDirty()" ng-pattern="regex.xss">
 								<div ng-messages="attributeForm.secondValue.$error" role="alert" ng-messages-multiple>
 									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
 									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 400</div>

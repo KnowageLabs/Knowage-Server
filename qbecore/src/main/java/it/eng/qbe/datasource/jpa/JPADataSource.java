@@ -335,8 +335,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("CustomOracleSpatialDialect")) {
 			dialect = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
-		}else if (dialect != null && dialect.contains("Oracle")) {
+		} else if (dialect != null && dialect.contains("Oracle")) {
 			dialect = "org.hibernate.dialect.ExtendedOracleDialect";
+		} else if (dialect != null && dialect.contains("Postgre")) {
+			dialect = "org.hibernate.dialect.ExtendedPostgresDialect";
 		} else if (SqlUtils.isHiveLikeDialect(dialect)) {
 			// because it seems similar.... really?
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
@@ -344,7 +346,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 		if (dataSource.checkIsJndi()) {
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));			cfg.put("hibernate.dialect", dialect);
+			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));
+			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {

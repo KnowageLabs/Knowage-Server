@@ -39,6 +39,12 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 		// TODO Auto-generated constructor stub
 	}
 
+	public DocumentDriverRuntime(BIObjectParameter biParam, String exeRole, Locale loc, BIObject doc, boolean isFromCross, boolean loadAdmissible,
+			DocumentRuntime dum, List<BIObjectParameter> objParameters) {
+		super(biParam, exeRole, loc, doc, isFromCross, loadAdmissible, dum, objParameters);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void initDAO() {
 		super.initDAO();

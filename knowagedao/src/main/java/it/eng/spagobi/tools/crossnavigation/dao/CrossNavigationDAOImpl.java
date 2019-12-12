@@ -137,6 +137,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
+				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
 						if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
@@ -167,6 +168,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setDescription(nd.getSimpleNavigation().getDescription());
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
+				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {
@@ -262,7 +264,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					}
 
 					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel()));
+							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), cn.getPopupOptions()));
 
 				}
 				return nd;
@@ -390,6 +392,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
 							jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
 							jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
+							jsonCnParam.put("popupOptions", cnParam.getSbiCrossNavigation().getPopupOptions());
 							jsonCnParam.put("crossId", crossId);
 							jsonCnParam.put("navigationParams", new JSONObject());
 							validCrossNavIdToCrossNavJSON.put(crossId, jsonCnParam);
@@ -577,7 +580,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param label the label to set
+	 * @param label
+	 *            the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -591,7 +595,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(Domain type) {
 		this.type = type;
@@ -605,7 +610,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param dateFormat the dateFormat to set
+	 * @param dateFormat
+	 *            the dateFormat to set
 	 */
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
@@ -619,7 +625,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param inputParameterType the inputParameterType to set
+	 * @param inputParameterType
+	 *            the inputParameterType to set
 	 */
 	public void setInputParameterType(String inputParameterType) {
 		this.inputParameterType = inputParameterType;

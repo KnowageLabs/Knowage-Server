@@ -397,7 +397,9 @@ public class SpagoBIConstants {
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
 	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
 	public static final String SELF_SERVICE_DATASET_MANAGEMENT = "SelfServiceDatasetManagement";
+	public static final String READ_ROLES = "ReadRoles";
 
+	public static final String EDIT_PYTHON_SCRIPTS = "EditPythonScripts";
 	public static final String SAVE_SUBOBJECT_FUNCTIONALITY = "SaveSubobjectFunctionality";
 	public static final String SEE_SUBOBJECTS_FUNCTIONALITY = "SeeSubobjectsFunctionality";
 	public static final String SEE_VIEWPOINTS_FUNCTIONALITY = "SeeViewpointsFunctionality";

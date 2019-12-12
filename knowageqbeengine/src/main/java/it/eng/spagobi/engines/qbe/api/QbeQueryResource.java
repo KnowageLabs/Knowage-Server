@@ -322,6 +322,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		try {
 			jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray pars = jsonEncodedReq.optJSONArray(DataSetConstants.PARS);
+			addParameters(pars);
 			catalogue = jsonEncodedReq.getJSONArray("catalogue");
 			if (catalogue == null) {
 				catalogue = jsonEncodedReq.getJSONArray("qbeJSONQuery");
@@ -614,7 +615,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 						value = getSingleValue(tempVal, type);
 					}
 
-					logger.debug("name: " + name + " / value: " + value);
+					logger.debug("Parameter name: " + name + " / parameter value: " + value);
 
 					getEnv().put(name + SpagoBIConstants.PARAMETER_TYPE, type);
 					getEnv().put(name, value);

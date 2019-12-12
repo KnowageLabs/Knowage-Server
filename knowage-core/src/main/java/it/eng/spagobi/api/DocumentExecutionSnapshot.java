@@ -24,6 +24,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.bo.SnapshotMainInfo;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -46,9 +47,9 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getSnapshots(@QueryParam("id") Integer biobjectId, @Context HttpServletRequest req) {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		List snapshotsList = null;
+		List<SnapshotMainInfo> snapshotsList = null;
 		try {
-			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshots(biobjectId);
+			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotMainInfos(biobjectId);
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
 		}

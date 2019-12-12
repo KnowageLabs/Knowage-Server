@@ -86,19 +86,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 	
 			 	<md-tab label="Widgets style">
 			        <cockpit-style-configurator  layout-fill ng-model="clonedTemplate.style"></cockpit-style-configurator>
-
 			 	</md-tab>
 			 	
-			 
+			 	<md-tab label="CSS Editor">
+			        <md-card>
+						<md-toolbar class="ternaryToolbar"> 
+					      <div class="md-toolbar-tools">
+					        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
+					      </div>
+					    </md-toolbar>
+						<md-card-content class="noPadding fullHeightEditor" style="height:calc(100% - 70px)">
+							<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="clonedTemplate.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
+						</md-card-content>
+					</md-card>
+			 	</md-tab>
+			 	
 			 </md-tabs>
 		
 		</md-content>
 	</md-card-content>
 	<md-card-actions layout="row" layout-align="end center">
-	  <md-button ng-click="cancelConfiguration()">
+	  <md-button class="md-raised" ng-click="cancelConfiguration()">
 	    {{translate.load("sbi.generic.cancel")}}
 	  </md-button>
-	  <md-button ng-click="saveConfiguration()">
+	  <md-button class="md-raised md-primary" ng-click="saveConfiguration()">
 	    {{translate.load("sbi.generic.save")}}
 	  </md-button>
 	</md-card-actions>

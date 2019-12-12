@@ -169,7 +169,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	/**
 	 * Utility method. Returns the analytical drivers associated to the document object.
 	 *
-	 *            Could be the label of the document
+	 * Could be the label of the document
+	 *
 	 * @return the list with analitycal drivers associated.
 	 */
 	public List getDocumentParameters(Object docDescriptor) {
@@ -433,7 +434,8 @@ public class AnalyticalModelDocumentManagementAPI {
 	 *
 	 * @param document
 	 *            The document id of the document to clone
-	 * @param documentId The document id of the document to clone
+	 * @param documentId
+	 *            The document id of the document to clone
 	 */
 	public BIObject cloneDocument(Integer documentId) {
 		logger.debug("IN");
@@ -828,10 +830,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			if (metadata != null) {
 				for (int i = 0; i < metadata.size(); i++) {
 					ObjMetacontent md = metadata.get(i);
-					if (md.getSubobjId().equals(null)) {// save only the metadata of the document.. not metadata of subojects
-						md.setBiobjId(sourceDocument.getId());
-						md.setObjmetaId(destinationDocument.getId());
-						md.setObjmetaId(null);
+					if (md.getSubobjId() == null) {// save only the metadata of the document.. not metadata of subojects
+						md.setBiobjId(destinationDocument.getId());
 						metadataContentDAO.insertObjMetacontent(md);
 					}
 				}

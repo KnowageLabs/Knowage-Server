@@ -24,6 +24,24 @@ currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf
 
 angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
 
+.filter('dateFormat', function($mdDateLocale) {
+
+
+
+		return function(item) {
+
+
+			var formatted = item;
+			var date = new Date().toDateString();
+
+
+				return $mdDateLocale.formatDate(new Date(date),item)
+
+
+			return formatted;
+		};
+	})
+
 .directive('qbeCalculatedFieldEditor', function($sce, $mdDialog, $mdMenu, $mdSidenav, $timeout,sbiModule_translate) {
     return {
         restrict: 'E',
@@ -39,14 +57,20 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         controller: function($scope, $attrs) {
         	$scope.translate = sbiModule_translate;
             $scope.availableFormulaTypes = [];
-            $scope.availableTypes = ['NUMBER','STRING'];
+            $scope.availableTypes = ['NUMBER','STRING','DATE'];
             $scope.availableNatures = ['MEASURE','ATTRIBUTE'];
+            $scope.dateFormats = ['LLLL','llll','LLL','lll','DD/MM/YYYY HH:MM:SS','DD/MM/YYYY HH:MM','LL','ll','L','l']
             $scope.calculatedField.fieldType = "inline.calculated.field";
 
             //fix for codemirror to refresh when opened
             $timeout(function() {
                 $scope.reloadCodemirror = true;
             }, 500)
+
+            $scope.typeChanged = function(calculatedField){
+            	if(calculatedField.type!=='DATE')
+            		calculatedField.format = undefined;
+            }
 
          //   if (!$scope.selectedEntity) $scope.selectedEntity = $scope.entities[0];
 

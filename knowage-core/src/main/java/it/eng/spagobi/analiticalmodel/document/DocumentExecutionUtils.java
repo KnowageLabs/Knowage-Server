@@ -122,7 +122,8 @@ public class DocumentExecutionUtils {
 						comingFromCross = true;
 					}
 
-					parametersForExecution.add(new DocumentDriverRuntime(parameter, executionRole, locale, document, dum, parameters));
+					parametersForExecution
+							.add(new DocumentDriverRuntime(parameter, executionRole, locale, document, comingFromCross, loadAdmissible, dum, parameters));
 				}
 			}
 		} finally {

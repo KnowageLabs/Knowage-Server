@@ -9,6 +9,19 @@ $aggrid-border-color: #d9dcde;
 	font: 400 $mediumFontSize $defaultFontFamily;
 	.editableCell {
 		cursor: pointer;
+		span {
+			display: inline-flex;
+    		justify-content: flex-start;
+    		align-items: center;
+    		width: 100%;
+		}
+		i.fa{
+			padding-right: 4px;
+		}
+		i:not(.fa){
+			min-height: 18px;
+    		display: inline-block;
+		}
 	}
 	.ag-body-viewport.ag-layout-auto-height{
 		height: auto;
@@ -95,6 +108,21 @@ $aggrid-border-color: #d9dcde;
 		height: 100%;
 	}
 	&.ag-theme-knowage:not(.ag-theme-knowage-default){
+		.ag-cell{
+			&.singlePinnedButton {
+				span {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					.md-button {
+						padding: 0;
+					    height: 24px;
+					    min-height: 24px;
+					    width: 24px;
+					}
+				}
+			}
+		}
 		&.ag-theme-knowage-secondary {
 			.ag-header {
 			    background-color: $secondaryColor;
@@ -119,17 +147,8 @@ $aggrid-border-color: #d9dcde;
 		.ag-row-selected {
 			background-color: $secondaryColor;
 		}
-		.ag-icon-menu {
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);
-		}
-		.ag-icon-desc {
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);
-		}
-		.ag-icon-asc {
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);
-		}
-		.ag-icon-filter {
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJub25lIi8+PC9zdmc+);
+		.ag-icon {
+			color: $lightTextColor;
 		}
 		.ag-paging-panel {
 			border-top: none;
@@ -147,16 +166,6 @@ $aggrid-border-color: #d9dcde;
 		.ag-header {
 		    background-color: $lightTextColor;
 		    color: $baseColor;
-		    span {
-		    	font-weight: $headerFontSize;
-		    }
-		    .ag-header-select-all:not(.ag-hidden) {
-		    	position: relative;
-		    	top: 7px;
-		    	&+ .ag-cell-label-container {
-					width: calc(100% - 36px);
-				}
-		    }
 		}
 		.ag-row-odd, .ag-row-even {
 			background-color: transparent;
@@ -182,14 +191,8 @@ $aggrid-border-color: #d9dcde;
 			    background-color: initial;
 			}
 		}
-		.ag-icon-checkbox-checked, .ag-icon-checkbox-unchecked, .ag-icon-checkbox-indeterminate {
-			background-size: 20px 20px;
-		    height: 20px;
-		    width: 20px;
-		    top: 2px;
-		}
 		.ag-icon-checkbox-checked {
-			background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiICAgd2lkdGg9IjE2IiAgIGhlaWdodD0iMTYiICAgdmlld0JveD0iMCAwIDE2IDE2IiAgIHZlcnNpb249IjEuMSIgICBpZD0ic3ZnMTMiICAgc29kaXBvZGk6ZG9jbmFtZT0iZG93bmxvYWQuc3ZnIiAgIGlua3NjYXBlOnZlcnNpb249IjAuOTIuMyAoMjQwNTU0NiwgMjAxOC0wMy0xMSkiPiAgPG1ldGFkYXRhICAgICBpZD0ibWV0YWRhdGExNyI+ICAgIDxyZGY6UkRGPiAgICAgIDxjYzpXb3JrICAgICAgICAgcmRmOmFib3V0PSIiPiAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+ICAgICAgICA8ZGM6dHlwZSAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4gICAgICA8L2NjOldvcms+ICAgIDwvcmRmOlJERj4gIDwvbWV0YWRhdGE+ICA8c29kaXBvZGk6bmFtZWR2aWV3ICAgICBwYWdlY29sb3I9IiNmZmZmZmYiICAgICBib3JkZXJjb2xvcj0iIzY2NjY2NiIgICAgIGJvcmRlcm9wYWNpdHk9IjEiICAgICBvYmplY3R0b2xlcmFuY2U9IjEwIiAgICAgZ3JpZHRvbGVyYW5jZT0iMTAiICAgICBndWlkZXRvbGVyYW5jZT0iMTAiICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIgICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjIiICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDI3IiAgICAgaWQ9Im5hbWVkdmlldzE1IiAgICAgc2hvd2dyaWQ9ImZhbHNlIiAgICAgaW5rc2NhcGU6em9vbT0iMTQuNzUiICAgICBpbmtzY2FwZTpjeD0iLTQuNjQ0MDY3OCIgICAgIGlua3NjYXBlOmN5PSI4IiAgICAgaW5rc2NhcGU6d2luZG93LXg9Ii04IiAgICAgaW5rc2NhcGU6d2luZG93LXk9Ii04IiAgICAgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIgICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZzEzIiAvPiAgPGRlZnMgICAgIGlkPSJkZWZzMyI+ICAgIDxyZWN0ICAgICAgIGlkPSJhIiAgICAgICB4PSIxIiAgICAgICB5PSIxIiAgICAgICB3aWR0aD0iMTQiICAgICAgIGhlaWdodD0iMTQiICAgICAgIHJ4PSIyIiAvPiAgPC9kZWZzPiAgPGcgICAgIGZpbGw9Im5vbmUiICAgICBmaWxsLXJ1bGU9ImV2ZW5vZGQiICAgICBpZD0iZzExIj4gICAgPHVzZSAgICAgICBmaWxsPSIjRkZGIiAgICAgICB4bGluazpocmVmPSIjYSIgICAgICAgaWQ9InVzZTUiIC8+ICAgIDxyZWN0ICAgICAgIHN0cm9rZT0iIzAwOTFFQSIgICAgICAgeD0iMS41IiAgICAgICB5PSIxLjUiICAgICAgIHdpZHRoPSIxMyIgICAgICAgaGVpZ2h0PSIxMyIgICAgICAgcng9IjIiICAgICAgIGlkPSJyZWN0NyIgICAgICAgc3R5bGU9InN0cm9rZTojYWNiNGI0O3N0cm9rZS1vcGFjaXR5OjE7ZmlsbDojM2I2NzhjO2ZpbGwtb3BhY2l0eToxIiAvPiAgICA8cGF0aCAgICAgICBzdHJva2U9IiMwMDkxRUEiICAgICAgIGQ9Ik0xMiA1bC01LjUgNS41TDQgOCIgICAgICAgaWQ9InBhdGg5IiAgICAgICBzdHlsZT0ic3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLW9wYWNpdHk6MSIgLz4gIDwvZz48L3N2Zz4=) !important;
+			color: $baseColor;
 		}
 		.miniChip {
     		font-size: $mediumFontSize;
@@ -277,6 +280,9 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-header-cell {
+		.ag-cell-label-container{
+			height: 100%;
+		}
 		.ag-header-cell-label {
 			.cellContainer {
 				display: flex;

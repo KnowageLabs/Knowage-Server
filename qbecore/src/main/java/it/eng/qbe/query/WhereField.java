@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,6 +32,7 @@ public class WhereField implements IQueryField {
 
 	private Operand leftOperand;
 	private String operator;
+	private String operatorParam;
 	private Operand rightOperand;
 
 	private String booleanConnector;
@@ -57,10 +58,35 @@ public class WhereField implements IQueryField {
 		setTemporalOperand(temporalOperand);
 	}
 
+	/**
+	 * @param name2
+	 * @param description2
+	 * @param promptable2
+	 * @param leftOperand2
+	 * @param operator2
+	 * @param operatorParameter
+	 * @param rightOperand2
+	 * @param booleanConnector2
+	 * @param temporalOperand2
+	 */
+	public WhereField(String name, String description, boolean promptable, Operand leftOperand, String operator, String operatorParameter, Operand rightOperand,
+			String booleanConnector, JSONObject temporalOperand) {
+		setName(name);
+		setDescription(description);
+		setPromptable(promptable);
+		setLeftOperand(leftOperand);
+		setOperator(operator);
+		setOperatorParam(operatorParameter);
+		setRightOperand(rightOperand);
+		setBooleanConnector(booleanConnector);
+	}
+
+	@Override
 	public String getAlias() {
 		return name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -123,6 +149,21 @@ public class WhereField implements IQueryField {
 
 	public JSONObject getTemporalOperand() {
 		return temporalOperand;
+	}
+
+	/**
+	 * @return the operatorParam
+	 */
+	public String getOperatorParam() {
+		return operatorParam;
+	}
+
+	/**
+	 * @param operatorParam
+	 *            the operatorParam to set
+	 */
+	public void setOperatorParam(String operatorParam) {
+		this.operatorParam = operatorParam;
 	}
 
 	public static class Operand extends it.eng.qbe.query.Operand {

@@ -55,6 +55,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ReadRoles" description="ReadRoles" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -111,6 +112,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadRoles" description="ReadRoles" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -154,6 +156,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ReadRoles" description="ReadRoles" />
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
@@ -195,6 +198,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="NotifyContextBrokerAction" description="NotifyContextBrokerAction" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ReadRoles" description="ReadRoles" />
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
@@ -247,6 +251,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MapWidgetUse" description="MapWidgetUse" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ReadRoles" description="ReadRoles" />
 		
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
@@ -292,5 +297,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ReadRoles" description="ReadRoles" />
 	
 </USER_FUNCTIONALITIES>

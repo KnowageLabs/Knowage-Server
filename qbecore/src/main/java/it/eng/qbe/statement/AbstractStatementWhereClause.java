@@ -199,7 +199,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(), whereField.getOperator(), rightOperandElements);
 				}
 
-				whereClauseElement = conditionalOperator.apply(leftOperandElements[0], rightOperandElements);
+				whereClauseElement = conditionalOperator.apply(leftOperandElements[0], rightOperandElements, whereField.getOperatorParam());
 			}
 
 			logger.debug("where element value [" + whereClauseElement + "]");

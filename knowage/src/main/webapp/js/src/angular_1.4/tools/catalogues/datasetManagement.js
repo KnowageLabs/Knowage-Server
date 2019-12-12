@@ -45,6 +45,13 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
 
+	sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_ADDRESS')
+	.then(function(response){
+		$scope.pythonAddress = response.data;
+	}, function(error){
+		$scope.pythonAddress = "";
+	});
+
 	$scope.maxSizeStr = maxSizeStr;
 
 	$scope.csvEncodingDefault = "UTF-8";
@@ -67,6 +74,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
 		}
+	});
+
+	$scope.$watch("selectedDataSet.pythonScript",function(newValue,oldValue){
+		//debugger;
 	});
 
 	var getAllTags = function(){
@@ -163,6 +174,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	// Manage the Dataset type combobox items
 	$scope.filterDatasetTypes = function (item) {
+		if (item.VALUE_CD == 'Python') {
+			if ($scope.pythonAddress != undefined && $scope.pythonAddress != "")
+				return true;
+			else {
+				return false;
+			}
+		}
 	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated';
 	};
 
@@ -2142,14 +2160,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.parameterItems = parameterItemsTemp;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
 			// Cast the REST NGSI (transform from the String)
 			if($scope.selectedDataSet.restNGSI){
 				$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
 			}
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 
 
@@ -2446,6 +2464,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					versNum:"",
 					trasfTypeCd: "",
 					restAddress: "",
+					pythonScript: "",
+					dataframeName: "",
 					solrCollection: "",
 					restDirectlyJSONAttributes: "",
 					restFetchSize: "",
@@ -2498,7 +2518,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.pivotRowName ? $scope.selectedDataSet.pivotRowName="" : null;
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -2519,13 +2539,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			}
 
-
 			//----------------------
 			// JSON PATH ATTRIBUTES
 			//----------------------
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
-
 		}
 		else if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="custom") {
 
@@ -2969,6 +2987,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	   lineNumbers: true
 	 };
 
+	 $scope.editorOptionsPython = {
+        theme: 'eclipse',
+        lineWrapping: true,
+        lineNumbers: true,
+        mode: "python",
+	};
+
 	 $scope.codemirrorSparqlOptions = {
 		   mode: 'application/sparql-query',
 		   lineWrapping : true,
@@ -3307,7 +3332,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.disableBack = true;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -3336,6 +3361,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			//----------------------
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
+
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset';
+    			$scope.selectedDataSet.restJsonPathItems = "$[*]";
+    			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+    			$scope.selectedDataSet.parameters = true;
+    		}
 
 		}
 
@@ -3874,7 +3906,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		}
     		}
     	}
-    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="solr") {
+    	else if (dsType.toLowerCase()=="rest" || dsTypeCd.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];
@@ -3933,11 +3965,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
 					$scope.isCategoryRequired = false;
 
-					if($scope.isFromSaveNoMetadata == true) {
-						$scope.selectedDataSet.isFromSaveNoMetadata = false;
-						$scope.isFromSaveNoMetadata = false;
-						$scope.saveDataset();
-					}
+					/*
+					 * This seems a workaround for something i don't know.
+					 * I comment it hoping to see what it fixed.
+					 */
+					// if($scope.isFromSaveNoMetadata == true) {
+					// 	$scope.selectedDataSet.isFromSaveNoMetadata = false;
+					// 	$scope.isFromSaveNoMetadata = false;
+					// 	$scope.saveDataset();
+					//}
 
 					// SCHEDULING
 					if ($scope.selectedDataSet.isScheduled) {

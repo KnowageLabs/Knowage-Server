@@ -301,6 +301,28 @@ public class Query implements IQuery {
 		return addWhereField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector, null);
 	}
 
+	/**
+	 * @param filterId
+	 * @param filterDescription
+	 * @param promptable
+	 * @param leftOperand
+	 * @param operator
+	 * @param operatorParameter
+	 * @param rightOperand
+	 * @param booleanConnector
+	 * @param temporalOperand
+	 */
+	public WhereField addWhereField(String name, String filterDescription, boolean promptable, it.eng.qbe.query.WhereField.Operand leftOperand, String operator,
+			String operatorParameter, it.eng.qbe.query.WhereField.Operand rightOperand, String booleanConnector, JSONObject temporalOperand) {
+		WhereField whereField = new WhereField(name, description, promptable, leftOperand, operator, operatorParameter, rightOperand, booleanConnector,
+				temporalOperand);
+
+		whereClause.add(whereField);
+		whereFieldMap.put("$F{" + name + "}", whereField);
+		return whereField;
+
+	}
+
 	public WhereField addWhereField(String name, String description, boolean promptable, it.eng.qbe.query.WhereField.Operand leftOperand, String operator,
 			it.eng.qbe.query.WhereField.Operand rightOperand, String booleanConnector, JSONObject temporalOperand) {
 

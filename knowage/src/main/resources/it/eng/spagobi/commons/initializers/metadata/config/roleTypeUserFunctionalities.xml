@@ -381,4 +381,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="TEST_ROLE"/>
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MapWidgetUse" roleType="USER"/>
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ReadRoles" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ReadRoles" roleType="DEV_ROLE" />
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

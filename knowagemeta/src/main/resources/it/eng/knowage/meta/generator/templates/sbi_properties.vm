@@ -17,6 +17,8 @@ ${jpaColumn.uniqueName}.type = $jpaColumn.getAttribute("structural.columntype")
 ${jpaColumn.uniqueName}.attribute = $jpaColumn.getAttribute("structural.attribute")
 ${jpaColumn.uniqueName}.filtercondition = $jpaColumn.getAttribute("structural.filtercondition")
 ${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
+${jpaColumn.uniqueName}.aggtype = $jpaColumn.getAttribute("structural.aggtype")
+
 
 #if($jpaColumn.getAttribute("structural.datatype") == "DATE")
 ${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.dateformat")

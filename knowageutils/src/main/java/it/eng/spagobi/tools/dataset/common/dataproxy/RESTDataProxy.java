@@ -84,8 +84,8 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 		this.address = address;
 		this.method = method;
-		this.requestBody = requestBody;
 		this.requestHeaders = new HashMap<String, String>(requestHeaders);
+		this.requestBody = requestBody;
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
@@ -113,8 +113,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody,
-					query);
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new RESTDataProxyException(

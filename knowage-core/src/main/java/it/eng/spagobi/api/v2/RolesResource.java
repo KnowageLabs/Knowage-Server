@@ -64,7 +64,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT, SpagoBIConstants.READ_ROLES })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRoles() {
@@ -79,7 +79,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllRoles();
 
 			IEngUserProfile profile = this.getUserProfile();
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT) || profile.isAbleToExecuteAction(SpagoBIConstants.READ_ROLES)) {
 				filteredList = fullList;
 			} else {
 				// user with FINAL_USERS_MANAGEMENT (users with neither
@@ -365,6 +365,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToCreateSelfServiceGeoreport(bo.isAbleToCreateSelfServiceGeoreport());
 		role.setAbleToCreateSelfServiceKpi(bo.isAbleToCreateSelfServiceKpi());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
+		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
 		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());

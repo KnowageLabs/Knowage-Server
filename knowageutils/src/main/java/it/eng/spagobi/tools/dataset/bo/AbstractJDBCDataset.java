@@ -35,6 +35,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -283,4 +284,6 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	public void setSelectQuery(SelectQuery selectQuery) {
 		this.selectQuery = selectQuery;
 	}
+
+	protected abstract AbstractDataReader createDataReader();
 }

@@ -159,7 +159,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	}
 
 	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible,
-			AbstractBIResourceRuntime dum, List<AbstractDriver> objParameters) {
+			AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
@@ -582,6 +582,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	/**
 	 * Parse LOV value.
+	 *
 	 * @return
 	 * @author Marco Libanori
 	 */
@@ -597,7 +598,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				}
 				SimpleDateFormat format = new SimpleDateFormat(date[1]);
 				LovValue ret = new LovValue();
-	
+
 				if (parType.equals("DATE")) {
 					try {
 						Date d = format.parse(date[0]);

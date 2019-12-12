@@ -1,0 +1,143 @@
+<md-dialog>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load('sbi.glossary.attributedetail')}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="min-width:900px">
+		<div layout="column" flex>
+			<md-card class="noPadding">
+				<md-card-content>
+					<div layout="row">
+						<md-input-container flex class="noPadding"> 
+							<label>{{translate.load('sbi.generic.name')}}</label>
+							<input type="text" ng-model="selectedAttribute.name">
+						</md-input-container>
+					</div>
+					<div layout="row">
+						<md-input-container flex class="noPadding"> 
+							<label>{{translate.load('sbi.glossary.description')}}</label>
+							<input type="text" ng-model="selectedAttribute.description">
+						</md-input-container>
+					</div>
+				</md-card-content>
+			</md-card>
+			<md-card class="noPadding">
+				<md-subheader class="noPadding">
+					<div layout="row" layout-align="start center" style="height:48px;">
+						<span layout-padding>{{translate.load('sbi.generic.structural')}}</span>
+					</div>
+				</md-subheader>
+				<md-card-content>
+					<div layout="row" layout-wrap>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['structural.aggtype'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.aggtype'].value">
+								<md-option ng-repeat="option in properties['structural.aggtype'].propertyType.admissibleValues" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.aggtype'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['structural.datatype'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.datatype'].value">
+								<md-option ng-repeat="option in properties['structural.datatype'].propertyType.admissibleValues" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.datatype'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['behavioural.notEnabledRoles'].propertyType.name}}</label>
+							<md-select ng-model="properties['behavioural.notEnabledRoles'].value">
+								<md-option ng-repeat="option in sbiModule_config.avaiableRoles track by $index" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['behavioural.notEnabledRoles'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['structural.attribute'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.attribute'].value">
+								<md-option ng-repeat="option in sbiModule_config.profileAttributes" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.attribute'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['physical.physicaltable'].propertyType.name}}</label>
+							<input type="text" ng-disabled="true" ng-model="properties['physical.physicaltable'].value" />
+							<div class="hint">{{properties['physical.physicaltable'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{translate.load('sbi.meta.business.columns.physicalColumn')}}</label>
+							<input type="text" ng-disabled="true" ng-model="physicalColumn.name" />
+							<div class="hint">{{translate.load('sbi.meta.business.columns.physicalColumn.hint')}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['structural.filtercondition'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.filtercondition'].value">
+								<md-option ng-repeat="option in properties['structural.filtercondition'].propertyType.admissibleValues" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.filtercondition'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block" ng-if="properties['structural.datatype'].value == 'DATE' || properties['structural.datatype'].value == 'TIMESTAMP'"> 
+							<label>{{properties['structural.dateformat'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.dateformat'].value">
+								<md-option ng-repeat="option in properties['structural.dateformat'].propertyType.admissibleValues" ng-value="option">
+									{{getExampleDate(option)}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.dateformat'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block" ng-if="properties['structural.datatype'].value == 'TIME'"> 
+							<label>{{properties['structural.dateformat'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.dateformat'].value">
+								<md-option ng-repeat="option in properties['structural.dateformat'].propertyType.admissibleValues" ng-value="option">
+									{{getExampleDate(option)}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.format'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block" ng-if="['INTEGER','DOUBLE','DECIMAL','BIGINT','FLOAT'].indexOf(properties['structural.datatype'].value) != -1"> 
+							<label>{{properties['structural.format'].propertyType.name}}</label>
+							<md-select ng-model="properties['structural.format'].value">
+								<md-option ng-repeat="option in properties['structural.format'].propertyType.admissibleValues" ng-value="option">
+									{{option}}
+								</md-option>
+							</md-select>
+							<div class="hint">{{properties['structural.format'].propertyType.description}}</div>
+						</md-input-container>
+						<md-input-container flex="50" class="noPadding md-block"> 
+							<label>{{properties['structural.customFunction'].propertyType.name}}</label>							
+							<input ng-model="properties['structural.customFunction'].value">								
+							<div class="hint">{{properties['structural.customFunction'].propertyType.description}}</div>
+						</md-input-container>
+					</div>
+				</md-card-content>
+			</md-card>
+		</div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" style="padding-left:8px">
+   		<!--  md-button class="md-raised md-warning" ng-click="deleteAttribute()" style="margin-left: 0;">
+        	{{translate.load('sbi.glossary.delete.attribute')}}
+      	</md-button-->
+      	<span flex></span>
+      	<md-button class="md-raised md-primary" ng-click="delete(selectedAttribute)" >
+        	{{translate.load('cache.manager.delete')}}
+      	</md-button>
+      	<md-button class="md-raised" ng-click="cancel()" >
+        	{{translate.load('sbi.generic.cancel')}}
+      	</md-button>
+      	<md-button class="md-raised md-primary" ng-click="save()" >
+        	{{translate.load('sbi.generic.save')}}
+      	</md-button>
+      	
+      	
+    </md-dialog-actions>
+</md-dialog>

@@ -469,6 +469,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());
 		role.setAbleToManageCalendar(bo.isAbleToManageCalendar());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
+		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
 		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());

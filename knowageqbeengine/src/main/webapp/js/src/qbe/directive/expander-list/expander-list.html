@@ -57,7 +57,7 @@
                 <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field["text"]}}</span>
-                     <md-tooltip md-direction="top">{{countAll(field)>0 ? countAll(field) + " " + translate.load('kn.qbe.expander.list.tooltip.filters') : translate.load('kn.qbe.expander.list.tooltip.no.filters')}}</md-tooltip>
+                     <md-tooltip md-direction="top">{{field.qtip}}</md-tooltip>
                    <span>{{field["alias"]}}</span>
                     <span flex></span>
                     
