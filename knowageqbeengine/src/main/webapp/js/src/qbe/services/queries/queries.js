@@ -26,7 +26,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		promise.then(function(response) {
      		queryModel.length = 0;
      		console.log("[POST]: SUCCESS!");
-     		var counter = 1;
+
      		for (var i = 0; i < query.fields.length; i++) {
 
 
@@ -36,7 +36,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"alias":query.fields[i].alias,
              		    	"entity":query.fields[i].entity,
              		    	"color":query.fields[i].color,
-             		    	"data":[],
+             		    	"data":getRows(query.fields[i].alias,response.data),
              		    	"funct":query.fields[i].funct,
         					"fieldType" : query.fields[i].fieldType,
         					"dataType": query.fields[i].dataType,
@@ -54,26 +54,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
              		    	"havings": []
              		    }
 
-         			if(query.fields[i].visible){
-         				var key = "column_"+counter;
-         				for (var j = 0; j < response.data.rows.length; j++) {
-             				var row = {
-             						"value":response.data.rows[j][key],
-             						"id":response.data.rows[j].id,
-             						"dateFormatJava":response.data.metaData.fields[i+1].dateFormatJava
-             				}
-             				queryObject.data.push(row);
-        				}
-
-         				counter++
-
-         			}
-
-
-         			queryModel.push(queryObject);
-
-
-
+        			queryModel.push(queryObject);
 
 			}
 
@@ -126,6 +107,69 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
 
     }
+
+	var refreshData = function(field,data){
+			clearFieldData(field)
+			var rows = getRows(field.alias,data);
+			angular.copy(rows,field.data);
+		}
+
+		var clearFieldData = function(field){
+			if(field){
+				field.data.length = 0;
+			}
+		}
+
+		var getRows = function(alias,data){
+
+			var rows = [];
+			var metaData = getMetaData(data)
+			var columnName = getFieldMetaDataProperty(alias,metaData,'name')
+			var values = getValues(data);
+
+			for(var i in values){
+				var row = {};
+				row.id = values[i].id
+				row.value = values[i][columnName]
+				row.dateFormatJava = getFieldMetaDataProperty(alias,metaData,'dateFormatJava')
+
+				rows.push(row)
+			}
+
+			return rows;
+
+		}
+
+
+
+		var getFieldMetaDataProperty = function(alias,metaData,propertyName){
+			if(!alias || !metaData || !propertyName) return;
+			var fields = getMetaDataFields(metaData)
+			for(var i in fields){
+				if(fields[i].header == alias){
+					return fields[i][propertyName];
+				}
+			}
+		}
+
+		var getMetaData = function(data){
+			if(data){
+				return data.metaData;
+			}
+
+		}
+
+		var getMetaDataFields = function(metaData){
+			if(metaData){
+				return metaData.fields;
+			}
+		}
+
+		var getValues = function(data){
+			if(data){
+				return data.rows;
+			}
+		}
 
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
