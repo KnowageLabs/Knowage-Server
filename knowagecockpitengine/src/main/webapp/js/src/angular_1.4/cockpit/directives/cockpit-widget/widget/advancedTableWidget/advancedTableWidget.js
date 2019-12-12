@@ -312,6 +312,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
 					else $scope.advancedTableGrid.api.setHeaderHeight(0);
 				}
+				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 					var rowsNumber = 1;
 					if($scope.ngModel.settings.summary.list) rowsNumber = $scope.ngModel.settings.summary.list.length;
@@ -322,7 +323,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([]);
 				}
-				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;
