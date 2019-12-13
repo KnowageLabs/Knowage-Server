@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -41,10 +42,12 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
@@ -52,6 +55,7 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
@@ -264,7 +268,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					}
 
 					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), cn.getPopupOptions()));
+							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), toDoc.getBiobjId(), cn.getPopupOptions()));
 
 				}
 				return nd;
@@ -580,8 +584,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param label
-	 *            the label to set
+	 * @param label the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -595,8 +598,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param type
-	 *            the type to set
+	 * @param type the type to set
 	 */
 	public void setType(Domain type) {
 		this.type = type;
@@ -610,8 +612,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param dateFormat
-	 *            the dateFormat to set
+	 * @param dateFormat the dateFormat to set
 	 */
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
@@ -625,8 +626,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param inputParameterType
-	 *            the inputParameterType to set
+	 * @param inputParameterType the inputParameterType to set
 	 */
 	public void setInputParameterType(String inputParameterType) {
 		this.inputParameterType = inputParameterType;
