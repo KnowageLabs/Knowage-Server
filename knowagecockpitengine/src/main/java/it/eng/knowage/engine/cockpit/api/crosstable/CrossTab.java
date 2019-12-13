@@ -373,16 +373,27 @@ public class CrossTab {
 					// apply logic for measure ordering if it's required
 					if (measuresSortKeysMap.size() > 0) {
 						for (Map.Entry<Integer, NodeComparator> entry : measuresSortKeysMap.entrySet()) {
-							Integer idx = getColumnIndex(entry.getValue().getMeasureLabel(), measuresHeaderList);
+							NodeComparator nodeComparator = entry.getValue();
+							String measureLabel = nodeComparator.getMeasureLabel();
+							int direction = nodeComparator.getDirection();
+							Integer idx = getColumnIndex(measureLabel, measuresHeaderList);
 							if (idx >= 0) {
 								String colName = measuresNameList.get(idx);
 								Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
 								String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
 								String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
 								// add value to order only if parents are correct (useful for deep levels)
+								String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
+								/*
+								 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure
+								 * a user sorts for. The else-branch adds a dummy value to records that don't match to let them appear
+								 * on the crosstable.
+								 */
 								if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
-									String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
 									measureToOrderMap.put(valueLbl, value);
+								} else {
+									double dummyValue = direction == -1 ? Double.MIN_VALUE : Double.MAX_VALUE;
+									measureToOrderMap.put(valueLbl, dummyValue);
 								}
 							}
 						}
