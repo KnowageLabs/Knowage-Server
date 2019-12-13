@@ -117,7 +117,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 					"fieldType":newCatalogue.fields[i].fieldType.toUpperCase(),
 					"dataType":newCatalogue.fields[i].dataType,
 					"format":newCatalogue.fields[i].format,
-					"type":""
+					"type":newCatalogue.fields[i].type
 			}
 			$scope.meta.push(meta);
 		}
@@ -224,6 +224,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
          		    	"data":[],
+         		    	"type":query.fields[i].type,
          		    	"funct":query.fields[i].funct,
          		    	"fieldType" : query.fields[i].fieldType,
          		    	"visible":query.fields[i].visible,
