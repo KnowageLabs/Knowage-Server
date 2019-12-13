@@ -331,7 +331,15 @@ public class PageResource {
 		// check if the property already exists
 		propertyType = model.getPropertyType("structural.dateformat");
 		if (propertyType != null) {
-			// model has already the property, we can skip the check
+			for (int i = 0; i < propertyType.getAdmissibleValues().size(); i++) {
+				if (propertyType.getAdmissibleValues().get(i).equals("DD/MM/YYYY HH:MM:SS")) {
+					propertyType.getAdmissibleValues().set(i, "DD/MM/YYYY HH:mm:SS");
+				}
+
+				if (propertyType.getAdmissibleValues().get(i).equals("DD/MM/YYYY HH:MM")) {
+					propertyType.getAdmissibleValues().set(i, "DD/MM/YYYY HH:mm");
+				}
+			}
 			return;
 		} else {
 
@@ -345,8 +353,8 @@ public class PageResource {
 			propertyType.getAdmissibleValues().add("llll");
 			propertyType.getAdmissibleValues().add("LLL");
 			propertyType.getAdmissibleValues().add("lll");
-			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:MM:SS");
-			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:MM");
+			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:mm:SS");
+			propertyType.getAdmissibleValues().add("DD/MM/YYYY HH:mm");
 			propertyType.getAdmissibleValues().add("LL");
 			propertyType.getAdmissibleValues().add("ll");
 			propertyType.getAdmissibleValues().add("L");

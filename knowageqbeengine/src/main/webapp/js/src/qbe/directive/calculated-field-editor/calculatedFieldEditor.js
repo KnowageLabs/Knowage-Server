@@ -59,7 +59,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             $scope.availableFormulaTypes = [];
             $scope.availableTypes = ['NUMBER','STRING','DATE'];
             $scope.availableNatures = ['MEASURE','ATTRIBUTE'];
-            $scope.dateFormats = ['LLLL','llll','LLL','lll','DD/MM/YYYY HH:MM:SS','DD/MM/YYYY HH:MM','LL','ll','L','l']
+            $scope.dateFormats = ['LLLL','llll','LLL','lll','DD/MM/YYYY HH:mm:SS','DD/MM/YYYY HH:mm','LL','ll','L','l']
             $scope.calculatedField.fieldType = "inline.calculated.field";
 
             //fix for codemirror to refresh when opened
