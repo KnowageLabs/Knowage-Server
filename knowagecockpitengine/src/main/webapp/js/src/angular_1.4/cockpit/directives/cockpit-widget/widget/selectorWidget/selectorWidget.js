@@ -206,7 +206,6 @@ angular.module('cockpitModule')
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
 				$scope.hideWidgetSpinner();
-				$rootScope.hideCockpitSpinner();
 				return;
 			}
 
@@ -238,7 +237,8 @@ angular.module('cockpitModule')
 				    $scope.showSelection = true;
 				})
 			}else{
-			    $scope.ngModel.activeValues = null;
+				if(!cockpitModule_widgetSelection.isLastTimestampedSelection($scope.ngModel.dataset.label, $scope.ngModel.content.selectedColumn.name))$scope.ngModel.activeValues = null;
+				else $scope.ngModel.activeValues = datasetRecords.activeValues;
 				$timeout(function(){
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
@@ -416,7 +416,6 @@ angular.module('cockpitModule')
 				}
 				$scope.oldSelectedValues = angular.copy(parVal);
 			}
-			$rootScope.showCockpitSpinner();
 			$scope.hasDefaultValues = false;
 
 			var item = {};
@@ -560,7 +559,6 @@ angular.module('cockpitModule')
                     cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
                 }
             }, 0);
-			$rootScope.hideCockpitSpinner();
 	    }
 
 	    $scope.editWidget=function(index){

@@ -29,7 +29,8 @@
 	    
 	    <property name="toDocId" type="integer" column="TO_DOC_ID"></property>
         
-
+        <property name="popupOptions" type="string" column="POPUP_OPTIONS" length="4000" />
+        
 	    <set name="sbiCrossNavigationPars" inverse="true" cascade="all,delete-orphan" >
 	    	<key column="CN_ID" />
             <one-to-many class="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar" />

@@ -605,8 +605,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	}
 
 	this.loadAssociativeSelection = function(defer,ass){
-
+		$rootScope.showCockpitSpinner();
 		if(ass==undefined){
+			$rootScope.hideCockpitSpinner();
 			defer.reject();
 			return;
 		}
@@ -726,7 +727,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost("2.0/associativeSelections","",body)
 			.then(function(response){
-				$rootScope.hideCockpitSpinner
 				var index = ws.currentSelectionContainsAss(response.data);
 				if(index==-1){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection.push(response.data);
@@ -747,6 +747,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				this[item]={};
 			},objDS)
 			angular.copy([],cockpitModule_widgetSelectionUtils.responseCurrentSelection);
+			$rootScope.hideCockpitSpinner();
 			defer.resolve(objDS);
 		}
 

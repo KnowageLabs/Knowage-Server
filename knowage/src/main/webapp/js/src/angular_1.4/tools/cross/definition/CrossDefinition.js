@@ -24,6 +24,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 
 			$scope.crossModes = [{label:s.translate.load("sbi.crossnavigation.modality.normal"),value:0},
 								 {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1},
+								 {label:s.translate.load("sbi.crossnavigation.modality.popupwindow"),value:2},
 			                    ];
 
 
@@ -120,6 +121,10 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
 						ctr.crossmodality = $scope.crossModes[data.simpleNavigation.type];
+						if(ctr.detail.simpleNavigation.popupOptions){
+							ctr.popupOptions = JSON.parse(ctr.detail.simpleNavigation.popupOptions);
+						}else ctr.popupOptions = {};
+
 
 					},function(response){
 						console.log(response);
@@ -131,7 +136,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
                 	action : function(item, event){ctr.navigationList.removeItem(item, event);}
                 }],
                 removeItem : function(item, event){
-                	
+
                 	 var confirm = $mdDialog.confirm()
 	                     .title(sbiModule_translate.load('kn.crossnavigation.delete'))
 	                     .textContent(sbiModule_translate.load('kn.crossnavigation.confirm'))
@@ -164,6 +169,9 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.saveFunc = function(){
 
 				ctr.detail.simpleNavigation.type = ctr.crossmodality.value;
+				if(ctr.detail.simpleNavigation.type == 2){
+					ctr.detail.simpleNavigation.popupOptions = JSON.stringify(ctr.popupOptions);
+				}
 				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
 				.then(function(response){
 					$scope.showActionOK("sbi.crossnavigation.save.ok");

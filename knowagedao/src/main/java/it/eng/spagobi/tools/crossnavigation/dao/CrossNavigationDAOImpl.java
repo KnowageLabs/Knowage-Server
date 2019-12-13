@@ -137,6 +137,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
 				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
+				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
 						if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
@@ -167,8 +168,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setDescription(nd.getSimpleNavigation().getDescription());
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
-				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
-				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
+				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {
@@ -262,10 +262,10 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							nd.getToPars().get(i).getLinks().add(fromSp);
 						}
 					}
-					
+
 					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), toDoc.getBiobjId()));
-					
+							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), cn.getPopupOptions()));
+
 				}
 				return nd;
 			}
@@ -365,29 +365,48 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
 				List<SbiCrossNavigationPar> cnParams = crit.list();
 
-				Map<Integer, JSONObject> mapCrossIdToJsonCnParam = new HashMap<Integer, JSONObject>();
+				Map<Integer, JSONObject> validCrossNavIdToCrossNavJSON = new HashMap<Integer, JSONObject>(); // valid cross nav id --> cross nav info in JSON
+				List<Integer> nonValidCrossNavIds = new ArrayList<Integer>(); // list of non valid cross nav id
 
 				for (SbiCrossNavigationPar cnParam : cnParams) {
 					// from cross navigation item get the document with input params like cross navigation toKeyId value in input params
 					Integer crossId = cnParam.getSbiCrossNavigation().getId();
 
-					JSONObject jsonCnParam = mapCrossIdToJsonCnParam.get(crossId);
-					if (jsonCnParam == null) {
+					if (!validCrossNavIdToCrossNavJSON.containsKey(crossId) && !nonValidCrossNavIds.contains(crossId)) {
 						SbiObjects sbiObj = cnParam.getToKey().getSbiObject();
 						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(sbiObj, session);
+						UserProfile userProfile = UserProfileManager.getProfile();
+						boolean canExecute = false;
+						try {
+							canExecute = ObjectsAccessVerifier.canExec(biObject, userProfile);
+						} catch (EMFInternalError e) {
+							throw new SpagoBIRuntimeException("Error while trying to see if user can execute the target document [" + biObject.getLabel() + "]",
+									e);
+						}
 
-						jsonCnParam = new JSONObject();
-						jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
-						jsonCnParam.put("documentId", sbiObj.getBiobjId());
-						jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
-						jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
-						jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
-						jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
-						jsonCnParam.put("crossId", crossId);
-						jsonCnParam.put("navigationParams", new JSONObject());
+						if (canExecute) {
+							JSONObject jsonCnParam = new JSONObject();
+							jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
+							jsonCnParam.put("documentId", sbiObj.getBiobjId());
+							jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
+							jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
+							jsonCnParam.put("crossBreadcrumb", cnParam.getSbiCrossNavigation().getBreadcrumb());
+							jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
+							jsonCnParam.put("popupOptions", cnParam.getSbiCrossNavigation().getPopupOptions());
+							jsonCnParam.put("crossId", crossId);
+							jsonCnParam.put("navigationParams", new JSONObject());
+							validCrossNavIdToCrossNavJSON.put(crossId, jsonCnParam);
+						} else {
+							// user cannot execute target document, we put it in a list to avoid further iterations on it
+							logger.debug("User " + userProfile.getUserId() + " cannot execute document " + biObject.getLabel()
+									+ ", skipping relevant cross navigation option.");
+							nonValidCrossNavIds.add(crossId);
+							continue;
+						}
 
-						mapCrossIdToJsonCnParam.put(crossId, jsonCnParam);
 					}
+
+					JSONObject jsonCnParam = validCrossNavIdToCrossNavJSON.get(crossId);
 
 					JSONObject jsonNavParam = new JSONObject();
 
@@ -417,7 +436,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 
 				JSONArray results = new JSONArray();
-				for (JSONObject jsonDoc : mapCrossIdToJsonCnParam.values()) {
+				for (JSONObject jsonDoc : validCrossNavIdToCrossNavJSON.values()) {
 					results.put(jsonDoc);
 				}
 				return results;
@@ -561,7 +580,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param label the label to set
+	 * @param label
+	 *            the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -575,7 +595,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(Domain type) {
 		this.type = type;
@@ -589,7 +610,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param dateFormat the dateFormat to set
+	 * @param dateFormat
+	 *            the dateFormat to set
 	 */
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
@@ -603,7 +625,8 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param inputParameterType the inputParameterType to set
+	 * @param inputParameterType
+	 *            the inputParameterType to set
 	 */
 	public void setInputParameterType(String inputParameterType) {
 		this.inputParameterType = inputParameterType;

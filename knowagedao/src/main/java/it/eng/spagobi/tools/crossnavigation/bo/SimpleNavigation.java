@@ -29,12 +29,13 @@ public class SimpleNavigation {
 	private String toDoc;
 	private Integer toDocId;
 	private String fixedValue;
+	private String popupOptions;
 
 	public SimpleNavigation() {
 	}
 
 	public SimpleNavigation(Integer id, String name, String description, String breadcrumb, Integer type, String fromDoc, Integer fromDocId, String toDoc,
-			Integer toDocId) {
+			Integer toDocId,String popupOptions) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -44,6 +45,7 @@ public class SimpleNavigation {
 		this.toDoc = toDoc;
 		this.fromDocId = fromDocId;
 		this.toDocId = toDocId;
+		this.popupOptions = popupOptions;
 	}
 
 	/**
@@ -54,7 +56,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -68,7 +71,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -82,7 +86,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param breadcrumb the breadcrumb to set
+	 * @param breadcrumb
+	 *            the breadcrumb to set
 	 */
 	public void setBreadcrumb(String breadcrumb) {
 		this.breadcrumb = breadcrumb;
@@ -104,7 +109,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param fromDoc the fromDoc to set
+	 * @param fromDoc
+	 *            the fromDoc to set
 	 */
 	public void setFromDoc(String fromDoc) {
 		this.fromDoc = fromDoc;
@@ -118,7 +124,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param toDoc the toDoc to set
+	 * @param toDoc
+	 *            the toDoc to set
 	 */
 	public void setToDoc(String toDoc) {
 		this.toDoc = toDoc;
@@ -132,7 +139,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -146,7 +154,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param fixedValue the fixedValue to set
+	 * @param fixedValue
+	 *            the fixedValue to set
 	 */
 	public void setFixedValue(String fixedValue) {
 		this.fixedValue = fixedValue;
@@ -160,7 +169,8 @@ public class SimpleNavigation {
 	}
 
 	/**
-	 * @param fromDocId the fromDocId to set
+	 * @param fromDocId
+	 *            the fromDocId to set
 	 */
 	public void setFromDocId(Integer fromDocId) {
 		this.fromDocId = fromDocId;
@@ -178,6 +188,14 @@ public class SimpleNavigation {
 	 */
 	public void setToDocId(Integer toDocId) {
 		this.toDocId = toDocId;
+	}
+
+	public String getPopupOptions() {
+		return popupOptions;
+	}
+
+	public void setPopupOptions(String popupOptions) {
+		this.popupOptions = popupOptions;
 	}
 
 }

@@ -45,7 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/cross/definition/CrossDefinition.js")%>"></script>
 
@@ -164,12 +163,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-input-container>
 					</div>
 					<div flex="50"  layout="column">
-					      <md-input-container class="md-block" style="height:50px">
-							<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
-					        <md-select ng-model="ctrl.crossmodality" ng-model-options="{trackBy: '$value.value'}">
-					          <md-option ng-value="crossMode" ng-repeat="crossMode in crossModes">{{crossMode.label}}</md-option>
-					        </md-select>			      
-					      </md-input-container>
+						<div layout="row" layout-align="start center">
+							<md-input-container class="md-block" style="height:50px" flex>
+								<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
+					        	<md-select ng-model="ctrl.crossmodality" ng-model-options="{trackBy: '$value.value'}">
+					          		<md-option ng-value="crossMode" ng-repeat="crossMode in crossModes">{{crossMode.label}}</md-option>
+					        	</md-select>			      
+					      	</md-input-container>
+					      	<md-input-container class="md-block" style="height:50px" ng-if="ctrl.crossmodality.value == 2" flex="25">
+								<label>{{translate.load("sbi.crossnavigation.window.width")}}</label>
+					        	<input type="number" name="width" ng-model="ctrl.popupOptions.width" min="0"> 		   
+					        	<div class="hint">{{translate.load("sbi.crossnavigation.window.width.hint")}}</div>   
+					      	</md-input-container>
+					      	<md-input-container class="md-block" style="height:50px" ng-if="ctrl.crossmodality.value == 2" flex="25">
+								<label>{{translate.load("sbi.crossnavigation.window.height")}}</label>
+							    <input type="number" name="height" ng-model="ctrl.popupOptions.height" min="0"> 
+							    <div class="hint">{{translate.load("sbi.crossnavigation.window.height.hint")}}</div>
+					      	</md-input-container>
+						</div>
+					      
 					      <md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.breadcrumb");}}</label>
 							<input md-maxlength="200" type="text" name="breadcrumb" ng-model="ctrl.detail.simpleNavigation.breadcrumb" > 

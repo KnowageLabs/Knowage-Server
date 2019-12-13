@@ -4,7 +4,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 	$mdThemingProvider.setDefaultTheme('knowage');
 }])
 .service('$crossNavigationHelper',
-		function($crossNavigationSteps,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter,sbiModule_logger){
+		function($crossNavigationSteps,$rootScope, $window, sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter,sbiModule_logger){
 		var cns=this;
 		var selectedRole={};
 		this.crossNavigationSteps=$crossNavigationSteps;
@@ -264,6 +264,9 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				      locals:{ translate:sbiModule_translate, targetUrl:targetUrl, documentName: documentName },
 				      fullscreen: false
 				    })
+			} else if(doc.crossType == 2) {
+				var jsonPopupOptions = JSON.parse(doc.popupOptions);
+				$window.open(targetUrl, '_blank', 'toolbar=0,status=0,menubar=0,width='+ (jsonPopupOptions.width || 800) +',height='+ (jsonPopupOptions.height || 600));
 			} else {
 				// normal cross navigation
 //				cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.name,label:doc.document.label,id:doc.document.id,url:targetUrl});

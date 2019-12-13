@@ -615,7 +615,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 						value = getSingleValue(tempVal, type);
 					}
 
-					logger.debug("name: " + name + " / value: " + value);
+					logger.debug("Parameter name: " + name + " / parameter value: " + value);
 
 					getEnv().put(name + SpagoBIConstants.PARAMETER_TYPE, type);
 					getEnv().put(name, value);
