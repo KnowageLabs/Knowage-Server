@@ -32,13 +32,15 @@ public class StatementTockenizer extends StringTokenizer {
 	private List<String> tockens;
 	private int tockenCount;
 
-	private static final String DELIMITERS = "+-|*/()<>=!,";
-	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = { "case ", " as ", "distinct", " like ", "case when", " when ", " then ", "else",
-			" end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty ", "is empty ", "not member of", "member of", " and ", " or " };
+	private static final String DELIMITERS = "+-|*/()<>=!, ";
+	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = { "case ", " as ", "distinct", " like ", "case when", "case when ", " when ",
+			" then ", "else", " end ", " end", "not in ", " in ", " between", "is not null ", "is null ", "is not empty ", "is empty ", "not member of",
+			"member of", " and ", " or " };
 
 	/**
 	 * @param str
 	 */
+
 	public StatementTockenizer(String str) {
 		super(str, DELIMITERS);
 		satement = str;
