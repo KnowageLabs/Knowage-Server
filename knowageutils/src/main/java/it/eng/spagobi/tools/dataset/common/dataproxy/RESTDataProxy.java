@@ -152,6 +152,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			}
 		}
 
+		// ========= CREDIT: https://github.com/VivekKumar856
 		if (this.parameters != null & this.parameters.size() > 0) {
 			Iterator keys = this.parameters.keySet().iterator();
 			while (keys.hasNext()) {
@@ -166,7 +167,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 				}
 			}
 		}
-
+		// =========
 		return res;
 	}
 
