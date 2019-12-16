@@ -634,7 +634,7 @@
 		<type>time</type>
 	</formula>
 	
-	<!-- <formula >
+	 <formula >
 		<name>subtractMonths</name>
 		<syntax>subtractMonths( Date_expression ,number_of_months)</syntax>
 			<body>subtractMonths(${date_expression},${number_of_months})</body>
@@ -663,7 +663,7 @@
 			 Returns subtraction of date and number of months . 
 		</description>
 		<type>time</type>
-	</formula> -->
+	</formula> 
 	
 	<formula >
 		<name>subtractYears</name>
@@ -725,7 +725,7 @@
 		<type>time</type>
 	</formula>
 	
-<!--	<formula >
+	<formula >
 		<name>dateDiffInHours</name>
 		<syntax>dateDiffInHours( Starting_date ,Ending_date)</syntax>
 			<body>dateDiffInHours(${starting_date},${ending_date})</body>
@@ -782,7 +782,7 @@
 		</description>
 		<type>time</type>
 	</formula>
-	-->
+	
 	
 	
 	<formula>
@@ -1109,7 +1109,7 @@
 		<type>space</type>
 	</formula>
 	
-<!--	<formula>
+	<formula>
 		<name>Case</name>
 		<syntax>Case  when condition then true_expression else false_expression end </syntax>
 		<body>Case when ${condition}  then ${true_expression} else ${false_expression} end</body>
@@ -1139,7 +1139,7 @@
 		<description>Returns the result if condition is true.</description>
 		<type>sql</type>
 	</formula>
--->
+
 	
  
 </formulas>
