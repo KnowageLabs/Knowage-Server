@@ -294,7 +294,7 @@ public class RestUtilities {
 
 	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
 			List<NameValuePair> queryParams) throws HttpException, IOException, HMACSecurityException {
-		return makeRequest(httpMethod, address, requestHeaders, requestBody, null, false);
+		return makeRequest(httpMethod, address, requestHeaders, requestBody, queryParams, false);
 	}
 
 	@SuppressWarnings("deprecation")
