@@ -1684,16 +1684,22 @@ public class CrossTab {
 		double[] st = new double[dataMatrix[0].length];
 
 		for (int i = 0; i < dataMatrix[0].length; i++) {
-			for (int j = start; j < length + start; j++) {
-				try {
-					if (getCellType(j, i).equals(CellType.DATA)) {
-						String value = dataMatrix[j][i];
-						if (!value.equals(DATA_MATRIX_NA)) {
-							st[i] = st[i] + new Double(value);
+			MeasureInfo measureInfo = measures.get(i % measures.size());
+			boolean excludeFromTotalAndSubtotal = measureInfo.excludeFromTotalAndSubtotal;
+			if (excludeFromTotalAndSubtotal) {
+				st[i] = Double.NaN;
+			} else {
+				for (int j = start; j < length + start; j++) {
+					try {
+						if (!excludeFromTotalAndSubtotal && getCellType(j, i).equals(CellType.DATA)) {
+							String value = dataMatrix[j][i];
+							if (!value.equals(DATA_MATRIX_NA)) {
+								st[i] = st[i] + new Double(value);
+							}
 						}
+					} catch (Exception e) {
+						logger.debug("Cant format the number " + (dataMatrix[j][i]));
 					}
-				} catch (Exception e) {
-					logger.debug("Cant format the number " + (dataMatrix[j][i]));
 				}
 			}
 		}
