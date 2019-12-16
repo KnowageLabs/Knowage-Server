@@ -7,6 +7,24 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 app.controller('cacheRuntimeCtrl', ['sbiModule_restServices','sbiModule_translate',"$scope","$log","$mdDialog",cacheRuntimeManagerFunction]);
 
+app.filter('filterCacheDimension', function () {
+    return function (size) {
+        if (isNaN(size))
+            size = 0;
+
+        if (size < 1024)
+            return size.toFixed(2) + ' MB';
+
+        size /= 1024;
+
+        if (size < 1024)
+            return '~' + size.toFixed(2) + ' GB';
+
+        size /= 1024;
+
+        return '~' + size.toFixed(2) + ' TB';
+    };
+});
 
 
 function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate, $scope,$log,$mdDialog)

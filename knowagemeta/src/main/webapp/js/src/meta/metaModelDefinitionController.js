@@ -125,6 +125,8 @@ function metaModelDefinitionControllerFunction($location, $scope, $httpParamSeri
 						});
 	}
 
-	$scope.loadDatasourceTable();
+	if(translatedModel==null){
+		$scope.loadDatasourceTable();
+	}
 
 }

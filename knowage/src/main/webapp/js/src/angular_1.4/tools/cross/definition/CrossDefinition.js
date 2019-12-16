@@ -231,6 +231,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.listRightDocuments = function(){
 				ctr.listDocuments(function(item, listId, closeDialog){
 					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
+					ctr.detail.simpleNavigation.toDocId = item.DOCUMENT_ID;
 					ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
 					loadInputParameters(item.DOCUMENT_LABEL,function(data){
 						ctr.detail.toPars = data;

@@ -17,7 +17,7 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 		if(engineinl!=-1 && engineinl!=expEngine.id){
 			return false
 		}
-		return true;	
+		return true;
 	}
 
 	function getExportedEngines(){
@@ -34,9 +34,9 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 		.success(function(data, status, headers, config) {
 			console.log("data--->",data)
 			if(data.hasOwnProperty("errors")){
-				$scope.stopImport(data.errors[0].message);	
+				$scope.stopImport(data.errors[0].message);
 			}else if(data.STATUS=="NON OK"){
-				$scope.stopImport(data.ERROR);		
+				$scope.stopImport(data.ERROR);
 			}
 			else if(data.STATUS=="OK"){
 				$scope.showCircular = false;
@@ -47,9 +47,12 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 			}
 		})
 		.error(function(data, status, headers, config) {
-			$scope.stopImport(data);		
+			$scope.stopImport(data);
 		});
 	}
 
+	$scope.getCurrentStep = function() {
+		return $scope.$parent.selectedStep;
+	}
 
 }

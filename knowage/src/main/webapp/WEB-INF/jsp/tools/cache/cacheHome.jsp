@@ -127,7 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.totalBytesAvailableForCache")}}</label>
             				<input ng-model="ctrl.variableSpaceAvailable" type="number" min="0">
-           				
+           					<div class="hint">{{ctrl.variableSpaceAvailable | filterCacheDimension}}</div>
           				</md-input-container>
           				
           				<md-input-container class="md-block">

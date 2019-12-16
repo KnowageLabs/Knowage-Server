@@ -27,6 +27,7 @@ public class SimpleNavigation {
 	private String fromDoc;
 	private Integer fromDocId;
 	private String toDoc;
+	private Integer toDocId;
 	private String fixedValue;
 	private String popupOptions;
 
@@ -34,7 +35,7 @@ public class SimpleNavigation {
 	}
 
 	public SimpleNavigation(Integer id, String name, String description, String breadcrumb, Integer type, String fromDoc, Integer fromDocId, String toDoc,
-			String popupOptions) {
+			Integer toDocId,String popupOptions) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -43,6 +44,7 @@ public class SimpleNavigation {
 		this.fromDoc = fromDoc;
 		this.toDoc = toDoc;
 		this.fromDocId = fromDocId;
+		this.toDocId = toDocId;
 		this.popupOptions = popupOptions;
 	}
 
@@ -172,6 +174,20 @@ public class SimpleNavigation {
 	 */
 	public void setFromDocId(Integer fromDocId) {
 		this.fromDocId = fromDocId;
+	}
+
+	/**
+	 * @param fromDocId the toDocId to set
+	 */
+	public Integer getToDocId() {
+		return toDocId;
+	}
+
+	/**
+	 * @param toDocId the toDocId to set
+	 */
+	public void setToDocId(Integer toDocId) {
+		this.toDocId = toDocId;
 	}
 
 	public String getPopupOptions() {

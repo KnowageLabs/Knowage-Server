@@ -24,6 +24,10 @@
         <property name="breadcrumb" type="string" column="BREADCRUMB" length="200"/>
         
         <property name="type" type="int" column="TYPE" />
+	    
+	    <property name="fromDocId" type="integer" column="FROM_DOC_ID"></property>
+	    
+	    <property name="toDocId" type="integer" column="TO_DOC_ID"></property>
         
         <property name="popupOptions" type="string" column="POPUP_OPTIONS" length="4000" />
         
