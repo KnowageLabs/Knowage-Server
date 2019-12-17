@@ -534,10 +534,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+								itemVal = URLDecoder.decode(itemVal.replace("+", "%2B"), "UTF-8");
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+								itemDescr = URLDecoder.decode(itemDescr.replace("+", "%2B"), "UTF-8");
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -566,14 +566,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				} else if (paramValues instanceof String) {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
-						paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+						paramValues = URLDecoder.decode(((String) paramValues).replace("+", "%2B"), "UTF-8");
 					}
 					paramValueLst.add(paramValues.toString());
 
 					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
-						parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+						parDescrVal = URLDecoder.decode(parDescrVal.replace("+", "%2B"), "UTF-8");
 					}
 					paramDescrLst.add(parDescrVal);
 
@@ -753,7 +753,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), "UTF-8"));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -761,7 +761,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), "UTF-8"));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -772,10 +772,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"));
+						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), "UTF-8"));
 					} else {
 						ValuesLstDecoded.put(value);
-						URLDecoder.decode(value.replaceAll("%", "%25"), "UTF-8"); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, ValuesLstDecoded);
@@ -1149,12 +1148,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
 	 *
-	 * @param id
-	 *            of document
-	 * @param id
-	 *            of subObject
-	 * @param id
-	 *            of a metaData
+	 * @param id          of document
+	 * @param id          of subObject
+	 * @param id          of a metaData
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError
