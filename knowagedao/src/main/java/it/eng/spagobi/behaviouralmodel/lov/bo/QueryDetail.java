@@ -312,7 +312,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			Map<String, String> types = getParametersNameToTypeMap(drivers);
 			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 		}
-		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
+		logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile, statement, getAllColumns);
 		logger.debug("OUT.result=" + result);
 		return result;
