@@ -123,7 +123,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public String toString() {
-		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType + "]";
+		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType + ", multivalue=" + multiValue + "]";
 	}
 
 	@Override

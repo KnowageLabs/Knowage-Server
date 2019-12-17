@@ -60,6 +60,7 @@ public class DatasetMetadataParser {
 	public static final String FIELD_TYPE = "fieldType";
 	public static final String TYPE = "type";
 	public static final String ALIAS = "alias";
+	public static final String MULTIVALUE = "multivalue";
 	public static final String VERSION = "version";
 
 	// XML VALUES FOR PROPERTIES TAG
@@ -86,6 +87,7 @@ public class DatasetMetadataParser {
 				Assert.assertNotNull(name, "Name of the field cannot be null");
 				String alias = fieldMetaData.getAlias();
 				String type = fieldMetaData.getType().getName();
+				boolean multiValue = fieldMetaData.isMultiValue();
 				Assert.assertNotNull(type, "Type of the field " + name + " cannot be null");
 				FieldType fieldType = fieldMetaData.getFieldType();
 				Map properties = fieldMetaData.getProperties();
@@ -93,10 +95,12 @@ public class DatasetMetadataParser {
 				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
 				SourceBeanAttribute attN = new SourceBeanAttribute(NAME, name);
 				SourceBeanAttribute attT = new SourceBeanAttribute(TYPE, type);
+				SourceBeanAttribute attM = new SourceBeanAttribute(MULTIVALUE, multiValue);
 				SourceBeanAttribute attA = alias != null ? new SourceBeanAttribute(ALIAS, alias) : null;
 				SourceBeanAttribute attF = fieldType != null ? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
+				sbMeta.setAttribute(attM);
 				if (attA != null)
 					sbMeta.setAttribute(attA);
 				if (attF != null)
@@ -144,6 +148,7 @@ public class DatasetMetadataParser {
 				String name = fieldMetaData.getName();
 				String alias = fieldMetaData.getAlias();
 				String type = fieldMetaData.getType().getName();
+				boolean multiValue = fieldMetaData.isMultiValue();
 				Assert.assertNotNull(type, "Type of the field " + name + " cannot be null");
 				FieldType fieldType = fieldMetaData.getFieldType();
 
@@ -152,6 +157,7 @@ public class DatasetMetadataParser {
 				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
 				SourceBeanAttribute attN = new SourceBeanAttribute(NAME, name);
 				SourceBeanAttribute attT = new SourceBeanAttribute(TYPE, type);
+				SourceBeanAttribute attM = new SourceBeanAttribute(MULTIVALUE, multiValue);
 				SourceBeanAttribute attF = fieldType != null ? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
 				SourceBeanAttribute attA = alias != null ? new SourceBeanAttribute(ALIAS, alias) : null;
 				if (attF != null)
@@ -161,6 +167,7 @@ public class DatasetMetadataParser {
 
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
+				sbMeta.setAttribute(attM);
 
 				sbColumns.setAttribute(sbMeta);
 
@@ -296,6 +303,7 @@ public class DatasetMetadataParser {
 					SourceBean sbRow = (SourceBean) iterator.next();
 					String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String type = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
+					boolean isMultivalue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(MULTIVALUE)) : false;
 					String alias = sbRow.getAttribute(ALIAS) != null ? sbRow.getAttribute(ALIAS).toString() : null;
 					String fieldType = sbRow.getAttribute(FIELD_TYPE) != null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
 
@@ -310,6 +318,7 @@ public class DatasetMetadataParser {
 						type = type.substring(6);
 					}
 					fieldMeta.setType(Class.forName(type.trim()));
+					fieldMeta.setMultiValue(isMultivalue);
 
 					fieldMeta.setAlias(alias);
 					if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString()))
