@@ -27,8 +27,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
-import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 
 /**
  * Export dataset as CSV file.
@@ -48,17 +48,14 @@ public class CSVExportJob extends AbstractExportJob {
 		try {
 			IDataSet dataSet = getDataSet();
 
-			DataIterator iterator = null;
+			IDataStore dataStore = null;
 			try {
 				logger.debug("Starting iteration to transfer data");
-				iterator = dataSet.iterator();
-
-				StreamingOutput stream = new CsvStreamingOutput(iterator);
+				dataSet.loadData();
+				dataStore = dataSet.getDataStore();
+				StreamingOutput stream = new CsvStreamingOutput(dataStore);
 				stream.write(exportFileOS);
 			} catch (Exception e) {
-				if (iterator != null) {
-					iterator.close();
-				}
 				throw e;
 			} finally {
 				if (exportFileOS != null) {

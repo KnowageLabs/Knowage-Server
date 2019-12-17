@@ -82,6 +82,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					sn.setDescription(cn.getDescription());
 					sn.setBreadcrumb(cn.getBreadcrumb());
 					sn.setType(cn.getType());
+					sn.setFromDocId(cn.getFromDocId());
+					sn.setToDocId(cn.getToDocId());
 					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
 						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
 						sn.setToDoc(cnp.getToKey().getSbiObject().getLabel());
@@ -136,6 +138,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setDescription(nd.getSimpleNavigation().getDescription());
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
+				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
+				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
 				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (nd.getToPars() != null) {
@@ -264,7 +268,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					}
 
 					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), cn.getPopupOptions()));
+							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), toDoc.getBiobjId(), cn.getPopupOptions()));
 
 				}
 				return nd;
@@ -580,8 +584,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param label
-	 *            the label to set
+	 * @param label the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -595,8 +598,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param type
-	 *            the type to set
+	 * @param type the type to set
 	 */
 	public void setType(Domain type) {
 		this.type = type;
@@ -610,8 +612,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param dateFormat
-	 *            the dateFormat to set
+	 * @param dateFormat the dateFormat to set
 	 */
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
@@ -625,8 +626,7 @@ class crossNavigationParameters {
 	}
 
 	/**
-	 * @param inputParameterType
-	 *            the inputParameterType to set
+	 * @param inputParameterType the inputParameterType to set
 	 */
 	public void setInputParameterType(String inputParameterType) {
 		this.inputParameterType = inputParameterType;

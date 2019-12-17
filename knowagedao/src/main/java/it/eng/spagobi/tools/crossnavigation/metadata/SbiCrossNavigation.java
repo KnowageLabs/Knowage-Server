@@ -37,6 +37,8 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	private Set<SbiCrossNavigationPar> sbiCrossNavigationPars;
 
 	private boolean newRecord;
+	private Integer fromDocId;
+	private Integer toDocId;
 
 	/**
 	 * @return the id
@@ -136,6 +138,36 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 		this.sbiCrossNavigationPars = sbiCrossNavigationPars;
 	}
 
+	/**
+	 *
+	 * @return the fromDocId
+	 */
+	public Integer getFromDocId() {
+		return fromDocId;
+	}
+
+	/**
+	 * @param id of the document from which the cross navigation starts
+	 */
+	public void setFromDocId(Integer fromDocId) {
+		this.fromDocId = fromDocId;
+	}
+
+	/**
+	 *
+	 * @return the toDocId
+	 */
+	public Integer getToDocId() {
+		return toDocId;
+	}
+
+	/**
+	 * @param id of the document in which the cross navigation ends
+	 */
+	public void setToDocId(Integer toDocId) {
+		this.toDocId = toDocId;
+	}
+
 	public String getPopupOptions() {
 		return popupOptions;
 	}
@@ -143,5 +175,4 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	public void setPopupOptions(String popupOptions) {
 		this.popupOptions = popupOptions;
 	}
-
 }

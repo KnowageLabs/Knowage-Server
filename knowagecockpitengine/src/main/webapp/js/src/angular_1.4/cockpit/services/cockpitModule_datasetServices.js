@@ -887,14 +887,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 				}
 
-				if(!isColumnInAssociation){
-					if(!isColumnInAssociation && !cockpitModule_widgetSelection.isLastTimestampedSelection(widgetObject.dataset.label,widgetObject.content.selectedColumn.name)){
+				if(!isColumnInAssociation && !cockpitModule_widgetSelection.isLastTimestampedSelection(widgetObject.dataset.label,widgetObject.content.selectedColumn.name)){
 
-						if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
-						&& widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
-						&& filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
-							delete filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name];
-						}
+					if(widgetObject.dataset && widgetObject.dataset.label && filtersToSend[widgetObject.dataset.label]
+					&& widgetObject.content && widgetObject.content.selectedColumn && widgetObject.content.selectedColumn.name
+					&& filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name]){
+						delete filtersToSend[widgetObject.dataset.label][widgetObject.content.selectedColumn.name];
 					}
 				}
 			}

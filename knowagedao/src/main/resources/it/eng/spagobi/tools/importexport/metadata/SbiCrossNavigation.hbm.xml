@@ -20,6 +20,9 @@
         
  		<property name="type" type="int" column="TYPE" />
 	    
+	    <property name="fromDocId" type="integer" column="FROM_DOC_ID"></property>
+	    
+	    <property name="toDocId" type="integer" column="TO_DOC_ID"></property>
        
 	</class>
 	

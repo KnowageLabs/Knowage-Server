@@ -220,17 +220,16 @@ public class UserUtilities {
 
 					user.setFunctions(readFunctionality(user));
 
-					if (defaultRole == null) {
-						profile = new UserProfile(user);
-					} else {
-						profile = new UserProfile(user);
+					profile = new UserProfile(user);
+					if (defaultRole != null) {
+
 						profile.setDefaultRole(defaultRole);
 
 						SpagoBIUserProfile clone = UserUtilities.clone(user);
 						clone.setRoles(new String[] { defaultRole });
 						String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
-						Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
-						profile.setFunctionalities(toReturn);
+						Collection functionalities = StringUtilities.convertArrayInCollection(functionalitiesArray);
+						profile.setFunctionalities(functionalities);
 					}
 
 				}

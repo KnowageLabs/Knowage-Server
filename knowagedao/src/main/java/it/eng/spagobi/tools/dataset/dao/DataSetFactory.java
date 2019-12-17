@@ -314,12 +314,12 @@ public class DataSetFactory {
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
 
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+				String dataSourceLabel = jsonConf.getString(DataSetConstants.DATA_SOURCE);
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(dataSourceLabel);
 
 				if (dataSource == null) {
-					logger.debug("Datasource " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " is null for " + sbiDataSet.getLabel());
-					throw new SpagoBIRuntimeException(
-							"Datasource " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " no longer exists for " + sbiDataSet.getLabel() + " Dataset");
+					logger.error("Datasource " + dataSourceLabel + " is null for " + sbiDataSet.getLabel());
+					throw new SpagoBIRuntimeException("Datasource " + dataSourceLabel + " no longer exists for " + sbiDataSet.getLabel() + " Dataset");
 				}
 
 				DatabaseDialect dialect = DataBaseFactory.getDataBase(dataSource).getDatabaseDialect();

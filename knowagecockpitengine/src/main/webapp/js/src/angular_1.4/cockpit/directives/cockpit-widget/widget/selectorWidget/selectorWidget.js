@@ -237,7 +237,8 @@ angular.module('cockpitModule')
 				    $scope.showSelection = true;
 				})
 			}else{
-			    $scope.ngModel.activeValues = null;
+				if(!cockpitModule_widgetSelection.isLastTimestampedSelection($scope.ngModel.dataset.label, $scope.ngModel.content.selectedColumn.name))$scope.ngModel.activeValues = null;
+				else $scope.ngModel.activeValues = datasetRecords.activeValues;
 				$timeout(function(){
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;

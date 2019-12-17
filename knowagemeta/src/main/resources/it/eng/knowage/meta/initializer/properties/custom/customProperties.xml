@@ -188,8 +188,8 @@
         <value>llll</value>
         <value>LLL</value>
         <value>lll</value>
-        <value>DD/MM/YYYY HH:MM:SS</value>
-        <value>DD/MM/YYYY HH:MM</value>
+        <value>DD/MM/YYYY HH:mm:SS</value>
+        <value>DD/MM/YYYY HH:mm</value>
         <value>LL</value>
         <value>ll</value>
         <value>L</value>
