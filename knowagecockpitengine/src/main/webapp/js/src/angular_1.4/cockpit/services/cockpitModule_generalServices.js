@@ -67,7 +67,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			dataToSend.action=cockpitModule_properties.DOCUMENT_ID==null ? "DOC_SAVE" : "MODIFY_COCKPIT";
 			dataToSend.document={};
 			dataToSend.document.name=cockpitModule_properties.DOCUMENT_NAME;
-		dataToSend.document.label=cockpitModule_properties.DOCUMENT_LABEL;
+			dataToSend.document.label=cockpitModule_properties.DOCUMENT_LABEL;
 			dataToSend.document.description=cockpitModule_properties.DOCUMENT_DESCRIPTION;
 			dataToSend.document.type="DOCUMENT_COMPOSITE";
 			dataToSend.folders=[];
@@ -76,6 +76,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			}
 			dataToSend.customData={};
 			dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
+			dataToSend.customData.templateContent.knowageVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 
 			// reset table widgets volatile data
 			if(dataToSend.customData.templateContent.sheets){

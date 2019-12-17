@@ -256,6 +256,9 @@
 		        align: 'center', 
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
+		        labelFormatter:function() {
+					return this.userOptions.bubbleConf
+		        },
 		    
 	    #end
 	    
@@ -268,6 +271,9 @@
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
+	             labelFormatter:function() {
+					return this.userOptions.bubbleConf		        
+		        },
 		    
 	 	#end
 	 	
@@ -366,7 +372,10 @@
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
-	          	y: $totalDistanceLegend,
+	          	y: $totalDistanceLegend, 
+	          	labelFormatter:function() {
+		        	 return this.userOptions.bubbleConf
+		        },
 		    
 	 	#end
 	        
@@ -889,8 +898,13 @@
 		#end
 		#if($relatedSerie.fakeSerie != 'true')
 		{	
+			#if( $relatedSerie.bubbleDimension && $relatedSerie.bubbleDimension!="")
+			#set($bubbleConf = "$relatedSerie.bubbleDimension")
+			#else
+			#set($bubbleConf = "$relatedSerie.name")
+			#end
 			name: "$escapeTool.javascript($relatedSerie.name)",
-			
+			bubbleConf: "$escapeTool.javascript($bubbleConf)",
 	       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 	    	
 	    	
@@ -915,7 +929,6 @@
 						#set($bubbleDimension = "$relatedSerie.bubbleDimension"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 
 						#end
-						$datasettransformer.print($row)
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $escapeTool.javascript($serieCategoryName))
 
@@ -924,10 +937,7 @@
 								y: $serieValue,
 								
 								#if($bubbleDimension && $bubbleDimension!="")
-						$datasettransformer.print($bubbleDimension)
-						$datasettransformer.print($dataColumnsMapper)
 						#set ($col =  $dataColumnsMapper.get($bubbleDimension))
-						$datasettransformer.print($col)
 									z: $row.get($col),
 								#else
 									z: $serieValue,
@@ -996,7 +1006,7 @@
 		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
                      		*/                		                    
 			               	formatter: function() {
-			                    var value = this.y;
+			                    var value = this.point.z;
 			                    var newValue = "";		                    
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
@@ -1041,23 +1051,8 @@
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
-		                      	}		
-
-		             					   var groupTotal = this.series.data.map(function (x) {
-														  return x.y;
-														}).reduce(function (a, b) {
-														  return a + b;
-														}, 0);
-		                 				
-		                 				   percentage = 100 * value/groupTotal;	
-		                 				     
-		                 				   var precisePercentage = percentage.toFixed(precision);		
-		                 				   
-		                 					if(showPercentage){
-												return prefixValue + ' ' + precisePercentage + '%' + sufixValue;										
-											} else {
-												return prefixValue + ' ' + newValue + ' ' + sufixValue;
-											}	                       
+		                      	}
+		                 				return prefixValue + ' ' + newValue + ' ' + sufixValue;                       
 	                   
 			            	},
 		                      

@@ -418,7 +418,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 							}
 						}
 					}
-					// driver.setParameterValuesDescription(descriptions);
+					driver.setParameterValuesDescription(descriptions);
 
 					// if parameter is of type lookup empty admissible values
 					if (isFromCross && "LOOKUP".equalsIgnoreCase(selectionType)) {

@@ -23,7 +23,7 @@
                <md-tooltip>Filter</md-tooltip>
                		<md-icon ng-click="rc.getFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x"></md-icon>
                </div>              
-                <div ng-if="rc.configuration.enableButtons" class="filter-btns save-btn">
+                <div class="filter-btns save-btn">
                 	<md-tooltip>Save</md-tooltip>
                       <md-icon  ng-click="rc.updateRow()" md-font-icon="fa fa-save fa-2x"></md-icon>
                 </div>
@@ -59,11 +59,11 @@
                                 </md-menu>
                             </div>
                         </th>
-                        <th class="tableAction">
+<!--                         <th class="tableAction">
                           <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableButtons">
                                Add row
                           </md-button>  
-                        </th>
+                        </th> -->
                     </tr>
                 </thead>                
                 <tbody>                
@@ -104,9 +104,9 @@
                                 </md-menu>
                             </div>                                            
                         </td>
-                        <td style="text-align:center">
+                     <!-- <td style="text-align:center">
                             <md-icon md-font-icon="fa fa-trash" class="delete-row" ng-click="rc.deleteRowFromDB(row, $event)"></md-icon>
-                        </td>
+                        </td> -->   
                     </tr>               	
                 </tbody>
             </table>

@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -151,6 +152,22 @@ public class RESTDataProxy extends AbstractDataProxy {
 			}
 		}
 
+		// ========= CREDIT: https://github.com/VivekKumar856
+		if (this.parameters != null & this.parameters.size() > 0) {
+			Iterator keys = this.parameters.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object val = this.parameters.get(key);
+				if (val instanceof String) {
+					if (val != null && !val.equals("") && !val.equals("''")) {
+						String curval = (String) val;
+						curval = curval.replaceAll("'", "");
+						res.add(new NameValuePair(key, curval));
+					}
+				}
+			}
+		}
+		// =========
 		return res;
 	}
 

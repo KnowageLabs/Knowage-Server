@@ -140,15 +140,15 @@ $aggrid-border-color: #d9dcde;
 		.ag-header {
 		    background-color: $baseColor;
 		    color: $lightTextColor;
+		    .ag-icon {
+				color: $lightTextColor;
+			}
 		}
 		.ag-root {
 			border: none;
 		}
 		.ag-row-selected {
 			background-color: $secondaryColor;
-		}
-		.ag-icon {
-			color: $lightTextColor;
 		}
 		.ag-paging-panel {
 			border-top: none;

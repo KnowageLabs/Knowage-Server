@@ -67,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			ng-drop-success="onDropComplete($data,$event)" 
 			ng-model="queryModel" 
 			expression="editQueryObj.expression" 
+			distinct="editQueryObj.distinct"
 			advanced-filters="advancedFilters"
 			filters="filters" 
 			is-temporal ="(entityModel.entities | filter:'temporal_dimension').length > 0 " >

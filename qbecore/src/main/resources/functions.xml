@@ -80,7 +80,7 @@
 	
 	<FUNCTION group="Date Functions" name="addHours" desc=" adding housr" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,$2,HOUR) " />
-		<OracleDialect code=" date_add_interval($1,$2,HOUR,'yyyy-mm-dd hh:mm:ss') " />
+		<OracleDialect code=" date_add_interval($1,$2,HOUR,'yyyy-mm-dd hh:MI:ss') " />
 		<PostgreSQLDialect code=" date_add_interval($1,$2,HOUR) " />
 	</FUNCTION>
 	
@@ -93,7 +93,7 @@
 	
 	<FUNCTION group="Date Functions" name="addYears" desc=" adding years" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,$2,YEAR) " />
-		<OracleDialect code=" date_add_interval($1,$2,YEAR,'yyyy-mm-dd hh:mm:ss') " />
+		<OracleDialect code=" date_add_interval($1,$2,YEAR,'yyyy-mm-dd hh:MI:ss') " />
 		<PostgreSQLDialect code=" date_add_interval($1,$2,YEAR) " />
 		
 	</FUNCTION>
@@ -106,20 +106,20 @@
 	
 	<FUNCTION group="Date Functions" name="subtractHours" desc=" subtract hours" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,HOUR) " />
-		<OracleDialect code=" date_add_interval($1,-$2,HOUR,'yyyy-mm-dd hh:mm:ss') " />
+		<OracleDialect code=" date_add_interval($1,-$2,HOUR,'yyyy-mm-dd hh:MI:ss') " />
 		<PostgreSQLDialect code=" date_add_interval($1,-$2,HOUR) " />
 		
 	</FUNCTION>
 	
 	<FUNCTION group="Date Functions" name="subtractMonths" desc=" subtract months" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,MONTH) " />
-		<OracleDialect code=" to_char(add_months($1,-$2),'dd/mm/yyyy hh:mm:ss') " />
+		<OracleDialect code=" add_months($1,-$2),'dd/mm/yyyy hh:MI:ss' " />
 		<PostgreSQLDialect code=" date_add_interval($1,-$2,MONTH) " />
 	</FUNCTION>
 	
 	<FUNCTION group="Date Functions" name="subtractYears" desc=" subtract years" nParams="2">
 		<MySQLInnoDBDialect code=" date_add_interval($1,-$2,YEAR) " />
-		<OracleDialect code=" date_add_interval($1,-$2,YEAR,'yyyy-mm-dd hh:mm:ss') " />
+		<OracleDialect code=" date_add_interval($1,-$2,YEAR,'yyyy-mm-dd hh:MI:ss') " />
 		<PostgreSQLDialect code=" date_add_interval($1,-$2,YEAR) " />
 	</FUNCTION>
 	

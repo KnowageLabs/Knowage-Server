@@ -101,8 +101,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-checkbox class="little-check"
 									ng-model="checkboxs.exportSnapshots" aria-label="Export snapshots">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
 								<md-checkbox class="little-check"
-									ng-model="checkboxs.exportCrossNav" aria-label="Export cross">{{translate.load("SBISet.importexport.expCrossNav","component_impexp_messages");}}</md-checkbox>
-								<md-checkbox class="little-check"
 									ng-model="checkboxs.exportBirt" aria-label="Export BIRT">{{translate.load("SBISet.importexport.expBirtTranslation","component_impexp_messages");}}</md-checkbox>
 							    <md-checkbox class="little-check"
 									ng-model="checkboxs.exportScheduler" aria-label="Export sched">{{translate.load("SBISet.importexport.expScheduler","component_impexp_messages");}}</md-checkbox>
@@ -137,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</document-tree>
 								-->
 								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true" leaf-key="biObjects" text-search="test" fields-search="['stateCode']"
-									selected-item="selected" multi-select="true" show-files="true" force-visibility="false">
+									selected-item="selected" multi-select="true" show-files="true" force-visibility="true">
 								</component-tree>
 							</div>
 						</div>
@@ -157,14 +155,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</bread-crumb>
 						</div>
 					</md-toolbar>
-					<md-content  ng-cloak ng-switch="selectedStep">
+					<md-content  ng-cloak>
 
-						<div class="importSteps" flex ng-controller="importControllerStep0" ng-switch-when="0"><%@include	file="./importDocumentsSteps/importDocumentsStep0.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep1" ng-switch-when="1"><%@include	file="./importDocumentsSteps/importDocumentsStep1.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep2" ng-switch-when="2"><%@include	file="./importDocumentsSteps/importDocumentsStep2.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep3" ng-switch-when="3"><%@include	file="./importDocumentsSteps/importDocumentsStep3.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep4" ng-switch-when="4"><%@include	file="./importDocumentsSteps/importDocumentsStep4.jsp"%></div>
-
+						<div class="importSteps" flex ng-controller="importControllerStep0" ng-if="selectedStep == 0"><%@include	file="./importDocumentsSteps/importDocumentsStep0.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep1" ng-if="selectedStep == 1"><%@include	file="./importDocumentsSteps/importDocumentsStep1.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep2" ng-if="selectedStep == 2"><%@include	file="./importDocumentsSteps/importDocumentsStep2.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep3" ng-if="selectedStep == 3"><%@include	file="./importDocumentsSteps/importDocumentsStep3.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep4" ng-if="selectedStep == 4"><%@include	file="./importDocumentsSteps/importDocumentsStep4.jsp"%></div>
 
 					</md-content>
 				  </md-card>	

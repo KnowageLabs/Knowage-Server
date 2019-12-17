@@ -42,9 +42,9 @@ app.factory("importExportDocumentModule_importConf", function() {
 });
 
 
-app.controller('importExportController', ["$scope","sbiModule_translate","$mdToast",impExpFuncController]);
-app.controller('exportController', ['$http','sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","sbiModule_messaging", "$filter", exportFuncController]);
-app.controller('importController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf","sbiModule_messaging",importFuncController]);
+app.controller('importExportController', impExpFuncController);
+app.controller('exportController', exportFuncController);
+app.controller('importController', importFuncController);
 
 function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 	sbiModule_translate.addMessageFile("component_impexp_messages");
@@ -71,8 +71,6 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 //	$scope.fileImport= {};
 //	$scope.associationsFileImport={};
 //	$scope.associations="noAssociations";
-
-
 
 	$scope.finishImport=function(){
 		if(importExportDocumentModule_importConf.hasOwnProperty("resetData")){
@@ -173,16 +171,16 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			viewDownload : false
 	}
 	var selectedFiles = [];
-	
+
 	$scope.checkboxs={
 			exportSubObj : false,
 			exportSnapshots : false,
-			exportCrossNav : false,
+			exportCrossNav : true,
 			exportBirt : false,
 			exportScheduler : false,
 			exportSelFunc: false
 	};
-	
+
 	$scope.filterDocuments = function(){
 		if($scope.filterDate!=undefined){
 			$scope.restServices.get("2.0", "folders","dateFilter="+$scope.filterDate)
@@ -222,20 +220,20 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
 		});
 	}
-	
+
 	$scope.restServices.get("2.0", "folders","includeDocs=true")
 	.success(function(data){
 		//if not errors in response, copy the data
 		if (data.errors === undefined){
 //			$scope.folders=angular.copy(data);
 			for (d in data){
-				
+
 				if (data[d].codType != "USER_FUNCT"){
 					//doesn't add personal folders to the tree
 					$scope.folders.push(data[d]);
 				}
 			}
-			
+
 			//tempFolders = angular.copy($scope.folders);
 		}else{
 			$scope.folders=[];
@@ -245,30 +243,30 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		$scope.folders=angular.copy(foldersJson);
 		$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
 	});
-	
+
 	$scope.filterByStatus = {
 			development: "",
 			test: "",
 			released: ""
 	};
-	
+
 	function filteringDocuments(object) {
-		
+
 		var value = "";
-		for(var key in object) 
+		for(var key in object)
 			value += object[key];
 		return value;
 	}
-	
+
 	$scope.filterDoc = function() {
 		$scope.test = filteringDocuments($scope.filterByStatus);
 	}
-	
-	
+
+
 	var goingThroughTree = function(folders) {
 		var checkedDocs = [];
 		var objArray = [];
-		
+
 		for(var i=0; i<folders.length; i++) {
 			checkedDocs = $filter('filter')(folders[i].biObjects, {checked: true}, true);
 			objArray = setObjectPath(folders[i].path, checkedDocs);
@@ -276,11 +274,11 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 				goingThroughTree(folders[i].subfolders);
 		}
 	}
-	
+
 	var setObjectPath = function(paths, checkedDocs) {
-		
+
 		var singlePath = [paths];
-		
+
 		for(var i=0; i<checkedDocs.length; i++) {
 			checkedDocs[i].functionalities = singlePath;
 			var obj = {"id": checkedDocs[i].id, "folder": paths}
@@ -289,27 +287,28 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	}
 
 	$scope.exportFiles= function(){
-		
+
 		var config={
 				"DOCUMENT_ID_LIST":[],
 				"EXPORT_FILE_NAME":$scope.exportName,
 				"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
 				"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
-				"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
+				//"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
+				"EXPORT_CROSSNAV":true,
 				"EXPORT_BIRT": $scope.checkboxs.exportBirt,
 				"EXPORT_SCHEDULER": $scope.checkboxs.exportScheduler,
 				"EXPORT_SELECTED_FUNCTIONALITY": $scope.checkboxs.exportSelFunc
 		};
-		
+
 		goingThroughTree($scope.folders);
-		
+
 		if(!$scope.checkboxs.exportSelFunc){
 			for (var i =0 ; i < $scope.selected.length;i++){
 				if ($scope.selected[i].type == "biObject")
 					config.DOCUMENT_ID_LIST.push(""+$scope.selected[i].id);
 			}
 		}
-		
+
 		if($scope.checkboxs.exportSelFunc) {
 			config.DOCUMENT_ID_LIST = [];
 			for(var i=0; i<selectedFiles.length; i++) {
@@ -317,7 +316,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 					config.DOCUMENT_ID_LIST.push(selectedFiles[i]);
 				//}
 			}
-			
+
 		}
 
 		$scope.flags.waitExport=true;
@@ -351,7 +350,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 
 
 	}
-	
+
 
 	$scope.submitDownForm = function(form){
 		$scope.flags.submitForm= true;

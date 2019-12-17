@@ -59,7 +59,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			hideTooltip : true,
 
 			transformer : function() {
-				return '<md-select ng-model=row.type class="noMargin" ><md-option ng-repeat="col in scopeFunctions.parameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.type class="noMargin" ><md-option ng-repeat="col in scopeFunctions.parameterTypes" value="{{col.value}}">{{col.name}}</md-option></md-select>';
 			}
 		},
 

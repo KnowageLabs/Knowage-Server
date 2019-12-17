@@ -14,7 +14,8 @@
 	   			<md-button ng-click="showSQLQuery()">{{translate.load("kn.qbe.custom.table.toolbar.sql")}}
 <!-- 					<md-icon md-font-icon="fas fa fa-database"></md-icon> -->
 				</md-button>
-	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
+				
+	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="distinct"  class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
 	   			<md-button class="md-icon-button" ng-click="openDialogForParams(ngModel)">
 					<md-icon md-font-icon="fa fa-product-hunt"></md-icon>
 				</md-button>

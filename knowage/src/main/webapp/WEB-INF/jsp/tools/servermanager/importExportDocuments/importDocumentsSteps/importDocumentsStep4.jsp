@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- <md-button ng-click="nextStep()">nextStep 3</md-button> -->
 
 <div layout="column"  >
-<div layout="row" layout-wrap >
-<md-switch flex ng-model="overwriteMetaData" aria-label="Switch 1" ng-init="overwriteMetaData=false">
+<div layout="row" layout-align="end center">
+<!-- <md-switch flex ng-model="overwriteMetaData" aria-label="Switch 1" ng-init="overwriteMetaData=false">
   {{translate.load('impexp.overwrite','component_impexp_messages');}} : {{ overwriteMetaData }}
-  </md-switch>
+  </md-switch> -->
 
-	<md-button ng-click="saveMetaDataAssociation()" class="md-raised">{{translate.load('SBISet.start.import','component_impexp_messages');}} </md-button> 
+	<md-button ng-click="saveMetaDataAssociation()" class="md-raised md-primary">{{translate.load('SBISet.start.import','component_impexp_messages');}} </md-button> 
 </div>
 
 <md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
