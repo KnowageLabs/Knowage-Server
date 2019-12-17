@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_translate,
 			cockpitModule_datasetServices,
 			cockpitModule_generalOptions,
+			cockpitModule_generalServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
@@ -58,6 +59,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.bulkSelection = false;
 		$scope.selectedCells = [];
 		$scope.selectedRows = [];
+
+		$scope.getTemplateUrl = function(template){
+	  		return cockpitModule_generalServices.getTemplateUrl('advancedTableWidget',template);
+	  	}
 
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
@@ -117,7 +122,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 						}
 
-						tempCol.cellRenderer = cellRenderer;
+						if(fields[f].multiValue) {
+							tempCol.cellClass = 'multiCell';
+							tempCol.cellRenderer = cellMultiRenderer;
+						}
+						else tempCol.cellRenderer = cellRenderer;
 
 						if($scope.ngModel.settings.autoRowsHeight) {
 							tempCol.autoHeight = true;
@@ -198,12 +207,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else return params.value;
 		}
 
+		$scope.showHiddenValues = function(e,values){
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		    $mdDialog.show({
+		      controller: function($scope, listValues){
+		    	  $scope.listValues = listValues;
+		    	  $scope.close = function(){
+		    		  $mdDialog.hide();
+		    	  }
+		      },
+		      templateUrl: $scope.getTemplateUrl('multiCellListDialogTemplate'),
+		      parent: angular.element(document.body),
+		      locals: {listValues:values},
+		      clickOutsideToClose:true
+		    })
+		}
+
 		//CELL RENDERERS
 		function cellRenderer () {}
 
 		cellRenderer.prototype.init = function(params){
 			this.eGui = document.createElement('span');
-			var tempValue = params.valueFormatted || params.value;
+			var tempValue = "";
+			tempValue = params.valueFormatted || params.value;
 			if(!params.node.rowPinned){
 				if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
 					var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
@@ -247,6 +274,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function crossIconRenderer(params){
 			return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
 		}
+
+		function cellMultiRenderer () {}
+
+		cellMultiRenderer.prototype.init = function(params){
+			this.eGui = document.createElement('div');
+			var self = this.eGui;
+			if(Array.isArray(params.value)){
+				params.value.slice(0,(params.colDef.style && params.colDef.style.maxChars) || params.value.length).forEach(function(item){
+					self.innerHTML += '<span class="miniChip">'+item+'</span>';
+				})
+				if(params.colDef.style && params.colDef.style.maxChars && params.value.length > params.colDef.style.maxChars) {
+					this.eGui.innerHTML += '<i class="fa fa-search maxcharsButton"></i>';
+					this.eButton = this.eGui.querySelector('.maxcharsButton');
+					this.eventListener = function(e) {
+				        $scope.showHiddenValues(e,params.value);
+				    };
+				    this.eButton.addEventListener('click', this.eventListener);
+				}
+			}
+		}
+
+		cellMultiRenderer.prototype.getGui = function() {
+		    return this.eGui;
+		};
 
 		function SummaryRowRenderer () {}
 

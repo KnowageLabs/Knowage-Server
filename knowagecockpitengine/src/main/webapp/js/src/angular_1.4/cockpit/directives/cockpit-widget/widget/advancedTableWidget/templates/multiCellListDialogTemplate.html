@@ -1,0 +1,16 @@
+<md-dialog>
+    <md-dialog-content>
+    	<md-list class="kn-smallList">
+			<md-list-item ng-repeat="value in listValues">
+          		<span>{{value}}</span>
+         	</md-list-item>
+        <md-list>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-primary md-raised" ng-click="close()">
+        Close
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1069,6 +1069,13 @@ color-picker {
   }
 }
 
+md-list.kn-smallList{
+  md-list-item {
+    height:32px;
+    min-height: 32px;
+  }
+}
+
 .kn-infoToast, .kn-warningToast {
   font-family: 'Roboto', 'Arial', 'Sanf-serif';
   font-size: .8rem;
