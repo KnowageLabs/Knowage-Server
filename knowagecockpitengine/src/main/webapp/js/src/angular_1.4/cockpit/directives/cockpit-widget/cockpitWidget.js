@@ -382,6 +382,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}else return $scope.ngModel.style.showScreenshot;
 	}
 
+	$rootScope.$on('DELETE_SELECTION',function(event,data){
+	    	cockpitModule_widgetSelection.removeTimestampedSelection(data.ds,data.columnName);
+	    })
 	// global WIDGET_EVENT
 	$rootScope.$on('WIDGET_EVENT',function(conf,eventType,config){
 		switch(eventType){

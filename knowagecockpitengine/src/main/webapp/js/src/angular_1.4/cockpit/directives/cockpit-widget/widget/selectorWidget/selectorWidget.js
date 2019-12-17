@@ -470,7 +470,7 @@ angular.module('cockpitModule')
 
 					}
 				}else{ // COMBOBOX
-					if(parVal){
+					if(parVal  && parVal.length>0){
 						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
 					}else{
 						item.value=angular.copy(parVal);
