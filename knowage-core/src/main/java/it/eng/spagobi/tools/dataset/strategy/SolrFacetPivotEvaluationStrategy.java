@@ -146,7 +146,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 
 		List<File> imports = new ArrayList<File>();
-		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 		File scriptFile = new File(url.toURI());
 		imports.add(scriptFile);
 
@@ -163,14 +163,24 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 			// method that calculates formula result getting each real value field
 
 			String resultingCalculation = transformFormula(newRecord, pagedMetaData, field.getFormula());
+			try {
+				Object o = scriptManager.runScript(resultingCalculation, "groovy", bindings, imports);
+				String data = (o == null) ? "" : o.toString();
 
-			Object o = scriptManager.runScript(resultingCalculation, "ECMAScript", bindings, imports);
-			String data = (o == null) ? "" : o.toString();
+				IField fieldNew = new Field(new BigDecimal(data));
+				newRecord.appendField(fieldNew);
 
-			IField fieldNew = new Field(new BigDecimal(data));
-			newRecord.appendField(fieldNew);
+				datastoresToAdd.appendRecord(newRecord);
+			} catch (Exception ex) {
 
-			datastoresToAdd.appendRecord(newRecord);
+				if (ex.getCause().getMessage().contains("Division by zero")) {
+					IField fieldNew = new Field();
+					newRecord.appendField(fieldNew);
+
+					datastoresToAdd.appendRecord(newRecord);
+				} else
+					throw ex;
+			}
 		}
 
 		// IDataStore columnsDataStore = new
