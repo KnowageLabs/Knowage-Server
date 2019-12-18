@@ -22,6 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.Permissions;
+import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +39,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
@@ -81,7 +89,7 @@ public class SpagoBIScriptManager {
 				return evaluateGroovy(script, bindings);
 			}
 
-			ScriptEngine scriptEngine = getScriptEngine(language);
+			final ScriptEngine scriptEngine = getScriptEngine(language);
 
 			if (scriptEngine == null) {
 				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
@@ -96,7 +104,22 @@ public class SpagoBIScriptManager {
 			}
 			scriptEngine.setContext(scriptContext);
 
-			results = scriptEngine.eval(script);
+			PermissionCollection pc = new Permissions(); // This means no permissions at all
+			CodeSource codeSource = scriptEngine.getClass().getProtectionDomain().getCodeSource();
+			ProtectionDomain protectionDomain = new ProtectionDomain(codeSource, pc);
+			ProtectionDomain[] context = new ProtectionDomain[] { protectionDomain };
+			AccessControlContext accessControlContext = new AccessControlContext(context);
+
+			final String _script = script;
+
+			results = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+
+				@Override
+				public Object run() throws ScriptException {
+					return scriptEngine.eval(_script);
+				}
+			}, accessControlContext);
+
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while executing script", t);
 		} finally {
