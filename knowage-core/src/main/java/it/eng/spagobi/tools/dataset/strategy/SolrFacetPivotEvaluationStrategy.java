@@ -392,28 +392,6 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		return dataStoreFinal;
 	}
 
-	private Object getValue(FieldStatsInfo fieldStats, IAggregationFunction aggregationFunction) {
-		if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
-			return fieldStats.getCount();
-		}
-		if (AggregationFunctions.COUNT_DISTINCT.equals(aggregationFunction.getName())) {
-			return fieldStats.getCountDistinct();
-		}
-		if (AggregationFunctions.MIN.equals(aggregationFunction.getName())) {
-			return fieldStats.getMin();
-		}
-		if (AggregationFunctions.MAX.equals(aggregationFunction.getName())) {
-			return fieldStats.getMax();
-		}
-		if (AggregationFunctions.SUM.equals(aggregationFunction.getName())) {
-			return fieldStats.getSum();
-		}
-		if (AggregationFunctions.AVG.equals(aggregationFunction.getName())) {
-			return fieldStats.getMean();
-		}
-		throw new IllegalArgumentException("The function " + aggregationFunction.getName() + " is not valid here");
-	}
-
 	private Map<String, String> getFacetsWithAggregation(List<AbstractSelectionField> groups) {
 		Map<String, String> facets = new HashMap<>(groups.size());
 		for (AbstractSelectionField facet : groups) {

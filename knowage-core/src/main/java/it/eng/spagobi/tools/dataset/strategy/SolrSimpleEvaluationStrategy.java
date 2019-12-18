@@ -39,6 +39,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -56,8 +58,8 @@ public class SolrSimpleEvaluationStrategy extends AbstractSolrStrategy {
 	}
 
 	@Override
-	protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<List<Projection>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
+			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
 		SolrQuery solrQuery = solrDataSet.getSolrQuery();
@@ -69,7 +71,7 @@ public class SolrSimpleEvaluationStrategy extends AbstractSolrStrategy {
 	}
 
 	@Override
-	protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+	protected IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
 		IDataStore dataStore = new DataStore(metaData);
 
 		SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
@@ -85,13 +87,27 @@ public class SolrSimpleEvaluationStrategy extends AbstractSolrStrategy {
 		for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
 			String fieldName = dataStore.getMetaData().getFieldName(i);
-			for (Projection projection : summaryRowProjections) {
-				if (projection.getName().equals(fieldName)) {
-					Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
-					IField field = new Field(value);
-					fieldMeta.setType(value.getClass());
-					summaryRow.appendField(field);
-					break;
+			for (AbstractSelectionField proj : summaryRowProjections) {
+				if (proj instanceof Projection) {
+					Projection projection = (Projection) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
+				}
+
+				else {
+					DataStoreCalculatedField projection = (DataStoreCalculatedField) proj;
+					if (projection.getName().equals(fieldName)) {
+						Object value = getValue(fieldStatsInfo.get(fieldName), projection.getAggregationFunction());
+						IField field = new Field(value);
+						dataStore.getMetaData().getFieldMeta(i).setType(value.getClass());
+						summaryRow.appendField(field);
+						break;
+					}
 				}
 			}
 		}
