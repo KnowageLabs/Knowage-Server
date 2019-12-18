@@ -59,6 +59,13 @@
 	             		</div>	                 
 	            	</div> 
 	            </div>
+	            <md-input-container>
+	                    <md-select ng-model="driversService.dataDependencyObjects[selectedDriver.id][conditionIndex].logicOperator" ng-change="addToChangedDataDepedencies(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])">
+	                        <md-option ng-value="option" ng-repeat="option in connectingOperators track by $index">
+	                            {{ option }}
+	                        </md-option>
+	                    </md-select>
+	                </md-input-container>
 			</div>
 	        </md-dialog-content>
 	        <md-dialog-actions layout="row">

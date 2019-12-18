@@ -469,6 +469,7 @@ angular
      			}
 
      			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','not contains','starts with','ends with'];
+     			$scope.connectingOperators = ['','AND','OR'];
      			driversService.selectedDataCondition = driversService.dataDependencyObjects[ $scope.selectedDriver.id][selectedDataCondition];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
