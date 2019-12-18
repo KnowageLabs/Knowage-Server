@@ -23,26 +23,6 @@
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
-
-		if(!$scope.model.settings.modalityValue){
-			$scope.model.settings.modalityValue="singleValue";
-		}
-		if(!$scope.model.settings.modalityView){
-			$scope.model.settings.modalityView="vertical";
-		}
-		if(!$scope.model.settings.modalityPresent){
-			$scope.model.settings.modalityPresent="LIST";
-		}
-		if($scope.model.settings.modalityPresent == "COMBOBOX"){
-			$scope.model.settings.modalityValue = "dropdown";
-		}
-		if(!$scope.model.settings.defaultValue){
-			$scope.model.settings.defaultValue="";
-		}
-		if(!$scope.model.settings.staticValues){
-			$scope.model.settings.staticValues="";
-		}
-
 		$scope.lastId = -1;
 
 
@@ -123,6 +103,12 @@
             $scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
             $scope.resetValue($scope.model.dataset.dsId, true);
         }
+		
+		$scope.$watch("model.settings.hideDisabled", function(newValue,oldValue){
+			if(newValue){
+				$scope.model.settings.enableAll = false;
+			}
+		})
 	}
 })();
 

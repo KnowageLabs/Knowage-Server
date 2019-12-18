@@ -72,6 +72,9 @@
 	         	<md-checkbox ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
 	            	{{::translate.load('kn.cockpit.selector.designer.hideDisabled')}}
 	         	</md-checkbox>
+	         	 <md-checkbox ng-disabled="model.settings.hideDisabled" ng-model="model.settings.enableAll" flex="20" layout-align="start center" layout="row">
+	            	{{::translate.load('kn.cockpit.selector.designer.enableAll')}}
+	         	</md-checkbox>
 		    </div>
 			
 	    </md-card-content>
