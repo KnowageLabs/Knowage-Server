@@ -211,7 +211,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			e.stopImmediatePropagation();
 			e.preventDefault();
 		    $mdDialog.show({
-		      controller: function($scope, listValues){
+		      controller: function($scope, listValues, sbiModule_translate){
+		    	  $scope.translate = sbiModule_translate;
 		    	  $scope.listValues = listValues;
 		    	  $scope.close = function(){
 		    		  $mdDialog.hide();
