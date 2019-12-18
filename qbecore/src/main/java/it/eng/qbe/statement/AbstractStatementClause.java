@@ -75,7 +75,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 			logger.debug("Parsing expression [" + cf.getExpression() + "] ...");
 			newExpression = replaceFields(cf, false, query, entityAliasesMaps);
-			newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
+			// newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
 			newExpression = replaceSlotDefinitions(newExpression, cf.getType(), slots, query, entityAliasesMaps);
 			logger.debug("Expression [" + cf.getExpression() + "] paresed succesfully into [" + newExpression + "]");
 		} catch (Throwable t) {

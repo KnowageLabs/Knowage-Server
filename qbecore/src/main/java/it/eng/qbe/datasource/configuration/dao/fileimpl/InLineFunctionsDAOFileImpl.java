@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,9 +37,8 @@ import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
- * Implementation of IInLineFunctionsDAO that read functions code (ie. data
- * functions)
- * 
+ * Implementation of IInLineFunctionsDAO that read functions code (ie. data functions)
+ *
  * @author Antonella Giachino
  */
 public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
@@ -54,6 +53,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	public final static String FIELD_TAG_NAME_ATTR = "name";
 	public final static String FIELD_TAG_DESC_ATTR = "desc";
 	public final static String FIELD_TAG_NPARAMS_ATTR = "nParams";
+	public final static String FIELD_TAG_TYPE_ATTR = "type";
 	public final static String FIELD_TAG_MYSQL_DIALECT = "MySQLInnoDBDialect";
 	public final static String FIELD_TAG_ORACLE_DIALECT = "OracleDialect";
 	public final static String FIELD_TAG_INGRES_DIALECT = "IngresDialect";
@@ -66,6 +66,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	// LOAD
 	// =============================================================================
 
+	@Override
 	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect) {
 
 		FileInputStream in;
@@ -75,6 +76,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		String name;
 		String desc;
 		String nParams;
+		String type;
 		String code;
 		List functionsNodes;
 		Iterator it;
@@ -108,28 +110,24 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				name = functionNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 				desc = functionNode.valueOf("@" + FIELD_TAG_DESC_ATTR);
 				nParams = functionNode.valueOf("@" + FIELD_TAG_NPARAMS_ATTR);
+				type = functionNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
 				dialectNode = null;
 				// get the code function only for the dialect managed
 				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_MYSQL_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_MYSQL_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_HQL_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_HQL_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)
 						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_EXTENDED_ORACLE)
 						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE_SPATIAL)) {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_ORACLE_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_ORACLE_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_INGRES_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_INGRES_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_POSTGRES_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_POSTGRES_DIALECT + "");
 				} else {
-					dialectNode = functionNode
-							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
 				}
 				code = "";
 				if (dialectNode != null) {
@@ -141,6 +139,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				func.setGroup(group);
 				func.setDesc(desc);
 				func.setnParams(Integer.valueOf(nParams));
+				func.setType(type);
 				func.setCode(code);
 				addInLineFunction(func);
 				logger.debug("Function [" + mapInLineFunctions.get(func.name) + "] loaded succesfully");
@@ -149,15 +148,13 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		} catch (Throwable t) {
 			if (t instanceof DAOException)
 				throw (DAOException) t;
-			throw new DAOException(
-					"An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", t);
+			throw new DAOException("An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", t);
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					throw new DAOException(
-							"Impossible to properly close stream to file file [" + FUNCTIONS_FILE_NAME + "]", e);
+					throw new DAOException("Impossible to properly close stream to file file [" + FUNCTIONS_FILE_NAME + "]", e);
 				}
 			}
 			logger.debug("OUT");
@@ -214,13 +211,13 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	}
 
 	public InLineFunction getInLineFunctionByName(String name) {
-		return (InLineFunction) mapInLineFunctions.get(name);
+		return mapInLineFunctions.get(name);
 	}
 
 	public List<InLineFunction> getInLineFunctionsByDialect(String dialect) {
 		List toReturn = new ArrayList();
 		for (int i = 0; i < mapInLineFunctions.size(); i++) {
-			InLineFunction func = (InLineFunction) mapInLineFunctions.get(i);
+			InLineFunction func = mapInLineFunctions.get(i);
 			if (func.dialect.contains(dialect))
 				toReturn.add(func);
 		}
@@ -234,6 +231,25 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		String code;
 		String dialect;
 		Integer nParams;
+		String type;
+
+		/**
+		 * @return the type
+		 */
+		public String getType() {
+			if (type == null || type.equals("")) {
+				return "STRING";
+			}
+			return type;
+		}
+
+		/**
+		 * @param type
+		 *            the type to set
+		 */
+		public void setType(String type) {
+			this.type = type;
+		}
 
 		/**
 		 * @return the name
