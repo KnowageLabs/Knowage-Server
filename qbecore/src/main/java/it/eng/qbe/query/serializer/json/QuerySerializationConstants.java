@@ -95,6 +95,8 @@ public class QuerySerializationConstants {
 	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
 	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
 	public static final String DIALECT_EXTENDED_ORACLE = "org.hibernate.dialect.ExtendedOracleDialect";
+	public static final String DIALECT_EXTENDED_MYSQL = "org.hibernate.dialect.ExtendedMySQLDialect";
+	public static final String DIALECT_EXTENDED_POSTGRES = "org.hibernate.dialect.ExtendedPostgresDialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 

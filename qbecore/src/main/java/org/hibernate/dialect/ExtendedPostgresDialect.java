@@ -13,8 +13,6 @@
 package org.hibernate.dialect;
 
 import org.apache.log4j.Logger;
-import org.hibernate.dialect.function.SQLFunctionTemplate;
-import org.hibernate.type.StandardBasicTypes;
 
 public class ExtendedPostgresDialect extends PostgreSQLDialect {
 
@@ -23,12 +21,14 @@ public class ExtendedPostgresDialect extends PostgreSQLDialect {
 	public ExtendedPostgresDialect() {
 		super();
 		logger.debug("IN"); // try {
-
+		InlineFunctionRegistrationManager.registerInlineFunctions(this);
 		// UserProfile userProfile = ProfileSingleton.getInstance().getUserProfile();
 
 		// List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
-		registerFunction("date_add_interval", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "(?1 + INTERVAL '?2 ?3')"));
-		registerFunction("date_diff", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, " date_part(?3, ?1 - ?2)"));
+		/*
+		 * registerFunction("date_add_interval", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "(?1 + INTERVAL '?2 ?3')"));
+		 * registerFunction("date_diff", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, " date_part(?3, ?1 - ?2)"));
+		 */
 
 		logger.debug("OUT");
 	}
