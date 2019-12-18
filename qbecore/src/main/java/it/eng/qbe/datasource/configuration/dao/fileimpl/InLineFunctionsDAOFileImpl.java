@@ -113,7 +113,8 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				type = functionNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
 				dialectNode = null;
 				// get the code function only for the dialect managed
-				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_EXTENDED_MYSQL)) {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_MYSQL_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_HQL_DIALECT + "");
@@ -124,7 +125,8 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_ORACLE_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_INGRES_DIALECT + "");
-				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
+				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_EXTENDED_POSTGRES)) {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_POSTGRES_DIALECT + "");
 				} else {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
