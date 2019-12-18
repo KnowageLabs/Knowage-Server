@@ -288,6 +288,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.init=function(element,width,height){
+			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+				if($scope.ngModel.content.columnSelectedOfDataset[k].isCalculated && $scope.ngModel.content.columnSelectedOfDataset[k].formulaEditor){
+					$scope.ngModel.content.columnSelectedOfDataset[k].formula = $scope.ngModel.content.columnSelectedOfDataset[k].formulaEditor.replace(/(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/g, function(match,p1,p2){
+						return cockpitModule_properties.VARIABLES[p2];
+					});
+				}
+			}
 			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
 				$scope.widgetIsInit=true;
@@ -323,7 +330,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.advancedTableGrid.api.setRowData(datasetRecords.rows);
 					$scope.advancedTableGrid.api.setPinnedBottomRowData([]);
 				}
-			
+
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;

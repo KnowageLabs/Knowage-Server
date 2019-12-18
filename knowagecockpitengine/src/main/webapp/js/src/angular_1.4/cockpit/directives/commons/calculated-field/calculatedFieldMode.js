@@ -5,6 +5,12 @@ CodeMirror.defineSimpleMode("calculatedFieldMode", {
         },{
             regex: /((?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\()(\"[a-zA-Z0-9\-\_\s]*\")(\))/,
             token: ["keyword", "field", "keyword"]
+        },{
+            regex: /((?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\()([a-zA-Z0-9\-\+\/\*\_\s\$\{\}\"]*)(\))/,
+            token: ["keyword", "", "keyword"]
+        },{
+            regex: /(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/,
+            token: ["keyword", "field", "keyword"]
         }, {
             regex: /\+|\-|\*|\//,
             token: ["keyword"]

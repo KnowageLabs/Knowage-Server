@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.currentRow != undefined){
 						$scope.currentRow.aliasToShow = result.alias;
 						$scope.currentRow.formula = result.formula;
+						$scope.currentRow.formulaEditor = result.formulaEditor;
 						$scope.currentRow.aggregationSelected = result.aggregationSelected;
 						$scope.currentRow.funcSummary = result.funcSummary;
 						$scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
@@ -71,20 +72,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout){
+	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
 		$scope.localDataset = {};
 		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
 		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
+		if($scope.calculatedField.formula && !$scope.calculatedField.formulaEditor) $scope.calculatedField.formulaEditor = $scope.calculatedField.formula;
+
+		$scope.setVariableFunction = function(variable){
+			return {
+			      "syntax":"$V{ "+variable.name+" }",
+			      "description":variable.name,
+			      "body":"$V{"+variable.name+"}",
+			      "name": variable.name,
+			      "output":"Number",
+			      "type":"variables"
+			   };
+		}
 
 		//premade functions for codemirror menu bar
-		$scope.functions = cockpitModule_generalOptions.calculatedFieldsFunctions;
+		$scope.functions = angular.copy(cockpitModule_generalOptions.calculatedFieldsFunctions);
+		angular.forEach(cockpitModule_template.configuration.variables, function(value, key) {
+			$scope.functions.push($scope.setVariableFunction(value));
+		})
+
 		$scope.availableFormulaTypes = [];
 		angular.forEach($scope.functions, function(value, key) {
 			if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
 		});
+
 
 		//codemirror initializer
 		$scope.reloadCodemirror = false;
@@ -113,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope._editor.replaceRange(text, position);
 		}
 
-		if($scope.calculatedField.formula) {
+		if($scope.calculatedField.formulaEditor) {
 			$timeout(function(){
 				$scope.reloadCodemirror = true;
 			},0)
@@ -135,7 +153,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.validateFormula = function(save) {
 			return $q(function(resolve, reject) {
-				if(!$scope.calculatedField.formula) {
+				$scope.calculatedField.formula =  $scope.calculatedField.formulaEditor.replace(/(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
+					return cockpitModule_properties.VARIABLES[p2];
+				})
+				if(!$scope.calculatedField.formulaEditor) {
 					$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
 					reject();
 					return;
@@ -215,6 +236,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				promise.resolve($scope.result);
 				$mdDialog.hide();
 			},function(error){
+				$scope.toastifyMsg('warning',error);
 				return;
 			})
 
@@ -224,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.resetFormula = function(){
-			$scope.calculatedField.formula = '';
+			$scope.calculatedField.formulaEditor = '';
 			$scope.calculatedField.aggregationSelected = $scope.calculatedField.datasetOrTableFlag ? 'SUM' : 'NONE';
 		}
 
@@ -232,7 +254,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.model.dataset.dsId != undefined) {
 				if (cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).type == "SbiSolrDataSet") {
 					return true;
-				}           
+				}
 
 			}
 			return false;

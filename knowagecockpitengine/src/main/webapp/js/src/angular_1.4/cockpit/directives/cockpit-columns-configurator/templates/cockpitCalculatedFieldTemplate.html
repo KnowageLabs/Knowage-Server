@@ -47,7 +47,7 @@
 						</md-switch>
 	            	</div>
 		             <md-menu-bar>
-		                <md-menu ng-repeat="type in availableFormulaTypes track by $index" ng-if="calculatedField.datasetOrTableFlag">
+		                <md-menu ng-repeat="type in availableFormulaTypes track by $index">
 		                    <button ng-click="$mdOpenMenu()">{{type}}</button>
 		                    <md-menu-content>
 		                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
@@ -69,7 +69,7 @@
 		            </md-menu-bar>
 				
 		            <md-card-content class="noPadding">
-		                <textarea id="formula" ui-codemirror="editorOptions" ng-model="calculatedField.formula" ui-refresh="reloadCodemirror" flex style="width:100%;"></textarea>
+		                <textarea id="formula" ui-codemirror="editorOptions" ng-model="calculatedField.formulaEditor" ui-refresh="reloadCodemirror" flex style="width:100%;"></textarea>
 		            </md-card-content>
 	
 	        	</md-card-content>
