@@ -71,7 +71,7 @@ angular.module('cockpitModule')
 		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX' && !$scope.ngModel.settings.modalityValue) $scope.ngModel.settings.modalityValue = "dropdown";
 
 		$scope.isDisabled = function(p){
-			if (cockpitModule_properties.TAINTED_ASSOCIATIONS[$scope.ngModel.dataset.label]) {
+			if ($scope.ngModel.settings.enableAll) {
 				return false;
 			}
 			if($scope.ngModel.settings.modalityValue=="dropdown"){
@@ -325,9 +325,13 @@ angular.module('cockpitModule')
         	 }
 
         	 scope.isDisabled = function(p){
-        		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name) || cockpitModule_properties.TAINTED_ASSOCIATIONS[ds]) {
+    			if ($scope.ngModel.settings.enableAll) {
+        				return false;
+    			}
+        		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name)) {
  					return false;
  				}
+        		 
         		 return selectables && selectables.indexOf(p) == -1;
         	 }
 
