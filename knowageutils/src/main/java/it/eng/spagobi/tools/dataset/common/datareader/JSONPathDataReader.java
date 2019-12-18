@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
@@ -35,7 +36,6 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.joda.time.Instant;
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -57,6 +57,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
+
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
  * each {@link IField} must be defined. The type can be fixed or can be defined dynamically by {@link JsonPath}. The value is found dynamically by
@@ -96,6 +97,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		private final String name;
 		private final String jsonPathValue;
 		private final String jsonPathType;
+		private final boolean multivalue;
 
 		public static String getJsonPathTypeFromSolrFieldType(String solrFieldType) {
 			String jsonPathType;
@@ -120,9 +122,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		public JSONPathAttribute(String name, String jsonPathValue, String jsonPathType) {
+			this(name, jsonPathValue, jsonPathType, false);
+		}
+
+		public JSONPathAttribute(String name, String jsonPathValue, String jsonPathType, boolean multivalue) {
 			this.name = name;
 			this.jsonPathValue = jsonPathValue;
 			this.jsonPathType = jsonPathType;
+			this.multivalue = multivalue;
+		}
+
+		public boolean isMultivalue() {
+			return multivalue;
 		}
 
 		public String getName() {
@@ -136,6 +147,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		public String getJsonPathType() {
 			return jsonPathType;
 		}
+
 	}
 
 	private final String jsonPathItems;
@@ -261,12 +273,12 @@ public class JSONPathDataReader extends AbstractDataReader {
 					String jsonPathValue = (String) fieldMeta.getProperty(JSON_PATH_VALUE_METADATA_PROPERTY);
 					Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
 					// can be fixed (not real JSONPath) or null (after value calculation)
-					String stringValue = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
+					Object value = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
 					IFieldMetaData fm = fieldMeta;
 					Class<?> type = fm.getType();
 					if (type == null) {
 						// dinamically defined, from json data path
-						String typeString = getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
+						String typeString = (String) getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
 						Assert.assertNotNull(typeString, "type of jsonpath type");
 						type = getType(typeString);
 						fm.setType(type);
@@ -276,7 +288,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 					}
 					Assert.assertNotNull(type != null, "type!=null");
 
-					IField field = new Field(getValue(stringValue, fm));
+					IField field = new Field(getValue(value, fm));
 					record.appendField(field);
 				}
 				if (useDirectlyAttributes) {
@@ -314,9 +326,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else {
 			parsedData = Arrays.asList(parsed);
 		}
-
-
-
 
 		return parsedData;
 	}
@@ -395,7 +404,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return value;
 	}
 
-	private static String getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
+	private static Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
 		// can be an array with a single value, a single object or also null (not found)
 		Object res = null;
 		try {
@@ -404,28 +413,29 @@ public class JSONPathDataReader extends AbstractDataReader {
 			logger.debug("JPath not found " + jsonPathValue);
 		}
 
-		if (res == null) {
-			return null;
-		}
-
-		if (o instanceof net.minidev.json.JSONObject || o instanceof net.minidev.json.JSONArray) {
-			res = getJSONFormat(res);
-			return res.toString();
-		}
-
-		if (res instanceof JSONArray) {
-			JSONArray array = (JSONArray) res;
-			if (array.length() > 1) {
-				throw new IllegalArgumentException(String.format("There is no unique value: %s", array.toString()));
-			}
-			if (array.length() == 0) {
-				return null;
-			}
-
-			res = array.get(0);
-		}
-
-		return res.toString();
+//		if (res == null) {
+//			return null;
+//		}
+//
+//		if (o instanceof net.minidev.json.JSONObject || o instanceof net.minidev.json.JSONArray) {
+//			res = getJSONFormat(res);
+//			return res.toString();
+//		}
+//
+//		if (res instanceof JSONArray) {
+//			JSONArray array = (JSONArray) res;
+//			if (array.length() > 1) {
+//				throw new IllegalArgumentException(String.format("There is no unique value: %s", array.toString()));
+//			}
+//			if (array.length() == 0) {
+//				return null;
+//			}
+//
+//			res = array.get(0);
+//		}
+//
+//		return res.toString();
+		return res;
 	}
 
 	private static Object getJSONFormat(Object res) {
@@ -463,21 +473,24 @@ public class JSONPathDataReader extends AbstractDataReader {
 	/**
 	 *
 	 * @param dataStoreMeta
-	 * @param parsedData
-	 *            list of json object (net.minidev)
+	 * @param parsedData    list of json object (net.minidev)
 	 */
 	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
-		if(ngsiDefaultItems)manageNGSI(parsedData);
-		else manageNonNGSIObject(parsedData);
+		if (ngsiDefaultItems)
+			manageNGSI(parsedData);
+		else
+			manageNonNGSIObject(parsedData);
 
 		for (int index = 0; index < jsonPathAttributes.size(); index++) {
 			JSONPathAttribute jpa = jsonPathAttributes.get(index);
 			FieldMetadata fm = new FieldMetadata();
 			String header = jpa.name;
+			boolean multiValue = jpa.multivalue;
 			fm.setAlias(getAlias(header));
 			fm.setName(header);
+			fm.setMultiValue(multiValue);
 			if (ID_NAME.equalsIgnoreCase(header)) {
 				if (idSet) {
 					throw new JSONPathDataReaderException("There is no unique id field.");
@@ -517,24 +530,24 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private void manageNonNGSIObject(List<Object> parsedData) {
 		if (!ngsiDefaultItems && !dataReadFirstTime) {
-			//If a column contains an Object then cast to a JSON string
+			// If a column contains an Object then cast to a JSON string
 
-			for(Object r : parsedData) {
-				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
-				Set<Object> columnNames =  record.keySet();
-				for(Object column : columnNames) {
-						Object obj = record.get(column);
-						if(obj instanceof Map) {
-							ObjectMapper mapper = new ObjectMapper();
-							try {
-								obj = mapper.writeValueAsString(obj);
-							} catch (JsonProcessingException e) {
-								System.out.println("Impossible to parse JSON");
-								e.printStackTrace();
-							}
-							//obj = new Gson().toJson(obj,LinkedHashMap.class);
-							record.put(column, obj);
+			for (Object r : parsedData) {
+				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>) r;
+				Set<Object> columnNames = record.keySet();
+				for (Object column : columnNames) {
+					Object obj = record.get(column);
+					if (obj instanceof Map) {
+						ObjectMapper mapper = new ObjectMapper();
+						try {
+							obj = mapper.writeValueAsString(obj);
+						} catch (JsonProcessingException e) {
+							System.out.println("Impossible to parse JSON");
+							e.printStackTrace();
 						}
+						// obj = new Gson().toJson(obj,LinkedHashMap.class);
+						record.put(column, obj);
+					}
 				}
 			}
 		}
@@ -586,12 +599,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 		fm.setProperty(DATE_FORMAT_FIELD_METADATA_PROPERTY, dateFormat);
 	}
 
-	private static Object getValue(String value, IFieldMetaData fmd) throws ParseException {
-		if (value == null) {
-			return null;
-		}
-
+	private static Object getSingleValue(String value, IFieldMetaData fmd) throws ParseException {
 		Class<?> fieldType = fmd.getType();
+
 		if (fieldType.equals(String.class)) {
 			return value;
 		} else if (fieldType.equals(Byte.class)) {
@@ -613,16 +623,56 @@ public class JSONPathDataReader extends AbstractDataReader {
 			Assert.assertNotNull(dateFormat != null, "dateFormat != null");
 			return getSimpleDateFormat(dateFormat).parse(value);
 		} else if (fieldType.equals(Timestamp.class)) {
-			if (value!=null && !value.isEmpty())
-			return new Timestamp(Instant.parse(value).getMillis());
-			else return null;
+			if (value != null && !value.isEmpty())
+				return new Timestamp(Instant.parse(value).getMillis());
+			else
+				return null;
 		} else if (fieldType.equals(Boolean.class)) {
 			return Boolean.valueOf(value);
 		} else if (fieldType.equals(Long.class)) {
 			return Long.valueOf(value);
 		}
+
 		Assert.assertUnreachable(String.format("Impossible to resolve field type: %s", fieldType));
 		throw new RuntimeException(); // unreachable
+	}
+
+	private static Object getValue(Object value, IFieldMetaData fmd) throws ParseException {
+		if (value == null) {
+			return null;
+		}
+
+		String name = fmd.getName();
+		Class<?> fieldType = fmd.getType();
+		boolean multiValue = fmd.isMultiValue();
+
+		if (multiValue) {
+			Object ret[] = null;
+
+			if (!(value instanceof net.minidev.json.JSONArray)) {
+				throw new IllegalStateException(
+						"Field " + name + " is multivalue but it's value is not a net.minidev.json.JSONArray: " + value + " of type " + value.getClass());
+			}
+
+			net.minidev.json.JSONArray arrayValue = (net.minidev.json.JSONArray) value;
+			int length = arrayValue.size();
+
+			ret = (Object[]) Array.newInstance(fieldType, length);
+
+			for (int i = 0; i < length; i++) {
+				Object currValue = null;
+				currValue = arrayValue.get(i);
+				ret[i] = getSingleValue(currValue.toString(), fmd);
+			}
+
+			return Arrays.asList(ret);
+		} else {
+			Object ret = null;
+
+			ret = getSingleValue(value.toString(), fmd);
+
+			return ret;
+		}
 	}
 
 	private static SimpleDateFormat getSimpleDateFormat(String dateFormat) {

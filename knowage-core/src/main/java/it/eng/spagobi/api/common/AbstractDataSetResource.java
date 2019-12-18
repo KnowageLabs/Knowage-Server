@@ -311,7 +311,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private void applyOptions(IDataSet dataSet, Map<String, Object> options) {
-		if (hasSolrFacetPivotOption(dataSet, options)) {
+		if (hasSolrSimpleOption(dataSet, options)) {
+			applySolrSimpleOption(dataSet);
+		} else if (hasSolrFacetPivotOption(dataSet, options)) {
 			applySolrFacetPivotOption(dataSet);
 		}
 	}
@@ -325,8 +327,21 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		solrDataSet.setEvaluationStrategy(DatasetEvaluationStrategyType.SOLR_FACET_PIVOT);
 	}
 
+	private void applySolrSimpleOption(IDataSet dataSet) {
+		if (dataSet instanceof VersionedDataSet) {
+			VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+			dataSet = versionedDataSet.getWrappedDataset();
+		}
+		SolrDataSet solrDataSet = (SolrDataSet) dataSet;
+		solrDataSet.setEvaluationStrategy(DatasetEvaluationStrategyType.SOLR_SIMPLE);
+	}
+
 	private boolean hasSolrFacetPivotOption(IDataSet dataSet, Map<String, Object> options) {
 		return isSolrDataset(dataSet) && Boolean.TRUE.equals(options.get("solrFacetPivot"));
+	}
+
+	private boolean hasSolrSimpleOption(IDataSet dataSet, Map<String, Object> options) {
+		return isSolrDataset(dataSet) && Boolean.TRUE.equals(options.get("solrSimple"));
 	}
 
 	private int getSolrFacetLimitOption(Map<String, Object> options) {

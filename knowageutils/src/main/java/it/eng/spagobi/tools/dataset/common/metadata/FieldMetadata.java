@@ -27,6 +27,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	Class type;
 	Map properties;
 	FieldType fieldType;
+	boolean multiValue;
 
 	public FieldMetadata() {
 		super();
@@ -122,7 +123,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public String toString() {
-		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType + "]";
+		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType + ", multivalue=" + multiValue + "]";
 	}
 
 	@Override
@@ -163,5 +164,15 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 		FieldMetadata clone = (FieldMetadata) super.clone();
 		clone.setProperties((Map) ((HashMap) properties).clone());
 		return clone;
+	}
+
+	@Override
+	public boolean isMultiValue() {
+		return multiValue;
+	}
+
+	@Override
+	public void setMultiValue(boolean multiValue) {
+		this.multiValue = multiValue;
 	}
 }

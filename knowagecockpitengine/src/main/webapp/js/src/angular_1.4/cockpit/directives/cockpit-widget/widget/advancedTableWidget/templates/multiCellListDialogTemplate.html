@@ -1,0 +1,23 @@
+<md-dialog>
+	<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load('kn.multicell.values')}}</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+    
+    <md-dialog-content>
+    	<md-list class="kn-smallList">
+			<md-list-item ng-repeat="value in listValues">
+          		<span>{{value}}</span>
+         	</md-list-item>
+        <md-list>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-primary md-raised" ng-click="close()">
+        {{translate.load('sbi.generic.close')}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

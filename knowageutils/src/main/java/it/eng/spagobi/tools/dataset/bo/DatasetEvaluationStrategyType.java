@@ -18,5 +18,5 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 public enum DatasetEvaluationStrategyType {
-	PERSISTED, FLAT, INLINE_VIEW, CACHED, REALTIME, SOLR, SOLR_FACET_PIVOT
+	PERSISTED, FLAT, INLINE_VIEW, CACHED, REALTIME, SOLR, SOLR_FACET_PIVOT, SOLR_SIMPLE
 }
