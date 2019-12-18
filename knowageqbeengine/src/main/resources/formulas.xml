@@ -274,7 +274,7 @@
 		<type>time</type>
 	</formula>
 	
-	<!-- <formula >
+	<formula >
 		<name>Current time</name>
 		<syntax>CURRENT_TIME()</syntax>
 			<body>CURRENT_TIME()</body>
@@ -284,8 +284,7 @@
 			Returns the current time on the database
 		</description>
 		<type>time</type>
-	</formula> -->
-	
+	</formula>
 	
 	<formula >
 		<name>Hour</name>
@@ -388,9 +387,9 @@
 	</formula>
 	
 	<formula >
-		<name>getQuarter</name>
-		<syntax>getQuarter( Date_expression )</syntax>
-			<body>getQuarter(date_expression)</body>
+		<name>get_quarter</name>
+		<syntax>get_quarter( Date_expression )</syntax>
+			<body>get_quarter(date_expression)</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -408,9 +407,9 @@
 	</formula>
 	
 	<formula >
-		<name>getWeek</name>
-		<syntax>getWeek( Date_expression )</syntax>
-			<body>getWeek(date_expression)</body>
+		<name>get_week</name>
+		<syntax>get_week( Date_expression )</syntax>
+			<body>get_week(date_expression)</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -428,9 +427,9 @@
 	</formula>
 	
 	<formula >
-		<name>getDayOfTheWeek</name>
-		<syntax>getDayOfTheWeek( Date_expression )</syntax>
-			<body>getDayOfTheWeek(date_expression)</body>
+		<name>get_day_of_the_week</name>
+		<syntax>get_day_of_the_week( Date_expression )</syntax>
+			<body>get_day_of_the_week(date_expression)</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -448,9 +447,9 @@
 	</formula>
 	
 	<formula >
-		<name>addDays</name>
-		<syntax>addDays( Date_expression ,number_of_days)</syntax>
-			<body>addDays(${date_expression},${number_of_days})</body>
+		<name>add_days</name>
+		<syntax>add_days( Date_expression ,number_of_days)</syntax>
+			<body>add_days(${date_expression},${number_of_days})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -479,9 +478,9 @@
 	</formula>
 	
 	<formula >
-		<name>addHours</name>
-		<syntax>addHours( Date_expression ,number_of_hours)</syntax>
-			<body>addHours(${date_expression},${number_of_hours})</body>
+		<name>add_hours</name>
+		<syntax>add_hours( Date_expression ,number_of_hours)</syntax>
+			<body>add_hours(${date_expression},${number_of_hours})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -509,9 +508,9 @@
 		<type>time</type>
 	</formula>
 	<formula >
-		<name>addMonths</name>
-		<syntax>addMonths( Date_expression ,number_of_months)</syntax>
-			<body>addMonths(${date_expression},${number_of_months})</body>
+		<name>add_months</name>
+		<syntax>add_months( Date_expression ,number_of_months)</syntax>
+			<body>add_months(${date_expression},${number_of_months})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -540,9 +539,9 @@
 	</formula>
 	
 	<formula >
-		<name>addYears</name>
-		<syntax>addYears( Date_expression ,number_of_years)</syntax>
-			<body>addYears(${date_expression},${number_of_years})</body>
+		<name>add_years</name>
+		<syntax>add_years( Date_expression ,number_of_years)</syntax>
+			<body>add_years(${date_expression},${number_of_years})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -573,9 +572,9 @@
 	
 	
 	<formula >
-		<name>subtractDays</name>
-		<syntax>subtractDays( Date_expression ,number_of_days)</syntax>
-			<body>subtractDays(${date_expression},${number_of_days})</body>
+		<name>subtract_days</name>
+		<syntax>subtract_days( Date_expression ,number_of_days)</syntax>
+			<body>subtract_days(${date_expression},${number_of_days})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -604,9 +603,9 @@
 	</formula>
 	
 	<formula >
-		<name>subtractHours</name>
-		<syntax>subtractHours( Date_expression ,number_of_hours)</syntax>
-			<body>subtractHours(${date_expression},${number_of_hours})</body>
+		<name>subtract_hours</name>
+		<syntax>subtract_hours( Date_expression ,number_of_hours)</syntax>
+			<body>subtract_hours(${date_expression},${number_of_hours})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -634,10 +633,10 @@
 		<type>time</type>
 	</formula>
 	
-	 <formula >
-		<name>subtractMonths</name>
-		<syntax>subtractMonths( Date_expression ,number_of_months)</syntax>
-			<body>subtractMonths(${date_expression},${number_of_months})</body>
+	<formula >
+		<name>subtract_months</name>
+		<syntax>subtract_months( Date_expression ,number_of_months)</syntax>
+			<body>subtract_months(${date_expression},${number_of_months})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -663,12 +662,12 @@
 			 Returns subtraction of date and number of months . 
 		</description>
 		<type>time</type>
-	</formula> 
+	</formula>
 	
 	<formula >
-		<name>subtractYears</name>
-		<syntax>subtractYears( Date_expression ,number_of_years)</syntax>
-			<body>subtractYears(${date_expression},${number_of_years})</body>
+		<name>subtract_years</name>
+		<syntax>subtract_years( Date_expression ,number_of_years)</syntax>
+			<body>subtract_years(${date_expression},${number_of_years})</body>
 			<argument>
 				<name>date_expression</name>
 				<expected_value></expected_value>
@@ -697,9 +696,9 @@
 	</formula>
 	
 	<formula >
-		<name>dateDiffInDays</name>
-		<syntax>dateDiffInDays( Starting_date ,Ending_date)</syntax>
-			<body>dateDiffInDays(${starting_date},${ending_date})</body>
+		<name>datediff_in_days</name>
+		<syntax>datediff_in_days( Starting_date ,Ending_date)</syntax>
+			<body>datediff_in_days(${starting_date},${ending_date})</body>
 			<argument>
 				<name>starting_date</name>
 				<expected_value></expected_value>
@@ -726,9 +725,9 @@
 	</formula>
 	
 	<formula >
-		<name>dateDiffInHours</name>
-		<syntax>dateDiffInHours( Starting_date ,Ending_date)</syntax>
-			<body>dateDiffInHours(${starting_date},${ending_date})</body>
+		<name>datediff_in_hours</name>
+		<syntax>datediff_in_hours( Starting_date ,Ending_date)</syntax>
+			<body>datediff_in_hours(${starting_date},${ending_date})</body>
 			<argument>
 				<name>starting_date</name>
 				<expected_value></expected_value>
@@ -755,9 +754,9 @@
 	</formula>
 	
 	<formula >
-		<name>dateDiffInMinutes</name>
-		<syntax>dateDiffInMinutes( Starting_date ,Ending_date)</syntax>
-			<body>dateDiffInMinutes(${starting_date},${ending_date})</body>
+		<name>datediff_in_minutes</name>
+		<syntax>datediff_in_minutes( Starting_date ,Ending_date)</syntax>
+			<body>datediff_in_minutes(${starting_date},${ending_date})</body>
 			<argument>
 				<name>starting_date</name>
 				<expected_value></expected_value>
