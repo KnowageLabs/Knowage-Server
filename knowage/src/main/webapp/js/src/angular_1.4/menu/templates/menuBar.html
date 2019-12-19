@@ -10,7 +10,7 @@
 		<ul>
 			<li>
 				<a href="#" ng-click="toggleAdminMenu($event)"> 
-					<md-tooltip md-delay="500">{{translate.load('kn.mainmenu.systemadministration')}}</md-tooltip> 
+					<md-tooltip md-delay="500">{{userName}}</md-tooltip> 
 					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome($event)"></div>
 					<span flex>{{userName}}</span>
 					<md-button class="md-icon-button" >
@@ -21,7 +21,7 @@
 				</a>
 				<input id="sysadmin" class="sysadmin" type="checkbox" ng-model="adminOpened"/>
 				<ul class="secnav">
-					<li ng-repeat="fix in fixed" ng-click="menuCall(fix.firstUrl,fix.linkType)">
+					<li ng-repeat="fix in fixed" ng-click="menuCall($event,fix.firstUrl,fix.linkType)">
 						<a href="#">
 							<md-tooltip md-delay="500">{{fix.tooltip}}</md-tooltip> 
 							{{fix.tooltip}}
@@ -29,9 +29,8 @@
 					</li>
 				</ul>
 			</li>
-			
-			<li ng-repeat="link in links" ng-if="link.linkType!='news' || (link.linkType=='news' && totalNewsNumber != 0)">
-				<a href="#" ng-click="menuCall(link.firstUrl,link.linkType)"> 
+			<li ng-repeat="link in links" ng-if="(link.linkType!='news' && link.linkType!='downloads') || (link.linkType=='news' && totalNewsNumber && totalNewsNumber != 0) || (link.linkType=='downloads' && downloadsList.length > 0)">
+				<a href="#" ng-click="menuCall($event,link.firstUrl,link.linkType)"> 
 					<i ng-if="link.iconCls" ng-class="['icon', link.iconCls]"></i> 
 					<i ng-if="!link.iconCls" class="icon fa fa-2x fa-link"></i> 
 					<span>{{link.tooltip}}</span>
@@ -42,7 +41,7 @@
 			</li>
 			
 			<li ng-repeat="custom in customs track by $index">
-				<a href="#" ng-click="menuCall(custom.src,custom.linkType)" layout="row"> 
+				<a href="#" ng-click="menuCall($event,custom.src,custom.linkType,custom.menu,$index)" layout="row"> 
 					<i ng-if="custom.menu" class="icon fa fa-2x fa-list-ul"></i> 
 					<i ng-if="!custom.menu" class="icon fa fa-2x fa-file-o"></i>
 					<span>{{custom.text}}</span>
@@ -64,7 +63,7 @@
 			<span flex></span>
 		</div>
 		<ul ng-animate-swap="selectedCustom" ng-class="{'reverseAnim' : tempAnimateClass, 'forwardAnim' : !tempAnimateClass}">
-			<li ng-repeat="item in selectedCustom.menu track by $index" ng-click="menuCall(item.src,item.linkType)" layout="row" layout-align="start center">
+			<li ng-repeat="item in selectedCustom.menu track by $index" ng-click="menuCall($event,item.src,item.linkType,item.menu,$index, true)" layout="row" layout-align="start center">
 				<span flex> 
 					{{item.text}}
 				</span>
