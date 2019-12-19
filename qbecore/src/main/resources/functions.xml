@@ -116,9 +116,9 @@
 		<PostgreSQLDialect code=" (?1 + INTERVAL '?2 DAY') " />
 	</FUNCTION>
 	
-	<FUNCTION group="Date Functions" name="add_hours" desc=" adding housr" nParams="2" type="TIMESTAMP">
+	<FUNCTION group="Date Functions" name="add_hours" desc=" adding hours" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_add(?1 , INTERVAL ?2 HOUR) " />
-		<OracleDialect code="to_char(?1 + INTERVAL '?2' HOUR,'yyyy-mm-dd hh:MI:ss') " />
+		<OracleDialect code="to_char(?1 + INTERVAL '?2' HOUR,'yyyy-mm-dd hh:MI:ss')" />
 		<PostgreSQLDialect code=" (?1 + INTERVAL '?2 HOUR') " />
 	</FUNCTION>
 	
@@ -131,7 +131,7 @@
 	
 	<FUNCTION group="Date Functions" name="add_years" desc=" adding years" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_add(?1 , INTERVAL ?2 YEAR) " />
-		<OracleDialect code=" to_char(?1 + INTERVAL '?2' YEAR,'yyyy-mm-dd hh:MI:ss') " />
+		<OracleDialect code=" to_char(?1 + INTERVAL '?2' YEAR,'yyyy-mm-dd hh:MI:ss')  " />
 		<PostgreSQLDialect code=" (?1 + INTERVAL '?2 YEAR') " />
 		
 	</FUNCTION>
@@ -151,13 +151,12 @@
 	
 	<FUNCTION group="Date Functions" name="subtract_months" desc=" subtract months" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_sub(?1 , INTERVAL ?2 MONTH) " />
-		<OracleDialect code=" to_char(?1 + INTERVAL '-?2' MONTH,'yyyy-mm-dd hh:MI:ss') " />
+		<OracleDialect code=" add_months(?1,-?2) " />
 		<PostgreSQLDialect code=" (?1 - INTERVAL '?2 MONTH') " />
 	</FUNCTION>
-	
 	<FUNCTION group="Date Functions" name="subtract_years" desc=" subtract years" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_sub(?1 , INTERVAL ?2 YEAR) " />
-		<OracleDialect code=" to_char(?1 + INTERVAL '-?2' YEAR,'yyyy-mm-dd hh:MI:ss') " />
+		<OracleDialect code=" to_char(?1  + INTERVAL '-?2' YEAR,'yyyy-mm-dd hh:MI:ss') " />
 		<PostgreSQLDialect code=" (?1 - INTERVAL '?2 YEAR') " />
 	</FUNCTION>
 	
