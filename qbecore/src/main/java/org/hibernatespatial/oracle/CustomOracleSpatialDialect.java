@@ -20,6 +20,7 @@ package org.hibernatespatial.oracle;
 import java.util.List;
 
 import org.hibernate.QueryException;
+import org.hibernate.dialect.InlineFunctionRegistrationManager;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -36,7 +37,9 @@ public class CustomOracleSpatialDialect extends OracleSpatial10gDialect {
 
 	public CustomOracleSpatialDialect() {
 		super();
-		registerFunction("date_add_interval", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "to_char(?1 + INTERVAL '?2' ?3,?4)"));
+
+		InlineFunctionRegistrationManager.registerInlineFunctions(this);
+
 		registerFunction("dwithin", new StandardSQLFunction("SDO_WITHIN_DISTANCE", StandardBasicTypes.STRING));
 		registerFunction("spatial_contains", new StandardSQLFunction("SDO_CONTAINS", StandardBasicTypes.BOOLEAN));
 		registerFunction("intersection", new StandardSQLFunction("SDO_GEOM.SDO_INTERSECTION", GeometryUserType.TYPE));
