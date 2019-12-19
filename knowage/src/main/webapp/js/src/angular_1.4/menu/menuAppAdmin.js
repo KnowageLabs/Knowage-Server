@@ -56,14 +56,22 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
         		var isIe11 = $scope.ie11.test($scope.browser);
         		return isIe11;
         	}
-
+        	$scope.openedMenu = false;
         	$scope.toggleCheck = function(){
-        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = !angular.element( document.querySelector( '#hamburger' ) )[0].checked;
+        		$scope.openedMenu = !$scope.openedMenu;
         		$scope.closeMenu();
         	}
 
         	$scope.closeCheck = function(){
-        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = false;
+        		$scope.openedMenu = false;
+        	}
+
+        	$scope.openCheck = function(){
+        		$scope.openedMenu = true;
+        	}
+
+        	$scope.getCheck = function(){
+        		return angular.element( document.querySelector( '#hamburger' ) )[0].checked;
         	}
 
         	$scope.getImageBackgroundStyle = function(imagepath){
@@ -749,8 +757,11 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 
 
 
-			$scope.menuCall = function menuCall(url,type){
-				$scope.closeMenu();
+			$scope.menuCall = function menuCall(e,url,type,hasMenu,index,fromMenu){
+				if(type) {
+					$scope.closeMenu();
+					$scope.closeCheck();
+				}
 				if (type == 'execDirectUrl'){
 					//custom fix to launch datasets in a new page. Please change after angular version is on
 					if(url=='/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE' && $scope.testIe11()){
@@ -784,9 +795,33 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
-				if(type) $scope.closeCheck();
-				else $scope.toggleCheck();
+				else{
+					if(fromMenu) {
+						$scope.nextMenu(e,index);
+					}else if(hasMenu){
+						if($scope.selectedCustom) {
+							if($scope.path[0] == index){
+								$scope.closeMenu();
+							}else{
+								$scope.openMenu(e,index);
+							}
+						}
+						else {
+							if($scope.openedMenu) $scope.openMenu(e,index);
+							else {
+								$scope.openCheck();
+								$scope.openMenu(e,index);
+							}
+						}
+					}
+					else $scope.toggleCheck();
+				}
+
 			}
+
+			$scope.$watch('openedMenu', function(newValue,oldValue){
+				if(newValue == false && $scope.selectedCustom) $scope.closeMenu();
+			})
 
 			$scope.openMenu = function(e, cursor){
 				e.preventDefault();
@@ -832,7 +867,20 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 				delete $scope.adminOpened;
 				delete $scope.selectedCustom;
 				delete $scope.tempSelectedCustom;
+				$scope.path = [];
+				$scope.safeApply();
 			}
+
+			$scope.safeApply = function(fn) {
+			  var phase = this.$root.$$phase;
+			  if(phase == '$apply' || phase == '$digest') {
+			    if(fn && (typeof(fn) === 'function')) {
+			      fn();
+			    }
+			  } else {
+			    this.$apply(fn);
+			  }
+			};
         }
     };
 

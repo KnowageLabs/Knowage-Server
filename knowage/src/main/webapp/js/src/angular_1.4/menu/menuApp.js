@@ -73,13 +73,22 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
         		}
         	}
 
+        	$scope.openedMenu = false;
         	$scope.toggleCheck = function(){
-        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = !angular.element( document.querySelector( '#hamburger' ) )[0].checked;
+        		$scope.openedMenu = !$scope.openedMenu;
         		$scope.closeMenu();
         	}
 
         	$scope.closeCheck = function(){
-        		angular.element( document.querySelector( '#hamburger' ) )[0].checked = false;
+        		$scope.openedMenu = false;
+        	}
+
+        	$scope.openCheck = function(){
+        		$scope.openedMenu = true;
+        	}
+
+        	$scope.getCheck = function(){
+        		return angular.element( document.querySelector( '#hamburger' ) )[0].checked;
         	}
 
         	$http.get(Sbi.config.contextName+'/restful-services/1.0/menu/enduser',{
@@ -508,8 +517,10 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				}
 			}
 
-			$scope.menuCall = function menuCall(url,type){
-				$scope.closeMenu();
+			$scope.menuCall = function menuCall(e,url,type,hasMenu,index,fromMenu){
+				if(type) {
+					$scope.closeCheck();
+				}
 				if (type == 'execDirectUrl'){
 					// this is the case linked document would not be executable
 //					if(url == 'noExecutableDoc'){
@@ -545,8 +556,38 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
-				if(type) $scope.closeCheck();
-				else $scope.toggleCheck();
+				else{
+					if(fromMenu) {
+						$scope.nextMenu(e,index);
+					}else if(hasMenu){
+						if($scope.selectedCustom) {
+							if($scope.path[0] == index){
+								$scope.closeMenu();
+							}else{
+								$scope.openMenu(e,index);
+							}
+						}
+						else {
+							if($scope.openedMenu) $scope.openMenu(e,index);
+							else {
+								$scope.openCheck();
+								$scope.openMenu(e,index);
+							}
+						}
+					}
+					else $scope.toggleCheck();
+				}
+			}
+
+			$scope.safeApply = function(fn) {
+				var phase = this.$root.$$phase;
+				if(phase == '$apply' || phase == '$digest') {
+					if(fn && (typeof(fn) === 'function')) {
+						fn();
+					}
+				} else {
+					this.$apply(fn);
+				}
 			}
 
 
@@ -594,6 +635,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				delete $scope.adminOpened;
 				delete $scope.selectedCustom;
 				delete $scope.tempSelectedCustom;
+				$scope.path = [];
+				$scope.safeApply();
 			}
 
 			$scope.setNewsBadge = function(){
