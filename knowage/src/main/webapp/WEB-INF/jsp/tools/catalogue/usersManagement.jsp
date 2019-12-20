@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes | orderBy : '-lovId'">
 										<div flex=100 ng-if="attribute.lovId == null || attribute.lovId == 0  ">
 											<md-input-container class="md-block"> <label>{{attribute.name}}</label>
-											<input name="attr" ng-model="attribute.value" ng-maxlength="100">
+											<input name="attr" ng-model="attribute.value" ng-maxlength="500">
 											<div ng-messages="" ng-show="false"></div></md-input-container>	
 										</div>
 										<div flex=100 layout="row" ng-if="attribute.lovId != null ">
