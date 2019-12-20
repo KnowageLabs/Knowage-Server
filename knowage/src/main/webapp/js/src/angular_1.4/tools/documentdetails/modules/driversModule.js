@@ -214,74 +214,72 @@
 	      	       };
 
 	      	     driversResource.persistDataDependency = function(driverableObjectId,requiredPath){
-	      	   	var parusesForDataDependency={};
-	      	       	for(var i = 0; i < driversResource.changedDataDependencies.length; i++){
-	      	       		var persistances =  Object.keys(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
-	      	       		var filterColumns =  Object.values(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
-	      	       		var dataDependency = driversResource.changedDataDependencies[i];
-	      	       		var isNew = dataDependency.newDependency;
-	      	       		var prog = dataDependency.prog;
-	      	       		var dataPath = driverableObjectId + '/datadependencies';
+		      	   	var parusesForDataDependency={};
+		      	       	for(var i = 0; i < driversResource.changedDataDependencies.length; i++){
+		      	       		var persistances =  Object.keys(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
+		      	       		var filterColumns =  Object.values(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
+		      	       		var dataDependency = driversResource.changedDataDependencies[i];
+		      	       		var isNew = dataDependency.newDependency;
+		      	       		var prog = dataDependency.prog;
+		      	       		var dataPath = driverableObjectId + '/datadependencies';
 
-	      	       		var filterColumnsForDataDependency=[];
+		      	       		var filterColumnsForDataDependency=[];
 
-	      	       		for(var j = 0 ; j < persistances.length;j++){
-	      	       			if(j == 0){
-	      	       		parusesForDataDependency = dataDependency.persist;
-	      	       			}else{
-	      	       				isNew = true;
-	      	       			}
-	      	       			if(persistances[j] != "undefined" &&  parusesForDataDependency[persistances[j]]){
-	      	       			var newDataDependency = {};
-	      	       			if(prog == dataDependency.prog){
-	      	       				newDataDependency = dataDependency;
-	      	       			}else{
-	      	       				newDataDependency = angular.copy(dataDependency);
-	      	       			}
-	      	       			newDataDependency.filterColumn =  filterColumns[j];
-	      	       		var paruse = [];
-            			for(var k = 0; k < driversResource.driverParuses.length;k++){
-            				if(driversResource.driverParuses[k].useID == persistances[j])
-            					paruse.push(driversResource.driverParuses[k]);
-            			}
-            			if(paruse.length == 0)
-            				continue;
-	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
-	      	       			newDataDependency.useModeId= paruse[0].useID;
-	      			        		if(isNew){
-	      			        			prepareDependencyForPersisting(newDataDependency);
-	      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
-	      			        			delete newDataDependency.persist;
-	      			        			crudService.post(requiredPath,dataPath,newDataDependency).then(function(response){
-	      			        				if(response.data.errors){
-	      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-	      			               			}else{
-	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
-	      			        				for(var i = 0; i < driversResource.dataDependencyObjects[newDataDependency.parId].length; i++){
-	      			        					if (driversResource.dataDependencyObjects[newDataDependency.parId][i].prog == newDataDependency.prog)
-	      			        						driversResource.dataDependencyObjects[newDataDependency.parId][i] = response.data
-	      			        					}
-	      			               			}
-	      			        			});
-	      			        			newDataDependency.prog++;
-	      			        		}else{
-	      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
-	      			        			delete newDataDependency.persist;
-	      			        			crudService.put(requiredPath,dataPath,newDataDependency).then(function(response){
-	      			        				if(response.data.errors){
-	      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-	      			               			}else{
-	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
-
-	      			               			}
-	      			        			});
-	      			        			newDataDependency.prog++;
-	      			        		}
-	      	       		}
-
-	      	       	}
-	      	       }
-	      	      driversResource.changedDataDependencies = [];
+		      	       		for(var j = 0 ; j < persistances.length;j++){
+		      	       			if(j == 0){
+		      	       				parusesForDataDependency = dataDependency.persist;
+		      	       			}else{
+		      	       				isNew = true;
+		      	       			}
+		      	       			if(persistances[j] != undefined){
+			      	       			var newDataDependency = {};
+			      	       			if(prog == dataDependency.prog){
+			      	       				newDataDependency = dataDependency;
+			      	       			}else{
+			      	       				newDataDependency = angular.copy(dataDependency);
+			      	       			}
+			      	       			newDataDependency.filterColumn =  filterColumns[j];
+			      	       			var paruse = [];
+			            			for(var k = 0; k < driversResource.driverParuses.length;k++){
+			            				if(driversResource.driverParuses[k].useID == persistances[j])
+			            					paruse.push(driversResource.driverParuses[k]);
+			            			}
+			            			if(paruse.length == 0)
+			            				continue;
+				      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
+				      	       			newDataDependency.useModeId= paruse[0].useID;
+		      			        		if(isNew){
+		      			        			prepareDependencyForPersisting(newDataDependency);
+		      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
+		      			        			delete newDataDependency.persist;
+		      			        			crudService.post(requiredPath,dataPath,newDataDependency).then(function(response){
+		      			        				if(response.data.errors){
+		      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
+		      			               			}else{
+		      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
+		      			        				for(var i = 0; i < driversResource.dataDependencyObjects[newDataDependency.parId].length; i++){
+		      			        					if (driversResource.dataDependencyObjects[newDataDependency.parId][i].prog == newDataDependency.prog)
+		      			        						driversResource.dataDependencyObjects[newDataDependency.parId][i] = response.data
+		      			        					}
+		      			               			}
+		      			        			});
+		      			        			newDataDependency.prog++;
+		      			        		}else{
+		      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
+		      			        			delete newDataDependency.persist;
+		      			        			crudService.put(requiredPath,dataPath,newDataDependency).then(function(response){
+		      			        				if(response.data.errors){
+		      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
+		      			               			}else{
+		      			               				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
+		      			               			}
+		      			        			});
+		      			        			newDataDependency.prog++;
+		      			        		}
+		      	       			}
+		      	       		}
+		      	       }
+		      	      driversResource.changedDataDependencies = [];
 	      	     }
 	      	     var prepareDependencyForPersisting = function(dependency){
 	             	delete dependency.newDependency;
