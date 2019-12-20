@@ -19,13 +19,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 		.service("cockpitModule_variableService", cockpitModule_variableService)
 
-	function cockpitModule_variableService(sbiModule_translate,sbiModule_user, cockpitModule_template,$q,cockpitModule_analyticalDrivers,cockpitModule_datasetServices, cockpitModule_widgetSelection){
+	function cockpitModule_variableService(sbiModule_translate,sbiModule_user, cockpitModule_template,cockpitModule_properties,$q,cockpitModule_analyticalDrivers,cockpitModule_datasetServices, cockpitModule_widgetSelection){
+		var self = this;
+
 		function formatDataset(dataset){
 			tempRows = {};
 			dataset.rows.forEach(function(row,i){
 				tempRows[row.column_1] = row.column_2;
 			})
 			return tempRows;
+		}
+
+		this.variablesInit = function(){
+			if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
+				if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
+				cockpitModule_template.configuration.variables.forEach(function(variable){
+					self.getVariableValue(variable).then(
+							function(response){
+								cockpitModule_properties.VARIABLES[variable.name] = response;
+							},function(error){
+								console.error('error during the variables recovery.')
+							}
+						)
+				})
+			}
 		}
 
 		this.getVariableValue = function(variable){
@@ -39,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //				}
 				if(variable.type == 'static') resolve( variable.value );
 				if(variable.type == 'driver') resolve( cockpitModule_analyticalDrivers[variable.driver] );
-				if(variable.type == 'profile') resolve( sbiModule_user.attributes[variable.attribute] );
+				if(variable.type == 'profile') resolve( sbiModule_user.profileAttributes[variable.attribute] );
 				if(variable.type == 'dataset') {
 					var tempDataset = cockpitModule_datasetServices.getDatasetById(variable.dataset);
 					var tempColumn = {content:{columnSelectedOfDataset:[]}}
