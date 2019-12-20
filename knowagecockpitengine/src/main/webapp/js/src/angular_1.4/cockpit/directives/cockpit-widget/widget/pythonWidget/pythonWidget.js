@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function () {
 	angular
 		.module('cockpitModule')
+		.config(function($locationProvider) {
+			$locationProvider.html5Mode(true);
+		})
 		.directive('cockpitPythonWidget', function () {
 			return {
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/pythonWidget/templates/pythonWidgetTemplate.html',
@@ -72,7 +75,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties,
 			cockpitModule_generalServices,
 			cockpitModule_datasetServices,
-			cockpitModule_widgetSelection) {
+			cockpitModule_widgetSelection,
+			cockpitModule_template) {
 
 		$scope.getTemplateUrl = function (template) {
 	  		return cockpitModule_generalServices.getTemplateUrl('pythonWidget', template);
@@ -86,6 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 				}, 500);
 			}
+			$scope.documentId = $location.search().document;
 			// if address of python is not set yet then set it and call sendData()
 			if ($scope.pythonAddress == undefined) {
 				sbiModule_restServices.restToRootProject();
@@ -178,6 +183,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        data: { 'script' : $scope.ngModel.pythonCode,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
+		        		'document_id' :  $scope.documentId,
 		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success
@@ -205,6 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        data: { 'script' : $scope.ngModel.pythonCode,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
+		        		'document_id' :  $scope.documentId,
 		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success

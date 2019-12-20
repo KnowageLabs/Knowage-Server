@@ -39,6 +39,11 @@ def retrieveDatasetInfo(data, headers):
     datastore_request = data['datastore_request']
     return dataset_name, datastore_request
 
+def retrieveWidgetInfo(data):
+    document_id = data['document_id']
+    widget_id = data['widget_id']
+    return document_id, widget_id
+
 def getDatasetAsDataframe(user_id, knowage_address, dataset_name, datastore_request):
     address = "http://" + knowage_address + "/knowage/restful-services/2.0/datasets/" + dataset_name + "/data?offset=0&size=-1"
     auth_token = security.buildAuthToken(user_id)

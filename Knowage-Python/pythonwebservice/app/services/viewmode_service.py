@@ -62,12 +62,14 @@ def python_img():
     script, img_file = utils.retrieveScriptInfo(request.get_json())
     user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
+    document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     # test
     if not security.userIsAuthorizedForFunctionality(user_id, knowage_address, constants.EDIT_PYTHON_SCRIPTS):
         print("Unauthorized")
     # check authentication
     if not security.userIsAuthenticated(user_id, knowage_address):
         return "Error: authentication failed", 401
+    script = security.loadScriptFromDB(user_id, knowage_address, document_id, widget_id)
     # retrieve dataset
     if dataset_name != "":
         dataset_file = constants.TMP_FOLDER + dataset_name + ".pckl"

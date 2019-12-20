@@ -16,6 +16,7 @@
 
 import base64
 import requests
+import json
 
 def buildAuthToken(user_id):
     # auth_token = "Direct " + base64(user_id)
@@ -43,3 +44,19 @@ def userIsAuthenticated(user_id, knowage_address):
     if r.status_code == 200:
         return True
     return False
+
+def saveScriptOnDB(user_id, knowage_address, document_id, widget_id, script):
+    address = "http://" + knowage_address + "/knowage/restful-services/userprofile/savescript"
+    auth_token = buildAuthToken(user_id)
+    headers = {'Authorization': auth_token, "Content-Type": "application/json"}
+    payload = {"user" : user_id, "document" : document_id, "widget" : widget_id, "script" : script}
+    r = requests.post(address, headers=headers, data=json.dumps(payload))
+    return r.status_code
+
+def loadScriptFromDB(user_id, knowage_address, document_id, widget_id):
+    address = "http://" + knowage_address + "/knowage/restful-services/userprofile/loadscript"
+    auth_token = buildAuthToken(user_id)
+    headers = {'Authorization': auth_token, "Content-Type": "application/json"}
+    payload = {"user" : user_id, "document" : document_id, "widget" : widget_id}
+    r = requests.post(address, headers=headers, data=json.dumps(payload))
+    return r.status_code
