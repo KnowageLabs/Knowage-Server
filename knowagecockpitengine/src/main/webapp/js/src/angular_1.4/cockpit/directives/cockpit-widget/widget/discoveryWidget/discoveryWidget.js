@@ -155,6 +155,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.gridOptions.api.sizeColumnsToFit();
 		}
 
+		function mapRow(rowData){
+			var keyMap = {};
+			for(var r in rowData){
+				for(var f in $scope.metaData.fields){
+					if(f != 0 && $scope.metaData.fields[f].dataIndex == r) keyMap[$scope.metaData.fields[f].header] = rowData[r];
+				}
+			}
+			return keyMap;
+		}
+
 		function handleClick(node){
 			if(node.colDef.paramType == 'text'){
 				$mdDialog.show({
@@ -180,7 +190,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 				return;
 			};
-	  		$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName),node.value,null,null,node.data, null);
+	  		$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName),node.value,null,null,mapRow(node.data), null);
 	  	}
 
 		function getColumnNameFromTableMetadata(colAlias){

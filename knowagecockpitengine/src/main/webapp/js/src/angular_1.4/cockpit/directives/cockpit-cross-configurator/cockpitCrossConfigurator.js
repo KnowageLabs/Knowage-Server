@@ -197,8 +197,9 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.outputParametersList.push(par);
 	}
 
-	if($scope.$parent.newModel != undefined && $scope.$parent.newModel.type === 'table'){
+	if($scope.$parent.newModel != undefined && ($scope.$parent.newModel.type === 'table' || $scope.$parent.newModel.type === 'discovery')){
 		$scope.crossTable = true;
+		if($scope.$parent.newModel.type === 'discovery') $scope.crossDiscovery = true;
 		$scope.crossTableModel = $scope.$parent.newModel;
 	}
 

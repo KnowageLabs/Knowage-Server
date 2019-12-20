@@ -236,12 +236,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            '	<span ref="lbFirstRowOnPage">'+((backEndPagination.page-1)*backEndPagination.itemsPerPage+1)+'</span> to <span ref="lbLastRowOnPage">'+maxPageNumber()+'</span> of <span ref="lbRecordCount">'+backEndPagination.totalRows+'</span>'+
 			            '</span>'+
 			            '<span class="ag-paging-page-summary-panel">'+
-			            '<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
-			            '   <button type="button" class="ag-paging-button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
-			            '   page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
-			            '   <button type="button" class="ag-paging-button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
-			            '   <button type="button" class="ag-paging-button" ref="btLast" '+disableLast()+' onclick="last()">Last</button>'+
-			            '</span>';
+			            
+			            '	<div ref="btFirst" class="ag-paging-button '+disableFirstClass()+'"><span class="ag-icon ag-icon-first" unselectable="on"></span>'+
+		       			'		<button type="button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
+		      			'	</div>'+
+		      			'	<div ref="btPrevious" class="ag-paging-button '+disableFirstClass()+'"><span class="ag-icon ag-icon-previous" unselectable="on"></span>'+
+		       			'		<button type="button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
+		       			'	</div>'+
+		       			'page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
+		       			'	<div ref="btNext" class="ag-paging-button '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
+		       			'   	<button type="button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
+		       			'	</div>'+
+		       			'	<div ref="btLast" class="ag-paging-button '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
+		       			'   	<button type="button" ref="btNext" onclick="last()" '+disableLast()+'">Last</button>'+
+		       			'	</div>'+
+						'</span>';
 		  	}
 		  	
 		  	function CustomErrorOverlay () {}
@@ -267,8 +276,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  		return backEndPagination.page == 1 ? "disabled=\"disabled\"" : "";
 		  	}
 		  	
+		  	function disableFirstClass(){
+		  		return backEndPagination.page == 1 ? "ag-disabled" : "";
+		  	}
+		  	
 		  	function disableLast(){
 		  		return backEndPagination.page == backEndPagination.totalPages ? "disabled=\"disabled\"" : "";
+		  	}
+		  	
+		  	function disableLastClass(){
+		  		return backEndPagination.page == backEndPagination.totalPages ? "ag-disabled" : "";
 		  	}
 		  	
 		  	function first(){

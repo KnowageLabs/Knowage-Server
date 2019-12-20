@@ -14,7 +14,7 @@
 					<md-option></md-option>
 					<md-option value="allRow">{{::translate.load('kn.crossconfigurator.interactiontype.wholerow')}}</md-option>
 					<md-option value="singleColumn">{{::translate.load('kn.crossconfigurator.interactiontype.singlecolumn')}}</md-option>
-					<md-option value="icon">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
+					<md-option value="icon" ng-if="!crossDiscovery">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
 				</md-select>
 			</md-input-container>
 			
@@ -199,11 +199,11 @@
 					<md-option></md-option>
 					<md-option value="allRow">{{::translate.load('kn.crossconfigurator.interactiontype.wholerow')}}</md-option>
 					<md-option value="singleColumn">{{::translate.load('kn.crossconfigurator.interactiontype.singlecolumn')}}</md-option>
-					<md-option value="icon">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
+					<md-option value="icon" ng-if="!crossDiscovery">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
 				</md-select>
 			</md-input-container>
 			
-			<div layout="row" flex="70" ng-if="!ngModel.preview.previewType && crossTable" layout-align="center center">
+			<div layout="row" flex="70" ng-if="!ngModel.preview.previewType && (crossTable || crossDiscovery)" layout-align="center center">
 				<div class="kn-info"  flex="60">
 					{{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
 				</div>

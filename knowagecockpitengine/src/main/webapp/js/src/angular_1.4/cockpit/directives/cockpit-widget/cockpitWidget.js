@@ -916,6 +916,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							if(colDataset.alias){
 								columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
 							}
+						}else if(colDataset.alias) {
+							columnAliasesMap[colDataset.alias] = colDataset.alias;
 						}
 					}
 				}
