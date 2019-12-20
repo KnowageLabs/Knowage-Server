@@ -131,7 +131,7 @@
 	
 	<FUNCTION group="Date Functions" name="add_years" desc=" adding years" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_add(?1 , INTERVAL ?2 YEAR) " />
-		<OracleDialect code=" add_months(?1,?2 *12)-1  " />
+		<OracleDialect code=" add_months(?1,?2 *12)  " />
 		<PostgreSQLDialect code=" (?1 + INTERVAL '?2 YEAR') " />
 		
 	</FUNCTION>
@@ -156,7 +156,7 @@
 	</FUNCTION>
 	<FUNCTION group="Date Functions" name="subtract_years" desc=" subtract years" nParams="2" type="TIMESTAMP">
 		<MySQLInnoDBDialect code=" date_sub(?1 , INTERVAL ?2 YEAR) " />
-		<OracleDialect code=" add_months(?1,-?2 *12)-1 " />
+		<OracleDialect code=" add_months(?1,-?2 *12) " />
 		<PostgreSQLDialect code=" (?1 - INTERVAL '?2 YEAR') " />
 	</FUNCTION>
 	
