@@ -20,7 +20,6 @@ package it.eng.spagobi.services.security.service;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -28,11 +27,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.widgets.dao.ISbiPythonWidgetDAO;
-import it.eng.spagobi.tools.widgets.metadata.SbiPythonWidget;
 import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/userprofile")
 public class RESTSecurityService {
@@ -49,35 +44,13 @@ public class RESTSecurityService {
 		return userProfile;
 	}
 
-	@POST
-	@Path("/savescript")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void saveScriptOnDB(PythonWidget pythonWidget) {
-		logger.debug("IN");
-		try {
-			ISbiPythonWidgetDAO sbiPythonWidgetDAO = DAOFactory.getSbiPythonWidgetDAO();
-			sbiPythonWidgetDAO.saveWidget(pythonWidget.getDocumentId(), pythonWidget.getWidgetId(), pythonWidget.getUserId(), pythonWidget.getScript());
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	@POST
-	@Path("/loadscript")
+	@GET
+	@Path("/readtemplate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String loadScriptFromDB(PythonWidget pythonWidget) {
-		SbiPythonWidget sbiPythonWidget = null;
 		logger.debug("IN");
-		try {
-			ISbiPythonWidgetDAO sbiPythonWidgetDAO = DAOFactory.getSbiPythonWidgetDAO();
-			sbiPythonWidget = sbiPythonWidgetDAO.loadWidget(pythonWidget.getDocumentId(), pythonWidget.getWidgetId());
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return sbiPythonWidget.getPythonScript();
+
+		logger.debug("OUT");
+		return null;
 	}
 }
