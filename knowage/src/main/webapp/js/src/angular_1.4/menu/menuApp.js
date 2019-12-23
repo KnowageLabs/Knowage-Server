@@ -556,6 +556,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
+				if(type) $scope.closeMenu();
 				else{
 					if(fromMenu) {
 						$scope.nextMenu(e,index);
