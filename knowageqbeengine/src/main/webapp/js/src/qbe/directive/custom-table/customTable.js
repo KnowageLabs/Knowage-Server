@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.directives.dirPagination'])
+angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.directives.dirPagination','formatModule'])
 .directive('qbeCustomTable', function() {
     return {
         restrict: 'E',
@@ -55,38 +55,19 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
         return ordered;
     };
 })
-.filter('format', function($mdDateLocale) {
+.filter('format', function(formatter) {
 
 
 
 	return function(item,field,row) {
 
 
-		var formatted = item;
-		var isOneOfDataTypes = function(dataType,types){
-			for(var i =0;i < types.length ; i++){
-				if(dataType && dataType.toLowerCase() == types[i]){
-					return true;
-				}
-			}
+		return formatter.format(item,field.format,row.dateFormatJava)
 
-			return false;
-		}
-
-		if(row.dateFormatJava && row.dateFormatJava == "dd/MM/yyyy"){
-
-			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY"),field.format)
-		}else if(row.dateFormatJava && row.dateFormatJava == "dd/MM/yyyy HH:mm:ss.SSS"){
-			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"DD/MM/YYYY HH:mm:ss.SSS"),field.format)
-		}else if(row.dateFormatJava && row.dateFormatJava == "HH:mm:ss.SSS"){
-			return $mdDateLocale.formatDate($mdDateLocale.parseDate(item,"HH:mm:ss"),field.format)
-		}
-
-		return formatted;
 	};
 });
 
-function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action,filters_service,expression_service){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action,filters_service,expression_service,formatter){
 
 	$scope.smartPreview = query_service.smartView;
 
@@ -314,31 +295,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 										"format":fields[f].format,
 										"dateFormatJava":fields[f].dateFormatJava,
 										"valueFormatter":function(params){
-
-
-											var formatted = params.value;
-											var isOneOfDataTypes = function(dataType,types){
-												for(var i =0;i < types.length ; i++){
-													if(dataType && dataType.toLowerCase() == types[i]){
-														return true;
-													}
-												}
-
-												return false;
-											}
-
-
-
-											if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "dd/MM/yyyy"){
-
-												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY"),params.colDef.format)
-											}else if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "dd/MM/yyyy HH:mm:ss.SSS"){
-												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"DD/MM/YYYY HH:mm:ss.SSS"),params.colDef.format)
-											}else if(params.colDef.dateFormatJava && params.colDef.dateFormatJava == "HH:mm:ss.SSS"){
-												formatted = $mdDateLocale.formatDate($mdDateLocale.parseDate(params.value,"HH:mm:ss"),params.colDef.format)
-											}
-
-											return formatted;
+											return formatter.format(params.value,params.colDef.format,params.colDef.dateFormatJava)
 											},
 										};
 

@@ -57,8 +57,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/relationships/selectedEntitiesRelationshipsModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/relationships/selectedEntitiesRelationshipsService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/relationships/queryEntitiesService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/format/formatModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/format/formatter/formatter.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/services/format/formatDate/formatDate.js")%>"></script>
+
+
 <!-- FILTERS -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/src/qbe/filters/byNotExistingMembers.js")%>"></script>
+
+
 
 
 <!-- EXPORT -->
