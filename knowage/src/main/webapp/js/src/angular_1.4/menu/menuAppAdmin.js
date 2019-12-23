@@ -795,6 +795,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 				} else if (type == "accessibilitySettings"){
 					$scope.accessibilitySettings();
 				}
+				if(type) $scope.closeMenu();
 				else{
 					if(fromMenu) {
 						$scope.nextMenu(e,index);
