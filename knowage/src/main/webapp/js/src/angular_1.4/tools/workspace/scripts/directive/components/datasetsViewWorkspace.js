@@ -843,9 +843,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
     }
 
-    $scope.isAbleToEditQbeDataset = function(selectedDataset) {
-    	if(selectedDataset !== undefined) {
-	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userId == selectedDataset.owner;
+    $scope.isAbleToEditQbeDataset = function(selectedDataSet) {
+    	if(selectedDataSet !== undefined) {
+	    	var toReturn = (selectedDataSet.dsTypeCd == 'Federated' || selectedDataSet.dsTypeCd == 'Qbe') && sbiModule_user.userId == selectedDataSet.owner;
 	    	return toReturn;
     	}
     };
@@ -1152,10 +1152,10 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	 var prevScope = $scope;
 
-	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
-		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
+	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataSet){
+		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataSet.qbeDatamarts).then(function(response){
 				$scope.drivers = response.data.filterStatus;
-				selectedDataset.drivers = $scope.drivers;
+				selectedDataSet.drivers = $scope.drivers;
 				$scope.selectedDataSet.drivers = [];
 				angular.copy($scope.drivers, $scope.selectedDataSet.drivers);
 		})
