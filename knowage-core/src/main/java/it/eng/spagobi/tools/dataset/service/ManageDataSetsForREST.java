@@ -1405,6 +1405,17 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
+			// to create python datasets you have to be allowed to EditPythonScripts
+			if (ds.getDsType().equals(DataSetConstants.DS_PYTHON_TYPE)) {
+				try {
+					if (!userProfile.isAbleToExecuteAction(SpagoBIConstants.EDIT_PYTHON_SCRIPTS)) {
+						throw new SecurityException("Not allowed to create python dataset");
+					}
+				} catch (Exception e) {
+					throw new SpagoBIServiceException("Error while checking python permission", e);
+				}
+			}
+
 			logParam.put("NAME", ds.getName());
 			logParam.put("LABEL", ds.getLabel());
 			logParam.put("TYPE", ds.getDsType());
