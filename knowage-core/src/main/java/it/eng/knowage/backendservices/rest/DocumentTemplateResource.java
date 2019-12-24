@@ -43,13 +43,12 @@ public class DocumentTemplateResource {
 	@POST
 	@Path("/{document_id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Content readTemplate(@PathParam("document_id") Integer documentId, ParametersMap params) {
+	public String readTemplate(@PathParam("document_id") Integer documentId, ParametersMap params) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		try {
-			String dbg = params.getParameters();
-			HashMap parameters = new ObjectMapper().readValue(dbg, HashMap.class);
+			HashMap parameters = new ObjectMapper().readValue(params.getParameters(), HashMap.class);
 		} catch (Exception e) {
 			logger.error("error while loading request body");
 			return null;
@@ -65,7 +64,7 @@ public class DocumentTemplateResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return content;
+		return content.getContent();
 	}
 
 }

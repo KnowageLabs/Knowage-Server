@@ -20,12 +20,6 @@ import json
 dataset = Blueprint('dataset', __name__)
 #url: knowage_addr:port/dataset
 
-@dataset.route('', methods = ['GET'])
-def rest_fix():
-    print("here")
-    res = json.loads(str(["a", "b", "c"]))
-    return json.dumps(res)
-
 @dataset.route('', methods = ['POST'])
 def python_dataset():
     # retrieve input parameters

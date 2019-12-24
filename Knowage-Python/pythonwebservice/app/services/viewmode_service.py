@@ -30,11 +30,10 @@ viewMode = Blueprint('view', __name__)
 def python_html():
     #retrieve input parameters
     script, output_variable = utils.retrieveScriptInfo(request.get_json())
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
-    # check authentication
-    if not security.userIsAuthenticated(user_id, knowage_address):
-        return "Error: authentication failed", 401
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
+    document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
+    script = security.loadScriptFromDB(user_id, knowage_address, document_id, widget_id)
     #retrieve dataset
     if dataset_name != "":
         dataset_file = constants.TMP_FOLDER + dataset_name + ".pckl"
@@ -60,18 +59,10 @@ def python_html():
 def python_img():
     # retrieve input parameters
     script, img_file = utils.retrieveScriptInfo(request.get_json())
-    a = request.headers
-    b = request.headers["Referer"]
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
-    # test
-    if not security.userIsAuthorizedForFunctionality(user_id, knowage_address, constants.EDIT_PYTHON_SCRIPTS):
-        print("Unauthorized")
-    # check authentication
-    if not security.userIsAuthenticated(user_id, knowage_address):
-        return "Error: authentication failed", 401
-    security.loadScriptFromDB(user_id, knowage_address, document_id, widget_id)
+    script = security.loadScriptFromDB(user_id, knowage_address, document_id, widget_id)
     # retrieve dataset
     if dataset_name != "":
         dataset_file = constants.TMP_FOLDER + dataset_name + ".pckl"
@@ -98,14 +89,12 @@ def python_img():
 @viewMode.route('/bokeh', methods = ['POST'])
 def python_bokeh():
     # retrieve input parameters
-    script = request.get_json()['script']
-    widget_id = request.get_json()['widget_id']
+    script, img_file = utils.retrieveScriptInfo(request.get_json())
+    document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
-    # check authentication
-    if not security.userIsAuthenticated(user_id, knowage_address):
-        return "Error: authentication failed", 401
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
+    script = security.loadScriptFromDB(user_id, knowage_address, document_id, widget_id)
     #destroy old bokeh server
     if utils.serverExists(widget_id):
         utils.destroyServer(widget_id)

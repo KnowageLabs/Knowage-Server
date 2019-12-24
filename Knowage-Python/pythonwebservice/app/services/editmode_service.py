@@ -30,8 +30,8 @@ editMode = Blueprint('editMode', __name__)
 def python_html():
     #retrieve input parameters
     script, output_variable = utils.retrieveScriptInfo(request.get_json())
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     # check authentication
     if not security.userIsAuthenticated(user_id, knowage_address):
         return "Error: authentication failed", 401
@@ -60,8 +60,8 @@ def python_html():
 def python_img():
     # retrieve input parameters
     script, img_file = utils.retrieveScriptInfo(request.get_json())
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     # test
     if not security.userIsAuthorizedForFunctionality(user_id, knowage_address, constants.EDIT_PYTHON_SCRIPTS):
@@ -100,8 +100,8 @@ def python_bokeh():
     script = request.get_json()['script']
     widget_id = request.get_json()['widget_id']
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json(), request.headers)
+    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     # check authentication
     if not security.userIsAuthenticated(user_id, knowage_address):
         return "Error: authentication failed", 401

@@ -25,17 +25,17 @@ def findFreePort():
     return s.getsockname()[1]  #return the port number assigned
 
 def retrieveScriptInfo(data):
-    script = data['script']
-    output_variable = data['output_variable']
+    script = data.get("script")
+    output_variable = data.get('output_variable')
     return script, output_variable
 
-def retrieveKnowageInfo(headers):
+def retrieveKnowageInfo(headers, data):
     user_id = headers['Authorization']
-    knowage_address = headers['knowage-address']
+    knowage_address = data['knowage_address']
     return user_id, knowage_address
 
-def retrieveDatasetInfo(data, headers):
-    dataset_name = headers['Dataset-name']
+def retrieveDatasetInfo(data):
+    dataset_name = data['dataset']
     datastore_request = data['datastore_request']
     return dataset_name, datastore_request
 
