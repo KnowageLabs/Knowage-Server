@@ -24,7 +24,7 @@ def buildAuthToken(user_id):
     return "Direct " + encoded_uid
 
 def getUserFunctionalities(user_id, knowage_address):
-    address = "http://" + knowage_address + "/knowage/restful-services/userprofile/"
+    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/userprofile/"
     auth_token = buildAuthToken(user_id)
     headers = {'Authorization': auth_token}
     r = requests.get(address, headers=headers)
@@ -45,18 +45,10 @@ def userIsAuthenticated(user_id, knowage_address):
         return True
     return False
 
-def saveScriptOnDB(user_id, knowage_address, document_id, widget_id, script):
-    address = "http://" + knowage_address + "/knowage/restful-services/userprofile/savescript"
-    auth_token = buildAuthToken(user_id)
-    headers = {'Authorization': auth_token, "Content-Type": "application/json"}
-    payload = {"user" : user_id, "document" : document_id, "widget" : widget_id, "script" : script}
-    r = requests.post(address, headers=headers, data=json.dumps(payload))
-    return r.status_code
-
 def loadScriptFromDB(user_id, knowage_address, document_id, widget_id):
-    address = "http://" + knowage_address + "/knowage/restful-services/userprofile/loadscript"
+    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + document_id
     auth_token = buildAuthToken(user_id)
     headers = {'Authorization': auth_token, "Content-Type": "application/json"}
-    payload = {"user" : user_id, "document" : document_id, "widget" : widget_id}
+    payload = {"parameters" : "ciao"}
     r = requests.post(address, headers=headers, data=json.dumps(payload))
     return r.status_code

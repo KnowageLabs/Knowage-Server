@@ -66,10 +66,11 @@ def python_img():
     # test
     if not security.userIsAuthorizedForFunctionality(user_id, knowage_address, constants.EDIT_PYTHON_SCRIPTS):
         print("Unauthorized")
+    else:
+        print("Authorized")
     # check authentication
     if not security.userIsAuthenticated(user_id, knowage_address):
         return "Error: authentication failed", 401
-    security.saveScriptOnDB(user_id, knowage_address, document_id, widget_id, script)
     # retrieve dataset
     if dataset_name != "":
         dataset_file = constants.TMP_FOLDER + dataset_name + ".pckl"

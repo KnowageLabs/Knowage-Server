@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.services.security.service;
+package it.eng.knowage.backendservices.rest;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -29,10 +28,10 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.user.UserProfileManager;
 
-@Path("/userprofile")
-public class RESTSecurityService {
+@Path("/2.0/backendservices/userprofile")
+public class UserProfileResource {
 
-	static protected Logger logger = Logger.getLogger(RESTSecurityService.class);
+	static protected Logger logger = Logger.getLogger(UserProfileResource.class);
 
 	@GET
 	@Path("/")
@@ -44,13 +43,4 @@ public class RESTSecurityService {
 		return userProfile;
 	}
 
-	@GET
-	@Path("/readtemplate")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public String loadScriptFromDB(PythonWidget pythonWidget) {
-		logger.debug("IN");
-
-		logger.debug("OUT");
-		return null;
-	}
 }

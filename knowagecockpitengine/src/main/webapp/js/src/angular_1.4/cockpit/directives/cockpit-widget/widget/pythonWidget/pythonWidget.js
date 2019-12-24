@@ -162,11 +162,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters($scope.ngModel, $scope.dataset);
 				$scope.dataset_label = $scope.dataset.label;
 				$scope.aggregations = $scope.buildAggregations($scope.dataset.metadata.fieldsMeta, $scope.dataset_label);
+				$scope.parameters = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			}
 			else { //no dataset selected
 				$scope.dataset_label = "";
 				$scope.selections = "";
 				$scope.aggregations = "";
+				$scope.parameters = "";
 			}
 		}
 
@@ -178,13 +180,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId,
 		        		  'knowage-address': $scope.knowageAddress,
-		        		  'Dataset-name': $scope.dataset_label,
-		        		  'parameters': [] },
+		        		  'Dataset-name': $scope.dataset_label},
 		        data: { 'script' : $scope.ngModel.pythonCode,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
 		        		'document_id' :  $scope.documentId,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'selections': $scope.selections})}
+		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success
 		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
@@ -206,13 +207,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId,
 		        		  'knowage-address': $scope.knowageAddress,
-		        		  'Dataset-name': $scope.dataset_label,
-		        		  'parameters': [] },
+		        		  'Dataset-name': $scope.dataset_label},
 		        data: { 'script' : $scope.ngModel.pythonCode,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
 		        		'document_id' :  $scope.documentId,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'selections': $scope.selections})}
+		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters, 'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success
 		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
