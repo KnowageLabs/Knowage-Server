@@ -40,7 +40,8 @@ datasetModule
 					})
 			}
 
-		}]);
+		}])
+		;
 
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
@@ -62,6 +63,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	var parameterDeletingMessage = "Are you sure you want to delete the dataset parameter ? ";
 	var qbeParameterDeletingMessage = "";
 	var urlBuilderService = sbiModule_urlBuilderService;
+
+	$scope.$watch('parameterItems',function(newValue,oldValue){
+		$scope.datasetForm.$setValidity("duplicates",!$scope.hasDuplicates(newValue,'name'))
+	},true)
+
+	$scope.hasDuplicates = function(array,property){
+		if(!array && !Array.isArray(array)){
+			return false;
+		}
+		var obj = {};
+		for(var i in array){
+			obj[array[i][property]] = array[i]
+		}
+
+		return array.length > Object.keys(obj).length
+	}
 
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
@@ -4760,6 +4777,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
 
+    $scope.hasDuplicates = function(array,property){
+		if(!array && !Array.isArray(array)){
+			return false;
+		}
+		var obj = {};
+		for(var i in array){
+			obj[array[i][property]] = array[i]
+		}
+
+		return array.length > Object.keys(obj).length
+	}
 
     // TAGS
 
