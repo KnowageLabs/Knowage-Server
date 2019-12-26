@@ -176,7 +176,7 @@ div.lower i  {
 		          	</md-button>
 		          	
 		          	<!-- SAVE WITHOUT METADATA BUTTON -->
-		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" ng-disabled="!datasetForm.$valid"
 		          			ng-show="selectedDataSet" title="Save without metadata" ng-click="saveWithoutMetadata()">
 		            	<!-- SWM -->
 		            	<md-icon md-font-icon="fa fa-hourglass-start"></md-icon>
@@ -201,9 +201,11 @@ div.lower i  {
 			</extra-button>
 	       
 	       <!-- DATASET DETAIL PANEL -->
+	       
 	       <detail 	preview-function="checkIfDataSetHasParameters" save-function="saveDataset" cancel-function="closeDatasetDetails" 
 	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" 
 	       			disable-save-button="!datasetForm.$valid" 
+	       			disable-preview-button="!datasetForm.$valid"
 	       			extra-functions='[
 	       			{"name":"test","showOn":showSaveAndCancelButtons,"function":"test"},
 	       			{"name":"test2","showOn":showSaveAndCancelButtons}]'>
@@ -223,7 +225,7 @@ div.lower i  {
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.label")}}</label>
-											<input ng-model="selectedDataSet.label" ng-required="true" ng-change="setFormDirty()">
+											<input ng-model="selectedDataSet.label" ng-required="true" ng-change="setFormDirty()" >
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.label">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 				</div>
@@ -844,7 +846,7 @@ div.lower i  {
 									</md-button> 
 									
 									<!-- <div flex=30 style="float:right"> -->
-									<md-button flex=20 class="md-raised" ng-click="showQbeDataset(selectedDataSet)">
+									<md-button ng-disabled="!datasetForm.$valid" flex=20 class="md-raised" ng-click="showQbeDataset(selectedDataSet)">
 										{{translate.load("sbi.ds.qbe.query.open.button")}}
 									</md-button> 								
 									
@@ -1581,8 +1583,9 @@ div.lower i  {
 									</div>
 												
 								</md-toolbar>						         
-												
+								
 								<md-card layout-padding style="height:300px; margin:0px">
+								<span class="kn-inputError" ng-if="hasDuplicates(parameterItems,'name')">{{translate.load('sbi.execution.parametersselection.parameters.duplicated')}}</span>	
 																				      						
 									<angular-table
 											id="datasetParametersTable"
@@ -1594,7 +1597,8 @@ div.lower i  {
 											scope-functions=paramScopeFunctions
 											no-pagination=false
 											speed-menu-option="parameterDelete"
-											current-page-number=parametersTableLastPage >
+											current-page-number=parametersTableLastPage
+											 >
 									</angular-table>
 								   									
 								</md-card>

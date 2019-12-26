@@ -400,6 +400,9 @@ public class ManageDataSetsForREST {
 				throw e;
 			}
 		} catch (Exception e) {
+			if (e instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) e;
+			}
 			logger.error("Erro while updating dataset metadata, cannot save the dataset", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error while updating dataset metadata, cannot save the dataset");
 
@@ -860,6 +863,11 @@ public class ManageDataSetsForREST {
 				return null;
 			}
 
+			if (hasDuplicates(getDataSetParametersAsMap(json), parsListJSON)) {
+				logger.error("duplicated parameter names");
+				throw new SpagoBIServiceException(SERVICE_NAME, "duplicated parameter names");
+			}
+
 			SourceBean sb = new SourceBean("PARAMETERSLIST");
 			SourceBean sb1 = new SourceBean("ROWS");
 
@@ -980,6 +988,12 @@ public class ManageDataSetsForREST {
 
 				logger.debug("name: " + name + " / value: " + value);
 				parametersMap.put(name, value);
+
+			}
+
+			if (hasDuplicates(parametersMap, parsListJSON)) {
+				logger.error("duplicated parameter names");
+				throw new SpagoBIServiceException(SERVICE_NAME, "duplicated parameter names");
 			}
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
@@ -1674,6 +1688,15 @@ public class ManageDataSetsForREST {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while retriving dataset from request", t);
 		}
 		return dataSet;
+	}
+
+	/**
+	 * @param parametersMap
+	 * @param parsListJSON
+	 * @return
+	 */
+	private boolean hasDuplicates(HashMap<String, String> parametersMap, JSONArray parsListJSON) {
+		return parsListJSON.length() > parametersMap.keySet().size();
 	}
 
 	// private Map parseJsonDriversMap(JSONObject drivers) {

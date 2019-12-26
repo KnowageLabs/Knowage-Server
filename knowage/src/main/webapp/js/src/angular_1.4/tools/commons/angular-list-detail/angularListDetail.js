@@ -1,52 +1,52 @@
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * 
+ *
  */
- 
+
 
 var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .factory('currentView',function(){
 	return {value:'list'};
 })
-.service('$angularListDetail',function(currentView){ 
+.service('$angularListDetail',function(currentView){
 	this.goToList=function(){
 		currentView.value='list';
 	};
 	this.goToDetail=function(){
 	currentView.value='detail';
 };
-}) 
+})
 .directive('angularListDetail',
 		function($compile) {
 	return {
 		template:'<div  class="kn-list-detail" layout="row" layout-wrap layout-fill></div>',
 		controller : function($scope,sbiModule_translate,currentView) {
 						this.currentView=currentView;
-						$scope.translate=sbiModule_translate; 
+						$scope.translate=sbiModule_translate;
 					},
 		controllerAs : "ALD_controller",
 		transclude : true,
 		replace:true,
 		link: function(scope, element, attrs, ctrl, transclude) {
 
-			
+
 
 			ctrl.showDetail=scope.$eval(attrs.showDetail);
-			ctrl.fullScreen=scope.$eval(attrs.fullScreen); 
-			 
+			ctrl.fullScreen=scope.$eval(attrs.fullScreen);
+
 			scope.$watch(attrs.fullScreen, function (value){
 				if(value!=undefined){
 					ctrl.fullScreen=value;
 				}
-			});	
-			
+			});
+
 			scope.$watch(attrs.showDetail, function (value){
 				if(value!=undefined){
 					ctrl.showDetail=value;
 				}
-			});	
-			 
-			
+			});
+
+
 			transclude(scope,function(clone,scope) {
 				angular.element(element[0]).append(clone);
 //				$compile(element[0])(scope);
@@ -87,10 +87,10 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 					    	layoutClass = "layout-column";
 					    	break;
 					}
-				} 
+				}
 				angular.element(element.children()[1]).addClass(layoutClass)
-				 
-				
+
+
 			transclude(scope,function(clone,scope) {
 				var contElem=element[0].querySelector("div.md-container>md-content ")
 				angular.element(contElem).append(clone);
@@ -98,29 +98,29 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 			});
 
 			ctrl.title=attrs.label;
-			
+
 			scope.newFuncName=scope.$eval(attrs.newFunction);
 			ctrl.disableNewButton=scope.$eval(attrs.disableNewButton);
 			ctrl.showNewButton=scope.$eval(attrs.showNewButton);
-			
+
 			scope.$watch(attrs.disableNewButton, function (value){
 				if(value!=undefined){
 					ctrl.disableNewButton=value;
 				}
-			});	
-			
-			
+			});
+
+
 			scope.$watch(attrs.showNewButton, function (value){
 				if(value!=undefined){
 					ctrl.showNewButton=value;
 				}
-			});	
-			
+			});
+
 			scope.$watch(attrs.label, function (value){
 				if(value!=undefined){
 					ctrl.title=value;
 				}
-			});	
+			});
 		}
 	}
 })
@@ -148,7 +148,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		controllerAs:"AWD_detailController",
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
-		
+
 			var layoutClass=""
 				if(attrs.layout){
 					switch(attrs.layout){
@@ -162,53 +162,59 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 					    	layoutClass = "layout-column";
 					    	break;
 					}
-				} 
+				}
 				angular.element(element.children()[1]).addClass(layoutClass)
-				 
+
 			scope.saveFuncName=scope.$eval(attrs.saveFunction);
 			ctrl.disableSaveButton=scope.$eval(attrs.disableSaveButton);
 			ctrl.showSaveButton=scope.$eval(attrs.showSaveButton);
-			
+
 			scope.previewFuncName=scope.$eval(attrs.previewFunction);
 			ctrl.disablePreviewButton=scope.$eval(attrs.disablePreviewButton);
-			
+
 			scope.cancelFuncName=scope.$eval(attrs.cancelFunction);
 			ctrl.disableCancelButton=scope.$eval(attrs.disableCancelButton);
 			ctrl.showCancelButton=scope.$eval(attrs.showCancelButton);
-			
+
 			ctrl.title=attrs.label;
-			
+
 			scope.$watch(attrs.disableSaveButton, function (value){
 				if(value!=undefined){
 					ctrl.disableSaveButton=value;
 				}
-			});	
-			
+			});
+
+			scope.$watch(attrs.disablePreviewButton, function (value){
+				if(value!=undefined){
+					ctrl.disablePreviewButton=value;
+				}
+			});
+
 			scope.$watch(attrs.disableCancelButton, function (value){
 				if(value!=undefined){
 					ctrl.disableCancelButton=value;
 				}
-			});	
-			
+			});
+
 			scope.$watch(attrs.showCancelButton, function (value){
 				if(value!=undefined){
 					ctrl.showCancelButton=value;
 				}
-			});	
-			
+			});
+
 			scope.$watch(attrs.showSaveButton, function (value){
 				if(value!=undefined){
 					ctrl.showSaveButton=value;
 				}
-			});	
-			
+			});
+
 			scope.$watch(attrs.label, function (value){
 				if(value!=undefined){
 					ctrl.title=value;
 				}
-			});	
-			
-			 
+			});
+
+
 			if(attrs.removeNoFlicker!=undefined ){
 				element[0].querySelector("div.md-container>md-content ").classList.remove("md-no-flicker");
 			}
@@ -217,7 +223,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 				angular.element(contElem).append(clone);
 //				$compile(contElem)(scope);
 			});
-			
+
 		}
 	}
 })
@@ -234,12 +240,12 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 				var contElem=element.parent()[0].querySelector(".kn-detail md-toolbar .md-toolbar-tools .extraButtonContainer ");
 				angular.element(contElem).append(clone);
 //				$compile(contElem)(scope);
-			}); 
+			});
 		}
 	}
 })
 
- 
+
 function listControllerFunction($scope) {
 }
 function detailControllerFunction($scope) {
