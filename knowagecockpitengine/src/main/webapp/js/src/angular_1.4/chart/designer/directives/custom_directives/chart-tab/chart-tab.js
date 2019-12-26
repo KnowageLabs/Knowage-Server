@@ -29,7 +29,7 @@ angular.module('chart-tab', [])
 
 });
 
-function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData,StructureTabService,chartEngineSettings){
+function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData,StructureTabService,chartEngineSettings,chartBackwardCompatibilityService){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
@@ -156,14 +156,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
-					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
-				}
-
+				chartBackwardCompatibilityService.updateTemplate($scope.chartTemplate);
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
-
-
 			} else {
 
 				$scope.chartTemplate = StructureTabService.getBaseTemplate('bar');
@@ -187,12 +181,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			if ($scope.chartTemplate) {
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
-					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
-				}
-
-
-
+				chartBackwardCompatibilityService.updateTemplate($scope.chartTemplate);
 				setConfigurationButtons($scope.selectedChartType);
 
 			}

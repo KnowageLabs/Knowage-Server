@@ -542,6 +542,25 @@
 						 #end 	
 			        #end 
 		        #end
+		        
+		        
+		        #if($yAxis.TARGET!="")
+		        	#if($yAxis.TARGET)
+			        	plotLines : [
+					   		{
+								color: "$yAxis.TARGET.get(0).color",
+					   			dashStyle: "$yAxis.TARGET.get(0).dashStyle",
+					   			value: $yAxis.TARGET.get(0).value,
+					   			width: $yAxis.TARGET.get(0).width,
+					   		},			
+					   	], 
+			        	 
+			        #end 
+		        #end
+		        
+		        
+		        
+		        
 		        },
     		#end       
     		

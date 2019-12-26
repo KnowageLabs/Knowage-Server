@@ -897,7 +897,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 							},
 							"PLOTBANDS":{
 								"PLOT":[]
-							}
+							},
+							"TARGET":[{"color": "","dashStyle": "","value":0,"width":0}],
 						}]
 					},
 					"COLORPALETTE": {
