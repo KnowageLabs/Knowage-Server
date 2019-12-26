@@ -129,7 +129,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		$scope.havings = $scope.editQueryObj.havings;
 
 		if(query_service.smartView){
-
+			query_service.count++;
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 			if(finalPromise) {
 				finalPromise.then(function(){},function(){
@@ -139,6 +139,14 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$scope.filteredRelations[i].isConsidered = relationship.isConsidered;
 
 					}
+
+					if(query_service.count > 1){
+						query_service.setSmartView(false);
+						$rootScope.$emit('smartView');
+						query_service.count = 0;
+					}
+
+
 				});
 			}
 		} else {

@@ -579,48 +579,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	private void addParameters(JSONArray parsListJSON) {
 		try {
-			if (parsListJSON != null) {
-
-				for (int i = 0; i < parsListJSON.length(); i++) {
-					JSONObject obj = (JSONObject) parsListJSON.get(i);
-					String name = obj.getString("name");
-					String type = null;
-					if (obj.has("type")) {
-						type = obj.getString("type");
-					}
-
-					// check if has value, if has not a valid value then use default
-					// value
-					boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
-					String tempVal = "";
-					if (hasVal) {
-						tempVal = obj.getString(PARAM_VALUE_NAME);
-					} else {
-						boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
-						if (hasDefaultValue) {
-							tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-							logger.debug("Value of param not present, use default value: " + tempVal);
-						}
-					}
-
-					boolean multivalue = false;
-					if (tempVal != null && tempVal.contains(",")) {
-						multivalue = true;
-					}
-
-					String value = "";
-					if (multivalue) {
-						value = getMultiValue(tempVal, type);
-					} else {
-						value = getSingleValue(tempVal, type);
-					}
-
-					logger.debug("Parameter name: " + name + " / parameter value: " + value);
-
-					getEnv().put(name + SpagoBIConstants.PARAMETER_TYPE, type);
-					getEnv().put(name, value);
-				}
+			if (hasDuplicates(parsListJSON)) {
+				logger.error("duplicated parameter names");
+				throw new SpagoBIServiceException(SERVICE_NAME, "duplicated parameter names");
 			}
+			;
+
+			getEnv().putAll(getParametersMap(parsListJSON));
 
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
@@ -628,6 +593,68 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
 		}
+	}
+
+	/**
+	 * @param parsListJSON
+	 * @return
+	 * @throws JSONException
+	 */
+	private boolean hasDuplicates(JSONArray parsListJSON) throws JSONException {
+		return parsListJSON.length() > getParametersMap(parsListJSON).size() / 2;
+	}
+
+	/**
+	 * @param parsListJSON
+	 * @throws JSONException
+	 */
+	private Map<String, String> getParametersMap(JSONArray parsListJSON) throws JSONException {
+		Map<String, String> parameters = new HashMap<>();
+		if (parsListJSON != null) {
+
+			for (int i = 0; i < parsListJSON.length(); i++) {
+				JSONObject obj = (JSONObject) parsListJSON.get(i);
+				String name = obj.getString("name");
+				String type = null;
+				if (obj.has("type")) {
+					type = obj.getString("type");
+				}
+
+				// check if has value, if has not a valid value then use default
+				// value
+				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+				String tempVal = "";
+				if (hasVal) {
+					tempVal = obj.getString(PARAM_VALUE_NAME);
+				} else {
+					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
+					if (hasDefaultValue) {
+						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
+						logger.debug("Value of param not present, use default value: " + tempVal);
+					}
+				}
+
+				boolean multivalue = false;
+				if (tempVal != null && tempVal.contains(",")) {
+					multivalue = true;
+				}
+
+				String value = "";
+				if (multivalue) {
+					value = getMultiValue(tempVal, type);
+				} else {
+					value = getSingleValue(tempVal, type);
+				}
+
+				logger.debug("Parameter name: " + name + " / parameter value: " + value);
+
+				parameters.put(name + SpagoBIConstants.PARAMETER_TYPE, type);
+				parameters.put(name, value);
+			}
+
+		}
+
+		return parameters;
 	}
 
 	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, JSONObject jsonEncodedRequest, String schedulingCronLine, String meta,
