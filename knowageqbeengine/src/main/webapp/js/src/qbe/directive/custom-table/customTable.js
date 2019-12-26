@@ -69,8 +69,8 @@ angular.module('qbe_custom_table', ['ngDraggable','exportModule','angularUtils.d
 
 function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action,filters_service,expression_service,formatter){
 
-	$scope.smartPreview = query_service.smartView;
-
+	//$scope.smartPreview = query_service.smartView;
+	$scope.query_service = query_service;
 	$scope.completeResult = false;
 
 	$scope.completeResultsColumns = [];
@@ -86,9 +86,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.firstExecution = true;
 
-	$scope.$watch('smartPreview',function(newValue,oldValue){
+	$scope.$watch('query_service.smartView',function(newValue,oldValue){
 		if(newValue !==oldValue){
-			query_service.setSmartView(newValue);
+			//query_service.setSmartView(newValue);
 			$rootScope.$emit('smartView', $scope.ngModel);
 		}
 
@@ -243,7 +243,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		angular.copy(data.columns, $scope.completeResultsColumns);
 		angular.copy(data.data, $scope.previewModel);
 		$scope.results = data.results;
-		if($scope.firstExecution&& !$scope.smartPreview){
+		if($scope.firstExecution&& !query_service.smartView){
 			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
 			$scope.firstExecution = false;
 		}

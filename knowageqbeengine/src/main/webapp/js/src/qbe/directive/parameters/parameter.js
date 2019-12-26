@@ -130,7 +130,21 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			parameterTypes: $scope.parameterTypes
 	};
 
+	$scope.hasDuplicates = function(array,property){
+		if(!array && !Array.isArray(array)){
+			return false;
+		}
+		var obj = {};
+		for(var i in array){
+			obj[array[i][property]] = array[i]
+		}
+
+		return array.length > Object.keys(obj).length
+	}
+
 	$scope.saveParams = function(){
+
+
 		$scope.ngModel.pars.length=0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.parameterItems);
 		$scope.ngModel.mdPanelRef.close();

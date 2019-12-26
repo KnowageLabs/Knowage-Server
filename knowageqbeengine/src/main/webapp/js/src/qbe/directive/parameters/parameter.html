@@ -19,6 +19,7 @@
 				</div>
 			</div>
 			<md-card ng-if="parameterItems && parameterItems.length > 0">
+			<span class="kn-inputError" ng-if="hasDuplicates(parameterItems,'name')">{{translate.load('kn.qbe.params.duplicated')}}</span>
 				<md-card-content layout="row" layout-padding>
 					<md-button class="md-icon-button angularTableHeaderButton" aria-label="Clear all parameters" 
 						ng-click="deleteAllParameters();">
@@ -46,7 +47,7 @@
 		<md-button ng-click="closeParams()" class="md-raised">
 	    {{translate.load("kn.qbe.general.cancel")}}
 		</md-button>
-		<md-button ng-click="saveParams()"  class="md-primary md-raised">
+		<md-button ng-click="saveParams()" ng-disabled="hasDuplicates(parameterItems,'name')" class="md-primary md-raised">
 		{{translate.load("kn.qbe.general.save")}}
 		</md-button>
 	</md-card-actions>

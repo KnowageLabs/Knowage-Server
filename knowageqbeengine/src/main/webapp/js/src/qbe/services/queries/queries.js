@@ -1,8 +1,9 @@
 var queries = angular.module('queries',['sbiModule']);
 
 queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope,sbiModule_messaging, $mdDialog){
-
+	var _this = this;
 	this.smartView = true;
+	this.count = 0;
 
 	this.setSmartView = function (value) {
 		this.smartView = value;
@@ -24,6 +25,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		var promise = sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend);
 
 		promise.then(function(response) {
+			_this.count = 0;
      		queryModel.length = 0;
      		console.log("[POST]: SUCCESS!");
 

@@ -29,7 +29,7 @@
 					<md-tooltip> {{translate.load("kn.qbe.custom.table.show.hidden.columns.tooltip")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-eye"></md-icon>
 				</md-button>
-	   			<md-switch ng-model="smartPreview" aria-label="Switch smart preview">
+	   			<md-switch ng-model="query_service.smartView" aria-label="Switch smart preview">
 				    {{translate.load("kn.qbe.custom.table.smartdata")}}
 				 </md-switch>
 				 
@@ -77,7 +77,7 @@
    	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'" ng-model="filters"></qbe-advanced-visualization>
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
    	
-   	<div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview">
+   	<div layout="column" ng-if="selectedVisualization=='previewData' && !query_service.smartView">
    		<md-card layout-padding layout="column">	
    				      						
 			<angular-table
@@ -96,7 +96,7 @@
 		
 	</div>
 
-	<div layout="row" ng-if="selectedVisualization=='previewData' && smartPreview">
+	<div layout="row" ng-if="selectedVisualization=='previewData' && query_service.smartView">
 		<div ng-repeat="field in ngModel | orderBy: 'order' track by $index" ng-if="field.visible" class="qbeCustomColumn" layout-column>
 	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : field.color}"><md-tooltip md-direction="top">{{field.entity}}</md-tooltip></div>
 	   		<md-toolbar>
