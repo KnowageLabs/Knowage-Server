@@ -805,6 +805,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			chartTemplate.CHART.outcomingEventsEnabled = true;
 			chartTemplate.CHART.cliccable = ngModel.cliccable;
 			chartTemplate.CHART.drillable = ngModel.drillable;
+			this.repalceVariables(chartTemplate.CHART);
 			var body = {"aggregations":bodyString, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
 			.then(function(response){
@@ -854,7 +855,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			return deferred.promise;
 		}
 	}
+	this.repalceVariables = function (chartTemplate){
+		if(chartTemplate.type.toLowerCase()=='gauge' && chartTemplate.AXES_LIST.AXIS[0].TARGET){
+			if(typeof chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value =='string')
+			chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value =  chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value.replace(/(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
+				return cockpitModule_properties.VARIABLES[p2];
+			})
+		}
 
+	}
 	// Returns Selections with Filters for Single Widget
 	this.getWidgetSelectionsAndFilters = function(widgetObject, dataset, loadDomainValues) {
 		var filtersToSend = {};
