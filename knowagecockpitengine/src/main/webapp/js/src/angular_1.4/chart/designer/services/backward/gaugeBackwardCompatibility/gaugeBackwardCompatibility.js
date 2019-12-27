@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		var updateTemplate = function(chartTemplate){
 			if(chartTemplate.type.toLowerCase()=='gauge' && !chartTemplate.AXES_LIST.AXIS[0].TARGET){
-				chartTemplate.AXES_LIST.AXIS[0].TARGET = [{"color": "","dashStyle": "","value":0,"width":0}]
+				chartTemplate.AXES_LIST.AXIS[0].TARGET = [{"color": "","dashStyle": "Solid","value":0,"width":2}]
 			}
 			return chartTemplate;
 		};

@@ -1,32 +1,69 @@
-<div ng-form name="structure-additionalParametersForm" layout="column" layout-padding flex>
-
-<md-input-container class="md-block"> 
+<div ng-form name="structure-additionalParametersForm" flex>
+<div layout="row" flex layout-margin>   
+	<md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis")}}</label>
-		 <input type="number" step="any" name="gauge_ap_min" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
+	<input type="number" step="any" name="gauge_ap_min" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
 		ng-model="axisForDisplay.min"/></md-input-container>
+</div> 
 
-<md-input-container class="md-block"> 
+<div layout="row" flex layout-margin>   
+	<md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis")}}</label>
-		 <input type="number" step="any" name="gauge_ap_max" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
+	<input type="number" step="any" name="gauge_ap_max" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
 		ng-model="axisForDisplay.max"/></md-input-container>
+</div> 
 
-<md-input-container class="md-block colorInputContainer">
+<div layout="row" flex layout-margin>   
+<md-input-container class="md-block colorInputContainer" flex>
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.lineColor")}}</label>
-	 <color-picker
+	<color-picker
 		options="colorPickerOptionsCockpit"
-		ng-model="axisForDisplay.lineColor" name ="gauge_ap_lineColor"></color-picker> </md-input-container>
-		
+		ng-model="axisForDisplay.lineColor"></color-picker> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>   
 <md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.lineWidth")}}</label>
-		 <input type="number" step="any" name="gauge_ap_lineWidth"
+	<input type="number" step="any" name="gauge_ap_lineWidth"
 		ng-model="axisForDisplay.lineWidth" min="0" /> </md-input-container>
+</div>		
 
-<div layout="row" layout-margin>
-		
+<div layout="row" flex layout-margin>	
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.endOnTick")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
 		ng-model="axisForDisplay.endOnTickGauge" name="gauge_ap_endTick"></md-checkbox>
 	</md-input-container>				
 </div>
 
+<md-subheader class="md-primary">
+	<strong>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.target")}}</strong>
+</md-subheader>
+
+<div layout="row" flex layout-margin>   
+<md-input-container class="md-block colorInputContainer" flex>
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.target.color")}}</label>
+	<color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.TARGET[0].color"></color-picker> </md-input-container>
+</div>
+	
+<div layout="row" flex layout-margin>   
+<md-input-container class="md-block">
+	<label>{{translate.load('sbi.chartengine.axisstylepopup.additionalParams.target.dashstyle')}}</label>
+	<input name="dashstyle" ng-model="axisForDisplay.TARGET[0].dashStyle"/></md-input-container>
+</div>	
+	
+<div layout="row" flex layout-margin>   
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.target.value")}}</label>
+	<input type="number" step="any" name="gauge_target_value"
+		ng-model="axisForDisplay.TARGET[0].value"/></md-input-container>
+</div>				
+
+<div layout="row" flex layout-margin>   
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.target.width")}}</label>
+	<input type="number" step="any" name="gauge_target_width"
+		ng-model="axisForDisplay.TARGET[0].width"/></md-input-container>
+</div>
 </div>
