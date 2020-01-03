@@ -23,33 +23,33 @@ def buildAuthToken(user_id):
     encoded_uid = base64.b64encode(bytes(user_id, 'utf-8')).decode('utf-8')
     return "Direct " + encoded_uid
 
-def getUserFunctionalities(user_id, knowage_address):
-    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/userprofile/"
-    auth_token = buildAuthToken(user_id)
+def getUserFunctionalities(widget):
+    address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/backendservices/userprofile/"
+    auth_token = buildAuthToken(widget.user_id)
     headers = {'Authorization': auth_token}
     r = requests.get(address, headers=headers)
     return r.json()["functionalities"]
 
-def userIsAuthorizedForFunctionality(user_id, knowage_address, func):
-    if func in getUserFunctionalities(user_id, knowage_address):
+def userIsAuthorizedForFunctionality(widget, func):
+    if func in getUserFunctionalities(widget):
         return True
     else:
         return False
 
-def userIsAuthenticated(user_id, knowage_address):
-    address = "http://" + knowage_address + "/knowage/restful-services/2.0/datasets/basicinfo/all"
-    auth_token = buildAuthToken(user_id)
+def userIsAuthenticated(widget):
+    address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/datasets/basicinfo/all"
+    auth_token = buildAuthToken(widget.user_id)
     headers = {'Authorization': auth_token}
     r = requests.get(address, headers=headers)
     if r.status_code == 200:
         return True
     return False
 
-def loadScriptFromDB(user_id, knowage_address, document_id, widget_id):
-    template = json.loads(getDocumentTemplate(knowage_address, user_id, document_id))
+def loadScriptFromDB(python_widget):
+    template = json.loads(getDocumentTemplate(python_widget.knowage_address, python_widget.user_id, python_widget.document_id))
     for sheet in template["sheets"]:
         for widget in sheet["widgets"]:
-            if widget["id"] == widget_id:
+            if widget["id"] == python_widget.widget_id:
                 return widget["pythonCode"]
     return ""
 

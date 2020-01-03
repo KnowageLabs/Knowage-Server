@@ -1291,6 +1291,7 @@ public class ManageDataSetsForREST {
 		for (String ja : PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
 			config.put(ja, new JSONArray(json.getString(ja)));
 		}
+		config.put(DataSetConstants.DATA_SET_TYPE, DataSetConstants.DS_PYTHON_TYPE);
 		PythonDataSet res = new PythonDataSet(config);
 		res.setLabel(json.optString(DataSetConstants.LABEL));
 		return res;
@@ -1419,15 +1420,8 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
-			// to create python datasets you have to be allowed to EditPythonScripts
 			if (ds.getDsType().equals(DataSetConstants.DS_PYTHON_TYPE)) {
-				try {
-					if (!userProfile.isAbleToExecuteAction(SpagoBIConstants.EDIT_PYTHON_SCRIPTS)) {
-						throw new SecurityException("Not allowed to create python dataset");
-					}
-				} catch (Exception e) {
-					throw new SpagoBIServiceException("Error while checking python permission", e);
-				}
+				checkPythonPermission(userProfile);
 			}
 
 			logParam.put("NAME", ds.getName());
@@ -1601,6 +1595,16 @@ public class ManageDataSetsForREST {
 		return dataSetJSON;
 	}
 
+	private void checkPythonPermission(IEngUserProfile profile) {
+		try {
+			if (!profile.isAbleToExecuteAction(SpagoBIConstants.EDIT_PYTHON_SCRIPTS)) {
+				throw new SecurityException("User is not allowed to create python dataset");
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error while checking python permission", e);
+		}
+	}
+
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
 
 		JSONObject dataSetJSON;
@@ -1608,6 +1612,10 @@ public class ManageDataSetsForREST {
 		logger.debug("IN");
 
 		dataSetJSON = null;
+//		if (dataSet != null && dataSet.getDsType().equals(DataSetConstants.DS_PYTHON_TYPE)) {
+//			checkPythonPermission(profile);
+//		}
+
 		try {
 			Integer start = json.optInt(DataSetConstants.START);
 			Integer limit = json.optInt(DataSetConstants.LIMIT);
