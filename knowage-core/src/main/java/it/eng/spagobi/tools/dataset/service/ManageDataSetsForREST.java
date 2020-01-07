@@ -1420,10 +1420,6 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
-			if (ds.getDsType().equals(DataSetConstants.DS_PYTHON_TYPE)) {
-				checkPythonPermission(userProfile);
-			}
-
 			logParam.put("NAME", ds.getName());
 			logParam.put("LABEL", ds.getLabel());
 			logParam.put("TYPE", ds.getDsType());
@@ -1595,16 +1591,6 @@ public class ManageDataSetsForREST {
 		return dataSetJSON;
 	}
 
-	private void checkPythonPermission(IEngUserProfile profile) {
-		try {
-			if (!profile.isAbleToExecuteAction(SpagoBIConstants.EDIT_PYTHON_SCRIPTS)) {
-				throw new SecurityException("User is not allowed to create python dataset");
-			}
-		} catch (Exception e) {
-			throw new SpagoBIServiceException("Error while checking python permission", e);
-		}
-	}
-
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
 
 		JSONObject dataSetJSON;
@@ -1612,9 +1598,6 @@ public class ManageDataSetsForREST {
 		logger.debug("IN");
 
 		dataSetJSON = null;
-//		if (dataSet != null && dataSet.getDsType().equals(DataSetConstants.DS_PYTHON_TYPE)) {
-//			checkPythonPermission(profile);
-//		}
 
 		try {
 			Integer start = json.optInt(DataSetConstants.START);

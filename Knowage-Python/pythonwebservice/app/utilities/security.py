@@ -60,3 +60,13 @@ def getDocumentTemplate(knowage_address, user_id, document_id):
     payload = {"parameters": "{}"}
     r = requests.post(address, headers=headers, data=json.dumps(payload))
     return base64.b64decode(r.text).decode("utf-8")
+
+def getDataSet(knowage_address, user_id, document_id):
+    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/dataset/" + document_id
+    auth_token = buildAuthToken(user_id)
+    headers = {'Authorization': auth_token, "Content-Type": "application/json"}
+    r = requests.post(address, headers=headers)
+    return base64.b64decode(r.text).decode("utf-8")
+
+def authenticateDatasetRequest():
+    return True

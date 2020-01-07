@@ -35,13 +35,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
-/**
- * This data proxy makes REST calls. Providing all attributes (address, type of method, etc..) it make a http call and read the data store from the response
- * using the provided reader.
- *
- * @author fabrizio
- *
- */
 public class PythonDataProxy extends AbstractDataProxy {
 
 	private static final int OFFSET_NOT_DEFINED = -1;

@@ -15,13 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from flask import Blueprint, request
-import json
+from app.utilities import security
 
 dataset = Blueprint('dataset', __name__)
 #url: knowage_addr:port/dataset
 
 @dataset.route('', methods = ['POST'])
-def python_dataset():
+def python_dataset_edit():
     # retrieve input parameters
     try:
         data = request.get_json()
@@ -31,17 +31,12 @@ def python_dataset():
     except Exception as e:
         return str(e), 400
 
+    # check authentication
+    if not security.authenticateDatasetRequest():
+        return "Error: authentication failed", 401
+
     #build parameters dictionary
-    parameters = {}
-    for x in knowage_parameters:
-        key = x['name']
-        if x['value'] != '':
-            value = x['value']
-        else:
-            value = x['defaultValue']
-        if x['type'] == 'Number':
-            value = float(value)
-        parameters.update({key: value})
+    parameters = buildParameters(knowage_parameters)
     # resolve parameters
     for p in parameters:
         script = script.replace("$P{" + p + "}", "parameters_.get(\'" + p + "\')")
@@ -55,11 +50,29 @@ def python_dataset():
     df = namespace[df_name]
 
     # convert dataframe to knowage json format
+    knowage_json = convertDataframe(df)
+
+    return str(knowage_json).replace('\'', "\""), 200
+
+def buildParameters(knowage_parameters):
+    parameters = {}
+    for x in knowage_parameters:
+        key = x['name']
+        if x['value'] != '':
+            value = x['value']
+        else:
+            value = x['defaultValue']
+        if x['type'] == 'Number':
+            value = float(value)
+        parameters.update({key: value})
+    return parameters
+
+def convertDataframe(df):
     knowage_json = []
     n_rows, n_cols = df.shape
     for i in range(0, n_rows):
         element = {}
         for j in range(0, n_cols):
-            element.update({df.columns[j] : df.loc[i][df.columns[j]]})
+            element.update({df.columns[j]: df.loc[i][df.columns[j]]})
         knowage_json.append(element)
-    return str(knowage_json).replace('\'', "\""), 200
+    return knowage_json
