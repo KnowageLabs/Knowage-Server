@@ -1266,7 +1266,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 													if($scope.currentPageNumber>1){
 														start = ($scope.currentPageNumber - 1) * $scope.currentItemsPerPage;
 													}
-													$scope.loadDatasetList(start, $scope.currentItemsPerPage, null,columnOrderingLabel,$scope.reverseOrdering);
+													$scope.loadDatasetList(start, $scope.currentItemsPerPage, $scope.searchValue,columnOrderingLabel,$scope.reverseOrdering);
 													// If the dataset that is deleted is selected, deselect it and hence close its details.
 													if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
 														$scope.selectedDataSet = null;
