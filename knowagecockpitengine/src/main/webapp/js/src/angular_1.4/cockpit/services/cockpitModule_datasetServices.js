@@ -959,7 +959,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					if(filterOperator != ""){
 						var values=[];
 						// if filterOperator is IN and filterVals has "," then filterVals must be splitted
-						if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
+						if(filterOperator == "IN" && filterVals[0] && filterVals[0].indexOf(",") != -1 ){
 							filterVals = filterVals[0].split(",");
 						}
 						angular.forEach(filterVals, function(item){
