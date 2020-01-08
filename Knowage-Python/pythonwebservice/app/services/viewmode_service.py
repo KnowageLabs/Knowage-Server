@@ -30,13 +30,17 @@ viewMode = Blueprint('view', __name__)
 @viewMode.route('/html', methods = ['POST'])
 def python_html():
     #retrieve input parameters
-    script, output_variable = utils.retrieveScriptInfo(request.get_json())
+    output_variable = utils.retrieveScriptInfo(request.get_json())[1]
     user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
-    python_widget = PythonWidgetExecution(script=script, output_variable=output_variable, user_id=user_id, document_id=document_id, widget_id=widget_id,
+    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    python_widget = PythonWidgetExecution(analytical_drivers=drivers, output_variable=output_variable, user_id=user_id, document_id=document_id, widget_id=widget_id,
                                           knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
+    # resolve analytical drivers
+    for d in drivers:
+        python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     #retrieve dataset
     if python_widget.dataset_name != "":
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
@@ -45,7 +49,7 @@ def python_html():
         python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
     #execute script
     try:
-        namespace = {python_widget.output_variable: ""}
+        namespace = {python_widget.output_variable: "", "drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
         return str(e), 400
@@ -61,13 +65,17 @@ def python_html():
 @viewMode.route('/img', methods = ['POST'])
 def python_img():
     # retrieve input parameters
-    script, img_file = utils.retrieveScriptInfo(request.get_json())
+    img_file = utils.retrieveScriptInfo(request.get_json())[1]
     user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
-    python_widget = PythonWidgetExecution(script=script, output_variable=img_file, user_id=user_id, document_id=document_id, widget_id=widget_id,
+    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    python_widget = PythonWidgetExecution(analytical_drivers=drivers, output_variable=img_file, user_id=user_id, document_id=document_id, widget_id=widget_id,
                                           knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
+    # resolve analytical drivers
+    for d in drivers:
+        python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     # retrieve dataset
     if python_widget.dataset_name != "":
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
@@ -76,7 +84,7 @@ def python_img():
         python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
     # execute script
     try:
-        namespace = {}
+        namespace = {"drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
         return str(e), 400
@@ -98,12 +106,16 @@ def python_bokeh():
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
     user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
-    python_widget = PythonWidgetExecution(user_id=user_id, document_id=document_id, widget_id=widget_id,
+    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    python_widget = PythonWidgetExecution(analytical_drivers=drivers, user_id=user_id, document_id=document_id, widget_id=widget_id,
                                           knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
     #destroy old bokeh server
     if utils.serverExists(python_widget.widget_id):
         utils.destroyServer(python_widget.widget_id)
+    # resolve analytical drivers
+    for d in drivers:
+        python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     # retrieve dataset
     if python_widget.dataset_name != "":
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
@@ -119,7 +131,7 @@ def python_bokeh():
         #replace curdoc() with keyword "curdoc_"
         bk_script = bk_script.replace("curdoc()", "curdoc_")
         # execute script
-        namespace = {'curdoc_': doc}
+        namespace = {'curdoc_': doc, "drivers_": drivers}
         exec(bk_script, namespace)
 
     #secondary thread function (bokeh server)

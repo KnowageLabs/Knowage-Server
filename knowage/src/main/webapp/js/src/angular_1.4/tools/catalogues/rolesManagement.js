@@ -41,6 +41,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"SEE_TODO_LIST",label:"seeToDoList",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
+	               {dbname:"EDIT_PYTHON_SCRIPTS",label:"editPythonScripts",visible:true, category:"ENABLE"},
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname: "ENABLE_TO_RATE", label: "enableToRate", visible: false, category: "ENABLE"},
 	               {dbname: "ENABLE_TO_PRINT", label: "enableToPrint", visible: false, category: "ENABLE"},
@@ -141,6 +142,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToSeeSubobjects= true;
 		$scope.selectedRole.ableToBuildQbeQuery= true;
 		$scope.selectedRole.ableToSaveSubobjects= true;
+		$scope.selectedRole.ableToEditPythonScripts= false;
 		$scope.selectedRole.ableToSaveRememberMe= true;
 		$scope.selectedRole.ableToSendMail= true;
 		$scope.selectedRole.ableToSeeFavourites= true;

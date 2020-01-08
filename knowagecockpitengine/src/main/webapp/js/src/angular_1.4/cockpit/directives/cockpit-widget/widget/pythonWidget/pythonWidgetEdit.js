@@ -46,6 +46,10 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.newModel.keys = Object.keys($scope.newModel.types);
 
+	$scope.toggleTag = function(tag){
+		tag.opened = !tag.opened;
+	}
+
 	$scope.$watch('newModel.dataset.dsId',function(newValue,oldValue){
 		if(newValue){
 			$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();

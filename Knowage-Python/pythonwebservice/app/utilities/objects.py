@@ -23,8 +23,9 @@ class PythonWidgetExecution:
     _output_variable = None
     _dataset_name = None
     _datastore_request = None
+    _analytical_drivers = None
 
-    def __init__(self, knowage_address=None, user_id=None, document_id=None, widget_id=None,
+    def __init__(self, analytical_drivers=None, knowage_address=None, user_id=None, document_id=None, widget_id=None,
                  script=None, output_variable=None, dataset_name=None, datastore_request=None):
         self._knowage_address = knowage_address
         self._user_id = user_id
@@ -34,10 +35,15 @@ class PythonWidgetExecution:
         self._output_variable = output_variable
         self._dataset_name = dataset_name
         self._datastore_request = datastore_request
+        self._analytical_drivers = analytical_drivers
 
     @property
     def knowage_address(self):
         return self._knowage_address
+
+    @property
+    def analytical_drivers(self):
+        return self._analytical_drivers
 
     @property
     def user_id(self):

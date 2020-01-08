@@ -28,8 +28,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
@@ -43,21 +41,14 @@ public class DocumentTemplateResource {
 	@POST
 	@Path("/{document_id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String readTemplate(@PathParam("document_id") Integer documentId, ParametersMap params) {
+	public String readTemplate(@PathParam("document_id") Integer documentId, HashMap<String, String> params) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
-		try {
-			HashMap parameters = new ObjectMapper().readValue(params.getParameters(), HashMap.class);
-		} catch (Exception e) {
-			logger.error("error while loading request body");
-			return null;
-		}
-
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
 		Content content;
 		try {
-			content = supplier.readTemplate(userId, Integer.toString(documentId), null);
+			content = supplier.readTemplate(userId, Integer.toString(documentId), params);
 		} catch (Exception e) {
 			logger.error("error while retrieving template for userId [" + userId + "] and documentId [" + documentId + "]");
 			return null;

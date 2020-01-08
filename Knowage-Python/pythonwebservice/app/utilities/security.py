@@ -46,19 +46,18 @@ def userIsAuthenticated(widget):
     return False
 
 def loadScriptFromDB(python_widget):
-    template = json.loads(getDocumentTemplate(python_widget.knowage_address, python_widget.user_id, python_widget.document_id))
+    template = json.loads(getDocumentTemplate(python_widget))
     for sheet in template["sheets"]:
         for widget in sheet["widgets"]:
             if widget["id"] == python_widget.widget_id:
                 return widget["pythonCode"]
     return ""
 
-def getDocumentTemplate(knowage_address, user_id, document_id):
-    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + document_id
-    auth_token = buildAuthToken(user_id)
+def getDocumentTemplate(python_widget):
+    address = "http://" + python_widget.knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + python_widget.document_id
+    auth_token = buildAuthToken(python_widget.user_id)
     headers = {'Authorization': auth_token, "Content-Type": "application/json"}
-    payload = {"parameters": "{}"}
-    r = requests.post(address, headers=headers, data=json.dumps(payload))
+    r = requests.post(address, headers=headers, data=json.dumps(python_widget.analytical_drivers))
     return base64.b64decode(r.text).decode("utf-8")
 
 def getDataSet(knowage_address, user_id, document_id):

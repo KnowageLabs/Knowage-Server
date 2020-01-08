@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_restServices,
 			sbiModule_config,
 			cockpitModule_properties,
+			cockpitModule_analyticalDrivers,
 			cockpitModule_generalServices,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetSelection,
@@ -156,6 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			url_string = window.location.href
 			url = new URL(url_string);
 			$scope.encodedUserId = url.searchParams.get("user_id");
+	        $scope.drivers = cockpitModule_analyticalDrivers;
 			//if there is a dataset selected save its label
 			if ($scope.ngModel.dataset != undefined && !angular.equals({}, $scope.ngModel.dataset)) {
 				$scope.dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -186,6 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
 		        		'document_id' :  $scope.documentId,
+		        		"drivers" : $scope.drivers,
 		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success
@@ -213,6 +216,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
 		        		'document_id' :  $scope.documentId,
+		        		"drivers" : $scope.drivers,
 		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters, 'selections': $scope.selections})}
 		    })
 		    .then(function(response) { //success

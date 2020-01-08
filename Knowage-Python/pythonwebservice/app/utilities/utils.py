@@ -44,6 +44,10 @@ def retrieveWidgetInfo(data):
     widget_id = data['widget_id']
     return document_id, widget_id
 
+def retrieveAnalyticalDriversInfo(data):
+    drivers = data.get("drivers")
+    return drivers
+
 def getDatasetAsDataframe(widget):
     address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/datasets/" + widget.dataset_name + "/data?offset=0&size=-1"
     auth_token = security.buildAuthToken(widget.user_id)
