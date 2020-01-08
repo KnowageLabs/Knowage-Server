@@ -234,21 +234,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						name="objParameters"   ng-maxlength="100" ng-change="setDirty()">
 					</md-input-container>
 			</div>
- 
-			 	<div ng-if="selectedMenuItem.typeId==1">
-				<label class="md-block">{{translate.load("sbi.menu.toolbar")}}:</label>
-				<md-input-container class="small counter"> <md-checkbox
-					ng-disabled="readOnly" ng-change="setDirty()"
-					ng-model="selectedMenu.hideToolbar" aria-label="View icon"></md-checkbox>
-				</md-input-container>
-			</div>
-				<div ng-if="selectedMenuItem.typeId==1">
-				<label class="md-block">{{translate.load("sbi.menu.sliders")}}:</label>
-				<md-input-container class="small counter"> <md-checkbox
-					ng-disabled="readOnly" ng-change="setDirty()"
-					ng-model="selectedMenu.hideSliders" aria-label="View icon"></md-checkbox>
-				</md-input-container>
-			</div>
 			
 		  <div flex=100 ng-if="selectedMenuItem.typeId==4">
 					<md-input-container class="md-block"> 
