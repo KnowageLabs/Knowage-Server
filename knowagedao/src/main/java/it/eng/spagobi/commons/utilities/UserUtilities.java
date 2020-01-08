@@ -619,9 +619,6 @@ public class UserUtilities {
 			List<String> roleFunctionalities = new ArrayList<>();
 			Role virtualRole = getVirtualRole(roles, organization);
 
-			if (virtualRole.isAbleToEditPythonScripts()) {
-				roleFunctionalities.add(SpagoBIConstants.EDIT_PYTHON_SCRIPTS);
-			}
 			if (virtualRole.isAbleToSaveSubobjects()) {
 				roleFunctionalities.add(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
 			}
@@ -747,6 +744,10 @@ public class UserUtilities {
 
 			if (virtualRole.isAbleToCreateSelfServiceKpi()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_KPI);
+			}
+
+			if (virtualRole.isAbleToEditPythonScripts()) {
+				roleFunctionalities.add(SpagoBIConstants.EDIT_PYTHON_SCRIPTS);
 			}
 
 			if (!roleFunctionalities.isEmpty()) {

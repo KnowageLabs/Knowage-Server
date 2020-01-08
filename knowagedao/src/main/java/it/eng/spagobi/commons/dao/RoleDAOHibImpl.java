@@ -616,7 +616,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION") && aRole.isAbleToManageInternationalization())
 				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.isAbleToCreateSelfServiceCockpit())
 				|| (authI.getName().equals("CREATE_SELF_SERVICE_KPI") && aRole.isAbleToCreateSelfServiceKpi())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT") && aRole.isAbleToCreateSelfServiceGeoreport());
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT") && aRole.isAbleToCreateSelfServiceGeoreport())
+				|| (authI.getName().equals("EDIT_PYTHON_SCRIPTS") && aRole.isAbleToEditPythonScripts());
 	}
 
 	/**
