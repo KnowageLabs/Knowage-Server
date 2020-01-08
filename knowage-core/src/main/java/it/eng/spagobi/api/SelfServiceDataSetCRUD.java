@@ -485,17 +485,15 @@ public class SelfServiceDataSetCRUD {
 	public String shareDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
+
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			int id = Integer.valueOf(req.getParameter("id"));
 			Integer catTypeId;
-			String catTypeCd;
 			try {
 				catTypeId = Integer.valueOf(req.getParameter("catTypeId"));
-				catTypeCd = String.valueOf(req.getParameter("catTypeCd"));
 			} catch (NumberFormatException e) {
 				catTypeId = null;
-				catTypeCd = null;
 			}
 
 			IDataSet ds = dao.loadDataSetById(id);
@@ -506,11 +504,7 @@ public class SelfServiceDataSetCRUD {
 			String type = getDatasetTypeName(ds.getDsType());
 			ds.setDsType(type);
 			ds.setCategoryId(catTypeId);
-			ds.setCategoryCd(catTypeCd);
 			dao.modifyDataSet(ds);
-
-			// Notifications Management -----------------------------------
-			// notificationManagement(req,ds,ds);
 
 			updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
 
@@ -519,7 +513,6 @@ public class SelfServiceDataSetCRUD {
 			JSONObject jo = new JSONObject();
 			jo.put("id", newId);
 			jo.put("catTypeId", ds.getCategoryId());
-			jo.put("catTypeCd", ds.getCategoryCd());
 
 			return jo.toString();
 
@@ -1336,7 +1329,7 @@ public class SelfServiceDataSetCRUD {
 		String label = request.getParameter("label");
 		String description = request.getParameter("description");
 		String name = request.getParameter("name");
-		String catTypeVn = request.getParameter("catTypeVn");
+		String catTypeId = request.getParameter("catTypeId");
 		String meta = request.getParameter(DataSetConstants.METADATA);
 		String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
@@ -1399,11 +1392,9 @@ public class SelfServiceDataSetCRUD {
 
 		Integer categoryCode = null;
 		try {
-			categoryCode = Integer.parseInt(catTypeVn);
+			categoryCode = Integer.parseInt(catTypeId);
 		} catch (Exception e) {
-			logger.debug("Category must be decodified...");
-			categoryCode = getCategoryCode(catTypeVn);
-			logger.debug("Category value decodified is : " + categoryCode);
+			logger.warn("Category value is invalid: " + catTypeId);
 		}
 		logger.debug("Category code is :  " + categoryCode);
 		toReturn.setCategoryId(categoryCode);

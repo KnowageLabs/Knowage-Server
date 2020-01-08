@@ -371,82 +371,74 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     }
 
-    $scope.shareDataset=function(dataset){
-    	var dsCatType = $scope.datasetCategoryType;
-    	if(dsCatType.length==1&&dataset.catTypeId!=undefined){
-    		$scope.unshareDataset(dataset);
-    		return;
-    	}
-    	var id=dataset.id;
-    	var catTypeId = null;
-    	var catTypeCd = null;
-    	if(dsCatType.length==1){
-    		catTypeId = dsCatType[0].VALUE_ID;
-    		catTypeCd =  dsCatType[0].VALUE_CD;
-    	} else {
-    		for (var i = 0; i < dsCatType.length; i++) {
+	$scope.shareDataset=function(dataset){
+		var dsCatType = $scope.datasetCategoryType;
+		if(dsCatType.length==1&&dataset.catTypeId!=undefined){
+			$scope.unshareDataset(dataset);
+			return;
+		}
+		var id=dataset.id;
+		var catTypeId = null;
+		if(dsCatType.length==1){
+			catTypeId = dsCatType[0].VALUE_ID;
+		} else {
+			for (var i = 0; i < dsCatType.length; i++) {
 				if($scope.datasetTemp.catTypeId==dsCatType[i].VALUE_ID){
-					catTypeCd=dsCatType[i].VALUE_CD;
 					catTypeId=dsCatType[i].VALUE_ID;
 					break;
 				}
 			}
-    	}
-        params={};
-    	params.id=id;
-    	params.catTypeId = catTypeId;
-    	params.catTypeCd = catTypeCd;
-    	config={};
-    	config.params=params;
+		}
+		params={};
+		params.id=id;
+		params.catTypeId = catTypeId;
+		config={};
+		config.params=params;
 
-    	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
+		sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
 		.then(function(response) {
-			 dataset.catTypeId=response.data.catTypeId;
-			 dataset.catTypeCd=response.data.catTypeCd;
-	         if(response.data.catTypeId!=null){
-	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
-	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.share.success"),
+			dataset.catTypeId=response.data.catTypeId;
+			if(response.data.catTypeId!=null){
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.share.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-	          } else {
-	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
-	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
+			} else {
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-	          }
+			  }
 		},function(response){
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
 		});
-    }
+	}
 
-    $scope.unshareDataset = function(dataset){
-    	var id=dataset.id;
-    	var catTypeId = null;
-    	var catTypeCd = null;
-    	params={};
-    	params.id=id;
-    	params.catTypeId = catTypeId;
-    	params.catTypeCd = catTypeCd;
-    	config={};
-    	config.params=params;
+	$scope.unshareDataset = function(dataset){
+		var id=dataset.id;
+		var catTypeId = null;
+		params={};
+		params.id=id;
+		params.catTypeId = catTypeId;
+		config={};
+		config.params=params;
 
-    	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
+		sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
 		.then(function(response) {
-			 dataset.catTypeId=response.data.catTypeId;
-			 dataset.catTypeCd=response.data.catTypeCd;
-	         if(response.data.catTypeId==null){
-	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
-	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
+			dataset.catTypeId=response.data.catTypeId;
+			if(response.data.catTypeId==null){
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-	          }else{
-	        	// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			}else{
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
-	          }
+			}
 		},function(response){
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
 		});
-    	$mdDialog.cancel();
-    }
+		$mdDialog.cancel();
+	}
 
     $scope.showQbeDataset= function(dataset){
 		var label= dataset.label;
