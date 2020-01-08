@@ -301,14 +301,13 @@
 				            <h3><b>{{translate.load("sbi.generic.author")}}</b></h3>
 				            <p>{{selectedDataSet.owner}}</p>
 				          </div>
-				 </md-list-item>
-				 	 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>{{translate.load("sbi.ds.changedon")}}</b></h3>
-				            <p>{{selectedDataSet.dateIn | date}}</p>
-				          </div>
-				         
-				 </md-list-item>
+				</md-list-item>
+					<md-list-item class="md-2-line">
+						<div class="md-list-item-text">
+							<h3><b>{{translate.load("sbi.ds.changedon")}}</b></h3>
+							<p>{{selectedDataSet.dateIn | date:'yyyy/MM/dd hh:mm:ss' }}</p>
+						</div>
+				</md-list-item>
 			</md-list>
 		</md-content>
 	</md-sidenav>

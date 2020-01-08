@@ -24,6 +24,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -248,7 +251,15 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(USER_IN, ds.getUserIn());
 			result.put(VERSION_NUM, ((VersionedDataSet) ds).getVersionNum());
 			// result.put(VERSION_ID, dsDetail.getDsHId());
-			result.put(DATE_IN, ds.getDateIn());
+
+			String dateIn = null;
+			if (ds.getDateIn() != null) {
+				DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+				DateTime dateTime = new DateTime(ds.getDateIn());
+				dateIn = formatter.print(dateTime);
+			}
+
+			result.put(DATE_IN, dateIn);
 
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
@@ -451,7 +462,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(IS_REALTIME, ds.isRealtime());
 			result.put(IS_ITERABLE, ds.isIterable());
 			result.put(OWNER, ds.getOwner());
-			result.put(DATE_IN, ds.getDateIn());
+			result.put(DATE_IN, dateIn);
 			result.put(SCOPE_CD, ds.getScopeCd());
 			result.put(SCOPE_ID, ds.getScopeId());
 
