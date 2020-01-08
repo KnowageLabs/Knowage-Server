@@ -331,7 +331,7 @@ angular.module('cockpitModule')
         		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name)) {
  					return false;
  				}
-        		 
+
         		 return selectables && selectables.indexOf(p) == -1;
         	 }
 
@@ -357,19 +357,21 @@ angular.module('cockpitModule')
 			if($scope.hasDefaultValues && (nature == "init" || nature == "refresh")){
 				var applyDefaultValues = false;
 
-				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
-				case 'FIRST':
-					$scope.defaultValues.push($scope.datasetRecords.rows[0].column_1);
-					applyDefaultValues = true;
-					break;
-				case 'LAST':
-					$scope.defaultValues.push($scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1);
-					applyDefaultValues = true;
-					break;
-				case 'STATIC':
-					$scope.defaultValues = $scope.ngModel.settings.staticValues.split(",");
-					applyDefaultValues = true;
-					break;
+				if($scope.ngModel.settings.defaultValue){
+					switch($scope.ngModel.settings.defaultValue.toUpperCase()){
+					case 'FIRST':
+						$scope.defaultValues.push($scope.datasetRecords.rows[0].column_1);
+						applyDefaultValues = true;
+						break;
+					case 'LAST':
+						$scope.defaultValues.push($scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1);
+						applyDefaultValues = true;
+						break;
+					case 'STATIC':
+						$scope.defaultValues = $scope.ngModel.settings.staticValues.split(",");
+						applyDefaultValues = true;
+						break;
+					}
 				}
 
 				if(applyDefaultValues){
