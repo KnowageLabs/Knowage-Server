@@ -2315,6 +2315,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
 		promise.then(function(response){
 			var result = response.data.root;
+			for (i in result) {
+				var currResult = result[i];
+				if (currResult.dateIn != null) {
+					currResult.dateIn = $filter('date')(currResult.dateIn, 'yyyy/MM/dd hh:mm:ss');
+				}
+			}
 			deferred.resolve(result);
 		}, function(error) {
 			if(error.data && error.data.errors)

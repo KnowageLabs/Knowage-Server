@@ -47,6 +47,9 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -316,12 +319,19 @@ public class DataSetResource extends AbstractDataSetResource {
 					String dsType = oldVersion.getDsType();
 					String userIn = oldVersion.getUserIn();
 					Date timeIn = oldVersion.getDateIn();
+					String timeInAsStr = null;
+
+					if (timeIn != null) {
+						DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+						DateTime dateTime = new DateTime(timeIn);
+						timeInAsStr = formatter.print(dateTime);
+					}
 
 					JSONObject oldDsJsonObj = new JSONObject();
 					oldDsJsonObj.put("type", dsType);
 					oldDsJsonObj.put("userIn", userIn);
 					oldDsJsonObj.put("versNum", dsVersionNum);
-					oldDsJsonObj.put("dateIn", timeIn);
+					oldDsJsonObj.put("dateIn", timeInAsStr);
 					oldDsJsonObj.put("dsId", id);
 					jsonArray.put(oldDsJsonObj);
 				}
