@@ -176,7 +176,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(0);
 			List<AbstractSelectionField> groups = new ArrayList<AbstractSelectionField>(0);
 			List<Sorting> sortings = new ArrayList<Sorting>(0);
-			List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
 			Map<String, String> columnAliasToName = new HashMap<String, String>();
 			if (aggregations != null && !aggregations.isEmpty()) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
@@ -210,11 +209,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					((VersionedDataSet) dataSet).setWrappedDataset(solrDS);
 				}
 
-//				if (summaryRow != null && !summaryRow.isEmpty()) {
-//					JSONObject summaryRowObject = new JSONObject(summaryRow);
-//					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-//					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
-//				}
 			}
 
 			List<Filter> filters = new ArrayList<>(0);

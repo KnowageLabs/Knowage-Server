@@ -786,9 +786,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		savedFilters = filtersToSendWithoutParams;
 
-		if(dataset.type == "SbiSolrDataSet" && ngModel.type == "table"){
-			bodyString = bodyString + ",options:{solrSimple:true}";
-		} else if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
+		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
 			bodyString = bodyString + ",options:{solrFacetPivot:true}";
 		}
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type == "discovery"){
