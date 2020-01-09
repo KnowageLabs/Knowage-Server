@@ -163,16 +163,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var headerStyle = {};
 			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = $scope.ngModel.style.th;
 			if(headerStyle && headerStyle.multiline) cellClasses = 'cellContainer multiLineHeader';
-			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
+			return 	'<div class="ag-cell-label-container customHeaderTemplate" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
 					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
-					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+headerStyle["justify-content"]+'">'+
+					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="color:'+headerStyle.color+';justify-content:'+headerStyle["justify-content"]+'">'+
 					'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
-					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+headerStyle.color+';font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'"></span></div>'+
+					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'"></span></div>'+
 					'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
-					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
+					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>'+
 					'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
-					'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" ></span>'+
-					'  		<span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" ></span>'+
+					'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>'+
+					'  		<span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>'+
 					'	</div>'+
 					'</div>';
 		}

@@ -244,6 +244,17 @@ $aggrid-border-color: #d9dcde;
 			.ag-cell-label-container {
 				padding-left: 12px;
 				padding-right: 12px;
+				&.customHeaderTemplate{
+					.ag-header-cell-text{
+						color: inherit;
+					}
+					.ag-header-icon {
+						color: inherit;
+						.ag-icon{
+							color: inherit;
+						}
+					}
+				}
 			}
 		}
 		.ag-cell {
