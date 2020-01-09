@@ -135,7 +135,7 @@
 						//check parameters selected field
 						if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
 							for(var z=0;z<innerNode.children.length;z++){
-								if($scope.parameter.parameterValue.indexOf(innerNode.children[z].value)!==-1){
+								if($scope.parameter.parameterValue.indexOf(innerNode.children[z].value)!==-1 || innerNode.checked==true){
 									innerNode.children[z].checked= true;
 								}
 							}
