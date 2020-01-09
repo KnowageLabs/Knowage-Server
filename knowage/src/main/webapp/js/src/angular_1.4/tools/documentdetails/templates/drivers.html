@@ -108,28 +108,22 @@
                 </div>
             </md-toolbar>
             <md-card-content layout="column" class="noPadding">
-                <div layout="row" layout-align="center center" ng-if=" !dd.dataConditions[dd.selectedDriver.id].length > 0">
-                    <div class="kn-noItems">
+                <div layout="row" layout-align="center center" ng-if="dd.isEmpty(dd.transformedObj)">
+                    <div class="kn-noItems">               
                        {{dd.translate.load("sbi.documentdetails.drivers.nodata")}}
                     </div>
                 </div>
                 <md-list class="md-dense">
-                    <md-list-item class=" md-2-line "  ng-repeat="correlation in dd.dataConditions[dd.selectedDriver.id] track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event,dd.selectedDriver,$index)">
-                         
-                        <div class="md-list-item-text " ng-if='!dd.driverRelatedObject.category'>
-                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
-                        </div>
-                         <div class="md-list-item-text " ng-if='dd.driverRelatedObject.category'>
-                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
-                 
-                        </div>
-                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition($index,'data',dd.selectedDriver) " aria-label="delete driver ">
+                    <md-list-item class=" md-2-line "  ng-repeat="(key, value) in dd.transformedObj track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event, dd.selectedDriver, key)">                         
+                        <div class="md-list-item-text ">
+                            <h3><strong>{{ value[0].filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{value[0].parFatherUrlName}} </h3>
+                        </div>                       
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition(key)" aria-label="delete driver ">
                             <md-icon md-font-icon="fa fa-trash "></md-icon>
                         </md-button>
                         <md-divider></md-divider>
                     </md-list-item>
-                </md-list>
-               
+                </md-list>                             
             </md-card-content>
  
         </md-card>

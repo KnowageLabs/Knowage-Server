@@ -19,7 +19,7 @@
 	      		  driversResource.selectedVisualCondition = {};
 	      		  driversResource.selectedDataCondition = {};
 	      		  driversResource.visusalDependencyObjects = [];
-	      		  driversResource.dataDependencyObjects = [];
+	      		  driversResource.dataDependencyObjects = {};
 	      		  driversResource.changedVisualDependencies = [];
 	      		  driversResource.changedDataDependencies = [];
 	      		  driversResource.dataDependenciesForDeleting = [];
@@ -216,39 +216,32 @@
 	      	     driversResource.persistDataDependency = function(driverableObjectId,requiredPath){
 		      	   	var parusesForDataDependency={};
 		      	       	for(var i = 0; i < driversResource.changedDataDependencies.length; i++){
-		      	       		var persistances =  Object.keys(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
-		      	       		var filterColumns =  Object.values(driversResource.paruseColumns[driversResource.changedDataDependencies[i].parId]);
 		      	       		var dataDependency = driversResource.changedDataDependencies[i];
-		      	       		var isNew = dataDependency.newDependency;
+
 		      	       		var prog = dataDependency.prog;
 		      	       		var dataPath = driverableObjectId + '/datadependencies';
 
 		      	       		var filterColumnsForDataDependency=[];
 
-		      	       		for(var j = 0 ; j < persistances.length;j++){
-		      	       			if(j == 0){
-		      	       				parusesForDataDependency = dataDependency.persist;
-		      	       			}else{
-		      	       				isNew = true;
-		      	       			}
-		      	       			if(persistances[j] != undefined){
+
+		      	       			if(driversResource.changedDataDependencies[i].useModeId != undefined){
 			      	       			var newDataDependency = {};
 			      	       			if(prog == dataDependency.prog){
 			      	       				newDataDependency = dataDependency;
 			      	       			}else{
 			      	       				newDataDependency = angular.copy(dataDependency);
 			      	       			}
-			      	       			newDataDependency.filterColumn =  filterColumns[j];
+
 			      	       			var paruse = [];
 			            			for(var k = 0; k < driversResource.driverParuses.length;k++){
-			            				if(driversResource.driverParuses[k].useID == persistances[j])
+			            				if(driversResource.driverParuses[k].useID == driversResource.changedDataDependencies[i].useModeId)
 			            					paruse.push(driversResource.driverParuses[k]);
 			            			}
 			            			if(paruse.length == 0)
 			            				continue;
-				      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
+				      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==driversResource.changedDataDependencies[i].useModeId)
 				      	       			newDataDependency.useModeId= paruse[0].useID;
-		      			        		if(isNew){
+		      			        		if(driversResource.changedDataDependencies[i].id==undefined){
 		      			        			prepareDependencyForPersisting(newDataDependency);
 		      			        			parusesForDataDependency[newDataDependency.useModeId] = false;
 		      			        			delete newDataDependency.persist;
@@ -256,6 +249,7 @@
 		      			        				if(response.data.errors){
 		      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 		      			               			}else{
+		      			               			driversResource.transformingCorrelations([response.data], response.data.parFatherId+response.data.filterOperation);
 		      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
 		      			        				for(var i = 0; i < driversResource.dataDependencyObjects[newDataDependency.parId].length; i++){
 		      			        					if (driversResource.dataDependencyObjects[newDataDependency.parId][i].prog == newDataDependency.prog)
@@ -277,7 +271,7 @@
 		      			        			newDataDependency.prog++;
 		      			        		}
 		      	       			}
-		      	       		}
+
 		      	       }
 		      	      driversResource.changedDataDependencies = [];
 	      	     }
@@ -361,6 +355,7 @@
 
 	             driversResource.deleteDataDependencies = function(driverableObjectId,requiredPath){
 	             	for(var i = 0; i < driversResource.dataDependenciesForDeleting.length; i++){
+	             		delete driversResource.dataDependenciesForDeleting[i].deleteItem;
 	             		driversResource.deleteDriverDataDependency(driversResource.dataDependenciesForDeleting[i],driverableObjectId,requiredPath)
 	             	}
 	             	driversResource.dataDependenciesForDeleting=[];
