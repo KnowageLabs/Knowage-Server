@@ -66,8 +66,8 @@
         	DriversService.persistDrivers(documentService.document.id,requiredPath);
         	DriversService.deleteDrivers(documentService.document.id,requiredPath);
 
-        	DriversService.persistDataDependency(documentService.document.id,requiredPath);
-        	DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
+//        	DriversService.persistDataDependency(documentService.document.id,requiredPath);
+//        	DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
 
         	DriversService.persistVisualDependency(documentService.document.id,requiredPath);
         	DriversService.deleteVisualDependencies(documentService.document.id,requiredPath);
