@@ -14,11 +14,12 @@
             <div>
 	                <md-input-container  flex>
 	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition[0].parFatherId" " >
-	                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
+	                    <md-select ng-required="true" ng-model="selectedDataCondition[0].parFatherId">
+	                        <md-option value="{{option.id}}" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>
 	                    </md-select>
+
 	                </md-input-container>
 	
 	                <p>  {{translate.load("sbi.documentdetails.datadependency.operator")}}</p>
