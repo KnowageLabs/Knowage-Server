@@ -18,12 +18,11 @@
 (function () {
 angular
         .module('DriversModule')
-        .controller('DocumentDetailsDriversController',['DocumentService', '$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config',
-        										function(DocumentService, $scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config){
+        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config',
+        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config){
 
         	 var self = this;
         	 var driversService = DriversService;
-        	 var documentService = DocumentService;
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;
              var crudService = resourceService;
@@ -389,7 +388,7 @@ angular
 
              self.deleteDataCondition = function(transformKey) {
             	angular.copy(self.transformedObj[transformKey], driversService.dataDependenciesForDeleting);
-            	driversService.deleteDataDependencies(documentService.document.id, documentService.requiredPath);
+            	driversService.deleteDataDependencies(id, requiredPath);
 
             	driversService.removeFromTransformedObj(transformKey);
              }
@@ -609,11 +608,11 @@ angular
                 	 if(!transformKey && driversService.changedDataDependencies[0]) {
                 		 transformKey = driversService.changedDataDependencies[0].parFatherId+driversService.changedDataDependencies[0].filterOperation;
                 	 }
-                	 driversService.persistDataDependency(documentService.document.id, documentService.requiredPath);
+                	 driversService.persistDataDependency(id, requiredPath);
 
                 	 driversService.transformingCorrelations($scope.selectedDataCondition, transformKey, false);
                 	 if(driversService.dataDependenciesForDeleting.length > 0) {
-                		 driversService.deleteDataDependencies(documentService.document.id, documentService.requiredPath);
+                		 driversService.deleteDataDependencies(id, requiredPath);
                 	 }
                  }
 

@@ -384,10 +384,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					DriversService.driverRelatedObject = $scope.selectedBusinessModel;
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+//					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+//					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
 
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
@@ -428,10 +428,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+//					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+//					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
 
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 
