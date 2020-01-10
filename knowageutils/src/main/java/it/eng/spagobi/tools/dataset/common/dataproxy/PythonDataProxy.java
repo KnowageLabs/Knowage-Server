@@ -18,6 +18,8 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.json.JSONObject;
 
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.Helper;
@@ -90,7 +93,11 @@ public class PythonDataProxy extends AbstractDataProxy {
 	private String buildBodyAsJson(String pythonScript, String dataframeName, String parameters) {
 		JSONObject json = new JSONObject();
 		try {
-			json.put("script", pythonScript);
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.MINUTE, 5);
+			Date expiresAt = calendar.getTime();
+			String jwtToken = JWTSsoService.pythonDataset2jwtToken(pythonScript, expiresAt);
+			json.put("script", jwtToken);
 			json.put("df_name", dataframeName);
 			if (parameters != null) {
 				ArrayList<JSONObject> parametersList = new ArrayList<JSONObject>();
@@ -107,6 +114,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Cannot build request body as Json", t);
 		}
+
 		return json.toString();
 	}
 

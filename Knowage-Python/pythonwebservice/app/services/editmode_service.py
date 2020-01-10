@@ -37,7 +37,7 @@ def python_html():
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=output_variable, user_id=user_id,
                                           knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
     # check authentication
-    if not security.userIsAuthenticated(python_widget):
+    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     # resolve analytical drivers
     for d in drivers:
@@ -73,13 +73,8 @@ def python_img():
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=img_file, user_id=user_id,
                                           knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
-    # test
-    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
-        print("Unauthorized")
-    else:
-        print("Authorized")
     # check authentication
-    if not security.userIsAuthenticated(python_widget):
+    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     # resolve analytical drivers
     for d in drivers:
@@ -119,7 +114,7 @@ def python_bokeh():
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, user_id=user_id, knowage_address=knowage_address,
                                           dataset_name=dataset_name, datastore_request=datastore_request, widget_id=widget_id)
     # check authentication
-    if not security.userIsAuthenticated(python_widget):
+    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     #destroy old bokeh server
     if utils.serverExists(python_widget.widget_id):

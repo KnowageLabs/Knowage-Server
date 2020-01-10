@@ -25,15 +25,15 @@ def python_dataset_edit():
     # retrieve input parameters
     try:
         data = request.get_json()
-        script = data['script']
+        token = data['script']
+        isAuthenticated, script = security.jwtToken2pythonDataset(token)
         df_name = data['df_name']
         knowage_parameters = data['parameters']
     except Exception as e:
         return str(e), 400
 
-    # check authentication
-    if not security.authenticateDatasetRequest():
-        return "Error: authentication failed", 401
+    if not isAuthenticated:
+        return "Unauthorized", 401
 
     #build parameters dictionary
     parameters = buildParameters(knowage_parameters)

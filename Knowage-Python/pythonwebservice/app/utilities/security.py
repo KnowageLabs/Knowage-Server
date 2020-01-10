@@ -17,6 +17,8 @@
 import base64
 import requests
 import json
+import jwt
+from datetime import datetime
 
 def buildAuthToken(user_id):
     # auth_token = "Direct " + base64(user_id)
@@ -35,15 +37,6 @@ def userIsAuthorizedForFunctionality(widget, func):
         return True
     else:
         return False
-
-def userIsAuthenticated(widget):
-    address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/datasets/basicinfo/all"
-    auth_token = buildAuthToken(widget.user_id)
-    headers = {'Authorization': auth_token}
-    r = requests.get(address, headers=headers)
-    if r.status_code == 200:
-        return True
-    return False
 
 def loadScriptFromDB(python_widget):
     template = json.loads(getDocumentTemplate(python_widget))
@@ -67,5 +60,18 @@ def getDataSet(knowage_address, user_id, document_id):
     r = requests.post(address, headers=headers)
     return base64.b64decode(r.text).decode("utf-8")
 
-def authenticateDatasetRequest():
-    return True
+def jwtToken2pythonDataset(token):
+    try:
+        decodedToken = jwt.decode(token, getHMACKey(), algorithms='HS256')
+    except Exception as e:
+        return False, None
+    # check expiration date
+    expirationTime = decodedToken.get("exp")
+    script = decodedToken.get("script")
+    ts = datetime.now().timestamp()
+    return True, script
+
+def getHMACKey():
+    f = open("app/utilities/HMACkey.txt", "r")
+    key = f.read()
+    return key
