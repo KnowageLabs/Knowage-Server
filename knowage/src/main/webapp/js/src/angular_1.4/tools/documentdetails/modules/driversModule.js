@@ -249,7 +249,7 @@
 		      			        				if(response.data.errors){
 		      			               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 		      			               			}else{
-		      			               			driversResource.transformingCorrelations([response.data], response.data.parFatherId+response.data.filterOperation);
+		      			               			driversResource.transformingCorrelations([response.data], response.data.parFatherId+response.data.filterOperation,true);
 		      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
 		      			        				for(var i = 0; i < driversResource.dataDependencyObjects[newDataDependency.parId].length; i++){
 		      			        					if (driversResource.dataDependencyObjects[newDataDependency.parId][i].prog == newDataDependency.prog)
