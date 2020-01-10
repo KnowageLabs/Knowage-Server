@@ -68,7 +68,9 @@ def jwtToken2pythonDataset(token):
     # check expiration date
     expirationTime = decodedToken.get("exp")
     script = decodedToken.get("script")
-    ts = datetime.now().timestamp()
+    now = datetime.now().timestamp()
+    if now > expirationTime:
+        return False, None
     return True, script
 
 def getHMACKey():
