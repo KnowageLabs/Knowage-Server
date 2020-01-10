@@ -19,6 +19,7 @@ package it.eng.knowage.engine.cockpit.api.engine;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DISCOVERY_WIDGET_USE;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.EDIT_PYTHON_SCRIPTS;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.MAP_WIDGET_USE;
 
 import java.util.ArrayList;
@@ -158,8 +159,8 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
-		// python widget is enabled only if python address is specified
-		if (SingletonConfig.getInstance().getConfigValue("PYTHON_ADDRESS") != null) {
+		// python widget is enabled only if python address is specified and user has python permission
+		if (SingletonConfig.getInstance().getConfigValue("PYTHON_ADDRESS") != null && functionalities.contains(EDIT_PYTHON_SCRIPTS)) {
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
 					.withCssClass("fa fa-file").withType("python").withTag("python").build());
 		}
@@ -172,7 +173,6 @@ public class EngineResource extends AbstractCockpitEngineResource {
 
 		return ret;
 	}
-
 }
 
 /**
