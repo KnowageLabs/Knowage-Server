@@ -44,8 +44,8 @@ angular
              self.drivers = [];
              self.transformedObj = {};
 
-             driversService.transformingCorrelations = function(correlations, transformKey) {
-            	 if(self.transformedObj.hasOwnProperty(transformKey)) {
+             driversService.transformingCorrelations = function(correlations, transformKey, fromPost) {
+            	 if(self.transformedObj.hasOwnProperty(transformKey) && !fromPost) {
             		 delete self.transformedObj[transformKey];
             	 }
             	 for (var i = 0; i < correlations.length; i++){
@@ -54,9 +54,13 @@ angular
         			if(self.transformedObj[fatherIdfilterOperation]==undefined){
         				self.transformedObj[fatherIdfilterOperation] = [];
         			}
-        			if(correlations[i].deleteItem==undefined)
-        			self.transformedObj[fatherIdfilterOperation].push (correlations[i])
+        			if(correlations[i].id && correlations[i].deleteItem==undefined){
+            			self.transformedObj[fatherIdfilterOperation].push (correlations[i]);
+        			}
             	 }
+            	 if(self.transformedObj[fatherIdfilterOperation]!=undefined && self.transformedObj[fatherIdfilterOperation].length==0)
+            		 delete self.transformedObj[fatherIdfilterOperation]
+
             	 return self.transformedObj;
              }
 
@@ -607,7 +611,7 @@ angular
                 	 }
                 	 driversService.persistDataDependency(documentService.document.id, documentService.requiredPath);
 
-                	 driversService.transformingCorrelations($scope.selectedDataCondition, transformKey);
+                	 driversService.transformingCorrelations($scope.selectedDataCondition, transformKey, false);
                 	 if(driversService.dataDependenciesForDeleting.length > 0) {
                 		 driversService.deleteDataDependencies(documentService.document.id, documentService.requiredPath);
                 	 }
