@@ -250,13 +250,18 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			var index = findInArray($scope.categories,'column',item.alias);
 
 			if (chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
-				if($scope.categories.length>=1){
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+				if(chartType.toUpperCase() == "SCATTER" && item.colType=="String"){
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.structure.scatter.only.strings"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
-					if(index<0){
-						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",fakeCategory:false});
+					if($scope.categories.length>=1){
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+					} else {
+						if(index<0){
+							  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",fakeCategory:false});
+						}
 					}
 				}
+
 			} else if (chartType.toUpperCase() == "PARALLEL") {
 				if($scope.categories.length>=2){
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
