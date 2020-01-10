@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
 /**
@@ -80,16 +79,9 @@ public class OAuth2Filter implements Filter {
 				// Using the code we get the access token and put it in session
 				OAuth2Client client = new OAuth2Client();
 				String accessToken = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
-				/*
-				 * author radmila.selakovic@mht.net setting access token in request header
-				 */
-				String url = oauth2Config.getProperty("REST_BASE_URL") + oauth2Config.getProperty("ROLES_PATH") + "?application_id="
-						+ oauth2Config.getProperty("APPLICATION_ID");
-				GetMethod httpget = new GetMethod(url);
-				httpget.addRequestHeader("X-Auth-Token", accessToken);
 				session.setAttribute("access_token", accessToken);
 
-				((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath());
+				chain.doFilter(request, response);
 			}
 		} else {
 			// pass the request along the filter chain
