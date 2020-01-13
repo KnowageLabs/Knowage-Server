@@ -47,17 +47,10 @@ def loadScriptFromDB(python_widget):
     return ""
 
 def getDocumentTemplate(python_widget):
-    address = "http://" + python_widget.knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + python_widget.document_id
+    address = "http://" + python_widget.knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + str(python_widget.document_id)
     auth_token = buildAuthToken(python_widget.user_id)
     headers = {'Authorization': auth_token, "Content-Type": "application/json"}
     r = requests.post(address, headers=headers, data=json.dumps(python_widget.analytical_drivers))
-    return base64.b64decode(r.text).decode("utf-8")
-
-def getDataSet(knowage_address, user_id, document_id):
-    address = "http://" + knowage_address + "/knowage/restful-services/2.0/backendservices/dataset/" + document_id
-    auth_token = buildAuthToken(user_id)
-    headers = {'Authorization': auth_token, "Content-Type": "application/json"}
-    r = requests.post(address, headers=headers)
     return base64.b64decode(r.text).decode("utf-8")
 
 def jwtToken2pythonDataset(token):

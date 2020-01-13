@@ -77,7 +77,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_generalServices,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetSelection,
-			cockpitModule_template) {
+			cockpitModule_template,
+			sbiModule_user) {
 
 		$scope.getTemplateUrl = function (template) {
 	  		return cockpitModule_generalServices.getTemplateUrl('pythonWidget', template);
@@ -91,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 				}, 500);
 			}
-			$scope.documentId = $location.search().document;
+			$scope.documentId = cockpitModule_properties.DOCUMENT_ID;
 			// if address of python is not set yet then set it and call sendData()
 			if ($scope.pythonAddress == undefined) {
 				sbiModule_restServices.restToRootProject();
@@ -156,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//get user_id from parameters and use it for authentication in python
 			url_string = window.location.href
 			url = new URL(url_string);
-			$scope.encodedUserId = url.searchParams.get("user_id");
+			$scope.encodedUserId = sbiModule_user.userUniqueIdentifier;
 	        $scope.drivers = cockpitModule_analyticalDrivers;
 			//if there is a dataset selected save its label
 			if ($scope.ngModel.dataset != undefined && !angular.equals({}, $scope.ngModel.dataset)) {

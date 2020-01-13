@@ -97,6 +97,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		//debugger;
 	});
 
+	$scope.$watch("selectedDataSet.dataframeName",function(newValue,oldValue){
+		//debugger;
+	});
+
 	var getAllTags = function(){
 		sbiModule_restServices.promiseGet("2.0/tags","")
 		.then(function(response) {

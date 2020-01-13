@@ -534,7 +534,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		if($scope.ngModelShared.limitRows == undefined){
+		if($scope.ngModelShared && !$scope.ngModelShared.limitRows){
 			$scope.ngModelShared.limitRows = {enable: false, rows: 10};
 		}
 
