@@ -87,7 +87,7 @@
 				childrenArray = childrenArray || [];
 				for(var i = 0; i < childrenArray.length; i++) {
 					var childItem = childrenArray[i];
-					if(childItem.checked && childItem.checked == true) {
+					if((childItem.checked && childItem.checked == true) && (!childItem.$parent || !childItem.$parent.checked)) {
 						parameterValue.push(childItem.value);
 						parameterDescription[childItem.value]=childItem.description;
 					}
