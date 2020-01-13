@@ -132,4 +132,4 @@ from knowage-ce-parent folder.
 
 ## License
 
-[AGPL](LICENSE) © 2018 Engineering Ingegneria Informatica S.p.A.
+[AGPL](LICENSE) © 2020 Engineering Ingegneria Informatica S.p.A.
