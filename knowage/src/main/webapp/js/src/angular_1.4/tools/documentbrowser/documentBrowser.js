@@ -266,7 +266,7 @@ function documentBrowserFunction($window,
 
 
 	var initLoadFolders= $interval(function() {
-        if ($scope.breadCrumbControl.insertBread==undefined) {
+        if ($scope.breadCrumbControl && $scope.breadCrumbControl.insertBread==undefined) {
           } else {
         	  if (angular.isDefined(initLoadFolders)) {
         		  $interval.cancel(initLoadFolders);
