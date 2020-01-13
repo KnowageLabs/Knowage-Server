@@ -233,11 +233,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <title>Knowage</title>
 <script>
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('../knowage-sw.js?version=' + "<%=it.eng.knowage.wapp.Version.getCompleteVersion()%>")
-		.then(reg => console.log('SW registered!', reg))
-		.catch(err => console.log('Error registering SW!', err));
-	}
+	//SERVICE WORKER REGISTRATION
+	//if ('serviceWorker' in navigator) {
+	//	navigator.serviceWorker.register('../knowage-sw.js?version=' + "<%=it.eng.knowage.wapp.Version.getCompleteVersion()%>")
+	//	.then(reg => console.log('SW registered!', reg))
+	//	.catch(err => console.log('Error registering SW!', err));
+	//}*/
 </script>
 <meta name="viewport" content="initial-scale=1" />
 <% if (forceIE8Compatibility == true){ %>

@@ -259,19 +259,36 @@
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			console.log('dataPost')
 			console.log(dataPost)
+			var postObject = {
+				params: {}
+			};
 			sbiModule_restServices.promisePost("1.0/documentexecution", 'url', dataPost)
 			.then(
 					function(response, status, headers, config) {
 						var data=response.data;
 						var documentUrl = data.url+'&timereloadurl=' + new Date().getTime();
 
-//						if (!!(execProperties.executionInstance.IS_FOR_EXPORT)) {
-//						documentUrl += "&IS_FOR_EXPORT=true";
-
-//						if(execProperties.executionInstance.COCKPIT_SELECTIONS.trim() != '') {
-//						documentUrl += "&COCKPIT_SELECTIONS=" + execProperties.executionInstance.COCKPIT_SELECTIONS;
-//						}
-//						}
+						postObject.url = documentUrl.split('?')[0];
+						var paramsFromUrl = documentUrl.split('?')[1].split('&');
+						for(var i in paramsFromUrl){
+							postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
+						}
+						var postForm = document.createElement("form");
+						postForm.id="postForm_"+postObject.params.document;
+						postForm.action = postObject.url;
+						postForm.method = "post";
+					    postForm.target = "documentFrame";
+					    for (var k in postObject.params) {
+					        var element = document.createElement("input");
+					        element.type = "hidden";
+					        element.id= 'postForm_' + k;
+					        element.name = k;
+					        element.value = decodeURIComponent(postObject.params[k]);
+					        element.value = element.value.replace(/\+/g,' ');
+					        postForm.appendChild(element);
+					    }
+					    document.body.appendChild(postForm);
+						postForm.submit();
 
 						console.log("1.0/documentexecution/url -> " + documentUrl);
 
@@ -736,18 +753,18 @@
 					}
 					//serviceScope.fillParametersPanel(fillObj);
 				}
-				
+
 				if (filterStatus[i].driverMaxValue) {
 					fillObj[filterStatus[i].urlName+'_max_value'] = filterStatus[i].driverMaxValue
 				}
 			}
-			
+
 			if(hasDefVal){
 				serviceScope.fillParametersPanel(fillObj);
 			}
-			
+
 			serviceScope.setMaxValueForParameters(fillObj);
-			
+
 		};
 
 		serviceScope.createNewViewpoint = function() {
@@ -799,7 +816,7 @@
 				+ '/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
-		
+
 		/*
 		 * Set max value for parameters.
 		 */

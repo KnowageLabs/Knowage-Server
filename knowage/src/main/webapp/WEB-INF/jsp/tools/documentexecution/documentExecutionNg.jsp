@@ -148,7 +148,6 @@ if(executionRoleNames.size() > 0) {
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversDependencyService.js")%>"></script>
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
         <!-- Styles -->
-        <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>  
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
         
@@ -451,7 +450,7 @@ if(executionRoleNames.size() > 0) {
                         <md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
                         
                     </div>
-                    <iframe class="noBorder" id="documentFrame" name="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
+                    <iframe class="noBorder" id="documentFrame" name="documentFrame"  iframe-onload="iframeOnload()"
                         iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded">
                     </iframe>
                     <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
@@ -564,12 +563,22 @@ if(executionRoleNames.size() > 0) {
                 cockpitEditingService.documentMode = 'VIEW';
                 
                 cockpitEditingService.startCockpitEditing = function() {
-
+                
                 	cockpitEditingService.documentMode = 'EDIT';
-                	var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
+                	//var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
                     
-                    if(newUrl != undefined && newUrl.length > 0){
-                    	execProperties.documentUrl = newUrl;
+                    //if(newUrl != undefined && newUrl.length > 0){
+                    if(!document.getElementById('postForm_documentMode')){
+                    	var element = document.createElement("input");
+				        element.type = "hidden";
+				        element.id= 'postForm_documentMode';
+				        element.name = 'documentMode';
+				        element.value = 'VIEW';
+				        document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).appendChild(element);	
+                    }
+                    
+                    if(document.getElementById('postForm_documentMode').value == 'VIEW'){
+                    	document.getElementById('postForm_documentMode').value = cockpitEditingService.documentMode;
                 	}else{
                 		cockpitEditingService.documentMode = 'VIEW';
                 		var confirm = $mdDialog.alert()
@@ -579,28 +588,31 @@ if(executionRoleNames.size() > 0) {
 								.ok(sbiModule_translate.load("sbi.general.continue"));
 						$mdDialog.show(confirm);
                 	}
+                    document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).submit();
                 };
                 
                 cockpitEditingService.stopCockpitEditing = function() {
-                	var action = function() {
+                	/*var action = function() {
 						cockpitEditingService.documentMode = 'VIEW';
 						var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
 						execProperties.documentUrl = newUrl;
-					};
+					};*/
+					cockpitEditingService.documentMode = 'VIEW';
 					
-					if(cockpitEditingService.documentMode == 'EDIT'){
+					if(document.getElementById('postForm_documentMode').value == 'EDIT'){
 						var confirm = $mdDialog.confirm()
 								.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
 								.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.quit'))
 								.ariaLabel('Leave edit mode')
 								.ok(sbiModule_translate.load("sbi.general.continue"))
 								.cancel(sbiModule_translate.load("sbi.general.cancel"));
-						$mdDialog.show(confirm).then(function(){action.call()});
-					}else{
-						action.call();
-					}
+						$mdDialog.show(confirm).then(function(){
+							document.getElementById('postForm_documentMode').value = cockpitEditingService.documentMode;
+							document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).submit();
+						});
+					
+                	};
                 };
-                
                 cockpitEditingService.changeDocumentExecutionUrlParameter = function(parameterName, parameterValue) {
                     var docurl = execProperties.documentUrl;
                     if(docurl.length == 0){
