@@ -363,25 +363,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 
-	    $scope.getLayers = function () {
-		    for (l in $scope.ngModel.content.layers){
+		$scope.getLayers = function () {
+			for (l in $scope.ngModel.content.layers){
 				var currLayer = $scope.ngModel.content.layers[l];
 				var layerDef =  currLayer;
-		    	var layerID = $scope.ngModel.id + "|" + layerDef.name;
-		    	$scope.configs[layerID] = layerDef;
-	    		if (layerDef.type === 'DATASET'){
-	    			$scope.getFeaturesFromDataset(layerDef);
-	    		}else if (layerDef.type === 'CATALOG'){
-	    			//TODO implementare recupero layer da catalogo
-	    		}else{
-	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
-	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
-	    			$timeout(function() {
+				var layerID = $scope.ngModel.id + "|" + layerDef.alias;
+				$scope.configs[layerID] = layerDef;
+				if (layerDef.type === 'DATASET'){
+					$scope.getFeaturesFromDataset(layerDef);
+				}else if (layerDef.type === 'CATALOG'){
+					//TODO implementare recupero layer da catalogo
+				}else{
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
+					console.log("Layer with type ["+layerDef.type+"] not managed! ");
+					$timeout(function() {
 						$scope.hideWidgetSpinner();
 					}, 3000);
-	    		}
-	    	}
-	    }
+				}
+			}
+		}
 
 		$scope.initializeTemplate = function (){
 			return $q(function(resolve, reject) {
@@ -443,12 +443,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			layer = {};
     			layer.name = layerDef.name;
     			layer.dsId = layerDef.dsId;
-    			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
+    			$scope.addLayer(layerDef.alias, layer);	//add layer to internal object
 				return;
 			}
 
-			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data); //add legend to internal structure
+			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.alias, layerDef);
+			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.alias, data); //add legend to internal structure
 			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
 			var layer;
 			if (isCluster) {
@@ -515,9 +515,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				layerDef.isStatic = false;
 			}
 
-			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
+			$scope.addLayer(layerDef.alias, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
-			$scope.values[layerDef.name] = data; //add values to internal object
+			$scope.values[layerDef.alias] = data; //add values to internal object
 			cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
 
 	    }
@@ -555,12 +555,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 		    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 		    		    	if (isCluster){
-			    				var values = $scope.values[layerDef.name];
-				        		$scope.createLayerWithData(layerDef.name, values, true, false); //return to cluster view
+			    				var values = $scope.values[layerDef.alias];
+				        		$scope.createLayerWithData(layerDef.alias, values, true, false); //return to cluster view
 			    			}
 			    			if (isHeatmap){
-			    				var values = $scope.values[layerDef.name];
-				        		$scope.createLayerWithData(layerDef.name, values, false, true); //return to cluster view
+			    				var values = $scope.values[layerDef.alias];
+				        		$scope.createLayerWithData(layerDef.alias, values, false, true); //return to cluster view
 			    			}
 	            		}
 	            	}
@@ -625,8 +625,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
     		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 	    			if (isCluster || isHeatmap){
-	    				var values = $scope.values[layerDef.name];
-		        		$scope.createLayerWithData(layerDef.name, values, false, false);
+	    				var values = $scope.values[layerDef.alias];
+		        		$scope.createLayerWithData(layerDef.alias, values, false, false);
 	    			}
     			}
     		});
@@ -684,7 +684,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 	    		function(allDatasetRecords){
 
-	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
+	    			$scope.createLayerWithData(layerDef.alias, allDatasetRecords, isCluster, isHeatmap);
 	    			$scope.hideWidgetSpinner();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
@@ -841,7 +841,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	var layerID = $scope.ngModel.id + "|" + config.name;
+	    	var layerID = $scope.ngModel.id + "|" + config.alias;
 	    	var elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
 	    	if (elem){
 		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
