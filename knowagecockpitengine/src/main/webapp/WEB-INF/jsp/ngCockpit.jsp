@@ -32,13 +32,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 	return {
-		EDIT_MODE:angular.equals("<%= documentMode %>","EDIT"),
+		EDIT_MODE:angular.equals("<%= StringEscapeUtils.escapeJavaScript(documentMode) %>","EDIT"),
 		DOCUMENT_ID: <%=  docId%>,
-		DOCUMENT_NAME: "<%=  docName%>",
-		DOCUMENT_LABEL:"<%=  docLabel%>",
-		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
+		DOCUMENT_NAME: "<%=  StringEscapeUtils.escapeJavaScript(docName)%>",
+		DOCUMENT_LABEL:"<%=  StringEscapeUtils.escapeJavaScript(docLabel)%>",
+		DOCUMENT_DESCRIPTION:"<%=  StringEscapeUtils.escapeJavaScript(docDescription)%>",
 		WIDGET_EXPANDED:{},
-		SELECTED_ROLE:"<%= 	executionRole %>",
+		SELECTED_ROLE:"<%= 	StringEscapeUtils.escapeJavaScript(executionRole) %>",
 		OUTPUT_PARAMETERS: <%=outputParameters%>,
 		DS_IN_CACHE:[],
 		HAVE_SELECTIONS_OR_FILTERS:false,
