@@ -121,7 +121,7 @@ public class SpagoBIScriptManager {
 			}, accessControlContext);
 
 		} catch (Throwable t) {
-			logger.error("Error while executing Javascript:\n" + script);
+			logger.error("Error while executing Javascript:\n" + script, t);
 			throw new SpagoBIRuntimeException("An unexpected error occured while executing script", t);
 		} finally {
 			logger.debug("OUT");
