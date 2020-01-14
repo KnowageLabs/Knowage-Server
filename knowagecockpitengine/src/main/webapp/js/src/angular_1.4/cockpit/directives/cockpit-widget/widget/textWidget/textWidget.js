@@ -145,15 +145,13 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		var config = {
 				attachTo:  angular.element(document.body),
 				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
-			    	  $scope.localModel = {};
 
 			    	  $scope.getcssUrl = function(){
 			  	  		return cockpitModule_generalServices.getTemplateUrl('textWidget','editor','.css');
 			  	  	}
 
-
-
-			    	  angular.copy(model,$scope.localModel);
+			    	  $scope.localModel = angular.copy(model);
+			    	  if(!$scope.localModel.style) $scope.localModel.style = {};
 			    	  $scope.translate=sbiModule_translate;
 
 			    	  // trick to have drawn the text again when going into edit (could be altyered dataset, filters)
