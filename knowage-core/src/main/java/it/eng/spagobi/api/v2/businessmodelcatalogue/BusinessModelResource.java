@@ -87,7 +87,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public List<MetaModel> getBusinessModels(@QueryParam("fileExtension") String fileExtension) {
 		logger.debug("IN");
 
-		List<MetaModel> businessModelList = null;
+		List<MetaModel> businessModelList = new ArrayList<MetaModel>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
