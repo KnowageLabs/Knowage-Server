@@ -37,6 +37,8 @@ import org.eclipse.birt.report.engine.api.EngineConstants;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 import org.eclipse.birt.report.utility.ParameterAccessor;
+import org.mozilla.javascript.PolicySecurityController;
+import org.mozilla.javascript.SecurityController;
 
 import it.eng.spagobi.engines.birt.utilities.Utils;
 
@@ -57,6 +59,11 @@ public class BirtEngine {
 	 */
 	public static synchronized void initBirtConfig() {
 		loadEngineProps();
+		/**
+		 * Needed by Mozilla Javascript lib when Tomcat is started
+		 * with a security manager.
+		 */
+		SecurityController.initGlobal(new PolicySecurityController());
 	}
 
 	/**
