@@ -57,7 +57,7 @@
 
 							}
 							else{
-								executionService.jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+								executionService.jsonDatumValue = (parameter.parameterValue == undefined)? '' : parameter.parameterValue;
 								executionService.jsonDatumDesc = executionService.jsonDatumValue;
 							}
 						}
