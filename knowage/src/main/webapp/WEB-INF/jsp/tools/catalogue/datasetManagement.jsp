@@ -624,20 +624,20 @@ div.lower i  {
 										relative-header="true">
 									</angular-table>
 								</md-card>
-							</div>							
-						    
-						    <!-- NEXT & BACK BUTTONS -->
-				       	 	<md-card  layout="column">         		
-		         		
-				         		<div layout="row" class="threeCombosLayout">
-				         			<span flex></span>
-				         			<md-button ng-click="changeStep('back')" ng-if="step!=1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.back")}}</md-button>
-				         			<md-button ng-click="changeStep('next')" ng-disabled="!selectedDataSet.hasOwnProperty('fileName')" ng-if="step==1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>
-				         			<md-button ng-click="changeStep('validate')" ng-if="step==2" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.file.validate")}}</md-button>
-				         			<md-button ng-click="goToFirstStep()" ng-if="validated" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.finish")}}</md-button>		
-				         		</div>
-				         		
-				         	</md-card>				       	 	
+							</div>
+
+							<!-- NEXT & BACK BUTTONS -->
+							<md-card layout="column" ng-show="dirtyForm">
+
+								<div layout="row" class="threeCombosLayout">
+									<span flex></span>
+									<md-button ng-click="changeStep('back')" ng-if="step!=1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.back")}}</md-button>
+									<md-button ng-click="changeStep('next')" ng-disabled="!selectedDataSet.hasOwnProperty('fileName')" ng-if="step==1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>
+									<md-button ng-click="changeStep('validate')" ng-if="step==2" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.file.validate")}}</md-button>
+									<md-button ng-click="goToFirstStep();setFormNotDirty();" ng-if="validated" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.finish")}}</md-button>		
+								</div>
+								
+							</md-card>
 							
 						</md-content>
 							
