@@ -273,21 +273,24 @@
 						for(var i in paramsFromUrl){
 							postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
 						}
-						var postForm = document.createElement("form");
-						postForm.id="postForm_"+postObject.params.document;
-						postForm.action = postObject.url;
-						postForm.method = "post";
-					    postForm.target = "documentFrame";
-					    for (var k in postObject.params) {
-					        var element = document.createElement("input");
-					        element.type = "hidden";
-					        element.id= 'postForm_' + k;
-					        element.name = k;
-					        element.value = decodeURIComponent(postObject.params[k]);
-					        element.value = element.value.replace(/\+/g,' ');
-					        postForm.appendChild(element);
-					    }
-					    document.body.appendChild(postForm);
+						var postForm = document.getElementById("postForm_"+postObject.params.document);
+						if(!postForm){
+							postForm = document.createElement("form");
+							postForm.id="postForm_"+postObject.params.document;
+							postForm.action = postObject.url;
+							postForm.method = "post";
+						    postForm.target = "documentFrame";
+						    for (var k in postObject.params) {
+						        var element = document.createElement("input");
+						        element.type = "hidden";
+						        element.id= 'postForm_' + k;
+						        element.name = k;
+						        element.value = decodeURIComponent(postObject.params[k]);
+						        element.value = element.value.replace(/\+/g,' ');
+						        postForm.appendChild(element);
+						    }
+						    document.body.appendChild(postForm);
+							}
 						postForm.submit();
 
 						console.log("1.0/documentexecution/url -> " + documentUrl);

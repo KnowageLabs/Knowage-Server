@@ -579,8 +579,8 @@ if(executionRoleNames.size() > 0) {
                     
                     if(document.getElementById('postForm_documentMode').value == 'VIEW'){
                     	document.getElementById('postForm_documentMode').value = cockpitEditingService.documentMode;
+                    	document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).submit();
                 	}else{
-                		cockpitEditingService.documentMode = 'VIEW';
                 		var confirm = $mdDialog.alert()
 								.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
 								.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.documentnotexecuted'))
@@ -588,7 +588,6 @@ if(executionRoleNames.size() > 0) {
 								.ok(sbiModule_translate.load("sbi.general.continue"));
 						$mdDialog.show(confirm);
                 	}
-                    document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).submit();
                 };
                 
                 cockpitEditingService.stopCockpitEditing = function() {
