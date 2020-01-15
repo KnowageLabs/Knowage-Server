@@ -6,7 +6,7 @@
 	</md-toolbar>
 	<md-dialog-content>
 		<md-list class="md-dense">
-			<md-list-item class="md-2-line" ng-repeat="language in languages" ng-click="menuCall(language.href,language.linkType)">
+			<md-list-item class="md-2-line" ng-repeat="language in languages" ng-click="menuCall($event,language.href,language.linkType)">
 				<img ng-src="/knowage/themes/commons/img/flagImages/{{language.iconCls}}.png" class="md-avatar" alt="{{license.product}}" />
 				<div class="md-list-item-text">
 	          		<h3>{{language.text}}</h3>
