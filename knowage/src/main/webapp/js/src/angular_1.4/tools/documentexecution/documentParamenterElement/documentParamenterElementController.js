@@ -133,11 +133,9 @@
 						console.log('parametervalues response OK -> ', response);
 						angular.copy(response.filterValues, innerNode.children);
 						//check parameters selected field
-						if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
-							for(var z=0;z<innerNode.children.length;z++){
-								if($scope.parameter.parameterValue.indexOf(innerNode.children[z].value)!==-1 || innerNode.checked==true){
-									innerNode.children[z].checked= true;
-								}
+						for(var z=0;z<innerNode.children.length;z++){
+							if(innerNode.checked==true || ($scope.parameter.parameterValue!=undefined && $scope.parameter.parameterValue.indexOf(innerNode.children[z].value)!==-1 )){
+								innerNode.children[z].checked= true;
 							}
 						}
 
