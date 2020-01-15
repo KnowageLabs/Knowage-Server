@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.pythonAddress = response.data;
 					$scope.sendData();
 				}, function(error){
-					//todo
+					$scope.pythonOutput = 'PYTHON_ADDRESS is not configured';
 				});
 			}
 			else { //python address already set so just call sendData()
