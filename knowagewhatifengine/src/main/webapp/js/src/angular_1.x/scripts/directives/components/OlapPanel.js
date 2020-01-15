@@ -32,7 +32,7 @@ angular
 				});
 
 var downlf;
-function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce,
+function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce, $location,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies,$localStorage, sbiModule_docInfo, sbiModule_config,sbiModule_download) {
 
@@ -41,14 +41,17 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 	}
 
 	$scope.exportOlap = function(type) {
-		var encoded = encodeURI('1.0/model/export/excel?SBI_EXECUTION_ID='
+		var encoded = encodeURI('knowagewhatifengine/restful-services/1.0/model/export/excel?SBI_EXECUTION_ID='
 				+ JSsbiExecutionID);
 		if (type == "PDF") {
-			encoded = encodeURI('1.0/model/export/pdf?SBI_EXECUTION_ID='
+			encoded = encodeURI('knowagewhatifengine/restful-services/1.0/model/export/pdf?SBI_EXECUTION_ID='
 					+ JSsbiExecutionID);
 		}
 
-		window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
+		var protocol = $location.protocol();
+		var host = $location.host();
+		var port = $location.port();
+		window.open(protocol + "://" + host + ":" + port + "/" + encoded);
 
 	}
 
