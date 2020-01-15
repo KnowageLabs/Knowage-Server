@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.wapp.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.metadata.SbiMenu;
-import it.eng.spagobi.wapp.metadata.SbiMenuRole;
-import it.eng.spagobi.wapp.metadata.SbiMenuRoleId;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,6 +32,18 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
+import it.eng.spagobi.wapp.metadata.SbiMenuRole;
+import it.eng.spagobi.wapp.metadata.SbiMenuRoleId;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -54,13 +54,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Load menu by id.
 	 *
-	 * @param menuID
-	 *            the menu id
+	 * @param menuID the menu id
 	 *
 	 * @return the menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByID(integer)
 	 */
@@ -107,13 +105,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Load sbiMenu by id.
 	 *
-	 * @param menuID
-	 *            the menu id
+	 * @param menuID the menu id
 	 *
 	 * @return the sbiMenu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByID(integer)
 	 */
@@ -150,15 +146,12 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Load menu by id.
 	 *
-	 * @param menuID
-	 *            the menu id
-	 * @param roleId
-	 *            the user's role id
+	 * @param menuID the menu id
+	 * @param roleId the user's role id
 	 *
 	 * @return the menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByID(integer)
 	 */
@@ -204,13 +197,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Load menu by name.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 *
 	 * @return the menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByName(string)
 	 */
@@ -246,13 +237,67 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
+	 * @param idsList list of ids of the menu to retrieve
+	 *
+	 * @param roleID  id of the menu role in the idsList
+	 *
+	 * @return List of menu
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByIDInClause(List, Integer)
+	 */
+	@Override
+	public List loadMenuByIDInClause(List idsList, Integer roleID) throws EMFUserError {
+		List toReturn = new ArrayList<Menu>();
+
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criterion domainCdCriterrion = Expression.in("menuId", idsList);
+			Criteria criteria = tmpSession.createCriteria(SbiMenu.class);
+			criteria.add(domainCdCriterrion);
+			List<SbiMenu> hibMenu = criteria.list();
+			if (hibMenu == null)
+				return null;
+
+			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
+			// menuID);
+			Iterator<SbiMenu> it = hibMenu.iterator();
+			while (it.hasNext()) {
+				SbiMenu tmpMenu = it.next();
+				logger.debug("Add Menu:" + tmpMenu.getName());
+				toReturn.add(toMenu(tmpMenu, roleID));
+			}
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
+		}
+		return toReturn;
+	}
+
+	/**
 	 * Modify menu.
 	 *
-	 * @param aMenu
-	 *            the a menu
+	 * @param aMenu the a menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#modifyMenu(it.eng.spagobi.wapp.bo.Menu)
 	 */
@@ -353,11 +398,9 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Insert menu.
 	 *
-	 * @param aMenu
-	 *            the a menu
+	 * @param aMenu the a menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#insertMenu(it.eng.spagobi.wapp.bo.Menu)
 	 */
@@ -538,11 +581,9 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Erase menu.
 	 *
-	 * @param aMenu
-	 *            the a menu
+	 * @param aMenu the a menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#eraseMenu(it.eng.spagobi.wapp.bo.Menu)
 	 */
@@ -649,8 +690,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadAllMenues()
 	 */
@@ -744,13 +784,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Checks for roles associated.
 	 *
-	 * @param menuId
-	 *            the menu id
+	 * @param menuId the menu id
 	 *
 	 * @return true, if checks for roles associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#hasRolesAssociated(java.lang.Integer)
 	 */
@@ -795,15 +833,12 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * Gets the children menu.
 	 *
-	 * @param menuId
-	 *            the menu id
-	 * @param roleId
-	 *            the user's role id
+	 * @param menuId the menu id
+	 * @param roleId the user's role id
 	 *
 	 * @return the children menu
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#getChildrenMenu(java.lang.Integer)
 	 */
@@ -865,11 +900,9 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
-	 * From the Hibernate Menu object at input, gives the corrispondent
-	 * <code>Menu</code> object.
+	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.
 	 *
-	 * @param hibMenu
-	 *            The Hibernate Menu object
+	 * @param hibMenu The Hibernate Menu object
 	 * @return the corrispondent output <code>Menu</code>
 	 */
 	private Menu toMenu(SbiMenu hibMenu, Integer roleId) throws EMFUserError {
@@ -909,11 +942,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 		// set the dephts
 		/*
-		 * if(menu.getParentId()!=null){ Menu
-		 * parent=loadMenuByID(menu.getParentId()); if(parent!=null){ Integer
-		 * depth=parent.getDepth(); menu.setDepth(new
-		 * Integer(depth.intValue()+1)); } } else{ menu.setDepth(new
-		 * Integer(0)); }
+		 * if(menu.getParentId()!=null){ Menu parent=loadMenuByID(menu.getParentId()); if(parent!=null){ Integer depth=parent.getDepth(); menu.setDepth(new
+		 * Integer(depth.intValue()+1)); } } else{ menu.setDepth(new Integer(0)); }
 		 */
 
 		List rolesList = new ArrayList();
@@ -951,8 +981,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
-	 * Return the level of menu element: 1 - first, 2 - second|third, 4 - last,
-	 * 0 other
+	 * Return the level of menu element: 1 - first, 2 - second|third, 4 - last, 0 other
 	 */
 	private Integer getLevel(Integer parentId, Integer objId) {
 		if ((parentId == null || parentId.intValue() == 0) && objId != null)
@@ -969,12 +998,9 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 * Saves all roles for a menu, using session and state information.
 	 *
 	 *
-	 * @param aSession
-	 *            The current session object
-	 * @param hibFunct
-	 *            The functionality hibernate object
-	 * @param aLowFunctionality
-	 *            The Low Functionality object
+	 * @param aSession          The current session object
+	 * @param hibFunct          The functionality hibernate object
+	 * @param aLowFunctionality The Low Functionality object
 	 * @return A collection object containing all roles
 	 * @throws EMFUserError
 	 *
