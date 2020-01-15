@@ -636,7 +636,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 						if (cockpitModule_template.sheets[i1].widgets[i2].id == idWidget) {
 							var filters = cockpitModule_template.sheets[i1].widgets[i2].filters ? cockpitModule_template.sheets[i1].widgets[i2].filters : cockpitModule_template.sheets[i1].widgets[i2].content.filters
-							if (filter == null && filters.length != 0) {
+							if (filters && filters.length != 0) {
 
 								for (var i3 = 0; i3 < filters.length; i3++) {
 
