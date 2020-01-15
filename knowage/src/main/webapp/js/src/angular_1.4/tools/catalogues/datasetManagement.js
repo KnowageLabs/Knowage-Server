@@ -3275,7 +3275,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.toggleDrivers =function(){
 					$scope.showDrivers = !$scope.showDrivers;
 				}
-			}else{
+			} else if ($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == 'File') {
+				$scope.dataset.executed = true;
+				$scope.drivers = [];
+				$scope.showDrivers = false;
+			} else {
 				$scope.dataset = {}
 				$scope.dataset.executed = true;
 				$scope.drivers = [];
@@ -4150,128 +4154,140 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			);
     }
 
-    $scope.changeStep = function(way) {
-    	var oldStep = $scope.step;
-    	var tempStep = angular.copy($scope.step);
-    	if(way=='back' && way!=undefined) {
-    		tempStep = tempStep-1;
-    	} else if(way=='next') {
-    		tempStep = tempStep+1;
-    	}
-    	switch(tempStep) {
-    	case 1:
-    		$scope.step=1;
-    		break;
-    	case 2:
-    		console.log('step 2');
-    		if(way=='validate') {
-    			$scope.toStep3();
-    		} else {
-    			if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload) || (oldStep==1&&$scope.isSelected)){
-        			loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
-            		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
-            		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
-            		$scope.toStep2();
-        		} else {
-        			$scope.step=2;
-        		}
-    		}
-
-    		break;
-    	default:
-    		break;
-    	}
-    }
-
-    $scope.toStep2 = function () {
-    	var params = {};
-		params.showDerivedDataset=false;
-		params.SBI_EXECUTION_ID = -1;
-		params.isTech = false;
-		params.showOnlyOwner=true;
-
-		$scope.dataset = {};
-		$scope.dataset.catTypeId = $scope.selectedDataSet.catTypeId;
-		$scope.dataset.catTypeVn = $scope.selectedDataSet.catTypeVn;
-		if($scope.selectedDataSet.csvEncoding=="" || $scope.selectedDataSet.csvEncoding==undefined) {
-			$scope.selectedDataSet.csvEncoding = "UTF-8";
+	$scope.changeStep = function(way) {
+		var oldStep = $scope.step;
+		var tempStep = angular.copy($scope.step);
+		if(way=='back' && way!=undefined) {
+			tempStep = tempStep-1;
+		} else if(way=='next') {
+			tempStep = tempStep+1;
 		}
-		$scope.dataset.csvEncoding = $scope.selectedDataSet.csvEncoding;
-		$scope.dataset.csvDelimiter = $scope.selectedDataSet.csvDelimiter;
-		$scope.dataset.csvQuote = $scope.selectedDataSet.csvQuote;
-		$scope.dataset.dateFormat = $scope.selectedDataSet.dateFormat;
-		$scope.dataset.timestampFormat = $scope.selectedDataSet.timestampFormat;
-		$scope.dataset.description = $scope.selectedDataSet.description;
-		$scope.dataset.exportToHdfs = $scope.selectedDataSet.isPersistedHDFS;
-		$scope.dataset.fileName = $scope.selectedDataSet.fileName;
-		$scope.dataset.fileType = $scope.selectedDataSet.fileType;
-		$scope.dataset.fileUploaded = $scope.selectedDataSet.fileUploaded;
-		$scope.dataset.id = $scope.selectedDataSet.id ? $scope.selectedDataSet.id : "";
-		$scope.dataset.label = $scope.selectedDataSet.label;
-		$scope.dataset.limitRows = $scope.selectedDataSet.limitRows;
-		$scope.dataset.meta = JSON.stringify($scope.selectedDataSet.meta);
-		$scope.dataset.name = $scope.selectedDataSet.name;
-		$scope.dataset.persist = $scope.selectedDataSet.isPersisted;
-		$scope.dataset.skipRows = $scope.selectedDataSet.skipRows;
-		$scope.dataset.tableName = $scope.selectedDataSet.persistTableName;
-		$scope.dataset.type = $scope.selectedDataSet.dsTypeCd;
-		$scope.dataset.xslSheetNumber = $scope.selectedDataSet.xslSheetNumber;
+		switch(tempStep) {
+		case 1:
+			$scope.step=1;
+			break;
+		case 2:
+			console.log('step 2');
+			if(way=='validate') {
+				$scope.toStep3();
+			} else {
+				if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload) || (oldStep==1&&$scope.isSelected)){
+					loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
+					loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
+					loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
 
-    	$http
-		(
-			{
-				method: 'POST',
-				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
-				data: $scope.dataset,
-				params: params,
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-
-				transformRequest: function(obj) {
-
-					var str = [];
-
-					for(var p in obj)
-						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-
-					return str.join("&");
-
-				},
+				}
+				$scope.toStep2();
 			}
-		)
-		.then
-		(
-			function successCallback(response) {
 
-				if (!response.data.errors) {
+			break;
+		default:
+			break;
+		}
+	}
 
-					$scope.step = 2;
+	$scope.toStep2 = function () {
+		if($scope.changingFile || $scope.initialUpload) {
+			var params = {};
+			params.showDerivedDataset=false;
+			params.SBI_EXECUTION_ID = -1;
+			params.isTech = false;
+			params.showOnlyOwner=true;
 
-					$scope.dataset.meta = {};
-					$scope.dataset.meta = angular.copy(response.data.meta);
-					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
+			$scope.dataset = {};
+			$scope.dataset.catTypeId = $scope.selectedDataSet.catTypeId;
+			$scope.dataset.catTypeVn = $scope.selectedDataSet.catTypeVn;
+			if($scope.selectedDataSet.csvEncoding=="" || $scope.selectedDataSet.csvEncoding==undefined) {
+				$scope.selectedDataSet.csvEncoding = "UTF-8";
+			}
+			$scope.dataset.csvEncoding = $scope.selectedDataSet.csvEncoding;
+			$scope.dataset.csvDelimiter = $scope.selectedDataSet.csvDelimiter;
+			$scope.dataset.csvQuote = $scope.selectedDataSet.csvQuote;
+			$scope.dataset.dateFormat = $scope.selectedDataSet.dateFormat;
+			$scope.dataset.timestampFormat = $scope.selectedDataSet.timestampFormat;
+			$scope.dataset.description = $scope.selectedDataSet.description;
+			$scope.dataset.exportToHdfs = $scope.selectedDataSet.isPersistedHDFS;
+			$scope.dataset.fileName = $scope.selectedDataSet.fileName;
+			$scope.dataset.fileType = $scope.selectedDataSet.fileType;
+			$scope.dataset.fileUploaded = $scope.selectedDataSet.fileUploaded;
+			$scope.dataset.id = $scope.selectedDataSet.id ? $scope.selectedDataSet.id : "";
+			$scope.dataset.label = $scope.selectedDataSet.label;
+			$scope.dataset.limitRows = $scope.selectedDataSet.limitRows;
+			$scope.dataset.meta = JSON.stringify($scope.selectedDataSet.meta);
+			$scope.dataset.name = $scope.selectedDataSet.name;
+			$scope.dataset.persist = $scope.selectedDataSet.isPersisted;
+			$scope.dataset.skipRows = $scope.selectedDataSet.skipRows;
+			$scope.dataset.tableName = $scope.selectedDataSet.persistTableName;
+			$scope.dataset.type = $scope.selectedDataSet.dsTypeCd;
+			$scope.dataset.xslSheetNumber = $scope.selectedDataSet.xslSheetNumber;
 
-					$scope.validationPassed = false;
-					$scope.prepareMetaForView();
-					$scope.prepareDatasetForView();
+			$http
+			(
+				{
+					method: 'POST',
+					url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
+					data: $scope.dataset,
+					params: params,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 
-					if($scope.initialUpload){
-						$scope.initialUpload = false;
+					transformRequest: function(obj) {
+
+						var str = [];
+
+						for(var p in obj)
+							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+
+						return str.join("&");
+
+					},
+				}
+			)
+			.then
+			(
+				function successCallback(response) {
+
+					if (!response.data.errors) {
+
+						$scope.step = 2;
+
+						$scope.dataset.meta = {};
+						$scope.dataset.meta = angular.copy(response.data.meta);
+						angular.copy(response.data.datasetColumns,$scope.datasetColumns);
+
+						$scope.validationPassed = false;
+						$scope.prepareMetaForView();
+						$scope.prepareDatasetForView();
+
+						if($scope.initialUpload){
+							$scope.initialUpload = false;
+						}
+
+
+					} else {
+						console.info("[ERROR]: ",$scope.translate.load(response.data.errors[0].message));
+						// Reset the meta after first unsuccessful try to go to Step 2
+						$scope.dataset.meta = [];
+
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					}
 
+				},
+				function errorCallback(response) {
 
-				} else {
-					console.info("[ERROR]: ",$scope.translate.load(response.data.errors[0].message));
-					// Reset the meta after first unsuccessful try to go to Step 2
-					$scope.dataset.meta = [];
+				});
+		} else {
+			$scope.step = 2;
 
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				}
+			$scope.validationPassed = false;
+			$scope.prepareMetaForView();
+			$scope.prepareDatasetForView();
 
-			},
-			function errorCallback(response) {
+			if($scope.initialUpload){
+				$scope.initialUpload = false;
+			}
 
-			});
-    }
+		}
+	}
 
     $scope.tableColumns =
         [
