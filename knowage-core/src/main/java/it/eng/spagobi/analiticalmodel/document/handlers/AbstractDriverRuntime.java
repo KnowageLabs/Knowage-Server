@@ -107,6 +107,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	// valid value in case valuesCount = 1
 	String value;
 
+	String description;
+
 	// in case of massive export these are the parameter ids referred by current parameter
 	List<Integer> objParameterIds;
 
@@ -332,7 +334,9 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				if (getValuesCount() == 1 && this.isMandatory()) {
 					SourceBean lovSB = (SourceBean) rows.get(0);
 					value = getValueFromLov(lovSB);
+					description = getDescriptionFromLov(lovSB);
 					driver.setParameterValues(new ArrayList<>(Arrays.asList(value)));
+					driver.setParameterValuesDescription(new ArrayList<>(Arrays.asList(description)));
 				}
 
 				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows, DocumentExecutionUtils.MODE_SIMPLE);
@@ -680,6 +684,25 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	private String getValueFromLov(SourceBean lovSB) {
 		String value = null;
+		try {
+			value = (String) lovSB.getAttribute(getLovProvider().getValueColumnName());
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's value", e);
+		}
+		return value;
+	}
+
+	private String getDescriptionFromLov(SourceBean lovSB) {
+		String description = null;
+		try {
+			description = (String) lovSB.getAttribute(getLovProvider().getDescriptionColumnName());
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's description", e);
+		}
+		return description;
+	}
+
+	private ILovDetail getLovProvider() {
 		ILovDetail lovProvDet = null;
 		try {
 			Parameter par = driver.getParameter();
@@ -687,12 +710,10 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			// build the ILovDetail object associated to the lov
 			String lovProv = lov.getLovProvider();
 			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
-
-			value = (String) lovSB.getAttribute(lovProvDet.getValueColumnName());
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's value", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get lov provider", e);
 		}
-		return value;
+		return lovProvDet;
 	}
 
 	public String getId() {
@@ -821,6 +842,14 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Map<String, List<DriverDependencyRuntime>> getDependencies() {
