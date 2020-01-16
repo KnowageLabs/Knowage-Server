@@ -525,6 +525,15 @@ md-icon {
   }
 }
 
+.md-subheader {
+  &.smallerSubheader{
+    height: 32px;
+    .md-subheader-inner {
+      padding: 8px 16px;
+    }
+  }
+}
+
 .noBorder{
 	border:0px;
 }
