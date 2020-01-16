@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.security;
-
-import it.eng.spagobi.commons.SingletonConfig;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.SingletonConfig;
+
 /**
  * @author Franco vuoto (franco.vuoto@eng.it)
  * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
- * 
+ *
  */
 public class Password {
 
@@ -36,10 +36,10 @@ public class Password {
 
 	private int contaAlfaUpperCase = 0;
 	private int contaAlfaLowerCase = 0;
-	
+
 	private int contaNum = 0;
 	private int contaNonAlfa = 0;
-	
+
 	static private Logger logger = Logger.getLogger(Password.class);
 
 	public Password() {
@@ -51,7 +51,7 @@ public class Password {
 
 		contaAlfaUpperCase = 0;
 		contaAlfaLowerCase = 0;
-		
+
 		contaNum = 0;
 		contaNonAlfa = 0;
 
@@ -91,8 +91,8 @@ public class Password {
 
 	/**
 	 * @return
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException
 	 */
 	public String getEncValue() throws InvalidKeyException, NoSuchAlgorithmException{
 
@@ -120,7 +120,7 @@ public class Password {
 	}
 	/**
 	 * public method used to store passwords on DB.
-	 * 
+	 *
 	 * @param clear password to encrypt
 	 * @return encrypted password
 	 * @throws Exception wrapping InvalidKeyException and NoSuchAlgorithmException
@@ -129,19 +129,16 @@ public class Password {
 		if (password != null){
 			String enable=SingletonConfig.getInstance().getConfigValue("internal.security.encript.password");
 			if ("true".equalsIgnoreCase(enable)){
-					// enable the password encription
-					if (!password.startsWith("#SHA#")){
-						Password hashPass = new Password(password);
-						try {
-							password = (hashPass.getEncValue());
-						} catch (InvalidKeyException e) {
-							logger.error("HASH not valid", e);
-							throw new Exception("HASH not valid",e);
-						} catch (NoSuchAlgorithmException e) {
-							logger.error("Impossibile to calcolate l'HASH", e);
-							throw new Exception("Impossibile to calcolate l'HASH",e);
-						}
-					}
+				Password hashPass = new Password(password);
+				try {
+					password = (hashPass.getEncValue());
+				} catch (InvalidKeyException e) {
+					logger.error("HASH not valid", e);
+					throw new Exception("HASH not valid",e);
+				} catch (NoSuchAlgorithmException e) {
+					logger.error("Impossibile to calcolate l'HASH", e);
+					throw new Exception("Impossibile to calcolate l'HASH",e);
+				}
 			}
 		}
 		return password;
