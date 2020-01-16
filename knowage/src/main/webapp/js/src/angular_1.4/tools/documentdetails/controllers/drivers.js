@@ -444,7 +444,6 @@ angular
 
             	 $scope.translate = sbiModule_translate;
             	 var selectedConditionIndex = selectedDataCondition;
-            	 $scope.conditionIndex = selectedDataCondition;
             	 $scope.driversService = DriversService;
                  $scope.document = driversService.driverRelatedObject;
                  $scope.drivers = [];
@@ -458,6 +457,8 @@ angular
                  $scope.dataDependencyModel = {};
                  $scope.selectedDataCondition = selectedDataCondition;
                  $scope.useModeIds = {};
+                 $scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','not contains','starts with','ends with'];
+      			 $scope.connectingOperators = ['AND','OR'];
 
                  if(columns.length > 0){
                 	 $scope.paruseColumns = columns;
@@ -476,9 +477,13 @@ angular
 
      			if(!selectedDataCondition){
      				$scope.selectedDataCondition = [{}]
+     				$scope.selectedDataCondition[0].parFatherId = $scope.drivers[0].id;
+     				$scope.selectedDataCondition[0].filterOperation = $scope.availableOperators[0];
+     				$scope.selectedDataCondition[0].logicOperator = $scope.connectingOperators[0];
      				$scope.useModeIds[$scope.dependencyParuses[0].useID]=true;
-     				$scope.paruseColumns[ $scope.selectedDriver.id][$scope.dependencyParuses[0].useID] = getLovColumns(selectedParuse[0])[0];
-
+     				for(var j = 0; j < $scope.dependencyParuses.length;j++){
+     				    $scope.paruseColumns[$scope.selectedDriver.id][$scope.dependencyParuses[j].useID] = getLovColumns($scope.dependencyParuses[j])[0];
+     				}
      			}else {
          			for(var j = 0; j < $scope.selectedDataCondition.length;j++){
          				$scope.useModeIds[$scope.selectedDataCondition[j].useModeId]=true;
@@ -486,8 +491,6 @@ angular
          			}
      			}
 
-     			$scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','not contains','starts with','ends with'];
-     			$scope.connectingOperators = ['','AND','OR'];
                  $scope.dataModes = {};
                  $scope.countParuses = function(){
                 	 var counter = 0;

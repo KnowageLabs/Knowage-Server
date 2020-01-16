@@ -5,63 +5,61 @@
                 <h2>{{translate.load("sbi.documentdetails.datadependency")}}</h2>
             </div>
         </md-toolbar>
-        <md-dialog-content style="padding:16px" layout="column" layout-align="start stretch">
-            <div layout="row" layout-align="center center">
-                <div class="kn-info" flex="60">
-                    {{translate.load("sbi.documentdetails.datadependency.set")}}
-                </div>
-            </div>
-            <div>
-	                <md-input-container  flex>
-	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required="true" ng-model="selectedDataCondition[0].parFatherId">
+        <md-dialog-content style="padding:16px" layout="column" layout-align="start stretch">            
+            
+            	<div layout="row">            		                
+	                <md-input-container flex=30>
+	                	<label>{{translate.load("sbi.documentdetails.datadependency.ad")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.depends")}}</label>
+                    	<md-select ng-model="selectedDataCondition[0].parFatherId">
 	                        <md-option value="{{option.id}}" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>
-	                    </md-select>
-
-	                </md-input-container>
-	
-	                <p>  {{translate.load("sbi.documentdetails.datadependency.operator")}}</p>
-	                  <h5>
-	                    {{translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} 
-	                    {{getDriverNameById(driversService.dataDependencyObjects[selectedDriver.id][conditionIndex])}} 
-	                    {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}} </h5>
-	                <md-input-container>
-	                    <md-select ng-model="selectedDataCondition[0].filterOperation">
-	                        <md-option ng-value="option" ng-repeat="option in availableOperators track by $index">
-	                            {{ option }}
-	                        </md-option>
-	                    </md-select>
-	                </md-input-container>
-<hr>
-				<div >
-					<div  ng-repeat="paruse in dependencyParuses">	
-						<div>		  
-							<label> {{translate.load("sbi.documentdetails.datadependency.check")}}</label>
-						<md-checkbox ng-model="useModeIds[paruse.useID]" aria-label="Finished?" >
-							 {{useModeIds[paruse.useID]}}
-							</md-checkbox>
-	                      	<h3>{{translate.load("sbi.documentdetails.datadependency.usename")}}</h3>
-		                   	<p><h4>{{paruse.name}} : {{paruse.description}} </h4></p>
-	            
-	                      	<h3>{{translate.load("sbi.documentdetails.datadependency.columns")}}</h3>
-	           				<md-select ng-model="paruseColumns[selectedDriver.id][paruse.useID]" >	           
-		                    	<md-option ng-value="option" ng-repeat="option in getLovColumnsForParuse(paruse) track by $index">
-		                    		{{ option }}
-		                    	</md-option>
-	             			</md-select>  
-             			</div>	                 
-	            	</div> 
-	            </div>
-	            <md-input-container>
-	                    <md-select ng-model="selectedDataCondition[0].logicOperator" ">
+                    	</md-select>
+                	</md-input-container>
+		            
+					<div layout="column" flex=50>		                
+		                <md-input-container>
+		                	<label>{{translate.load("sbi.documentdetails.datadependency.operator")}}</label>
+		                    <md-select ng-model="selectedDataCondition[0].filterOperation">
+		                        <md-option ng-value="option" ng-repeat="option in availableOperators track by $index">
+		                            {{ option }}
+		                        </md-option>
+		                    </md-select>		                    
+        					<div class="hint">
+        					{{translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}}
+	                    </div>
+		                </md-input-container>
+		                
+	                </div>
+	                <md-input-container flex>
+	            		<label>{{translate.load("sbi.documentdetails.datadependency.logicaloperator")}}</label>
+	                    <md-select ng-model="selectedDataCondition[0].logicOperator">
 	                        <md-option ng-value="option" ng-repeat="option in connectingOperators track by $index">
 	                            {{ option }}
 	                        </md-option>
 	                    </md-select>
 	                </md-input-container>
-			</div>
+	            </div>
+				
+					<div ng-repeat="paruse in dependencyParuses">	
+					<md-divider></md-divider>
+					<md-subheader class="smallerSubheader">{{translate.load("sbi.documentdetails.datadependency.usename")}} {{paruse.name}}</md-subheader>
+						<div layout="row">
+							<md-input-container flex=50>								
+								<md-checkbox ng-model="useModeIds[paruse.useID]" aria-label='translate.load("sbi.documentdetails.datadependency.check")'>{{translate.load("sbi.documentdetails.datadependency.check")}}</md-checkbox>								
+							</md-input-container>
+							
+							<md-input-container flex>
+							 	<label>{{translate.load("sbi.documentdetails.datadependency.columns")}}</label>
+							 	<md-select ng-model="paruseColumns[selectedDriver.id][paruse.useID]" ng-disabled="!useModeIds[paruse.useID]">	           
+				                    <md-option ng-value="option" ng-repeat="option in getLovColumnsForParuse(paruse) track by $index">
+				                    	{{ option }}
+				                    </md-option>
+		             			</md-select> 
+		             		</md-input-container>														
+             			</div>             				                 
+	            	</div>	            	
+			
 	        </md-dialog-content>
 	        <md-dialog-actions layout="row">
 	            <span flex></span>
