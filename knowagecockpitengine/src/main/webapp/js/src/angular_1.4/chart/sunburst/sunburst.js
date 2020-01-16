@@ -153,70 +153,6 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 		}
 	}
 
-//	var scale = 0;
-//	var tickPositions1 = [];
-//	var tickPositions = [];
-//	tickPositions.push(0);
-//	var scaleObject = {};
-//
-//	for (var i = 0; i < points.length; i++) {
-//		if(scaleObject.hasOwnProperty(points[i].parentName)){
-//			scaleObject[(points[i].parentName)].push(points[i]);
-//		} else {
-//			scaleObject[(points[i].parentName)] = []
-//			scaleObject[(points[i].parentName)].push(points[i])
-//		}
-//	}
-//
-//
-//	var sumaForMax = 0
-//	for (property in scaleObject) {
-//		var suma = 0
-//
-//		for (var i = 0; i < scaleObject[property].length; i++) {
-//			if(scaleObject[property][i].hasOwnProperty("value")){
-//				suma = suma + scaleObject[property][i].value;
-//			}
-//		}
-//		if(sumaForMax <= suma){
-//			sumaForMax = suma;
-//		}
-//		for (var i = 0; i < scaleObject[property].length; i++) {
-//			if(scaleObject[property][i].hasOwnProperty("value")){
-//				scaleObject[property][i].suma = suma
-//			}
-//		}
-//	}
-//
-//	var divider = sumaForMax / colors.length;
-//	tickPositions1.push(0);
-//	var next = 0
-//	for (var i = 0; i < colors.length; i++) {
-//
-//		next = next + divider;
-//		tickPositions1.push(next);
-//	}
-//
-//	for (property in scaleObject) {
-//		for (var i = 0; i < scaleObject[property].length; i++) {
-//			if(scaleObject[property][i].hasOwnProperty("value")){
-//				scaleObject[property][i].scale = scale
-//			}
-//		}
-//		scale = scale+divider;
-//		tickPositions.push(scale)
-//	}
-//	for (property in scaleObject) {
-//		var colorvalue = [];
-//
-//		for (var i = 0; i < scaleObject[property].length; i++) {
-//			if(scaleObject[property][i].hasOwnProperty("value")){
-//				colorvalue.push(scaleObject[property][i]);
-//				scaleObject[property][i].colorValue = scaleObject[property][i].value + scaleObject[property][i].scale
-//			}
-//		}
-//	}
-
 	// Splice in transparent for the center circle
 	Highcharts.getOptions().colors.splice(0, 0, 'transparent');
 
@@ -440,20 +376,38 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				chart.plotOptions = {
 					series: {
 						events: {
-							 legendItemClick: function(e) {
-								   var self = this;
-							       points.forEach(function(leaf){
-							    	   if (leaf.id === self.userOptions.id || leaf.parent === self.userOptions.id) {
-							               leaf.visible = !leaf.visible;
-							           }
-							       });
+							legendItemClick: function(e) {
+								var self = this,
+				                newLevels,
+				                series = self.chart.series[0];
+								points.forEach(function(leaf){
+									if (leaf.id === self.userOptions.id || leaf.parent === self.userOptions.id) {
+										leaf.visible = !leaf.visible;
+										if (leaf.id === "id_0") {
+											newLevels = levels.map(function(l){
+												return l.level === 1 ? Object.assign({}, l, {
+													levelSize: {
+														value: leaf.visible ? 1 : 0
+				                                    }
+												}) : l;
+											});
+										}
+									}
+								});
 
-							       var newData = points.filter(function(leaf){
-							    	   return leaf.visible;
-							       }).slice();
+								if (!newLevels) {
+									var newData = points.filter(function(leaf){
+										return leaf.visible;
+									});
 
-							       self.chart.series[0].setData(newData, true);
-					         }
+									series.setData(newData, true, true, false);
+								} else {
+									series.update({
+										levels: newLevels
+									})
+								}
+
+							}
 						}
 					}
 				};
