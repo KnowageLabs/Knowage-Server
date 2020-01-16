@@ -250,7 +250,7 @@
 		$scope.popupLookupParameterDialog = function(parameter) {
 
 			$scope.execProperties.hideProgressCircular.status=false;
-			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
+			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.drivers);
 			var templateUrl = sbiModule_config.dynamicResourcesBasePath
 				+ '/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 
