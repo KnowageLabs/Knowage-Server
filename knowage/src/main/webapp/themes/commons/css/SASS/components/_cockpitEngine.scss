@@ -3001,7 +3001,14 @@
 		align-items: center;
 		justify-content: center;
 	}
-
+	
+	md-menu-item{
+		button md-icon{
+			display: inline-flex !important;
+			
+		}
+	}
+	
 	.imagesLibrary {
     	.imageContainer {
     		.imageEraser {
