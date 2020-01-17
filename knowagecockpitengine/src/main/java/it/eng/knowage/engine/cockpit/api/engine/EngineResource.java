@@ -43,7 +43,6 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.spago.error.EMFInternalError;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.user.UserProfileManager;
@@ -159,8 +158,8 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
-		// python widget is enabled only if python address is specified and user has python permission
-		if (SingletonConfig.getInstance().getConfigValue("PYTHON_ADDRESS") != null && functionalities.contains(EDIT_PYTHON_SCRIPTS)) {
+		if (functionalities.contains(EDIT_PYTHON_SCRIPTS)) {
+
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
 					.withCssClass("fa fa-file").withType("python").withTag("python").build());
 		}

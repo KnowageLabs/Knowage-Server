@@ -46,7 +46,7 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
 
-	sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_ADDRESS')
+	sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_MAIN_ENVIRONMENT')
 	.then(function(response){
 		$scope.pythonAddress = response.data;
 	}, function(error){
@@ -3394,7 +3394,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = $scope.pythonAddress.valueCheck + 'dataset';
+    			$scope.selectedDataSet.restAddress = "http://" + $scope.pythonAddress.valueCheck + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;

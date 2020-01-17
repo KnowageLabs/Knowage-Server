@@ -96,12 +96,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			// if address of python is not set yet then set it and call sendData()
 			if ($scope.pythonAddress == undefined) {
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_ADDRESS')
+				sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_MAIN_ENVIRONMENT')
 				.then(function(response){
 					$scope.pythonAddress = response.data;
 					$scope.sendData();
 				}, function(error){
-					$scope.pythonOutput = 'PYTHON_ADDRESS is not configured';
+					$scope.pythonOutput = 'Configure python address';
 				});
 			}
 			else { //python address already set so just call sendData()
@@ -177,7 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: $scope.pythonAddress.valueCheck + "edit/" + $scope.ngModel.pythonOutputType,
+		        url: "http://" + $scope.pythonAddress.valueCheck + "/edit/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
@@ -206,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataViewMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: $scope.pythonAddress.valueCheck + "view/" + $scope.ngModel.pythonOutputType,
+		        url: "http://" + $scope.pythonAddress.valueCheck + "/view/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
