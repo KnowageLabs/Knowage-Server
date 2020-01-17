@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.documentId = cockpitModule_properties.DOCUMENT_ID;
 			if ($scope.ngModel.pythonAddress == undefined) {
 				$scope.pythonOutput = 'Configure python address';
-			}
+			} else {
 				$scope.sendData();
 			}
 			$scope.hideWidgetSpinner();
