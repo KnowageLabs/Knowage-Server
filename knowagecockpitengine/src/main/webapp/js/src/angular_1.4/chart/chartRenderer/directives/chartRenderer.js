@@ -17,7 +17,7 @@
  */
 angular.module('chartRendererModule')
 
-.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n, ChartUpdateService){
+.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n){
 
 	return{
 		restrict:'E',
@@ -182,6 +182,7 @@ angular.module('chartRendererModule')
 			scope.$on('changeChartType',function(event,data){
 
 				if(!data.isOriginal){
+					var ChartUpdateService = chartInitializerRetriver.getChartInitializer("ChartUpdateService");
 					scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
 				}
 

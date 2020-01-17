@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/cockpitImport.jsp"%>
+<%@include file="/WEB-INF/jsp/chart/designer/chartImport.jsp"%>
+<%@include file="/WEB-INF/jsp/chart/designer/chartDesignerConf.jspf"%>
 <%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
 <base href="/" />
 
@@ -114,7 +116,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(cockpitSelections.filters && !angular.equals(cockpitSelections.filters, {})) {
     	template.configuration.filters = cockpitSelections.filters;
     }
-	
+	var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
 	function filterForInitialSelection(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
 			for(var i=0;i<cockpitModule_properties.STARTING_SELECTIONS.length;i++){

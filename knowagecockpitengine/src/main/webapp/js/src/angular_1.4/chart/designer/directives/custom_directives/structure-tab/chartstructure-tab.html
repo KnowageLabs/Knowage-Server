@@ -27,7 +27,7 @@
 					<!-- ATTRIBUTES -->
 					<md-card ng-show="selectedChartType.toUpperCase() != 'GAUGE'">
 					
-						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')">
+						<expander-box color="white" expanded="true" title="{{translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')}}">
 							<md-list flex style="padding-top:0; padding-bottom:0">
 								<md-list-item ng-repeat="attribute in allAttributes" ng-disabled="disableUsingAttributeIfRealtimeDSisUsed(attribute)" ng-click="moveAttributeToCategories(attribute)" class="noright">
 								   <span><b>{{attribute.alias || attribute.id}}</b></span>
@@ -40,7 +40,7 @@
 					<!-- MEASURES -->
 					<md-card>
 					
-						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.measures.title')">
+						<expander-box color="white" expanded="true" title="{{translate.load('sbi.chartengine.designer.structureTab.attributemeasures.measures.title')}}">
 							
 							<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers<=1">
 								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">

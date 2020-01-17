@@ -41,7 +41,13 @@ angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",funct
 angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,StructureTabService,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
 
 	var wi=this;
-
+	var validForm = false;
+	this.validateForm = function (formValid){
+		validForm = formValid;
+	}
+	this.isFormValid  = function (){
+		return validForm;
+	}
 	var fullPageWidget=false;
 	var widgetInit=0;
 	var widgetCount=cockpitModule_templateServices.getNumberOfWidgets();
@@ -396,7 +402,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         	if (angular.equals(cockpitModule_widgetSelection.getLastTimestampedSelection().value,  config.activeValues)) {
                         		data.activeValues = wi.loadDatasetRecords(config, options, false);
                         	}
-                        	else data.activeValues = config.activeValues;                        
+                        	else data.activeValues = config.activeValues;
                         }
                         $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                     }

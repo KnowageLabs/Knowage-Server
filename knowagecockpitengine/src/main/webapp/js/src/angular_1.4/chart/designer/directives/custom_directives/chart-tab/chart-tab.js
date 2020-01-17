@@ -17,12 +17,12 @@
  */
 
 angular.module('chart-tab', [])
-.directive('chartTab', function(sbiModule_config) {
+.directive('chartTab', function(sbiModule_config,chartDesignerBasePath) {
 	return {
 		restrict: 'AE',
 		replace: true,
 		templateUrl: function(){
-		      return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.html'
+		      return chartDesignerBasePath + '/directives/custom_directives/chart-tab/chart-tab.html'
 	      },
 		controller: chartTabControllerFunction
 	}
@@ -31,7 +31,6 @@ angular.module('chart-tab', [])
 
 function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData,StructureTabService,chartEngineSettings,chartBackwardCompatibilityService){
 	$scope.translate = sbiModule_translate;
-	$scope.datasetLabel = datasetLabel;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	$scope.selectedChartType;
 	$scope.libInUse;
@@ -149,11 +148,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 
 		if($scope.isCockpitEng){
 
-			if (parent.angular.element(window.frameElement).scope().localMod.chartTemplate!=undefined) {
-				var chart = angular.copy(parent.angular.element(window.frameElement).scope().localMod.chartTemplate.CHART);
+			if ($scope.localMod.chartTemplate!=undefined) {
+				var chart = angular.copy($scope.localMod.chartTemplate.CHART);
 
 				$scope.chartTemplate = angular.copy(chart);
-				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
+				$scope.localMod.chartTemplate = $scope.chartTemplate;
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
 				chartBackwardCompatibilityService.updateTemplate($scope.chartTemplate);
@@ -166,7 +165,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
 				$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
 				$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
+				$scope.localMod.chartTemplate = $scope.chartTemplate;
 
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();

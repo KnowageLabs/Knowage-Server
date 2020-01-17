@@ -23,22 +23,25 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","channelMessaging","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","sbiModule_logger", "$mdToast","$mdDialog","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
-
-function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
-
-	if(parent.angular.element(window.frameElement).scope().isCockpitEng){
-		$scope.isCockpitEng = parent.angular.element(window.frameElement).scope().isCockpitEng;
-	}else{
-		$scope.isCockpitEng = false;
+app.directive("chartDesigner" ,function(chartDesignerBasePath){
+	return {
+		templateUrl: chartDesignerBasePath + '/chartDesignerTemplate.html',
+		controller: chartDesignerFunction,
+		scope:{
+	    	   datasetLabel:'=',
+	    	   datasetId:'=',
+	    	   isCockpitEng:'=',
+	    	   localMod:'='
+	    	  },
 	}
+});
 
-	console.log($scope.isCockpitEng);
-	//sbiModule_logger.disableConsole();
+function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
+
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.selectedChartType = "";
-
+	$scope.selectedTab = {'tab' : 0};
 	var urlForDataset="";
 
 	var findInArray = function(array, attr, value) {
@@ -51,7 +54,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 	}
 
 	if($scope.isCockpitEng){
-		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+parent.angular.element(window.frameElement).scope().datasetId;
+		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+$scope.datasetId;
 	}else{
 		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset";
 	}
@@ -79,62 +82,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 			return false;
 		} else return true;
 	}
-	$scope.saveChartTemplate = function(saving) {//izmena
-		if(saving){
 
-			$scope.attachCategoriesToTemplate();
-			if($scope.selectedChartType == 'scatter'){
-				$scope.attachSeriesToTemplate();
-			}
-			if($scope.selectedChartType == 'bubble' ){
-				$scope.attachSeriesToTemplateBubble();
-			}
-
-			$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
-			if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
-				var color = $scope.chartTemplate.COLORPALETTE.COLOR;
-				for (var i = 0; i < color.length; i++) {
-					if(color[i].hasOwnProperty("$$hashKey")){
-						delete color[i].$$hashKey;
-					}
-				}
-			}
-			prepareTemplate();
-			if(!checkChartSettings()){
-				if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
-					showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
-				}
-				if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
-					showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
-				}
-
-			}
-			else {
-				var temp = {"CHART":$scope.chartTemplate}
-				if(temp.CHART.VALUES.CATEGORY){
-					if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
-						temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
-					}
-				}
-
-				var toSend = {}
-				toSend.jsonTemplate = angular.toJson(temp);
-				toSend.docLabel = docLabel;
-				sbiModule_restServices.promisePost('../api/1.0/chart/template/save','',$scope.httpParamSerializer(toSend) , {
-					transformRequest:angular.identity,
-					headers:{'Content-Type': ' application/x-www-form-urlencoded; charset=utf-8'}
-				})
-				.then(function(response) {
-					console.log("[POST]: SUCCESS!");
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.chartengine.designer.savetemplate.success"), sbiModule_translate.load("sbi.generic.success"));
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				});
-			}//izmena
-
-		}
-
-	}
 	var showAction = function(text) {
 		var toast = $mdToast.simple()
 		.content(text)
@@ -151,8 +99,6 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 	$scope.goBackFromDesigner = function() {
 		channelMessaging.sendMessage();
 	}
-
-	$scope.exporterContextName = exporterContextName;
 
 	$scope.allMeasures = [];
 	$scope.allAttributes = [];
@@ -185,19 +131,8 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		}
 	}
 
-	/*$scope.testChart = function() {
-		//$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
-		prepareTemplate();
-		//sbiModule_logger.clearConsole(); // only for dev
-		console.log($scope.chartTemplate);
-		console.log($scope.chartTemplate.VALUES.SERIE);
-		console.log($scope.chartTemplate.AXES_LIST.AXIS);
+	$scope.$on('attachCategories',function(event,data){
 
-	}*/
-
-
-
-	window.attachCategories = function() {
 		$scope.attachCategoriesToTemplate();
 		if($scope.selectedChartType == 'scatter'){
 			$scope.attachSeriesToTemplate();
@@ -210,14 +145,11 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		var chartTemp = {}
 		chartTemp.CHART = chartObj;
 		angular.copy(chartTemp, $scope.chartTemplate);
-	}
+	})
 
-	window.validateForm = function() {
-		if(!$scope.userForm.$valid){
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.message"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
-		}
-		return $scope.userForm.$valid;
-	}
+	$scope.$on('validateForm',function(event,data){
+		cockpitModule_widgetServices.validateForm($scope.chartDesignerForm.$valid)
+	})
 
 	$scope.refreshJsonTree = function() {
 		$scope.attachCategoriesToTemplate(true);
@@ -341,39 +273,6 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		}
 	}
 
-	var prepareTemplate = function() {
-
-		if( $scope.selectedChartType.toUpperCase() == "GAUGE"){
-
-			for (var i = 0; i < $scope.chartTemplate.AXES_LIST.AXIS.length; i++) {
-
-				if($scope.chartTemplate.AXES_LIST.AXIS[i].type == 'Category'){
-					$scope.chartTemplate.AXES_LIST.AXIS.splice(i,1);
-				}
-			}
-			if($scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS == ""){
-				$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS = {};
-				$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT = [];
-			}
-			$scope.chartTemplate.styleName = $scope.clearStyleTag($scope.chartTemplate.styleName);
-
-		} else {
-			if(checkChartSettings()){
-				$scope.attachCategoriesToTemplate();
-				$scope.chartTemplate.styleName = $scope.clearStyleTag($scope.chartTemplate.styleName);
-			}
-		}
-		if($scope.chartTemplate.type == "SCATTER" || $scope.chartTemplate.type == "BAR" || $scope.chartTemplate.type == "LINE" || $scope.chartTemplate.type == "BUBBLE"){
-	    	  for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
-	    		  for (var j = 0; j < $scope.chartTemplate.AXES_LIST.AXIS.length; j++) {
-						if($scope.chartTemplate.VALUES.SERIE[i].axis == $scope.chartTemplate.AXES_LIST.AXIS[j].alias && $scope.chartTemplate.AXES_LIST.AXIS[j].labels){
-							$scope.chartTemplate.VALUES.SERIE[i].scaleFactor = $scope.chartTemplate.AXES_LIST.AXIS[j].labels.scaleFactor
-						}
-		    	  }
-	    	  }
-		}
-
-	}
 	var checkChartSettings = function (){
 		var f = true;
 		if( $scope.selectedChartType.toUpperCase() == "SCATTER" && $scope.chartTemplate.VALUES.SERIE.length>1){
@@ -424,4 +323,6 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 			}
 		}
 	}
+
+
 }

@@ -24,101 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 angular.module('cockpitModule')
 
-/*
- * This directive acts like an Ext.form.FormPanel
- * Creates an IFrame with an URL called by posting parameters
- *
- * */
-.directive('postIframe',function(sbiModule_restServices){
-	var i = 0;
-	return {
-		restrict: 'E',
-	    templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/postIframe.html',
-	    scope:{
-	    	   datasetLabel:'=',
-	    	   datasetId:'=',
-	    	   isCockpitEng:'=',
-	    	   localMod:'='
-	    	  },
-	    link: function(scope, elem, attrs) {
-	    	var genId = i++;
-	    	scope.iframeName = attrs.id + "_frameName" + genId;
-	    	scope.formId = attrs.id + "_formId" + genId;
-	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
-	    	scope.iframeContent = '';
-	    },
-	    controller: function($scope, $element, $http, sbiModule_restServices, $httpParamSerializerJQLike){
-	    	$scope.iframeContent = '';
-	    	$scope.updateAction = function(actionUrl){
-	    		$scope.actionUrl = actionUrl + "&SBI_EXECUTION_ID=" + (new Date().getTime() + '_' + (i++));
-	    	};
-
-	    	$scope.showWidgetSpinner=function(){
-	    		  $scope.confSpinner=true;
-	    	  }
-	    	$scope.updateParameters = function(parameters){
-	    		$scope.formParameters = parameters;
-	    	};
-
-	    	var loadPageIntoIframe = function(actionUrl, parameters){
-	    		var iframe = $element.find('iframe')[0];
-    			if(actionUrl){
-    				$scope.updateAction(actionUrl);
-    			}
-    			if(parameters){
-    				$scope.updateParameters(parameters);
-    			}
-    			var formId = $element[0].id + "_formId";
-    			var formAction = $scope.actionUrl;
-    			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
-    			for(var x=0;x<$scope.formParameters.length;x++){
-    				var param = $scope.formParameters[x];
-    				var paramName = param.name;
-    				var paramValue = JSON.stringify(param.value);
-    				paramValue = paramValue.replace(/'/g, "");
-    				form.append('<input type="hidden" name="' + paramName + '" value=\'' + paramValue + '\'>');
-    			}
-    			var doc = iframe.contentWindow.document;
-    			doc.open();
-    			doc.write(form.wrap(doc.createElement('div')).parent().html());
-    			doc.close();
-    			doc.getElementById(formId).submit();
-    			$scope.showWidgetSpinner();
-	    	}
-	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
-	    		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
-					return;
-				}
-
-				// Check if service is on line
-				// When dealing with CAS, first call will force web app to do login and can give some error
-
-				/*
-					author Radmila Selakovic (radmila.selakovic@mht.net)
-					Checking is it case of first rendreing or updating chart
-					If it is updating chart, method that will be called is
-					updateData that is implemented in highcharts414Initializer.jsp
-				 */
-
-	    		var typesOfCharts= ["HEATMAP", "TREEMAP", "CHORD", "PARALLEL","SUNBURST" ,"WORDCLOUD"];
-				if(nature=="refresh" && typesOfCharts.indexOf(parameters[0].value.widgetData.chartTemplate.CHART.type) == -1){
-					var iframe = $element.find('iframe')[0];
-		    		var wind = iframe.contentWindow;
-		    		wind.updateData(parameters[0].value.widgetData);
-	    		}
-	    		else{
-	    			$http.get(actionUrl.testUrl).then(function(){
-	    				loadPageIntoIframe(actionUrl.url, parameters);
-	    			},function(){
-	    				showAction("Service error");
-	    			});
-	    		}
-			};
-
-
-	    }
-	};
-})
 .directive('cockpitChartWidget',function(cockpitModule_widgetServices,$mdDialog,buildParametersForExecution,$compile){
 	return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetTemplate.html',
@@ -130,7 +35,6 @@ angular.module('cockpitModule')
                     	element[0].classList.add("layout");
                     },
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
-                    	scope.postIframe = element.find('post-iframe')[0];
                     	//init the widget
                     	element.ready(function () {
                     		scope.initWidget();
@@ -649,7 +553,6 @@ function cockpitChartWidgetControllerFunction(
 							  $scope.somethingChanged = true;
 							  $scope.confChecked = false;
 							  if($scope.datasetChanged){
-								  showChartConfiguration();
 								  $scope.datasetChanged = false;
 							  }
 						  }
@@ -733,15 +636,15 @@ function cockpitChartWidgetControllerFunction(
 			    			  return;
 			    		  }
 			    		  var f = true;
-			    		  if(document.getElementById('chartConfigurationIframe').contentWindow.hasOwnProperty('validateForm')){
-			    			  var isFormValid = document.getElementById('chartConfigurationIframe').contentWindow.validateForm();
 
-				    		  if(!isFormValid) {
-				    			  return false;
-				    		  }
+			    		  $scope.$broadcast("validateForm");
+			    		  var isFormValid = cockpitModule_widgetServices.isFormValid();
+			    		  if(!isFormValid) {
+			    			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.message"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+			    			  return false;
 			    		  }
 
-				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
+			    		  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
 
 				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE" || chartTemplateFake.type == "BUBBLE"){
 					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
@@ -791,11 +694,7 @@ function cockpitChartWidgetControllerFunction(
 			    	  }
 
 			    	  $scope.attachCategoriesToTemplateInIframe = function() {
-			    		  var attach = document.getElementById('chartConfigurationIframe').contentWindow.attachCategories;
-			    		  if (typeof attach === "function") {
-			    			  document.getElementById('chartConfigurationIframe').contentWindow.attachCategories();
-			    			}
-
+			    		  $scope.$broadcast("attachCategories");
 			          };
 
 			    	  var saveConfiguration=function(){
@@ -833,13 +732,6 @@ function cockpitChartWidgetControllerFunction(
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
-			    	  }
-
-			    	  var showChartConfiguration=function(){
-				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
-				    	  var execPar = buildParametersForExecution.edit(widgetData);
-				    	  angular.element(document.getElementById("chartConfigurationIframe")).scope()
-				  		  .updateContent(execPar.formAction, execPar.formParameters, 'init');
 			    	  }
 
 			    	  var showAction = function(text) {

@@ -1,0 +1,67 @@
+	<div class="bodyStyle kn-chartdesigner" >
+		<form name="chartDesignerForm" layout="column" layout-fill >
+		<div layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);' ng-if="!chartTypes.length>0">
+			<md-progress-circular md-mode="indeterminate" style='top:50%;left:50%' ng-disabled="chartTypes.length>0"></md-progress-circular>
+		</div>
+		
+		
+		
+		<md-tabs md-selected="selectedTab.tab" flex> 
+			<md-tab>
+				<md-tab-label>
+                <div >
+                    {{translate.load("sbi.chartengine.designer.tab.chart");}}
+                    <span >
+                        <span/>
+                    </span>
+                </div>
+            </md-tab-label>
+            
+            <md-tab-body >
+                <div flex>
+                	<chart-tab></chart-tab> </md-tab> 
+                </div>
+            </md-tab-body>
+			
+			</md-tab>
+			<md-tab>
+				<md-tab-label>
+                <div ng-class="structureForm.$invalid ? 'kn-danger' : ''">
+                    {{translate.load("sbi.chartengine.designer.tab.structure");}} 
+                    <span >
+                        <span/>
+                    </span>
+                </div>
+            </md-tab-label>
+            
+            <md-tab-body ng-if="chartTemplate">
+                <div flex>
+                	<chartstructure-tab></chartstructure-tab>
+                </div>
+            </md-tab-body>
+			
+			</md-tab>
+			
+			<md-tab>
+				<md-tab-label>
+                <div ng-class="configurationForm.$invalid ? 'kn-danger' : ''">
+                    {{translate.load("sbi.chartengine.designer.tab.configuration");}}
+                    <span >
+                        <span/>
+                    </span>
+                </div>
+            </md-tab-label>
+            
+            <md-tab-body ng-if="chartTemplate">
+                <div flex>
+                	<configuration-tab></configuration-tab>
+                </div>
+            </md-tab-body>
+			
+			</md-tab> 
+
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()"><advanced-tab ng-if="chartTemplate"></advanced-tab> </md-tab> 
+		</md-tabs>
+		</form>
+
+	</div>

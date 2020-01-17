@@ -22,12 +22,12 @@
 
 var app = angular.module('chartstructure-tab', []);
 
-app.directive('chartstructureTab', function(sbiModule_config) {
+app.directive('chartstructureTab', function(sbiModule_config,chartDesignerBasePath) {
 		return {
 			restrict: 'AE',
 			replace: true,
 			templateUrl: function(){
-			      return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.html'
+			      return chartDesignerBasePath + '/directives/custom_directives/structure-tab/chartstructure-tab.html'
 		      },
 			controller: structureTabControllerFunction
 		}
@@ -100,7 +100,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	var urlForMetadata="";
 	if($scope.isCockpitEng){
-		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+parent.angular.element(window.frameElement).scope().datasetId;
+		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+$scope.datasetId;
 	}else{
 		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadata";
 	}

@@ -22,6 +22,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="it.eng.knowage.engine.cockpit.CockpitEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
+<%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>

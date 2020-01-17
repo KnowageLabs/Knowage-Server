@@ -18,12 +18,12 @@
 
 
 angular.module('configuration-tab', [])
-.directive('configurationTab', function(sbiModule_config) {
+.directive('configurationTab', function(sbiModule_config,chartDesignerBasePath) {
 	return {
 		restrict: 'AE',
 		replace:true,
 		templateUrl: function(){
-		      return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.html'
+		      return chartDesignerBasePath + '/directives/custom_directives/configuration-tab/configuration-tab.html'
 	      },
 		controller: configurationTabControllerFunction
 	}
