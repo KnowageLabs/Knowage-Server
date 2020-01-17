@@ -138,7 +138,7 @@ def python_bokeh():
 
     #secondary thread function (bokeh server)
     def bk_worker():
-        server = Server({'/bkapp'+str(python_widget.widget_id): modify_doc}, io_loop=IOLoop(), allow_websocket_origin=["localhost:8080"], port=cuncurrency_manager.bokeh_resources[python_widget.widget_id].port)
+        server = Server({'/bkapp'+str(python_widget.widget_id): modify_doc}, io_loop=IOLoop(), allow_websocket_origin=["*"], port=cuncurrency_manager.bokeh_resources[python_widget.widget_id].port)
         with cuncurrency_manager.lck:
             cuncurrency_manager.active_servers.update({python_widget.widget_id:server}) #{widget_id : bokeh_server}
         server.start()
