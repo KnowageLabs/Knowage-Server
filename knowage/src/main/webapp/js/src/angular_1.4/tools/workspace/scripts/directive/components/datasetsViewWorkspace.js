@@ -535,8 +535,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     $scope.previewDataset = function(dataset){
     	console.info("DATASET FOR PREVIEW: ",dataset);
-    	$scope.datasetInPreview=dataset;
-	$scope.selectedDataSet = dataset;
+    	$scope.datasetInPreview = dataset;
+    	$scope.selectedDataSet = dataset;
     	$scope.disableBack=true;
     	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
 	    	/**
@@ -1147,9 +1147,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataSet){
 		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataSet.qbeDatamarts).then(function(response){
 				$scope.drivers = response.data.filterStatus;
-				selectedDataSet.drivers = $scope.drivers;
-				$scope.selectedDataSet.drivers = [];
-				angular.copy($scope.drivers, $scope.selectedDataSet.drivers);
+				$scope.selectedDataSet.drivers = $scope.drivers;
 		})
 		return promise;
 	}
@@ -1173,8 +1171,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 //				$scope.dataset.executed = true;
 //			}
 //    	}else{
-    		angular.copy($scope.datasetInPreview, $scope.dataset)
-
+//    		angular.copy($scope.datasetInPreview, $scope.dataset)
+    		$scope.dataset = $scope.datasetInPreview;
     		$scope.previewDS = function() {
     			var config = { datasetLabel: $scope.dataset.label };
     	        if(typeof $scope.dataset.pars !== 'undefined' && $scope.dataset.pars.length > 0) {
