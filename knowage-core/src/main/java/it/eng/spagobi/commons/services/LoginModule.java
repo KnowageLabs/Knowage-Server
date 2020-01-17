@@ -208,6 +208,8 @@ public class LoginModule extends AbstractHttpModule {
 		// If SSO is not active, check username and password, i.e. performs the authentication;
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make
 		// any authentication, just creates the user profile object and puts it into Spago permanent container
+		userIdForDefaultProfile = userId;
+
 		if (!activeSoo && !isPublicUser) {
 			String pwd = (String) request.getAttribute("password");
 			try {
@@ -231,7 +233,6 @@ public class LoginModule extends AbstractHttpModule {
 					}
 				}
 
-				userIdForDefaultProfile = userId;
 				userId = userProfile.getUniqueIdentifier();
 
 			} catch (Exception e) {
