@@ -107,7 +107,7 @@
 				        	<groupId>org.apache.maven.plugins</groupId>
 				            <artifactId>maven-war-plugin</artifactId>
 				            <configuration>
-								<warSourceExcludes>js/src/**</warSourceExcludes>
+								<warSourceExcludes>js/src/**,themes/commons/css/**</warSourceExcludes>
 								<webResources>
 									<resource>
 										<directory>src/main/webapp</directory>
@@ -119,6 +119,10 @@
 							        <resource>
 							          <directory>src/main/webapp/js/src</directory>
 							          <targetPath>js/src-${project.version}</targetPath>
+							        </resource>
+							         <resource>
+							          <directory>src/main/webapp/themes/commons/css</directory>
+							          <targetPath>themes/commons/css-${project.version}</targetPath>
 							        </resource>
 						      </webResources>
 				            </configuration>
