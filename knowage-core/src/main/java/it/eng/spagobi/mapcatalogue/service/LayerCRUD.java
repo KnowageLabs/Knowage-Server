@@ -36,6 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
@@ -178,8 +179,14 @@ public class LayerCRUD {
 	@GET
 	@Path("/{layerId}/download/{typeWFS}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS) throws JSONException {
-		return getData(layerId, typeWFS);
+	public Response getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS) throws JSONException {
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		JSONObject content = dao.getContentforDownload(layerId, typeWFS);
+		if (content == null) {
+			return Response.status(404).build();
+		} else {
+			return Response.ok(content.toString()).build();
+		}
 	}
 
 	private String getData(int layerId, String typeWFS) {
