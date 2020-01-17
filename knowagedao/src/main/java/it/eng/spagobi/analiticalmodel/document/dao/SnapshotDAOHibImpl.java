@@ -143,7 +143,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select ss.snapId, ss.sbiObject.biobjId, ss.name, ss.description, ss.creationDate from SbiSnapshots ss where ss.sbiObject.biobjId = ?";
+			String hql = "select ss.snapId, ss.sbiObject.biobjId, ss.name, ss.description, ss.creationDate from SbiSnapshots ss where ss.sbiObject.biobjId = ? order by ss.creationDate desc";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, idBIObj.intValue());
