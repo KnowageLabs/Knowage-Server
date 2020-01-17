@@ -1,6 +1,5 @@
 from threading import Lock
 
 active_servers = {}
-active_threads = {}
-ports_dict = {}
+bokeh_resources = {}
 lck = Lock()

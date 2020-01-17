@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -80,6 +81,36 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/{category}")
+	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Config> getConfigsByCategory(@PathParam("category") String category) {
+		logger.debug("IN");
+		try {
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			List<Config> allConfigs = configsDao.loadAllConfigParameters();
+			return filterConfigsByCategory(allConfigs, category);
+
+		} catch (Exception e) {
+			logger.error("Error while getting the list of configs", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of configs", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private List<Config> filterConfigsByCategory(List<Config> allConfigs, String category) {
+		ArrayList<Config> filteredConfigs = new ArrayList<>();
+		for (Config cfg : allConfigs) {
+			if (cfg.getCategory().equals("PYTHON_CONFIGURATION")) {
+				filteredConfigs.add(cfg);
+			}
+		}
+		return filteredConfigs;
 	}
 
 	@GET

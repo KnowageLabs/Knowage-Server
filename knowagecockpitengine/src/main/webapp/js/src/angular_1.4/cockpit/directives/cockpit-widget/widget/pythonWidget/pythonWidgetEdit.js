@@ -68,6 +68,21 @@ function pythonWidgetEditControllerFunction(
 
 	})
 
+	$scope.insertCode = function(tag){
+		var tempString = tag.tag;
+		for(var i in tag.inputs){
+			if($scope.helper[tag.name] && (typeof $scope.helper[tag.name][tag.inputs[i].name] != 'undefined')) {
+				tempString = tempString.replace('%%'+tag.inputs[i].name+'%%', function(match){
+					if(tag.inputs[i].replacer){
+						return tag.inputs[i].replacer.replace('***', $scope.helper[tag.name][tag.inputs[i].name]);
+					}else return $scope.helper[tag.name][tag.inputs[i].name];
+				});
+			}else tempString = tempString.replace('%%'+tag.inputs[i].name+'%%','');
+		}
+		if($scope.newModel.pythonCode) $scope.newModel.pythonCode += tempString;
+		else  $scope.newModel.pythonCode = tempString;
+	}
+
 	$scope.editorOptionsPython = {
         theme: 'eclipse',
         lineWrapping: true,

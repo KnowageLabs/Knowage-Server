@@ -48,7 +48,7 @@
 						</div>
 						<div class="availableFunctions" flex="20">
 					      <md-toolbar class="secondaryToolbar">
-					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.html.availabletags')}}</h1>
+					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.python.availabletags')}}</h1>
 					      </md-toolbar>
 					  		<md-subheader class="expandableSubheader" ng-repeat-start="tag in helper" layout="row" ng-click="toggleTag(tag)">{{tag.label}}<i class="fa" ng-class="{'fa-chevron-up':tag.opened,'fa-chevron-down':!tag.opened}"></i></md-subheader>
 					  		<div layout="column" style="background-color: white;" ng-if="tag.opened">

@@ -22,7 +22,8 @@ from bokeh.server.server import Server
 from threading import Thread
 from tornado.ioloop import IOLoop
 from app.utilities import utils, security, constants, cuncurrency_manager
-from app.utilities.objects import PythonWidgetExecution
+from app.utilities.objects import PythonWidgetExecution, BokehResourceList
+from datetime import datetime
 
 editMode = Blueprint('editMode', __name__)
 #url: knowage_addr:port/edit
@@ -43,7 +44,7 @@ def python_html():
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     #retrieve dataset
-    if python_widget.dataset_name != "":
+    if python_widget.dataset_name != None:
         dataset_file = "tmp/" + python_widget.dataset_name + ".pckl"
         df = utils.getDatasetAsDataframe(python_widget)
         df.to_pickle(dataset_file)
@@ -80,7 +81,7 @@ def python_img():
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     # retrieve dataset
-    if python_widget.dataset_name != "":
+    if python_widget.dataset_name != None:
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
         df = utils.getDatasetAsDataframe(python_widget)
         df.to_pickle(dataset_file)
@@ -104,6 +105,7 @@ def python_img():
 
 @editMode.route('/bokeh', methods = ['POST'])
 def python_bokeh():
+    utils.bokehGarbageCollector()
     # retrieve input parameters
     script = request.get_json()['script']
     widget_id = request.get_json()['widget_id']
@@ -123,7 +125,7 @@ def python_bokeh():
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     # retrieve dataset
-    if python_widget.dataset_name != "":
+    if python_widget.dataset_name != None:
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
         df = utils.getDatasetAsDataframe(python_widget)
         df.to_pickle(dataset_file)
@@ -142,7 +144,7 @@ def python_bokeh():
 
     #secondary thread function (bokeh server)
     def bk_worker():
-        server = Server({'/bkapp'+str(python_widget.widget_id): modify_doc}, io_loop=IOLoop(), allow_websocket_origin=["localhost:8080"], port=cuncurrency_manager.ports_dict[python_widget.widget_id])
+        server = Server({'/bkapp'+str(python_widget.widget_id): modify_doc}, io_loop=IOLoop(), allow_websocket_origin=["localhost:8080"], port=cuncurrency_manager.bokeh_resources[python_widget.widget_id].port)
         with cuncurrency_manager.lck:
             cuncurrency_manager.active_servers.update({python_widget.widget_id:server}) #{widget_id : bokeh_server}
         server.start()
@@ -155,24 +157,10 @@ def python_bokeh():
     #instance a bokeh server for the widget if not instanciated yet
     if not utils.serverExists(python_widget.widget_id): #allocate bokeh server
         t = Thread(target=bk_worker) #thread that hosts bokeh server
+        bk_res = BokehResourceList(thread=t, timestamp=datetime.now(), port=utils.findFreePort(), dataset_name=dataset_name)
         with cuncurrency_manager.lck:
-            cuncurrency_manager.active_threads.update({python_widget.widget_id : t}) #{widget_id : thread}
-            cuncurrency_manager.ports_dict.update({python_widget.widget_id : utils.findFreePort()}) #{widget_id : port_number_of_bokeh_server}
+            cuncurrency_manager.bokeh_resources.update({python_widget.widget_id : bk_res}) #{widget_id : BokehResourceList}
         t.start()
     #serve plot
-    jscript = server_document("http://localhost:" + str(cuncurrency_manager.ports_dict[python_widget.widget_id]) + "/bkapp" + str(python_widget.widget_id))
+    jscript = server_document("http://localhost:" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
-
-@editMode.route('/bokeh', methods = ['DELETE'])
-def python_bokeh_stop(): #free bokeh server resources
-    # retrieve input parameters
-    widget_id = int(request.args.get('widget_id'))
-    dataset_name = request.args.get('dataset_name')
-    dataset_file = constants.TMP_FOLDER + dataset_name + ".pckl"
-    #destroy bokeh server
-    utils.destroyServer(widget_id)
-    #delete temp files
-    os.remove("bokeh_script_" + str(widget_id) + ".txt")
-    if dataset_name is not None:
-        os.remove(dataset_file)
-    return "0"

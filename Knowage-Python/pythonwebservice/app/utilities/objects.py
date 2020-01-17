@@ -72,3 +72,31 @@ class PythonWidgetExecution:
     @property
     def datastore_request(self):
         return self._datastore_request
+
+class BokehResourceList:
+    _thread = None
+    _timestamp = None
+    _port = None
+    _dataset_name = None
+
+    def __init__(self, thread, timestamp, port, dataset_name):
+        self._thread = thread
+        self._timestamp = timestamp
+        self._port = port
+        self._dataset_name = dataset_name
+
+    @property
+    def thread(self):
+        return self._thread
+
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @property
+    def port(self):
+        return self._port
+
+    @property
+    def dataset_name(self):
+        return self._dataset_name

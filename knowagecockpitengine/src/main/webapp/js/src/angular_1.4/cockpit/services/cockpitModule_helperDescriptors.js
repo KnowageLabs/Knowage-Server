@@ -190,42 +190,22 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 	self.pythonHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets){
 		return [
 			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag1'),
+				'label':sbiModule_translate.load('kn.cockpit.python.tag1'),
 				'name': 'column',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag1.desc'),
+				'description': sbiModule_translate.load('kn.cockpit.python.tag1.desc'),
 				'hidden': !datasetId ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.python.nodataset'),
 				'inputs': [
 					{	'name':'column',
 						'type': 'select',
 						'options': !datasetId || meta,
-						'flex':'flex-100'},
-					{	'name':'aggregation',
-						'type': 'select',
-						'options': aggregations,
-						'flex':'flex-100',
-						'replacer':" aggregation='***'"},
-					{	'name':'row',
-						'type': 'number',
-						'flex':'flex',
-						'replacer':" row='***'"},
-					{	'name':'precision',
-						'type': 'number',
-						'flex':'flex',
-						'replacer':" precision='***'"},
-					{	'name':'format',
-						'label': 'Format to locale',
-						'type': 'check',
-						'flex':'flex-100',
-						'replacer':" format"
-
-					}
+						'flex':'flex-100'}
 				],
-				'tag':"[kn-column='%%column%%'%%row%%%%aggregation%%%%precision%%%%format%%]"},
+				'tag':"%%column%%"},
 			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag2'),
+				'label':sbiModule_translate.load('kn.cockpit.python.tag2'),
 				'name': 'parameter',
-				'description':sbiModule_translate.load('kn.cockpit.html.tag2.desc'),
+				'description':sbiModule_translate.load('kn.cockpit.python.tag2.desc'),
 				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
 				'hiddenMessage': 'no parameter available',
 				'inputs': [
@@ -234,54 +214,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'options': parameters,
 						'flex':'flex-100'}
 				],
-				'tag':"[kn-parameter='%%parameter%%']"},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag5'),
-				'name': 'if',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag5.desc'),
-				'tag':'<div kn-if="%%condition%%"></div>',
-				'inputs': [
-					{	'name':'condition',
-						'type': 'area',
-						'flex':'flex-100'}
-				]},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag6'),
-				'name': 'cross',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag6.desc'),
-				'tag':'<div kn-cross></div>'
-				},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag7'),
-				'name': 'selection',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag7.desc'),
-				'hidden': !datasetId ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
-				'tag':'<div kn-selection-column="%%selectioncolumn%%" %%selectionvalue%%></div>',
-				'inputs': [
-					{	'name':'selectioncolumn',
-						'type': 'select',
-						'flex':'flex-100',
-						'options': !datasetId || meta},
-					{	'name':'selectionvalue',
-						'type': 'text',
-						'flex':'flex-100',
-						'replacer':'kn-selection-value=\"***\"'}
-				]
-				},
-			{
-				'label':sbiModule_translate.load('kn.cockpit.html.tag10'),
-				'name': 'active-selection',
-				'description': sbiModule_translate.load('kn.cockpit.html.tag10.desc'),
-				'hidden': !datasetId ? true : false,
-				'hiddenMessage': sbiModule_translate.load('kn.cockpit.html.nodataset'),
-				'tag':"[kn-active-selection='%%column%%']",
-				'inputs': [
-					{	'name':'column',
-						'type': 'select',
-						'options': !datasetId || meta,
-						'flex':'flex-100'}]
-				}
+				'tag':"$P{%%parameter%%}"}
 		]
 	}
 });

@@ -75,6 +75,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.cockpitModule_datasetServices=cockpitModule_datasetServices;
 		$scope.translate=sbiModule_translate;
 
+		$scope.$watch("ngModelShared.filters",function(newValue,oldValue){
+			debugger;
+		});
+
 		$scope.openGeneralConfigurationDialog=function(){
 			cockpitModule_generalServices.openGeneralConfiguration();
 		}

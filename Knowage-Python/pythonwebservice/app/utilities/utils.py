@@ -16,7 +16,9 @@
 
 import pandas as pd
 import requests
-from app.utilities import security, cuncurrency_manager
+from app.utilities import constants, security, cuncurrency_manager as cm
+from datetime import datetime, timedelta
+import os
 
 def findFreePort():
     import socket
@@ -35,7 +37,7 @@ def retrieveKnowageInfo(headers, data):
     return user_id, knowage_address
 
 def retrieveDatasetInfo(data):
-    dataset_name = data['dataset']
+    dataset_name = data.get('dataset')
     datastore_request = data['datastore_request']
     return dataset_name, datastore_request
 
@@ -77,19 +79,34 @@ def getDatasetAsDataframe(widget):
     return df
 
 def serverExists(id):
-    with cuncurrency_manager.lck:
-        if id in cuncurrency_manager.active_servers.keys():
+    with cm.lck:
+        if id in cm.active_servers.keys():
             return True
         return False
 
 def destroyServer(id):
     # retrieve server and thread to be stopped and stop them
-    with cuncurrency_manager.lck:
-        bokeh_server = cuncurrency_manager.active_servers[id]
-        del cuncurrency_manager.active_servers[id]
-        th = cuncurrency_manager.active_threads[id]
-        del cuncurrency_manager.active_threads[id]
-        del cuncurrency_manager.ports_dict[id]
+    with cm.lck:
+        bokeh_server = cm.active_servers[id]
+        del cm.active_servers[id]
+        th = cm.bokeh_resources[id].thread
+        del cm.bokeh_resources[id]
     bokeh_server.io_loop.stop()
     bokeh_server.stop()
     th.join()
+
+def bokehGarbageCollector():
+    to_destroy = []
+    now = datetime.now()
+    with cm.lck:
+        for widget_id, res in cm.bokeh_resources.items():
+            if now - res.timestamp < timedelta(hours=1):
+                # add widget to destroy list
+                to_destroy.append(widget_id)
+                # delete temp files
+                os.remove(constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt")
+                if res.dataset_name is not None:
+                    dataset_file = constants.TMP_FOLDER + res.dataset_name + ".pckl"
+                    os.remove(dataset_file)
+    for w in to_destroy:
+        destroyServer(w)

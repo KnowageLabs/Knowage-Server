@@ -168,7 +168,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.parameters = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			}
 			else { //no dataset selected
-				$scope.dataset_label = "";
 				$scope.selections = "";
 				$scope.aggregations = "";
 				$scope.parameters = "";
