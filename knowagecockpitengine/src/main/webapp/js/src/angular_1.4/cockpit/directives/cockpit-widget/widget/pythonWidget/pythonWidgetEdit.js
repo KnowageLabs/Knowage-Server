@@ -33,18 +33,37 @@ function pythonWidgetEditControllerFunction(
 		mdPanelRef,
 		cockpitModule_datasetServices,
 		cockpitModule_analyticalDrivers,
-		cockpitModule_helperDescriptors) {
+		cockpitModule_helperDescriptors,
+		sbiModule_restServices) {
 
 	$scope.translate = sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 
-	$scope.newModel.types = {
+	sbiModule_restServices.restToRootProject();
+	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+	.then(function(response){
+		$scope.newModel.pythonEnvs = $scope.buildEnvironments(response.data);
+		$scope.newModel.pythonEnvsKeys = Object.keys($scope.newModel.pythonEnvs);
+	}, function(error){
+	});
+
+	$scope.buildEnvironments = function (data) {
+		toReturn = {}
+		for (i=0; i<data.length; i++) {
+			key = data[i].label;
+			val = data[i].valueCheck;
+			toReturn[key] = val;
+		}
+		return toReturn;
+	}
+
+	$scope.newModel.outputTypes = {
         "Image":"img",
         "HTML":"html",
         "Bokeh application":"bokeh",
 	};
 
-	$scope.newModel.keys = Object.keys($scope.newModel.types);
+	$scope.newModel.outputTypesKeys = Object.keys($scope.newModel.outputTypes);
 
 	$scope.toggleTag = function(tag){
 		tag.opened = !tag.opened;

@@ -18,9 +18,20 @@
 							<md-card>
 						     	<md-card-content layout="row" layout-align="space-around center">
 						     		<md-input-container flex class="md-block">
+									  <label>{{translate.load('kn.cockpit.python.environment')}}</label>
+									  <md-select ng-model="newModel.pythonAddress">
+								          <md-option ng-repeat="key in newModel.pythonEnvsKeys" value="{{newModel.pythonEnvs[key]}}">{{key}}</md-option>
+								      </md-select>
+									</md-input-container>
+								</md-card-content>
+							</md-card>
+						
+							<md-card>
+						     	<md-card-content layout="row" layout-align="space-around center">
+						     		<md-input-container flex class="md-block">
 									  <label>{{translate.load('kn.cockpit.python.outputType')}}</label>
 									  <md-select ng-model="newModel.pythonOutputType">
-								          <md-option ng-repeat="key in newModel.keys" value="{{newModel.types[key]}}">{{key}}</md-option>
+								          <md-option ng-repeat="key in newModel.outputTypesKeys" value="{{newModel.outputTypes[key]}}">{{key}}</md-option>
 								      </md-select>
 									</md-input-container>
 									<md-input-container flex class="md-block" ng-if="newModel.pythonOutputType == 'img'">
