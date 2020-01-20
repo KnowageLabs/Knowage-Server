@@ -1,4 +1,4 @@
-<md-card  class="flexCard datasetParameterDetail" ng-if="ngModelShared.viewDatasets || ngModelShared.viewParameters"  flex="33">
+<md-card  class="flexCard datasetParameterDetail" ng-if="ngModelShared.viewDatasets || ngModelShared.viewParameters || ngModelShared.viewVariables">
 	<md-toolbar class="secondaryToolbar">
 		  <div class="md-toolbar-tools"> 
 		     <h2>{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.dynamic.title")}}</h2> 
@@ -23,10 +23,8 @@
 			</md-subheader>		
 			<div ng-show="ngModelShared.viewParametersDett">
 		        <md-list-item ng-repeat="par in ngModelShared.parameters"  ng-click="addToText('parameter', par.url)">
-					<md-button  class="md-icon-button" >
-			             <md-icon md-font-icon="fa fa-arrow-left"  aria-label="Add To Text"></md-icon>
-			             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addParameter")}}</md-tooltip>
-		        	</md-button>
+		             <md-icon class="noMargin" md-font-icon="fa fa-arrow-left"  aria-label="Add To Text"></md-icon>
+		             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addParameter")}}</md-tooltip>
 					<p ng-show="ngModelShared.viewParametersDett"> {{par.label}} ({{par.url}}) </p>
 				</md-list-item>
 			</div>
@@ -36,13 +34,22 @@
 				</md-subheader>
 				<div  ng-show="ngModelShared.viewDatasetsDett[key]">
 			        <md-list-item ng-repeat="field in value"  ng-click="addToText('dataset', field.alias, key)">
-						<md-button  class="md-icon-button"  >
-				             <md-icon md-font-icon="fa fa-arrow-left" aria-label="Add To Text"></md-icon>
-				             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addField")}}</md-tooltip>
-			        	</md-button>
+			             <md-icon class="noMargin" md-font-icon="fa fa-arrow-left" aria-label="Add To Text"></md-icon>
+			             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addField")}}</md-tooltip>
 			        	<p  ng-show="ngModelShared.viewDatasetsDett[key]">  {{field.alias}} </p>						
 					</md-list-item>
 				</div>
+			</div>
+			<md-subheader ng-show="ngModelShared.viewVariables" layout="row" class="md-no-sticky" ng-click="showHideVariables()">
+				<i class="fa fa-code"></i>
+				<i class="fa floatRight" ng-class="{'fa-chevron-down':ngModelShared.viewVariablesDett,'fa-chevron-up':!ngModelShared.viewVariablesDett}"></i>{{::translate.load('kn.variables')}}
+			</md-subheader>	
+			<div ng-if="ngModelShared.viewVariables" ng-show="ngModelShared.viewVariablesDett">
+		        <md-list-item ng-repeat="(key,value) in ngModelShared.viewVariables"  ng-click="addToText('variable', key)">
+			        <md-icon class="noMargin" md-font-icon="fa fa-arrow-left"  aria-label="Add To Text"></md-icon>
+			        <md-tooltip md-direction="bottom">{{::translate.load('kn.variables.addvariable')}}</md-tooltip>
+					<p> {{key}} </p>
+				</md-list-item>
 			</div>
         </md-list> 
   

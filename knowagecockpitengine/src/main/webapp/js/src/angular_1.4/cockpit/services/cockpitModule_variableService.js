@@ -47,13 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		this.getVariableValue = function(variable){
 			return $q(function(resolve, reject) {
-//				var selectedVariable;
-//				for(var k in cockpitModule_template.configuration.variables){
-//					if(cockpitModule_template.configuration.variables[k].name == variableName){
-//						selectedVariable = cockpitModule_template.configuration.variables[k];
-//						break;
-//					}
-//				}
 				if(variable.type == 'static') resolve( variable.value );
 				if(variable.type == 'driver') resolve( cockpitModule_analyticalDrivers[variable.driver] );
 				if(variable.type == 'profile') resolve( sbiModule_user.profileAttributes[variable.attribute] );
@@ -77,6 +70,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					})
 				}
 			})
+		}
+
+		this.getVariablePlaceholders = function(textToParse){
+			var tempText = angular.copy(textToParse);
+			if(tempText){
+				tempText = tempText.replace(/\$V\{([a-zA-Z0-9\-\_]*)\}/g,function(match,p1){
+					return cockpitModule_properties.VARIABLES[p1];
+				})
+			}
+			return tempText;
 		}
 	}
 })();

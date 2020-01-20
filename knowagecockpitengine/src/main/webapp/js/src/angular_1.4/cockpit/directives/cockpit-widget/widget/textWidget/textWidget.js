@@ -23,18 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
 angular.module('cockpitModule')
-.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices,cockpitModule_datasetServices,cockpitModule_generalServices) {
+.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices,cockpitModule_datasetServices,cockpitModule_generalServices, cockpitModule_variableService) {
     return {
         restrict: 'A',
         replace: true,
         css: baseScriptPath+ '/directives/cockpit-widget/widget/textWidget/templates/editorCss.css',
         link: function (scope, ele, attrs) {
             scope.$watch(attrs.textWidgetTextRender, function (html) {
-            	html=cockpitModule_utilstServices.getParameterValue(html);
-
                 var model = scope.ngModel;
                 scope.ngModel.isReady=(cockpitModule_generalServices.isFromNewCockpit())?true:false;
-                if (html && html.indexOf("$F{")  >= 0){
+                if (html && html.indexOf("$F{")  >= 0 ){
                 	var elems = [];
 	                for (var dsLabel in model.datasets){
 	                	elems.push(dsLabel);
@@ -62,6 +60,10 @@ angular.module('cockpitModule')
 		                			scope.checkPlaceholders(counter, null, callback);
 		                		}
 		                	}else{
+		                		html = cockpitModule_utilstServices.getParameterValue(html);
+		                    	html = cockpitModule_variableService.getVariablePlaceholders(html);
+		                    	ele.html(html);
+		                    	$compile(ele.contents())(scope);
 		                		scope.ngModel.isReady=true; //view the content replaced
 		                		if (callback && typeof callback === "function") {
 		                			return callback();
@@ -104,7 +106,7 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_generalServices,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout){
+function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_generalServices,cockpitModule_properties,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel,$timeout,cockpitModule_variableService){
 
 	$scope.property={style:{}};
 	$scope.init=function(element,width,height){
@@ -129,6 +131,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		$scope.property.style["line-height"]= fontSize+"px";
 
 		if($scope.checkPlaceholders) $scope.checkPlaceholders(0, true);
+
 		if(nature == 'init'){
 			$timeout(function(){
 				$scope.widgetIsInit=true;

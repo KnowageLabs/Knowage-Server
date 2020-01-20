@@ -87,6 +87,10 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 		}
 	}
 
+	//set variables references to ngModel
+	$scope.ngModelShared.viewVariables = cockpitModule_properties.VARIABLES && !angular.equals(cockpitModule_properties.VARIABLES, {}) ? cockpitModule_properties.VARIABLES : false;
+	$scope.ngModelShared.viewVariablesDett = false;
+
 	$scope.addToText = function (type, param, key){
 		if (type=='parameter'){
 			param="<span class='paramPlaceholder'> $P{" + param + "}</span>";
@@ -117,6 +121,9 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 			}
 			else param="<span  class='paramPlaceholder'>" + ph + "</span>";
 		}
+		else if(type=='variable'){
+			param="<span class='paramPlaceholder'> $V{" + param + "}</span>";
+		}
 		if (!$scope.editorText) $scope.editorText="";
 		$scope.editorText += param;
 	}
@@ -141,6 +148,10 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 
 	$scope.showHideParameters = function(){
 		$scope.ngModelShared.viewParametersDett = (!$scope.ngModelShared.viewParametersDett);
+	}
+
+	$scope.showHideVariables = function(){
+		$scope.ngModelShared.viewVariablesDett = (!$scope.ngModelShared.viewVariablesDett);
 	}
 
 	$scope.showHideDatasetFields = function(key){
