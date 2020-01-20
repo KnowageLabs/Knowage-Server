@@ -46,13 +46,6 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
 
-	sbiModule_restServices.promiseGet('2.0/configs/label', 'PYTHON_MAIN_ENVIRONMENT')
-	.then(function(response){
-		$scope.pythonAddress = response.data;
-	}, function(error){
-		$scope.pythonAddress = "";
-	});
-
 	$scope.maxSizeStr = maxSizeStr;
 
 	$scope.csvEncodingDefault = "UTF-8";
@@ -91,14 +84,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
 		}
-	});
-
-	$scope.$watch("selectedDataSet.pythonScript",function(newValue,oldValue){
-		//debugger;
-	});
-
-	$scope.$watch("selectedDataSet.dataframeName",function(newValue,oldValue){
-		//debugger;
 	});
 
 	var getAllTags = function(){
@@ -195,13 +180,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	// Manage the Dataset type combobox items
 	$scope.filterDatasetTypes = function (item) {
-		if (item.VALUE_CD == 'Python') {
-			if ($scope.pythonAddress != undefined && $scope.pythonAddress != "")
-				return true;
-			else {
-				return false;
-			}
-		}
 	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated';
 	};
 
@@ -389,6 +367,24 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"csv",name:"CSV"}
  	];
 
+	// PYTHON ENVIRONMENTS CONFIG
+	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+	.then(function(response){
+		$scope.pythonEnvs = $scope.buildEnvironments(response.data);
+		$scope.pythonEnvsKeys = Object.keys($scope.pythonEnvs);
+	}, function(error){
+		$scope.selectedDataSet.pythonAddress = "";
+	});
+
+	$scope.buildEnvironments = function (data) {
+		toReturn = {}
+		for (i=0; i<data.length; i++) {
+			key = data[i].label;
+			val = data[i].valueCheck;
+			toReturn[key] = val;
+		}
+		return toReturn;
+	}
 	/**
 	 * Static (fixed) values for three comboboxes that appear when the CSV file is uploaded.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -3394,7 +3390,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = "http://" + $scope.pythonAddress.valueCheck + '/dataset';
+    			$scope.selectedDataSet.restAddress = "http://" + $scope.selectedDataSet.pythonAddress + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;

@@ -1121,6 +1121,22 @@ div.lower i  {
 							
 							<md-card layout-padding style="margin-top:0">
 								
+								<md-input-container class="md-block" style="width:100%"> 
+								       	
+								       	<label>Python environment</label>
+								       	
+								       	<md-select 	placeholder ="Choose python environment"
+								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()"
+								        			ng-model="selectedDataSet.pythonAddress">   
+								        	<md-option ng-repeat="key in pythonEnvsKeys" value="{{pythonEnvs[key]}}">{{key}}</md-option>
+								       	</md-select>  
+								       	
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanFileType">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+		       						 	
+						        	</md-input-container>
+								
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Dataframe variable name</label>
