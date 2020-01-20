@@ -209,6 +209,7 @@ public class LoginModule extends AbstractHttpModule {
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make
 		// any authentication, just creates the user profile object and puts it into Spago permanent container
 		userIdForDefaultProfile = userId;
+		logger.debug("userIdForDefaultProfile: " + userIdForDefaultProfile);
 
 		if (!activeSoo && !isPublicUser) {
 			String pwd = (String) request.getAttribute("password");
@@ -294,12 +295,17 @@ public class LoginModule extends AbstractHttpModule {
 		try {
 			httpSession = regenerateSession(servletRequest);
 			// set default role
+			logger.debug("userIdForDefaultProfile: " + userIdForDefaultProfile);
 			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userIdForDefaultProfile);
 			Integer defaultRoleId = user.getDefaultRoleId();
+			logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
 			String defaultRole = null;
-			if (defaultRoleId != null)
+			if (defaultRoleId != null) {
 				defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
+				logger.debug("defaultRole: " + defaultRole);
+			}
 
+			logger.debug("START - Getting user profile");
 			profile = UserUtilities.getUserProfile(userId, defaultRole);
 			if (profile == null) {
 				logger.error("user not created");
@@ -308,7 +314,7 @@ public class LoginModule extends AbstractHttpModule {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 				return;
 			}
-
+			logger.debug("END - Getting user profile");
 			// checks if the input role is valid with SpagoBI's role list
 			boolean isRoleValid = true;
 			String checkRoleLogin = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.CHECK_ROLE_LOGIN");

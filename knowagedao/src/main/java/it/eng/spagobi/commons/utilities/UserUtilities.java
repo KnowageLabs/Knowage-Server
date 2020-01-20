@@ -194,6 +194,7 @@ public class UserUtilities {
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
 		logger.debug("IN.userId=" + userId);
+		logger.debug("IN.defaultRole=" + defaultRole);
 		CacheInterface cache = UserProfileCache.getCache();
 		// Search UserProfile in cache
 		if (cache.contains(userId)) {
@@ -223,14 +224,17 @@ public class UserUtilities {
 					if (defaultRole == null) {
 						profile = new UserProfile(user);
 					} else {
+						logger.debug("Default role valorized with " + defaultRole);
 						profile = new UserProfile(user);
 						profile.setDefaultRole(defaultRole);
 
 						SpagoBIUserProfile clone = UserUtilities.clone(user);
 						clone.setRoles(new String[] { defaultRole });
+						logger.debug("START - Default role setting functionalities");
 						String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
 						Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
 						profile.setFunctionalities(toReturn);
+						logger.debug("END - Default role setting functionalities");
 					}
 
 				}
