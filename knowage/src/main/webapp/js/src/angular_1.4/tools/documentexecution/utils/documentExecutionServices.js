@@ -290,7 +290,13 @@
 						        postForm.appendChild(element);
 						    }
 						    document.body.appendChild(postForm);
+						}else{
+							for (var k in postObject.params) {
+								inputElement = document.getElementById("postForm_"+k);
+								inputElement.value = decodeURIComponent(postObject.params[k]);
+								inputElement.value = inputElement.value.replace(/\+/g,' ');
 							}
+						}
 						postForm.submit();
 
 						console.log("1.0/documentexecution/url -> " + documentUrl);
