@@ -231,6 +231,8 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 
 	$scope.crossHtml = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'html';
 
+	$scope.crossPython = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'python';
+
 	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
 
 	$scope.toggleEnabled = function(type){

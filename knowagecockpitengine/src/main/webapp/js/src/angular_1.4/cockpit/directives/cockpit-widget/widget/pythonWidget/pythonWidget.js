@@ -105,6 +105,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.refreshWidget();
 		}
 
+		$scope.crossNavigation = function () {
+			$scope.doSelection(null, null, null, null, null, null, $scope.ngModel.dataset.dsId, null);
+		}
+
 		$scope.createIframe = function () {
 			// get <div> associated to this bokeh application
 			var element = angular.element(document.querySelector('#w' + $scope.ngModel.id + ' #bokeh'));
@@ -168,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: "http://" + $scope.ngModel.pythonAddress + "/edit/" + $scope.ngModel.pythonOutputType,
+		        url: "http://" + $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
@@ -197,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataViewMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: "http://" + $scope.ngModel.pythonAddress + "/view/" + $scope.ngModel.pythonOutputType,
+		        url: "http://" + $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
