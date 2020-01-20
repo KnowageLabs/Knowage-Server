@@ -38,6 +38,7 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.translate = sbiModule_translate;
 	$scope.newModel = angular.copy(model);
+	$scope.formattedAnalyticalDrivers = [];
 
 	sbiModule_restServices.restToRootProject();
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
@@ -46,6 +47,10 @@ function pythonWidgetEditControllerFunction(
 		$scope.newModel.pythonEnvsKeys = Object.keys($scope.newModel.pythonEnvs);
 	}, function(error){
 	});
+
+	for(var a in cockpitModule_analyticalDrivers){
+		$scope.formattedAnalyticalDrivers.push({'name':a});
+	}
 
 	$scope.buildEnvironments = function (data) {
 		toReturn = {}
@@ -83,7 +88,9 @@ function pythonWidgetEditControllerFunction(
 		}else{
 			if($scope.newModel.content && $scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = [];
 		}
-		$scope.helper = cockpitModule_helperDescriptors.pythonHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets);
+
+		var ds_label = cockpitModule_datasetServices.getDatasetById(newValue).label;
+		$scope.helper = cockpitModule_helperDescriptors.pythonHelperJSON(newValue, ds_label, $scope.dataset ? $scope.dataset.metadata.fieldsMeta : null, $scope.formattedAnalyticalDrivers, $scope.aggregations, $scope.newModel.cross, $scope.availableDatasets);
 
 	})
 

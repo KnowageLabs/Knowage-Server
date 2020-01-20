@@ -187,7 +187,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 		]
 	}
 
-	self.pythonHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets){
+	self.pythonHelperJSON = function(datasetId,datasetLabel,meta,parameters,aggregations,cross,availableDatasets){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.python.tag1'),
@@ -201,7 +201,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'options': !datasetId || meta,
 						'flex':'flex-100'}
 				],
-				'tag':"%%column%%"},
+				'tag': datasetLabel + "[\"%%column%%\"]"},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.python.tag2'),
 				'name': 'parameter',
