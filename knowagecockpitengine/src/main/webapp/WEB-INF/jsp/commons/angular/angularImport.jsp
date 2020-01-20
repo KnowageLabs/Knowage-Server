@@ -111,7 +111,7 @@ END-PRODUCTION -->
 
 <!-- 		angular-drag-and-drop-lists -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>	
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>"/>	
 
 <!--  angular JSON FORMATTER -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jsonformatter/dist/json-formatter.min.css">
