@@ -6,7 +6,11 @@
             </div>
         </md-toolbar>
         <md-dialog-content style="padding:16px" layout="column" layout-align="start stretch">            
-            
+            <div layout="row" layout-align="center center">
+			  <div class="kn-info"  flex>
+			    {{::translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}}
+			  </div>
+			</div>
             	<div layout="row">            		                
 	                <md-input-container flex=30>
 	                	<label>{{translate.load("sbi.documentdetails.datadependency.ad")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.depends")}}</label>
@@ -25,9 +29,6 @@
 		                            {{ option }}
 		                        </md-option>
 		                    </md-select>		                    
-        					<div class="hint">
-        					{{translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}}
-	                    </div>
 		                </md-input-container>
 		                
 	                </div>
