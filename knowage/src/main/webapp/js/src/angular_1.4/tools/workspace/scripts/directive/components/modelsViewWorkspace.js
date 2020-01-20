@@ -65,8 +65,12 @@
 			}
 		}
 
-		$scope.showQbeFromBMIndex = function(index){
-			$scope.showQbeFromBM($scope.businessModels[index]);
+		$scope.showQbeFromBMIndex = function(bmId){
+			for (var i = 0; i < $scope.businessModels.length; i++) {
+				if($scope.businessModels[i].id==bmId) {
+					$scope.showQbeFromBM($scope.businessModels[i]);
+				}
+			}
 		}
 
 		$scope.showQbeFromBM=function(businessModel){
@@ -135,17 +139,17 @@
 		}
 
 		function modelsOnSelectionChanged(params) {
-			$scope.selectModel($scope.businessModels[params.rowIndex]);
+			$scope.selectModel(params.data);
 			$scope.$apply();
 		}
 
 		function federationsOnSelectionChanged(params) {
-			$scope.selectModel($scope.federationDefinitions[params.rowIndex]);
+			$scope.selectModel(params.data);
 			$scope.$apply();
 		}
 
 		function modelsButtonRenderer(params){
-			return 	'<md-button class="md-icon-button" ng-click="showQbeFromBMIndex('+params.rowIndex+')"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.qbe\')}}</md-tooltip><md-icon md-font-icon="fa fa-search"></md-icon></md-button>';
+			return 	'<md-button class="md-icon-button" ng-click="showQbeFromBMIndex('+params.data.id+')"><md-tooltip md-delay="500">{{::translate.load(\'sbi.workspace.dataset.qbe\')}}</md-tooltip><md-icon md-font-icon="fa fa-search"></md-icon></md-button>';
 		}
 
 		function federationsButtonRenderer(params){
