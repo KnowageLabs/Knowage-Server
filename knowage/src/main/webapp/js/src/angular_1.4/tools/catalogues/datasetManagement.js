@@ -2208,7 +2208,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				  return JSON.stringify(obj) === JSON.stringify({});
 				}
 
-			if(!isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
+			if($scope.selectedDataSet.restRequestHeaders != undefined && !isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
 				for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
 
 					var restRequestHeaderTemp = {};
