@@ -3014,7 +3014,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         theme: 'eclipse',
         lineWrapping: true,
         lineNumbers: true,
-        mode: "python",
+        mode: {name: "python"}
 	};
 
 	 $scope.codemirrorSparqlOptions = {

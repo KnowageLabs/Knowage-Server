@@ -90,6 +90,7 @@ div.lower i  {
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sparql/sparql.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/python/python.js")%>"></script>
 		
 		<!-- CRON for Dataset Scheduling -->
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
