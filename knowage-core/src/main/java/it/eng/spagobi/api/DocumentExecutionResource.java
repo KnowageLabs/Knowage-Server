@@ -129,6 +129,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
+	public String runDocumentExecution = SingletonConfig.getInstance().getConfigValue("knowage.documentExecution");
 
 	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
 	private static final String DESCRIPTION_FIELD = "description";
@@ -733,8 +734,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 
 		}
-
-		resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
+		if (runDocumentExecution.equals("STOP")) {
+			resultAsMap.put("isReadyForExecution", false);
+		} else {
+			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
+		}
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
@@ -1165,9 +1169,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
 	 *
-	 * @param id          of document
-	 * @param id          of subObject
-	 * @param id          of a metaData
+	 * @param id
+	 *            of document
+	 * @param id
+	 *            of subObject
+	 * @param id
+	 *            of a metaData
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError

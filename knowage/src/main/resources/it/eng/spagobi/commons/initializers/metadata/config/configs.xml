@@ -541,6 +541,11 @@
         description="Show grid view as default in workspace"
         isActive="true" valueCheck="true" valueType="STRING"
         category="GENERIC_CONFIGURATION" />
+        
+    <CONFIG label="knowage.documentExecution" name="Document execution"
+        description="Document execution"
+        isActive="true" valueCheck="RUN" valueType="STRING"
+        category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="internal.security.login.checkForMaxFailedLoginAttempts" name="Max failed login attempts filter"
 		description="Enable filter for max value of failed login attempts" isActive="true"
