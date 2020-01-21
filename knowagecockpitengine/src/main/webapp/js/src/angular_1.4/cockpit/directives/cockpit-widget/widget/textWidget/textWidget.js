@@ -74,6 +74,8 @@ angular.module('cockpitModule')
 
 	                scope.checkPlaceholders(0);
                 }else{
+                	html = cockpitModule_utilstServices.getParameterValue(html);
+                	html = cockpitModule_variableService.getVariablePlaceholders(html);
                 	 ele.html(html);
                      $compile(ele.contents())(scope);
                      scope.ngModel.isReady=true;
