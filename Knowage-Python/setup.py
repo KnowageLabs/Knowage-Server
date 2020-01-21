@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="knowage-python",
-    version="0.1.2",
+    version="0.2.7",
     license='AGPL v3',
     author="Marco Balestri",
     author_email="marco.balestri@eng.it",
@@ -13,13 +13,17 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    package_data={
+        '': ['*.html'],
+    },
     install_requires=[
           'flask',
-          'base64',
+          'pybase64',
           'bokeh',
           'tornado',
           'requests',
           'pandas',
+          'jwt',
       ],
     classifiers=[
         "Programming Language :: Python :: 3",

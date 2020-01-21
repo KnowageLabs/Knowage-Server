@@ -19,6 +19,7 @@ import requests
 import json
 import jwt
 from datetime import datetime
+from app.utilities import constants
 
 def buildAuthToken(user_id):
     # auth_token = "Direct " + base64(user_id)
@@ -67,6 +68,6 @@ def jwtToken2pythonDataset(token):
     return True, script
 
 def getHMACKey():
-    f = open("app/utilities/HMACkey.txt", "r")
+    f = open(constants.HMAC_KEY_FILE, "r")
     key = f.read()
     return key
