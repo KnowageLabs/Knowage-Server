@@ -27,6 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -672,112 +675,119 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createUserMenuElement(Menu childElem, Locale locale, int level, JSONArray tempMenuList) throws JSONException {
-		JSONObject temp2 = new JSONObject();
+		Monitor monitor = MonitorFactory.start("Knowage.it.eng.spagobi.commons.serializer.createUserMenuElement : " + childElem.getName());
+		try {
+			JSONObject temp2 = new JSONObject();
 
-		String path = MenuUtilities.getMenuPath(childElem, locale);
+			String path = MenuUtilities.getMenuPath(childElem, locale);
 
-		MessageBuilder msgBuild = new MessageBuilder();
-		String text = "";
-		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-			// text = msgBuild.getI18nMessage(locale, childElem.getName());
-			text = childElem.getName();
-		else {
-			if (childElem.getName().startsWith("#")) {
-				String titleCode = childElem.getName().substring(1);
-
-				try {
-					switch (titleCode) {
-					case "menu.ServerManager":
-					case "menu.CacheManagement":
-						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
-						break;
-					}
-				} catch (ClassNotFoundException e) {
-					return tempMenuList;
-				}
-
-				text = msgBuild.getMessage(titleCode, locale);
-			} else {
+			MessageBuilder msgBuild = new MessageBuilder();
+			String text = "";
+			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
+				// text = msgBuild.getI18nMessage(locale, childElem.getName());
 				text = childElem.getName();
+			else {
+				if (childElem.getName().startsWith("#")) {
+					String titleCode = childElem.getName().substring(1);
+
+					try {
+						switch (titleCode) {
+						case "menu.ServerManager":
+						case "menu.CacheManagement":
+							Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+							break;
+						}
+					} catch (ClassNotFoundException e) {
+						return tempMenuList;
+					}
+
+					text = msgBuild.getMessage(titleCode, locale);
+				} else {
+					text = childElem.getName();
+				}
 			}
-		}
 
-		level++;
-		if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
-			temp2.put(TITLE, text);
-			temp2.put(TITLE_ALIGN, "left");
-			temp2.put(COLUMNS, 1);
-			temp2.put(XTYPE, "buttongroup");
-			temp2.put(ICON_CLS, childElem.getIconCls());
-		} else {
+			level++;
+			if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
+				temp2.put(TITLE, text);
+				temp2.put(TITLE_ALIGN, "left");
+				temp2.put(COLUMNS, 1);
+				temp2.put(XTYPE, "buttongroup");
+				temp2.put(ICON_CLS, childElem.getIconCls());
+			} else {
 
-			temp2.put(TEXT, text);
-			temp2.put("style", "text-align: left;");
-			temp2.put(TARGET, "_self");
-			temp2.put(ICON_CLS, "bullet");
+				temp2.put(TEXT, text);
+				temp2.put("style", "text-align: left;");
+				temp2.put(TARGET, "_self");
+				temp2.put(ICON_CLS, "bullet");
 
-			String src = childElem.getUrl();
+				String src = childElem.getUrl();
 
-			if (childElem.getObjId() != null) {
-				if (childElem.isClickable() == true) {
-					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+				if (childElem.getObjId() != null) {
+					if (childElem.isClickable() == true) {
+						temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+								+ childElem.getMenuId() + "', '" + path + "' )");
+						temp2.put(LINK_TYPE, "execDirectUrl");
+						temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+					} else {
+						temp2.put("isClickable", "false");
+					}
+				} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
+					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="
 							+ childElem.getMenuId() + "', '" + path + "' )");
 					temp2.put(LINK_TYPE, "execDirectUrl");
-					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
+				} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
+					String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
+					temp2.put(HREF, finalUrl);
+					temp2.put(LINK_TYPE, "execDirectUrl");
+					temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
+				} else if (childElem.getExternalApplicationUrl() != null) {
+					temp2.put(HREF,
+							"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
+					temp2.put(LINK_TYPE, "callExternalApp");
+					temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
+				} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
+					String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
+					url = url.replace("${SPAGOBI_CONTEXT}", contextName);
+					url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+					src = src.replace("${SPAGOBI_CONTEXT}", contextName);
+					src = src.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+					path = path.replace("#", "");
+
+					// code to manage SpagoBISocialAnalysis link in admin menu
+					if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
+						url = url.substring(0, url.length() - 1);
+						url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+						src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+						// if (!GeneralUtilities.isSSOEnabled()) {
+						url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
+								+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
+								+ "'";
+					}
+					temp2.put(SRC, src);
+					temp2.put(HREF, url + ", '" + path + "')");
+					String linkType = childElem.getLinkType() == null ? "execDirectUrl" : childElem.getLinkType();
+					temp2.put(LINK_TYPE, linkType);
+				}
+
+			}
+			if (childElem.getHasChildren()) {
+				List childrenBis = childElem.getLstChildren();
+				JSONArray tempMenuList2 = (JSONArray) getChildren(childrenBis, level, locale);
+				if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
+					temp2.put(ITEMS, tempMenuList2);
 				} else {
-					temp2.put("isClickable", "false");
+					temp2.put(MENU, tempMenuList2);
 				}
-			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
-						+ "', '" + path + "' )");
-				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
-			} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
-				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
-				temp2.put(HREF, finalUrl);
-				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
-			} else if (childElem.getExternalApplicationUrl() != null) {
-				temp2.put(HREF,
-						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
-				temp2.put(LINK_TYPE, "callExternalApp");
-				temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
-			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
-				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
-				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
-				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
-				src = src.replace("${SPAGOBI_CONTEXT}", contextName);
-				src = src.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
-				path = path.replace("#", "");
-
-				// code to manage SpagoBISocialAnalysis link in admin menu
-				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
-					url = url.substring(0, url.length() - 1);
-					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					// if (!GeneralUtilities.isSSOEnabled()) {
-					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
-				}
-				temp2.put(SRC, src);
-				temp2.put(HREF, url + ", '" + path + "')");
-				String linkType = childElem.getLinkType() == null ? "execDirectUrl" : childElem.getLinkType();
-				temp2.put(LINK_TYPE, linkType);
 			}
 
+			tempMenuList.put(temp2);
+			monitor.stop();
+			return tempMenuList;
+		} finally {
+			monitor.stop();
 		}
-		if (childElem.getHasChildren()) {
-			List childrenBis = childElem.getLstChildren();
-			JSONArray tempMenuList2 = (JSONArray) getChildren(childrenBis, level, locale);
-			if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
-				temp2.put(ITEMS, tempMenuList2);
-			} else {
-				temp2.put(MENU, tempMenuList2);
-			}
-		}
-
-		tempMenuList.put(temp2);
-		return tempMenuList;
 	}
 
 	private boolean isAbleTo(String func, List funcs) {

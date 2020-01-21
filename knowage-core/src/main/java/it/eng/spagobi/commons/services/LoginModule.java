@@ -71,7 +71,6 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
-import it.eng.spagobi.wapp.util.MenuUtilities;
 
 public class LoginModule extends AbstractHttpModule {
 
@@ -140,14 +139,14 @@ public class LoginModule extends AbstractHttpModule {
 					// user is authenticated, nothing to do
 					logger.debug("User is authenticated");
 					// fill response
-					List lstMenu = MenuUtilities.getMenuItems(profile);
+//					List lstMenu = MenuUtilities.getMenuItems(profile);
 					String url = "/themes/" + currTheme + "/jsp/";
 					if (UserUtilities.isTechnicalUser(profile)) {
 						url += "adminHome.jsp";
 					} else {
 						url += "userHome.jsp";
 					}
-					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 					// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 					return;
@@ -182,7 +181,7 @@ public class LoginModule extends AbstractHttpModule {
 					// user is authenticated, nothing to do
 					logger.debug("User is authenticated");
 					// fill response
-					List lstMenu = MenuUtilities.getMenuItems(profile);
+//					List lstMenu = MenuUtilities.getMenuItems(profile);
 					// set publisher name
 					String url = "/themes/" + currTheme + "/jsp/";
 					if (UserUtilities.isTechnicalUser(profile)) {
@@ -190,7 +189,7 @@ public class LoginModule extends AbstractHttpModule {
 					} else {
 						url += "userHome.jsp";
 					}
-					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 
 					return;
@@ -377,7 +376,7 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-			List lstMenu = MenuUtilities.getMenuItems(profile);
+//			List lstMenu = MenuUtilities.getMenuItems(profile);
 
 			String url = "/themes/" + currTheme + "/jsp/";
 			if (UserUtilities.isTechnicalUser(profile)) {
@@ -385,7 +384,7 @@ public class LoginModule extends AbstractHttpModule {
 			} else {
 				url += "userHome.jsp";
 			}
-			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case

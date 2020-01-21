@@ -90,7 +90,7 @@ public class MenuUtilities {
 		}
 	}
 
-	public static void checkAndSetNotClickableMenus(Menu menu, IEngUserProfile userProfile) {
+	public static void checkAndSetNotClickableMenus(List<Integer> list, Menu menu, IEngUserProfile userProfile) {
 		if (menu.getObjId() != null) {
 			boolean clickable = MenuAccessVerifier.checkClickable(menu, userProfile);
 			if (clickable == false) {
@@ -100,7 +100,10 @@ public class MenuUtilities {
 		if (menu.getHasChildren()) {
 			for (Iterator iterator = menu.getLstChildren().iterator(); iterator.hasNext();) {
 				Menu chldMenu = (Menu) iterator.next();
-				checkAndSetNotClickableMenus(chldMenu, userProfile);
+				if (!list.contains(chldMenu.getObjId())) {
+					list.add(chldMenu.getObjId());
+					checkAndSetNotClickableMenus(list, chldMenu, userProfile);
+				}
 			}
 		}
 	}
@@ -117,15 +120,20 @@ public class MenuUtilities {
 					canView = true; // technical menu voice is ever visible if
 									// it's present
 				if (canView) {
-					filteredMenuList.add(menuElem);
+					if (!filteredMenuList.contains(menuElem))
+						filteredMenuList.add(menuElem);
 				}
 			}
 		}
 
+		List<Integer> list = new ArrayList<Integer>();
 		for (Iterator iterator = filteredMenuList.iterator(); iterator.hasNext();) {
 			Menu menu = (Menu) iterator.next();
 			// call recursively for menu to set clickable also for children
-			checkAndSetNotClickableMenus(menu, userProfile);
+			if (!list.contains(menu.getObjId())) {
+				list.add(menu.getObjId());
+				checkAndSetNotClickableMenus(list, menu, userProfile);
+			}
 		}
 
 		return filteredMenuList;
@@ -135,12 +143,9 @@ public class MenuUtilities {
 	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
 	 * the method <code>loadMenuByRoleId</code>.
 	 *
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param request  The request Source Bean
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	public static void getMenuItems(SourceBean request, SourceBean response, IEngUserProfile profile) throws EMFUserError {
 		try {
@@ -201,12 +206,9 @@ public class MenuUtilities {
 	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
 	 * the method <code>loadMenuByRoleId</code>.
 	 *
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param request  The request Source Bean
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	public static List getMenuItems(IEngUserProfile profile) throws EMFUserError {
 		try {
@@ -280,10 +282,8 @@ public class MenuUtilities {
 	/**
 	 * This method checks if the single item is visible from the technical user
 	 *
-	 * @param itemSB
-	 *            the single item
-	 * @param profile
-	 *            the profile
+	 * @param itemSB  the single item
+	 * @param profile the profile
 	 * @return boolean value
 	 * @throws EMFInternalError
 	 */
@@ -299,10 +299,8 @@ public class MenuUtilities {
 	/**
 	 * This method checks if the single item has other sub-items visible from the technical user
 	 *
-	 * @param itemSB
-	 *            the master item
-	 * @param profile
-	 *            the profile
+	 * @param itemSB  the master item
+	 * @param profile the profile
 	 * @return boolean value
 	 * @throws EMFInternalError
 	 */
@@ -325,8 +323,7 @@ public class MenuUtilities {
 	/**
 	 * This method return a Menu type element recursivly with the technical user item (the item is created in memory, it isn't on db)
 	 *
-	 * @param itemSB
-	 *            the technical item to add
+	 * @param itemSB the technical item to add
 	 * @param father
 	 * @return
 	 */
@@ -395,10 +392,8 @@ public class MenuUtilities {
 	/**
 	 * Check if the menu element in input is already presents into the list
 	 *
-	 * @param lst
-	 *            the list to check
-	 * @param menu
-	 *            the element to check
+	 * @param lst  the list to check
+	 * @param menu the element to check
 	 * @return the index of the input menu item or -1 if it is not found in the list
 	 */
 	public static int indexOf(List lst, Menu menu) {

@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.serializer.MenuListJSONSerializerForREST;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.wapp.util.MenuUtilities;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,6 +30,16 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.serializer.MenuListJSONSerializerForREST;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -64,6 +66,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@Path("/enduser")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getEndUserMenu(@Context HttpServletRequest req) {
+		Monitor monitor = null;
+		Monitor monitor1 = null;
+		Monitor monitor2 = null;
 
 		logger.debug("IN");
 
@@ -72,7 +77,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 		if (userProfile == null) {
 			return ExceptionUtilities.serializeException("Profile not found when executing service", null);
 		}
-
 		try {
 			UserProfile profile = (UserProfile) userProfile;
 			String userName = (String) profile.getUserName();
@@ -81,7 +85,8 @@ public class MenuResource extends AbstractSpagoBIResource {
 			String language = req.getParameter("curr_language");
 
 			Locale currentLocale = new Locale(language, country, "");
-			List lstMenu = new ArrayList();
+//			List lstMenu = new ArrayList();
+			List lstMenu = MenuUtilities.getMenuItems(profile);
 			// search for custom menu defined for this user
 			if (getAttributeFromHttpSession(MenuUtilities.LIST_MENU) != null) {
 				lstMenu = (List) getAttributeFromHttpSession(MenuUtilities.LIST_MENU);
@@ -89,9 +94,17 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 			HttpSession session = req.getSession();
 			// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
+			monitor = MonitorFactory.start("Knowage.MenuUtilities.filterListForUser");
 			List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+			monitor.stop();
+
+			monitor1 = MonitorFactory.start("Knowage.MenuListJSONSerializerForREST");
 			MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session);
+			monitor1.stop();
+
+			monitor2 = MonitorFactory.start("Knowage.serializer.serialize");
 			JSONObject jsonMenuList = (JSONObject) serializer.serialize(filteredMenuList, currentLocale);
+			monitor2.stop();
 
 			jsonMenuList.put("userName", userName);
 
@@ -100,6 +113,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Throwable t) {
 			return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
 		} finally {
+			monitor.stop();
+			monitor1.stop();
+			monitor2.stop();
 			logger.debug("OUT");
 		}
 
