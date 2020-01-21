@@ -30,7 +30,6 @@ angular.module('cockpitModule')
         css: baseScriptPath+ '/directives/cockpit-widget/widget/textWidget/templates/editorCss.css',
         link: function (scope, ele, attrs) {
             scope.$watch(attrs.textWidgetTextRender, function (html) {
-            	html=cockpitModule_utilstServices.getParameterValue(html);
 
                 var model = scope.ngModel;
                 scope.ngModel.isReady=(cockpitModule_generalServices.isFromNewCockpit())?true:false;
@@ -62,6 +61,9 @@ angular.module('cockpitModule')
 		                			scope.checkPlaceholders(counter, null, callback);
 		                		}
 		                	}else{
+		                		html = cockpitModule_utilstServices.getParameterValue(html);
+		                    	ele.html(html);
+		                    	$compile(ele.contents())(scope);
 		                		scope.ngModel.isReady=true; //view the content replaced
 		                		if (callback && typeof callback === "function") {
 		                			return callback();
@@ -72,6 +74,7 @@ angular.module('cockpitModule')
 
 	                scope.checkPlaceholders(0);
                 }else{
+                	html = cockpitModule_utilstServices.getParameterValue(html);
                 	 ele.html(html);
                      $compile(ele.contents())(scope);
                      scope.ngModel.isReady=true;
