@@ -401,11 +401,15 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     function rolesSelection(params){
     	$scope.role = $scope.rolesGridOptions.api.getSelectedRows();
+
+    	if ($scope.role.length <= 1) {
+    		$scope.selectedUser.defaultRoleId = null;
+    	} else {
 	    	for (var i = 0; i < $scope.role.length; i++) {
 	    		if ($scope.selectedUser.defaultRoleId && $scope.role[i].id == $scope.selectedUser.defaultRoleId) break;
 	    		if (i == $scope.role.length-1) $scope.selectedUser.defaultRoleId = null;
 	    	}
-
+    	}
     	$scope.$apply();
 	}
 

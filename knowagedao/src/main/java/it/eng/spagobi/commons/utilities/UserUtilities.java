@@ -63,6 +63,7 @@ import it.eng.spagobi.dao.exception.DAORuntimeException;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
+import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -187,14 +188,10 @@ public class UserUtilities {
 	}
 
 	public static IEngUserProfile getUserProfile(String userId) throws Exception {
-		return getUserProfile(userId, null);
-	}
 
-	public static IEngUserProfile getUserProfile(String userId, String defaultRole) throws Exception {
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
 		logger.debug("IN.userId=" + userId);
-		logger.debug("IN.defaultRole=" + defaultRole);
 		CacheInterface cache = UserProfileCache.getCache();
 		// Search UserProfile in cache
 		if (cache.contains(userId)) {
@@ -220,21 +217,12 @@ public class UserUtilities {
 					checkTenant(user);
 
 					user.setFunctions(readFunctionality(user));
+					profile = new UserProfile(user);
 
-					if (defaultRole == null) {
-						profile = new UserProfile(user);
-					} else {
-						logger.debug("Default role valorized with " + defaultRole);
-						profile = new UserProfile(user);
-						profile.setDefaultRole(defaultRole);
+					String defaultRole = getDefaultRole(user);
 
-						SpagoBIUserProfile clone = UserUtilities.clone(user);
-						clone.setRoles(new String[] { defaultRole });
-						logger.debug("START - Default role setting functionalities");
-						String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
-						Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
-						profile.setFunctionalities(toReturn);
-						logger.debug("END - Default role setting functionalities");
+					if (defaultRole != null) {
+						createProfileWithDefaultRole(profile, user, defaultRole);
 					}
 
 				}
@@ -261,6 +249,31 @@ public class UserUtilities {
 			}
 		}
 
+	}
+
+	private static void createProfileWithDefaultRole(UserProfile profile, SpagoBIUserProfile user, String defaultRole) {
+		profile.setDefaultRole(defaultRole);
+		logger.debug("Default role set with " + defaultRole);
+
+		SpagoBIUserProfile clone = UserUtilities.clone(user);
+		clone.setRoles(new String[] { defaultRole });
+		logger.debug("START - Default role setting functionalities");
+		String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
+		Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
+		profile.setFunctionalities(toReturn);
+		logger.debug("END - Default role setting functionalities");
+	}
+
+	private static String getDefaultRole(SpagoBIUserProfile user) throws EMFUserError {
+		SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
+		Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
+		logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
+		String defaultRole = null;
+		if (defaultRoleId != null) {
+			defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
+			logger.debug("Found defaultRole: " + defaultRole);
+		}
+		return defaultRole;
 	}
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
