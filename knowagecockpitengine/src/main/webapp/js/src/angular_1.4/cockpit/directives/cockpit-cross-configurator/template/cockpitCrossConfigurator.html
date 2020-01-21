@@ -88,7 +88,7 @@
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
 				<label>{{::translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" >
-					<md-option ng-repeat="opt in outputParametersType" ng-value="opt.value" ng-hide="crossImage && opt.value == 'dynamic'">
+					<md-option ng-repeat="opt in outputParametersType" ng-value="opt.value" ng-hide="(crossImage || crossPython) && opt.value == 'dynamic'">
 						{{opt.label}}
 					</md-option>
 				</md-select>
@@ -103,7 +103,7 @@
 				<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="{{outputParameter.dataType}}">
 			</md-input-container>
 
-			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" ng-value="ciaoooo" type="hidden">
+			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" type="hidden">
 	
 			<!-- column if dynamic -->
 			<!-- TABLE -->

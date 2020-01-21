@@ -1582,8 +1582,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			    canvas.toBlob(function(blob) {
 			        saveAs(blob, (model.content.name || 'screenshot' )+'.png');
 			    });
-			}, function(error) {
-				//todo
 			});
 		}
 		delete model.loadingScreen;

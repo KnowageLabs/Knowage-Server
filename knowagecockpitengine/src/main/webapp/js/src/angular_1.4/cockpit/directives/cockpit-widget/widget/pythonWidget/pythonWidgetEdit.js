@@ -89,7 +89,10 @@ function pythonWidgetEditControllerFunction(
 			if($scope.newModel.content && $scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = [];
 		}
 
-		var ds_label = cockpitModule_datasetServices.getDatasetById(newValue).label;
+		var ds_label;
+		if (newValue) {
+			ds_label = cockpitModule_datasetServices.getDatasetById(newValue).label;
+		}
 		$scope.helper = cockpitModule_helperDescriptors.pythonHelperJSON(newValue, ds_label, $scope.dataset ? $scope.dataset.metadata.fieldsMeta : null, $scope.formattedAnalyticalDrivers, $scope.aggregations, $scope.newModel.cross, $scope.availableDatasets);
 
 	})
