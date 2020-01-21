@@ -22,9 +22,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -64,37 +61,32 @@ public class MenuAccessVerifier {
 
 	public static boolean canView(Menu menu, IEngUserProfile profile) {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("Knowage.MenuAccessVerifier.canView");
+		Role[] menuRoles = menu.getRoles();
+		Collection profileRoles = null;
+
 		try {
-			Role[] menuRoles = menu.getRoles();
-			Collection profileRoles = null;
+			profileRoles = ((UserProfile) profile).getRolesForUse();
+		} catch (EMFInternalError e) {
+			return false;
+		}
 
-			try {
-				profileRoles = ((UserProfile) profile).getRolesForUse();
-			} catch (EMFInternalError e) {
-				return false;
-			}
+		boolean found = false;
+		for (Iterator iterator = profileRoles.iterator(); iterator.hasNext() && !found;) {
+			String profileRole = (String) iterator.next();
+			for (int i = 0; i < menuRoles.length && !found; i++) {
+				Role menuRole = menuRoles[i];
+				String menuRoleName = menuRole.getName();
 
-			boolean found = false;
-			for (Iterator iterator = profileRoles.iterator(); iterator.hasNext() && !found;) {
-				String profileRole = (String) iterator.next();
-				for (int i = 0; i < menuRoles.length && !found; i++) {
-					Role menuRole = menuRoles[i];
-					String menuRoleName = menuRole.getName();
-
-					if (menuRoleName.equals(profileRole)) {
-						found = true;
-					}
+				if (menuRoleName.equals(profileRole)) {
+					found = true;
 				}
-
 			}
-			logger.debug("OUT");
-			return found;
-
-		} finally {
-			monitor.stop();
 
 		}
+		logger.debug("OUT");
+
+		return found;
+
 	}
 
 }

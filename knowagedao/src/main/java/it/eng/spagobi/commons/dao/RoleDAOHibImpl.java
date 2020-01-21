@@ -39,9 +39,6 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
@@ -785,157 +782,152 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * @return The corrispondent <code>Role</code> object
 	 */
 	public Role toRole(SbiExtRoles hibRole) {
-		Monitor monitor = MonitorFactory.start("Knowage.RoleDAOHibImpl.toRole");
-		try {
-			logger.debug("IN.hibRole.getName()=" + hibRole.getName());
-			Role role = new Role();
-			role.setCode(hibRole.getCode());
-			role.setDescription(hibRole.getDescr());
-			role.setId(hibRole.getExtRoleId());
-			role.setName(hibRole.getName());
-			role.setIsPublic(hibRole.getIsPublic());
+		logger.debug("IN.hibRole.getName()=" + hibRole.getName());
+		Role role = new Role();
+		role.setCode(hibRole.getCode());
+		role.setDescription(hibRole.getDescr());
+		role.setId(hibRole.getExtRoleId());
+		role.setName(hibRole.getName());
+		role.setIsPublic(hibRole.getIsPublic());
 
-			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
-			Iterator it = authorizations.iterator();
-			while (it.hasNext()) {
-				SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
-				SbiAuthorizations f = fr.getSbiAuthorizations();
+		Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
+		Iterator it = authorizations.iterator();
+		while (it.hasNext()) {
+			SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
+			SbiAuthorizations f = fr.getSbiAuthorizations();
 
-				String name = f.getName();
-				if (name.equals("SAVE_SUBOBJECTS")) {
-					role.setIsAbleToSaveSubobjects(true);
-				}
-				if (name.equals("SEE_SUBOBJECTS")) {
-					role.setIsAbleToSeeSubobjects(true);
-				}
-				if (name.equals("SEE_VIEWPOINTS")) {
-					role.setIsAbleToSeeViewpoints(true);
-				}
-				if (name.equals("SEE_SNAPSHOTS")) {
-					role.setIsAbleToSeeSnapshots(true);
-				}
-				if (name.equals("RUN_SNAPSHOTS")) {
-					role.setIsAbleToRunSnapshots(true);
-				}
-				if (name.equals("SEE_NOTES")) {
-					role.setIsAbleToSeeNotes(true);
-				}
-				if (name.equals("SEND_MAIL")) {
-					role.setIsAbleToSendMail(true);
-				}
-				if (name.equals("SAVE_INTO_FOLDER")) {
-					role.setIsAbleToSaveIntoPersonalFolder(true);
-				}
-				if (name.equals("SAVE_REMEMBER_ME")) {
-					role.setIsAbleToSaveRememberMe(true);
-				}
-				if (name.equals("SEE_METADATA")) {
-					role.setIsAbleToSeeMetadata(true);
-				}
-				if (name.equals("SAVE_METADATA")) {
-					role.setIsAbleToSaveMetadata(true);
-				}
-				if (name.equals("BUILD_QBE_QUERY")) {
-					role.setIsAbleToBuildQbeQuery(true);
-				}
-				if (name.equals("DO_MASSIVE_EXPORT")) {
-					role.setIsAbleToDoMassiveExport(true);
-				}
-				if (name.equals("MANAGE_USERS")) {
-					role.setIsAbleToManageUsers(true);
-				}
-				if (name.equals("SEE_DOCUMENT_BROWSER")) {
-					role.setIsAbleToSeeDocumentBrowser(true);
-				}
-				if (name.equals("SEE_FAVOURITES")) {
-					role.setIsAbleToSeeFavourites(true);
-				}
-				if (name.equals("SEE_SUBSCRIPTIONS")) {
-					role.setIsAbleToSeeSubscriptions(true);
-				}
-				if (name.equals("SEE_MY_DATA")) {
-					role.setIsAbleToSeeMyData(true);
-				}
-				if (name.equals("SEE_MY_WORKSPACE")) {
-					role.setIsAbleToSeeMyWorkspace(true);
-				}
-				if (name.equals("SEE_TODO_LIST")) {
-					role.setIsAbleToSeeToDoList(true);
-				}
-				if (name.equals("CREATE_DOCUMENTS")) {
-					role.setIsAbleToCreateDocuments(true);
-				}
-				if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
-					role.setIsAbleToCreateSocialAnalysis(true);
-				}
-				if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
-					role.setIsAbleToViewSocialAnalysis(true);
-				}
-				if (name.equals("HIERARCHIES_MANAGEMENT")) {
-					role.setIsAbleToHierarchiesManagement(true);
-				}
-				if (name.equals("KPI_COMMENT_EDIT_ALL")) {
-					role.setAbleToEditAllKpiComm(true);
-				}
-				if (name.equals("KPI_COMMENT_EDIT_MY")) {
-					role.setAbleToEditMyKpiComm(true);
-				}
-				if (name.equals("KPI_COMMENT_DELETE")) {
-					role.setAbleToDeleteKpiComm(true);
-				}
-				if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
-					role.setIsAbleToEnableDatasetPersistence(true);
-				}
-				if (name.equals("ENABLE_FEDERATED_DATASET")) {
-					role.setIsAbleToEnableFederatedDataset(true);
-				}
-				if (name.equals("ENABLE_TO_RATE")) {
-					role.setIsAbleToEnableRate(true);
-				}
-				if (name.equals("ENABLE_TO_PRINT")) {
-					role.setIsAbleToEnablePrint(true);
-				}
-				if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
-					role.setIsAbleToEnableCopyAndEmbed(true);
-				}
-				if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
-					role.setAbleToManageGlossaryBusiness(true);
-				}
-				if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
-					role.setAbleToManageGlossaryTechnical(true);
-				}
-				if (name.equals("MANAGE_KPI_VALUE")) {
-					role.setAbleToManageKpiValue(true);
-				}
-				if (name.equals("MANAGE_CALENDAR")) {
-					role.setAbleToManageCalendar(true);
-				}
-				if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
-					role.setAbleToUseFunctionsCatalog(true);
-				}
-				if (name.equals("MANAGE_INTERNATIONALIZATION")) {
-					role.setAbleToManageInternationalization(true);
-				}
-				if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
-					role.setAbleToCreateSelfServiceCockpit(true);
-				}
-				if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
-					role.setAbleToCreateSelfServiceGeoreport(true);
-				}
-				if (name.equals("CREATE_SELF_SERVICE_KPI")) {
-					role.setAbleToCreateSelfServiceKpi(true);
-				}
-
+			String name = f.getName();
+			if (name.equals("SAVE_SUBOBJECTS")) {
+				role.setIsAbleToSaveSubobjects(true);
+			}
+			if (name.equals("SEE_SUBOBJECTS")) {
+				role.setIsAbleToSeeSubobjects(true);
+			}
+			if (name.equals("SEE_VIEWPOINTS")) {
+				role.setIsAbleToSeeViewpoints(true);
+			}
+			if (name.equals("SEE_SNAPSHOTS")) {
+				role.setIsAbleToSeeSnapshots(true);
+			}
+			if (name.equals("RUN_SNAPSHOTS")) {
+				role.setIsAbleToRunSnapshots(true);
+			}
+			if (name.equals("SEE_NOTES")) {
+				role.setIsAbleToSeeNotes(true);
+			}
+			if (name.equals("SEND_MAIL")) {
+				role.setIsAbleToSendMail(true);
+			}
+			if (name.equals("SAVE_INTO_FOLDER")) {
+				role.setIsAbleToSaveIntoPersonalFolder(true);
+			}
+			if (name.equals("SAVE_REMEMBER_ME")) {
+				role.setIsAbleToSaveRememberMe(true);
+			}
+			if (name.equals("SEE_METADATA")) {
+				role.setIsAbleToSeeMetadata(true);
+			}
+			if (name.equals("SAVE_METADATA")) {
+				role.setIsAbleToSaveMetadata(true);
+			}
+			if (name.equals("BUILD_QBE_QUERY")) {
+				role.setIsAbleToBuildQbeQuery(true);
+			}
+			if (name.equals("DO_MASSIVE_EXPORT")) {
+				role.setIsAbleToDoMassiveExport(true);
+			}
+			if (name.equals("MANAGE_USERS")) {
+				role.setIsAbleToManageUsers(true);
+			}
+			if (name.equals("SEE_DOCUMENT_BROWSER")) {
+				role.setIsAbleToSeeDocumentBrowser(true);
+			}
+			if (name.equals("SEE_FAVOURITES")) {
+				role.setIsAbleToSeeFavourites(true);
+			}
+			if (name.equals("SEE_SUBSCRIPTIONS")) {
+				role.setIsAbleToSeeSubscriptions(true);
+			}
+			if (name.equals("SEE_MY_DATA")) {
+				role.setIsAbleToSeeMyData(true);
+			}
+			if (name.equals("SEE_MY_WORKSPACE")) {
+				role.setIsAbleToSeeMyWorkspace(true);
+			}
+			if (name.equals("SEE_TODO_LIST")) {
+				role.setIsAbleToSeeToDoList(true);
+			}
+			if (name.equals("CREATE_DOCUMENTS")) {
+				role.setIsAbleToCreateDocuments(true);
+			}
+			if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
+				role.setIsAbleToCreateSocialAnalysis(true);
+			}
+			if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
+				role.setIsAbleToViewSocialAnalysis(true);
+			}
+			if (name.equals("HIERARCHIES_MANAGEMENT")) {
+				role.setIsAbleToHierarchiesManagement(true);
+			}
+			if (name.equals("KPI_COMMENT_EDIT_ALL")) {
+				role.setAbleToEditAllKpiComm(true);
+			}
+			if (name.equals("KPI_COMMENT_EDIT_MY")) {
+				role.setAbleToEditMyKpiComm(true);
+			}
+			if (name.equals("KPI_COMMENT_DELETE")) {
+				role.setAbleToDeleteKpiComm(true);
+			}
+			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
+				role.setIsAbleToEnableDatasetPersistence(true);
+			}
+			if (name.equals("ENABLE_FEDERATED_DATASET")) {
+				role.setIsAbleToEnableFederatedDataset(true);
+			}
+			if (name.equals("ENABLE_TO_RATE")) {
+				role.setIsAbleToEnableRate(true);
+			}
+			if (name.equals("ENABLE_TO_PRINT")) {
+				role.setIsAbleToEnablePrint(true);
+			}
+			if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
+				role.setIsAbleToEnableCopyAndEmbed(true);
+			}
+			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
+				role.setAbleToManageGlossaryBusiness(true);
+			}
+			if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
+				role.setAbleToManageGlossaryTechnical(true);
+			}
+			if (name.equals("MANAGE_KPI_VALUE")) {
+				role.setAbleToManageKpiValue(true);
+			}
+			if (name.equals("MANAGE_CALENDAR")) {
+				role.setAbleToManageCalendar(true);
+			}
+			if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
+				role.setAbleToUseFunctionsCatalog(true);
+			}
+			if (name.equals("MANAGE_INTERNATIONALIZATION")) {
+				role.setAbleToManageInternationalization(true);
+			}
+			if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
+				role.setAbleToCreateSelfServiceCockpit(true);
+			}
+			if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
+				role.setAbleToCreateSelfServiceGeoreport(true);
+			}
+			if (name.equals("CREATE_SELF_SERVICE_KPI")) {
+				role.setAbleToCreateSelfServiceKpi(true);
 			}
 
-			role.setRoleTypeCD(hibRole.getRoleTypeCode());
-			role.setRoleTypeID(hibRole.getRoleType().getValueId());
-			role.setOrganization(hibRole.getCommonInfo().getOrganization());
-			logger.debug("OUT");
-			return role;
-		} finally {
-			monitor.stop();
 		}
+
+		role.setRoleTypeCD(hibRole.getRoleTypeCode());
+		role.setRoleTypeID(hibRole.getRoleType().getValueId());
+		role.setOrganization(hibRole.getCommonInfo().getOrganization());
+		logger.debug("OUT");
+		return role;
 	}
 
 	/**
