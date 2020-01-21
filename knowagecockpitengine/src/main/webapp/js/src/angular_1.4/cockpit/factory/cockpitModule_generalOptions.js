@@ -155,6 +155,12 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {value:'LTS',hint:moment().locale(sbiModule_config.curr_language).format('LTS')},
 
 		 ],
+		 tableVariablesActions: [
+			 {label:"Show column",value:"show"},
+			 {label:"Hide column",value:"hide"},
+			 {label:"Set column header name",value:'header'}
+		 ],
+		 conditions : ['>','<','==','>=','<=','!='],
 		 calculatedFieldsFunctions: [
 			   {
 				      "syntax":"SUM( Field )",

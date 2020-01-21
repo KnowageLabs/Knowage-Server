@@ -412,12 +412,12 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		$scope.model.dataset= {};
 		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	}
-	
+
 	$scope.filterColumns = function(){
 		var tempColumnsList = $filter('filter')($scope.localDataset.metadata.fieldsMeta,$scope.columnsSearchText);
 		$scope.columnsGridOptions.api.setRowData(tempColumnsList);
 	}
-	
+
 	$scope.columnsGridOptions = {
             enableColResize: false,
             enableFilter: true,
@@ -438,7 +438,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
         		{"headerName":"Type","field":"type"}],
         	rowData : $scope.localDataset.metadata.fieldsMeta
 	};
-	
+
 	function resizeColumns(){
 		$scope.columnsGridOptions.api.sizeColumnsToFit();
 	}
@@ -467,10 +467,12 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	}
 }
 
-function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService){
+function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService,	cockpitModule_properties){
 	$scope.translate=sbiModule_translate;
 	$scope.generalServices=cockpitModule_generalServices;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+	$scope.cockpitModule_properties = cockpitModule_properties;
+
 	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
@@ -478,19 +480,23 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
-	$scope.availableIcons = knModule_fontIconsService.icons;	
-	
+	$scope.availableIcons = knModule_fontIconsService.icons;
+
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
-	
+
 	$scope.isDateColumn = function(type){
 		if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){
 			return true;
 		}
 		return false;
 	}
-	
+
+	$scope.variablesExists = function(){
+		return 	$scope.cockpitModule_properties.VARIABLES && !angular.equals($scope.cockpitModule_properties.VARIABLES, {});
+	}
+
 	$scope.hasPrecision = function(column){
 		return $scope.generalServices.isNumericColumn(column);
 	}
