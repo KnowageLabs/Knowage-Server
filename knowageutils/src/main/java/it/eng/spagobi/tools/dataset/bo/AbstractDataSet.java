@@ -419,15 +419,43 @@ public abstract class AbstractDataSet implements IDataSet {
 		return values;
 	}
 
+	/**
+	 * Encapsulate values into SQL values.
+	 *
+	 * For every type of data except string, the method convert the values
+	 * to strings.
+	 *
+	 * With strings we can have two case:
+	 * <ul>
+	 * <li>String that starts and ends with single quote</li>
+	 * <li>String that doesn't start and end with single quote</li>
+	 * </ul>
+	 *
+	 * In the first case, FE are sending us SQL values that probably contain
+	 * JSON escape (e.g., a JSON value like 'this string contains a \' in it').
+	 *
+	 * In the second case, FE are sending us standard not-SQL-escaded string (
+	 * e.g., a string like "this string contains a ' in it"). In this second case
+	 * this method escapes single quote and duplicates them as requested by SQL.
+	 *
+	 * @param parameter Original parameter JSON metadata
+	 * @param values Actual values of parameters
+	 * @return List of encapsulated values as strings
+	 */
 	private List<String> encapsulateValues(JSONObject parameter, String[] values) {
 		String typePar = parameter.optString("typePar");
-		String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+		boolean isString = "string".equalsIgnoreCase(typePar);
+		String delim = isString ? "'" : "";
 
 		List<String> newValues = new ArrayList<>();
 		for (int j = 0; j < values.length; j++) {
 			String value = values[j].trim();
 			if (!value.isEmpty()) {
 				if (!value.startsWith(delim) && !value.endsWith(delim)) {
+					if (isString) {
+						// Duplicate single quote to transform it into an escaped SQL single quote
+						value = value.replaceAll("'", "''");
+					}
 					newValues.add(delim + value + delim);
 				} else {
 					newValues.add(value);
