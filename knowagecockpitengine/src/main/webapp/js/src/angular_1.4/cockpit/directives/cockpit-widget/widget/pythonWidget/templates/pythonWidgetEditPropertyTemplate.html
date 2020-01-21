@@ -98,7 +98,7 @@
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
 		        	<md-card>
 		        		<md-card-content>
-		   					<dataset-selector ng-model="newModel.dataset.dsId" on-change="handleDsChange('datasetChanged',dsId)" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
+		   					<dataset-selector ng-model="newModel.dataset.dsId" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
 		   				</md-card-content>
 		   			</md-card>	
 		     	</md-tab>
@@ -107,7 +107,7 @@
 				</md-tab>
 		     	
 		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
-					<cockpit-filters-configuration ng-model-shared="newModel.filters" ></cockpit-filters-configuration>
+					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
 				</md-tab>
 	      	</md-tabs>
 	    </md-content>
