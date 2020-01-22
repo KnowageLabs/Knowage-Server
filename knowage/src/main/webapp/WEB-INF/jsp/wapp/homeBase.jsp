@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="org.json.JSONObject"%>
 <%@page language="java" 
-	pageEncoding="utf-8"
+	pageEncoding="UTF-8"
 		import="it.eng.spago.base.*,
                  java.util.List,
                  java.util.ArrayList,

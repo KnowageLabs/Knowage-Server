@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+<%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/importExportCommons/importExportCommonsModule.js")%>"></script>
 <%@include file="/WEB-INF/jsp/tools/servermanager/importExportCommons/importExportCommonsConfig.jspf"%>
 
