@@ -68,6 +68,8 @@ def jwtToken2pythonDataset(token):
     return True, script
 
 def getHMACKey():
-    f = open(constants.HMAC_KEY_FILE, "r")
-    key = f.read()
+    import xml.etree.ElementTree as ET
+    tree = ET.parse(constants.HMAC_KEY_FILE)
+    root = tree.getroot()
+    key = root[0][0].text
     return key

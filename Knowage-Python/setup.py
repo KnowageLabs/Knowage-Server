@@ -23,7 +23,7 @@ setuptools.setup(
           'tornado',
           'requests',
           'pandas',
-          'jwt',
+          'pyjwt',
       ],
     classifiers=[
         "Programming Language :: Python :: 3",
