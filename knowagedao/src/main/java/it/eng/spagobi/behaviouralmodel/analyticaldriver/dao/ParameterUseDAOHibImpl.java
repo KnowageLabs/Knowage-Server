@@ -47,6 +47,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
@@ -61,13 +62,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Load by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the sbi paruse
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#loadById(java.lang.Integer)
 	 */
@@ -98,13 +97,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Load by use id.
 	 *
-	 * @param useID
-	 *            the use id
+	 * @param useID the use id
 	 *
 	 * @return the parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#loadByUseID(java.lang.Integer)
 	 */
@@ -144,15 +141,12 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Load by parameter idand role.
 	 *
-	 * @param parameterId
-	 *            the parameter id
-	 * @param roleName
-	 *            the role name
+	 * @param parameterId the parameter id
+	 * @param roleName    the role name
 	 *
 	 * @return the parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#loadByParameterIdandRole(java.lang.Integer, java.lang.String)
 	 */
@@ -202,11 +196,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Fill associated checks for par use.
 	 *
-	 * @param aParameterUse
-	 *            the a parameter use
+	 * @param aParameterUse the a parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#fillAssociatedChecksForParUse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse)
 	 */
@@ -246,11 +238,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Fill roles for par use.
 	 *
-	 * @param aParameterUse
-	 *            the a parameter use
+	 * @param aParameterUse the a parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#fillRolesForParUse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse)
 	 */
@@ -290,11 +280,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Modify parameter use.
 	 *
-	 * @param aParameterUse
-	 *            the a parameter use
+	 * @param aParameterUse the a parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#modifyParameterUse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse)
 	 */
@@ -420,11 +408,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Insert parameter use.
 	 *
-	 * @param aParameterUse
-	 *            the a parameter use
+	 * @param aParameterUse the a parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#insertParameterUse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse)
 	 */
@@ -540,11 +526,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Erase parameter use.
 	 *
-	 * @param aParameterUse
-	 *            the a parameter use
+	 * @param aParameterUse the a parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#eraseParameterUse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse)
 	 */
@@ -593,13 +577,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Checks for par use modes.
 	 *
-	 * @param parId
-	 *            the par id
+	 * @param parId the par id
 	 *
 	 * @return true, if checks for par use modes
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#hasParUseModes(java.lang.String)
 	 */
@@ -616,13 +598,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Load parameters use by par id.
 	 *
-	 * @param parId
-	 *            the par id
+	 * @param parId the par id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#loadParametersUseByParId(java.lang.Integer)
 	 */
@@ -678,8 +658,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	 *
 	 * TODO: code refactoring to remove the loadRoles input!!!
 	 *
-	 * @param hibParUse
-	 *            The hybernate parameter use mode
+	 * @param hibParUse The hybernate parameter use mode
 	 *
 	 * @return The corrispondent <code>ParameterUse</code> object
 	 */
@@ -692,10 +671,8 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Fill an empty ParameterUse object extracting data from a SbiParuse object.
 	 *
-	 * @param aParameterUse
-	 *            the destionation ParameterUse object
-	 * @param hibParUse
-	 *            the source SbiParuse object
+	 * @param aParameterUse the destionation ParameterUse object
+	 * @param hibParUse     the source SbiParuse object
 	 */
 	public void fillParameterUse(ParameterUse aParameterUse, SbiParuse hibParUse, boolean loadRoles) {
 		aParameterUse.setUseID(hibParUse.getUseId());
@@ -764,9 +741,10 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 		Role tmpRole = null;
 
 		List roleList = new ArrayList();
+		Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 		for (Iterator itParUseDet = hibParUseDets.iterator(); itParUseDet.hasNext();) {
 			aSbiParuseDet = (SbiParuseDet) itParUseDet.next();
-			tmpRole = roleDAOHibImpl.toRole(aSbiParuseDet.getId().getSbiExtRoles());
+			tmpRole = roleDAOHibImpl.toRole(aSbiParuseDet.getId().getSbiExtRoles(), authorizations);
 			roleList.add(tmpRole);
 		}
 
@@ -776,11 +754,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Erase parameter use by par id.
 	 *
-	 * @param parId
-	 *            the par id
+	 * @param parId the par id
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#eraseParameterUseByParId(java.lang.Integer)
 	 */
@@ -799,13 +775,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Gets the parameter uses associated to lov.
 	 *
-	 * @param lovId
-	 *            the lov id
+	 * @param lovId the lov id
 	 *
 	 * @return the parameter uses associated to lov
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#getParameterUsesAssociatedToLov(java.lang.Integer)
 	 */
@@ -853,13 +827,10 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Erase from hibSession all things related to parameter with parId
 	 *
-	 * @param parId
-	 *            the par id
-	 * @param sSession
-	 *            the hibernate session
+	 * @param parId    the par id
+	 * @param sSession the hibernate session
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#eraseParameterUseByParId(java.lang.Integer)
 	 */
@@ -935,13 +906,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * Delete from hibernate session a parameter use
 	 *
-	 * @param Session
-	 *            hibernate Session
+	 * @param Session hibernate Session
 	 *
 	 * @return The list of parameter uses associated to the lov identified by the lovId at input
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public void eraseParameterUseByIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError {
