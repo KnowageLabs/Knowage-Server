@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Author: Stefan Petrovic (spetrovic, Stefan.Petrovic@mht.net)
 -->
 
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+<%@ page language="java" pageEncoding="UTF-8" session="true"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>

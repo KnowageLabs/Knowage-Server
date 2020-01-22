@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@page import="java.util.Enumeration"%>
 
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+<%@ page language="java" pageEncoding="UTF-8" session="true"%>
 
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 

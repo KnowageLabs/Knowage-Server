@@ -1,4 +1,4 @@
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+<%@ page language="java" pageEncoding="UTF-8" session="true"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>

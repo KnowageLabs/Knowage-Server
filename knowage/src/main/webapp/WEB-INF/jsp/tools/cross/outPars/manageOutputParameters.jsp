@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+<%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <%@ page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
