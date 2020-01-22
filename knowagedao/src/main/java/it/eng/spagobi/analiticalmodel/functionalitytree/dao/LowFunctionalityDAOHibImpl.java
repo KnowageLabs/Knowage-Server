@@ -61,7 +61,6 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -916,14 +915,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		if (roles != null) {
 			logger.debug("getSbiFuncRoles() size=" + roles.size());
 			Iterator iterRoles = roles.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (iterRoles.hasNext()) {
 				SbiFuncRole hibfuncrole = (SbiFuncRole) iterRoles.next();
 				SbiExtRoles hibRole = hibfuncrole.getId().getRole();
 				SbiDomains hibPermission = hibfuncrole.getId().getState();
 				logger.debug("hibfuncrole.getId().getRole().getName()=" + hibRole.getName());
 				RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-				Role role = roleDAO.toRole(hibRole, authorizations);
+				Role role = roleDAO.toRole(hibRole, cachedRoles);
 
 				String state = hibPermission.getValueCd();
 				if (state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
