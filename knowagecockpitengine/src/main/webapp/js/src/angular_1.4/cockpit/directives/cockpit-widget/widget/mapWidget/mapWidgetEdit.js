@@ -217,8 +217,8 @@ function mapWidgetEditControllerFunction(
 							var newLayer =  {
 								"type": "DATASET",
 								"dsId": tempLayer.id.dsId,
-								"alias": tempLayer.label,
-								"name": tempLayer.name,
+								"alias": tempLayer.name,
+								"name": tempLayer.label,
 								"defaultVisible": true
 							}
 							for(var i in tempLayer.metadata.fieldsMeta){
