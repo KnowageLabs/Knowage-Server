@@ -92,8 +92,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				tx = aSession.beginTransaction();
 
 				SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleID);
-
-				toReturn = toRole(hibRole);
+				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+				toReturn = toRole(hibRole, authorizations);
 				putIntoCache(String.valueOf(toReturn.getId()), toReturn);
 				tx.commit();
 			} catch (HibernateException he) {
@@ -166,8 +166,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
 				if (hibRole == null)
 					return null;
-
-				toReturn = toRole(hibRole);
+				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+				toReturn = toRole(hibRole, authorizations);
 				putIntoCache(roleName, toReturn);
 				tx.commit();
 			} catch (HibernateException he) {
@@ -221,9 +221,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 
 			Iterator it = hibList.iterator();
-
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next());
+				Role role = toRole((SbiExtRoles) it.next(), authorizations);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -259,9 +259,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 
 			Iterator it = hibList.iterator();
-
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next());
+				Role role = toRole((SbiExtRoles) it.next(), authorizations);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -302,9 +302,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				SbiGeoLayersRoles sbi = (SbiGeoLayersRoles) it.next();
 				roles.add(sbi.getRole());
 			}
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 
 			for (int i = 0; i < roles.size(); i++) {
-				Role role = toRole(roles.get(i));
+				Role role = toRole(roles.get(i), authorizations);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -659,9 +660,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibListAllRoles.removeAll(noFreeRoles);
 
 			Iterator it = hibListAllRoles.iterator();
-
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next());
+				Role role = toRole((SbiExtRoles) it.next(), authorizations);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -733,9 +734,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibListAllRoles.removeAll(noFreeRoles);
 
 			Iterator it = hibListAllRoles.iterator();
-
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next());
+				Role role = toRole((SbiExtRoles) it.next(), authorizations);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -781,7 +782,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * @param hibRole The hybernate role
 	 * @return The corrispondent <code>Role</code> object
 	 */
-	public Role toRole(SbiExtRoles hibRole) {
+	public Role toRole(SbiExtRoles hibRole, Set<SbiAuthorizationsRoles> cachedAuthorizations) {
 		logger.debug("IN.hibRole.getName()=" + hibRole.getName());
 		Role role = new Role();
 		role.setCode(hibRole.getCode());
@@ -790,144 +791,167 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setName(hibRole.getName());
 		role.setIsPublic(hibRole.getIsPublic());
 
-		Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
-		Iterator it = authorizations.iterator();
-		while (it.hasNext()) {
-			SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
-			SbiAuthorizations f = fr.getSbiAuthorizations();
-
-			String name = f.getName();
-			if (name.equals("SAVE_SUBOBJECTS")) {
-				role.setIsAbleToSaveSubobjects(true);
+		boolean found = false;
+		for (SbiAuthorizationsRoles sbiAuthorizationsRoles : cachedAuthorizations) {
+			if (sbiAuthorizationsRoles.getSbiExtRoles().getExtRoleId().compareTo(hibRole.getExtRoleId()) == 0) {
+				found = true;
+				break;
 			}
-			if (name.equals("SEE_SUBOBJECTS")) {
-				role.setIsAbleToSeeSubobjects(true);
-			}
-			if (name.equals("SEE_VIEWPOINTS")) {
-				role.setIsAbleToSeeViewpoints(true);
-			}
-			if (name.equals("SEE_SNAPSHOTS")) {
-				role.setIsAbleToSeeSnapshots(true);
-			}
-			if (name.equals("RUN_SNAPSHOTS")) {
-				role.setIsAbleToRunSnapshots(true);
-			}
-			if (name.equals("SEE_NOTES")) {
-				role.setIsAbleToSeeNotes(true);
-			}
-			if (name.equals("SEND_MAIL")) {
-				role.setIsAbleToSendMail(true);
-			}
-			if (name.equals("SAVE_INTO_FOLDER")) {
-				role.setIsAbleToSaveIntoPersonalFolder(true);
-			}
-			if (name.equals("SAVE_REMEMBER_ME")) {
-				role.setIsAbleToSaveRememberMe(true);
-			}
-			if (name.equals("SEE_METADATA")) {
-				role.setIsAbleToSeeMetadata(true);
-			}
-			if (name.equals("SAVE_METADATA")) {
-				role.setIsAbleToSaveMetadata(true);
-			}
-			if (name.equals("BUILD_QBE_QUERY")) {
-				role.setIsAbleToBuildQbeQuery(true);
-			}
-			if (name.equals("DO_MASSIVE_EXPORT")) {
-				role.setIsAbleToDoMassiveExport(true);
-			}
-			if (name.equals("MANAGE_USERS")) {
-				role.setIsAbleToManageUsers(true);
-			}
-			if (name.equals("SEE_DOCUMENT_BROWSER")) {
-				role.setIsAbleToSeeDocumentBrowser(true);
-			}
-			if (name.equals("SEE_FAVOURITES")) {
-				role.setIsAbleToSeeFavourites(true);
-			}
-			if (name.equals("SEE_SUBSCRIPTIONS")) {
-				role.setIsAbleToSeeSubscriptions(true);
-			}
-			if (name.equals("SEE_MY_DATA")) {
-				role.setIsAbleToSeeMyData(true);
-			}
-			if (name.equals("SEE_MY_WORKSPACE")) {
-				role.setIsAbleToSeeMyWorkspace(true);
-			}
-			if (name.equals("SEE_TODO_LIST")) {
-				role.setIsAbleToSeeToDoList(true);
-			}
-			if (name.equals("CREATE_DOCUMENTS")) {
-				role.setIsAbleToCreateDocuments(true);
-			}
-			if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
-				role.setIsAbleToCreateSocialAnalysis(true);
-			}
-			if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
-				role.setIsAbleToViewSocialAnalysis(true);
-			}
-			if (name.equals("HIERARCHIES_MANAGEMENT")) {
-				role.setIsAbleToHierarchiesManagement(true);
-			}
-			if (name.equals("KPI_COMMENT_EDIT_ALL")) {
-				role.setAbleToEditAllKpiComm(true);
-			}
-			if (name.equals("KPI_COMMENT_EDIT_MY")) {
-				role.setAbleToEditMyKpiComm(true);
-			}
-			if (name.equals("KPI_COMMENT_DELETE")) {
-				role.setAbleToDeleteKpiComm(true);
-			}
-			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
-				role.setIsAbleToEnableDatasetPersistence(true);
-			}
-			if (name.equals("ENABLE_FEDERATED_DATASET")) {
-				role.setIsAbleToEnableFederatedDataset(true);
-			}
-			if (name.equals("ENABLE_TO_RATE")) {
-				role.setIsAbleToEnableRate(true);
-			}
-			if (name.equals("ENABLE_TO_PRINT")) {
-				role.setIsAbleToEnablePrint(true);
-			}
-			if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
-				role.setIsAbleToEnableCopyAndEmbed(true);
-			}
-			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
-				role.setAbleToManageGlossaryBusiness(true);
-			}
-			if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
-				role.setAbleToManageGlossaryTechnical(true);
-			}
-			if (name.equals("MANAGE_KPI_VALUE")) {
-				role.setAbleToManageKpiValue(true);
-			}
-			if (name.equals("MANAGE_CALENDAR")) {
-				role.setAbleToManageCalendar(true);
-			}
-			if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
-				role.setAbleToUseFunctionsCatalog(true);
-			}
-			if (name.equals("MANAGE_INTERNATIONALIZATION")) {
-				role.setAbleToManageInternationalization(true);
-			}
-			if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
-				role.setAbleToCreateSelfServiceCockpit(true);
-			}
-			if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
-				role.setAbleToCreateSelfServiceGeoreport(true);
-			}
-			if (name.equals("CREATE_SELF_SERVICE_KPI")) {
-				role.setAbleToCreateSelfServiceKpi(true);
-			}
-
 		}
 
+		if (found) {
+			for (SbiAuthorizationsRoles sbiAuthorizationsRoles : cachedAuthorizations) {
+				if (sbiAuthorizationsRoles.getSbiExtRoles().getExtRoleId().compareTo(hibRole.getExtRoleId()) == 0) {
+
+					setRoleAuthorizations(role, sbiAuthorizationsRoles);
+				}
+			}
+
+		} else {
+
+			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
+			Iterator it = authorizations.iterator();
+			while (it.hasNext()) {
+				SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
+				setRoleAuthorizations(role, fr);
+
+				cachedAuthorizations.add(fr);
+			}
+		}
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
 		role.setOrganization(hibRole.getCommonInfo().getOrganization());
 		logger.debug("OUT");
 		return role;
+	}
+
+	private void setRoleAuthorizations(Role role, SbiAuthorizationsRoles fr) {
+		SbiAuthorizations f = fr.getSbiAuthorizations();
+
+		String name = f.getName();
+		if (name.equals("SAVE_SUBOBJECTS")) {
+			role.setIsAbleToSaveSubobjects(true);
+		}
+		if (name.equals("SEE_SUBOBJECTS")) {
+			role.setIsAbleToSeeSubobjects(true);
+		}
+		if (name.equals("SEE_VIEWPOINTS")) {
+			role.setIsAbleToSeeViewpoints(true);
+		}
+		if (name.equals("SEE_SNAPSHOTS")) {
+			role.setIsAbleToSeeSnapshots(true);
+		}
+		if (name.equals("RUN_SNAPSHOTS")) {
+			role.setIsAbleToRunSnapshots(true);
+		}
+		if (name.equals("SEE_NOTES")) {
+			role.setIsAbleToSeeNotes(true);
+		}
+		if (name.equals("SEND_MAIL")) {
+			role.setIsAbleToSendMail(true);
+		}
+		if (name.equals("SAVE_INTO_FOLDER")) {
+			role.setIsAbleToSaveIntoPersonalFolder(true);
+		}
+		if (name.equals("SAVE_REMEMBER_ME")) {
+			role.setIsAbleToSaveRememberMe(true);
+		}
+		if (name.equals("SEE_METADATA")) {
+			role.setIsAbleToSeeMetadata(true);
+		}
+		if (name.equals("SAVE_METADATA")) {
+			role.setIsAbleToSaveMetadata(true);
+		}
+		if (name.equals("BUILD_QBE_QUERY")) {
+			role.setIsAbleToBuildQbeQuery(true);
+		}
+		if (name.equals("DO_MASSIVE_EXPORT")) {
+			role.setIsAbleToDoMassiveExport(true);
+		}
+		if (name.equals("MANAGE_USERS")) {
+			role.setIsAbleToManageUsers(true);
+		}
+		if (name.equals("SEE_DOCUMENT_BROWSER")) {
+			role.setIsAbleToSeeDocumentBrowser(true);
+		}
+		if (name.equals("SEE_FAVOURITES")) {
+			role.setIsAbleToSeeFavourites(true);
+		}
+		if (name.equals("SEE_SUBSCRIPTIONS")) {
+			role.setIsAbleToSeeSubscriptions(true);
+		}
+		if (name.equals("SEE_MY_DATA")) {
+			role.setIsAbleToSeeMyData(true);
+		}
+		if (name.equals("SEE_MY_WORKSPACE")) {
+			role.setIsAbleToSeeMyWorkspace(true);
+		}
+		if (name.equals("SEE_TODO_LIST")) {
+			role.setIsAbleToSeeToDoList(true);
+		}
+		if (name.equals("CREATE_DOCUMENTS")) {
+			role.setIsAbleToCreateDocuments(true);
+		}
+		if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
+			role.setIsAbleToCreateSocialAnalysis(true);
+		}
+		if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
+			role.setIsAbleToViewSocialAnalysis(true);
+		}
+		if (name.equals("HIERARCHIES_MANAGEMENT")) {
+			role.setIsAbleToHierarchiesManagement(true);
+		}
+		if (name.equals("KPI_COMMENT_EDIT_ALL")) {
+			role.setAbleToEditAllKpiComm(true);
+		}
+		if (name.equals("KPI_COMMENT_EDIT_MY")) {
+			role.setAbleToEditMyKpiComm(true);
+		}
+		if (name.equals("KPI_COMMENT_DELETE")) {
+			role.setAbleToDeleteKpiComm(true);
+		}
+		if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
+			role.setIsAbleToEnableDatasetPersistence(true);
+		}
+		if (name.equals("ENABLE_FEDERATED_DATASET")) {
+			role.setIsAbleToEnableFederatedDataset(true);
+		}
+		if (name.equals("ENABLE_TO_RATE")) {
+			role.setIsAbleToEnableRate(true);
+		}
+		if (name.equals("ENABLE_TO_PRINT")) {
+			role.setIsAbleToEnablePrint(true);
+		}
+		if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
+			role.setIsAbleToEnableCopyAndEmbed(true);
+		}
+		if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
+			role.setAbleToManageGlossaryBusiness(true);
+		}
+		if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
+			role.setAbleToManageGlossaryTechnical(true);
+		}
+		if (name.equals("MANAGE_KPI_VALUE")) {
+			role.setAbleToManageKpiValue(true);
+		}
+		if (name.equals("MANAGE_CALENDAR")) {
+			role.setAbleToManageCalendar(true);
+		}
+		if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
+			role.setAbleToUseFunctionsCatalog(true);
+		}
+		if (name.equals("MANAGE_INTERNATIONALIZATION")) {
+			role.setAbleToManageInternationalization(true);
+		}
+		if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
+			role.setAbleToCreateSelfServiceCockpit(true);
+		}
+		if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
+			role.setAbleToCreateSelfServiceGeoreport(true);
+		}
+		if (name.equals("CREATE_SELF_SERVICE_KPI")) {
+			role.setAbleToCreateSelfServiceKpi(true);
+		}
 	}
 
 	/**
@@ -1171,9 +1195,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			toTransform = hibernateQuery.list();
 
 			if (toTransform != null) {
+				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 				for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
 					SbiExtRoles hibRole = (SbiExtRoles) iterator.next();
-					Role role = toRole(hibRole);
+					Role role = toRole(hibRole, authorizations);
 					putIntoCache(String.valueOf(role.getId()), role);
 					toReturn.add(role);
 				}
@@ -1841,8 +1866,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				return null;
 
 			SbiExtRoles hibRole = (SbiExtRoles) hibRoleO;
-
-			toReturn = toRole(hibRole);
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			toReturn = toRole(hibRole, authorizations);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
