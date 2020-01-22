@@ -735,10 +735,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		}
 
-		if (Boolean.parseBoolean(runDocumentExecution) == true) {
+		if (runDocumentExecution.equalsIgnoreCase("true")) {
 			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
-		} else {
+		} else if (runDocumentExecution.equalsIgnoreCase("false")) {
 			resultAsMap.put("isReadyForExecution", false);
+		} else {
+			throw new SpagoBIRuntimeException(
+					"The value of configuration variable document.execution.startAutomatically is not valid, contact your administrator");
 		}
 
 		logger.debug("OUT");
