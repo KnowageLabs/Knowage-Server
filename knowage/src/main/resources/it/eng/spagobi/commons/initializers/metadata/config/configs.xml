@@ -542,9 +542,9 @@
         isActive="true" valueCheck="true" valueType="STRING"
         category="GENERIC_CONFIGURATION" />
         
-    <CONFIG label="knowage.documentExecution" name="Document execution"
-        description="Document execution"
-        isActive="true" valueCheck="RUN" valueType="STRING"
+    <CONFIG label="document.execution.startAutomatically" name="Document execution automatic start"
+        description="If true, when opening a document, it will be executed automatically in case no mandatory drivers are missing"
+        isActive="true" valueCheck="true" valueType="STRING"
         category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="internal.security.login.checkForMaxFailedLoginAttempts" name="Max failed login attempts filter"

@@ -129,7 +129,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
-	public String runDocumentExecution = SingletonConfig.getInstance().getConfigValue("knowage.documentExecution");
+	public String runDocumentExecution = SingletonConfig.getInstance().getConfigValue("document.execution.startAutomatically");
 
 	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
 	private static final String DESCRIPTION_FIELD = "description";
@@ -734,10 +734,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 
 		}
-		if (runDocumentExecution.equals("STOP")) {
-			resultAsMap.put("isReadyForExecution", false);
-		} else {
+
+		if (Boolean.parseBoolean(runDocumentExecution) == true) {
 			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
+		} else {
+			resultAsMap.put("isReadyForExecution", false);
 		}
 
 		logger.debug("OUT");
