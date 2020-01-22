@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -55,7 +56,7 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 	/**
 	 * TODO Tutte le pagine dell'engine
 	 *
-	 * */
+	 */
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
@@ -93,7 +94,22 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName) {
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("/{pagename}")
+	@Produces("text/html")
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	/**
+	 * @param pageName
+	 */
+	private void openPage(String pageName) {
 		SvgViewerEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
 
@@ -124,8 +140,10 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			/*HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);*/
+			/*
+			 * HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class); HttpServletResponse response =
+			 * ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			 */
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
