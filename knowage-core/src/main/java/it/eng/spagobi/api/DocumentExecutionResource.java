@@ -735,7 +735,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		}
 
-		if (runDocumentExecution.equalsIgnoreCase("true")) {
+		if (runDocumentExecution == null || runDocumentExecution.equalsIgnoreCase("true")) {
 			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
 		} else if (runDocumentExecution.equalsIgnoreCase("false")) {
 			resultAsMap.put("isReadyForExecution", false);
