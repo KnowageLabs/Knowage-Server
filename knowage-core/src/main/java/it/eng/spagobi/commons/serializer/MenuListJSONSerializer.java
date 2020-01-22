@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +35,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -167,7 +167,7 @@ public class MenuListJSONSerializer implements Serializer {
 				boolean isAdmin = false;
 				for (int i = 0; i < filteredMenuList.size(); i++) {
 					Menu menuElem = (Menu) filteredMenuList.get(i);
-					String path = MenuUtilities.getMenuPath(menuElem, locale);
+					String path = MenuUtilities.getMenuPath(filteredMenuList, menuElem, locale);
 
 					if (menuElem.getLevel().intValue() == 1) {
 
@@ -175,13 +175,13 @@ public class MenuListJSONSerializer implements Serializer {
 
 						if (!menuElem.isAdminsMenu()) {
 
-							menuUserList = createUserMenuElement(menuElem, locale, 1, menuUserList);
+							menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
 							personal.put(MENU, menuUserList);
 
 							if (menuElem.getHasChildren()) {
 
 								List lstChildrenLev2 = menuElem.getLstChildren();
-								JSONArray tempMenuList2 = (JSONArray) getChildren(lstChildrenLev2, 1, locale);
+								JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
 								temp.put(MENU, tempMenuList2);
 							}
 						} else {
@@ -241,7 +241,7 @@ public class MenuListJSONSerializer implements Serializer {
 							if (menuElem.getHasChildren()) {
 
 								List lstChildrenLev2 = menuElem.getLstChildren();
-								JSONArray tempMenuList = (JSONArray) getChildren(lstChildrenLev2, 1, locale);
+								JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
 								temp.put(MENU, tempMenuList);
 							}
 							tempFirstLevelMenuList.put(temp);
@@ -585,19 +585,19 @@ public class MenuListJSONSerializer implements Serializer {
 		return tempMenuList;
 	}
 
-	private Object getChildren(List children, int level, Locale locale) throws JSONException {
+	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
 		JSONArray tempMenuList = new JSONArray();
 		for (int j = 0; j < children.size(); j++) {
 			Menu childElem = (Menu) children.get(j);
-			tempMenuList = createUserMenuElement(childElem, locale, level, tempMenuList);
+			tempMenuList = createUserMenuElement(filteredMenuList, childElem, locale, level, tempMenuList);
 		}
 		return tempMenuList;
 	}
 
-	private JSONArray createUserMenuElement(Menu childElem, Locale locale, int level, JSONArray tempMenuList) throws JSONException {
+	private JSONArray createUserMenuElement(List filteredMenuList, Menu childElem, Locale locale, int level, JSONArray tempMenuList) throws JSONException {
 		JSONObject temp2 = new JSONObject();
 
-		String path = MenuUtilities.getMenuPath(childElem, locale);
+		String path = MenuUtilities.getMenuPath(filteredMenuList, childElem, locale);
 
 		MessageBuilder msgBuild = new MessageBuilder();
 		String text = "";
@@ -682,7 +682,7 @@ public class MenuListJSONSerializer implements Serializer {
 		}
 		if (childElem.getHasChildren()) {
 			List childrenBis = childElem.getLstChildren();
-			JSONArray tempMenuList2 = (JSONArray) getChildren(childrenBis, level, locale);
+			JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, childrenBis, level, locale);
 			if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
 				temp2.put(ITEMS, tempMenuList2);
 			} else {

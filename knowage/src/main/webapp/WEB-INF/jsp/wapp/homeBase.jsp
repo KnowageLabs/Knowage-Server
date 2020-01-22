@@ -245,7 +245,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 					break;
 				}
 			}
-			String pathInit=MenuUtilities.getMenuPath(firtsItem, locale);
+			String pathInit=MenuUtilities.getMenuPath(filteredMenuList,firtsItem, locale);
 			Integer objId=firtsItem.getObjId();
 			
 			if(objId!=null){
