@@ -40,6 +40,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
@@ -438,6 +439,8 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				} else if (DataSetConstants.DS_REST_NAME.equalsIgnoreCase(type)) {
 					manageRESTDataSet(jsonConf, result);
+				} else if (DataSetConstants.DS_PYTHON_NAME.equalsIgnoreCase(type)) {
+					managePythonDataSet(jsonConf, result);
 				} else if (DataSetConstants.DS_SOLR_NAME.equalsIgnoreCase(type)) {
 					manageSolrDataSet(jsonConf, result);
 				} else if (type.equalsIgnoreCase(DataSetConstants.SPARQL)) {
@@ -503,6 +506,18 @@ public class DataSetJSONSerializer implements Serializer {
 
 	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {
 		for (String attr : RESTDataSetConstants.REST_ALL_ATTRIBUTES) {
+			if (!conf.has(attr)) {
+				// optional attribute
+				continue;
+			}
+			Object value = conf.get(attr);
+			Assert.assertNotNull(value, "json value");
+			result.put(attr, value.toString());
+		}
+	}
+
+	private static void managePythonDataSet(JSONObject conf, JSONObject result) throws JSONException {
+		for (String attr : PythonDataSetConstants.PYTHON_ALL_ATTRIBUTES) {
 			if (!conf.has(attr)) {
 				// optional attribute
 				continue;

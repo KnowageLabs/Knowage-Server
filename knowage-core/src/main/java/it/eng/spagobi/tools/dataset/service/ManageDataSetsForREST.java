@@ -1282,7 +1282,7 @@ public class ManageDataSetsForREST {
 	}
 
 	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
-		for (String sa : PythonDataSetConstants.REST_STRING_ATTRIBUTES) {
+		for (String sa : PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
 		for (String ja : PythonDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {

@@ -26,17 +26,17 @@ public class PythonDataSetConstants {
 	public static final String REST_REQUEST_HEADERS = "restRequestHeaders";
 	public static final String[] REST_JSON_OBJECT_ATTRIBUTES = { REST_REQUEST_HEADERS };
 	public static final String REST_REQUEST_BODY = "restRequestBody";
-	public static final String REST_PYTHON_SCRIPT = "pythonScript";
-	public static final String REST_DATAFRAME_NAME = "dataframeName";
-	public static final String REST_SCRIPT_PARAMETERS = "pars";
+	public static final String PYTHON_SCRIPT = "pythonScript";
+	public static final String PYTHON_DATAFRAME_NAME = "dataframeName";
+	public static final String PYTHON_SCRIPT_PARAMETERS = "pars";
 	public static final String REST_JSON_PATH_ITEMS = "restJsonPathItems";
-	public static final String REST_ADDRESS = "restAddress";
+	public static final String PYTHON_ADDRESS = "restAddress";
 	public static final String REST_JSON_DIRECTLY_ATTRIBUTES = "restDirectlyJSONAttributes";
 	public static final String REST_OFFSET = "restOffset";
 	public static final String REST_FETCH_SIZE = "restFetchSize";
 	public static final String REST_MAX_RESULTS = "restMaxResults";
-	public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_PYTHON_SCRIPT, REST_DATAFRAME_NAME, REST_SCRIPT_PARAMETERS, REST_REQUEST_BODY,
+	public static final String[] PYTHON_STRING_ATTRIBUTES = { PYTHON_ADDRESS, PYTHON_SCRIPT, PYTHON_DATAFRAME_NAME, PYTHON_SCRIPT_PARAMETERS, REST_REQUEST_BODY,
 			REST_JSON_PATH_ITEMS, REST_JSON_DIRECTLY_ATTRIBUTES, REST_OFFSET, REST_FETCH_SIZE, REST_MAX_RESULTS };
-	public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length + REST_JSON_OBJECT_ATTRIBUTES.length
+	public static final String[] PYTHON_ALL_ATTRIBUTES = new String[PYTHON_STRING_ATTRIBUTES.length + REST_JSON_OBJECT_ATTRIBUTES.length
 			+ REST_JSON_ARRAY_ATTRIBUTES.length];
 }

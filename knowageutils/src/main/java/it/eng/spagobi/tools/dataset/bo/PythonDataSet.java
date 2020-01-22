@@ -116,7 +116,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {
-		String address = getProp(PythonDataSetConstants.REST_ADDRESS, jsonConf, false);
+		String address = getProp(PythonDataSetConstants.PYTHON_ADDRESS, jsonConf, false);
 
 		Map<String, String> requestHeaders;
 		try {
@@ -124,15 +124,15 @@ public class PythonDataSet extends ConfigurableDataSet {
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
-		String pythonScript = getProp(PythonDataSetConstants.REST_PYTHON_SCRIPT, jsonConf, true);
-		String dataframeName = getProp(PythonDataSetConstants.REST_DATAFRAME_NAME, jsonConf, true);
+		String pythonScript = getProp(PythonDataSetConstants.PYTHON_SCRIPT, jsonConf, true);
+		String dataframeName = getProp(PythonDataSetConstants.PYTHON_DATAFRAME_NAME, jsonConf, true);
 
 		// Pagination parameters
 		String offset = getProp(PythonDataSetConstants.REST_OFFSET, jsonConf, true);
 		String fetchSize = getProp(PythonDataSetConstants.REST_FETCH_SIZE, jsonConf, true);
 		String maxResults = getProp(PythonDataSetConstants.REST_MAX_RESULTS, jsonConf, true);
 
-		String parameters = getProp(PythonDataSetConstants.REST_SCRIPT_PARAMETERS, jsonConf, true);
+		String parameters = getProp(PythonDataSetConstants.PYTHON_SCRIPT_PARAMETERS, jsonConf, true);
 
 		setDataProxy(new PythonDataProxy(address, pythonScript, dataframeName, parameters, requestHeaders, offset, fetchSize, maxResults));
 	}

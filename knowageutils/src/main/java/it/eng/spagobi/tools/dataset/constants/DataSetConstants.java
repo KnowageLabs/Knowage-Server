@@ -179,6 +179,12 @@ public class DataSetConstants {
 		}
 
 		curr = 0;
+		for (String[] a : new String[][] { PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES, PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES }) {
+			System.arraycopy(a, 0, PythonDataSetConstants.PYTHON_ALL_ATTRIBUTES, curr, a.length);
+			curr += a.length;
+		}
+
+		curr = 0;
 		for (String[] a : new String[][] { SolrDataSetConstants.SOLR_STRING_ATTRIBUTES, SolrDataSetConstants.SOLR_JSON_ARRAY_ATTRIBUTES }) {
 			System.arraycopy(a, 0, SolrDataSetConstants.SOLR_ALL_ATTRIBUTES, curr, a.length);
 			curr += a.length;
