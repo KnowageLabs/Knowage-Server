@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+    pageEncoding="UTF-8"%>
  
 <%--------- Java Imports  --------%>
  <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
