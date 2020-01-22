@@ -156,7 +156,6 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 
 		 ],
 		 tableVariablesActions: [
-			 {label:"Show column",value:"show"},
 			 {label:"Hide column",value:"hide"},
 			 {label:"Set column header name",value:'header'}
 		 ],

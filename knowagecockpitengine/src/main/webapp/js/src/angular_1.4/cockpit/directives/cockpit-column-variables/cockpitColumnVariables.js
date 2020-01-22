@@ -45,6 +45,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.variables.splice(i,1);
 		}
 
+		$scope.isVariableObject = function(variableName){
+			return typeof cockpitModule_properties.VARIABLES[variableName] == 'object';
+		}
+
 	};
 
 })();

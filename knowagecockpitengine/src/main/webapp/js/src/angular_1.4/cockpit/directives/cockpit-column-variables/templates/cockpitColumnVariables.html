@@ -25,6 +25,15 @@
 				</md-select>
 			</md-input-container>
 			
+			<md-input-container flex=20 class="md-block" ng-if="setting.variable && isVariableObject(setting.variable)"> 
+				<label>Key</label>
+				<md-select aria-label="aria-label" ng-model="setting.key">
+					<md-option ng-repeat="(key,value) in cockpitModule_properties.VARIABLES[setting.variable]" value="{{key}}">{{key}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			
+			
 			<md-input-container flex=20 class="md-block" ng-if="setting.action == 'show' || setting.action == 'hide'"> 
 				<label>Condition</label>
 				<md-select aria-label="aria-label" ng-model="setting.condition">

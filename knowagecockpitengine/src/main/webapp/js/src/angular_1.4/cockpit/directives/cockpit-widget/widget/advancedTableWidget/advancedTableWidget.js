@@ -64,6 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		return cockpitModule_generalServices.getTemplateUrl('advancedTableWidget',template);
 	  	}
 
+		function escapeIfString(value){
+			if(typeof value != 'number') return "\""+value+"\"";
+		}
+
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
@@ -85,6 +89,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType,
 								"headerTooltip": $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias};
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].variables && $scope.ngModel.content.columnSelectedOfDataset[c].variables.length>0){
+							for(var k in $scope.ngModel.content.columnSelectedOfDataset[c].variables){
+								var variableUsage = $scope.ngModel.content.columnSelectedOfDataset[c].variables[k];
+								if(variableUsage.action == 'hide' && eval(escapeIfString(cockpitModule_properties.VARIABLES[variableUsage.variable]) + variableUsage.condition + escapeIfString(variableUsage.value))) tempCol.hide = true;
+								if(variableUsage.action == 'header' && cockpitModule_properties.VARIABLES[variableUsage.variable]) {
+									if(typeof cockpitModule_properties.VARIABLES[variableUsage.variable] == 'object' && cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key]) {
+										tempCol.headerName = cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key];
+									}
+									else tempCol.headerName = cockpitModule_properties.VARIABLES[variableUsage.variable];
+								}
+							}
+						}
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) {
 							tempCol.tooltipValueGetter = TooltipValue;
 						}
