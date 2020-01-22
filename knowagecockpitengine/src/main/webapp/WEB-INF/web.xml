@@ -82,6 +82,7 @@ ${enable.cas.start}  END-CAS -->
   <filter-mapping>
     <filter-name>EncodingFilter</filter-name>
     <url-pattern>/servlet/AdapterHTTP</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping>
   
 <!-- START-CAS ${enable.cas.end}
