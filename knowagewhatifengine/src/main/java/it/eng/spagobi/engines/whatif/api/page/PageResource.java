@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -42,12 +43,12 @@ public class PageResource extends AbstractRestService {
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
-	@Context HttpServletRequest request;
-	@Context HttpServletResponse response;
+	@Context
+	HttpServletRequest request;
+	@Context
+	HttpServletResponse response;
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
-
-
 
 	/**
 	 * TODO Tutte le pagine dell'engine
@@ -72,13 +73,27 @@ public class PageResource extends AbstractRestService {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName) {
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	@POST
+	@Path("/{pagename}")
+	@Produces("text/html")
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	/**
+	 * @param pageName
+	 */
+	private void openPage(String pageName) {
 		String dispatchUrl = urls.get(pageName);
 		try {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of
 			// RestEasy Wrapper
-//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {

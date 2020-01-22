@@ -18,13 +18,13 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-
 
 @Path("/olap/startwhatif")
 @ManageAuthorization
@@ -34,28 +34,31 @@ public class WhatIfEngineStartAction extends WhatIfEngineAbstractStartAction {
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
 
-
 	// OUTPUT PARAMETERS
-
-
-
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
 
-
-
-	
 	@GET
 	@Path("/")
 	@Produces("text/html")
-	public void startWhatIfActionOlap() {
+	public void startWhatIfActionOlapGet() {
+		startAction();
+	}
+
+	@POST
+	@Path("/")
+	@Produces("text/html")
+	public void startWhatIfActionOlapPost() {
+		startAction();
+	}
+
+	/**
+	 *
+	 */
+	private void startAction() {
 		logger.debug("Starting WHATIF");
 		startAction(true);
 	}
-
-
-
-
 
 }

@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.georeport.api.page;
 
-import it.eng.spagobi.engines.georeport.GeoReportEngine;
-import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
-import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -42,6 +36,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.engines.georeport.GeoReportEngine;
+import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
+import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+
 @Path("/1.0/pages")
 @ManageAuthorization
 public class PageResource extends AbstractChartEngineResource {
@@ -51,7 +52,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 	@Context
 	private HttpServletResponse response;
-	
+
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
 
@@ -104,7 +105,22 @@ public class PageResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName) {
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("/{pagename}")
+	@Produces("text/html")
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	/**
+	 * @param pageName
+	 */
+	private void openPage(String pageName) {
 		GeoReportEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
 

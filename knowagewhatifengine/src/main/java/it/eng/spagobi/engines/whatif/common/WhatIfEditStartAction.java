@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.whatif.common;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -47,15 +48,30 @@ public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 	private String url = "";
 	private boolean whatif;
-	@Context HttpServletRequest request;
-	@Context HttpServletResponse response;
+	@Context
+	HttpServletRequest request;
+	@Context
+	HttpServletResponse response;
 
 	@GET
 	@Path("/edit")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void startAction() {
-		logger.debug("IN");
+	public void startActionGet() {
+		startAction();
+	}
 
+	@POST
+	@Path("/edit")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void startActionPost() {
+		startAction();
+	}
+
+	/**
+	 *
+	 */
+	private void startAction() {
+		logger.debug("IN");
 
 		try {
 			logger.debug("User Id: " + getUserId());

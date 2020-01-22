@@ -17,6 +17,24 @@
  */
 package it.eng.knowage.engine.kpi.api.page;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.knowage.engine.kpi.KpiEngine;
 import it.eng.knowage.engine.kpi.KpiEngineInstance;
 import it.eng.knowage.engine.kpi.KpiEngineRuntimeException;
@@ -28,24 +46,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @authors
@@ -132,7 +132,22 @@ public class PageResource extends AbstractFullKpiEngineResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName, @Context HttpServletRequest request2) {
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("/{pagename}")
+	@Produces("text/html")
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPage(pageName);
+	}
+
+	/**
+	 * @param pageName
+	 */
+	private void openPage(String pageName) {
 		KpiEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
 
@@ -169,8 +184,8 @@ public class PageResource extends AbstractFullKpiEngineResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
@@ -179,101 +194,6 @@ public class PageResource extends AbstractFullKpiEngineResource {
 			logger.debug("OUT");
 		}
 	}
-
-	/*
-	 * @SuppressWarnings("unchecked")
-	 *
-	 * @POST
-	 *
-	 * @Path("/{pagename}")
-	 *
-	 * @Produces("text/html") public void openPageFromCockpit(@PathParam("pagename") String pageName, @FormParam("widgetData") String widgetData) {
-	 * FullKpiEngineInstance engineInstance; String dispatchUrl = urls.get(pageName);
-	 *
-	 * try {
-	 *
-	 * JSONObject jsonWidgetDataOut = new JSONObject(widgetData);
-	 *
-	 * Assert.assertTrue(!jsonWidgetDataOut.isNull("widgetData"),
-	 * "It's impossible instantiate a Chart Designer from the Cockpit Engine without a valid [widgetData] param!");
-	 *
-	 * JSONObject jsonWidgetDataIn = jsonWidgetDataOut.getJSONObject("widgetData");
-	 *
-	 * String datasetLabel = jsonWidgetDataIn.getString("datasetLabel"); String chartTemplate;
-	 *
-	 * if (!jsonWidgetDataIn.isNull("chartTemplate")) { chartTemplate = JSONTemplateUtilities.convertJsonToXML(jsonWidgetDataIn.getJSONObject("chartTemplate"));
-	 * } else { chartTemplate = buildBaseTemplate().toString(); }
-	 *
-	 * switch (pageName) {
-	 *
-	 * case "execute_cockpit":
-	 *
-	 * engineInstance = FullKpiEngine.createInstance(chartTemplate, getIOManager().getEnv()); engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL,
-	 * datasetLabel);
-	 *
-	 * if (!jsonWidgetDataIn.isNull("jsonData") && jsonWidgetDataIn.get("jsonData") != null) {
-	 *
-	 * String jsonData = null;
-	 *
-	 * if (jsonWidgetDataIn.get("jsonData") instanceof String) { jsonData = jsonWidgetDataIn.getString("jsonData"); } else if (jsonWidgetDataIn.get("jsonData")
-	 * instanceof JSONObject) { jsonData = jsonWidgetDataIn.getJSONObject("jsonData").toString(); }
-	 *
-	 * engineInstance.getEnv().put("METADATA", jsonData); }
-	 *
-	 * if (!jsonWidgetDataIn.isNull("aggregations") && jsonWidgetDataIn.get("aggregations") != null) {
-	 *
-	 * String aggregations = null;
-	 *
-	 * if (jsonWidgetDataIn.get("aggregations") instanceof String) { aggregations = jsonWidgetDataIn.getString("aggregations"); } else if
-	 * (jsonWidgetDataIn.get("aggregations") instanceof JSONObject) { aggregations = jsonWidgetDataIn.getJSONObject("aggregations").toString(); }
-	 *
-	 * engineInstance.getEnv().put("AGGREGATIONS", aggregations); }
-	 *
-	 * if (!jsonWidgetDataIn.isNull("selections") && jsonWidgetDataIn.get("selections") != null) { String selections = null;
-	 *
-	 * if (jsonWidgetDataIn.get("selections") instanceof String) { selections = jsonWidgetDataIn.getString("selections"); } else if
-	 * (jsonWidgetDataIn.get("selections") instanceof JSONObject) { selections = jsonWidgetDataIn.getJSONObject("selections").toString(); }
-	 *
-	 * if (!selections.equals("")) { if (!jsonWidgetDataIn.isNull("associations") && jsonWidgetDataIn.get("associations") != null) { String associations = null;
-	 *
-	 * if (jsonWidgetDataIn.get("associations") instanceof String) { associations = jsonWidgetDataIn.getString("associations"); } else if
-	 * (jsonWidgetDataIn.get("associations") instanceof JSONObject) { associations = jsonWidgetDataIn.getJSONObject("associations").toString(); }
-	 *
-	 * JSONObject jsonSelections = ChartEngineUtil.cockpitSelectionsFromAssociations(request, selections, associations, datasetLabel);
-	 * Assert.assertNotNull(jsonSelections, "Invalid values for [selections] param"); engineInstance.getEnv().put("SELECTIONS", jsonSelections.toString()); }
-	 * else { engineInstance.getEnv().put("SELECTIONS", selections); }
-	 *
-	 * } }
-	 *
-	 * if (!jsonWidgetDataIn.isNull("widgetId") && jsonWidgetDataIn.getString("widgetId") != null) { engineInstance.getEnv().put("WIDGETID",
-	 * jsonWidgetDataIn.getString("widgetId")); }
-	 *
-	 * // engineInstance.getEnv().put("IFRAMEID", getIOManager().getRequest().getParameter("iFrameId")); engineInstance.getEnv().put("EXECUTE_COCKPIT", true);
-	 * // TODO put this not in session but in context getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance); break;
-	 *
-	 * case "edit_cockpit":
-	 *
-	 * // create a new engine instance engineInstance = FullKpiEngine.createInstance(chartTemplate, getIOManager().getEnv());
-	 * engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel); engineInstance.getEnv().put("EDIT_COCKPIT", true); // TODO put this not in
-	 * session but in context getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	 *
-	 * JSONArray styles = new JSONArray(new StyleResource().getStyles()); getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES,
-	 * styles);
-	 *
-	 * break;
-	 *
-	 * default: dispatchUrl = "/WEB-INF/jsp/error.jsp"; break; }
-	 *
-	 * // To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper HttpServletRequest request =
-	 * ResteasyProviderFactory.getContextData(HttpServletRequest.class); HttpServletResponse response =
-	 * ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-	 *
-	 * if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) { request.getRequestDispatcher(dispatchUrl).include(request, response); } else {
-	 * request.getRequestDispatcher(dispatchUrl).forward(request, response); }
-	 *
-	 * } catch (Exception e) { throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e); } finally {
-	 * logger.debug("OUT"); } }
-	 */
 
 	@GET
 	@Path("/executeTest")
