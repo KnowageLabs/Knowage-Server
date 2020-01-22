@@ -62,7 +62,9 @@ import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.dao.exception.DAORuntimeException;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -208,7 +210,13 @@ public class UserUtilities {
 			try {
 				UserProfile profile;
 				if (UserProfile.isSchedulerUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a scheduler user.");
 					profile = UserProfile.createSchedulerUserProfile(userId);
+				} else if (PublicProfile.isPublicUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a public user.");
+					String decodedUserId = JWTSsoService.jwtToken2userId(userId);
+					SpagoBIUserProfile user = PublicProfile.createPublicUserProfile(decodedUserId);
+					profile = new UserProfile(user);
 				} else {
 					ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
 					SpagoBIUserProfile user = supplier.createUserProfile(userId);
