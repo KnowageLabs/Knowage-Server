@@ -116,8 +116,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			documentDao.modifyBIObject(document);
 			document = documentDao.loadBIObjectById(document.getId());
 		} catch (EMFUserError e) {
-			logger.error("Document can not be deleted", e);
-			throw new SpagoBIRestServiceException("Deleting of document has failed", buildLocaleFromSession(), e);
+			logger.error("Document can not be updated", e);
+			throw new SpagoBIRestServiceException("Updating document has failed", buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return document;

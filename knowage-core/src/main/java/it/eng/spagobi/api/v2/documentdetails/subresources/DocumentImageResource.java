@@ -41,6 +41,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
@@ -171,18 +172,23 @@ public class DocumentImageResource extends AbstractSpagoBIResource {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(id);
 		String previewFileName = "";
-
+		IBIObjectDAO documentDao = null;
 		try {
+			documentDao = DAOFactory.getBIObjectDAO();
 			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
 				previewFileName = document.getPreviewFile();
 			}
-
 			File previewDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 			String previewFilePath = previewDirectory.getAbsolutePath() + File.separator + previewFileName;
 			File previewFile = new File(previewFilePath);
 			previewFile.delete();
+			document.setPreviewFile(null);
+			documentDao.modifyBIObject(document);
 		} catch (EMFInternalError e) {
 			throw new SpagoBIRuntimeException("User is not allowed to preview document", e);
+		} catch (EMFUserError e) {
+			logger.error("Preview file cannot be deleted", e);
+			throw new SpagoBIRestServiceException("Preview file cannot be deleted", buildLocaleFromSession(), e);
 		}
 	}
 
