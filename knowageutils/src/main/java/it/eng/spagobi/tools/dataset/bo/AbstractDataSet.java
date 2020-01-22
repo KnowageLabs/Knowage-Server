@@ -451,14 +451,14 @@ public abstract class AbstractDataSet implements IDataSet {
 		for (int j = 0; j < values.length; j++) {
 			String value = values[j].trim();
 			if (!value.isEmpty()) {
-				if (!value.startsWith(delim) && !value.endsWith(delim)) {
+				if (value.startsWith(delim) && value.endsWith(delim)) {
+					newValues.add(value);
+				} else {
 					if (isString) {
 						// Duplicate single quote to transform it into an escaped SQL single quote
 						value = value.replaceAll("'", "''");
 					}
 					newValues.add(delim + value + delim);
-				} else {
-					newValues.add(value);
 				}
 			}
 		}
