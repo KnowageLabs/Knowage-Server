@@ -31,9 +31,9 @@ import org.hibernate.Transaction;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.wapp.bo.Menu;
 
 /**
@@ -79,11 +79,11 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 			Iterator it = hibList.iterator();
 			IMenuDAO menuDAO = DAOFactory.getMenuDAO();
 			Menu tmpMenu = null;
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (it.hasNext()) {
 				Object[] tmpLst = (Object[]) it.next();
 				Integer menuId = (Integer) tmpLst[0];
-				tmpMenu = menuDAO.loadMenuByID(menuId, roleId, authorizations);
+				tmpMenu = menuDAO.loadMenuByID(menuId, roleId, cachedRoles);
 				if (tmpMenu != null) {
 					logger.debug("Add Menu:" + tmpMenu.getName());
 					realResult.add(tmpMenu);

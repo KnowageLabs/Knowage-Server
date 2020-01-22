@@ -92,8 +92,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				tx = aSession.beginTransaction();
 
 				SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleID);
-				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
-				toReturn = toRole(hibRole, authorizations);
+				Set<Role> cachedRoles = new HashSet<Role>();
+				toReturn = toRole(hibRole, cachedRoles);
 				putIntoCache(String.valueOf(toReturn.getId()), toReturn);
 				tx.commit();
 			} catch (HibernateException he) {
@@ -166,8 +166,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
 				if (hibRole == null)
 					return null;
-				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
-				toReturn = toRole(hibRole, authorizations);
+				Set<Role> cachedRoles = new HashSet<Role>();
+				toReturn = toRole(hibRole, cachedRoles);
 				putIntoCache(roleName, toReturn);
 				tx.commit();
 			} catch (HibernateException he) {
@@ -221,9 +221,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 
 			Iterator it = hibList.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next(), authorizations);
+				Role role = toRole((SbiExtRoles) it.next(), cachedRoles);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -259,9 +259,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 
 			Iterator it = hibList.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next(), authorizations);
+				Role role = toRole((SbiExtRoles) it.next(), cachedRoles);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -302,10 +302,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				SbiGeoLayersRoles sbi = (SbiGeoLayersRoles) it.next();
 				roles.add(sbi.getRole());
 			}
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 
 			for (int i = 0; i < roles.size(); i++) {
-				Role role = toRole(roles.get(i), authorizations);
+				Role role = toRole(roles.get(i), cachedRoles);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -660,9 +660,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibListAllRoles.removeAll(noFreeRoles);
 
 			Iterator it = hibListAllRoles.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next(), authorizations);
+				Role role = toRole((SbiExtRoles) it.next(), cachedRoles);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -734,9 +734,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibListAllRoles.removeAll(noFreeRoles);
 
 			Iterator it = hibListAllRoles.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			Set<Role> cachedRoles = new HashSet<Role>();
 			while (it.hasNext()) {
-				Role role = toRole((SbiExtRoles) it.next(), authorizations);
+				Role role = toRole((SbiExtRoles) it.next(), cachedRoles);
 				putIntoCache(String.valueOf(role.getId()), role);
 				realResult.add(role);
 			}
@@ -782,32 +782,27 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * @param hibRole The hybernate role
 	 * @return The corrispondent <code>Role</code> object
 	 */
-	public Role toRole(SbiExtRoles hibRole, Set<SbiAuthorizationsRoles> cachedAuthorizations) {
+	public Role toRole(SbiExtRoles hibRole, Set<Role> cachedRoles) {
 		logger.debug("IN.hibRole.getName()=" + hibRole.getName());
-		Role role = new Role();
-		role.setCode(hibRole.getCode());
-		role.setDescription(hibRole.getDescr());
-		role.setId(hibRole.getExtRoleId());
-		role.setName(hibRole.getName());
-		role.setIsPublic(hibRole.getIsPublic());
-
+		Role role = null;
 		boolean found = false;
-		for (SbiAuthorizationsRoles sbiAuthorizationsRoles : cachedAuthorizations) {
-			if (sbiAuthorizationsRoles.getSbiExtRoles().getExtRoleId().compareTo(hibRole.getExtRoleId()) == 0) {
+
+		for (Role cachedRole : cachedRoles) {
+			if (cachedRole.getId().compareTo(hibRole.getExtRoleId()) == 0) {
 				found = true;
+				role = cachedRole;
 				break;
 			}
 		}
 
-		if (found) {
-			for (SbiAuthorizationsRoles sbiAuthorizationsRoles : cachedAuthorizations) {
-				if (sbiAuthorizationsRoles.getSbiExtRoles().getExtRoleId().compareTo(hibRole.getExtRoleId()) == 0) {
+		if (!found) {
 
-					setRoleAuthorizations(role, sbiAuthorizationsRoles);
-				}
-			}
-
-		} else {
+			role = new Role();
+			role.setCode(hibRole.getCode());
+			role.setDescription(hibRole.getDescr());
+			role.setId(hibRole.getExtRoleId());
+			role.setName(hibRole.getName());
+			role.setIsPublic(hibRole.getIsPublic());
 
 			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
 			Iterator it = authorizations.iterator();
@@ -815,12 +810,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
 				setRoleAuthorizations(role, fr);
 
-				cachedAuthorizations.add(fr);
 			}
+			cachedRoles.add(role);
+			role.setRoleTypeCD(hibRole.getRoleTypeCode());
+			role.setRoleTypeID(hibRole.getRoleType().getValueId());
+			role.setOrganization(hibRole.getCommonInfo().getOrganization());
 		}
-		role.setRoleTypeCD(hibRole.getRoleTypeCode());
-		role.setRoleTypeID(hibRole.getRoleType().getValueId());
-		role.setOrganization(hibRole.getCommonInfo().getOrganization());
 		logger.debug("OUT");
 		return role;
 	}
@@ -1195,10 +1190,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			toTransform = hibernateQuery.list();
 
 			if (toTransform != null) {
-				Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+				Set<Role> cachedRoles = new HashSet<Role>();
 				for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
 					SbiExtRoles hibRole = (SbiExtRoles) iterator.next();
-					Role role = toRole(hibRole, authorizations);
+					Role role = toRole(hibRole, cachedRoles);
 					putIntoCache(String.valueOf(role.getId()), role);
 					toReturn.add(role);
 				}
@@ -1866,8 +1861,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				return null;
 
 			SbiExtRoles hibRole = (SbiExtRoles) hibRoleO;
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
-			toReturn = toRole(hibRole, authorizations);
+			Set<Role> cachedRoles = new HashSet<Role>();
+			toReturn = toRole(hibRole, cachedRoles);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
