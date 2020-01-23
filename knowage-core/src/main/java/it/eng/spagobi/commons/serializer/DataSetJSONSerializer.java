@@ -518,8 +518,7 @@ public class DataSetJSONSerializer implements Serializer {
 
 	private static void managePythonDataSet(JSONObject conf, JSONObject result) throws JSONException {
 		for (String attr : PythonDataSetConstants.PYTHON_ALL_ATTRIBUTES) {
-			if (!conf.has(attr)) {
-				// optional attribute
+			if (!conf.has(attr) || result.has(attr)) {
 				continue;
 			}
 			Object value = conf.get(attr);

@@ -153,6 +153,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.cleanOldCockpitFilters=function(ds){
 			var indexToDelete = [];
+			if ($scope.ngModelShared.filters == undefined) { //no filters to delete
+				return;
+			}
 			for(var i = 0; i<$scope.ngModelShared.filters.length;i++){
 				var f = $scope.ngModelShared.filters[i];
 				if(f.filterOperator == undefined || f.filterOperator == ''){
