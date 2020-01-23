@@ -16,7 +16,18 @@
 		   					<dataset-selector flex ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>
 		     			</md-card-content>
 	     			</md-card>
-		     	</md-tab>
+	     				<md-card>
+	        			<md-card-content layout="row">	        		
+	        			<!-- ng-show="model.content.columnSelectedOfDatasetAggregations.length>0" -->
+	        			<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="padding:8px;">
+	        			
+	        			<calculated-field ng-model="localModel"></calculated-field>	        			
+	        			</div> 	        			
+	        		 
+		      			</md-card-content>
+	     			</md-card>
+	     						
+	         	</md-tab>
 		     	
 		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="handleEvent('openConfiguration')" md-on-deselect="handleEvent('closeConfiguration')">
 		     	 	<div ng-show="confSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>

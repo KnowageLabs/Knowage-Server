@@ -31,7 +31,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function calculatedFieldController($scope,sbiModule_translate,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 
 		$scope.translate = sbiModule_translate;
-		if($scope.selectedItem){$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]}
+		if($scope.selectedItem){
+			
+			$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
+		
+			if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
+
+				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
+				
+			}
+		
+		}
 		$scope.addNewCalculatedField = function(){
 
 			var deferred = $q.defer();
@@ -61,7 +71,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
 						$scope.currentRow.alias = result.alias;
 					}else{
+						if ($scope.ngModel.content == undefined) {
+							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result);
+						}
+						else {
 						$scope.ngModel.content.columnSelectedOfDataset.push(result);
+						}
 
 					}
 				});
@@ -212,13 +227,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
+		if ($scope.model.content == undefined) {
+			
+			for(var i in $scope.model.columnSelectedOfDatasetAggregations){
+				var obj = $scope.model.columnSelectedOfDatasetAggregations[i];
+				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+					$scope.measuresList.push(obj);
+				}
+			}
+		}
+		else {
 		for(var i in $scope.model.content.columnSelectedOfDataset){
 			var obj = $scope.model.content.columnSelectedOfDataset[i];
 			if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
 				$scope.measuresList.push(obj);
 			}
 		}
-
+		}
 		$scope.saveColumnConfiguration=function(){
 			$scope.validateFormula(true)
 			.then(function(success){

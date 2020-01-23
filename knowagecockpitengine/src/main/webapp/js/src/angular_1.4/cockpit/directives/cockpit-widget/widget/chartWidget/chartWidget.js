@@ -90,6 +90,7 @@ function cockpitChartWidgetControllerFunction(
 		cockpitModule_datasetServices,
 		cockpitModule_generalServices,
 		cockpitModule_widgetConfigurator,
+		cockpitModule_generalOptions,
 		$q,
 		$mdPanel,
 		sbiModule_restServices,
@@ -115,6 +116,24 @@ function cockpitChartWidgetControllerFunction(
 	//variable that contains last data of realtime dataset not filtered by selections
 	$scope.realTimeDatasetDataNotFiltered;
 	$scope.isIE = window.document.documentMode;
+	$scope.model = $scope.ngModel;
+	$scope.local = {};
+	  if($scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
+			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local);
+			$scope.model.content.columnSelectedOfDatasetAggregations  = [];
+			for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
+				var obj = $scope.local.metadata.fieldsMeta[i];
+				$scope.model.content.columnSelectedOfDatasetAggregations.push(obj);
+			}
+			$scope.safeApply();
+		}else{
+			$scope.model.content.columnSelectedOfDatasetAggregations = [];
+		}
+		for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
+			if(!$scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.model.content.columnSelectedOfDatasetAggregations[c].alias;
+			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
+			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected;
+		}
 
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
@@ -316,11 +335,6 @@ function cockpitChartWidgetControllerFunction(
 										  // adapt the metadata to be sent to the backend
 										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 										  scope.adaptMetadata(metadataFields);
-
-
-
-
-
 										  //send broadcast for selections with data filtered by selections
 										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
 									  }
@@ -497,19 +511,17 @@ function cockpitChartWidgetControllerFunction(
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh,sbiModule_user){
+				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh,sbiModule_user,cockpitModule_generalOptions,cockpitModule_datasetServices){
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
 					  $scope.somethingChanged=false;
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.localModel.cross= angular.copy(model.content.cross);
-					  $scope.user = sbiModule_user;
-
-					  $scope.model= angular.copy(model);
-
-
-
+					  $scope.user = sbiModule_user;				
+					  $scope.localDataset = {};
+					  $scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
+					  $scope.typesMap = cockpitModule_generalOptions.typesMap;
 					  $scope.handleEvent=function(event, arg1){
 						  if(event=='init'){
 							  if($scope.localModel.datasetId != undefined){
@@ -568,7 +580,24 @@ function cockpitChartWidgetControllerFunction(
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    		  }
+			    		  $scope.columnsGrid.api.setRowData(model.content.columnSelectedOfDatasetAggregations);
+			    	
+			 
 			    	  }
+			    	  
+			    	
+			    	  if ($scope.localModel.datasetId != undefined) {
+			    		  $scope.localModel.dataset = cockpitModule_datasetServices.getDatasetById($scope.localModel.datasetId);
+			    		  $scope.localModel.dataset.dsId = $scope.localModel.datasetId;
+			    	  }
+			    	  
+			    		if($scope.localModel.dataset){
+			    			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.localModel.datasetId), $scope.localDataset);
+			    		} else{
+			    			$scope.model.dataset= {};
+			    			angular.copy([], $scope.localModel.dataset.metadata.fieldsMeta);
+			    		}
+			    	  
 			    	  var checkConfiguration=function(){
 
 			    		  $scope.confChecked = true;
@@ -576,7 +605,6 @@ function cockpitChartWidgetControllerFunction(
 	    				  setAggregationsOnChartEngine($scope.localModel);
 	    				  return true;
 			    	  }
-
 
 
 //				  		check if right number of operands have been specified depending on operator type
@@ -765,6 +793,79 @@ function cockpitChartWidgetControllerFunction(
 		    		  }
 
 			    	  $scope.handleEvent('init');
+			    	  
+			    	  /*
+			  		 * Section copied from Advanced Table widget
+			  		 */
+			    		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
+			    			if($scope.columnsGrid.api && newValue){
+			    				$scope.columnsGrid.api.setRowData(newValue);
+			    				$scope.columnsGrid.api.sizeColumnsToFit();
+			    			}
+			    		})
+			    	  
+			  		function editableCell(params){
+			  			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
+			  		}
+			  		function typeCell(params){
+			  			return "<i class='"+$scope.typesMap[params.value].icon+"'></i> "+$scope.typesMap[params.value].label;
+			  		}
+			  		function isInputEditable(params) {
+			  			return typeof(params.data.name) !== 'undefined';
+			  		}
+			  		function isAggregationEditable(params) {
+			  			return params.data.fieldType == "MEASURE" ? true : false;
+			  		}
+			  		function aggregationRenderer(params) {
+			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
+			  	        return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
+
+			  		}
+			  		function rowDragEnter(event){
+			  			$scope.startingDragRow = event.overIndex;
+			  		}
+			  		function onRowDragEnd(event){
+			  			moveInArray(model.content.columnSelectedOfDatasetAggregations, $scope.startingDragRow, event.overIndex);
+			  		}
+
+			  		function resizeColumns(){
+			  			$scope.columnsGrid.api.sizeColumnsToFit();
+			  		}
+			  		function refreshRow(cell){
+			  			if(cell.data.fieldType == 'MEASURE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
+			  			if(cell.data.fieldType == 'MEASURE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
+			  			if(cell.data.isCalculated) cell.data.alias = cell.data.aliasToShow;
+			  			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+			  		}
+			  		
+			  		$scope.columnsDefition = [
+			  	    	{headerName: 'Name', field:'alias',cellRenderer:editableCell, cellClass: 'editableCell'},
+			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',cellRenderer:editableCell, cellClass: 'editableCell'},
+			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
+			  	    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
+			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
+			  	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}}
+			  	    		
+			  	    		];
+			  		
+			  		$scope.columnsGrid = {
+			  				domLayout:'autoHeight',
+			  		        enableColResize: false,
+			  		        enableFilter: false,
+			  		        enableSorting: false,
+			  		        onGridReady : resizeColumns,
+			  		        onCellEditingStopped: refreshRow,
+			  		        singleClickEdit: true,
+			  		        stopEditingWhenGridLosesFocus: true,
+			  		        columnDefs: $scope.columnsDefition,
+			  				rowData: model.content.columnSelectedOfDatasetAggregations
+			  			}
+			  		/*
+			  		 * 
+			  		 */
+			    	  
+			    	  
+			    	  
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetEditPropertyTemplate.html',
@@ -777,10 +878,16 @@ function cockpitChartWidgetControllerFunction(
 				preserveScope: true,
 				locals: {finishEdit:finishEdit, model:$scope.ngModel, doRefresh:$scope.refreshWidget}
 		};
-		$mdPanel.open(config);
+		$mdPanel.open(config);		
+		
 		return finishEdit.promise;
 	}
+	
 
+	
+	
+	
+	
 	$scope.reloadWidgetsByChartEvent = function(item){
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
