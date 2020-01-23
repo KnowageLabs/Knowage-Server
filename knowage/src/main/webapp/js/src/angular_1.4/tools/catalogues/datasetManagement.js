@@ -370,18 +370,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	// PYTHON ENVIRONMENTS CONFIG
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
-		$scope.pythonEnvs = $scope.buildEnvironments(response.data);
-		$scope.pythonEnvsKeys = Object.keys($scope.pythonEnvs);
+		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
 	}, function(error){
-		$scope.selectedDataSet.pythonAddress = "";
+		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
 	});
 
 	$scope.buildEnvironments = function (data) {
-		toReturn = {}
+		toReturn = []
 		for (i=0; i<data.length; i++) {
 			key = data[i].label;
 			val = data[i].valueCheck;
-			toReturn[key] = val;
+			toReturn[i] = {"label": key, "value": val};
 		}
 		return toReturn;
 	}
@@ -3390,7 +3389,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = "http://" + $scope.selectedDataSet.pythonAddress + '/dataset';
+    			$scope.selectedDataSet.restAddress = "http://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;
@@ -3933,7 +3932,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		}
     		}
     	}
-    	else if (dsType.toLowerCase()=="rest" || dsTypeCd.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
+    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];

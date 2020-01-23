@@ -1128,8 +1128,8 @@ div.lower i  {
 								       	
 								       	<md-select 	placeholder ="Choose python environment"
 								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()"
-								        			ng-model="selectedDataSet.pythonAddress">   
-								        	<md-option ng-repeat="key in pythonEnvsKeys" value="{{pythonEnvs[key]}}">{{key}}</md-option>
+								        			ng-model="selectedDataSet.pythonEnvironment">   
+								        	<md-option ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
 								       	</md-select>  
 								       	
 								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanFileType">
