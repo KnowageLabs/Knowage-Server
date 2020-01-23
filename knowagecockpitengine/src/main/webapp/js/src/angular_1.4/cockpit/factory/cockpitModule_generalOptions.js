@@ -156,8 +156,8 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 
 		 ],
 		 tableVariablesActions: [
-			 {label:"Hide column",value:"hide"},
-			 {label:"Set column header name",value:'header'}
+			 {label:sbiModule_translate.load('kn.variables.hidecolumn'),value:"hide"},
+			 {label:sbiModule_translate.load('kn.variables.setheader'),value:'header'}
 		 ],
 		 conditions : ['>','<','==','>=','<=','!='],
 		 calculatedFieldsFunctions: [
