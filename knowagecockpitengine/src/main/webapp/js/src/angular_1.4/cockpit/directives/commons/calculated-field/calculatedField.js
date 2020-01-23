@@ -33,13 +33,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 		if($scope.selectedItem){
 			
-			$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
-		
 			if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
 
 				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
 				
 			}
+			else {
+
+				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
+			}
+	
 		
 		}
 		$scope.addNewCalculatedField = function(){

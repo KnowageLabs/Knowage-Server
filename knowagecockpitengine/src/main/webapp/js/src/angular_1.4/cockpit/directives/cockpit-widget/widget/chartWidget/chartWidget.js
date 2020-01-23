@@ -801,6 +801,7 @@ function cockpitChartWidgetControllerFunction(
 			    			if($scope.columnsGrid.api && newValue){
 			    				$scope.columnsGrid.api.setRowData(newValue);
 			    				$scope.columnsGrid.api.sizeColumnsToFit();
+			    				$scope.somethingChanged = true;
 			    			}
 			    		})
 			    	  
@@ -839,16 +840,17 @@ function cockpitChartWidgetControllerFunction(
 			  		}
 			  		
 			  		$scope.columnsDefition = [
-			  	    	{headerName: 'Name', field:'alias',cellRenderer:editableCell, cellClass: 'editableCell'},
-			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',cellRenderer:editableCell, cellClass: 'editableCell'},
-			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
+			  	    	{headerName: 'Name', field:'alias'},
+			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow'},
+			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',
 			  	    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
 			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
-			  	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}}
-			  	    		
-			  	    		];
+			  	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+			  	    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false,
+			  	    			}];
 			  		
 			  		$scope.columnsGrid = {
+			  				angularCompileRows: true,
 			  				domLayout:'autoHeight',
 			  		        enableColResize: false,
 			  		        enableFilter: false,
@@ -860,6 +862,14 @@ function cockpitChartWidgetControllerFunction(
 			  		        columnDefs: $scope.columnsDefition,
 			  				rowData: model.content.columnSelectedOfDatasetAggregations
 			  			}
+			  		
+			  		function buttonRenderer(params){
+			  			if(params.data.isCalculated){
+			  				return '<calculated-field ng-model="localModel" selected-item="'+params.rowIndex+'"></calculated-field>';
+			  			}
+
+			  		}
+			  		
 			  		/*
 			  		 * 
 			  		 */
