@@ -61,7 +61,6 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -229,12 +228,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load low functionality by id.
 	 *
-	 * @param functionalityID  the functionality id
-	 * @param recoverBIObjects the recover bi objects
+	 * @param functionalityID
+	 *            the functionality id
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the low functionality
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadLowFunctionalityByID(java.lang.Integer)
 	 */
@@ -275,12 +277,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load low functionality by code.
 	 *
-	 * @param label            the functionality code
-	 * @param recoverBIObjects the recover bi objects
+	 * @param label
+	 *            the functionality code
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the low functionality
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadLowFunctionalityByLabel(java.lang.String)
 	 */
@@ -324,11 +329,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load low functionality list by id List
 	 *
-	 * @param functionalityIDs the functionality id List
+	 * @param functionalityIDs
+	 *            the functionality id List
 	 *
 	 * @return the low functionalities List
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadLowFunctionalityByID(java.lang.Integer)
 	 */
@@ -398,11 +405,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load root low functionality.
 	 *
-	 * @param recoverBIObjects the recover bi objects
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the low functionality
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadRootLowFunctionality(boolean)
 	 */
@@ -448,12 +457,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load low functionality by path.
 	 *
-	 * @param functionalityPath the functionality path
-	 * @param recoverBIObjects  the recover bi objects
+	 * @param functionalityPath
+	 *            the functionality path
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the low functionality
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadLowFunctionalityByPath(java.lang.String)
 	 */
@@ -496,9 +508,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Modify low functionality.
 	 *
-	 * @param aLowFunctionality the a low functionality
+	 * @param aLowFunctionality
+	 *            the a low functionality
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#modifyLowFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality)
 	 */
@@ -615,10 +629,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 * Saves all roles for a functionality, using session and permission information. The permission for a functionality can be DEVELOPMENT, TEST, EXECUTION AND
 	 * CREATE and each permission has its own roles.
 	 *
-	 * @param aSession          The current session object
-	 * @param hibFunct          The functionality hibernate object
-	 * @param aLowFunctionality The Low Functionality object
-	 * @param permission        The string defining the permission
+	 * @param aSession
+	 *            The current session object
+	 * @param hibFunct
+	 *            The functionality hibernate object
+	 * @param aLowFunctionality
+	 *            The Low Functionality object
+	 * @param permission
+	 *            The string defining the permission
 	 * @return A collection object containing all roles
 	 * @throws EMFUserError
 	 *
@@ -672,10 +690,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Insert low functionality.
 	 *
-	 * @param aLowFunctionality the a low functionality
-	 * @param profile           the profile
+	 * @param aLowFunctionality
+	 *            the a low functionality
+	 * @param profile
+	 *            the profile
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#insertLowFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality,
 	 *      it.eng.spago.security.IEngUserProfile)
@@ -782,10 +803,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Erase low functionality.
 	 *
-	 * @param aLowFunctionality the a low functionality
-	 * @param profile           the profile
+	 * @param aLowFunctionality
+	 *            the a low functionality
+	 * @param profile
+	 *            the profile
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#eraseLowFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality,
 	 *      it.eng.spago.security.IEngUserProfile)
@@ -863,8 +887,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * From the Hibernate Low Functionality object at input, gives the corrispondent <code>LowFunctionality</code> object.
 	 *
-	 * @param hibFunct         The Hibernate Low Functionality object
-	 * @param recoverBIObjects If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 * @param hibFunct
+	 *            The Hibernate Low Functionality object
+	 * @param recoverBIObjects
+	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the corrispondent output <code>LowFunctionality</code>
 	 */
@@ -875,8 +901,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * From the Hibernate Low Functionality object at input, gives the corrispondent <code>LowFunctionality</code> object.
 	 *
-	 * @param hibFunct         The Hibernate Low Functionality object
-	 * @param recoverBIObjects If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 * @param hibFunct
+	 *            The Hibernate Low Functionality object
+	 * @param recoverBIObjects
+	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the corrispondent output <code>LowFunctionality</code>
 	 *
@@ -916,14 +944,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		if (roles != null) {
 			logger.debug("getSbiFuncRoles() size=" + roles.size());
 			Iterator iterRoles = roles.iterator();
-			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (iterRoles.hasNext()) {
 				SbiFuncRole hibfuncrole = (SbiFuncRole) iterRoles.next();
 				SbiExtRoles hibRole = hibfuncrole.getId().getRole();
 				SbiDomains hibPermission = hibfuncrole.getId().getState();
 				logger.debug("hibfuncrole.getId().getRole().getName()=" + hibRole.getName());
 				RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-				Role role = roleDAO.toRole(hibRole, authorizations);
+				Role role = roleDAO.toRole(hibRole);
 
 				String state = hibPermission.getValueCd();
 				if (state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
@@ -1009,11 +1036,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Exist by code.
 	 *
-	 * @param code the code
+	 * @param code
+	 *            the code
 	 *
 	 * @return the integer
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#existByCode(java.lang.String)
 	 */
@@ -1053,11 +1082,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load all low functionalities.
 	 *
-	 * @param recoverBIObjects the recover bi objects
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
 	 */
@@ -1080,11 +1111,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load all low functionalities.
 	 *
-	 * @param recoverBIObjects the recover bi objects
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
 	 */
@@ -1228,12 +1261,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load sub low functionalities.
 	 *
-	 * @param initialPath      the initial path
-	 * @param recoverBIObjects the recover bi objects
+	 * @param initialPath
+	 *            the initial path
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadSubLowFunctionalities(java.lang.String, boolean)
 	 */
@@ -1301,11 +1337,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Checks for child.
 	 *
-	 * @param id the id
+	 * @param id
+	 *            the id
 	 *
 	 * @return true, if checks for child
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#hasChild(java.lang.String)
 	 */
@@ -1363,9 +1401,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Deletes a set of inconsistent roles reference from the database, in order to keep functionalities tree permissions consistence.
 	 *
-	 * @param rolesSet the set containing the roles to erase
+	 * @param rolesSet
+	 *            the set containing the roles to erase
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 */
 	@Override
 	public void deleteInconsistentRoles(Set rolesSet) throws EMFUserError {
@@ -1625,12 +1665,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load all functionalities associated the user roles.
 	 *
-	 * @param onlyFirstLevel   limits functionalities to first level
-	 * @param recoverBIObjects the recover bi objects
+	 * @param onlyFirstLevel
+	 *            limits functionalities to first level
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
 	 */
@@ -1782,12 +1825,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load all functionalities associated the user roles.
 	 *
-	 * @param onlyFirstLevel   limits functionalities to first level
-	 * @param recoverBIObjects the recover bi objects
+	 * @param onlyFirstLevel
+	 *            limits functionalities to first level
+	 * @param recoverBIObjects
+	 *            the recover bi objects
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
 	 */
@@ -1941,11 +1987,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/**
 	 * Load all fathers functionalities.
 	 *
-	 * @param functId the identifier of functionality child
+	 * @param functId
+	 *            the identifier of functionality child
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(Integer)
 	 */
