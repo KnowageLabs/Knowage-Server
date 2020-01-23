@@ -38,6 +38,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.metadata.SbiMenu;
@@ -81,8 +82,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
 			// menuID);
-			Set<Role> cachedRoles = new HashSet<Role>();
-			toReturn = toMenu(hibMenu, null, cachedRoles);
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			toReturn = toMenu(hibMenu, null, authorizations);
 			// toReturn = toMenu(loadSbiMenuByID(menuID), null);
 
 		} catch (HibernateException he) {
@@ -157,7 +158,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByID(integer)
 	 */
 	@Override
-	public Menu loadMenuByID(Integer menuID, Integer roleID, Set<Role> cachedRoles) throws EMFUserError {
+	public Menu loadMenuByID(Integer menuID, Integer roleID, Set<SbiAuthorizationsRoles> authorizations) throws EMFUserError {
 		Menu toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -175,7 +176,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
 			// menuID);
-			toReturn = toMenu(hibMenu, roleID, cachedRoles);
+			toReturn = toMenu(hibMenu, roleID, authorizations);
 
 		} catch (HibernateException he) {
 			logException(he);
@@ -220,8 +221,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			SbiMenu hibMenu = (SbiMenu) criteria.uniqueResult();
 			if (hibMenu == null)
 				return null;
-			Set<Role> cachedRoles = new HashSet<Role>();
-			biMenu = toMenu(hibMenu, null, cachedRoles);
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
+			biMenu = toMenu(hibMenu, null, authorizations);
 
 			// tx.commit();
 		} catch (HibernateException he) {
@@ -654,11 +655,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
-			Set<Role> cachedRoles = new HashSet<Role>();
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
 				SbiMenu hibMenu = (SbiMenu) it.next();
 				if (hibMenu != null) {
-					Menu biMenu = toMenu(hibMenu, null, cachedRoles);
+					Menu biMenu = toMenu(hibMenu, null, authorizations);
 					logger.debug("Add Menu:" + biMenu.getName());
 					realResult.add(biMenu);
 				}
@@ -699,11 +700,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			@SuppressWarnings("unchecked")
 			List<SbiMenu> hibList = hibQuery.list();
 			Iterator<SbiMenu> it = hibList.iterator();
-			Set<Role> cachedRoles = new HashSet<Role>();
+			Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 			while (it.hasNext()) {
 				SbiMenu hibMenu = it.next();
 				if (hibMenu != null) {
-					Menu biMenu = toMenu(hibMenu, null, cachedRoles);
+					Menu biMenu = toMenu(hibMenu, null, authorizations);
 					logger.debug("Add Menu:" + biMenu.getName());
 					realResult.add(biMenu);
 				}
@@ -792,7 +793,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Menu> getChildrenMenu(Integer menuId, Integer roleID, Set<Role> cachedRoles) throws EMFUserError {
+	public List<Menu> getChildrenMenu(Integer menuId, Integer roleID, Set<SbiAuthorizationsRoles> authorizations) throws EMFUserError {
 		List<Menu> lstChildren = new ArrayList<>();
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -820,12 +821,12 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 						List<SbiMenuRole> hibListRoles = aQuery.list();
 						if (hibListRoles.size() > 0) {
-							Menu biMenu = toMenu(hibMenu, roleID, cachedRoles);
+							Menu biMenu = toMenu(hibMenu, roleID, authorizations);
 							lstChildren.add(biMenu);
 						}
 					}
 				} else {
-					Menu biMenu = toMenu(hibMenu, roleID, cachedRoles);
+					Menu biMenu = toMenu(hibMenu, roleID, authorizations);
 					lstChildren.add(biMenu);
 				}
 			}
@@ -853,7 +854,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 * @param hibMenu The Hibernate Menu object
 	 * @return the corrispondent output <code>Menu</code>
 	 */
-	private Menu toMenu(SbiMenu hibMenu, Integer roleId, Set<Role> cachedRoles) throws EMFUserError {
+	private Menu toMenu(SbiMenu hibMenu, Integer roleId, Set<SbiAuthorizationsRoles> authorizations) throws EMFUserError {
 
 		Menu menu = new Menu();
 		menu.setMenuId(hibMenu.getMenuId());
@@ -903,7 +904,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			SbiExtRoles hibRole = hibMenuRole.getSbiExtRoles();
 
 			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-			Role role = roleDAO.toRole(hibRole, cachedRoles);
+			Role role = roleDAO.toRole(hibRole, authorizations);
 
 			rolesList.add(role);
 		}
@@ -917,7 +918,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 		// set children
 		try {
-			List tmpLstChildren = (DAOFactory.getMenuDAO().getChildrenMenu(menu.getMenuId(), roleId, cachedRoles));
+			List tmpLstChildren = (DAOFactory.getMenuDAO().getChildrenMenu(menu.getMenuId(), roleId, authorizations));
 			boolean hasCHildren = (tmpLstChildren.size() == 0) ? false : true;
 			menu.setLstChildren(tmpLstChildren);
 			menu.setHasChildren(hasCHildren);

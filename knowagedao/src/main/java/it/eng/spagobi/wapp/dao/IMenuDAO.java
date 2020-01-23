@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.metadata.SbiMenu;
@@ -67,7 +67,7 @@ public interface IMenuDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Menu loadMenuByID(Integer menuID, Integer roleID, Set<Role> cachedRoles) throws EMFUserError;
+	public Menu loadMenuByID(Integer menuID, Integer roleID, Set<SbiAuthorizationsRoles> authorizations) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for a menu whose name is equal to <code>name</code>.
@@ -142,7 +142,7 @@ public interface IMenuDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List getChildrenMenu(Integer menuId, Integer roleID, Set<Role> cachedRoles) throws EMFUserError;
+	public List getChildrenMenu(Integer menuId, Integer roleID, Set<SbiAuthorizationsRoles> authorizations) throws EMFUserError;
 
 	/**
 	 * Substitution between the current node and his father

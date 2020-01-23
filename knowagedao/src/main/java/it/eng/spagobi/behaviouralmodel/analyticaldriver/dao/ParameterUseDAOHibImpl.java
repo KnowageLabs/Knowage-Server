@@ -47,6 +47,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
@@ -740,10 +741,10 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 		Role tmpRole = null;
 
 		List roleList = new ArrayList();
-		Set<Role> cachedRoles = new HashSet<Role>();
+		Set<SbiAuthorizationsRoles> authorizations = new HashSet<SbiAuthorizationsRoles>();
 		for (Iterator itParUseDet = hibParUseDets.iterator(); itParUseDet.hasNext();) {
 			aSbiParuseDet = (SbiParuseDet) itParUseDet.next();
-			tmpRole = roleDAOHibImpl.toRole(aSbiParuseDet.getId().getSbiExtRoles(), cachedRoles);
+			tmpRole = roleDAOHibImpl.toRole(aSbiParuseDet.getId().getSbiExtRoles(), authorizations);
 			roleList.add(tmpRole);
 		}
 
