@@ -74,6 +74,12 @@ function pythonWidgetEditControllerFunction(
 		tag.opened = !tag.opened;
 	}
 
+	$scope.$watch('newModel.pythonOutputType',function(newValue,oldValue){
+		if (newValue == "bokeh") {
+			$scope.newModel.cross = {};
+		}
+	})
+
 	$scope.$watch('newModel.dataset.dsId',function(newValue,oldValue){
 		if(newValue){
 			$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
