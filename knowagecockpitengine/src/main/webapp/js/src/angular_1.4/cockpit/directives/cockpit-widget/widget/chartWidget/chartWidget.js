@@ -537,7 +537,10 @@ function cockpitChartWidgetControllerFunction(
 						  }else if(event=='openFilters'){
 							  $scope.somethingChanged = true;
 						  }else if(event=='save'){
-							  if(!checkChartSettings()){
+							  if(checkChartSettings()==undefined){
+								  return
+							  }
+							  else if(!checkChartSettings()){
 								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
 										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 									}
@@ -669,8 +672,7 @@ function cockpitChartWidgetControllerFunction(
 
 			    	  var checkChartSettings = function (){
 
-			    		  if(!$scope.localModel.hasOwnProperty('chartTemplate')){
-
+			    		  if($scope.localModel.chartTemplate.VALUES.SERIE.length==0){
 			    			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.misingChartDesigner"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			    			  return;
 			    		  }
