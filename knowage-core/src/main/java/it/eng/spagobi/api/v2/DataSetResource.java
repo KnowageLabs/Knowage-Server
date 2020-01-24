@@ -598,11 +598,10 @@ public class DataSetResource extends AbstractDataSetResource {
 				aggregations = jsonAggregations != null ? jsonAggregations.toString() : null;
 
 				JSONObject jsonSummaryRow = jsonBody.optJSONObject("summaryRow");
-				if (jsonSummaryRow!=null) {
+				if (jsonSummaryRow != null) {
 					summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
-				}
-				else {
-					JSONArray jsonSummaryRowArray=jsonBody.optJSONArray("summaryRow");
+				} else {
+					JSONArray jsonSummaryRowArray = jsonBody.optJSONArray("summaryRow");
 					summaryRow = jsonSummaryRowArray != null ? jsonSummaryRowArray.toString() : null;
 				}
 
@@ -628,8 +627,9 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 			}
 			timing.stop();
-			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-					options, columns);
+			String dbg = getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
+					isNearRealtime, options, columns);
+			return dbg;
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
