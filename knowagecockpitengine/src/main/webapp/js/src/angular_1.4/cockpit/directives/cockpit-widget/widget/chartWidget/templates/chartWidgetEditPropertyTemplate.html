@@ -16,6 +16,8 @@
 		   					<dataset-selector flex ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>
 		     			</md-card-content>
 	     			</md-card>
+	     				<md-card>
+	     			<md-card-content class="noPadding" layout="column">
 	     					<md-subheader class="noPadding" style="margin-bottom:8px;">
 								<div layout="row" layout-align="start center" style="height:48px; padding-left:8px">
 									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
@@ -23,8 +25,7 @@
 	        			            <calculated-field ng-model="localModel"></calculated-field>	     
 				                </div>
 							</md-subheader>
-	     				<md-card>
-	        			<md-card-content layout="row">	        		
+	     		        		
 	        			<!-- ng-show="model.content.columnSelectedOfDatasetAggregations.length>0" -->
 	        			<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="padding:8px;">
 	        		   			
