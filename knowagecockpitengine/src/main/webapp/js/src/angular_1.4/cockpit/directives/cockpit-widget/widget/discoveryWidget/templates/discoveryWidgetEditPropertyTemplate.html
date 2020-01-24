@@ -7,28 +7,59 @@
 	      </div>
 	    </md-toolbar>
 			<md-tabs flex md-border-bottom>
-				<md-tab label="Settings">
-						<md-card>
-		        			<md-card-content layout="row">
-		   						<dataset-selector flex ng-model="newModel.dataset.dsId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
-		   					</md-card-content>
-		   				</md-card>
-		   				<md-card ng-if="newModel.dataset.dsId">
+				<md-tab label="Dataset">
+					<md-card>
+	        			<md-card-content layout="row">
+	   						<dataset-selector flex ng-model="newModel.dataset.dsId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
+	   					</md-card-content>
+	   				</md-card>
+	   				
+	   				<md-card ng-show="newModel.dataset.dsId">
 		   					<md-subheader class="noPadding">
 		   						<div layout="row" layout-align="start center" style="height:48px;">
-		   							<span layout-padding>{{::translate.load('sbi.generic.settings')}}</span><span flex></span>
+		   							<span layout-padding>{{::translate.load('sbi.cockpit.table.columns')}}</span><span flex></span>
 		   						</div>
 		   					</md-subheader>
-		   					<md-card-content>
+		   					<md-card-content class="noPadding" style="padding:0;height:350px;">
+		   						<div class="kn-grid-container" style="padding:0;">
+		   							<div ag-grid="columnsGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage ag-theme-knowage-secondary noPadding" style="width:100%;"></div>
+		   						</div>
+		   					</md-card-content>
+		   				</md-card>
+				</md-tab>
+				<md-tab label="Settings">
+						
+		   				<md-card ng-if="newModel.dataset.dsId">
+		   					<md-subheader class="noPadding">
+		   						<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
+		   							<md-switch ng-model="newModel.settings.table.enabled"></md-switch><span layout-padding>{{::translate.load('kn.cockpit.discovery.enabledatatable')}}</span><span flex></span>
+		   						</div>
+		   					</md-subheader>
+		   					<md-card-content ng-if="newModel.settings.table.enabled">
 		   						<div layout="row">
-		   							<md-switch flex="15" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-switch>
-		   							<md-switch flex="15" ng-model="newModel.settings.table.enabled">{{::translate.load('kn.cockpit.discovery.enabledatatable')}}</md-switch>
-		   							<md-switch flex="15" ng-model="newModel.settings.hideTextSearch">{{::translate.load('kn.cockpit.discovery.hidetextsearch')}}</md-switch>
 		   							<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>{{::translate.load('kn.cockpit.discovery.pagination.items')}}</label>
 								        <input ng-model="newModel.settings.pagination.itemsNumber" type="number" min="0" />
 							      	</md-input-container>
-							      	<md-input-container flex style="margin-bottom: 4px;">
+		   						</div>
+		   					</md-card-content>
+	   					</md-card>
+		   				
+		   				<md-card>	
+		   					<md-subheader class="noPadding">
+		   						<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
+		   							<md-switch ng-model="newModel.settings.facets.enabled"></md-switch> <span layout-padding>Facets</span><span flex></span>
+		   						</div>
+		   					</md-subheader>
+		   					<md-card-content ng-if="newModel.settings.facets.enabled">
+		   						<div layout="row">
+		   							<div layout="row" flex="20" layout-align="start center">
+			   							<md-checkbox class="noMargin" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-checkbox>
+			   						</div>
+			   						<div layout="row" flex="20" layout-align="start center">
+			   							<md-checkbox class="noMargin" ng-model="newModel.settings.facets.closed">Closed by default</md-checkbox>
+			   						</div>
+		   							<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>{{::translate.load('kn.cockpit.discovery.facets.width')}}</label>
 								        <input ng-model="newModel.settings.facets.width" type="text" />
 								        <div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
@@ -39,13 +70,20 @@
 							      	</md-input-container>
 		   						</div>
 		   					</md-card-content>
+	   					</md-card>
+		   				
+		   				<md-card>		
 		   					<md-subheader class="noPadding">
+		   						
 		   						<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
-		   							<md-switch ng-model="newModel.settings.defaultTextSearch"></md-switch> <span layout-padding>Default Text search</span><span flex></span>
+		   							<md-switch ng-model="newModel.settings.textEnabled"></md-switch><span layout-padding>Text search</span><span flex></span>
 		   						</div>
 		   					</md-subheader>
-		   					<md-card-content ng-if="newModel.settings.defaultTextSearch">
+		   					<md-card-content ng-if="newModel.settings.textEnabled">
 		   						<div layout="row">
+		   							<div layout="row" flex="20" layout-align="start center">
+		   								<md-checkbox class="noMargin" ng-model="newModel.settings.defaultTextSearch">Default Text search</md-checkbox>
+		   							</div>
 		   							<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>{{::translate.load('kn.cockpit.discovery.defaultsearchtype')}}</label>
 								        <md-select ng-model="newModel.settings.defaultTextSearchType" >
@@ -65,19 +103,7 @@
 									</md-input-container>
 		   						</div>
 		   						</md-card-content>
-	   					</md-card>
-		   				<md-card ng-show="newModel.dataset.dsId">
-		   					<md-subheader class="noPadding">
-		   						<div layout="row" layout-align="start center" style="height:48px;">
-		   							<span layout-padding>{{::translate.load('sbi.cockpit.table.columns')}}</span><span flex></span>
-		   						</div>
-		   					</md-subheader>
-		   					<md-card-content class="noPadding" style="padding:0;height:350px;">
-		   						<div class="kn-grid-container" style="padding:0;">
-		   							<div ag-grid="columnsGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
-		   						</div>
-		   					</md-card-content>
-		   				</md-card>
+	   					</md-card>		   				
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	

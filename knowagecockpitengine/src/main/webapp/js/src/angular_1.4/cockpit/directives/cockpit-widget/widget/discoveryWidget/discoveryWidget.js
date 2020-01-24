@@ -222,6 +222,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return orderedFacets;
 		}
 
+		$scope.setFacetAsClosed = function(facets){
+			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+				for(var j in facets){
+					if(!$scope.isFacetGroupSelected(j)) facets[j].closed = true;
+				}
+			}
+		}
+
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 			$scope.showWidgetSpinner();
 			if(datasetRecords){
@@ -230,6 +238,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.settings.table && $scope.ngModel.settings.table.enabled){
 					$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
 					if(nature == 'init'){
+						if(typeof $scope.ngModel.settings.textEnabled == 'undefined') $scope.ngModel.settings.textEnabled = true;
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
 						$scope.updateDates();
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
@@ -238,6 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.gridOptions.api.setRowData(datasetRecords.rows);
 					resizeColumns();
 				}
+				if($scope.ngModel.settings.facets.closed) $scope.setFacetAsClosed($scope.facets);
 				$scope.totalResults = datasetRecords.results;
 				$scope.hideWidgetSpinner();
 			}
@@ -505,12 +515,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return false;
 		}
 
-		$scope.hasFacets = function() {
-		    for(var k in $scope.ngModel.content.columnSelectedOfDataset){
-            	if($scope.ngModel.content.columnSelectedOfDataset[k].facet) {
-            	    return true;
-            	}
+		$scope.isFacetGroupSelected = function(group){
+			if($scope.template.configuration.filters && $scope.template.configuration.filters[$scope.ngModel.dataset.label] && $scope.template.configuration.filters[$scope.ngModel.dataset.label][group]) return true;
+			if($scope.ngModel.search.facets && $scope.ngModel.search.facets[group]) return true;
+			if($scope.template.configuration.aggregations){
+			    for(var i in $scope.template.configuration.aggregations){
+			        if($scope.template.configuration.aggregations[i].selection && $scope.template.configuration.aggregations[i].selection[$scope.ngModel.dataset.label+'.'+group])
+			            return true;
+			    }
             }
+			return false;
+		}
+
+		$scope.hasFacets = function() {
+			if($scope.ngModel.settings.facets.enabled || typeof $scope.ngModel.settings.facets.enabled == 'undefined'){
+				for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+	            	if($scope.ngModel.content.columnSelectedOfDataset[k].facet) {
+	            	    return true;
+	            	}
+	            }
+			}
             return false;
 		}
 

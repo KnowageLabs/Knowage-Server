@@ -122,6 +122,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
+				if(model.type == 'discovery'){
+					debugger;
+					if(model.settings.hideTextSearch) model.settings.textEnabled = !model.settings.hideTextSearch;
+				}
 			}
 
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
