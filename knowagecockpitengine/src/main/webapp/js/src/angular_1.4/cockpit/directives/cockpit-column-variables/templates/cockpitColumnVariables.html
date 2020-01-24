@@ -1,0 +1,57 @@
+<md-card>
+	<md-toolbar class="ternaryToolbar ">
+    	<div class="md-toolbar-tools">
+        	<h2>{{::translate.load('kn.variables.settings')}}</h2>
+          	<span flex></span>
+          	<md-button class="md-icon-button" ng-click="addVariablesUsage()" >
+	      		<md-icon md-font-icon="fa fa-plus" aria-label="Add variable usage"></md-icon>
+	      	</md-button>
+        </div>
+     </md-toolbar>
+	<md-card-content layout="column">
+		<div ng-if="!variables || variables.length == 0" flex>{{::translate.load('kn.variables.novariableset')}}</div>             
+		<div layout="row" ng-repeat="setting in variables track by $index" layout-align="start center">
+			<md-input-container flex=20 class="md-block"> 
+				<label>{{::translate.load('kn.variables.action')}}</label>
+				<md-select aria-label="aria-label" ng-model="setting.action">
+					<md-option ng-repeat="vc in variablesActions" value="{{vc.value}}">{{vc.label}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container flex=20 class="md-block" ng-if="setting.action"> 
+				<label>{{::translate.load('kn.variables.name')}}</label>
+				<md-select aria-label="aria-label" ng-model="setting.variable">
+					<md-option ng-repeat="(key,value) in cockpitModule_properties.VARIABLES" value="{{key}}">{{key}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container flex=20 class="md-block" ng-if="setting.variable && isVariableObject(setting.variable)"> 
+				<label>{{::translate.load('kn.variables.key')}}</label>
+				<md-select aria-label="aria-label" ng-model="setting.key">
+					<md-option ng-repeat="(key,value) in cockpitModule_properties.VARIABLES[setting.variable]" value="{{key}}">{{key}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			
+			
+			<md-input-container flex=20 class="md-block" ng-if="setting.action == 'show' || setting.action == 'hide'"> 
+				<label>{{::translate.load('sbi.cockpit.table.condition')}}</label>
+				<md-select aria-label="aria-label" ng-model="setting.condition">
+					<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container flex=20 class="md-block" ng-if="setting.action == 'show' || setting.action == 'hide'"> 
+				<label>{{::translate.load('kn.variables.value')}}</label>
+				<input type="text" ng-model="setting.value"/>
+			</md-input-container>
+			
+			<span flex></span>
+			
+			<md-button class="md-icon-button" ng-click="deleteVariable($index)" >
+		      	<md-icon md-font-icon="fa fa-trash" aria-label="Delete variable"></md-icon>
+		    </md-button>
+		</div>
+
+	</md-card-content>
+</md-card>

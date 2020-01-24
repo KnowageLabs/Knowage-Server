@@ -32,7 +32,7 @@ angular.module('cockpitModule')
             scope.$watch(attrs.textWidgetTextRender, function (html) {
                 var model = scope.ngModel;
                 scope.ngModel.isReady=(cockpitModule_generalServices.isFromNewCockpit())?true:false;
-                if (html && html.indexOf("$F{")  >= 0 ){
+                if (html && (html.indexOf("$F{") >= 0  || html.indexOf("$P{") >= 0  || html.indexOf("$V{")  >= 0 )){
                 	var elems = [];
 	                for (var dsLabel in model.datasets){
 	                	elems.push(dsLabel);
@@ -43,7 +43,7 @@ angular.module('cockpitModule')
 		                		html = scope.ngModel.content.text;
 		                	}
 
-		                	if (counter < elems.length){
+		                	if (elems.length != 0 && (counter < elems.length)){
 		                		// call this only if reference is really contained
 		                		if(html.indexOf(elems[counter])>=0){
 		                			cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
