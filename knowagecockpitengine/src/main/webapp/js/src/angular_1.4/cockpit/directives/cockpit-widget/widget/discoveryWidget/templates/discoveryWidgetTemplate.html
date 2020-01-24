@@ -14,7 +14,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 
-<div layout="row" ng-if="!ngModel.settings.hideTextSearch">
+<div layout="row" ng-if="ngModel.settings.textEnabled">
 	<md-card flex>
 		<md-card-content class="noPadding" layout="row">
 			<md-input-container flex class="md-icon-float" style="margin:8px 4px;">
@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 		</md-card-content>
 	</md-card>
 </div>
-<div layout="row" class="discoveryCardsContainer" ng-class="{'noSearch':ngModel.settings.hideTextSearch}" flex>
+<div layout="row" class="discoveryCardsContainer" ng-class="{'noSearch':!ngModel.settings.textEnabled}" flex>
 	<md-card class="discoveryFiltersCard" ng-if="hasFacets()" ng-class="{'sidenav':dimensions.width<600 && ngModel.settings.table.enabled, 'open': sidemenuOpened, 'flex-100':!ngModel.settings.table.enabled, 'flex-30':ngModel.settings.table.enabled && !ngModel.settings.facets.width}" 
 		style="margin-top:0;" ng-style="customFacetWidth()">
 		<md-card-content class="noPadding discoveryFiltersList">
