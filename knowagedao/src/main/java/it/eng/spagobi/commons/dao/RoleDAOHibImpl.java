@@ -783,6 +783,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	public Role toRole(SbiExtRoles hibRole) {
 		logger.debug("IN.hibRole.getName()=" + hibRole.getName());
+
 		Role role = new Role();
 		role.setCode(hibRole.getCode());
 		role.setDescription(hibRole.getDescr());
@@ -926,6 +927,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
 		role.setOrganization(hibRole.getCommonInfo().getOrganization());
+
 		logger.debug("OUT");
 		return role;
 	}

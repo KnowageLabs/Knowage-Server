@@ -40,6 +40,9 @@ import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.RoleEhCache;
 import it.eng.spagobi.wapp.bo.Menu;
 
 public class MenuUtilities {
@@ -220,34 +223,45 @@ public class MenuUtilities {
 
 			Object[] arrRoles = lstRolesForUser.toArray();
 			Integer levelItem = 1;
+			Role role = null;
 			for (int i = 0; i < arrRoles.length; i++) {
 				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
-				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
-				if (role != null) {
 
-					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
-					if (menuItemsForARole != null) {
-						mergeMenuItems(lstFinalMenu, menuItemsForARole);
-					} else {
-						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
-					}
+				CacheInterface roleEhCache = RoleEhCache.getCache();
+				String cacheKey = String.format("%s_ROLE_%s", TenantManager.getTenant().getName(), arrRoles[i]);
+				if (roleEhCache.contains(cacheKey)) {
+					role = (Role) roleEhCache.get(cacheKey);
+					System.out.println("Found role " + cacheKey);
+				} else {
+					role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
 
-					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
-						// list technical user menu
-						technicalMenuLoaded = true;
-						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
-						Iterator it = firstLevelItems.iterator();
-						while (it.hasNext()) {
-							SourceBean itemSB = (SourceBean) it.next();
-							if (isAbleToSeeItem(itemSB, profile)) {
+					if (role != null) {
 
-								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
-								levelItem++;
+						List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+						if (menuItemsForARole != null) {
+							mergeMenuItems(lstFinalMenu, menuItemsForARole);
+						} else {
+							logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
+						}
+
+						if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
+							// list technical user menu
+							technicalMenuLoaded = true;
+							List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
+							Iterator it = firstLevelItems.iterator();
+							while (it.hasNext()) {
+								SourceBean itemSB = (SourceBean) it.next();
+								if (isAbleToSeeItem(itemSB, profile)) {
+
+									lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
+									levelItem++;
+								}
 							}
 						}
+					} else {
+						logger.debug("Role " + (String) arrRoles[i] + " not found on db");
 					}
-				} else
-					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
+				}
 			}
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());

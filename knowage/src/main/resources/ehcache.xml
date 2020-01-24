@@ -16,5 +16,9 @@
 	<cache name="user_profile" maxElementsInMemory="20" eternal="false"
 		overflowToDisk="true" timeToIdleSeconds="600" timeToLiveSeconds="600"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="3" />		
+		
+	<cache name="roles" maxElementsInMemory="200" eternal="false"
+		overflowToDisk="true" timeToIdleSeconds="10" timeToLiveSeconds="10"
+		diskPersistent="false" diskExpiryThreadIntervalSeconds="3" />		
 
 </ehcache>
