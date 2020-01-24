@@ -384,4 +384,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ReadRoles" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ReadRoles" roleType="DEV_ROLE" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonWidget" roleType="DEV_ROLE" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="DEV_ROLE" />
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

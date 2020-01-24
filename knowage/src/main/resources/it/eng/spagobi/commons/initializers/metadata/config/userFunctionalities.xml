@@ -56,6 +56,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ReadRoles" description="ReadRoles" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonWidget" description="CreatePythonWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonDataset" description="CreatePythonDataset" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -113,6 +115,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadRoles" description="ReadRoles" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="PythonWidget" description="CreatePythonWidget" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -298,5 +301,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="DiscoveryWidgetUse" description="DiscoveryWidgetUse" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ReadRoles" description="ReadRoles" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonWidget" description="CreatePythonWidget" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonDataset" description="CreatePythonDataset" />
 	
 </USER_FUNCTIONALITIES>

@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="knowage-python",
-    version="0.2.7",
+    version="0.2.8",
     license='AGPL v3',
     author="Marco Balestri",
     author_email="marco.balestri@eng.it",
