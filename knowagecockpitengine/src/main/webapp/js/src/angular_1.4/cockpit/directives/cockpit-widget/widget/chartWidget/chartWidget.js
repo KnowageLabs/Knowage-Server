@@ -118,7 +118,7 @@ function cockpitChartWidgetControllerFunction(
 	$scope.isIE = window.document.documentMode;
 	$scope.model = $scope.ngModel;
 	$scope.local = {};
-	  if($scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
+	  if($scope.model.dataset != undefined && $scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local);
 			$scope.model.content.columnSelectedOfDatasetAggregations  = [];
 			for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
@@ -577,11 +577,23 @@ function cockpitChartWidgetControllerFunction(
 			    				  delete $scope.localModel.aggregations;
 			    				  delete $scope.localModel.chartTemplate;
 			    				  delete $scope.localModel.columnSelectedOfDataset;
-			    			  }
+				    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
+			    			  $scope.localModel.dataset = ds;
+			    			  $scope.localModel.datasetId = ds.id.dsId;
+				    		  $scope.localModel.dataset.dsId = $scope.localModel.datasetId;
+			    			  $scope.localModel.columnSelectedOfDatasetAggregations  = [];
+		    					for(var i=0;i<ds.metadata.fieldsMeta.length;i++){
+		    						var obj = ds.metadata.fieldsMeta[i];
+		    						$scope.localModel.columnSelectedOfDatasetAggregations.push(obj);
+		    					}
 			    		  }
-			    		  $scope.columnsGrid.api.setRowData(model.content.columnSelectedOfDatasetAggregations);
-			    	
+//			    		  $scope.columnsGrid.api.setRowData(model.content.columnSelectedOfDatasetAggregations);
+			    			for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
+			    				if(!$scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.localModel.columnSelectedOfDatasetAggregations[c].alias;
+			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
+			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
+			    			}
 			 
 			    	  }
 			    	  
@@ -594,8 +606,7 @@ function cockpitChartWidgetControllerFunction(
 			    		if($scope.localModel.dataset){
 			    			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.localModel.datasetId), $scope.localDataset);
 			    		} else{
-			    			$scope.model.dataset= {};
-			    			angular.copy([], $scope.localModel.dataset.metadata.fieldsMeta);
+			    			//angular.copy([], $scope.localModel.dataset.metadata.fieldsMeta);
 			    		}
 			    	  
 			    	  var checkConfiguration=function(){
