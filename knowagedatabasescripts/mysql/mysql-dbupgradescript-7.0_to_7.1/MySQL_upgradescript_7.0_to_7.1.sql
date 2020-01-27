@@ -1,2 +1,1 @@
---- START ---
-DELETE FROM sbi_role_type_user_func WHERE user_funct_id IN (SELECT user_funct_id FROM sbi_user_func WHERE name IN ('ProfileAttributeManagement','ProfileManagement')) AND role_type_id = (SELECT value_id FROM sbi_domains WHERE DOMAIN_CD='ROLE_TYPE' AND value_cd='DEV_ROLE')
+DELETE FROM SBI_ROLE_TYPE_USER_FUNC WHERE USER_FUNCT_ID IN (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME IN ('ProfileAttributeManagement','ProfileManagement')) AND ROLE_TYPE_ID = (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD='ROLE_TYPE' AND VALUE_CD='DEV_ROLE')
