@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdDialog,
 			$mdToast,
 			$timeout,
+			$interval,
 			$mdPanel,
 			$q,
 			$filter,
@@ -231,10 +232,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.ngModel.activeValues = tempActs;
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				},function(error){
 					console.error("Unable to load active values");
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				})
 			}else{
 				if(!cockpitModule_widgetSelection.isLastTimestampedSelection($scope.ngModel.dataset.label, $scope.ngModel.content.selectedColumn.name))$scope.ngModel.activeValues = null;
@@ -242,6 +245,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$timeout(function(){
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				}, 0);
 			}
 
@@ -267,13 +271,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				parent: angular.element(document.body),
 				targetEvent: ev,
 				clickOutsideToClose:true,
+				bindToController: true,
 				locals: {
-					selectables:$scope.ngModel.activeValues,
 					itemsList:$scope.datasetRecords.rows,
+					selectables:$scope.ngModel.activeValues,
 					activeSelections: $scope.selectedValues,
 					targetModel: $scope.ngModel.content,
 					settings:$scope.ngModel.settings,
 					callback:$scope.toggleParameter,
+					updateSelectables: $scope.updateSelectables,
 					ds: $scope.ngModel.dataset.label,
 					title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
 				}
@@ -282,10 +288,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			},function(error){});
 		}
 
-		function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title, ds, callback) {
+		function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
 			scope.settings = settings;
 			scope.title = title;
-			scope.translate = sbiModule_translate;			
+			scope.translate = sbiModule_translate;
 			scope.allSelected = false;
 			scope.checkActiveSelections = function() {
 				scope.selectables = [];
@@ -314,11 +320,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
 					}
 				}
+				scope.loading = false;
 			}
 			scope.checkActiveSelections();
 			scope.targetColumn = targetModel.selectedColumn;
 			scope.close = function() {
-				debugger
 				scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
 					if(element.selected) result.push(element.name);
 					return result;
@@ -332,20 +338,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			scope.isDisabled = function(p){
 				if ($scope.ngModel.settings.enableAll) {
 					return false;
-				}   
+				}
 
 				return selectables && selectables.indexOf(p) == -1;
 			}
 
 			scope.editSelection = function() {
-
+				scope.loading = true;
+				scope.tempSelectables = selectables;
 				for(var s in scope.availableItems){
 					scope.availableItems[s].selected = false;
 				}
-
-				callback([]);
-				scope.checkActiveSelections();
-
+				callback([],true);
+				updateSelectables().then(function(newSelectables){
+					selectables = newSelectables;
+					scope.checkActiveSelections();
+				});
 			}
 
 			scope.selectAll = function(){
@@ -429,76 +437,88 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.searchParamText = "";
 		};
 
-		$scope.toggleParameter = function(parVal) {
-			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
-				if(angular.equals(parVal, $scope.oldSelectedValues)){
-					return;
-				}
-				$scope.oldSelectedValues = angular.copy(parVal);
-			}
-			$scope.hasDefaultValues = false;
-
-			var item = {};
-			item.aggregated=$scope.aggregated;
-			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-			item.ds=$scope.ngModel.dataset.label;
-
-			if($scope.ngModel.settings.modalityValue=="multiValue"){
-				var values;
-				if($scope.ngModel.settings.modalityPresent=="LIST"){
-					var index = $scope.selectedValues.indexOf(parVal);
-					if (index > -1) {
-						$scope.selectedValues.splice(index, 1);
-					} else {
-						$scope.selectedValues.push(parVal);
+		$scope.updateSelectables = function(){
+			return $q(function(resolve, reject) {
+				var pollingInterval = $interval(function(){
+					if(!$scope.waitingForSelection) {
+						$interval.cancel(pollingInterval);
+						resolve($scope.ngModel.activeValues);
 					}
-					values = $scope.selectedValues;
-				}else{
-					values = parVal;
-				}
+				},300)
+			})
+		}
 
-				if(values.length>0){
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
-				} else {
-					item.value=angular.copy(values);
-					$rootScope.$broadcast('DELETE_SELECTION',item);
-					$scope.deleteSelections(item);
-				}
-			} else { // singleValue
-				if($scope.ngModel.settings.modalityPresent=="LIST"){
-					if($scope.selectedValues[0] != parVal){
-						if (parVal.length == 0) {
-							item.value=angular.copy($scope.selectedValues[0]);
-							$rootScope.$broadcast('DELETE_SELECTION',item);
-							$scope.deleteSelections(item);
-						}
-						else {
-							$scope.selectedValues[0] = parVal;
-							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+		$scope.toggleParameter = function(parVal,setLoader) {
 
-						}
-					} else {
-						if ($scope.selectedValues[0]) {
-							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
-						}
-						else {
-							item.value=angular.copy($scope.selectedValues[0]);
-							$rootScope.$broadcast('DELETE_SELECTION',item);
-							$scope.deleteSelections(item);
-						}
-
+				if(setLoader) $scope.waitingForSelection = setLoader;
+				if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
+					if(angular.equals(parVal, $scope.oldSelectedValues)){
+						return;
 					}
-				}else{ // COMBOBOX
-					if(parVal  && parVal.length>0){
-						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
+					$scope.oldSelectedValues = angular.copy(parVal);
+				}
+				$scope.hasDefaultValues = false;
+
+				var item = {};
+				item.aggregated=$scope.aggregated;
+				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.ds=$scope.ngModel.dataset.label;
+
+				if($scope.ngModel.settings.modalityValue=="multiValue"){
+					var values;
+					if($scope.ngModel.settings.modalityPresent=="LIST"){
+						var index = $scope.selectedValues.indexOf(parVal);
+						if (index > -1) {
+							$scope.selectedValues.splice(index, 1);
+						} else {
+							$scope.selectedValues.push(parVal);
+						}
+						values = $scope.selectedValues;
 					}else{
-						item.value=angular.copy(parVal);
+						values = parVal;
+					}
+
+					if(values.length>0){
+						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
+					} else {
+						item.value=angular.copy(values);
 						$rootScope.$broadcast('DELETE_SELECTION',item);
 						$scope.deleteSelections(item);
 					}
+				} else { // singleValue
+					if($scope.ngModel.settings.modalityPresent=="LIST"){
+						if($scope.selectedValues[0] != parVal){
+							if (parVal.length == 0) {
+								item.value=angular.copy($scope.selectedValues[0]);
+								$rootScope.$broadcast('DELETE_SELECTION',item);
+								$scope.deleteSelections(item);
+							}
+							else {
+								$scope.selectedValues[0] = parVal;
+								$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+							}
+						} else {
+							if ($scope.selectedValues[0]) {
+								$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+							}
+							else {
+								item.value=angular.copy($scope.selectedValues[0]);
+								$rootScope.$broadcast('DELETE_SELECTION',item);
+								$scope.deleteSelections(item);
+							}
+
+						}
+					}else{ // COMBOBOX
+						if(parVal  && parVal.length>0){
+							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
+						}else{
+							item.value=angular.copy(parVal);
+							$rootScope.$broadcast('DELETE_SELECTION',item);
+							$scope.deleteSelections(item);
+						}
+					}
 				}
-			}
 		}
 
 		$scope.getOptions = function(){

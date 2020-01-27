@@ -1,4 +1,7 @@
 <md-dialog class="multiselectionDialog">
+	<div ng-if="loading" layout-fill style='position:absolute;z-index: 800;background:rgba(0,0,0, 0.3);'>
+	   <md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+	</div>
     <md-toolbar class="secondaryToolbar">
       <div class="md-toolbar-tools">
         <h2 class="text-transform-none">{{title || targetColumn.name}}</h2>
