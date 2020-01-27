@@ -17,7 +17,7 @@
 		     			</md-card-content>
 	     			</md-card>
 	     				<md-card>
-	     			<md-card-content class="noPadding" layout="column">
+	     			<md-card-content class="noPadding" layout="column" ng-show="localModel.columnSelectedOfDatasetAggregations.length>0">
 	     					<md-subheader class="noPadding" style="margin-bottom:8px;">
 								<div layout="row" layout-align="start center" style="height:48px; padding-left:8px">
 									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
@@ -26,8 +26,7 @@
 				                </div>
 							</md-subheader>
 	     		        		
-	        			<!-- ng-show="model.content.columnSelectedOfDatasetAggregations.length>0" -->
-	        			<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="padding:8px;">
+	        			<div  ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="padding:8px;">
 	        		   			
 	        			</div> 	        			
 	        		 
