@@ -19,7 +19,10 @@ package it.eng.spagobi.api.v2;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -308,6 +312,45 @@ public class ExportResource {
 		logger.debug("OUT");
 
 		return ret;
+	}
+
+	/**
+	 * Delete all exported resources requested by a specific user.
+	 */
+	@DELETE
+	@Path("/")
+	public void deleteAll() {
+		logger.debug("IN");
+
+		UserProfile userProfile = UserProfileManager.getProfile();
+		String resoursePath = SpagoBIUtilities.getResourcePath();
+		final java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
+
+		try {
+			Files.walkFileTree(perUserExportResourcePath, new SimpleFileVisitor<java.nio.file.Path>() {
+				@Override
+				public FileVisitResult postVisitDirectory(java.nio.file.Path dir, IOException exc) throws IOException {
+					/*
+					 * It's not a problem to delete user directory but it's
+					 * not so useful then we can skip it.
+					 */
+					if (!perUserExportResourcePath.equals(dir)) {
+						Files.delete(dir);
+					}
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(java.nio.file.Path file, BasicFileAttributes attrs) throws IOException {
+					Files.delete(file);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (Exception e) {
+			logger.error("Error during downloadable resources deletion", e);
+		}
+
+		logger.debug("OUT");
 	}
 
 	@GET

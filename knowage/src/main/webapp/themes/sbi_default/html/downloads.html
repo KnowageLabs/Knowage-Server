@@ -22,8 +22,11 @@
 		
 	</md-dialog-content>
 	<md-dialog-actions>
+		<md-button ng-if="downloadsList && downloadsList.length > 0" class="md-raised md-primary" ng-click="deleteAllDownload()" >
+			{{::translate.load('sbi.generic.deleteAll')}}
+		</md-button>
 		<md-button class="md-raised md-primary" ng-click="closeDialog()" >
 			{{::translate.load('sbi.generic.close')}}
-        </md-button>
+		</md-button>
 	</md-dialog-actions>
 </md-dialog>
