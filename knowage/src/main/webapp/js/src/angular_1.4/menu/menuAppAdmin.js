@@ -600,6 +600,14 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 	        	    	scope.downloadGridOptions.api.setRowData(scope.rowData);
 	        	    }
 
+					scope.deleteAllDownload = function(){
+						$http.delete(Sbi.config.contextName + '/restful-services/2.0/export').then(function(result){
+							// Clear both lists
+							$scope.downloadsList = [];
+							scope.downloadsList = [];
+						})
+					}
+
 	        	    scope.$watch('downloadsList', function(newValue,oldValue){
 						if(newValue && scope.downloadGridOptions.api) {
 							scope.downloadGridOptions.api.setRowData(newValue);
