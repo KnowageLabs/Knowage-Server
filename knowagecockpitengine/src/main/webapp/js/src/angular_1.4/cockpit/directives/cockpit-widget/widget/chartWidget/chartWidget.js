@@ -671,8 +671,9 @@ function cockpitChartWidgetControllerFunction(
 
 
 			    	  var checkChartSettings = function (){
+			    		  var chartTemplate = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
 
-			    		  if($scope.localModel.chartTemplate.VALUES.SERIE.length==0){
+			    		  if(chartTemplate.VALUES.SERIE.length==0){
 			    			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.misingChartDesigner"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			    			  return;
 			    		  }
@@ -685,34 +686,32 @@ function cockpitChartWidgetControllerFunction(
 			    			  return false;
 			    		  }
 
-			    		  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
-
-				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE" || chartTemplateFake.type == "BUBBLE"){
-					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
-					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
-										if(chartTemplateFake.VALUES.SERIE[i].axis == chartTemplateFake.AXES_LIST.AXIS[j].alias && chartTemplateFake.AXES_LIST.AXIS[j].labels){
-											chartTemplateFake.VALUES.SERIE[i].scaleFactor = chartTemplateFake.AXES_LIST.AXIS[j].labels.scaleFactor
+			    		 if(chartTemplate.type == "SCATTER" || chartTemplate.type == "BAR" || chartTemplate.type == "LINE" || chartTemplate.type == "BUBBLE"){
+					    	  for (var i = 0; i < chartTemplate.VALUES.SERIE.length; i++) {
+					    		  for (var j = 0; j < chartTemplate.AXES_LIST.AXIS.length; j++) {
+										if(chartTemplate.VALUES.SERIE[i].axis == chartTemplate.AXES_LIST.AXIS[j].alias && chartTemplate.AXES_LIST.AXIS[j].labels){
+											chartTemplate.VALUES.SERIE[i].scaleFactor = chartTemplate.AXES_LIST.AXIS[j].labels.scaleFactor
 										}
 						    	  }
 					    	  }
 				    	  }
 
-	    				  if (chartTemplateFake.type == "SCATTER" && chartTemplateFake.VALUES.SERIE.length>1) {
-	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
+	    				  if (chartTemplate.type == "SCATTER" && chartTemplate.VALUES.SERIE.length>1) {
+	    					  var allSeries = chartTemplate.VALUES.SERIE;
 	    						var counter = 0;
 	    						for (var i = 0; i < allSeries.length; i++) {
 	    							if(allSeries[i].groupingFunction=="NONE"){
 	    								counter++
 	    							};
 	    						}
-	    						if(counter<chartTemplateFake.VALUES.SERIE.length){
+	    						if(counter<chartTemplate.VALUES.SERIE.length){
 	    							f=false;
 	    						}
 	    						if (counter == 0) f = true;
 	    				  }
 
-	    				  if ((chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE") && chartTemplateFake.VALUES.SERIE.length>0) {
-	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
+	    				  if ((chartTemplate.type == "BAR" || chartTemplate.type == "LINE") && chartTemplate.VALUES.SERIE.length>0) {
+	    					  var allSeries = chartTemplate.VALUES.SERIE;
 	    						var counterlow = 0;
 	    						var counterhigh = 0;
 	    						for (var i = 0; i < allSeries.length; i++) {
