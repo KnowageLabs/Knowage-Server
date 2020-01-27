@@ -158,3 +158,9 @@ def python_bokeh():
     #serve plot
     jscript = server_document("http://localhost:" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
+
+# GET /widget/view/stub
+#save self signed certificate in the browser
+@viewMode.route('/stub', methods = ['GET'])
+def stub():
+    return "<div>ciao</div>"

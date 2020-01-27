@@ -12,4 +12,4 @@ if __name__ == '__main__':
     open(constants.LOG_FILE, 'w+').close() #clean log file
     original_stderr = sys.stderr
     #sys.stderr = open(constants.LOG_FILE, 'a')
-    application.run(host='0.0.0.0', debug=False, port=port)
+    application.run(host='0.0.0.0', debug=False, port=port, ssl_context=('cert.pem', 'key.pem'))
