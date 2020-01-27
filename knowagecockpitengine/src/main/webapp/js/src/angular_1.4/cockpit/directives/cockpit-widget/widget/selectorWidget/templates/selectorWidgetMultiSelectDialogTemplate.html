@@ -3,6 +3,10 @@
       <div class="md-toolbar-tools">
         <h2 class="text-transform-none">{{title || targetColumn.name}}</h2>
         <span flex=""></span>
+        <md-button class="md-icon-button" ng-click="editSelection()">
+        	<md-icon ng-if="!allSelected" md-font-icon="fa fa-edit"></md-icon>
+        	<md-tooltip md-delay="500">Edit current selection</md-tooltip>
+        </md-button>
         <md-button class="md-icon-button" ng-click="selectAll()">
         	<md-icon ng-if="!allSelected" md-font-icon="fa fa-check-square-o"></md-icon>
         	<md-icon ng-if="allSelected" md-font-icon="fa fa-eraser"></md-icon>

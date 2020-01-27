@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function() {
-angular.module('cockpitModule')
+	angular.module('cockpitModule')
 	.directive('cockpitSelectorWidget',function(cockpitModule_widgetServices,$mdDialog,$rootScope){
 		return{
 			templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/selectorWidget/templates/selectorWidgetTemplate.html',
@@ -64,8 +64,8 @@ angular.module('cockpitModule')
 			$rootScope){
 
 		$scope.getTemplateUrl = function(template){
-	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
-	  	}
+			return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
+		}
 
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
 		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX' && !$scope.ngModel.settings.modalityValue) $scope.ngModel.settings.modalityValue = "dropdown";
@@ -96,18 +96,18 @@ angular.module('cockpitModule')
 			if(e.target.attributes.value && e.target.attributes.value.value){
 				$scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
-                $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-            }
+				$scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+			}
 		}
 
 		var getValueFromString = function(s){
-		    for(i in $scope.datasetRecords.rows){
-		        var value = $scope.datasetRecords.rows[i].column_1;
-		        if("" + value == s){
-		            return value;
-		        }
-		    }
-		    return null;
+			for(i in $scope.datasetRecords.rows){
+				var value = $scope.datasetRecords.rows[i].column_1;
+				if("" + value == s){
+					return value;
+				}
+			}
+			return null;
 		}
 
 		$scope.gridWidth = function() {
@@ -170,8 +170,8 @@ angular.module('cockpitModule')
 		}
 
 		if($scope.ngModel.settings.staticValue != undefined){
-		    $scope.ngModel.settings.staticValues = $scope.ngModel.settings.staticValue;
-		    delete $scope.ngModel.settings.staticValue;
+			$scope.ngModel.settings.staticValues = $scope.ngModel.settings.staticValue;
+			delete $scope.ngModel.settings.staticValue;
 		}
 
 		if(!$scope.ngModel.style){
@@ -211,10 +211,10 @@ angular.module('cockpitModule')
 
 			$scope.datasetRecords.activeValues = datasetRecords.activeValues;
 			if(datasetRecords.rows){
-			    $scope.datasetRecords.metaData = datasetRecords.metaData;
-                if(!angular.equals($scope.datasetRecords.rows, datasetRecords.rows)){
-                    $scope.datasetRecords.rows = datasetRecords.rows;
-                }
+				$scope.datasetRecords.metaData = datasetRecords.metaData;
+				if(!angular.equals($scope.datasetRecords.rows, datasetRecords.rows)){
+					$scope.datasetRecords.rows = datasetRecords.rows;
+				}
 			}
 
 			checkForSavedSelections(nature);
@@ -232,9 +232,9 @@ angular.module('cockpitModule')
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
 				},function(error){
-				    console.error("Unable to load active values");
-				    $scope.hideWidgetSpinner();
-				    $scope.showSelection = true;
+					console.error("Unable to load active values");
+					$scope.hideWidgetSpinner();
+					$scope.showSelection = true;
 				})
 			}else{
 				if(!cockpitModule_widgetSelection.isLastTimestampedSelection($scope.ngModel.dataset.label, $scope.ngModel.content.selectedColumn.name))$scope.ngModel.activeValues = null;
@@ -253,95 +253,109 @@ angular.module('cockpitModule')
 			}
 		}
 
-        $scope.mobilecheck = function() {
-            var check = false;
-            (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-            return check;
-          };
+		$scope.mobilecheck = function() {
+			var check = false;
+			(function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+			return check;
+		};
 
-        $scope.openSelectDialog = function(ev, column){
-        	$mdDialog.show({
-        		controller: MultiSelectDialogController,
-        		fullscreen: $scope.mobilecheck,
-        		templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
-        		parent: angular.element(document.body),
-        		targetEvent: ev,
-        		clickOutsideToClose:true,
-        		locals: {
-        			selectables:$scope.ngModel.activeValues,
-        			itemsList:$scope.datasetRecords.rows,
-        			activeSelections: $scope.selectedValues,
-        			targetModel: $scope.ngModel.content,
-        			settings:$scope.ngModel.settings,
-        			ds: $scope.ngModel.dataset.label,
-        			title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
-        		}
-	  		}).then(function(selectedFields) {
-	  			$scope.toggleParameter(selectedFields);
-	  			},function(error){});
-        	}
+		$scope.openSelectDialog = function(ev, column){
+			$mdDialog.show({
+				controller: MultiSelectDialogController,
+				fullscreen: $scope.mobilecheck,
+				templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose:true,
+				locals: {
+					selectables:$scope.ngModel.activeValues,
+					itemsList:$scope.datasetRecords.rows,
+					activeSelections: $scope.selectedValues,
+					targetModel: $scope.ngModel.content,
+					settings:$scope.ngModel.settings,
+					callback:$scope.toggleParameter,
+					ds: $scope.ngModel.dataset.label,
+					title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
+				}
+			}).then(function(selectedFields) {
+				$scope.toggleParameter(selectedFields);
+			},function(error){});
+		}
 
-    	function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title, ds) {
-    		scope.settings = settings;
-    		scope.title = title;
-    		scope.translate = sbiModule_translate;
-        	scope.selectables = [];
-        	scope.allSelected = false;
-        	if(settings.hideDisabled){
-				if(selectables){
-					for(var k in selectables){
-						scope.selectables.push({name: selectables[k], selected: (activeSelections && activeSelections.indexOf(selectables[k]) != -1) ? true : false});
-					}
-				}else{
-					for(var j in itemsList){
-						if(activeSelections.length > 0){
-							if(activeSelections.indexOf(itemsList[j].column_1) != -1){
-								scope.selectables.push({name: itemsList[j].column_1, selected: true});
+		function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title, ds, callback) {
+			scope.settings = settings;
+			scope.title = title;
+			scope.translate = sbiModule_translate;			
+			scope.allSelected = false;
+			scope.checkActiveSelections = function() {
+				scope.selectables = [];
+				if(settings.hideDisabled){
+
+					if(selectables){
+						for(var k in selectables){
+							scope.selectables.push({name: selectables[k], selected: (activeSelections && activeSelections.indexOf(selectables[k]) != -1) ? true : false});
+						}
+					}else{
+						for(var j in itemsList){
+							if(activeSelections.length > 0){
+								if(activeSelections.indexOf(itemsList[j].column_1) != -1){
+									scope.selectables.push({name: itemsList[j].column_1, selected: true});
+								}else {
+									scope.selectables.push({name: itemsList[j].column_1, selected: false});
+								}
 							}else {
 								scope.selectables.push({name: itemsList[j].column_1, selected: false});
 							}
-						}else {
-							scope.selectables.push({name: itemsList[j].column_1, selected: false});
-						}
 
+						}
+					}
+				}else{
+					for(var j in itemsList){
+						scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
 					}
 				}
-			}else{
-				for(var j in itemsList){
-					scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
+			}
+			scope.checkActiveSelections();
+			scope.targetColumn = targetModel.selectedColumn;
+			scope.close = function() {
+				debugger
+				scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
+					if(element.selected) result.push(element.name);
+					return result;
+				}, []);
+				$mdDialog.hide(scope.selectablesToSend);
+			};
+			scope.cancel = function(){
+				$mdDialog.cancel();
+			}
+
+			scope.isDisabled = function(p){
+				if ($scope.ngModel.settings.enableAll) {
+					return false;
+				}   
+
+				return selectables && selectables.indexOf(p) == -1;
+			}
+
+			scope.editSelection = function() {
+
+				for(var s in scope.availableItems){
+					scope.availableItems[s].selected = false;
+				}
+
+				callback([]);
+				scope.checkActiveSelections();
+
+			}
+
+			scope.selectAll = function(){
+				scope.allSelected = !scope.allSelected;
+				for(var s in scope.availableItems){
+					if(!scope.isDisabled(scope.availableItems[s].name)) scope.availableItems[s].selected = scope.allSelected;
 				}
 			}
 
-        	scope.targetColumn = targetModel.selectedColumn;
-        	scope.close = function() {
-	        	scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
-	        		if(element.selected) result.push(element.name);
-	        		return result;
-	        	}, []);
-	        	$mdDialog.hide(scope.selectablesToSend);
-        	 };
-        	 scope.cancel = function(){
-        		 $mdDialog.cancel();
-        	 }
-
-        	 scope.isDisabled = function(p){
-    			if ($scope.ngModel.settings.enableAll) {
-        				return false;
-    			}
-        		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name)) {
- 					return false;
- 				}
-
-        		 return selectables && selectables.indexOf(p) == -1;
-        	 }
-
-            scope.selectAll = function(){
-                  scope.allSelected = !scope.allSelected;
-                  for(var s in scope.availableItems){
-                       if(!scope.isDisabled(scope.availableItems[s].name)) scope.availableItems[s].selected = scope.allSelected;
-                  }
-            }
-    	}
+		}
 
 
 
@@ -381,8 +395,8 @@ angular.module('cockpitModule')
 					item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 					item.ds=$scope.ngModel.dataset.label;
 
-                 if (nature == "init")
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
+					if (nature == "init")
+						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
 				}else{
 					if(selections && !angular.equals($scope.defaultValues, selections)){
 						$scope.defaultValues = angular.copy(selections);
@@ -407,11 +421,11 @@ angular.module('cockpitModule')
 					$scope.selectedValues = angular.copy(values);
 				}
 			}else{
-			    $scope.selectedValues = [];
+				$scope.selectedValues = [];
 			}
 		}
 
-	    $scope.clearParamSearch = function() {
+		$scope.clearParamSearch = function() {
 			$scope.searchParamText = "";
 		};
 
@@ -466,7 +480,7 @@ angular.module('cockpitModule')
 						}
 					} else {
 						if ($scope.selectedValues[0]) {
-					    	$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
 						}
 						else {
 							item.value=angular.copy($scope.selectedValues[0]);
@@ -487,8 +501,8 @@ angular.module('cockpitModule')
 			}
 		}
 
-	    $scope.getOptions = function(){
-	    	var isSortinEnabled = $scope.ngModel.content.sortingOrder && $scope.ngModel.content.sortingOrder!='';
+		$scope.getOptions = function(){
+			var isSortinEnabled = $scope.ngModel.content.sortingOrder && $scope.ngModel.content.sortingOrder!='';
 
 			var obj = {};
 			obj["page"] = -1;
@@ -500,21 +514,21 @@ angular.module('cockpitModule')
 			return obj;
 		}
 
-	    $scope.clearAllSelection = function(){
-	    	var tempItem = {
-	    			"aggregated" : $scope.aggregated,
-	    			"ds" : $scope.ngModel.dataset.label,
-	    			"columnName" : $scope.ngModel.content.selectedColumn.name
-	    	}
-	    	$scope.deleteSelections(tempItem);
-	    }
+		$scope.clearAllSelection = function(){
+			var tempItem = {
+					"aggregated" : $scope.aggregated,
+					"ds" : $scope.ngModel.dataset.label,
+					"columnName" : $scope.ngModel.content.selectedColumn.name
+			}
+			$scope.deleteSelections(tempItem);
+		}
 
-	    $scope.deleteSelections = function(item){
-	    	var reloadAss=false;
-	    	var associatedDatasets = [];
-	    	var reloadFilt=[];
+		$scope.deleteSelections = function(item){
+			var reloadAss=false;
+			var associatedDatasets = [];
+			var reloadFilt=[];
 
-	    	if(item.aggregated){
+			if(item.aggregated){
 				var key = item.ds + "." + item.columnName;
 
 				for(var i=0; i<cockpitModule_template.configuration.aggregations.length; i++){
@@ -535,9 +549,9 @@ angular.module('cockpitModule')
 						if(Object.keys(cockpitModule_template.configuration.filters[item.ds]).length==0){
 							delete cockpitModule_template.configuration.filters[item.ds];
 						}
-                        if(reloadFilt.indexOf(item.ds) == -1){
-						    reloadFilt.push(item.ds);
-                        }
+						if(reloadFilt.indexOf(item.ds) == -1){
+							reloadFilt.push(item.ds);
+						}
 					}
 				}
 			}
@@ -561,13 +575,13 @@ angular.module('cockpitModule')
 			}
 
 			setTimeout(function() {
-                for(var i in reloadFilt){
-                    cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
-                }
-            }, 0);
-	    }
+				for(var i in reloadFilt){
+					cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt[i]);
+				}
+			}, 0);
+		}
 
-	    $scope.editWidget=function(index){
+		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
 					attachTo:  angular.element(document.body),
@@ -647,11 +661,11 @@ angular.module('cockpitModule')
 
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
-					.content(text)
-					.action('OK')
-					.highlightAction(false)
-					.hideDelay(3000)
-					.position('top')
+			.content(text)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top')
 
 			$mdToast.show(toast);
 		}
