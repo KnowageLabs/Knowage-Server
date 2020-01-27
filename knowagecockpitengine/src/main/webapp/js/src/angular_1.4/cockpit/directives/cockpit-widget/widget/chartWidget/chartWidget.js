@@ -126,14 +126,15 @@ function cockpitChartWidgetControllerFunction(
 				$scope.model.content.columnSelectedOfDatasetAggregations.push(obj);
 			}
 			$scope.safeApply();
-		}else{
-			$scope.model.content.columnSelectedOfDatasetAggregations = [];
-		}
-		for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
+	  }
+	 if($scope.model.content.columnSelectedOfDatasetAggregations) {
+		 for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
 			if(!$scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.model.content.columnSelectedOfDatasetAggregations[c].alias;
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 		}
+	 }
+
 
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
@@ -511,14 +512,14 @@ function cockpitChartWidgetControllerFunction(
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh,sbiModule_user,cockpitModule_generalOptions,cockpitModule_datasetServices){
+				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh,sbiModule_user,cockpitModule_generalOptions,cockpitModule_datasetServices,sbiModule_util){
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
 					  $scope.somethingChanged=false;
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.localModel.cross= angular.copy(model.content.cross);
-					  $scope.user = sbiModule_user;				
+					  $scope.user = sbiModule_user;
 					  $scope.localDataset = {};
 					  $scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 					  $scope.typesMap = cockpitModule_generalOptions.typesMap;
@@ -580,7 +581,7 @@ function cockpitChartWidgetControllerFunction(
 			    				  delete $scope.localModel.aggregations;
 			    				  delete $scope.localModel.chartTemplate;
 			    				  delete $scope.localModel.columnSelectedOfDataset;
-				    			  }
+			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    			  $scope.localModel.dataset = ds;
 			    			  $scope.localModel.datasetId = ds.id.dsId;
@@ -597,26 +598,26 @@ function cockpitChartWidgetControllerFunction(
 			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
 			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 			    			}
-			 
+
 			    	  }
-			    	  
-			    	
+
+
 			    	  if ($scope.localModel.datasetId != undefined) {
 			    		  $scope.localModel.dataset = cockpitModule_datasetServices.getDatasetById($scope.localModel.datasetId);
 			    		  $scope.localModel.dataset.dsId = $scope.localModel.datasetId;
 			    	  }
-			    	  
+
 			    		if($scope.localModel.dataset){
 			    			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.localModel.datasetId), $scope.localDataset);
 			    		} else{
 			    			//angular.copy([], $scope.localModel.dataset.metadata.fieldsMeta);
 			    		}
-			    	  
+
 			    	  var checkConfiguration=function(){
 
 			    		  $scope.confChecked = true;
 
-	    				  setAggregationsOnChartEngine($scope.localModel);
+	    				  setAggregationsOnChartEngine($scope.localModel,sbiModule_util);
 	    				  return true;
 			    	  }
 
@@ -805,7 +806,7 @@ function cockpitChartWidgetControllerFunction(
 		    		  }
 
 			    	  $scope.handleEvent('init');
-			    	  
+
 			    	  /*
 			  		 * Section copied from Advanced Table widget
 			  		 */
@@ -816,7 +817,7 @@ function cockpitChartWidgetControllerFunction(
 			    				$scope.somethingChanged = true;
 			    			}
 			    		})
-			    	  
+
 			  		function editableCell(params){
 			  			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
 			  		}
@@ -831,9 +832,23 @@ function cockpitChartWidgetControllerFunction(
 			  		}
 			  		function aggregationRenderer(params) {
 			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
+			  			changeAggregationOnSerie();
 			  	        return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
 
 			  		}
+			  		function changeAggregationOnSerie() {
+			  			if($scope.localModel.chartTemplate) {
+			  				var chartSeries =  $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART.VALUES.SERIE : $scope.localModel.chartTemplate.VALUES.SERIE;
+			  				for(var i = 0; i < $scope.localModel.columnSelectedOfDatasetAggregations.length; i++) {
+			  					for(var j = 0; j < chartSeries.length; j++) {
+			  						if($scope.localModel.columnSelectedOfDatasetAggregations[i].alias == chartSeries[j].column) {
+				  						chartSeries[j].groupingFunction = $scope.localModel.columnSelectedOfDatasetAggregations[i].aggregationSelected;
+				  					}
+			  					}
+			  				}
+			  			}
+			  		}
+
 			  		function rowDragEnter(event){
 			  			$scope.startingDragRow = event.overIndex;
 			  		}
@@ -850,7 +865,7 @@ function cockpitChartWidgetControllerFunction(
 			  			if(cell.data.isCalculated) cell.data.alias = cell.data.aliasToShow;
 			  			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 			  		}
-			  		
+
 			  		$scope.columnsDefition = [
 			  	    	{headerName: 'Name', field:'alias'},
 			  	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow'},
@@ -860,7 +875,7 @@ function cockpitChartWidgetControllerFunction(
 			  	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
 			  	    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false,
 			  	    			}];
-			  		
+
 			  		$scope.columnsGrid = {
 			  				angularCompileRows: true,
 			  				domLayout:'autoHeight',
@@ -874,20 +889,20 @@ function cockpitChartWidgetControllerFunction(
 			  		        columnDefs: $scope.columnsDefition,
 			  				rowData: model.content.columnSelectedOfDatasetAggregations
 			  			}
-			  		
+
 			  		function buttonRenderer(params){
 			  			if(params.data.isCalculated){
 			  				return '<calculated-field ng-model="localModel" selected-item="'+params.rowIndex+'"></calculated-field>';
 			  			}
 
 			  		}
-			  		
+
 			  		/*
-			  		 * 
+			  		 *
 			  		 */
-			    	  
-			    	  
-			    	  
+
+
+
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetEditPropertyTemplate.html',
@@ -900,16 +915,16 @@ function cockpitChartWidgetControllerFunction(
 				preserveScope: true,
 				locals: {finishEdit:finishEdit, model:$scope.ngModel, doRefresh:$scope.refreshWidget}
 		};
-		$mdPanel.open(config);		
-		
+		$mdPanel.open(config);
+
 		return finishEdit.promise;
 	}
-	
 
-	
-	
-	
-	
+
+
+
+
+
 	$scope.reloadWidgetsByChartEvent = function(item){
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
@@ -1221,7 +1236,7 @@ function cockpitChartWidgetControllerFunction(
 	}
 };
 
-function setAggregationsOnChartEngine(wconf){
+function setAggregationsOnChartEngine(wconf,sbiModule_util){
 	var chartsForGrouping = ["bar","line", "radar"]
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
@@ -1235,7 +1250,7 @@ function setAggregationsOnChartEngine(wconf){
 			var chartSeries = chartTemplate.CHART.VALUES.SERIE;
 
 			for(var i = 0; i < chartSeries.length; i++){
-
+				var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartSeries[i].name);
 				var obj = {};
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = chartSeries[i].groupingFunction ? chartSeries[i].groupingFunction : 'SUM';
@@ -1244,6 +1259,10 @@ function setAggregationsOnChartEngine(wconf){
 				obj['fieldType'] = "MEASURE";
 				obj['orderType'] = chartSeries[i].orderType;
 				obj['orderColumn'] = chartSeries[i].column;
+				if(wconf.columnSelectedOfDatasetAggregations[index].isCalculated) {
+					obj['isCalculated'] = wconf.columnSelectedOfDatasetAggregations[index].isCalculated;
+					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
+				}
 				aggregations.push(obj);
 			}
 

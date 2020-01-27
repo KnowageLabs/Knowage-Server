@@ -312,6 +312,15 @@ sbiM.service('sbiModule_util',function(){
 		    return v.toString(16);
 		  });
 	};
+	
+	this.findInArray = function(array, attr, value) {
+	    for(var i = 0; i < array.length; i += 1) {
+	        if(array[i][attr] === value) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
 });
 
 sbiM.service('kn_regex',function(){
