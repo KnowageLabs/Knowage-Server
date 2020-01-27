@@ -399,7 +399,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                         }
                         else {
 
-                        	if (angular.equals(cockpitModule_widgetSelection.getLastTimestampedSelection().value,  config.activeValues)) {
+                        	if (angular.equals(cockpitModule_widgetSelection.getLastTimestampedSelection().values,  config.activeValues)) {
                         		data.activeValues = wi.loadDatasetRecords(config, options, false);
                         	}
                         	else data.activeValues = config.activeValues;
