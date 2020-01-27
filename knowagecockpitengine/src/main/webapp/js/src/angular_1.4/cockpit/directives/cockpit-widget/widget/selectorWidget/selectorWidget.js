@@ -270,7 +270,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
 				parent: angular.element(document.body),
 				targetEvent: ev,
-				clickOutsideToClose:true,
+				clickOutsideToClose:false,
 				bindToController: true,
 				locals: {
 					itemsList:$scope.datasetRecords.rows,
@@ -285,7 +285,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}).then(function(selectedFields) {
 				$scope.toggleParameter(selectedFields);
-			},function(error){});
+			},function(pendingSelection){
+				if (pendingSelection) {
+					$scope.toggleParameter(pendingSelection);
+				}
+			});
 		}
 
 		function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
@@ -332,7 +336,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$mdDialog.hide(scope.selectablesToSend);
 			};
 			scope.cancel = function(){
-				$mdDialog.cancel();
+				$mdDialog.cancel(scope.tempActiveSelections);
 			}
 
 			scope.isDisabled = function(p){
@@ -346,6 +350,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			scope.editSelection = function() {
 				scope.loading = true;
 				scope.tempSelectables = selectables;
+				scope.tempActiveSelections = activeSelections;
 				for(var s in scope.availableItems){
 					scope.availableItems[s].selected = false;
 				}
@@ -450,75 +455,75 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.toggleParameter = function(parVal,setLoader) {
 
-				if(setLoader) $scope.waitingForSelection = setLoader;
-				if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
-					if(angular.equals(parVal, $scope.oldSelectedValues)){
-						return;
-					}
-					$scope.oldSelectedValues = angular.copy(parVal);
+			if(setLoader) $scope.waitingForSelection = setLoader;
+			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
+				if(angular.equals(parVal, $scope.oldSelectedValues)){
+					return;
 				}
-				$scope.hasDefaultValues = false;
+				$scope.oldSelectedValues = angular.copy(parVal);
+			}
+			$scope.hasDefaultValues = false;
 
-				var item = {};
-				item.aggregated=$scope.aggregated;
-				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.ds=$scope.ngModel.dataset.label;
+			var item = {};
+			item.aggregated=$scope.aggregated;
+			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.ds=$scope.ngModel.dataset.label;
 
-				if($scope.ngModel.settings.modalityValue=="multiValue"){
-					var values;
-					if($scope.ngModel.settings.modalityPresent=="LIST"){
-						var index = $scope.selectedValues.indexOf(parVal);
-						if (index > -1) {
-							$scope.selectedValues.splice(index, 1);
-						} else {
-							$scope.selectedValues.push(parVal);
-						}
-						values = $scope.selectedValues;
-					}else{
-						values = parVal;
-					}
-
-					if(values.length>0){
-						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
+			if($scope.ngModel.settings.modalityValue=="multiValue"){
+				var values;
+				if($scope.ngModel.settings.modalityPresent=="LIST"){
+					var index = $scope.selectedValues.indexOf(parVal);
+					if (index > -1) {
+						$scope.selectedValues.splice(index, 1);
 					} else {
-						item.value=angular.copy(values);
-						$rootScope.$broadcast('DELETE_SELECTION',item);
-						$scope.deleteSelections(item);
+						$scope.selectedValues.push(parVal);
 					}
-				} else { // singleValue
-					if($scope.ngModel.settings.modalityPresent=="LIST"){
-						if($scope.selectedValues[0] != parVal){
-							if (parVal.length == 0) {
-								item.value=angular.copy($scope.selectedValues[0]);
-								$rootScope.$broadcast('DELETE_SELECTION',item);
-								$scope.deleteSelections(item);
-							}
-							else {
-								$scope.selectedValues[0] = parVal;
-								$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
-							}
-						} else {
-							if ($scope.selectedValues[0]) {
-								$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
-							}
-							else {
-								item.value=angular.copy($scope.selectedValues[0]);
-								$rootScope.$broadcast('DELETE_SELECTION',item);
-								$scope.deleteSelections(item);
-							}
+					values = $scope.selectedValues;
+				}else{
+					values = parVal;
+				}
 
-						}
-					}else{ // COMBOBOX
-						if(parVal  && parVal.length>0){
-							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
-						}else{
-							item.value=angular.copy(parVal);
+				if(values.length>0){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
+				} else {
+					item.value=angular.copy(values);
+					$rootScope.$broadcast('DELETE_SELECTION',item);
+					$scope.deleteSelections(item);
+				}
+			} else { // singleValue
+				if($scope.ngModel.settings.modalityPresent=="LIST"){
+					if($scope.selectedValues[0] != parVal){
+						if (parVal.length == 0) {
+							item.value=angular.copy($scope.selectedValues[0]);
 							$rootScope.$broadcast('DELETE_SELECTION',item);
 							$scope.deleteSelections(item);
 						}
+						else {
+							$scope.selectedValues[0] = parVal;
+							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+						}
+					} else {
+						if ($scope.selectedValues[0]) {
+							$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+						}
+						else {
+							item.value=angular.copy($scope.selectedValues[0]);
+							$rootScope.$broadcast('DELETE_SELECTION',item);
+							$scope.deleteSelections(item);
+						}
+
+					}
+				}else{ // COMBOBOX
+					if(parVal  && parVal.length>0){
+						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
+					}else{
+						item.value=angular.copy(parVal);
+						$rootScope.$broadcast('DELETE_SELECTION',item);
+						$scope.deleteSelections(item);
 					}
 				}
+			}
 		}
 
 		$scope.getOptions = function(){
