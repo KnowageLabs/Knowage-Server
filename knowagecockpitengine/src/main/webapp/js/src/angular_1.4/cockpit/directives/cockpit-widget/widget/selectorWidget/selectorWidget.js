@@ -86,22 +86,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
 
-		$scope.isSelectedOrder = function(p){
-			return $scope.selectedValues && $scope.selectedValues.indexOf(p.column_1) > -1;
+		$scope.isSelectedOrder = function(item){
+			var tempItem = item;
+			if(item.column_1) tempItem = item.column_1;
+			if($scope.isSelected(tempItem)) return 1;
+			if(!$scope.isDisabled(tempItem)) return 2;
+			return 3;
 		}
 
 		$scope.mapToColumn = function(x){
 			return x.column_1;
 		}
 
-		$scope.selectElement = function(e){
+		$scope.selectElement = function(e,isBulk){
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
-			var tempValue;
 			if(e.target.attributes.value && e.target.attributes.value.value){
-				$scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
+				else $scope.prepareParameter(getValueFromString(e.target.attributes.value.value));
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
-				$scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 			}
 		}
 
@@ -134,7 +139,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.ngModel.activeValues = null;
 
 		$scope.selectedValues = [];
+		$scope.tempSelectedValues = [];
 		$scope.oldSelectedValues = null;
+		$scope.showInfoBar = false;
 
 		$scope.searchParamText = "";
 		$scope.selectedTab = {'tab' : 0};
@@ -442,6 +449,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(values){
 				if(!angular.equals($scope.selectedValues, values)){
 					$scope.selectedValues = angular.copy(values);
+					$scope.tempSelectedValues = angular.copy($scope.selectedValues);
 				}
 			}else{
 				$scope.selectedValues = [];
@@ -461,6 +469,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				},300)
 			})
+		}
+
+		$scope.cancelBulkSelection = function(){
+			$scope.tempSelectedValues = [];
+			$scope.showInfoBar = false;
+		}
+
+		$scope.prepareParameter = function(parVal){
+			if ($scope.tempSelectedValues.indexOf(parVal) > -1) {
+				$scope.tempSelectedValues.splice($scope.tempSelectedValues.indexOf(parVal), 1);
+			} else {
+				$scope.tempSelectedValues.push(parVal);
+			}
+			$scope.showInfoBar = ($scope.tempSelectedValues.length == 0) ? false : true;
+		}
+
+		$scope.bulkSelect = function(){
+			$scope.toggleParameter($scope.tempSelectedValues);
+			$scope.cancelBulkSelection();
 		}
 
 		$scope.toggleParameter = function(parVal,setLoader) {

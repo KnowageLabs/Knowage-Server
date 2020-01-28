@@ -717,7 +717,7 @@
 		}
 	}
 
-	cockpit-advanced-table-widget {
+	cockpit-advanced-table-widget, cockpit-selector-widget {
 		.infoBar {
 			font-size: $baseFontSize;
 			background-color: lighten($secondaryColor,20%);
@@ -739,6 +739,15 @@
 				font-size: $smallFontSize;
 			}
 
+		}
+	}
+	cockpit-selector-widget {
+		.infoBar {
+			position: relative;
+			.md-icon-button {
+				position:absolute;
+				right:0;
+			}
 		}
 	}
 
