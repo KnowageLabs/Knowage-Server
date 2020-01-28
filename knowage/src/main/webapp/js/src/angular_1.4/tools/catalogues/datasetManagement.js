@@ -3271,6 +3271,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.showDrivers = !$scope.showDrivers;
 				}
 			} else if ($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == 'File') {
+				if (!$scope.dataset) {
+					// If we click on dataset for the first time
+					$scope.dataset = {}
+				}
 				$scope.dataset.executed = true;
 				$scope.drivers = [];
 				$scope.showDrivers = false;
