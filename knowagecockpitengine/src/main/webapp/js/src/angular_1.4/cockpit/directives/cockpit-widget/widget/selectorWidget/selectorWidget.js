@@ -86,6 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
 
+		$scope.isSelectedOrder = function(p){
+			return $scope.selectedValues && $scope.selectedValues.indexOf(p.column_1) > -1;
+		}
+
 		$scope.mapToColumn = function(x){
 			return x.column_1;
 		}
@@ -292,11 +296,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 
-		function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
+		function MultiSelectDialogController($rootScope, scope, $mdDialog, $filter, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
+			scope.activeSelections = activeSelections;
 			scope.settings = settings;
 			scope.title = title;
 			scope.translate = sbiModule_translate;
 			scope.allSelected = false;
+
+			scope.isDisabled = function(p){
+				if ($scope.ngModel.settings.enableAll) {
+					return false;
+				}
+				return selectables && selectables.indexOf(p.name) == -1;
+			}
+
 			scope.checkActiveSelections = function() {
 				scope.selectables = [];
 				if(settings.hideDisabled){
@@ -324,6 +337,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
 					}
 				}
+				scope.selectables = $filter('orderBy')(scope.selectables, function(item){
+					if(item.selected) return 1;
+					if(!scope.isDisabled(item)) return 2;
+					return 3;
+				})
 				scope.loading = false;
 			}
 			scope.checkActiveSelections();
@@ -337,14 +355,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			};
 			scope.cancel = function(){
 				$mdDialog.cancel(scope.tempActiveSelections);
-			}
-
-			scope.isDisabled = function(p){
-				if ($scope.ngModel.settings.enableAll) {
-					return false;
-				}
-
-				return selectables && selectables.indexOf(p) == -1;
 			}
 
 			scope.editSelection = function() {
