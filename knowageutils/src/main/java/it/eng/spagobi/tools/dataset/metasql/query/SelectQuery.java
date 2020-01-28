@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -251,12 +252,23 @@ public class SelectQuery {
 	public boolean hasAggregationFunction() {
 		boolean hasAggregationFunction = false;
 		for (AbstractSelectionField projectio : projections) {
-			Projection projection = (Projection) projectio;
-			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-			if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-				hasAggregationFunction = true;
-				break;
+
+			if (projectio instanceof Projection) {
+				Projection projection = (Projection) projectio;
+				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+				if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+					hasAggregationFunction = true;
+					break;
+				}
+			} else {
+				DataStoreCalculatedField projection = (DataStoreCalculatedField) projectio;
+				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+				if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+					hasAggregationFunction = true;
+					break;
+				}
 			}
+
 		}
 		return hasAggregationFunction;
 	}
