@@ -43,6 +43,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 	$scope.selectedChartType = "";
 	$scope.selectedTab = {'tab' : 0};
 	var urlForDataset="";
+	$scope.enterpriseEdition = sbiModule_user.functionalities.indexOf("SeeAdvancedTab")>-1;
 
 	var findInArray = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {

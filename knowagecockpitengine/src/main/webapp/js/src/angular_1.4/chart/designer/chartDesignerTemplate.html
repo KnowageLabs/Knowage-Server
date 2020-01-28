@@ -19,7 +19,7 @@
             
             <md-tab-body >
                 <div flex>
-                	<chart-tab></chart-tab> </md-tab> 
+                	<chart-tab></chart-tab> 
                 </div>
             </md-tab-body>
 			
@@ -60,7 +60,9 @@
 			
 			</md-tab> 
 
-			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()"><advanced-tab ng-if="chartTemplate"></advanced-tab> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()" ng-if="enterpriseEdition">
+				<advanced-tab ng-if="chartTemplate"></advanced-tab>
+			</md-tab> 
 		</md-tabs>
 		</form>
 
