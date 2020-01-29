@@ -18,6 +18,7 @@ setuptools.setup(
     },
     install_requires=[
           'flask',
+          'flask_cors',
           'pybase64',
           'bokeh',
           'tornado',
