@@ -89,10 +89,13 @@ public class LoginModule extends AbstractHttpModule {
 	/**
 	 * Service.
 	 *
-	 * @param request  the request
-	 * @param response the response
+	 * @param request
+	 *            the request
+	 * @param response
+	 *            the response
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 *
 	 * @see it.eng.spago.dispatching.action.AbstractHttpAction#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
@@ -292,14 +295,10 @@ public class LoginModule extends AbstractHttpModule {
 
 		try {
 			httpSession = regenerateSession(servletRequest);
-			// set default role
-			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userIdForDefaultProfile);
-			Integer defaultRoleId = user.getDefaultRoleId();
-			String defaultRole = null;
-			if (defaultRoleId != null)
-				defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
 
-			profile = UserUtilities.getUserProfile(userId, defaultRole);
+			logger.debug("START - Getting user profile");
+
+			profile = UserUtilities.getUserProfile(userId);
 			if (profile == null) {
 				logger.error("user not created");
 				EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
@@ -307,6 +306,8 @@ public class LoginModule extends AbstractHttpModule {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 				return;
 			}
+
+			logger.debug("END - Getting user profile");
 
 			// checks if the input role is valid with SpagoBI's role list
 			boolean isRoleValid = true;
