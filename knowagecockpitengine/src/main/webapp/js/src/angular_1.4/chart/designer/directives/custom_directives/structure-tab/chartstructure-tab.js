@@ -98,14 +98,17 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	// Get all metadata of the chart's dataset (all measures and attributes)
 
-	$scope.fieldsMetadata = $scope.localMod.columnSelectedOfDatasetAggregations;
-	for(var i = 0; i < $scope.fieldsMetadata.length; i++) {
-		if($scope.fieldsMetadata[i].fieldType=="MEASURE") {
-			$scope.allMeasures.push($scope.fieldsMetadata[i]);
-		} else {
-			$scope.allAttributes.push($scope.fieldsMetadata[i]);
+	$scope.getMetadata = function(){
+		$scope.fieldsMetadata = $scope.localMod.columnSelectedOfDatasetAggregations;
+		for(var i = 0; i < $scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType=="MEASURE") {
+				$scope.allMeasures.push($scope.fieldsMetadata[i]);
+			} else {
+				$scope.allAttributes.push($scope.fieldsMetadata[i]);
+			}
 		}
 	}
+	$scope.getMetadata();
 
 
 	/**
@@ -1020,7 +1023,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.gaugeTicksPositionOptions = StructureTabService.getGaugeTicksPosition();
     $scope.gaugeSubtypes = StructureTabService.getGaugeSybtypes();
 
-//    $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
+    $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
 
     /*
 	@author: Radmila Selakovic (rselakov, radmila.selakovic@mht.net)

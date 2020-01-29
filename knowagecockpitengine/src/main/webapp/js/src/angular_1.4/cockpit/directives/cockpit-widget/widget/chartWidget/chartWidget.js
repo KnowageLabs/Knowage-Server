@@ -807,16 +807,11 @@ function cockpitChartWidgetControllerFunction(
 
 			    	  $scope.handleEvent('init');
 
-			    	  /*
-			  		 * Section copied from Advanced Table widget
-			  		 */
-			    		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
-			    			if($scope.columnsGrid.api && newValue){
-			    				$scope.columnsGrid.api.setRowData(newValue);
-			    				$scope.columnsGrid.api.sizeColumnsToFit();
-			    				$scope.somethingChanged = true;
-			    			}
-			    		})
+			    	  $scope.updateGrid = function (){
+			    		  $scope.columnsGrid.api.setRowData($scope.localModel.columnSelectedOfDatasetAggregations);
+			    		  $scope.columnsGrid.api.sizeColumnsToFit();
+			    		  $scope.somethingChanged = true;
+			    	  }
 
 			  		function editableCell(params){
 			  			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
@@ -887,12 +882,12 @@ function cockpitChartWidgetControllerFunction(
 			  		        singleClickEdit: true,
 			  		        stopEditingWhenGridLosesFocus: true,
 			  		        columnDefs: $scope.columnsDefition,
-			  				rowData: model.content.columnSelectedOfDatasetAggregations
+			  				rowData: $scope.localModel.columnSelectedOfDatasetAggregations
 			  			}
-
 			  		function buttonRenderer(params){
 			  			if(params.data.isCalculated){
-			  				return '<calculated-field ng-model="localModel" selected-item="'+params.rowIndex+'"></calculated-field>';
+			  				
+			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" selected-item="'+params.rowIndex+'"></calculated-field>';
 			  			}
 
 			  		}

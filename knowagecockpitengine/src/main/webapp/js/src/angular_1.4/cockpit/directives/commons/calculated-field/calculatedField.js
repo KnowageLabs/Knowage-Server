@@ -22,7 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			replace: true,
 			scope:{
 				ngModel:"=",
-				selectedItem : "=?"
+				selectedItem : "=?",
+				callbackUpdateGrid : "&?"
 			},
 			controller: calculatedFieldController,
 		}
@@ -32,18 +33,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.translate = sbiModule_translate;
 		if($scope.selectedItem){
-			
+
 			if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
 
 				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
-				
+
 			}
 			else {
 
 				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
 			}
-	
-		
+
+
 		}
 		$scope.addNewCalculatedField = function(){
 
@@ -59,7 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				locals: {
 					promise: deferred,
 					model:$scope.ngModel,
-					actualItem : $scope.currentRow
+					actualItem : $scope.currentRow,
+					callbackUpdateGrid: $scope.callbackUpdateGrid
 				},
 				//fullscreen: true,
 				controller: calculatedFieldDialogController
@@ -78,9 +80,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result);
 						}
 						else {
-						$scope.ngModel.content.columnSelectedOfDataset.push(result);
+							$scope.ngModel.content.columnSelectedOfDataset.push(result);
 						}
-
+					}
+					if($scope.callbackUpdateGrid){
+						$scope.callbackUpdateGrid()
 					}
 				});
 			}, function() {
@@ -90,10 +94,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
+		$scope.callbackUpdateGrid = callbackUpdateGrid;
 		$scope.localDataset = {};
 		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
 		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
@@ -231,7 +236,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		if ($scope.model.content == undefined) {
-			
+
 			for(var i in $scope.model.columnSelectedOfDatasetAggregations){
 				var obj = $scope.model.columnSelectedOfDatasetAggregations[i];
 				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
@@ -263,6 +268,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.result.type = "java.lang.Double";
 				promise.resolve($scope.result);
 				$mdDialog.hide();
+
 			},function(error){
 				$scope.toastifyMsg('warning',error);
 				return;
