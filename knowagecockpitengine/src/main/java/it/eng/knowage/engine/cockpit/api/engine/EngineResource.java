@@ -129,9 +129,9 @@ public class EngineResource extends AbstractCockpitEngineResource {
 				.withCssClass("fa fa-picture-o").withType("image").withTag("image").build());
 
 		ret.add(Widget.builder().withName("Chart").withDescKey("sbi.cockpit.editor.newwidget.description.chart").withImg("4.png")
-				.withCssClass("fa fa-bar-chart").withType("chart").withTag("chart").build());
+				.withCssClass("fas fa-chart-pie").withType("chart").withTag("chart").build());
 
-		ret.add(Widget.builder().withName("Html").withDescKey("sbi.cockpit.editor.newwidget.description.html").withImg("4.png").withCssClass("fa fa-code")
+		ret.add(Widget.builder().withName("Html").withDescKey("sbi.cockpit.editor.newwidget.description.html").withImg("4.png").withCssClass("fab fa-html5")
 				.withType("html").withTag("html").build());
 
 		ret.add(Widget.builder().withName("Table").withDescKey("sbi.cockpit.editor.newwidget.description.table").withImg("5.png").withCssClass("fa fa-table")
@@ -143,13 +143,13 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		if (functionalities.contains(DOCUMENT_WIDGET_USE)) {
 
 			ret.add(Widget.builder().withName("Document").withDescKey("sbi.cockpit.editor.newwidget.description.document").withImg("7.png")
-					.withCssClass("fa fa-file").withType("document").withTag("document").withTag("datasource").build());
+					.withCssClass("fas fa-file-invoice").withType("document").withTag("document").withTag("datasource").build());
 		}
 
 		if (functionalities.contains(MAP_WIDGET_USE)) {
 
-			ret.add(Widget.builder().withName("Map").withDescKey("sbi.cockpit.editor.newwidget.description.map").withImg("7.png").withCssClass("fa fa-map")
-					.withType("map").withTag("map").build());
+			ret.add(Widget.builder().withName("Map").withDescKey("sbi.cockpit.editor.newwidget.description.map").withImg("7.png")
+					.withCssClass("fas fa-map-marked-alt").withType("map").withTag("map").build());
 		}
 
 		ret.add(Widget.builder().withName("Active Selections").withDescKey("sbi.cockpit.editor.newwidget.description.selection").withImg("8.png")
@@ -159,9 +159,8 @@ public class EngineResource extends AbstractCockpitEngineResource {
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
 		if (functionalities.contains(EDIT_PYTHON_SCRIPTS)) {
-
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
-					.withCssClass("fa fa-file").withType("python").withTag("python").build());
+					.withCssClass("fab fa-python").withType("python").withTag("python").build());
 		}
 
 		if (functionalities.contains(DISCOVERY_WIDGET_USE)) {
