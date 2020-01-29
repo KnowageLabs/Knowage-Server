@@ -273,13 +273,16 @@ public class UserUtilities {
 	}
 
 	private static String getDefaultRole(SpagoBIUserProfile user) throws EMFUserError {
-		SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
-		Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
-		logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
 		String defaultRole = null;
-		if (defaultRoleId != null) {
-			defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
-			logger.debug("Found defaultRole: " + defaultRole);
+		SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
+		/* If you use an external profiling service, sbiUserDB will be null. */
+		if (sbiUserDB != null) {
+			Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
+			logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
+			if (defaultRoleId != null) {
+				defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
+				logger.debug("Found defaultRole: " + defaultRole);
+			}
 		}
 		return defaultRole;
 	}
