@@ -74,3 +74,16 @@ package-lock.json
 
 # zanata folder
 .zanata-cache/
+Knowage-Python/pythonwebservice/app/utilities/__pycache__/
+
+Knowage-Python/pythonwebservice/app/__pycache__/
+
+Knowage-Python/pythonwebservice/app/services/__pycache__/
+
+Knowage-Python/pythonwebservice/app/services/tmp/
+
+Knowage-Python/pythonwebservice/logs/
+
+Knowage-Python/pythonwebservice/cert.pem
+
+Knowage-Python/pythonwebservice/key.pem

@@ -114,6 +114,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var element = angular.element(document.querySelector('#w' + $scope.ngModel.id + ' #bokeh'));
 			// create an iframe and append it to the <div>
 			var iframe = document.createElement('iframe');
+			iframe.height="100%";
+			iframe.width="100%";
 			iframe.id = "bokeh_" + $scope.ngModel.id;
 			iframe.classList.add("layout-fill");
 			element.append(iframe);

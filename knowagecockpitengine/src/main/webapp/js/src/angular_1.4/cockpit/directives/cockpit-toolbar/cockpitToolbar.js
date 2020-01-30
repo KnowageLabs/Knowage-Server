@@ -273,16 +273,22 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 	}
 
 				 	function replaceIframe(widget){
-				 		var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
+				 		if(widget.type == 'python' && widget.pythonOutputType == 'bokeh') {
+				 			var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName('body')[0];
+				 			var tempHeight = element.scrollHeight;
+				 		}
+				 		else var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
 				 		html2canvas(element,{
 				 			allowTaint: true,
 				 			useCORS: true,
 				 			foreignObjectRendering: true,
 				 			width: element.clientWidth,
-				 			height: element.scrollHeight
+				 			height: tempHeight ? tempHeight : element.scrollHeight,
+				 			scale : 2
 				 		}).then(function(canvas){
 				 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
-				 			canvas.style.height = "100%";
+				 			canvas.style.height = tempHeight ? tempHeight+"px" : "100%";
+				 			canvas.style.width = "100%";
 				 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
 				 		},function(error){
 				 			reject(error);
@@ -343,7 +349,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 					}
 				 				}
 					 		for(var w in sheet.widgets){
-					 			if(sheet.widgets[w].type == 'document'){
+					 			if(sheet.widgets[w].type == 'document' || sheet.widgets[w].type == 'python'){
 					 				replaceIframe(sheet.widgets[w]);
 					 			}
 					 		}
