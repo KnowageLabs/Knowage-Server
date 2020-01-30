@@ -93,14 +93,16 @@
 								}
 								else {
                                     var multivalue;
-                                    if (typeof currParam.parameterValue == 'string') {
-                                        var match = currParam.parameterValue.match(/[^\s'",;]+/gi);
-                                        if (match) {
-                                            multivalue = "{;{"+match.join([separator = ';'])+"}"+currParam.type+"}";
+                                    if (!Array.isArray(currParam.parameterValue)) {
+                                        var tempArray = [];
+                                        currParam.parameterValue.replace(/\'([^'";,]+)\'|([^\s'",;]+)/gi,function(match,value1,value2){
+                                        	tempArray.push(value1||value2);
+                                        });
+                                        if (tempArray.length > 0) {
+                                            multivalue = "{;{"+tempArray.join([separator = ';'])+"}"+currParam.type+"}";
                                         } else {
                                             multivalue = "{;{"+currParam.parameterValue+"}"+currParam.type+"}";
                                         }
-
                                     } else {
                                         multivalue = "{;{"+currParam.parameterValue.join([separator = ';'])+"}"+currParam.type+"}";
                                     }
