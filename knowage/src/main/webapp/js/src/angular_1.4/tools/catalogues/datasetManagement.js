@@ -3389,7 +3389,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
-    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/knowagedataset';
+    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;
