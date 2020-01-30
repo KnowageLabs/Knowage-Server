@@ -92,9 +92,20 @@
 									paramsFilter=paramsFilter+'&'+currParam.urlName+'='+currParam.parameterValue;
 								}
 								else {
-									var multivalue = "{;{"+currParam.parameterValue.join([separator = ';'])+"}"+currParam.type+"}";
-									paramsFilter=paramsFilter+'&'+currParam.urlName+'='+multivalue;
-								}
+                                    var multivalue;
+                                    if (typeof currParam.parameterValue == 'string') {
+                                        var match = currParam.parameterValue.match(/[^\s'",;]+/gi);
+                                        if (match) {
+                                            multivalue = "{;{"+match.join([separator = ';'])+"}"+currParam.type+"}";
+                                        } else {
+                                            multivalue = "{;{"+currParam.parameterValue+"}"+currParam.type+"}";
+                                        }
+
+                                    } else {
+                                        multivalue = "{;{"+currParam.parameterValue.join([separator = ';'])+"}"+currParam.type+"}";
+                                    }
+                                    paramsFilter=paramsFilter+'&'+currParam.urlName+'='+multivalue;
+                                }
 							}
 						}
 					}
