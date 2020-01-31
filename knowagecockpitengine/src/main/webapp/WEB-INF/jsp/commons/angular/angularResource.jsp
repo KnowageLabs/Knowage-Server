@@ -72,7 +72,6 @@
 	String userUniqueIdentifier="";
 	String userId="";
 	String userName="";
-	String defaultRole="";
 	List userRoles = new ArrayList();
 	
 	AccessibilityPreferences ap = null;
@@ -93,7 +92,6 @@
 		userUniqueIdentifier=(String)profile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)profile).getUserName();
 		userRoles = (ArrayList)profile.getRoles();
-		defaultRole = ((UserProfile)profile).getDefaultRole();
 		ap =  UserUtilities.readAccessibilityPreferencesByUser(profile);
 	    
 	    if(ap != null){

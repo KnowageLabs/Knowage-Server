@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -53,17 +64,6 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.security.ISecurityInfoProvider;
 import it.eng.spagobi.security.SecurityInfoProviderFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-
 /**
  * Implements a module which handles all predefined List of Values (LOV) management: has methods for LOV load, detail, modify/insertion and deleting operations.
  * The <code>service</code> method has a switch for all these operations, differentiated the ones from the others by a <code>message</code> String.
@@ -79,7 +79,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -91,15 +91,11 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	 * <p>
 	 * When a new value is defined, the user has to use a wizard to build all the new value definition. There are some methods written for this aim.
 	 *
-	 * @param request
-	 *            The Source Bean containing all request parameters
-	 * @param response
-	 *            The Source Bean containing all response parameters
+	 * @param request  The Source Bean containing all request parameters
+	 * @param response The Source Bean containing all response parameters
 	 *
-	 * @throws exception
-	 *             If an exception occurs
-	 * @throws Exception
-	 *             the exception
+	 * @throws exception If an exception occurs
+	 * @throws Exception the exception
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
@@ -162,12 +158,9 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	 * Gets the detail of a value choosed by the user from the predefined List of Values. It reaches the key from the request and asks to the DB all detail
 	 * parameter use mode information, by calling the method <code>loadModalitiesValueByID</code>.
 	 *
-	 * @param key
-	 *            The choosed parameter use mode id key
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param key      The choosed parameter use mode id key
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getDetailModValue(String key, SourceBean response) throws EMFUserError {
 		try {
@@ -199,7 +192,6 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 				// copy all the roles, functionalities of the original profile
 				userProfile.setFunctionalities(profile.getFunctionalities());
 				userProfile.setRoles(((UserProfile) profile).getRolesForUse());
-				userProfile.setDefaultRole(((UserProfile) profile).getDefaultRole());
 
 				// copy attributes and add the missing ones
 				Map attributes = new HashMap();
@@ -244,16 +236,11 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	 * method is called; when a new parameter use mode is added, the <code>inserModalitiesValue</code> method is called. These two cases are differentiated by
 	 * the <code>mod</code> String input value .
 	 *
-	 * @param request
-	 *            The request information contained in a SourceBean Object
-	 * @param mod
-	 *            A request string used to differentiate insert/modify operations
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean exception occurs
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
 	private void modDetailModValue(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
 		ModalitiesValue modVal = null;
@@ -693,19 +680,16 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Sets some attributes into the response SourceBean. Those attributes are required for the correct visualization of the ModalitiesValue form page.
 	 *
-	 * @param modVal
-	 *            The ModalitiesValue to visualize
-	 * @param mod
-	 *            The modality (insert/modify)
-	 * @param response
-	 *            The SourceBean to set
+	 * @param modVal   The ModalitiesValue to visualize
+	 * @param mod      The modality (insert/modify)
+	 * @param response The SourceBean to set
 	 * @throws SourceBeanException
 	 * @throws EMFUserError
 	 * @throws EMFInternalError
 	 */
 
-	private void prepareDetailModalitiesValuePage(ModalitiesValue modVal, String mod, SourceBean response) throws SourceBeanException, EMFUserError,
-			EMFInternalError {
+	private void prepareDetailModalitiesValuePage(ModalitiesValue modVal, String mod, SourceBean response)
+			throws SourceBeanException, EMFUserError, EMFInternalError {
 		response.setAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT, modVal);
 		response.setAttribute(SpagoBIConstants.MODALITY, mod);
 		loadValuesDomain(response);
@@ -727,16 +711,11 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Deletes a value choosed by user from the LOV list.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
 
 	private void delDetailModValue(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
@@ -786,13 +765,10 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Instantiates a new <code>Value<code> object when a new value
-	 * insertion in the LOV list is required, in order to prepare the page for the insertion.
+	 * Instantiates a new <code>Value<code> object when a new value insertion in the LOV list is required, in order to prepare the page for the insertion.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void newDetailModValue(SourceBean response) throws EMFUserError {
 		try {
@@ -818,10 +794,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Loads into the Response Source Bean all the Input Type Domain objects
 	 *
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If any exception occurred
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If any exception occurred
 	 */
 	private void loadValuesDomain(SourceBean response) throws EMFUserError {
 		try {
@@ -836,8 +810,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Recover all Java Class Wizard values when a value is inserted or modified, choosing "Java Class" as the input type.
 	 *
-	 * @param request
-	 *            The request SourceBean
+	 * @param request The request SourceBean
 	 */
 	private void recoverJavaClassWizardValues(SourceBean request, JavaClassDetail jcd) {
 		String javaClassName = (String) request.getAttribute("javaClassName");
@@ -850,8 +823,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Recover all Query Wizard values when a value is inserted or modified, choosing "Query Statement" as the input type.
 	 *
-	 * @param request
-	 *            The request SourceBean
+	 * @param request The request SourceBean
 	 */
 	private void recoverQueryWizardValues(SourceBean request, QueryDetail query) {
 		// String connName = (String)request.getAttribute("connName");
@@ -866,8 +838,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Recover all Script Wizard values when a value is inserted or modified, choosing "Script to Load Values" as the input type.
 	 *
-	 * @param request
-	 *            The request SourceBean
+	 * @param request The request SourceBean
 	 */
 
 	private void recoverScriptWizardValues(SourceBean request, ScriptDetail sdet) {
@@ -891,8 +862,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Recover all Dataset Wizard values when a value is inserted or modified, choosing "Dataset" as the input type.
 	 *
-	 * @param request
-	 *            The request SourceBean
+	 * @param request The request SourceBean
 	 */
 	private void recoverDatasetWizardValues(SourceBean request, DatasetDetail dataset) {
 		String datasetId = (String) request.getAttribute("dataset");
@@ -905,12 +875,9 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	 * Inserts a new Fixed LOV item in the FixedLov Wizard. When this type of Input is selected dring the insertion/ modify of a Value in the LOV list, it is
 	 * possible to add a series of FixLov Values, showed at runtime in a table.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param modVal
-	 *            The ModalitiesValue to modify with the new entry
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurred
+	 * @param request The request SourceBean
+	 * @param modVal  The ModalitiesValue to modify with the new entry
+	 * @throws SourceBeanException If a SourceBean Exception occurred
 	 */
 	private FixedListDetail addFixLovItem(SourceBean request, ModalitiesValue modVal) throws SourceBeanException {
 		String lovProv = modVal.getLovProvider();
@@ -929,10 +896,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Delete from the list of fix lov items the one at index indexOfFixedListItemToDelete
 	 *
-	 * @param lovDetList
-	 *            The list of Fix Lov
-	 * @param indexOfFixedListItemToDelete
-	 *            The index of the item to be deleted
+	 * @param lovDetList                   The list of Fix Lov
+	 * @param indexOfFixedListItemToDelete The index of the item to be deleted
 	 */
 	private FixedListDetail deleteFixLovValue(FixedListDetail lovDetList, int indexOfFixedLovItemToDelete) {
 		List lovs = lovDetList.getItems();
@@ -944,10 +909,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Move up an item of the fix lov list
 	 *
-	 * @param lovDetList
-	 *            The list of Fix Lov
-	 * @param indexOfItemToUp
-	 *            The index of the item to move up
+	 * @param lovDetList      The list of Fix Lov
+	 * @param indexOfItemToUp The index of the item to move up
 	 */
 	private FixedListDetail moveUpFixLovItem(FixedListDetail lovDetList, int indexOfItemToUp) {
 		List lovs = lovDetList.getItems();
@@ -961,10 +924,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Move down an item of the fix lov list
 	 *
-	 * @param lovDetList
-	 *            The list of Fix Lov
-	 * @param indexOfItemToDown
-	 *            The index of the item to move down
+	 * @param lovDetList        The list of Fix Lov
+	 * @param indexOfItemToDown The index of the item to move down
 	 */
 	private FixedListDetail moveDownFixLovItem(FixedListDetail lovDetList, int indexOfItemToDown) {
 		List lovs = lovDetList.getItems();
@@ -978,14 +939,10 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Chnage from the list of fix lov items the one at index indexOfFixedListItemToDelete
 	 *
-	 * @param lovDetList
-	 *            The list of Fix Lov
-	 * @param itemToChange
-	 *            The index of the item to be changed
-	 * @param newName
-	 *            the new name of the item
-	 * @param newValue
-	 *            the new value of the item
+	 * @param lovDetList   The list of Fix Lov
+	 * @param itemToChange The index of the item to be changed
+	 * @param newName      the new name of the item
+	 * @param newValue     the new value of the item
 	 */
 	private FixedListDetail changeFixLovValue(FixedListDetail lovDetList, int itemToChange, String newName, String newValue) {
 		List lovs = lovDetList.getItems();
@@ -1001,13 +958,10 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	/**
 	 * Controls if the label choosed by user is yet in use. If it is, an error is added to the error handler.
 	 *
-	 * @param request
-	 *            The request Source Bean
-	 * @param mod
-	 *            The modality
+	 * @param request The request Source Bean
+	 * @param mod     The modality
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	public void labelControl(SourceBean request, String mod) throws EMFUserError {
 		String label = (String) request.getAttribute("label");

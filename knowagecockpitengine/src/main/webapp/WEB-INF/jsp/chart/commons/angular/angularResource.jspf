@@ -92,7 +92,6 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	List<String> includes;
 	String datasetLabel;
 	String userName="";
-	String defaultRole="";
 	List userRoles = new ArrayList();
 	
 	
@@ -147,7 +146,6 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		userUniqueIdentifier=(String)profile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)profile).getUserName();
 		userRoles = (ArrayList)profile.getRoles();
-		defaultRole = ((UserProfile)profile).getDefaultRole();
 	}
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null) ? "" : engineInstance.isTechnicalUser().toString();
 	

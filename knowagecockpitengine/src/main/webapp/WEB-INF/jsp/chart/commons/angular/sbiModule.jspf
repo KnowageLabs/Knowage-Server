@@ -44,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%-- 	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>; --%>
 		user.isSuperAdmin = '<%= profile != null && ((UserProfile)profile).getIsSuperadmin() %>';
 		user.isTechnicalUser = '<%= profile != null && UserUtilities.isTechnicalUser((UserProfile)profile)%>'
-		user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
 		// 	set roles
 		user.roles =[];
 		<% for(Object rol : userRoles) { 	%>

@@ -3,6 +3,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <!-- this imports are used for language controls  -->
+<%@page import="it.eng.spagobi.commons.bo.SessionUserProfile"%>
 <%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
@@ -107,7 +108,7 @@
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		sessionRole = ((UserProfile)userProfile).getSessionRole();		
+		sessionRole = userProfile instanceof SessionUserProfile ? ((SessionUserProfile)userProfile).getSessionRole() : null;		
 		
 	}
 	

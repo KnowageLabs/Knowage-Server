@@ -64,7 +64,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
-import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -252,68 +251,6 @@ public class UserUtilities {
 			}
 		}
 
-	}
-
-	public static String getDefaultRole(UserProfile userProfile) {
-		logger.debug("IN");
-		String defaultRole = null;
-		try {
-			SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userProfile.getUserId().toString());
-			/* If you use an external profiling service, sbiUserDB will be null. */
-			if (sbiUserDB != null) {
-				Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
-				logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
-				if (defaultRoleId != null) {
-					defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
-					logger.debug("Found defaultRole: " + defaultRole);
-				}
-			}
-		} catch (EMFUserError error) {
-			throw new SpagoBIRuntimeException("Error while getting default role", error);
-		}
-		logger.debug("OUT: returning " + defaultRole);
-		return defaultRole;
-	}
-
-	public static UserProfile getDefaultUserProfile(UserProfile completeProfile, String defaultRole) {
-		UserProfile toReturn;
-		logger.debug("User [" + completeProfile.getUserId() + "] has default role [" + defaultRole + "].");
-		SpagoBIUserProfile clone = UserUtilities.clone(completeProfile.getSpagoBIUserProfile());
-		clone.setRoles(new String[] { defaultRole });
-		// recalculating available functionalities for the user considering only the default role
-		clone.setFunctions(UserUtilities.readFunctionality(clone));
-		logger.debug("Re-creating user profile object for user  [" + completeProfile.getUserId() + "] considering its default role [" + defaultRole + "]....");
-		toReturn = new UserProfile(clone);
-		// restoring initial roles, otherwise the user will not be able to switch between them
-		try {
-			toReturn.setRoles(completeProfile.getRoles());
-		} catch (EMFInternalError e) {
-			throw new SpagoBIRuntimeException("Error while getting user roles", e);
-		}
-		// default role is NOT supposed to change
-		toReturn.setDefaultRole(defaultRole);
-		// setting session role as initial state, it may change
-		toReturn.setSessionRole(defaultRole);
-		return toReturn;
-	}
-
-	public static UserProfile getDefaultUserProfile(UserProfile completeProfile) {
-		logger.debug("IN");
-		UserProfile userProfile = null;
-
-		String defaultRole = UserUtilities.getDefaultRole(completeProfile);
-		if (defaultRole != null) {
-			logger.debug("Detected default role for user [" + completeProfile.getUserId() + "], re-creating user profile considering only that role");
-			// we get another UserProfile instance detach it from cache, otherwise we can have errors in case cache is expired (see KNOWAGE-4795)
-			userProfile = getDefaultUserProfile(completeProfile, defaultRole);
-		} else {
-			logger.debug("No default role set for user [" + completeProfile.getUserId() + "]");
-			// we clone the object to detach it from cache, otherwise we can have errors in case cache is expired (see KNOWAGE-4795)
-			SpagoBIUserProfile clone = UserUtilities.clone(completeProfile.getSpagoBIUserProfile());
-			userProfile = new UserProfile(clone);
-		}
-		logger.debug("OUT");
-		return userProfile;
 	}
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
@@ -1151,16 +1088,7 @@ public class UserUtilities {
 
 	public static List<String> getCurrentRoleNames(IEngUserProfile profile) throws EMFInternalError {
 		logger.debug("IN");
-		List<String> roleNames = new ArrayList<String>();
-		String defaultRole = null;
-		if (profile instanceof UserProfile) {
-			defaultRole = ((UserProfile) profile).getDefaultRole();
-		}
-		if (defaultRole != null) {
-			roleNames.add(defaultRole);
-		} else {
-			roleNames = (List<String>) profile.getRoles();
-		}
+		List<String> roleNames = (List<String>) ((UserProfile) profile).getRolesForUse();
 		logger.debug("OUT");
 		return roleNames;
 	}
