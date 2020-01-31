@@ -179,8 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
 
-		        data: { 'knowage_address': $scope.knowageAddress,
-	        		  	'dataset': $scope.dataset_label,
+		        data: { 'dataset': $scope.dataset_label,
 		        		'script' : $scope.ngModel.pythonCode,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
@@ -209,7 +208,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        		  'Authorization': $scope.encodedUserId},
 
 		        data: { 'dataset': $scope.dataset_label,
-		        		'knowage_address': $scope.knowageAddress,
 		        		'output_variable' : $scope.ngModel.pythonOutput,
 		        		'widget_id' :  $scope.ngModel.id,
 		        		'document_id' :  $scope.documentId,
@@ -229,9 +227,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.init = function (element, width, height) {
-			var knowageHost = $location.$$host;
-			var knowagePort = $location.$$port;
-			$scope.knowageAddress = knowageHost + ":" + knowagePort;
 			$scope.showWidgetSpinner();
 			$scope.refresh(element, width, height, null, 'init');
 		}

@@ -42,8 +42,7 @@ def retrieveScriptInfo(data):
 
 def retrieveKnowageInfo(headers, data):
     user_id = headers['Authorization']
-    knowage_address = data['knowage_address']
-    return user_id, knowage_address
+    return user_id
 
 def retrieveDatasetInfo(data):
     dataset_name = data.get('dataset')

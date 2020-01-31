@@ -32,12 +32,12 @@ viewMode = Blueprint('view', __name__)
 def python_html():
     #retrieve input parameters
     output_variable = utils.retrieveScriptInfo(request.get_json())[1]
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, output_variable=output_variable, user_id=user_id, document_id=document_id, widget_id=widget_id,
-                                          knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
+                                          dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
     # resolve analytical drivers
     for d in drivers:
@@ -67,12 +67,12 @@ def python_html():
 def python_img():
     # retrieve input parameters
     img_file = utils.retrieveScriptInfo(request.get_json())[1]
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, output_variable=img_file, user_id=user_id, document_id=document_id, widget_id=widget_id,
-                                          knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
+                                          dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
     # resolve analytical drivers
     for d in drivers:
@@ -106,11 +106,11 @@ def python_bokeh():
     # retrieve input parameters
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, user_id=user_id, document_id=document_id, widget_id=widget_id,
-                                          knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
+                                          dataset_name=dataset_name, datastore_request=datastore_request)
     python_widget.script = security.loadScriptFromDB(python_widget)
     #destroy old bokeh server
     if utils.serverExists(python_widget.widget_id):

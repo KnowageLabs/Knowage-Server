@@ -32,11 +32,11 @@ editMode = Blueprint('editMode', __name__)
 def python_html():
     #retrieve input parameters
     script, output_variable = utils.retrieveScriptInfo(request.get_json())
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=output_variable, user_id=user_id,
-                                          knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
+                                          dataset_name=dataset_name, datastore_request=datastore_request)
     # check authentication
     if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
@@ -68,12 +68,12 @@ def python_html():
 def python_img():
     # retrieve input parameters
     script, img_file = utils.retrieveScriptInfo(request.get_json())
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=img_file, user_id=user_id,
-                                          knowage_address=knowage_address, dataset_name=dataset_name, datastore_request=datastore_request)
+                                          dataset_name=dataset_name, datastore_request=datastore_request)
     # check authentication
     if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
@@ -110,10 +110,10 @@ def python_bokeh():
     script = request.get_json()['script']
     widget_id = request.get_json()['widget_id']
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id, knowage_address = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
-    python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, user_id=user_id, knowage_address=knowage_address,
+    python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, user_id=user_id,
                                           dataset_name=dataset_name, datastore_request=datastore_request, widget_id=widget_id)
     # check authentication
     if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
