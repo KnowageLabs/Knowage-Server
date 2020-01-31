@@ -634,7 +634,7 @@
 			if(execProperties.parametersData.documentParameters.length > 0) {
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
 					var parameter = execProperties.parametersData.documentParameters[i];
-					driversExecutionService.resetParameter(parameter);
+					driversExecutionService.resetParameter(parameter, true);
 					//INIT VISUAL CORRELATION PARAMS
 					driversDependencyService.updateVisualDependency(parameter,execProperties);
 				}

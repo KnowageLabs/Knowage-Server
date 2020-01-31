@@ -242,8 +242,10 @@
 			if (typeof parameter.parameterValue == 'undefined'){
 				parameter.parameterValue= [];
 			}
-			if(parameter.parameterDescription == undefined ) parameter.parameterDescription ="";
-				addParameterValueDescription(parameter);
+			if(parameter.parameterDescription == undefined ) {
+				parameter.parameterDescription ="";
+			}
+			addParameterValueDescription(parameter);
 		}
 
 
