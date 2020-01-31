@@ -4,14 +4,14 @@
         <h2>Layers</h2>
         <span flex></span>
         <md-button class="" ng-click="addLayer($event)">
-			Add layer
+			{{translate.load('sbi.cockpit.map.edit.addLayer')}}
 		</md-button>
       </div>
     </md-toolbar>
 	<md-card-content>
 		<div layout="row" layout-align="center center">
 			<div class="kn-noItems" ng-if="!newModel.content.layers || newModel.content.layers.length == 0">
-				No Layers present, add one or more to continue
+				{{translate.load('sbi.cockpit.map.edit.noLayers')}}
 			</div>
 		</div>
 		
@@ -58,17 +58,17 @@
 					</td>
 					<td class="colorPickerTd" style="text-align:right;">
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
-							<md-tooltip>Metadata</md-tooltip>
+							<md-tooltip>{{translate.load('sbi.cockpit.map.edit.metadata')}}</md-tooltip>
 							<md-icon md-font-icon="fa fa-tags"></md-icon>
 						</md-button>
 						
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'style')" ng-class="{'expanded':layer.expanded=='style'}">
-							<md-tooltip>Style</md-tooltip>
+							<md-tooltip>{{translate.load('sbi.cockpit.map.edit.style')}}</md-tooltip>
 							<md-icon md-font-icon="fa fa-paint-brush"></md-icon>
 						</md-button>
 						
 						<md-button class="md-icon-button" ng-click="deleteLayer(layer)">
-							<md-tooltip>Delete</md-tooltip>
+							<md-tooltip>{{translate.load('sbi.cockpit.map.edit.delete')}}</md-tooltip>
 							<md-icon md-font-icon="fa fa-trash"></md-icon>
 						</md-button>
 					</td>

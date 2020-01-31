@@ -18,6 +18,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
+		.service('perLayerFilterService',function($q, sbiModule_restServices) {
+			/*
+			 * Cache data for per-layer filter.
+			 */
+			var cache = {};
+
+			/*
+			 * Return a promise to supply filter values.
+			 */
+			this.getFilterValues = function(ds, col) {
+				var dsName = ds.name;
+				var colName = col.name;
+				var colAlias = col.alias;
+				var colAliasToShow = col.aliasToShow;
+
+				return $q(function(resolve, reject) {
+
+					if (dsName in cache
+							&& colName in cache[dsName]
+							&& cache[dsName].length > 0) {
+						var ret = [];
+						ret = cache[dsName][colName];
+
+						resolve(ret);
+					} else {
+
+						var bodyString = '{aggregations:{"measures":[],"categories":[{"id":"' + colName + '","alias":"' + colAliasToShow + '","columnName":"' + colAlias + '","orderType":"","funct":"NONE"}],"dataset":"' + dsName + '"},parameters:{},selections:{},indexes:[]}';
+
+						sbiModule_restServices.restToRootProject();
+						sbiModule_restServices
+							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" /*+ params*/, bodyString)
+							.then(function(response) {
+
+								var ret = [];
+								var data = response.data;
+
+								var rows = data.rows;
+								for (var i in rows) {
+									var currVal = rows[i];
+									ret.push(currVal["column_1"]);
+								}
+
+								if(!cache[dsName]) {
+									cache[dsName] = {};
+								}
+								cache[dsName][colName] = ret;
+
+								resolve(ret);
+
+							},function(error) {
+								console.error(sbiModule_translate.load("sbi.glossary.load.error"));
+							});
+
+					}
+
+				});
+			}
+
+		})
 		.directive('cockpitMapWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetTemplate.html',
@@ -92,7 +151,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
-			cockpitModule_properties){
+			cockpitModule_properties,
+			perLayerFilterService){
 
 		//ol objects
 		$scope.popupContainer; 		//popup detail
@@ -419,7 +479,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		if (!layerDef) return;
 
-    		columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
     		//remove old layer
     		var previousLayer = $scope.getLayerByName(label);
@@ -1054,6 +1114,111 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							&& currBackgroundLayer.get("layerId") != backgroundLayerId)) {
 				$scope.map.removeLayer(currBackgroundLayer);
 			}
+
+		}
+
+		$scope.isFilterableCol = function(currCol) {
+			if (currCol.properties.showFilter) {
+				return true;
+			}
+			return false;
+		}
+
+		$scope.hasPerLayerFilters = function(ds) {
+			var cols = $scope.ngModel.content.columnSelectedOfDataset;
+			for (var i in cols) {
+
+				if (ds != undefined && i != ds.dsId) {
+					continue;
+				}
+
+				var currColsList = cols[i];
+				for (var j in currColsList) {
+					var currCol = currColsList[j];
+					if ($scope.isFilterableCol(currCol)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		$scope.getPerLayerFilters = function(ds) {
+			var ret = [];
+
+			var cols = $scope.ngModel.content.columnSelectedOfDataset;
+			for (var i in cols) {
+
+				if (i != ds.dsId) {
+					continue;
+				}
+
+				var currColsList = cols[i];
+				for (var j in currColsList) {
+					var currCol = currColsList[j];
+					if ($scope.isFilterableCol(currCol)) {
+						ret.push(currCol);
+					}
+				}
+			}
+			return ret;
+		}
+
+		// Cache filter values
+		$scope.perLayerFiltersValues = {};
+		//Contains selected values by the user
+		$scope.selectedFilterValues = {};
+
+		$scope.getPerLayerFiltersValues = function(layer, col) {
+
+			var layerName = layer.name;
+			var colName = col.name;
+
+			return perLayerFilterService
+				.getFilterValues(layer, col)
+				.then(function(data) {
+					if (!$scope.perLayerFiltersValues[layerName]) {
+						$scope.perLayerFiltersValues[layerName] = {};
+					}
+					$scope.perLayerFiltersValues[layerName][colName] = data;
+				});
+
+		}
+
+		$scope.filterLayerBy = function(currLayer) {
+
+			var layerName = currLayer.name;
+			var layer = $scope.getLayerByName(layerName);
+
+			var filters = layer.filterBy;
+
+			var source = layer.getSource();
+			var features = source.getFeatures();
+			features.forEach(function(feature) {
+
+				var currStyle = null;
+
+				// Filters are in AND-condition
+				//
+				// A feature is visible only when all filters
+				// are respected.
+				for (var i in filters) {
+					var currFilterVal = filters[i];
+					var propVal = feature.get(i).value;
+
+					if (currFilterVal != undefined
+							&& currFilterVal != ""
+							&& currFilterVal != propVal) {
+						currStyle = new ol.style.Style({ visibility: 'hidden' });
+						break;
+					}
+				}
+
+				feature.setStyle(currStyle);
+
+			});
+
+			source.changed();
 
 		}
 

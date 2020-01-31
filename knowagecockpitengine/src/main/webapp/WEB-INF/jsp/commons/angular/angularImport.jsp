@@ -134,9 +134,9 @@ END-PRODUCTION -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
-<!-- Open Layers 4.6.4 -->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol-debug.js"></script>
+<!-- Open Layers 6.1.1 -->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.js"></script>
 
 <link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>		
@@ -149,13 +149,6 @@ END-PRODUCTION -->
 </script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
 
-
-<!-- <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	-->
- 
-<!-- 3.x.x 
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.js"></script>	 
--->
 <!-- mathjs for quantil thematization -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
 

@@ -400,20 +400,20 @@ function mapWidgetEditControllerFunction(
   	}
 
 
-  	$scope.addToDatasets = function() {
-  		$scope.newModel.dataset = {};
-  		if ($scope.newModel.content.layers.length > 1) {
-  			// $scope.newModel.dataset.dsId = [];
-  			for (var k in $scope.newModel.content.layers){
-  				// $scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
-  				if($scope.newModel.content.layers[k].targetDefault){
-  					$scope.newModel.dataset.dsId = $scope.newModel.content.layers[k].dsId;
-  				}
-  			}
-  		} else {
-  			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
-  		}
-  	}
+	$scope.addToDatasets = function() {
+		$scope.newModel.dataset = {};
+		if ($scope.newModel.content.layers.length > 1) {
+			// $scope.newModel.dataset.dsId = [];
+			for (var k in $scope.newModel.content.layers){
+				// $scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
+				if($scope.newModel.content.layers[k].targetDefault){
+					$scope.newModel.dataset.dsId = $scope.newModel.content.layers[k].dsId;
+				}
+			}
+		} else if($scope.newModel.content.layers.length > 0) {
+			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
+		}
+	}
 
 
   	$scope.getThresholds = function(ev, measure) {

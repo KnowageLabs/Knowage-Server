@@ -60,14 +60,15 @@
 										<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0" layout-padding>
 										<thead>
 											<tr>
-												<th>Column</th>
-												<th>Alias</th>
-												<th>Type</th>
-												<th>Aggregation function</th>
-												<th style="text-align:center">Show on detail</th>
-												<th style="text-align:center">Show on map</th>
-												<th style="text-align:center">Modal column</th>
-												<th style="text-align:center">Threshold</th>
+												<th>{{translate.load('sbi.cockpit.map.edit.metadata.column')}}</th>
+												<th>{{translate.load('sbi.cockpit.map.edit.metadata.alias')}}</th>
+												<th>{{translate.load('sbi.cockpit.map.edit.metadata.type')}}</th>
+												<th>{{translate.load('sbi.cockpit.map.edit.metadata.aggregationFunction')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnDetail')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnMap')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.modalColumn')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -99,10 +100,13 @@
 													</md-input-container>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
+													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+													<md-checkbox ng-model="column.properties.showMap" aria-label="Show column on map" ng-if="column.fieldType=='MEASURE'"/>
+												</td>
+												<td style="text-align:center">
+													<md-checkbox ng-model="column.properties.showFilter" aria-label="Show column on filter" ng-if="column.fieldType=='ATTRIBUTE'"/>
 												</td>
 												<td style="display: flex;justify-content: center;">
 													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
