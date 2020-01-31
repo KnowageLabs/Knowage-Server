@@ -1,15 +1,12 @@
 <!-- control panel -->
 <md-sidenav class="md-sidenav-right mapOptionsSidenav" md-component-id="optionSidenavId" eval-attr-as-expr="mdComponentId" style="height:100%">
-	
-    <md-toolbar layout="row" class="secondaryToolbar" layout-align="start center">
-      	<h2 class="md-toolbar-tools">OPTIONS</h2>
-      	<span flex></span>
-    </md-toolbar>
+
+	<md-toolbar layout="row" class="secondaryToolbar" layout-align="start center">
+		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.options')}}</h2>
+		<span flex></span>
+	</md-toolbar>
 
 	<div ng-repeat="layer in ngModel.content.layers | filter:{isStatic:false}">
-<!-- 		<div style="font-size: 6px;"> -->
-<!-- 			{{ layer }} -->
-<!-- 		</div> -->
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
@@ -52,10 +49,43 @@
 				<md-icon md-font-icon="fa fa-chevron-up" ng-if="layer.expandedNav"></md-icon>
 			</div>
 			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expandedNav">
-	 	   		<md-radio-button ng-repeat="ind in ngModel.content.columnSelectedOfDataset[layer.dsId]" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
-		 	   		{{ind.aliasToShow}} <!-- ({{ind.properties.aggregationSelected}})  -->
-		 	   	</md-radio-button>
-	    	</md-radio-group>
+				<md-radio-button ng-repeat="ind in ngModel.content.columnSelectedOfDataset[layer.dsId]" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
+					{{ind.aliasToShow}} <!-- ({{ind.properties.aggregationSelected}})  -->
+				</md-radio-button>
+			</md-radio-group>
 		</div>
 	</div>
+	
+	<!-- Filters -->
+	<md-toolbar ng-show="hasPerLayerFilters()" layout="row" class="secondaryToolbar" layout-align="start center">
+		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.filters')}}</h2>
+		<span flex></span>
+	</md-toolbar>
+	<div ng-repeat="currLayer in ngModel.content.layers | filter:hasPerLayerFilters">
+		<div class="indicatorOptions" layout="column">
+			<div class="indicatorLabel" layout="row" layout-align="start center">
+				<span flex class="truncated"><md-tooltip md-delay="500">{{currLayer.alias}}</md-tooltip>{{currLayer.alias}}</span>
+			</div>
+		</div>
+		<div ng-repeat="currCol in getPerLayerFilters(currLayer)">
+<!-- 			<div class="md-primary" style="font-size:.7rem;" flex="33"> -->
+<!-- 				{{ currCol.aliasToShow }} -->
+<!-- 			</div> -->
+<!-- 			<div class="md-primary" style="font-size:.7rem;" flex="65"> -->
+<!-- 				<md-select ng-model="getLayerByName(currLayer.name).filterBy[currCol.name]" ng-change="filterLayerBy(currLayer)" md-on-open="getPerLayerFiltersValues(currLayer, currCol)"> -->
+<!-- 					<md-option value=""></md-option> -->
+<!-- 					<md-option ng-repeat="val in perLayerFiltersValues[currLayer.name][currCol.name]">{{ val }}</md-option> -->
+<!-- 				</md-select> -->
+<!-- 			</div> -->
+			<md-input-container style="width:100%;" style="font-size:.8rem;">
+				<label class="md-primary">{{ currCol.aliasToShow }}</label>
+				<md-select class="md-primary"ng-model="getLayerByName(currLayer.name).filterBy[currCol.name]" ng-change="filterLayerBy(currLayer)" md-on-open="getPerLayerFiltersValues(currLayer, currCol)">
+					<md-option value=""></md-option>
+					<md-option ng-repeat="val in perLayerFiltersValues[currLayer.name][currCol.name]">{{ val }}</md-option>
+				</md-select>
+			</md-input-container>
+
+		</div>
+	</div>
+
 </md-sidenav>
