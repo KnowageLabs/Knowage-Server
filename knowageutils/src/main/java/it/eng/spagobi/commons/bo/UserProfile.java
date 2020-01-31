@@ -74,7 +74,14 @@ public class UserProfile implements IEngUserProfile {
 	private Map userAttributes = null;
 	private Collection roles = null;
 	private Collection functionalities = null;
+
+	// defaultRole is the default role as it is set on metadata database
 	private String defaultRole = null;
+
+	// sessionRole is the session role, set by the user using the web GUI change role functionality: when the user profile is created from scratch, the
+	// defaultRole is set as sessionRole as well, but the user can change it, therefore defaultRole and sessionRole will differ
+	private String sessionRole = null;
+
 	private String organization = null;
 	private Boolean isSuperadmin = false;
 
@@ -87,8 +94,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * The Constructor.
 	 *
-	 * @param profile
-	 *            SpagoBIUserProfile
+	 * @param profile SpagoBIUserProfile
 	 */
 	public UserProfile(SpagoBIUserProfile profile) {
 		logger.debug("IN");
@@ -242,22 +248,21 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	/*
-	 * if a role default is assigned return it, else returns all roles
+	 * if a session role is set, it is returned, otherwise all roles are returned
 	 */
 	public Collection getRolesForUse() throws EMFInternalError {
 		logger.debug("IN");
 		Collection toReturn = null;
-		logger.debug("look if default role is selected");
-		if (defaultRole != null) {
-			logger.debug("default role selected is " + defaultRole);
+		logger.debug("Looking if session role is selected");
+		String sessionRole = this.getSessionRole();
+		if (sessionRole != null) {
+			logger.debug("Session role selected is " + sessionRole);
 			toReturn = new ArrayList<String>();
-			toReturn.add(defaultRole);
+			toReturn.add(sessionRole);
 		} else {
-			logger.debug("default role not selected");
-
+			logger.debug("Session role not selected");
 			toReturn = this.roles;
 		}
-
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -378,8 +383,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the functionalities.
 	 *
-	 * @param functs
-	 *            the new functionalities
+	 * @param functs the new functionalities
 	 */
 	public void setFunctionalities(Collection functs) {
 		this.functionalities = functs;
@@ -388,8 +392,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the attributes.
 	 *
-	 * @param attrs
-	 *            the new attributes
+	 * @param attrs the new attributes
 	 */
 	public void setAttributes(Map attrs) {
 		this.userAttributes = attrs;
@@ -413,8 +416,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Sets the roles.
 	 *
-	 * @param rols
-	 *            the new roles
+	 * @param rols the new roles
 	 */
 	public void setRoles(Collection rols) {
 		this.roles = rols;
@@ -432,6 +434,16 @@ public class UserProfile implements IEngUserProfile {
 		// putting default role as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_SESSION_ROLES.getName(),
 				this.defaultRole != null ? "'" + this.defaultRole + "'" : concatenateRolesForINClause());
+	}
+
+	public String getSessionRole() {
+		return sessionRole;
+	}
+
+	public void setSessionRole(String sessionRole) {
+		logger.debug("IN " + sessionRole);
+		this.sessionRole = sessionRole;
+		logger.debug("OUT");
 	}
 
 	public Map getUserAttributes() {
@@ -466,8 +478,7 @@ public class UserProfile implements IEngUserProfile {
 	 * To be used by external engines ONLY. The user unique identifier must be a JWT token expiring in SCHEDULER_JWT_TOKEN_EXPIRE_HOURS hours containing a claim
 	 * SsoServiceInterface.USER_ID: the value of this claim must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name.
 	 *
-	 * @param userUniqueIdentifier
-	 *            The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
+	 * @param userUniqueIdentifier The JWT token containing a claim SsoServiceInterface.USER_ID with value SCHEDULER_USER_ID_PREFIX + tenant name
 	 * @return the user profile for the scheduler
 	 */
 	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {

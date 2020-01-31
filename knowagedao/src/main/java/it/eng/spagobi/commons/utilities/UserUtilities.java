@@ -225,13 +225,8 @@ public class UserUtilities {
 					checkTenant(user);
 
 					user.setFunctions(readFunctionality(user));
+
 					profile = new UserProfile(user);
-
-					String defaultRole = getDefaultRole(user);
-
-					if (defaultRole != null) {
-						createProfileWithDefaultRole(profile, user, defaultRole);
-					}
 
 				}
 
@@ -259,32 +254,66 @@ public class UserUtilities {
 
 	}
 
-	private static void createProfileWithDefaultRole(UserProfile profile, SpagoBIUserProfile user, String defaultRole) {
-		profile.setDefaultRole(defaultRole);
-		logger.debug("Default role set with " + defaultRole);
-
-		SpagoBIUserProfile clone = UserUtilities.clone(user);
-		clone.setRoles(new String[] { defaultRole });
-		logger.debug("START - Default role setting functionalities");
-		String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
-		Collection toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
-		profile.setFunctionalities(toReturn);
-		logger.debug("END - Default role setting functionalities");
+	public static String getDefaultRole(UserProfile userProfile) {
+		logger.debug("IN");
+		String defaultRole = null;
+		try {
+			SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userProfile.getUserId().toString());
+			/* If you use an external profiling service, sbiUserDB will be null. */
+			if (sbiUserDB != null) {
+				Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
+				logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
+				if (defaultRoleId != null) {
+					defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
+					logger.debug("Found defaultRole: " + defaultRole);
+				}
+			}
+		} catch (EMFUserError error) {
+			throw new SpagoBIRuntimeException("Error while getting default role", error);
+		}
+		logger.debug("OUT: returning " + defaultRole);
+		return defaultRole;
 	}
 
-	private static String getDefaultRole(SpagoBIUserProfile user) throws EMFUserError {
-		String defaultRole = null;
-		SbiUser sbiUserDB = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
-		/* If you use an external profiling service, sbiUserDB will be null. */
-		if (sbiUserDB != null) {
-			Integer defaultRoleId = sbiUserDB.getDefaultRoleId();
-			logger.debug("defaultRoleId: " + defaultRoleId == null ? "null" : defaultRoleId);
-			if (defaultRoleId != null) {
-				defaultRole = DAOFactory.getRoleDAO().loadByID(defaultRoleId).getName();
-				logger.debug("Found defaultRole: " + defaultRole);
-			}
+	public static UserProfile getDefaultUserProfile(UserProfile completeProfile, String defaultRole) {
+		UserProfile toReturn;
+		logger.debug("User [" + completeProfile.getUserId() + "] has default role [" + defaultRole + "].");
+		SpagoBIUserProfile clone = UserUtilities.clone(completeProfile.getSpagoBIUserProfile());
+		clone.setRoles(new String[] { defaultRole });
+		// recalculating available functionalities for the user considering only the default role
+		clone.setFunctions(UserUtilities.readFunctionality(clone));
+		logger.debug("Re-creating user profile object for user  [" + completeProfile.getUserId() + "] considering its default role [" + defaultRole + "]....");
+		toReturn = new UserProfile(clone);
+		// restoring initial roles, otherwise the user will not be able to switch between them
+		try {
+			toReturn.setRoles(completeProfile.getRoles());
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Error while getting user roles", e);
 		}
-		return defaultRole;
+		// default role is NOT supposed to change
+		toReturn.setDefaultRole(defaultRole);
+		// setting session role as initial state, it may change
+		toReturn.setSessionRole(defaultRole);
+		return toReturn;
+	}
+
+	public static UserProfile getDefaultUserProfile(UserProfile completeProfile) {
+		logger.debug("IN");
+		UserProfile userProfile = null;
+
+		String defaultRole = UserUtilities.getDefaultRole(completeProfile);
+		if (defaultRole != null) {
+			logger.debug("Detected default role for user [" + completeProfile.getUserId() + "], re-creating user profile considering only that role");
+			// we get another UserProfile instance detach it from cache, otherwise we can have errors in case cache is expired (see KNOWAGE-4795)
+			userProfile = getDefaultUserProfile(completeProfile, defaultRole);
+		} else {
+			logger.debug("No default role set for user [" + completeProfile.getUserId() + "]");
+			// we clone the object to detach it from cache, otherwise we can have errors in case cache is expired (see KNOWAGE-4795)
+			SpagoBIUserProfile clone = UserUtilities.clone(completeProfile.getSpagoBIUserProfile());
+			userProfile = new UserProfile(clone);
+		}
+		logger.debug("OUT");
+		return userProfile;
 	}
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
@@ -609,7 +638,6 @@ public class UserUtilities {
 		functionalities.addAll(licenseFunct);
 		String[] a = new String[] { "" };
 		logger.debug("OUT");
-
 		return functionalities.toArray(a);
 	}
 
@@ -1081,8 +1109,18 @@ public class UserUtilities {
 	 * @return a clone of the input SpagoBIUserProfile object
 	 */
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {
-		SpagoBIUserProfile clone = new SpagoBIUserProfile((HashMap) profile.getAttributes().clone(), profile.getFunctions().clone(), profile.getIsSuperadmin(),
-				profile.getOrganization(), profile.getRoles().clone(), profile.getUniqueIdentifier(), profile.getUserId(), profile.getUserName());
+		// @formatter:off
+		SpagoBIUserProfile clone = new SpagoBIUserProfile(
+			profile.getAttributes() != null ? (HashMap) profile.getAttributes().clone() : null,
+			profile.getFunctions() != null ? profile.getFunctions().clone() : null,
+			profile.getIsSuperadmin(),
+			profile.getOrganization(),
+			profile.getRoles() != null ? profile.getRoles().clone() : null,
+			profile.getUniqueIdentifier(),
+			profile.getUserId(),
+			profile.getUserName()
+		);
+		// @formatter:on
 		return clone;
 	}
 

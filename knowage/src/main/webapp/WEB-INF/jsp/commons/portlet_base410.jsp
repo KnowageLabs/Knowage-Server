@@ -171,7 +171,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String userUniqueIdentifier="";
 	String userId="";
 	String userName="";
-	String defaultRole="";
+	String sessionRole="";
 	List userRoles = new ArrayList();
 	 AccessibilityPreferences ap = null;
 	 
@@ -186,7 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
+		sessionRole = ((UserProfile)userProfile).getSessionRole();		
 		
 	    ap =  UserUtilities.readAccessibilityPreferencesByUser((UserProfile)userProfile);
 	    
@@ -327,7 +327,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Sbi.user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
     Sbi.user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	Sbi.user.roles = new Array();
-	Sbi.user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	Sbi.user.sessionRole = '<%= sessionRole != null ? StringEscapeUtils.escapeJavaScript(sessionRole)  : ""%>';
 	
 	<%
 	StringBuffer buffer = new StringBuffer("[");
