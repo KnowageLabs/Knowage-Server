@@ -175,14 +175,14 @@
                </div>
                <md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
 		<!-- multiple -->
-			<md-select ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
+			<md-select ng-required="::parameter.mandatory" ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
 		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>
 			</md-select>
 			<!-- single -->
-			<md-select ng-required="!driversForm.$pristine" ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
+			<md-select ng-required="::parameter.mandatory" ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
 		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
