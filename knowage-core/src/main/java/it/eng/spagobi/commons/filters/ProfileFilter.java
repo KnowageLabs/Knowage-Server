@@ -41,12 +41,12 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -134,7 +134,7 @@ public class ProfileFilter implements Filter {
 						if (requestIsForHomePage(httpRequest)) {
 							// in case user has a default role, we get his default user profile object only in case the request is for the home page, otherwise
 							// we can have inconsistencies (example: request is for execution of a document not executable by the default role, but another one)
-							profile = UserUtilities.getDefaultUserProfile((UserProfile) profile);
+							profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 						}
 
 						// put user profile into session

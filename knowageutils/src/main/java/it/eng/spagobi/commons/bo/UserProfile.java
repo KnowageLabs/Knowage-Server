@@ -75,13 +75,6 @@ public class UserProfile implements IEngUserProfile {
 	private Collection roles = null;
 	private Collection functionalities = null;
 
-	// defaultRole is the default role as it is set on metadata database
-	private String defaultRole = null;
-
-	// sessionRole is the session role, set by the user using the web GUI change role functionality: when the user profile is created from scratch, the
-	// defaultRole is set as sessionRole as well, but the user can change it, therefore defaultRole and sessionRole will differ
-	private String sessionRole = null;
-
 	private String organization = null;
 	private Boolean isSuperadmin = false;
 
@@ -245,21 +238,11 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	/*
-	 * if a session role is set, it is returned, otherwise all roles are returned
+	 * All roles are returned
 	 */
 	public Collection getRolesForUse() throws EMFInternalError {
 		logger.debug("IN");
-		Collection toReturn = null;
-		logger.debug("Looking if session role is selected");
-		String sessionRole = this.getSessionRole();
-		if (sessionRole != null) {
-			logger.debug("Session role selected is " + sessionRole);
-			toReturn = new ArrayList<String>();
-			toReturn.add(sessionRole);
-		} else {
-			logger.debug("Session role not selected");
-			toReturn = this.roles;
-		}
+		Collection toReturn = this.roles;
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -419,26 +402,6 @@ public class UserProfile implements IEngUserProfile {
 		this.roles = rols;
 	}
 
-	public String getDefaultRole() {
-		return defaultRole;
-	}
-
-	public void setDefaultRole(String defaultRole) {
-		logger.debug("IN " + defaultRole);
-		this.defaultRole = defaultRole;
-		logger.debug("OUT");
-	}
-
-	public String getSessionRole() {
-		return sessionRole;
-	}
-
-	public void setSessionRole(String sessionRole) {
-		logger.debug("IN " + sessionRole);
-		this.sessionRole = sessionRole;
-		logger.debug("OUT");
-	}
-
 	public Map getUserAttributes() {
 		return userAttributes;
 	}
@@ -510,8 +473,7 @@ public class UserProfile implements IEngUserProfile {
 	@Override
 	public String toString() {
 		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName=" + userName + ", userAttributes="
-				+ userAttributes + ", roles=" + roles + ", defaultRole=" + defaultRole + ", organization=" + organization + ", isSuperadmin=" + isSuperadmin
-				+ "]";
+				+ userAttributes + ", roles=" + roles + ", organization=" + organization + ", isSuperadmin=" + isSuperadmin + "]";
 	}
 
 }

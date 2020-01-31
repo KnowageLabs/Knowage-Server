@@ -25,6 +25,8 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.SessionUserProfile;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -75,10 +77,18 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 			}
 
 			// set this role as session one, or clear session role if not present
-			String previousSessionRole = ((UserProfile) profile).getSessionRole();
+			if (!(profile instanceof SessionUserProfile)) {
+				// in case the user profile is not a SessionUserProfile, we create it and replace the previous profile in session
+				logger.debug("Creating an instance of SessionUserProfile...");
+				profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
+				logger.debug("Storing the SessionUserProfile in session in place of the previous profile object");
+				storeProfileInSession(profile);
+			}
+			// at this moment, the profile is and instance of SessionUserProfile
+			String previousSessionRole = ((SessionUserProfile) profile).getSessionRole();
 			logger.debug("previous session role " + previousSessionRole);
 			logger.debug("new session role " + sessionRole);
-			((UserProfile) profile).setSessionRole(sessionRole);
+			((SessionUserProfile) profile).setSessionRole(sessionRole);
 			logger.debug("session role set! ");
 
 			// now I must refresh userProfile functionalities
@@ -113,6 +123,13 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 
+	}
+
+	private void storeProfileInSession(IEngUserProfile userProfile) {
+		logger.debug("IN");
+		getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		getHttpRequest().getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		logger.debug("OUT");
 	}
 
 	private Collection getFunctionalitiesForSessionRole(IEngUserProfile engUserProfile, String sessionRole) {

@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" session="true"
 	import="it.eng.spago.base.*,
@@ -26,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 The following directive catches exceptions thrown by jsps, must be commented in development environment
 --%>
 <%@page errorPage="/WEB-INF/jsp/commons/genericError.jsp"%>
+
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
 <%@page
@@ -49,6 +51,7 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
+<%@page import="it.eng.spagobi.commons.bo.SessionUserProfile"%>
 
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
@@ -162,7 +165,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		sessionRole = ((UserProfile)userProfile).getSessionRole();
+		sessionRole = userProfile instanceof SessionUserProfile ? ((SessionUserProfile)userProfile).getSessionRole() : null;
 		isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
 	}
 	

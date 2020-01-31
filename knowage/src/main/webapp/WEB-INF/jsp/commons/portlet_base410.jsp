@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
-
+<%@page import="it.eng.spagobi.commons.bo.SessionUserProfile"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -186,7 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		sessionRole = ((UserProfile)userProfile).getSessionRole();		
+		sessionRole = userProfile instanceof SessionUserProfile ? ((SessionUserProfile)userProfile).getSessionRole() : null;
 		
 	    ap =  UserUtilities.readAccessibilityPreferencesByUser((UserProfile)userProfile);
 	    

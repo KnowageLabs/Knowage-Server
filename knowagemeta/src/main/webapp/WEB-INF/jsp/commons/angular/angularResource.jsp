@@ -52,7 +52,6 @@
 	String userUniqueIdentifier="";
 	String userId="";
 	String userName="";
-	String defaultRole="";
 	List userRoles = new ArrayList();
 	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
 	if (userProfile!=null){
@@ -60,7 +59,6 @@
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
 		
 	}
 	

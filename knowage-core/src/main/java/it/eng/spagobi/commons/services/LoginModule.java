@@ -47,6 +47,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -347,7 +348,7 @@ public class LoginModule extends AbstractHttpModule {
 			response.setAttribute("USER_HAS_CHANGED", userHasChanged);
 
 			// in case user has a default role, we get his default user profile object
-			profile = UserUtilities.getDefaultUserProfile((UserProfile) profile);
+			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
 			storeProfileInSession((UserProfile) profile, permSess, httpSession);
 

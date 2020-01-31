@@ -708,7 +708,6 @@ public class LovResource extends AbstractSpagoBIResource {
 		// copy all the roles, functionalities of the original profile
 		userProfile.setFunctionalities(getUserProfile().getFunctionalities());
 		userProfile.setRoles(getUserProfile().getRolesForUse());
-		userProfile.setDefaultRole(getUserProfile().getDefaultRole());
 
 		// copy attributes and add the missing ones
 		Map attributes = new HashMap();
