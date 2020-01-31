@@ -126,6 +126,7 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
 
 .md-button.md-knowage-theme.md-warn.md-raised:not([disabled]) {
   background-color: $fabPrimaryColor;
+  color: $lightTextColor;
   &:hover {
     background-color: lighten($fabPrimaryColor,10%);
   }

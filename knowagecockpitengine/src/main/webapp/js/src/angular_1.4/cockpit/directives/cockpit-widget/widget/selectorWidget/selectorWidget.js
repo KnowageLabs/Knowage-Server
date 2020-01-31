@@ -46,6 +46,7 @@ angular.module('cockpitModule')
 			$mdDialog,
 			$mdToast,
 			$timeout,
+			$interval,
 			$mdPanel,
 			$q,
 			$filter,
@@ -85,19 +86,28 @@ angular.module('cockpitModule')
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
 
+		$scope.isSelectedOrder = function(item){
+			var tempItem = item;
+			if(item.column_1) tempItem = item.column_1;
+			if($scope.isSelected(tempItem)) return 1;
+			if(!$scope.isDisabled(tempItem)) return 2;
+			return 3;
+		}
+
 		$scope.mapToColumn = function(x){
 			return x.column_1;
 		}
 
-		$scope.selectElement = function(e){
+		$scope.selectElement = function(e,isBulk){
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
-			var tempValue;
 			if(e.target.attributes.value && e.target.attributes.value.value){
-				$scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
+				else $scope.prepareParameter(getValueFromString(e.target.attributes.value.value));
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
-                $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-            }
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
+			}
 		}
 
 		var getValueFromString = function(s){
@@ -129,7 +139,9 @@ angular.module('cockpitModule')
 		$scope.ngModel.activeValues = null;
 
 		$scope.selectedValues = [];
+		$scope.tempSelectedValues = [];
 		$scope.oldSelectedValues = null;
+		$scope.showInfoBar = false;
 
 		$scope.searchParamText = "";
 		$scope.selectedTab = {'tab' : 0};
@@ -231,10 +243,12 @@ angular.module('cockpitModule')
 					$scope.ngModel.activeValues = tempActs;
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				},function(error){
-				    console.error("Unable to load active values");
-				    $scope.hideWidgetSpinner();
-				    $scope.showSelection = true;
+					console.error("Unable to load active values");
+					$scope.hideWidgetSpinner();
+					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				})
 			}else{
 				if(!cockpitModule_widgetSelection.isLastTimestampedSelection($scope.ngModel.dataset.label, $scope.ngModel.content.selectedColumn.name))$scope.ngModel.activeValues = null;
@@ -242,6 +256,7 @@ angular.module('cockpitModule')
 				$timeout(function(){
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
+					$scope.waitingForSelection = false;
 				}, 0);
 			}
 
@@ -259,89 +274,118 @@ angular.module('cockpitModule')
             return check;
           };
 
-        $scope.openSelectDialog = function(ev, column){
-        	$mdDialog.show({
-        		controller: MultiSelectDialogController,
-        		fullscreen: $scope.mobilecheck,
-        		templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
-        		parent: angular.element(document.body),
-        		targetEvent: ev,
-        		clickOutsideToClose:true,
-        		locals: {
-        			selectables:$scope.ngModel.activeValues,
-        			itemsList:$scope.datasetRecords.rows,
-        			activeSelections: $scope.selectedValues,
-        			targetModel: $scope.ngModel.content,
-        			settings:$scope.ngModel.settings,
-        			ds: $scope.ngModel.dataset.label,
-        			title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
-        		}
-	  		}).then(function(selectedFields) {
-	  			$scope.toggleParameter(selectedFields);
-	  			},function(error){});
-        	}
+		$scope.openSelectDialog = function(ev, column){
+			$mdDialog.show({
+				controller: MultiSelectDialogController,
+				fullscreen: $scope.mobilecheck,
+				templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose:false,
+				bindToController: true,
+				locals: {
+					itemsList:$scope.datasetRecords.rows,
+					selectables:$scope.ngModel.activeValues,
+					activeSelections: $scope.selectedValues,
+					targetModel: $scope.ngModel.content,
+					settings:$scope.ngModel.settings,
+					callback:$scope.toggleParameter,
+					updateSelectables: $scope.updateSelectables,
+					ds: $scope.ngModel.dataset.label,
+					title:($scope.ngModel.style.title && $scope.ngModel.style.title.label) ? $scope.ngModel.style.title.label : $scope.ngModel.content.name
+				}
+			}).then(function(selectedFields) {
+				$scope.toggleParameter(selectedFields);
+			},function(pendingSelection){
+				if (pendingSelection) {
+					$scope.toggleParameter(pendingSelection);
+				}
+			});
+		}
 
-    	function MultiSelectDialogController($rootScope, scope, $mdDialog, sbiModule_translate, targetModel, selectables, activeSelections, itemsList, settings, title, ds) {
-    		scope.settings = settings;
-    		scope.title = title;
-    		scope.translate = sbiModule_translate;
-        	scope.selectables = [];
-        	scope.allSelected = false;
-        	if(settings.hideDisabled){
-				if(selectables){
-					for(var k in selectables){
-						scope.selectables.push({name: selectables[k], selected: (activeSelections && activeSelections.indexOf(selectables[k]) != -1) ? true : false});
-					}
-				}else{
-					for(var j in itemsList){
-						if(activeSelections.length > 0){
-							if(activeSelections.indexOf(itemsList[j].column_1) != -1){
-								scope.selectables.push({name: itemsList[j].column_1, selected: true});
+		function MultiSelectDialogController($rootScope, scope, $mdDialog, $filter, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
+			scope.activeSelections = activeSelections;
+			scope.settings = settings;
+			scope.title = title;
+			scope.translate = sbiModule_translate;
+			scope.allSelected = false;
+
+			scope.isDisabled = function(p){
+				if ($scope.ngModel.settings.enableAll) {
+					return false;
+				}
+				return selectables && selectables.indexOf(p.name) == -1;
+			}
+
+			scope.checkActiveSelections = function() {
+				scope.selectables = [];
+				if(settings.hideDisabled){
+
+					if(selectables){
+						for(var k in selectables){
+							scope.selectables.push({name: selectables[k], selected: (activeSelections && activeSelections.indexOf(selectables[k]) != -1) ? true : false});
+						}
+					}else{
+						for(var j in itemsList){
+							if(activeSelections.length > 0){
+								if(activeSelections.indexOf(itemsList[j].column_1) != -1){
+									scope.selectables.push({name: itemsList[j].column_1, selected: true});
+								}else {
+									scope.selectables.push({name: itemsList[j].column_1, selected: false});
+								}
 							}else {
 								scope.selectables.push({name: itemsList[j].column_1, selected: false});
 							}
-						}else {
-							scope.selectables.push({name: itemsList[j].column_1, selected: false});
-						}
 
+						}
+					}
+				}else{
+					for(var j in itemsList){
+						scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
 					}
 				}
-			}else{
-				for(var j in itemsList){
-					scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
+				scope.selectables = $filter('orderBy')(scope.selectables, function(item){
+					if(item.selected) return 1;
+					if(!scope.isDisabled(item)) return 2;
+					return 3;
+				})
+				scope.loading = false;
+			}
+			scope.checkActiveSelections();
+			scope.targetColumn = targetModel.selectedColumn;
+			scope.close = function() {
+				scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
+					if(element.selected) result.push(element.name);
+					return result;
+				}, []);
+				$mdDialog.hide(scope.selectablesToSend);
+			};
+			scope.cancel = function(){
+				$mdDialog.cancel(scope.tempActiveSelections);
+			}
+
+			scope.editSelection = function() {
+				scope.loading = true;
+				scope.tempSelectables = selectables;
+				scope.tempActiveSelections = activeSelections;
+				for(var s in scope.availableItems){
+					scope.availableItems[s].selected = false;
+				}
+				callback([],true);
+				updateSelectables().then(function(newSelectables){
+					selectables = newSelectables;
+					scope.checkActiveSelections();
+				});
+			}
+
+			scope.selectAll = function(){
+				scope.allSelected = !scope.allSelected;
+				for(var s in scope.availableItems){
+					if(!scope.isDisabled(scope.availableItems[s].name)) scope.availableItems[s].selected = scope.allSelected;
 				}
 			}
 
-        	scope.targetColumn = targetModel.selectedColumn;
-        	scope.close = function() {
-	        	scope.selectablesToSend = scope.selectables.reduce(function(result, element) {
-	        		if(element.selected) result.push(element.name);
-	        		return result;
-	        	}, []);
-	        	$mdDialog.hide(scope.selectablesToSend);
-        	 };
-        	 scope.cancel = function(){
-        		 $mdDialog.cancel();
-        	 }
-
-        	 scope.isDisabled = function(p){
-    			if ($scope.ngModel.settings.enableAll) {
-        				return false;
-    			}
-        		 if (cockpitModule_widgetSelection.isLastTimestampedSelection(ds,scope.targetColumn.name)) {
- 					return false;
- 				}
-
-        		 return selectables && selectables.indexOf(p) == -1;
-        	 }
-
-            scope.selectAll = function(){
-                  scope.allSelected = !scope.allSelected;
-                  for(var s in scope.availableItems){
-                       if(!scope.isDisabled(scope.availableItems[s].name)) scope.availableItems[s].selected = scope.allSelected;
-                  }
-            }
-    	}
+		}
 
 
 
@@ -405,6 +449,7 @@ angular.module('cockpitModule')
 			if(values){
 				if(!angular.equals($scope.selectedValues, values)){
 					$scope.selectedValues = angular.copy(values);
+					$scope.tempSelectedValues = angular.copy($scope.selectedValues);
 				}
 			}else{
 			    $scope.selectedValues = [];
@@ -415,7 +460,39 @@ angular.module('cockpitModule')
 			$scope.searchParamText = "";
 		};
 
-		$scope.toggleParameter = function(parVal) {
+		$scope.updateSelectables = function(){
+			return $q(function(resolve, reject) {
+				var pollingInterval = $interval(function(){
+					if(!$scope.waitingForSelection) {
+						$interval.cancel(pollingInterval);
+						resolve($scope.ngModel.activeValues);
+					}
+				},300)
+			})
+		}
+
+		$scope.cancelBulkSelection = function(){
+			$scope.tempSelectedValues = [];
+			$scope.showInfoBar = false;
+		}
+
+		$scope.prepareParameter = function(parVal){
+			if ($scope.tempSelectedValues.indexOf(parVal) > -1) {
+				$scope.tempSelectedValues.splice($scope.tempSelectedValues.indexOf(parVal), 1);
+			} else {
+				$scope.tempSelectedValues.push(parVal);
+			}
+			$scope.showInfoBar = ($scope.tempSelectedValues.length == 0) ? false : true;
+		}
+
+		$scope.bulkSelect = function(){
+			$scope.toggleParameter($scope.tempSelectedValues);
+			$scope.cancelBulkSelection();
+		}
+
+		$scope.toggleParameter = function(parVal,setLoader) {
+
+			if(setLoader) $scope.waitingForSelection = setLoader;
 			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue!='multiValue'){
 				if(angular.equals(parVal, $scope.oldSelectedValues)){
 					return;
