@@ -366,6 +366,8 @@
 												//	console.log('setting default value ', response.data.result.root[0].value);
 													execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 															[response.data.result.root[0].value]	: response.data.result.root[0].value;
+													execProperties.parametersData.documentParameters[z].parameterDescription = execProperties.parametersData.documentParameters[z].multivalue ?
+																	[response.data.result.root[0].description]	: response.data.result.root[0].description;
 												}else{
 													//don't back from viewpoint and default value
 													if(execProperties.initResetFunctionLovDependency.status){
