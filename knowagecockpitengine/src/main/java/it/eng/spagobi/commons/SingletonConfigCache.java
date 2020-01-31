@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,34 +33,35 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SingletonConfigCache implements ISingletonConfigCache {
-
-	private static transient Logger logger = Logger.getLogger(SingletonConfigCache.class);
+public class SingletonConfigCache implements ISingletonConfigCache{
+	
+	private static Logger logger = Logger.getLogger(SingletonConfigCache.class);
 	private final HashMap<String, String> cache = new HashMap<String, String>();
-
+	
 	public SingletonConfigCache() {
 		logger.debug("IN");
-
-		IConfigDAO dao = null;
+		
+		IConfigDAO dao = null;  
 		try {
 			dao = DAOFactory.getSbiConfigDAO();
 			List<Config> allConfig = dao.loadAllConfigParameters();
-			if (allConfig.size() == 0)
+			if (allConfig.isEmpty()) {
 				logger.error("The table sbi_config is EMPTY");
+			}
 			for (Config config : allConfig) {
 				cache.put(config.getLabel(), config.getValueCheck());
-				logger.info("Add: " + config.getLabel() + " / " + config.getValueCheck());
+				logger.info("Add: " + config.getLabel() +" / " + config.getValueCheck());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+		} catch (Throwable e) {
 			logger.error("Impossible to load configuration for report engine", e);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
-
+	
 	@Override
-	public String get(String key) {
+	public String get(String key){
 		if (cache.get(key) == null) {
 			logger.info("The property '" + key + "' doens't have any value assigned, check SBI_CONFIG table");
 			return null;
