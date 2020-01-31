@@ -28,10 +28,8 @@ def findFreePort():
     while count < constants.BOKEH_PORTS_RANGE[1] - constants.BOKEH_PORTS_RANGE[0]:
         count += 1
         p = random.randint(constants.BOKEH_PORTS_RANGE[0], constants.BOKEH_PORTS_RANGE[1])
-        print("Trying: ", p)
         try:
             s.bind(('', p))  #bind to a free port provided by the host
-            print("Found: ", s.getsockname()[1])
             return s.getsockname()[1]  #return the port number assigned
         except:
             pass
