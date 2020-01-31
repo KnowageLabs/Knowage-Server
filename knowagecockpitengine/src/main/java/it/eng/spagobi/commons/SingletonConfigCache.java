@@ -60,13 +60,25 @@ public class SingletonConfigCache implements ISingletonConfigCache{
 		}
 	}
 	
+	/**
+	 * TODO : Workaround for KNOWAGE-4784 
+	 */
 	@Override
-	public String get(String key){
-		if (cache.get(key) == null) {
+	public String get(String key) {
+		String ret = null;
+		try {
+			IConfigDAO dao = null;  
+			dao = DAOFactory.getSbiConfigDAO();
+			ret = dao.loadConfigParametersByLabel(key).getValueCheck();
+		} catch (Exception e) {
+		}
+			
+		if (/* cache.get(key) */ ret == null) {
 			logger.info("The property '" + key + "' doens't have any value assigned, check SBI_CONFIG table");
 			return null;
 		}
-		logger.debug("GET :" + key + "=" + cache.get(key));
-		return cache.get(key);
+		logger.debug("GET :" + key + "=" + /*cache.get(key)*/ ret);
+		return /*cache.get(key)*/ ret;
 	}
+
 }
