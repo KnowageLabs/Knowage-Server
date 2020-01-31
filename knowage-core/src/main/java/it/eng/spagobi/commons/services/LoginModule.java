@@ -83,8 +83,7 @@ public class LoginModule extends AbstractHttpModule {
 	/** The format date to manage the data validation. */
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
-	IEngUserProfile profile = null;
-	EMFErrorHandler errorHandler = null;
+	public static final String PAGE_NAME = "LoginPage";
 
 	/**
 	 * Service.
@@ -99,6 +98,8 @@ public class LoginModule extends AbstractHttpModule {
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
+
+		IEngUserProfile profile = null;
 
 		RequestContainer reqCont = RequestContainer.getRequestContainer();
 		SessionContainer sessCont = reqCont.getSessionContainer();
@@ -121,7 +122,7 @@ public class LoginModule extends AbstractHttpModule {
 			isPublicDoc = ObjectsAccessVerifier.isObjectPublic(obj);
 		}
 
-		errorHandler = getErrorHandler();
+		EMFErrorHandler errorHandler = getErrorHandler();
 
 		UserProfile previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
@@ -344,8 +345,11 @@ public class LoginModule extends AbstractHttpModule {
 				userHasChanged = Boolean.FALSE;
 			}
 			response.setAttribute("USER_HAS_CHANGED", userHasChanged);
+
+			// in case user has a default role, we get his default user profile object
+			profile = UserUtilities.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+			storeProfileInSession((UserProfile) profile, permSess, httpSession);
 
 		} catch (Exception e) {
 			logger.error("Reading user information... ERROR");
@@ -392,6 +396,13 @@ public class LoginModule extends AbstractHttpModule {
 			TenantManager.unset();
 		}
 
+		logger.debug("OUT");
+	}
+
+	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
+		logger.debug("IN");
+		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		logger.debug("OUT");
 	}
 

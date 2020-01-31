@@ -173,7 +173,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 			$scope.roleSelection = function roleSelection(){
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
 					$scope.toggleMenu();
-					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_DEFAULT_ROLE_ACTION";
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_SESSION_ROLE_ACTION";
 					var parentEl = angular.element(document.body);
 					$mdDialog.show({
 						parent: parentEl,
@@ -194,7 +194,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 		        	        scope.title = title;
 		        	        scope.okMessage = okMessage;
 		        	        scope.roles = Sbi.user.roles;
-		        	        scope.defaultRole = Sbi.user.defaultRole;
+		        	        scope.sessionRole = Sbi.user.sessionRole;
 		        	        scope.serviceUrl = serviceUrl;
 		        	        scope.closeDialog = function() {
 		        	          $mdDialog.hide();
@@ -202,7 +202,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 		        	        scope.save = function() {
 		        	        	$http.get(scope.serviceUrl,{
 		        	        	    params: {
-		        	        	    		SELECTED_ROLE: scope.defaultRole,
+		        	        	    		SELECTED_ROLE: scope.sessionRole,
 		        	        	    	}
 		        	        	}).success(function(data){
 		        	        		console.log("default role set correcty");

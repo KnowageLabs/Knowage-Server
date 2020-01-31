@@ -42,9 +42,11 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -121,16 +123,22 @@ public class ProfileFilter implements Filter {
 							return;
 						}
 					} else {
-						// case of installation as portlet application and/or
-						// with SSO
+						// case of installation as portlet application and/or with SSO
 						userId = getUserIdWithSSO(httpRequest);
 					}
 
 					logger.debug("User id = " + userId);
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
-						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-						session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+
+						if (requestIsForHomePage(httpRequest)) {
+							// in case user has a default role, we get his default user profile object only in case the request is for the home page, otherwise
+							// we can have inconsistencies (example: request is for execution of a document not executable by the default role, but another one)
+							profile = UserUtilities.getDefaultUserProfile((UserProfile) profile);
+						}
+
+						// put user profile into session
+						storeProfileInSession((UserProfile) profile, permanentSession, session);
 					} else {
 						logger.debug("User identifier not found.");
 					}
@@ -163,6 +171,18 @@ public class ProfileFilter implements Filter {
 			TenantManager.unset();
 			UserProfileManager.unset();
 		}
+	}
+
+	private boolean requestIsForHomePage(HttpServletRequest request) {
+		// returns true in case request has PAGE=LoginPage parameter, false otherwise
+		return request.getParameter(Constants.PAGE) != null && request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
+	}
+
+	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
+		logger.debug("IN");
+		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		logger.debug("OUT");
 	}
 
 	private static String getSessionFileName() throws NamingException {

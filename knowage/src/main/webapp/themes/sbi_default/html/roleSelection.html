@@ -7,7 +7,7 @@
     </md-toolbar>
   <md-dialog-content layout-padding layout-margin>
         <md-input-container class="md-block">
-          <md-select ng-model="defaultRole">
+          <md-select ng-model="sessionRole">
             <md-option value=""><em>{{noDefaultRole}}</em></md-option>
             <md-option ng-repeat="role in roles" ng-value="role">
               {{role}}

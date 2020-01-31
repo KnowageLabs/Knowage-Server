@@ -103,15 +103,6 @@ public class PublicProfile {
 			profile.setUniqueIdentifier(jwtToken);
 			profile.setUserId(userId);
 
-			// Locale locale = GeneralUtilities.getDefaultLocale();
-			// String name = null;
-			// if (locale != null) {
-			// IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-			// name = msgBuilder.getMessage(PUBLIC_USER_NAME);
-			// } else {
-			// name = PUBLIC_USER_NAME;
-			// }
-
 			profile.setUserName("Anonymous user");
 			profile.setOrganization(organization);
 			profile.setIsSuperadmin(false);

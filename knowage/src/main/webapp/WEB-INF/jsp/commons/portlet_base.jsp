@@ -153,7 +153,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String userUniqueIdentifier="";
 	String userId="";
 	String userName="";
-	String defaultRole="";
+	String sessionRole="";
 	boolean isTechnicalUser=false;
 	List userRoles = new ArrayList();;
 	
@@ -162,7 +162,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		defaultRole = ((UserProfile)userProfile).getDefaultRole();
+		sessionRole = ((UserProfile)userProfile).getSessionRole();
 		isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
 	}
 	
@@ -285,7 +285,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
     Sbi.user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
     Sbi.user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	Sbi.user.roles = new Array();
-	Sbi.user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	Sbi.user.sessionRole = '<%= sessionRole != null ? StringEscapeUtils.escapeJavaScript(sessionRole)  : ""%>';
 	<%
 	StringBuffer buffer = new StringBuffer("[");
 	if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) {

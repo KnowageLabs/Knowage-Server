@@ -18,7 +18,7 @@
  <ACTION name="CHANGE_THEME" class="it.eng.spagobi.wapp.services.ChangeTheme" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
- <ACTION name="SET_DEFAULT_ROLE_ACTION" class="it.eng.spagobi.wapp.services.SetDefaultRoleAction" scope="REQUEST">
+ <ACTION name="SET_SESSION_ROLE_ACTION" class="it.eng.spagobi.wapp.services.SetSessionRoleAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
  <ACTION name="READ_HTML_FILE" class="it.eng.spagobi.wapp.services.ReadHtmlFile" scope="REQUEST">
