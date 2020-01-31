@@ -97,7 +97,7 @@
 				}
 			};
 
-			executionService.resetParameter = function(parameter) {
+			executionService.resetParameter = function(parameter, mainReset) {
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
 					parameter.parameterValue = angular.copy(parameter.defaultValue);
@@ -118,7 +118,11 @@
 						}
 						parameter.parameterDescription = tempParamDescription;
 					}
-				}else{
+				} else if(parameter.defaultValues != undefined && parameter.defaultValues.length==1 && parameter.mandatory &&
+						(parameter.selectionType=='LIST' ||	parameter.selectionType=='COMBOBOX') && mainReset) {
+					parameter.parameterValue = parameter.multivalue ? [parameter.defaultValues[0].value] : parameter.defaultValues[0].value;
+					parameter.parameterDescription = parameter.multivalue ?	[parameter.defaultValues[0].description] : parameter.defaultValues[0].description;
+				} else {
 					resetWithoutDefaultValues(parameter)
 				}
 			}
