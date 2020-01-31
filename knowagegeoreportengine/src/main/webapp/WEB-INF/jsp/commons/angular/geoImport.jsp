@@ -43,5 +43,4 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>
 <!--  <script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js"></script> -->
 <!-- <script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>	 -->
-<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css" type="text/css">
 <!--  link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css"-->
