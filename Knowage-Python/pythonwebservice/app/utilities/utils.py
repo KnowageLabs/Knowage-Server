@@ -100,7 +100,7 @@ def bokehGarbageCollector():
     now = datetime.now()
     with cm.lck:
         for widget_id, res in cm.bokeh_resources.items():
-            if now - res.timestamp < timedelta(hours=1):
+            if now - res.timestamp > timedelta(hours=1):
                 # add widget to destroy list
                 to_destroy.append(widget_id)
                 # delete temp files
