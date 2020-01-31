@@ -198,7 +198,16 @@
 					text-align: center;
 					margin: 0 2px;
 				}
+				label {
+					&.mandatory {
+						&::after {
+							content: " *"; 
+						}
+					}
+				}
 			}
+
+
 		}
 		.lookupParameter {
 			div {
