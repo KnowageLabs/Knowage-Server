@@ -34,11 +34,11 @@
 			}
 			return false;
 		}
-		
+
 		$scope.setSelectorType = function(type){
 			$scope.model.settings.modalityValue = type;
 		}
-		
+
 		$scope.showCircularcolumns = {value :false};
 		$scope.modalityValue = [
 			{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value'),temporalAvailable:true},
@@ -82,7 +82,7 @@
 				}
 
 				for(i in $scope.model.content.columnSelectedOfDataset){
-				    if($scope.model.content.columnSelectedOfDataset[i].alias == $scope.model.content.selectedColumn.alias){
+				    if($scope.model.content.columnSelectedOfDataset[i] && $scope.model.content.columnSelectedOfDataset[i].alias == $scope.model.content.selectedColumn.alias){
 				        $scope.model.content.columnSelectedOfDataset[i] = $scope.model.content.selectedColumn;
 				        break;
 				    }
@@ -103,7 +103,7 @@
             $scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
             $scope.resetValue($scope.model.dataset.dsId, true);
         }
-		
+
 		$scope.$watch("model.settings.hideDisabled", function(newValue,oldValue){
 			if(newValue){
 				$scope.model.settings.enableAll = false;
