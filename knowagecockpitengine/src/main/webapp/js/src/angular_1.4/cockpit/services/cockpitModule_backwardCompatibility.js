@@ -107,6 +107,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(model.type=='selector'){
 					if(model.settings && model.settings.modalityValue == 'multiValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'multiDropdown';
 				}
+				if(model.type=='static-pivot-table') {
+					if (!model.content.style) {
+						model.content.style = {};
+					}
+					if (!model.content.style.generic) {
+						model.content.style.generic = {};
+					}
+					model.content.style.generic['layout'] = 'auto';
+				}
 			}
 
 			if(!self.compareVersion("7.3.0",model.knowageVersion)){

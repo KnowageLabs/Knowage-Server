@@ -115,6 +115,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		elem.style['table-layout'] = 'auto';
 	}
 
+	$scope.addFixedWidthClass = function(elem){
+		elem.classList.add('crosstab-fill-width');
+		elem.style['table-layout'] = 'fixed';
+	}
+
 	$scope.removeDynamicWidthClass = function(elem){
 		elem.classList.remove("crosstab-fill-width");
 	}
@@ -126,10 +131,10 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			var fatherElement = angular.element($scope.subCockpitWidget);
-			if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
+			if($scope.ngModel.content.style.generic.layout == 'auto') {
 				$scope.addDynamicWidthClass(fatherElement[0].children[0]);
-			}else{
-//				$scope.removeDynamicWidthClass(fatherElement[0].children[0]);
+			} else {
+				$scope.addFixedWidthClass(fatherElement[0].children[0]);
 			}
 			return;
 		}
