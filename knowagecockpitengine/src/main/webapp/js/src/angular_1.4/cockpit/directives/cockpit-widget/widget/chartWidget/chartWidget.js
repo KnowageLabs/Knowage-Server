@@ -823,7 +823,7 @@ function cockpitChartWidgetControllerFunction(
 			  			return typeof(params.data.name) !== 'undefined';
 			  		}
 			  		function isAggregationEditable(params) {
-			  			return params.data.fieldType == "MEASURE" ? true : false;
+			  			return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? true : false;
 			  		}
 			  		function aggregationRenderer(params) {
 			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
@@ -887,11 +887,31 @@ function cockpitChartWidgetControllerFunction(
 			  		function buttonRenderer(params){
 			  			if(params.data.isCalculated){
 			  				
-			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" selected-item="'+params.rowIndex+'"></calculated-field>';
+			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" selected-item="'+params.rowIndex+'"></calculated-field>' +
+			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 			  			}
 
 			  		}
-
+			  		
+			  		$scope.deleteColumn = function(rowName,event) {
+						for(var k in $scope.localModel.columnSelectedOfDatasetAggregations){
+							if($scope.localModel.columnSelectedOfDatasetAggregations[k].name == rowName) var item = $scope.localModel.columnSelectedOfDatasetAggregations[k];
+						}
+				  		  var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
+						  $scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+						  if($scope.localModel.settings.sortingColumn == item.aliasToShow){
+							  $scope.localModel.settings.sortingColumn = null;
+						  }
+					  }
+			  		
+			  		
+			  		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
+						if($scope.columnsGrid.api && newValue){
+							$scope.columnsGrid.api.setRowData(newValue);
+							$scope.columnsGrid.api.sizeColumnsToFit();
+						}
+			  		});
+			  		
 			  		/*
 			  		 *
 			  		 */
