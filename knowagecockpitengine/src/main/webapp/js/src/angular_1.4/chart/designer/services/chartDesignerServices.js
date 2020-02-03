@@ -664,6 +664,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 									   "precision":2,
 										"scaleFactor": "empty",
 					               },
+					               "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
+						    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+
 					               "MAJORGRID":{
 					                  "interval":"",
 					                  "style":{
@@ -683,7 +686,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 						               "id":"X",
 						               "alias":"X",
-						               "type":"Category",
+						               "type":"Serie",
 						               "position":"",
 						               "step" : "",
 						               "style":{
@@ -693,7 +696,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						            	   "fontFamily":"",
 						            	   "fontSize":"",
 						            	   "fontWeight":""
-						               },
+						               },"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
+							    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+
 						               "TITLE":{
 							                  "text":"",
 							                  "style":{
@@ -704,7 +709,13 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 							                	  "fontSize":""
 							                  }
 							               }
-						            }
+						            },{
+
+							               "id":"Z",
+							               "alias":"Z",
+							               "type":"Serie",
+
+							            }
 
 					         ]
 					      },
@@ -771,6 +782,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				                  }
 					         }
 					      },
+					      "showCategoryValue":true,
 					      "heightDimType":"percentage",
 					      "widthDimType":"percentage",
 					      "borderVisible":false,
@@ -2652,6 +2664,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 										"/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
 			case "categoriesDateTimeHeatMap": templatesURLs = chartDesignerBasePath  +
 										"/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
+			case "splitBubble": templatesURLs = chartDesignerBasePath  +
+										"/directives/custom_directives/structure-tab/splitBubble.html"; break;
 			case "additionalParameters": templatesURLs = chartDesignerBasePath  +
 										"/directives/custom_directives/structure-tab/additional_parameters.html"; break;
 			case "mainTick": templatesURLs = chartDesignerBasePath  +
@@ -2691,6 +2705,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "categoriesOrdering": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.title"); break;
 			case "categoriesDateTimeHeatMap": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTime"); break;
 			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping"); break;
+			case "splitBubble": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.serieSplitting"); break;
 			case "serieTitle": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.serie.serieTitle"); break;
 			case "gaugeSubtypes": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.gauge.subtypes"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;

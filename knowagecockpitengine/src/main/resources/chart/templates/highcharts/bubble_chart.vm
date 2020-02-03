@@ -1,5 +1,5 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
-#set($dataColumnsMapper = {}) 
+#set($dataColumnsMapper = {})
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
@@ -9,6 +9,7 @@
 	#end
 #end
 #set($rows = $data.rows) ## data in table rows
+
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
@@ -33,26 +34,49 @@
 #set($yaxisName= "")
 #end
 #set($seriesMap = {}) ## conversion series metadata to map object
+#if($chart.groupSeriesCateg && $chart.groupSeriesCateg == 'true')
+	#if($chart.groupedSerie)
+	#set($groupedSerie = $chart.groupedSerie)
+	#else
+		#if($series.get(0))
+		#set($groupedSerie = $series.get(0).column)
+		#else
+		#set($groupedSerie = $series.column)
+		#end
+	#end
+#end
 
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+	#if($series.column == $groupedSerie)
+		#set($groupedSerie = "$series.name.toLowerCase()"+"_"+"$series.groupingFunction.toLowerCase()")
+	#end
 #else
 	#set($serieKeyFeed = 0)
 	#foreach($serie in $series)
-	
+		
 		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
 		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
 		
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 		
+		#if($serie.column == $groupedSerie)
 		
+		#set($groupedSerie = "$serie.name.toLowerCase()"+"_"+"$serie.groupingFunction.toLowerCase()")
 		
+		#end
 	#end
 #end
 #set($seriesMapGroupingFunction = {}) 
 #foreach($serie in $series)
-	
+
 		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
+			#if($serie.axis=='Z')
+			#set($serieForZAxis = $withgroup)
+			#end
+			#if($serie.axis=='X')
+			#set($serieForXAxis = $withgroup)
+			#end
 		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
 		
 		
@@ -257,7 +281,9 @@
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
 		        labelFormatter:function() {
+		        if(this.userOptions.bubbleConf)
 					return this.userOptions.bubbleConf
+				return this.userOptions.name
 		        },
 		    
 	    #end
@@ -271,8 +297,10 @@
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
-	             labelFormatter:function() {
-					return this.userOptions.bubbleConf		        
+	            labelFormatter:function() {
+		        if(this.userOptions.bubbleConf)
+					return this.userOptions.bubbleConf
+				return this.userOptions.name
 		        },
 		    
 	 	#end
@@ -374,7 +402,9 @@
 	            layout: 'horizontal',
 	          	y: $totalDistanceLegend, 
 	          	labelFormatter:function() {
-		        	 return this.userOptions.bubbleConf
+		        if(this.userOptions.bubbleConf)
+					return this.userOptions.bubbleConf
+				return this.userOptions.name
 		        },
 		    
 	 	#end
@@ -485,14 +515,14 @@
     #set($axisFactorScale = $axisList.get(0).scaleFactor)
   
     #foreach($axis in $axisList)
-	 	#if($axis.type == 'Category')
+	 	#if($axis.alias == 'X')
 	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
 	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
 	 		
 	 		#set($xAxisCounter = $xAxisCounter + 1)
 	 	#end
 	 	
-	 	#if($axis.type == 'Serie')
+	 	#if($axis.type == 'Serie' && $axis.alias!='X' && $axis.alias!='Z' )
 		 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
 		 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
 	 		
@@ -500,7 +530,6 @@
 
 	 	#end
 	#end
-	
     xAxis:[
     
  
@@ -510,7 +539,40 @@
 
 	{
 		
-			type: "category",
+		
+		#if($xAxis.plotBands)
+		plotBands: [
+    	{
+    		label:
+    		{
+	    		text:"",
+				#if($xAxis.plotBands.get(0).label)
+				text :"$xAxis.plotBands.get(0).label.text",
+				#end
+	    		align :"$xAxis.plotBands.get(0).label.align",
+    		},
+    		color: "$xAxis.plotBands.get(0).color",
+    		from : $xAxis.plotBands.get(0).from,
+    		to : $xAxis.plotBands.get(0).to,
+    	},			
+    	],
+   		plotLines : [
+   		{
+   			label:
+   			{
+   				text:"",
+				#if($xAxis.plotLines.get(0).label)
+				text :"$xAxis.plotLines.get(0).label.text",
+				#end
+   				align :"$xAxis.plotLines.get(0).label.align", 
+   			},
+   			color: "$xAxis.plotLines.get(0).color",
+   			dashStyle: "$xAxis.plotLines.get(0).dashStyle",
+   			value: $xAxis.plotLines.get(0).value,
+   			width: $xAxis.plotLines.get(0).width,
+   		},			
+   		],
+		#end
 			#if($categorieColumns.orderType=="desc")
 				reversed: true,
 			#end
@@ -617,11 +679,13 @@
 		#if($xAxis.position == 'top')
 		 	opposite: true,
 		#end
-
 		## author: rselakov, radmila.selakovic@mht.net
 		## Calling the method for reconfiguring the original data about the ordering column and its category values		
 		
-		
+		#if($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+		#set($map = $datasettransformer.prepareDataForGroupingBubble($rows, $dataColumnsMapper, $categorieColumns, $groupedSerie,$serieForZAxis,$serieForXAxis))
+     
+		#end
 
 	},
 	#end
@@ -634,7 +698,42 @@
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         {
-      
+      #if($yAxis.plotBands)
+		plotBands: [
+    	{	
+    		label:
+    		{
+    			text:"",
+   				#if($yAxis.plotBands.get(0).label)
+   				text :"$yAxis.plotBands.get(0).label.text",
+   				#end
+    			align :"$yAxis.plotBands.get(0).label.align",
+    		},
+    		color: "$yAxis.plotBands.get(0).color",
+    		from : $yAxis.plotBands.get(0).from,
+    		to : $yAxis.plotBands.get(0).to,
+    	},			
+    	],
+   		plotLines : [
+   		{
+   			label:
+   			{
+   				text:"",
+   				#if($yAxis.plotLines.get(0).label)
+   				text :"$yAxis.plotLines.get(0).label.text",
+   				#end
+   				align :"$yAxis.plotLines.get(0).label.align",
+   			},
+   			color: "$yAxis.plotLines.get(0).color",
+   			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
+   			value: $yAxis.plotLines.get(0).value,
+   			width: $yAxis.plotLines.get(0).width,
+            	zIndex: 1
+   		},			
+   		],
+	   		
+	   		
+			#end
 			#set($Integer1 = 0)
 			#if($yAxis.min==$yAxis.max)
 			#set ($minAndMaxAreSame= true)
@@ -866,21 +965,15 @@
     
     #foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	    
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	   	#if($chart.isCockpitEngine != 'true')
-	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	    #end
-	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
-	   	
-			
+	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"	
 	#end
 
   	#set ($counter = 0)
 	#set ($count = $count+1)
 	
 	series: [
-	
+	#if($chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	
 	    #set($relatedSerie = $seriesMap.get($valueKey))
@@ -896,15 +989,11 @@
 				#end
 			#end
 		#end
-		#if($relatedSerie.fakeSerie != 'true')
+		#if($relatedSerie.fakeSerie != 'true' && $relatedSerie.axis!='X' && $relatedSerie.axis!='Z')
 		{	
-			#if( $relatedSerie.bubbleDimension && $relatedSerie.bubbleDimension!="")
-			#set($bubbleConf = "$relatedSerie.bubbleDimension")
-			#else
-			#set($bubbleConf = "$relatedSerie.name")
-			#end
+			
 			name: "$escapeTool.javascript($relatedSerie.name)",
-			bubbleConf: "$escapeTool.javascript($bubbleConf)",
+			bubbleConf: '$serieForZAxis',
 	       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 	    	
 	    	
@@ -925,6 +1014,8 @@
 	    		#foreach($row in $rows)
 					#if( $row.get($serieColumnsMapped))
 						#set ($serieValue = $row.get($serieColumnsMapped))
+						#set ($colZ =  $dataColumnsMapper.get($serieForZAxis))
+						#set ($colX =  $dataColumnsMapper.get($serieForXAxis))
 						#if( $relatedSerie.bubbleDimension && $relatedSerie.bubbleDimension!="")
 						#set($bubbleDimension = "$relatedSerie.bubbleDimension"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 
@@ -934,16 +1025,24 @@
 
 						{
 							#if( $serieValue!="")
-								y: $serieValue,
-								
-								#if($bubbleDimension && $bubbleDimension!="")
-						#set ($col =  $dataColumnsMapper.get($bubbleDimension))
-									z: $row.get($col),
-								#else
-									z: $serieValue,
-								#end	
-							#end						
+								y: $serieValue,								
+							#end
+							#if( $row.get($colZ)!="")
+								z: $row.get($colZ),
+							#end
+							#if( $row.get($colX)!="")
+								x: $row.get($colX),
+							#end								
 							name: "$serieCategoryName",
+							tooltipConf:{
+							#foreach($valueKey in $dataColumnsMapper.keySet())
+							#set ($col =  $dataColumnsMapper.get($valueKey))
+							#if($valueKey.lastIndexOf( '_' )>-1)
+							#set ($valueKey =  $valueKey.substring(0,$valueKey.lastIndexOf( '_' )))
+							#end
+							"$valueKey": "$row.get($col)",
+							#end
+							}
 
 						},
 						#set ($countXvalues = $countXvalues+1)
@@ -1007,6 +1106,7 @@
                      		*/                		                    
 			               	formatter: function() {
 			                    var value = this.point.z;
+			                    var nameForBubble= this.key;
 			                    var newValue = "";		                    
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
@@ -1052,7 +1152,7 @@
 		                      			break;
 		                      	
 		                      	}
-		                 				return prefixValue + ' ' + newValue + ' ' + sufixValue;                       
+		                 				return prefixValue + ' ' + nameForBubble + ' ' + sufixValue;                       
 	                   
 			            	},
 		                      
@@ -1108,10 +1208,139 @@
 			#end
 			},
 			cropThreshold:$countXvalues,
-		#set($referencedAxis = $relatedSerie.axis)
+			#set($referencedAxis = $relatedSerie.axis)
     		yAxis: $yAxisPositions[$referencedAxis]
 	    }, 
 	    #end
+	#end
+	#else
+		#foreach($valueKey in $map.keySet())
+			#if($valueKey!="null")
+				{	
+					name: "$escapeTool.javascript($valueKey)",
+					#if($seriesMapGroupingFunction.get($valueKey))
+		    		#set($referencedAxis = $seriesMapGroupingFunction.get($valueKey).axis)
+		    		yAxis: $yAxisPositions[$referencedAxis],
+					#elseif($seriesMapGroupingFunction.get($groupedSerie))
+		    		#set($referencedAxis = $seriesMapGroupingFunction.get($groupedSerie).axis)
+		    		yAxis: $yAxisPositions[$referencedAxis],
+		    		#else
+			    	#set($referencedAxis = $relatedSerie.axis)
+			    	yAxis: $yAxisPositions[$referencedAxis],
+					#end
+				
+			       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
+			       	#set($showValue= $chart.showCategoryValue)
+			       	
+					data: [
+						#foreach($el in  $map.get($valueKey))
+									
+						{
+						
+							#if($el.y!="")	
+								y: $el.y,
+							#end
+							#if($el.x!="")	
+								x: $el.x,
+							#end
+							#if($el.z!="")	
+								z: $el.z,
+							#end
+							#if($el.name!="")	
+								name: '$el.name',
+							#end
+							#if($el.y!="")	
+								y: $el.y,
+							#end
+							
+							
+							tooltipConf: {
+								#foreach($conf in  $el.tooltipConf.keys())
+									#set ($value =  $el.tooltipConf.get($conf))
+								#if($conf.lastIndexOf( '_' )>-1)
+								#set ($conf =  $conf.substring(0,$conf.lastIndexOf( '_' )))
+								#end
+								"$conf": "$value",
+							
+								#end
+							},
+
+							
+						},
+						#end	
+					],
+					
+					dataLabels: 
+						{
+							style:{
+				    			color:"$styleOfDataLabels.color",
+			                	fontFamily:"$styleOfDataLabels.fontFamily",
+			                	fontWeight:"$styleOfDataLabels.fontWeight",
+			                	fontSize:"$styleOfDataLabels.fontSize",
+			                	fontStyle:"$styleOfDataLabels.fontStyle",
+	    					},
+		                    enabled: $showValue,
+		                   
+		                   formatter: function() {
+			                    return this.key;                       
+	                   
+			            	},
+		                      
+	                    
+	                	},
+					 
+					tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				 
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision,
+			#end
+				scaleFactor: '$relatedSerie.scaleFactor',
+				
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+				},
+			#end
+		#end
 	#end
     ],
     tooltip: {
@@ -1283,8 +1512,13 @@
 				result += 
 					'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + fontStyle + "; font-family: " + ttFont + "; "
 						+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
-				  
-			  result += '<span>' + key + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+						result += '<span>' + key +'</span><br/>';
+					for(prop in point.tooltipConf){
+						if(point.tooltipConf[prop]!=key){
+							result +=  prop + ': ' + point.tooltipConf[prop]+ '<br/>';
+						}
+					}
+					'</div>'
            		return result
         	}
         
@@ -1387,3 +1621,5 @@
        
     }
 }
+
+

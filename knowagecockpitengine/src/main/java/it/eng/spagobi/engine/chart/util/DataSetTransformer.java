@@ -45,10 +45,10 @@ public class DataSetTransformer {
 
 	public void print(Object object) {
 
-		/*
-		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
-		 * System.out.println("-----------------------");
-		 */
+		System.out.println("-----------------------");
+		System.out.println(object);
+		System.out.println(object.getClass().toString());
+		System.out.println("-----------------------");
 
 		logger.debug("-----------------------");
 		logger.debug(object);
@@ -837,6 +837,122 @@ public class DataSetTransformer {
 		logger.debug("map: " + map);
 		return map;
 
+	}
+
+	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGroupingBubble(List<Object> dataRows, Map<String, String> dataColumnsMapper,
+			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis) throws JSONException {
+
+		ArrayList<Object> categories = new ArrayList<>();
+		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+
+		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+
+		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
+			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
+		}
+
+		String primCateg = categorieColumns.get("column");
+		String primColumn = dataColumnsMapper.get((categorieColumns).get("column"));
+		String seriaColumn = null;
+		String seria = null;
+		if (categorieColumns.get("groupby") != null && categorieColumns.get("groupby") != "") {
+			seriaColumn = dataColumnsMapper.get(categorieColumns.get("groupby"));
+			seria = categorieColumns.get("groupby");
+		} else {
+			seriaColumn = primColumn;
+			seria = categorieColumns.get("column");
+		}
+		String secCat = columnForGroupingSerie;
+
+		String z = dataColumnsMapper.get(serieForZAxis);
+		String x = dataColumnsMapper.get(serieForXAxis);
+
+		logger.debug("primCat: " + primColumn);
+		logger.debug("secCat: " + secCat);
+		logger.debug("seria: " + seriaColumn);
+
+		for (Object singleObject : dataRows) {
+			categories.add(((Map) singleObject).get(primColumn));
+		}
+
+		Set<Object> categoriesSet = new LinkedHashSet<>(categories);// bez duplikata
+		Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
+
+		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>(); // canada 0 maxico 1 usa 2
+		for (int i = 0; i < categoriesList.length; i++) {
+			categoriesListIndexMap.put(categoriesList[i], i);
+		}
+
+		for (String key : dataColumnsMapper.keySet()) {
+			String newCol = "";
+
+			String serieValue = "";
+			String zValue = "";
+			String xValue = "";
+
+			for (Object singleObject : dataRows) {
+				if (key.equals(seria)) {
+					newCol = ((Map) singleObject).get(seriaColumn).toString();
+					serieValue = ((Map) singleObject).get(secCat).toString();
+				} else if (isDifferent(key, primCateg) && isDifferent(key, serieForXAxis) && isDifferent(key, serieForZAxis)
+						&& isDifferent(key, groupedSerie)) {
+
+					newCol = key;
+					serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
+
+				}
+
+				if (!"".equals(newCol)) {
+					ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
+					if (newListOfOrderColumnItems == null) {
+						newListOfOrderColumnItems = new ArrayList<JSONObject>();
+						for (int i = 0; i < categoriesList.length; i++) {
+							Object category = categoriesList[i];
+							JSONObject jo = new JSONObject();
+							jo.put("name", category);
+							jo.put("x", "");
+							jo.put("z", "");
+							jo.put("y", "");
+							jo.put("tooltipConf", new JSONObject());
+
+							newListOfOrderColumnItems.add(jo);
+						}
+						map.put(newCol, newListOfOrderColumnItems);
+					}
+
+					JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primColumn)));
+					jo.put("y", serieValue);
+					jo.put("x", ((Map) singleObject).get(x).toString());
+					jo.put("z", ((Map) singleObject).get(z).toString());
+					JSONObject tooltipConf = new JSONObject();
+					for (String column : dataColumnsMapper.keySet()) {
+						tooltipConf.put(column, ((Map) singleObject).get(dataColumnsMapper.get(column)));
+					}
+					jo.put("tooltipConf", tooltipConf);
+
+				}
+
+			}
+
+		}
+
+		logger.debug("map: " + map);
+		return map;
+
+	}
+
+	/**
+	 * @param seria
+	 * @param x
+	 * @param z
+	 * @param groupedSerie
+	 * @return
+	 */
+	private boolean isDifferent(String key, String seria) {
+		if (!key.equals(seria))
+			return true;
+		return false;
 	}
 
 	/**

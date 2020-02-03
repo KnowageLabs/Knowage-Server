@@ -1094,7 +1094,7 @@ function cockpitChartWidgetControllerFunction(
 };
 
 function setAggregationsOnChartEngine(wconf){
-	var chartsForGrouping = ["bar","line", "radar"]
+	var chartsForGrouping = ["bar","line", "radar","bubble"]
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};

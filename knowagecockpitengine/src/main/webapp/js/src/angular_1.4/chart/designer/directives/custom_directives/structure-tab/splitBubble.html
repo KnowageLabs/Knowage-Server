@@ -1,0 +1,55 @@
+<md-card  ng-form name="structure-orderingColumnForm" flex >
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>
+				{{translate.load("sbi.chartengine.designer.tab.configuration.grouping.createsplitting")}}
+			</h2>
+			<md-menu>
+				<md-button 	aria-label="Help " class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+		      				style="margin-left:2; margin-right:2;" ng-class="structureForm.$invalid ? 'dangerBorder' : ''">
+		        	<md-icon md-menu-origin class="fa fa-question-circle" style="display:inline"></md-icon>
+		      	</md-button>
+		      	<md-menu-content style="min-height:175px;padding:20px 20px;">
+	        		<md-menu-item class="noright" style="padding:0 8 0 16">
+						<span  ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropattributes.' + selectedChartType.toLowerCase())"></span>
+	        		</md-menu-item>	        		
+        		</md-menu-content>
+	      	</md-menu>
+		</div>	
+	</md-toolbar> 
+	
+	<div layout="row">
+	 	<div layout="column"  flex=100 layout-margin>
+		
+			<label ng-if='categories.length>1'>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg")}}</label>
+			<label ng-if='categories.length==1'>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.one")}}</label>
+			<md-input-container class="small counter"> 
+				<md-checkbox  ng-model="chartTemplate.groupSeriesCateg" style="margin:0 8px" aria-label="groupSeriesCateg" name="generic_groupSeriesCateg" ></md-checkbox>
+			</md-input-container>
+		</div>	
+		
+		</div>
+		
+			<div layout="row" ng-if="chartTemplate.groupSeriesCateg">
+			<div layout="column" flex=100 layout-margin>
+			
+			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesToUse")}}</label>
+			<md-input-container class="md-block">
+				 <md-select ng-model="chartTemplate.groupedSerie" >
+				 	<md-option
+					ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.column}}">{{seriesItem.column}}
+					</md-option>
+				 </md-select> 
+			</md-input-container>
+			
+			</div>
+		</div>
+		<div layout="column"  flex=100 layout-margin>
+			<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.showCategoryValue")}} </label>
+			<md-input-container class="small counter"> 
+				<md-checkbox  ng-model="chartTemplate.showCategoryValue" style="margin:0 8px" aria-label="showCategoryValue" name="showCategoryValue" ></md-checkbox>
+			</md-input-container>
+		</div>
+		
+	
+</md-card>

@@ -85,7 +85,6 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'bubble':
 			$scope.minMaxCategories.min = 1;
-			$scope.minMaxCategories.max = 1;
 			$scope.minMaxSeries.min = 1;
 			break;
 		case 'bar':
@@ -133,6 +132,13 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxSeries.min = 1;
 			}else {
 				$scope.minMaxCategories.min = 1;
+				$scope.minMaxSeries.min = 1;
+			}
+		} else if($scope.chartTemplate.type.toLowerCase()=="bubble"){
+			if (newValue.groupSeriesCateg){
+				$scope.minMaxCategories.max = 2;
+				$scope.minMaxCategories.min = 1;
+				//$scope.minMaxSeries.max = 1;
 				$scope.minMaxSeries.min = 1;
 			}
 		}
@@ -398,7 +404,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			angular.copy(StructureTabService.getRadarTemplate(), $scope.chartTemplate);
 			break;
 		case 'bar':
-			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartRmeTemplate);
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
@@ -421,6 +427,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		default:
 			break;
 		}
+		$scope.numberOfSeriesContainers = 0;
+		$scope.checkSeriesForContainers()
 		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 		$scope.chartTemplate.VALUES.SERIE = serie;
 		ifNeededTrimDownCategoriesToSizeNeededByChartType();

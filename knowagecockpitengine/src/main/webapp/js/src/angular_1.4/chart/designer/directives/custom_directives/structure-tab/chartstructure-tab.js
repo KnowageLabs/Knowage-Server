@@ -348,6 +348,13 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			for (i=0; i<$scope.seriesContainers.length; i++) {
 				if ($scope.seriesContainers[i].name == seriesContainer.name) {
 					//checkIt($scope.selectedChartType,$scope.seriesContainers);
+
+					if($scope.selectedChartType.toLowerCase() == 'bubble' && (seriesContainer.name=='X' || seriesContainer.name=='Z')){
+						if($scope.seriesContainers[i].series.length==1){
+							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.series.axis"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+							break;
+						}
+					}
 					if ($scope.seriesContainers[i].series.indexOf(item.alias)<0) {
 						$scope.seriesContainers[i].series.push(item.alias);
 
@@ -365,7 +372,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			}else if($scope.seriesLimit == false){
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.series"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			}else{
-				console.log("duplicate");
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.series.duplicate"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			}
 		}
 		for (var i = 0; i < $scope.seriesContainers.length; i++) {
@@ -445,12 +452,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
 
-		var editingMode = "";
-		if(parent.angular.element(window.frameElement).scope().localMod){
-			editingMode = parent.angular.element(window.frameElement).scope().localMod.chartTemplate;
-		}else{
-			editingMode = $scope.chartTemplate;
-		}
+		var editingMode = $scope.chartTemplate;
 		if (editingMode!=undefined) {
 
 			var chartType = $scope.selectedChartType.toLowerCase();
@@ -481,15 +483,9 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.checkSeriesForContainers = function() {
-
+		$scope.seriesContainers.length=0
 		$scope.prepareSeriesContainersAliases();
-		var editingMode = "";
-		if(parent.angular.element(window.frameElement).scope().localMod){
-			editingMode = parent.angular.element(window.frameElement).scope().localMod.chartTemplate;
-		}else{
-			editingMode = $scope.chartTemplate;
-		}
-
+		var editingMode = editingMode = $scope.chartTemplate;
 
 		if (editingMode !=undefined) {
 
@@ -921,7 +917,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			var lastSerContName = $scope.seriesContainers[nmbOfSerConts-1].name;
 			var newSerContName = "Axis_";	// The prefix of the name of the new Series container that will be added to Designer
 
-			if (lastSerContName!="Y") {
+			if (lastSerContName!="Y" && lastSerContName!='X' && lastSerContName!='Z') {
 				var splitLastSerContName = lastSerContName.split("_");
 				newSerContName += (Number(splitLastSerContName[1])+1);
 			}
@@ -1036,7 +1032,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
      */
 
     // TODO: we need also to take care if the series container is the main (for plus)/additional (for X)
-    $scope.seriesContainerAddAndRemoveIncludeTypes = ["bar","line"];
+    $scope.seriesContainerAddAndRemoveIncludeTypes = ["bar","line","bubble"];
 
     $scope.seriesContainerConfigDropDownExcludeTypes = ["sunburst","treemap","wordcloud"];
 
@@ -1053,6 +1049,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];
     $scope.categoriesConfigExcludeTypes = ["pie","sunburst"];
     $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord"];
+    $scope.categoriesDateTimeIncludedTypes = ["bar","line","radar","scatter"];
 
     $scope.seriesItemTypes = StructureTabService.getSeriesItemTypes();
     $scope.seriesItemOrderingTypes = StructureTabService.getSeriesItemOrderingTypes();
