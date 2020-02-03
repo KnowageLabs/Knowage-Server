@@ -156,8 +156,7 @@ def python_bokeh():
             cuncurrency_manager.bokeh_resources.update({python_widget.widget_id : bk_res}) #{widget_id : BokehResourceList}
         t.start()
     #serve plot
-    import socket
-    jscript = server_document("http://" + socket.gethostbyname(socket.gethostname()) + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
+    jscript = server_document("http://" + utils.getPythonAddress() + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
 
 # GET /widget/view/stub

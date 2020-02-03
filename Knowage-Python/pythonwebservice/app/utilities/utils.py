@@ -19,6 +19,7 @@ import requests
 from app.utilities import constants, security, cuncurrency_manager as cm
 from datetime import datetime, timedelta
 import os
+import xml.etree.ElementTree as ET
 
 def findFreePort():
     import socket
@@ -118,3 +119,21 @@ def bokehGarbageCollector():
                     os.remove(dataset_file)
     for w in to_destroy:
         destroyServer(w)
+
+def getHMACKey():
+    tree = ET.parse(constants.CONFIG_FILE)
+    root = tree.getroot()
+    key = root[0][0].text
+    return key
+
+def getKnowageAddress():
+    tree = ET.parse(constants.CONFIG_FILE)
+    root = tree.getroot()
+    addr = root[0][1].text
+    return addr
+
+def getPythonAddress():
+    tree = ET.parse(constants.CONFIG_FILE)
+    root = tree.getroot()
+    addr = root[0][2].text
+    return addr

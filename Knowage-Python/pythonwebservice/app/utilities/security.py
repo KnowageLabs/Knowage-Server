@@ -19,7 +19,7 @@ import requests
 import json
 import jwt
 from datetime import datetime
-from app.utilities import constants
+from app.utilities import constants, utils
 
 def buildAuthToken(user_id):
     # auth_token = "Direct " + base64(user_id)
@@ -56,7 +56,7 @@ def getDocumentTemplate(python_widget):
 
 def jwtToken2pythonDataset(token):
     try:
-        decodedToken = jwt.decode(token, getHMACKey(), algorithms='HS256')
+        decodedToken = jwt.decode(token, utils.getHMACKey(), algorithms='HS256')
     except Exception as e:
         return False, None
     # check expiration date
@@ -66,10 +66,3 @@ def jwtToken2pythonDataset(token):
     if now > expirationTime:
         return False, None
     return True, script
-
-def getHMACKey():
-    import xml.etree.ElementTree as ET
-    tree = ET.parse(constants.HMAC_KEY_FILE)
-    root = tree.getroot()
-    key = root[0][0].text
-    return key

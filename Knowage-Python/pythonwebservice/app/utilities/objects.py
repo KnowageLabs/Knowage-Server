@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from app.utilities import constants
+from app.utilities import utils
+
 class PythonWidgetExecution:
     _knowage_address = None
     _user_id = None
@@ -28,7 +29,7 @@ class PythonWidgetExecution:
 
     def __init__(self, analytical_drivers=None, user_id=None, document_id=None, widget_id=None,
                  script=None, output_variable=None, dataset_name=None, datastore_request=None):
-        self._knowage_address = constants.KNOWAGE_ADDRESS
+        self._knowage_address = utils.getKnowageAddress()
         self._user_id = user_id
         self._document_id = document_id
         self._widget_id = widget_id
