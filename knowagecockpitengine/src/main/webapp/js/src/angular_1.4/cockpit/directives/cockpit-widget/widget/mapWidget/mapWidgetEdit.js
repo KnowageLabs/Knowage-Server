@@ -219,8 +219,12 @@ function mapWidgetEditControllerFunction(
 								"dsId": tempLayer.id.dsId,
 								"alias": tempLayer.name,
 								"name": tempLayer.label,
-								"defaultVisible": true
+								"defaultVisible": true,
+								"dataset": angular.copy(tempLayer)
 							}
+							// Requested by calculated fields
+							newLayer.dataset.dsId = tempLayer.id.dsId;
+
 							for(var i in tempLayer.metadata.fieldsMeta){
 								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
 								columnSelected.push(tempLayer.metadata.fieldsMeta[i]);
@@ -237,6 +241,9 @@ function mapWidgetEditControllerFunction(
 							if(!exists) cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
 							if(!$scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = {};
 							$scope.newModel.content.columnSelectedOfDataset[tempLayer.id.dsId] = columnSelected;
+							// Requested by calculated fields
+							newLayer.content = {}
+							newLayer.content.columnSelectedOfDataset = angular.copy(columnSelected);
 						}
 					}
 

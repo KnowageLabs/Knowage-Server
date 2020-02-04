@@ -1,9 +1,10 @@
 <md-card layout="column" ng-if="layer.expanded=='metadata'">
 							<md-toolbar class="ternaryToolbar">
-							  <div class="md-toolbar-tools">
-							    <h2>{{layer.expanded}}</h2>
-							    <span flex></span>
-							  </div>
+								<div class="md-toolbar-tools">
+									<h2>{{layer.expanded}}</h2>
+									<span flex></span>
+									<calculated-field ng-model="layer"></calculated-field>
+								</div>
 							</md-toolbar>
 							<md-card-content flex layout="column" class="noPadding">
 								<md-subheader>Spatial Attribute</md-subheader>
