@@ -72,6 +72,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
+				if(model.type=='static-pivot-table') {
+					if (!model.content.style) {
+						model.content.style = {};
+					}
+					if (!model.content.style.generic) {
+						model.content.style.generic = {};
+					}
+					model.content.style.generic['layout'] = 'auto';
+				}
 			}
 			//to version 6.4
 			if(!self.compareVersion("6.4.3",model.knowageVersion)){
@@ -106,15 +115,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(model.type=='selector'){
 					if(model.settings && model.settings.modalityValue == 'multiValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'multiDropdown';
-				}
-				if(model.type=='static-pivot-table') {
-					if (!model.content.style) {
-						model.content.style = {};
-					}
-					if (!model.content.style.generic) {
-						model.content.style.generic = {};
-					}
-					model.content.style.generic['layout'] = 'auto';
 				}
 			}
 
