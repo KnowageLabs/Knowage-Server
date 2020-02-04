@@ -26,9 +26,12 @@ def findFreePort():
     import random
     s = socket.socket()
     count = 0
-    while count < constants.BOKEH_PORTS_RANGE[1] - constants.BOKEH_PORTS_RANGE[0]:
+    range = getPortsRange()
+    lower_bound = int(range[0])
+    upper_bound = int(range[1])
+    while count < upper_bound - lower_bound:
         count += 1
-        p = random.randint(constants.BOKEH_PORTS_RANGE[0], constants.BOKEH_PORTS_RANGE[1])
+        p = random.randint(lower_bound, upper_bound)
         try:
             s.bind(('', p))  #bind to a free port provided by the host
             return s.getsockname()[1]  #return the port number assigned
@@ -137,3 +140,9 @@ def getPythonAddress():
     root = tree.getroot()
     addr = root[0][2].text
     return addr
+
+def getPortsRange():
+    tree = ET.parse(constants.CONFIG_FILE)
+    root = tree.getroot()
+    range = root[0][3].text
+    return range.split("-")
