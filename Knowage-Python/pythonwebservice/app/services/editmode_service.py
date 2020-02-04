@@ -16,7 +16,9 @@
 
 from flask import Blueprint, request, render_template
 import base64
+import json
 import os
+import pkg_resources
 from bokeh.embed import server_document
 from bokeh.server.server import Server
 from threading import Thread
@@ -164,3 +166,11 @@ def python_bokeh():
     #serve plot
     jscript = server_document("http://" + utils.getPythonAddress() + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
+
+@editMode.route('/libraries', methods = ['GET'])
+def python_libraries():
+    to_return = []
+    for d in pkg_resources.working_set:
+        lib = str(d).split(" ")
+        to_return.append({"name": lib[0], "version": lib[1]})
+    return json.dumps(to_return), 200
