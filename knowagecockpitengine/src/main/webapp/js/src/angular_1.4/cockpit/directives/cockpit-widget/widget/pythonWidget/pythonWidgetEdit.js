@@ -26,6 +26,7 @@ angular
 
 function pythonWidgetEditControllerFunction(
 		$scope,
+		$http,
 		finishEdit,
 		model,
 		sbiModule_translate,
@@ -39,6 +40,20 @@ function pythonWidgetEditControllerFunction(
 	$scope.translate = sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.formattedAnalyticalDrivers = [];
+
+	$scope.setLibraries = function () {
+		$http({
+	        url: "https://" + $scope.newModel.pythonAddress + "/widget/edit/libraries",
+	        method: "GET",
+	        headers: {'Content-Type': 'application/json',
+	        		  'Authorization': $scope.encodedUserId}
+	    })
+	    .then(function(response) { //success
+	            $scope.newModel.libraries = response.data;
+	    },
+	    function(response) { //failed
+	    });
+  	}
 
 	sbiModule_restServices.restToRootProject();
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
