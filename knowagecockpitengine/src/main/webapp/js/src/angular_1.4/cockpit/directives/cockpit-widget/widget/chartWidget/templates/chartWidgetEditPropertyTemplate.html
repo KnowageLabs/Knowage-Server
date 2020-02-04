@@ -22,12 +22,12 @@
 								<div layout="row" layout-align="start center" style="height:48px; padding-left:8px">
 									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
 									<span flex></span>					             	
-	        			            <calculated-field ng-model="localModel" callback-update-grid="updateGrid()"></calculated-field>	     
+	        			            <calculated-field ng-model="localModel" callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)"></calculated-field>	     
 				                </div>
 							</md-subheader>
 	     		        		
 	        			<div  ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="padding:8px;">
-	        		   			
+
 	        			</div> 	        			
 	        		 
 		      			</md-card-content>

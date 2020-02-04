@@ -96,21 +96,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
 	$scope.showMaxNmbSerAxesExceeded = false;
 
-	// Get all metadata of the chart's dataset (all measures and attributes)
-
-	$scope.getMetadata = function(){
-		$scope.fieldsMetadata = $scope.localMod.columnSelectedOfDatasetAggregations;
-		for(var i = 0; i < $scope.fieldsMetadata.length; i++) {
-			if($scope.fieldsMetadata[i].fieldType=="MEASURE") {
-				$scope.allMeasures.push($scope.fieldsMetadata[i]);
-			} else {
-				$scope.allAttributes.push($scope.fieldsMetadata[i]);
-			}
-		}
-	}
-	$scope.getMetadata();
-
-
 	/**
 	 * Show/hide the Structure Details panel.
 	 */
@@ -1039,8 +1024,25 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 	}
 
-	$scope.checkCategories();
-	$scope.checkSeries();
-	$scope.checkAxis();
+
+
+	$scope.getMetadata = function(){
+		$scope.allMeasures.length = 0;
+		$scope.allAttributes.length = 0;
+		$scope.fieldsMetadata = $scope.localMod.columnSelectedOfDatasetAggregations;
+		for(var i = 0; i < $scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType=="MEASURE") {
+				$scope.allMeasures.push($scope.fieldsMetadata[i]);
+			} else {
+				$scope.allAttributes.push($scope.fieldsMetadata[i]);
+			}
+		}
+		$scope.categories.length=0;
+		$scope.seriesContainers.length=0;
+		$scope.checkCategories();
+		$scope.checkSeries();
+		$scope.checkAxis();
+	}
+	$scope.getMetadata();
 
 }

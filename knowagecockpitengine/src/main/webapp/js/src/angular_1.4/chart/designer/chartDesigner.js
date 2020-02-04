@@ -142,6 +142,10 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 		cockpitModule_widgetServices.validateForm($scope.chartDesignerForm.$valid)
 	})
 
+	$scope.$on('updateMeasuresWithCF', function(event,data) {
+		$scope.getMetadata();
+	})
+
 	$scope.refreshJsonTree = function() {
 		$scope.attachCategoriesToTemplate(true);
 

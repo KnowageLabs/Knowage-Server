@@ -21,9 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			'<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button><span>',
 			replace: true,
 			scope:{
-				ngModel:"=",
+				ngModel: "=",
 				selectedItem : "=?",
-				callbackUpdateGrid : "&?"
+				callbackUpdateGrid : "&?",
+				callbackUpdateAlias : "&?"
 			},
 			controller: calculatedFieldController,
 		}
@@ -61,13 +62,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					promise: deferred,
 					model:$scope.ngModel,
 					actualItem : $scope.currentRow,
-					callbackUpdateGrid: $scope.callbackUpdateGrid
+					callbackUpdateGrid: $scope.callbackUpdateGrid,
+					callbackUpdateAlias: $scope.callbackUpdateAlias
 				},
 				//fullscreen: true,
 				controller: calculatedFieldDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
 					if($scope.currentRow != undefined){
+						if($scope.callbackUpdateAlias) {
+							$scope.callbackUpdateAlias({newAlias: result.alias, oldAlias: $scope.currentRow.alias});
+						}
 						$scope.currentRow.aliasToShow = result.alias;
 						$scope.currentRow.formula = result.formula;
 						$scope.currentRow.formulaEditor = result.formulaEditor;
@@ -84,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 					if($scope.callbackUpdateGrid){
-						$scope.callbackUpdateGrid()
+						$scope.callbackUpdateGrid();
 					}
 				});
 			}, function() {
@@ -94,11 +99,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
 		$scope.callbackUpdateGrid = callbackUpdateGrid;
+		$scope.callbackUpdateAlias = callbackUpdateAlias;
 		$scope.localDataset = {};
 		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
 		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
