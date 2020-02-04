@@ -76,6 +76,7 @@
 			#end
 			#if($serie.axis=='X')
 			#set($serieForXAxis = $withgroup)
+			#set($xAxisTitle = $serie.name)
 			#end
 		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
 		
@@ -577,15 +578,11 @@
 				reversed: true,
 			#end
 	 	title: {
+	 		text: "$xAxisTitle",
+			customTitle: false,
 	 	    #if($xAxis.TITLE.text != '')
 				customTitle: true,
-				
 				text: "$xAxis.TITLE.text",
-				
-			#elseif($categorieColumns.name != '')
-				customTitle: false,
-				text: "$categorieColumns.name",
-				
 			#end
 			#if($chart.hideAxisTitleCategory)
 				#if($chart.hideAxisTitleCategory=="true")
