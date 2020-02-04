@@ -1154,7 +1154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 
 				var currColsList = cols[i];
-				for (var j in currColsList) {
+				for (var j=0; j < currColsList.length; j++) {
 					var currCol = currColsList[j];
 					if ($scope.isFilterableCol(currCol)) {
 						ret.push(currCol);
