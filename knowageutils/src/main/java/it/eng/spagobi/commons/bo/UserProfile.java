@@ -143,8 +143,8 @@ public class UserProfile implements IEngUserProfile {
 		// putting tenant id as a predefined profile attribute:
 		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.TENANT_ID.getName(), this.organization);
 		// putting default role as a predefined profile attribute:
-		userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_SESSION_ROLES.getName(),
-				this.defaultRole != null ? "'" + this.defaultRole + "'" : concatenateRolesForINClause());
+		//userAttributes.put(PREDEFINED_PROFILE_ATTRIBUTES.USER_SESSION_ROLES.getName(),
+		//		this.defaultRole != null ? "'" + this.defaultRole + "'" : concatenateRolesForINClause());
 	}
 
 	private String concatenateRolesForINClause() {
