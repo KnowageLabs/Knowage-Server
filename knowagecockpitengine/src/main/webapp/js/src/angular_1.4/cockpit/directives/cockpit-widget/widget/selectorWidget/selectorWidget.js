@@ -203,6 +203,7 @@ angular.module('cockpitModule')
 		}
 
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
+			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();
 			$scope.ngModel.activeValues = null;
 
@@ -258,6 +259,14 @@ angular.module('cockpitModule')
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
 				}, 0);
+			}
+
+			if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
+			if($scope.savedParameters){
+				$scope.selectedValues = $scope.savedParameters;
+				$scope.tempSelectedValues = $scope.savedParameters;
+				$scope.showUnlock = false;
+				delete $scope.savedParameters;
 			}
 
 			if(nature == 'init'){
@@ -490,6 +499,11 @@ angular.module('cockpitModule')
 			$scope.cancelBulkSelection();
 		}
 
+		$scope.unlock = function(){
+			$scope.savedParameters = $scope.tempSelectedValues.length > 0 ? $scope.tempSelectedValues : $scope.selectedValues;
+			$scope.toggleParameter([]);
+		}
+
 		$scope.toggleParameter = function(parVal,setLoader) {
 
 			if(setLoader) $scope.waitingForSelection = setLoader;
@@ -508,23 +522,10 @@ angular.module('cockpitModule')
 			item.ds=$scope.ngModel.dataset.label;
 
 			if($scope.ngModel.settings.modalityValue=="multiValue"){
-				var values;
-				if($scope.ngModel.settings.modalityPresent=="LIST"){
-					var index = $scope.selectedValues.indexOf(parVal);
-					if (index > -1) {
-						$scope.selectedValues.splice(index, 1);
-					} else {
-						$scope.selectedValues.push(parVal);
-					}
-					values = $scope.selectedValues;
-				}else{
-					values = parVal;
-				}
-
-				if(values.length>0){
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
+				if(parVal.length>0){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(parVal));
 				} else {
-					item.value=angular.copy(values);
+					item.value=angular.copy(parVal);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 					$scope.deleteSelections(item);
 				}
