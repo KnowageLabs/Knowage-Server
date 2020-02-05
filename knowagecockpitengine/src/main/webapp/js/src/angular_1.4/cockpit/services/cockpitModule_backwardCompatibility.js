@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 	.service("cockpitModule_backwardCompatibility", cockpitModule_backwardCompatibility);
 
-	function cockpitModule_backwardCompatibility(cockpitModule_properties){
+	function cockpitModule_backwardCompatibility(cockpitModule_datasetServices, cockpitModule_properties) {
 		var self=this;
 		var currentVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 
@@ -127,51 +127,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
-//			if(!self.compareVersion("7.1.1",version)){
-//				if(model.type=='map') {
-//					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
-//					var layers = model.content.layers;
-//					// Add content attribute to every layer
-//					for (var j in layers) {
-//						var currLayer = layers[j];
-//						currLayer.content = {};
-//					}
-//					// Selected columns are moved into the respective layers
-//					for (var i in colsSelectedFromAllLayers) {
-//						var currColSelSet = colsSelectedFromAllLayers[i];
-//
-//						// Move aggregation function of all the measures outside properties
-//						for (var k in currColSelSet) {
-//							var currCol = currColSelSet[k];
-//							if ("MEASURE" == currCol.fieldType) {
-//								currCol.aggregationSelected = currCol.properties.aggregationSelected;
-//								delete currCol.properties.aggregationSelected;
-//							}
-//						}
-//
-//						for (var j in layers) {
-//							var currLayer = layers[j];
-//							var currDsId = currLayer.dsId;
-//							if (currDsId == i) {
-//								currLayer.content.columnSelectedOfDataset = currColSelSet;
-//								break;
-//							}
-//						}
-//					}
-//
-//					// Add dataset to every layer
-//					for (var j in layers) {
-//						var currLayer = layers[j];
-//						var currDsId = currLayer.dsId;
-//						currLayer.dataset =
-//							cockpitModule_datasetServices.getDatasetById(currDsId);
-//						currLayer.dataset.dsId = currLayer.dataset.id.dsId;
-//					}
-//
-//					// Cleanup
-//					delete model.content.columnSelectedOfDataset;
-//				}
-//			}
+			if(!self.compareVersion("7.1.1",version)){
+				if(model.type=='map') {
+					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
+					var layers = model.content.layers;
+					// Add content attribute to every layer
+					for (var j in layers) {
+						var currLayer = layers[j];
+						currLayer.content = {};
+					}
+					// Selected columns are moved into the respective layers
+					for (var i in colsSelectedFromAllLayers) {
+						var currColSelSet = colsSelectedFromAllLayers[i];
+
+						// Move aggregation function of all the measures outside properties
+						for (var k in currColSelSet) {
+							var currCol = currColSelSet[k];
+							if ("MEASURE" == currCol.fieldType) {
+								currCol.aggregationSelected = currCol.properties.aggregationSelected;
+								delete currCol.properties.aggregationSelected;
+							}
+						}
+
+						for (var j in layers) {
+							var currLayer = layers[j];
+							var currDsId = currLayer.dsId;
+							if (currDsId == i) {
+								currLayer.content.columnSelectedOfDataset = currColSelSet;
+								break;
+							}
+						}
+					}
+
+					// Add dataset to every layer
+					for (var j in layers) {
+						var currLayer = layers[j];
+						var currDsId = currLayer.dsId;
+						currLayer.dataset =
+							cockpitModule_datasetServices.getDatasetById(currDsId);
+						currLayer.dataset.dsId = currLayer.dataset.id.dsId;
+					}
+
+					// Cleanup
+					delete model.content.columnSelectedOfDataset;
+				}
+			}
 
 			if(!self.compareVersion("7.3.0",version)){
 				if(model.type=='table' || model.type=='discovery'){
