@@ -68,29 +68,29 @@ function mapWidgetEditControllerFunction(
   		}
   	}
 
-  	$scope.expandRow = function(layer,content){
-  		if(content == 'metadata'){
-  			$scope.confrontationDs = cockpitModule_datasetServices.getDatasetById(layer.dsId);
-  			$scope.confrontationDsList = angular.copy($scope.confrontationDs.metadata.fieldsMeta);
-  			for(var i in $scope.confrontationDsList){
-  				if($scope.confrontationDsList[i].fieldType == 'SPATIAL_ATTRIBUTE'){
-  					$scope.confrontationDsList.splice(i,1);
-  				}
-  			}
-  		}
-  		for(var t in $scope.newModel.content.layers){
-  			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
-  				delete $scope.newModel.content.layers[t].expanded;
-  			}
-  			if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded != content){
-  				$scope.newModel.content.layers[t].expanded = content;
+	$scope.expandRow = function(layer,content){
+		if(content == 'metadata'){
+			$scope.confrontationDs = cockpitModule_datasetServices.getDatasetById(layer.dsId);
+			$scope.confrontationDsList = angular.copy($scope.confrontationDs.metadata.fieldsMeta);
+			for(var i in $scope.confrontationDsList){
+				if($scope.confrontationDsList[i].fieldType == 'SPATIAL_ATTRIBUTE'){
+					$scope.confrontationDsList.splice(i,1);
+				}
+			}
+		}
+		for(var t in $scope.newModel.content.layers){
+			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
+				delete $scope.newModel.content.layers[t].expanded;
+			}
+			if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded != content){
+				$scope.newModel.content.layers[t].expanded = content;
 	  		}else {
 	  			if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded == content){
 	  				delete $scope.newModel.content.layers[t].expanded;
 		  		}
 	  		}
-  		}
-  	}
+		}
+	}
 
   	$scope.addField = function(columns){
   		columns.unshift({});
@@ -239,11 +239,9 @@ function mapWidgetEditControllerFunction(
 								};
 							}
 							if(!exists) cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
-							if(!$scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = {};
-							$scope.newModel.content.columnSelectedOfDataset[tempLayer.id.dsId] = columnSelected;
 							// Requested by calculated fields
 							newLayer.content = {}
-							newLayer.content.columnSelectedOfDataset = angular.copy(columnSelected);
+							newLayer.content.columnSelectedOfDataset = columnSelected;
 						}
 					}
 

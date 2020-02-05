@@ -247,7 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		/**
 		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 		 */
-		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
+		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName) {
 			for (i = 0; i < columnSelectedOfDataset.length; i++){
 				if (columnSelectedOfDataset[i].name === originalName){
 					return columnSelectedOfDataset[i];
@@ -583,14 +583,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 
-	    $scope.getColumnSelectedOfDataset = function(dsId) {
-	    	for (di in $scope.ngModel.content.columnSelectedOfDataset){
-	    		if (di == dsId){
-	    			return $scope.ngModel.content.columnSelectedOfDataset[di];
-	    		}
-	    	}
-	    	return null;
-	    }
+		$scope.getColumnSelectedOfDataset = function(dsId) {
+			var layers = $scope.ngModel.content.layers;
+
+			for (var i = 0; i<layers.length; i++) {
+				var currLayer = layers[i];
+				if (currLayer.dsId == dsId) {
+					return currLayer.content.columnSelectedOfDataset;
+				}
+			}
+			return null;
+		}
 
 	    $scope.getTargetDataset = function() {
 	    	for (l in $scope.ngModel.content.layers){
@@ -630,54 +633,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             });
 	    }
 
-	    $scope.addMapEvents = function (overlay){
-	    	if ($scope.closer){
-	            $scope.closer.onclick = function(){
-	            	overlay.setPosition(undefined);
-		              if ($scope.closer && $scope.closer.blur) $scope.closer.blur();
-		              return false;
-	            }
-	    	}
-            $scope.map.on('singleclick', function(evt) {
-    			$scope.props = {};
-    			$scope.clickOnFeature = false;
+		$scope.addMapEvents = function (overlay){
+			if ($scope.closer){
+				$scope.closer.onclick = function(){
+					overlay.setPosition(undefined);
+					  if ($scope.closer && $scope.closer.blur) $scope.closer.blur();
+					  return false;
+				}
+			}
+			$scope.map.on('singleclick', function(evt) {
+				$scope.props = {};
+				$scope.clickOnFeature = false;
 
-            	evt.map.forEachFeatureAtPixel(evt.pixel,
-		            function(feature, layer) {
+				evt.map.forEachFeatureAtPixel(evt.pixel,
+					function(feature, layer) {
 						$scope.selectedLayer = layer;
 						$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
 						$scope.props = $scope.selectedFeature.getProperties();
-		                $scope.clickOnFeature = true;
-	            });
+						$scope.clickOnFeature = true;
+				});
 
-            	//modal selection management
-    	        if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
-    	        	$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, null, null, $scope.selectedLayer.dsId);
-    	        }
+				//modal selection management
+				if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
+					$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, null, null, $scope.selectedLayer.dsId);
+				}
 
-            	//popup isn't shown with cluster and heatmap
-            	if ($scope.selectedLayer && ($scope.selectedLayer.isCluster || $scope.selectedLayer.isHeatmap  || !$scope.selectedLayer.hasShownDetails)){
-            		$scope.closer.onclick();
-            		return;
-            	}
-    	        if ($scope.clickOnFeature && $scope.selectedFeature) {
-	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
-	        		$scope.$apply()
+				//popup isn't shown with cluster and heatmap
+				if ($scope.selectedLayer && ($scope.selectedLayer.isCluster || $scope.selectedLayer.isHeatmap  || !$scope.selectedLayer.hasShownDetails)){
+					$scope.closer.onclick();
+					return;
+				}
+				if ($scope.clickOnFeature && $scope.selectedFeature) {
+					if ($scope.props.features && Array.isArray($scope.props.features)) return;
+					$scope.$apply()
 
-	        		if (cockpitModule_properties.EDIT_MODE || !$scope.columnsConfig[$scope.selectedLayer.name]){
-    	        		$scope.layerConfig = $scope.getColumnSelectedOfDataset($scope.selectedLayer.dsId);
-	        			$scope.columnsConfig[$scope.selectedLayer.name] =  $scope.layerConfig;
-    	        	}else{
-    	        		$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
-    	        	}
+					if (cockpitModule_properties.EDIT_MODE || !$scope.columnsConfig[$scope.selectedLayer.name]){
+						$scope.layerConfig = $scope.getColumnSelectedOfDataset($scope.selectedLayer.dsId);
+						$scope.columnsConfig[$scope.selectedLayer.name] =  $scope.layerConfig;
+					}else{
+						$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
+					}
 
-	        		$scope.layerConfig.dsId = $scope.selectedLayer.dsId;
-	        		$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
-    	            var geometry = $scope.selectedFeature.getGeometry();
-    	            var coordinate = evt.coordinate;
-    	            overlay.setPosition(coordinate);
-    	        }
-             });
+					$scope.layerConfig.dsId = $scope.selectedLayer.dsId;
+					$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
+					var geometry = $scope.selectedFeature.getGeometry();
+					var coordinate = evt.coordinate;
+					overlay.setPosition(coordinate);
+				}
+			 });
 
     		$scope.map.on('dblclick', function(evt) {
     			for (l in $scope.ngModel.content.layers){
@@ -715,37 +718,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return null;
 	    }
 
-	    $scope.getFeaturesFromDataset = function(layerDef){
-    		//prepare object with metadata for desiderata dataset columns
-	    	var geoColumn = null;
-    		var selectedMeasure = null;
-    		var columnsForData = [];
-    		var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-    		var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+		$scope.getFeaturesFromDataset = function(layerDef){
+			//prepare object with metadata for desiderata dataset columns
+			var geoColumn = null;
+			var selectedMeasure = null;
+			var columnsForData = [];
+			var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
+			var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
-    		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
-    		for (f in columnsForData){
-    			var tmpField = columnsForData[f];
-    			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
-    				geoColumn = tmpField.name;
-    			else if (tmpField.properties.showMap) 	{ //first measure
-    				selectedMeasure = tmpField.aliasToShow;
-    				if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
-    			}
+			for (f in columnsForData){
+				var tmpField = columnsForData[f];
+				if (tmpField.fieldType == "SPATIAL_ATTRIBUTE") {
+					geoColumn = tmpField.name;
+				} else if (tmpField.properties
+						&& tmpField.properties.showMap) {
+					//first measure
+					selectedMeasure = tmpField.aliasToShow;
+					if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
+				}
 
-    		}
+			}
 
-    		var model = {content: {columnSelectedOfDataset: columnsForData }};
-    		var features = [];
-    		var layer =  new ol.layer.Vector();
+			var model = {content: {columnSelectedOfDataset: columnsForData }};
+			var features = [];
+			var layer =  new ol.layer.Vector();
 
-    		//get the dataset columns values
-	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
-	    		function(allDatasetRecords){
+			//get the dataset columns values
+			cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
+				function(allDatasetRecords){
 
-	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
-	    			$scope.hideWidgetSpinner();
+					$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
+					$scope.hideWidgetSpinner();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
@@ -754,7 +759,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}, 3000);
 
 			});
-    	}
+		}
 
 		$scope.createMap = function (){
 
@@ -882,23 +887,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return false;
 	    }
 
-	    //Thematization
-	    $scope.thematizeMeasure = function (l, m){
-	    	var layer = $scope.getLayerByName(l);
-	    	var layerValues = $scope.values[l];
-	    	var layerKeyColumn =  $scope.getLayerProperty(l, 'geoColumn');
-	    	var layerConfig;
-	    	for (var c=0; c<$scope.ngModel.content.layers.length;c++){
-	    		if ($scope.ngModel.content.layers[c].name === l){
-	    			layerConfig =$scope.ngModel.content.layers[c];
-	    			break;
-	    		}
-	    	}
-	    	var layerColumnConfig = $scope.getColumnSelectedOfDataset(layerConfig.dsId) || [];
-	    	$scope.refreshStyle(layer, m, layerConfig, layerColumnConfig, layerValues, layerKeyColumn);
-	    }
+		//Thematization
+		$scope.thematizeMeasure = function (l, m){
+			var layer = $scope.getLayerByName(l);
+			var layerValues = $scope.values[l];
+			var layerKeyColumn =  $scope.getLayerProperty(l, 'geoColumn');
+			var layerConfig;
+			for (var c=0; c<$scope.ngModel.content.layers.length;c++){
+				if ($scope.ngModel.content.layers[c].name === l){
+					layerConfig =$scope.ngModel.content.layers[c];
+					break;
+				}
+			}
+			var layerColumnConfig = $scope.getColumnSelectedOfDataset(layerConfig.dsId) || [];
+			$scope.refreshStyle(layer, m, layerConfig, layerColumnConfig, layerValues, layerKeyColumn);
+		}
 
-	  //thematizer functions
+		//thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
 	    	var layerID = $scope.ngModel.id + "|" + config.name;
@@ -1118,47 +1123,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.isFilterableCol = function(currCol) {
-			if (currCol.properties.showFilter) {
+			if (currCol.properties
+					&& currCol.properties.showFilter) {
 				return true;
 			}
 			return false;
 		}
 
 		$scope.hasPerLayerFilters = function(ds) {
-			var cols = $scope.ngModel.content.columnSelectedOfDataset;
-			for (var i in cols) {
 
-				if (ds != undefined && i != ds.dsId) {
-					continue;
+			var dsIds = [];
+
+			if (ds != undefined) {
+				// If a ds is specified, checks its dsId only
+				dsIds.push(ds.dsId);
+			} else {
+				// Else checks all dsId of all layers
+				var layers = $scope.ngModel.content.layers;
+				for (var currLayerIdx in layers) {
+					var currLayer = layers[currLayerIdx];
+					dsIds.push(currLayer.dsId);
 				}
+			}
 
-				var currColsList = cols[i];
-				for (var j=0; j < currColsList.length; j++) {
-					var currCol = currColsList[j];
+			for (var currDsIdIdx in dsIds) {
+				var currDsId = dsIds[currDsIdIdx];
+				var cols = $scope.getColumnSelectedOfDataset(currDsId);
+				for (var currColIdx in cols) {
+					var currCol = cols[currColIdx];
 					if ($scope.isFilterableCol(currCol)) {
 						return true;
 					}
 				}
 			}
+
 			return false;
 		}
 
 		$scope.getPerLayerFilters = function(ds) {
 			var ret = [];
 
-			var cols = $scope.ngModel.content.columnSelectedOfDataset;
-			for (var i in cols) {
-
-				if (i != ds.dsId) {
-					continue;
-				}
-
-				var currColsList = cols[i];
-				for (var j=0; j < currColsList.length; j++) {
-					var currCol = currColsList[j];
-					if ($scope.isFilterableCol(currCol)) {
-						ret.push(currCol);
-					}
+			var cols = $scope.getColumnSelectedOfDataset(ds.dsId);
+			for (var currColIdx in cols) {
+				var currCol = cols[currColIdx];
+				if ($scope.isFilterableCol(currCol)) {
+					ret.push(currCol);
 				}
 			}
 			return ret;
@@ -1166,7 +1175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		// Cache filter values
 		$scope.perLayerFiltersValues = {};
-		//Contains selected values by the user
+		// Contains selected values by the user
 		$scope.selectedFilterValues = {};
 
 		$scope.getPerLayerFiltersValues = function(layer, col) {

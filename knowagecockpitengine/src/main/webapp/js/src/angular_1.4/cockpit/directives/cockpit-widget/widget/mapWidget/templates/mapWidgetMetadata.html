@@ -19,7 +19,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | filter:{'fieldType':'SPATIAL_ATTRIBUTE'}" >
+											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | filter:{'fieldType':'SPATIAL_ATTRIBUTE'}" >
 												
 												<td>  {{column.name}}</td>
 												<td>
@@ -70,13 +70,14 @@
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.modalColumn')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}</th>
+												<th style="text-align:center"></th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | orderBy:'fieldType':true track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
 												
 												<td>
-													<md-input-container ng-if="!checkDs(column)" layout="row" layout-align="start center">
+													<md-input-container ng-if="!column.isCalculated && !checkDs(column)" layout="row" layout-align="start center">
 														<i class="fa fa-warning"><md-tooltip>The column name is changed, select a field from the existing ones</md-tooltip></i> 
 														<md-select ng-model="column.name" aria-label="column name" ng-change="updateDsList(column, layer.dsId)" ng-init="column.name=''">
 															<md-option value=""></md-option>
@@ -84,7 +85,7 @@
 														</md-select>
 													</md-input-container>
 													
-													<span ng-if="checkDs(column)">{{column.name}}</span>
+													<span ng-if="!column.isCalculated && checkDs(column)">{{column.name}}</span>
 													
 												</td>
 												<td>
@@ -94,8 +95,8 @@
 												</td>
 												<td>{{column.fieldType}}</td>
 												<td>
-													<md-input-container ng-if="column.fieldType === 'MEASURE'">
-														<md-select ng-model="column.properties.aggregationSelected" ng-init="column.properties.aggregationSelected=column.properties.aggregationSelected||availableAggregationFunctions[0]" aria-label="column aggregation">
+													<md-input-container ng-if="column.fieldType === 'MEASURE' && !column.isCalculated">
+														<md-select ng-model="column.aggregationSelected" ng-init="column.aggregationSelected=column.aggregationSelected||availableAggregationFunctions[0]" aria-label="column aggregation">
 															<md-option ng-repeat="func in availableAggregationFunctions" ng-value="func">{{func}}</md-option>
 														</md-select>
 													</md-input-container>
@@ -114,7 +115,9 @@
 												</td>
 												<td class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
-													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="deleteColumn(newModel.content.columnSelectedOfDataset[layer.dsId],column)" ng-if="!checkDs(column,false)"></md-icon>
+												</td>
+												<td class="multiTableAction">
+													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)" ng-if="column.isCalculated || !checkDs(column,false)"></md-icon>
 												</td>
 											</tr>
 										</tbody>
