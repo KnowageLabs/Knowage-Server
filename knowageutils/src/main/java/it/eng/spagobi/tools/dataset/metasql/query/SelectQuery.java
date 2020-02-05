@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -266,6 +267,12 @@ public class SelectQuery {
 				if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 					hasAggregationFunction = true;
 					break;
+				}
+				for (String aggr : AggregationFunctions.getAggregationsList()) {
+					String regex = ".*" + aggr + ".*";
+					hasAggregationFunction = Pattern.matches(regex, projection.getFormula());
+					if (hasAggregationFunction)
+						break;
 				}
 			}
 

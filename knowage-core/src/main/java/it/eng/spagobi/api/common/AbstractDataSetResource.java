@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
@@ -547,8 +548,16 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < fields.length(); i++) {
 			JSONObject field = fields.getJSONObject(i);
 			String functionName = field.optString("funct");
-			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
+			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE) && !field.has("formula")) {
 				return true;
+			}
+			if (field.has("formula")) {
+				for (String aggr : AggregationFunctions.getAggregationsList()) {
+					String regex = ".*" + aggr + ".*";
+					boolean hasAggregationFunction = Pattern.matches(regex, field.getString("formula"));
+					if (hasAggregationFunction)
+						return true;
+				}
 			}
 		}
 		return false;

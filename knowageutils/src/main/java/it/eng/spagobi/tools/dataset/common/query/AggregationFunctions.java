@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.common.query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AggregationFunctions {
@@ -115,6 +117,22 @@ public class AggregationFunctions {
 			return "COUNT(DISTINCT " + fieldName + ")";
 		}
 	};
+
+	public static List<String> getAggregationsList() {
+
+		ArrayList<String> listToReturn = new ArrayList<String>();
+
+		listToReturn.add(NONE);
+		listToReturn.add(SUM);
+		listToReturn.add(AVG);
+		listToReturn.add(MAX);
+		listToReturn.add(MIN);
+		listToReturn.add(COUNT);
+		listToReturn.add(COUNT_DISTINCT);
+
+		return listToReturn;
+
+	}
 
 	static {
 		aggregationFunctions = new HashMap<String, IAggregationFunction>();
