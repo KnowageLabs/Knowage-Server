@@ -922,7 +922,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				layer.setSource(newSource);
 			}
 
-			layer.getSource().refresh({force:true});
+			layer.getSource().changed();
 		}
 //
 //	    $scope.changeHeatmapValues = function(){
