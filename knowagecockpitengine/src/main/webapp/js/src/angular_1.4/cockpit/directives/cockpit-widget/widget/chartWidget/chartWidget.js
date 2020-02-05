@@ -587,6 +587,10 @@ function cockpitChartWidgetControllerFunction(
 						  }
 					  }
 			    	  var changeDatasetFunction=function(dsId){
+			    		    if($scope.localModel.datasetId){
+			    		         $scope.localModel.datasetId=null
+			    		    }
+
 			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
 			    		  if(ds){
 			    			  if(ds.id.dsId != $scope.localModel.datasetId && ds.id.dsLabel != $scope.localModel.datasetLabel){
@@ -597,8 +601,12 @@ function cockpitChartWidgetControllerFunction(
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    			  $scope.localModel.dataset = ds;
-			    			  $scope.localModel.datasetId = ds.id.dsId;
-				    		  $scope.localModel.dataset.dsId = $scope.localModel.datasetId;
+			    			  if(!$scope.localModel.datasetId){
+                                  $timeout(function(){
+                                      $scope.localModel.datasetId = ds.id.dsId;
+                                      $scope.localModel.dataset.dsId = $scope.localModel.datasetId;
+                                  }, 100);
+                              }
 			    			  $scope.localModel.columnSelectedOfDatasetAggregations  = [];
 		    					for(var i=0;i<ds.metadata.fieldsMeta.length;i++){
 		    						var obj = ds.metadata.fieldsMeta[i];
@@ -611,6 +619,7 @@ function cockpitChartWidgetControllerFunction(
 			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
 			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 			    			}
+
 // $scope.updateGrid();
 			    	  }
 

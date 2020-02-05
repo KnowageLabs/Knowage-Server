@@ -680,7 +680,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			   else {
 			    chartSeries= $scope.chartTemplate.VALUES.SERIE;
 			   }
-			if(chartSeries[0].column==""){
+			if(chartSeries[0] && chartSeries[0].column==""){
 				$scope.chartTemplate.VALUES.SERIE = [];
 			}
 				if(chartSeries.length>0){
@@ -1037,12 +1037,13 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				$scope.allAttributes.push($scope.fieldsMetadata[i]);
 			}
 		}
-		$scope.categories.length=0;
+
 		$scope.seriesContainers.length=0;
-		$scope.checkCategories();
+
 		$scope.checkSeries();
 		$scope.checkAxis();
 	}
 	$scope.getMetadata();
+	$scope.checkCategories();
 
 }
