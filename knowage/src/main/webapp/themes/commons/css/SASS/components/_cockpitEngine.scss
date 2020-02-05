@@ -718,8 +718,9 @@
 	}
 
 	cockpit-advanced-table-widget, cockpit-selector-widget {
-		.infoBar {
-			font-size: $baseFontSize;
+		.infoBar, .unlock{
+			cursor: pointer;
+			font-size: $smallFontSize;
 			background-color: lighten($secondaryColor,20%);
 			min-height: 25px;
 			max-height: 25px;
@@ -738,7 +739,9 @@
 				line-height: 25px;
 				font-size: $smallFontSize;
 			}
-
+		}
+		.unlock {
+			background-color: lighten($ternaryColor,10%);
 		}
 	}
 	cockpit-selector-widget {

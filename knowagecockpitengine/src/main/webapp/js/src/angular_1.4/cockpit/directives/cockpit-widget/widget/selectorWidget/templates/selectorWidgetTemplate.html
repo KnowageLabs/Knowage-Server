@@ -1,4 +1,7 @@
 <div flex layout-align="center center" class="cockpitSelectorWidget">
+	<div class="infoBar unlock animation fade-down" ng-if="showUnlock" layout="row" layout-align="center center" ng-click="unlock()">
+		<i class="fa fa-unlock"></i><span style="margin-left: 4px;">unlock</span>
+	</div>
 	<div ng-if="ngModel.settings.modalityValue=='singleValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller">
 		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 			<label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows | orderBy:isSelectedOrder" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
@@ -19,9 +22,6 @@
 	<!-- lov list multiple input -->
 	<div class="infoBar multiSelect animation fade-down" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal() && showInfoBar" layout="row" layout-align="center center">
 		<md-button ng-click="bulkSelect()"><i class="fa fa-bolt"></i> {{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-button>
-		<md-button class="md-icon-button" ng-click="cancelBulkSelection()">
-	       	<md-icon md-font-icon="fa fa-times"></md-icon>
-	   	</md-button>
 	</div>
 	<div ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" >
 		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)" >
