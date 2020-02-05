@@ -494,6 +494,17 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
+	$scope.calculateColumnOrderWeight = function(s1) {
+		return s1Val = (s1.isCalculated ? 100 : 0)
+			+ (s1.fieldType == "ATTRIBUTE" ? 10 : 0);
+	}
+
+	$scope.columnComparator = function(s1, s2) {
+		var s1Val = $scope.calculateColumnOrderWeight(s1);
+		var s2Val = $scope.calculateColumnOrderWeight(s2);
+		return s1Val - s2Val;
+	}
+
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get(".", "layers")

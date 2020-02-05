@@ -70,11 +70,11 @@
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.modalColumn')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}</th>
-												<th style="text-align:center"></th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.delete')}}</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | orderBy:'fieldType':true track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | orderBy:'fieldType':comparator track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
 												
 												<td>
 													<md-input-container ng-if="!column.isCalculated && !checkDs(column)" layout="row" layout-align="start center">
@@ -113,10 +113,10 @@
 												<td style="display: flex;justify-content: center;">
 													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
 												</td>
-												<td class="multiTableAction">
+												<td style="text-align:center" class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
 												</td>
-												<td class="multiTableAction">
+												<td style="text-align:center" class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)" ng-if="column.isCalculated || !checkDs(column,false)"></md-icon>
 												</td>
 											</tr>
