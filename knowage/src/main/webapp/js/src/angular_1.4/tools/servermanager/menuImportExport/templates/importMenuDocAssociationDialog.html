@@ -1,0 +1,31 @@
+<md-dialog aria-label="{{translate.load('SBISet.importexport.documentNotRelatedToMenu','component_impexp_messages');}}">
+   <md-toolbar>
+      <div class="md-toolbar-tools">
+         <h2>{{translate.load('SBISet.importexport.documentNotRelatedToMenu','component_impexp_messages');}}</h2>
+         <span flex></span>
+      </div>
+   </md-toolbar>
+   <md-dialog-content>
+      <md-toolbar class="secondaryToolbar" layout="row">
+         <div class="md-toolbar-tools">
+            <span flex>{{translate.load('sbi.generic.menu');}}</span>
+            <span flex>{{translate.load('sbi.generic.document');}}</span>
+         </div>
+      </md-toolbar>
+      <md-list class="md-dense" flex>
+         <md-list-item ng-repeat="item in docRelToMenu" ng-click="null">
+            <md-tooltip md-delay="500">{{item.menuName}} - {{item.biobjLabel}}</md-tooltip>
+            <div class="md-list-item-text" layout="row" style="width: 100%">
+               <span class="truncated" flex>{{item.menuName}}
+               </span>
+               <span class="truncated" flex>{{item.biobjLabel}}
+               </span>
+            </div>
+         </md-list-item>
+      </md-list>
+   </md-dialog-content>
+   <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised md-primary" layout-align="end center" ng-click="closeDialog()">{{translate.load('sbi.generic.close');}}</md-button>
+   </md-dialog-actions>
+</md-dialog>

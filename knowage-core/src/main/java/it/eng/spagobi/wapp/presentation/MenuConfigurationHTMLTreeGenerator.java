@@ -371,8 +371,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the create master node from the child folder selected.
 	 *
-	 * @param folder
-	 *            The folder to be master node
+	 * @param folder The folder to be master node
 	 * @return The URL to call the create master node functionality operation
 	 */
 	private String createMasterNodeFunctionalityLink(Menu menu) {
@@ -386,8 +385,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the move up functionality operation.
 	 *
-	 * @param folder
-	 *            The folder to be moved up
+	 * @param folder The folder to be moved up
 	 * @return The URL to call the move up functionality operation
 	 */
 	private String createMoveUpFunctionalityLink(Menu menu) {
@@ -401,8 +399,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the move down fuctionality operation.
 	 *
-	 * @param folder
-	 *            The folder to be moved down
+	 * @param folder The folder to be moved down
 	 * @return The URL to call the move down functionality operation
 	 */
 	private String createMoveDownFunctionalityLink(Menu menu) {
@@ -416,8 +413,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the add fuctionality operation.
 	 *
-	 * @param path
-	 *            The object tree path String
+	 * @param path The object tree path String
 	 * @return The URL to call the add functionality operation
 	 */
 	private String createAddFunctionalityLink(String parentId) {
@@ -434,8 +430,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create the URL to call the remove functionality operation.
 	 *
-	 * @param path
-	 *            The object tree path String
+	 * @param path The object tree path String
 	 * @return the URL to call the remove functionality operation.
 	 */
 	private String createRemoveFunctionalityLink(String id) {
@@ -450,8 +445,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create the URL to call the create functionality operation.
 	 *
-	 * @param path
-	 *            The object tree path String
+	 * @param path The object tree path String
 	 * @return the URL to call the create functionality operation
 	 */
 	private String createDetailFunctionalityLink(String id) {
@@ -497,8 +491,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the create master node functionality operation from a child menu.
 	 *
-	 * @param folder
-	 *            The folder to be transformed into master folder
+	 * @param folder The folder to be transformed into master folder
 	 * @return The URL to call the create master menu operation
 	 */
 	private String createMasterNodeMenuLink(Menu menu) {
@@ -516,8 +509,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the move up fuctionality operation.
 	 *
-	 * @param folder
-	 *            The folder to be moved up
+	 * @param folder The folder to be moved up
 	 * @return The URL to call the move up functionality operation
 	 */
 	private String createMoveUpMenuLink(Menu menu) {
@@ -535,8 +527,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Create URL to call the move down functionality operation.
 	 *
-	 * @param folder
-	 *            The folder to be moved down
+	 * @param folder The folder to be moved down
 	 * @return The URL to call the move down functionality operation
 	 */
 	private String createMoveDownMenuLink(Menu menu) {
@@ -582,8 +573,10 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 				}
 
 				parentRoles = parentMenu.getRoles();
+
 				logger.debug("Parent menu have [" + parentRoles.length + "] role(s)");
 				currentRoles = menu.getRoles();
+
 				logger.debug("Menu have [" + currentRoles.length + "] role(s)");
 
 				boolean equals = true;

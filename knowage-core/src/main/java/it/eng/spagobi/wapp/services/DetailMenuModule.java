@@ -94,15 +94,11 @@ public class DetailMenuModule extends AbstractHttpModule {
 	/**
 	 * Reads the operation asked by the user and calls the insertion, modify, detail and deletion methods.
 	 *
-	 * @param request
-	 *            The Source Bean containing all request parameters
-	 * @param response
-	 *            The Source Bean containing all response parameters
+	 * @param request  The Source Bean containing all request parameters
+	 * @param response The Source Bean containing all response parameters
 	 *
-	 * @throws exception
-	 *             If an exception occurs
-	 * @throws Exception
-	 *             the exception
+	 * @throws exception If an exception occurs
+	 * @throws Exception the exception
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
@@ -157,12 +153,9 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * Gets the detail of a menu choosed by the user from the low functionalities list. It reaches the key from the request and asks to the DB all detail
 	 * parameter use mode information, by calling the method <code>loadLowFunctionalityByPath</code>.
 	 *
-	 * @param key
-	 *            The choosed low functionality id key
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param key      The choosed low functionality id key
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getDetailMenu(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
@@ -194,16 +187,11 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * method is called; when a new parameter use mode is added, the <code>insertLowFunctionality</code> method is called. These two cases are differentiated by
 	 * the <code>mod</code> String input value .
 	 *
-	 * @param request
-	 *            The request information contained in a SourceBean Object
-	 * @param mod
-	 *            A request string used to differentiate insert/modify operations
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean exception occurs
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
 	private void modDetailMenu(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
 		HashMap<String, String> logParam = new HashMap();
@@ -266,16 +254,11 @@ public class DetailMenuModule extends AbstractHttpModule {
 	/**
 	 * Deletes a Menu choosed by user .
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
 	private void delMenu(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
 		String id = (String) request.getAttribute(MENU_ID);
@@ -311,10 +294,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 	/**
 	 * Instantiates a new <code>Menu<code> object when a new menu insertion is required, in order to prepare the page for the insertion.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void newDetailMenu(SourceBean request, SourceBean response) throws EMFUserError {
 		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
@@ -536,17 +517,12 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * deleted for all father's children and descendants. This metod recusively scans all father's descendants and saves inside a Set all roles that must be
 	 * erased from the Database.
 	 *
-	 * @param lowFuncParent
-	 *            the parent Functionality
-	 * @param rolesToErase
-	 *            the set containing all roles to erase
+	 * @param lowFuncParent the parent Functionality
+	 * @param rolesToErase  the set containing all roles to erase
 	 *
-	 * @throws EMFUserError
-	 *             if any EMFUserError exception occurs
-	 * @throws BuildOperationException
-	 *             if any BuildOperationException exception occurs
-	 * @throws OperationExecutionException
-	 *             if any OperationExecutionException exception occurs
+	 * @throws EMFUserError                if any EMFUserError exception occurs
+	 * @throws BuildOperationException     if any BuildOperationException exception occurs
+	 * @throws OperationExecutionException if any OperationExecutionException exception occurs
 	 */
 	/*
 	 * public void loadRolesToErase(Menu menuParent, Set rolesToErase) throws EMFUserError{ String parentPath = lowFuncParent.getPath(); //ArrayList childs =
@@ -582,12 +558,9 @@ public class DetailMenuModule extends AbstractHttpModule {
 	/**
 	 * Erases the defined input role from a functionality object, if this one has the role.The updated functionality object is returned.
 	 *
-	 * @param func
-	 *            the input functionality object
-	 * @param roleId
-	 *            the role id for the role to erase
-	 * @param roleType
-	 *            the type of the role to erase
+	 * @param func     the input functionality object
+	 * @param roleId   the role id for the role to erase
+	 * @param roleType the type of the role to erase
 	 *
 	 * @return the updated functionality
 	 */

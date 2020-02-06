@@ -39,6 +39,9 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
@@ -81,6 +84,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	@Override
 	public Role loadByID(Integer roleID) throws EMFUserError {
+		Monitor m = MonitorFactory.start("knowage_loadByID");
 		Role toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -111,6 +115,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				}
 			}
 		}
+		m.stop();
 		return toReturn;
 	}
 

@@ -179,6 +179,15 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
 
+<%-- angular tree control --%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/angular-tree-control.js")%>"></script>
+
+<!-- Include context-menu module if you're going to use menu-id attribute -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/context-menu.js")%>"></script>
+
+<!-- link for CSS when using the tree as a Dom element -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/css/tree-control.css")%>"></script>
+
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

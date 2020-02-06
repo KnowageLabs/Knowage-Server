@@ -89,8 +89,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the lst children.
 	 *
-	 * @param lstChildren
-	 *            the new lst children
+	 * @param lstChildren the new lst children
 	 */
 	public void setLstChildren(List lstChildren) {
 		this.lstChildren = lstChildren;
@@ -108,8 +107,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the menu id.
 	 *
-	 * @param menuId
-	 *            the new menu id
+	 * @param menuId the new menu id
 	 */
 	public void setMenuId(Integer menuId) {
 		this.menuId = menuId;
@@ -127,8 +125,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the obj id.
 	 *
-	 * @param objId
-	 *            the new obj id
+	 * @param objId the new obj id
 	 */
 	public void setObjId(Integer objId) {
 		this.objId = objId;
@@ -146,8 +143,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -161,8 +157,7 @@ public class Menu implements Serializable {
 	}
 
 	/**
-	 * @param isAdminsMenu
-	 *            the isAdminsMenu to set
+	 * @param isAdminsMenu the isAdminsMenu to set
 	 */
 	public void setAdminsMenu(boolean isAdminsMenu) {
 		this.isAdminsMenu = isAdminsMenu;
@@ -180,8 +175,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -199,8 +193,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the parent id.
 	 *
-	 * @param parentId
-	 *            the new parent id
+	 * @param parentId the new parent id
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
@@ -218,8 +211,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the level.
 	 *
-	 * @param level
-	 *            the new level
+	 * @param level the new level
 	 */
 	public void setLevel(Integer level) {
 		this.level = level;
@@ -238,8 +230,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the depth.
 	 *
-	 * @param depth
-	 *            the new depth
+	 * @param depth the new depth
 	 */
 
 	public void setDepth(Integer depth) {
@@ -258,8 +249,7 @@ public class Menu implements Serializable {
 	/**
 	 * Sets the checks for children.
 	 *
-	 * @param hasChildren
-	 *            the new checks for children
+	 * @param hasChildren the new checks for children
 	 */
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
@@ -369,8 +359,7 @@ public class Menu implements Serializable {
 	}
 
 	/**
-	 * @param code
-	 *            the code to set
+	 * @param code the code to set
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -384,8 +373,7 @@ public class Menu implements Serializable {
 	}
 
 	/**
-	 * @param url
-	 *            the url to set
+	 * @param url the url to set
 	 */
 	public void setUrl(String url) {
 		this.url = url;
@@ -399,8 +387,7 @@ public class Menu implements Serializable {
 	}
 
 	/**
-	 * @param iconPath
-	 *            the iconPath to set
+	 * @param iconPath the iconPath to set
 	 */
 	public void setIconPath(String iconPath) {
 		this.iconPath = iconPath;
