@@ -412,12 +412,12 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		$scope.model.dataset= {};
 		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	}
-	
+
 	$scope.filterColumns = function(){
 		var tempColumnsList = $filter('filter')($scope.localDataset.metadata.fieldsMeta,$scope.columnsSearchText);
 		$scope.columnsGridOptions.api.setRowData(tempColumnsList);
 	}
-	
+
 	$scope.columnsGridOptions = {
             enableColResize: false,
             enableFilter: true,
@@ -438,7 +438,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
         		{"headerName":"Type","field":"type"}],
         	rowData : $scope.localDataset.metadata.fieldsMeta
 	};
-	
+
 	function resizeColumns(){
 		$scope.columnsGridOptions.api.sizeColumnsToFit();
 	}
@@ -478,19 +478,19 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
-	$scope.availableIcons = knModule_fontIconsService.icons;	
-	
+	$scope.availableIcons = knModule_fontIconsService.icons;
+
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
-	
+
 	$scope.isDateColumn = function(type){
 		if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){
 			return true;
 		}
 		return false;
 	}
-	
+
 	$scope.hasPrecision = function(column){
 		return $scope.generalServices.isNumericColumn(column);
 	}
@@ -516,19 +516,20 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		}
 	}
 
+	$scope.defaultChart = {"enabled":true,"minValue":0,"maxValue":100,"style":{"color":"white","background-color":"#3b678c","justify-content":"start"}};
 
 	$scope.changeVisType = function(){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
 		}else if($scope.selectedColumn.visType=="Chart"){
-			if(!$scope.selectedColumn.barchart) $scope.selectedColumn.barchart=={"enabled":true};
+			if(!$scope.selectedColumn.barchart) $scope.selectedColumn.barchart = angular.copy($scope.defaultChart);
 			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=false;
 		}else if($scope.selectedColumn.visType=="Text"){
 			delete $scope.selectedColumn.barchart;
 			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=true;
 		}else if($scope.selectedColumn.visType=='Icon only'){
 			$scope.selectedColumn.text.enabled=false;
-		}
+		}else if($scope.selectedColumn.visType == "Text & Chart") $scope.selectedColumn.barchart = angular.copy($scope.defaultChart);
 	}
 
 
@@ -590,6 +591,18 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 	$scope.saveColumnStyleConfiguration = function(){
+		if($scope.selectedColumn.visType=='Chart'|| $scope.selectedColumn.visType== 'Text & Chart' ){
+			if($scope.selectedColumn.barchart && $scope.selectedColumn.barchart.enabled && (typeof $scope.selectedColumn.barchart.minValue == 'undefined' || typeof $scope.selectedColumn.barchart.maxValue == 'undefined')){
+				var toast = $mdToast.simple()
+				.content($scope.translate.load('kn.table.missingrequiredfields'))
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(5000)
+				.position('top')
+				$mdToast.show(toast)
+				return;
+			}
+		}
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}
