@@ -74,7 +74,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						}else{
 
 							obj["orderColumn"] = col.orderColumn === undefined ||  col.orderColumn == ""? col.name  : col.orderColumn;
-							obj["orderType"] = col.orderType === undefined || col.orderType == "" ? "ASC ": col.orderType;
+							obj["orderType"] = col.orderType === undefined || col.orderType == "" ? "ASC": col.orderType;
 						}
 					}
 				}
