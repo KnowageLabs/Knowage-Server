@@ -536,6 +536,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(
 					/* a little offset to get space for background */
 					10 + /* then */ layerDef.order*1000);
+			debugger;
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
@@ -642,6 +643,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			$scope.map.on('singleclick', function(evt) {
+				$scope.selectedLayer = undefined;
+				$scope.selectedFeature = undefined;
 				$scope.props = {};
 				$scope.clickOnFeature = false;
 
@@ -663,6 +666,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.closer.onclick();
 					return;
 				}
+
+				//when a feature is clicked
 				if ($scope.clickOnFeature && $scope.selectedFeature) {
 					if ($scope.props.features && Array.isArray($scope.props.features)) return;
 					$scope.$apply()
@@ -674,12 +679,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
 					}
 
-					$scope.layerConfig.dsId = $scope.selectedLayer.dsId;
-					$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
 					var geometry = $scope.selectedFeature.getGeometry();
 					var coordinate = evt.coordinate;
 					overlay.setPosition(coordinate);
 				}
+
+				//when no feature is clicked, close the details popup
+				if ($scope.selectedFeature == undefined) {
+					$scope.closer.onclick();
+					return;
+				}
+
 			 });
 
     		$scope.map.on('dblclick', function(evt) {

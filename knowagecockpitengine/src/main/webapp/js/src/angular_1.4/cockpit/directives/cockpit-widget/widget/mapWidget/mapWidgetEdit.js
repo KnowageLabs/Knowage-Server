@@ -135,20 +135,22 @@ function mapWidgetEditControllerFunction(
   		}
   	}
 
-  	$scope.hasShownDetails = function(layer){
-  		layer.hasShownDetails = false;
-  		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
-  		for(var i in columnsList){
-  			if(columnsList[i].properties.showDetails){
-  				layer.hasShownDetails = true;
-  				return;
-  			}
-  		}
+	$scope.hasShownDetails = function(layer){
 
-  	}
+		layer.hasShownDetails = false;
+		var columnsList = layer.content.columnSelectedOfDataset;
+		for(var i in columnsList){
+			if(columnsList[i].properties.showDetails){
+				layer.hasShownDetails = true;
+				return;
+			}
+		}
+
+	}
 
 	$scope.setModalColumn = function(column, layer){
-		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
+		var columnsList = layer.content.columnSelectedOfDataset;
+		debugger;
 		layer.modalSelectionColumn = (column.properties.modal) ? column.alias : undefined;
 
 		for(var i in columnsList){
