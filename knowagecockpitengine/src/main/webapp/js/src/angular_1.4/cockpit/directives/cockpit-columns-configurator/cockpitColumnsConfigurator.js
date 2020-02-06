@@ -521,20 +521,20 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 			$scope.selectedColumn.colorThresholdOptions.condition[i]="none";
 		}
 	}
-
+	$scope.defaultChart = {"enabled":true,"minValue":0,"maxValue":100,"style":{"color":"white","background-color":"#3b678c","justify-content":"start"}};
 
 	$scope.changeVisType = function(){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
 		}else if($scope.selectedColumn.visType=="Chart"){
-			if(!$scope.selectedColumn.barchart) $scope.selectedColumn.barchart=={"enabled":true};
+			if(!$scope.selectedColumn.barchart) $scope.selectedColumn.barchart = angular.copy($scope.defaultChart);
 			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=false;
 		}else if($scope.selectedColumn.visType=="Text"){
 			delete $scope.selectedColumn.barchart;
 			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=true;
 		}else if($scope.selectedColumn.visType=='Icon only'){
 			$scope.selectedColumn.text.enabled=false;
-		}
+		}else if($scope.selectedColumn.visType == "Text & Chart") $scope.selectedColumn.barchart = angular.copy($scope.defaultChart);
 	}
 
 
@@ -596,6 +596,18 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 	$scope.saveColumnStyleConfiguration = function(){
+		if($scope.selectedColumn.visType=='Chart'|| $scope.selectedColumn.visType== 'Text & Chart' ){
+			if($scope.selectedColumn.barchart && $scope.selectedColumn.barchart.enabled && (typeof $scope.selectedColumn.barchart.minValue == 'undefined' || typeof $scope.selectedColumn.barchart.maxValue == 'undefined')){
+				var toast = $mdToast.simple()
+				.content($scope.translate.load('kn.table.missingrequiredfields'))
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(5000)
+				.position('top')
+				$mdToast.show(toast)
+				return;
+			}
+		}
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}

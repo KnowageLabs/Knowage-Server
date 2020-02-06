@@ -255,10 +255,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			tempValue = params.valueFormatted || params.value;
 			if(!params.node.rowPinned){
 				if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')){
-					var percentage = Math.round((params.value - (params.colDef.chart.minValue || 0))/((params.colDef.chart.maxValue || 100) - (params.colDef.chart.minValue || 0))*100);
+					var minValue = (params.colDef.chart && params.colDef.chart.minValue) ? params.colDef.chart.minValue : 0;
+					var maxValue = (params.colDef.chart && params.colDef.chart.maxValue) ? params.colDef.chart.maxValue : 100;
+					var percentage = Math.round(((params.value - minValue)/(maxValue - minValue))*100);
 					if(percentage < 0) percentage = 0;
 					if(percentage > 100) percentage = 100;
-					this.eGui.innerHTML = '<div class="inner-chart-bar" style="justify-content:'+params.colDef.chart.style['justify-content']+'"><div class="bar" style="justify-content:'+params.colDef.chart.style['justify-content']+';background-color:'+params.colDef.chart.style['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+params.colDef.chart.style.color+'">'+params.value+'</span>' : '')+'</div></div>';
+					var tempStyle = params.colDef.chart && params.colDef.chart.style ? params.colDef.chart.style : {"background-color":"#3B678C","color":"#ffffff"};
+					this.eGui.innerHTML = '<div class="inner-chart-bar" style="justify-content:'+tempStyle['justify-content']+'"><div class="bar" style="justify-content:'+tempStyle['justify-content']+';background-color:'+tempStyle['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+tempStyle.color+'">'+tempValue+'</span>' : '')+'</div></div>';
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
