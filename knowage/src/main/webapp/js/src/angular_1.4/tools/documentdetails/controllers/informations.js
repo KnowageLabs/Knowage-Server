@@ -277,6 +277,8 @@ angular
              self.deleteImage = function(){
             	 resourceService.delete(self.documentService.requiredPath,self.document.id + '/image').then(function(response){
             		 self.documentService.documentImage = undefined;
+            		 self.documentService.document.previewFile = undefined;
+            		 self.documentService.previewFile.file = undefined;
                	});
              }
              self.getFunctionalities(functionalitiesPath);
