@@ -31,7 +31,6 @@ angular.module('configuration-tab', [])
 });
 
 function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData,$mdColorPalette,$mdColors, $mdColorUtil){
-
  $scope.translate = sbiModule_translate;
  $scope.configurationForDisplay = [];
  $scope.selectedConfigurationButton = "";

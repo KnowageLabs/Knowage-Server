@@ -322,8 +322,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					            "column":"",
 					            "orderColumn":"",
 					            "orderType":"",
-					            "stackedType":"",
-					            "stacked":"",
 					            "groupby":"",
 					            "groupbyNames":""
 					         },
@@ -588,22 +586,39 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						  "TOOLTIP":{
 							  "borderWidth":0,
 							  "borderRadius":0,
+							  "backgroundColor":"",
+			                    "style":{
+					            	   "align":"",
+					            	   "color":"",
+					            	   "fontFamily":"",
+					            	   "fontSize":"",
+					            	   "fontWeight":""
+					               },
 						  },
+
+
+					      "showCategoryValue":true,
+						  "dataLabels":{
+				                 "style": {
+			                		 "color":"",
+			                		 "fontFamily":"",
+			                		 "fontWeight":"",
+			                		 "fontSize":"",
+			                		 "fontStyle":"",
+				                 	},
+				                 },
 					      "VALUES":{
 					         "CATEGORY":{
 					            "name":"",
 					            "column":"",
 					            "orderColumn":"",
 					            "orderType":"",
-					            "stackedType":"",
-					            "stacked":"",
 					            "groupby":"",
 					            "groupbyNames":""
 					         },
 					         "SERIE":[
 					        	 {
 					                 "axis":"Y",
-					                 "color":"",
 					                 "column":"",
 					                 "groupingFunction":"SUM",
 					                 "name":"",
@@ -611,33 +626,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 "postfixChar":"",
 					                 "precision":0,
 					                 "prefixChar":"",
-					                 "showValue":true,
-					                 "showAbsValue":false,
-					                 "showPercentage":false,
-					                 "showCategoryValue":false,
 					                 "scaleFactor":"empty",
 					                 "type":"",
-					                 "dataLabels":{
-					                 "style": {
-				                		 "color":"",
-				                		 "fontFamily":"",
-				                		 "fontWeight":"",
-				                		 "fontSize":"",
-				                		 "fontStyle":"",
-					                 	},
-					                 },
-					                 "TOOLTIP":{
-					                    "backgroundColor":"",
-					                    "showAbsValueTooltip":false,
-						                "showPercentageTooltip":true,
-					                    "style":{
-							            	   "align":"",
-							            	   "color":"",
-							            	   "fontFamily":"",
-							            	   "fontSize":"",
-							            	   "fontWeight":""
-							               },
-					                 },
+
 					              }
 					         ]
 					      },
@@ -649,7 +640,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					               "id":"Y",
 					               "alias":"Y",
 					               "type":"Serie",
-					               "position":"",
 					               "min":'auto',
 					               "max":'auto',
 					               "style":{
@@ -687,7 +677,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						               "id":"X",
 						               "alias":"X",
 						               "type":"Serie",
-						               "position":"",
 						               "step" : "",
 						               "style":{
 						            	   "rotate":"",
@@ -782,7 +771,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				                  }
 					         }
 					      },
-					      "showCategoryValue":true,
 					      "heightDimType":"percentage",
 					      "widthDimType":"percentage",
 					      "borderVisible":false,
@@ -1009,8 +997,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					}],
 					"SERIE": [{
 						"axis": "",
@@ -1204,8 +1190,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
+
 					}],
 					"SERIE":[
 			        	 {
@@ -1415,8 +1400,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					},
 					"SERIE": [{
 						"axis": "Y",
@@ -1604,8 +1587,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					},
 					"SERIE": [{
 						"axis": "",
@@ -1816,8 +1797,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					}],
 					"SERIE": [{
 						"axis": "",
@@ -2023,8 +2002,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					}],
 					"SERIE": [{
 						"axis": "",
@@ -2205,8 +2182,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"name": "",
 						"orderColumn": "",
 						"orderType": "",
-						"stacked": "",
-						"stackedType": ""
 					}],
 					"SERIE": [{
 						"axis": "",
@@ -2844,12 +2819,12 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					//and groupbyNames is an array
 					if(categoryTag.groupbyNames.indexOf(",") > -1) {
 
-						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 
 						var groupBySplitArray = categoryTag.groupby.split(",");
 						for (i=0; i<groupBySplitArray.length; i++) {
 
-							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", };
 							obj.column = groupBySplitArray[i];
 							if(obj.column.startsWith(" ")) obj.column = obj.column.replace(" ","")
 							var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
@@ -2868,12 +2843,12 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					//and groupbyNames is not an array
 					else {
 
-						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",});
 
 						var gbnCounter = 0;
 						var groupBySplitArray = categoryTag.groupby.split(",");
 						for (i=0; i<groupBySplitArray.length; i++) {
-							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", };
 							//check if grpupByName is empty and case for first situation
 							 if(categoryTag.groupbyNames!="" && gbnCounter==0) {
 								 obj.column = groupBySplitArray[i];
@@ -2891,19 +2866,19 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 					//categoryTag.groupby is empty
 					if(categoryTag.groupby=="" && categoryTag.column!=""){
-						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 					} else {
 
 						 if(categoryTag.name=="" && categoryTag.column!=""){
-							 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",});
 							 } else if(categoryTag.name!="" && categoryTag.column!="") {
-								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 							 }
 
 						 if(categoryTag.groupbyNames!="") {
-							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",});
 						 } else if (categoryTag.column!="") {
-							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",});
 						 }
 					}
 				}
@@ -2913,7 +2888,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 
 		if(template.CHART.type.toLowerCase()== "bar"|| template.CHART.type.toLowerCase()=="line" || template.CHART.type.toLowerCase()=="bubble"){
-			var category = {column:categories[0].column,groupby:"", groupbyNames:"",name:categories[0].name, orderColumn:categories[0].orderColumn,orderType:categories[0].orderType,stacked:categories[0].stacked,stackedType:categories[0].stackedType}
+			var category = {column:categories[0].column,groupby:"", groupbyNames:"",name:categories[0].name, orderColumn:categories[0].orderColumn,orderType:categories[0].orderType,}
 			var groupby = "";
 			if(categories.length>1)
 			for (var i = 1; i < categories.length; i++) {

@@ -37,7 +37,6 @@ app.directive("chartDesigner" ,function(chartDesignerBasePath){
 });
 
 function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
-
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.selectedChartType = "";
@@ -194,8 +193,6 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 												name:totalAttributes[i].alias,
 												orderColumn:"",
 												orderType:"",
-												stacked:"",
-												stackedType:"",
 												fakeCategory:true});
 					}
 				}
@@ -215,8 +212,6 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 							name:"",
 							orderColumn:"",
 							orderType:"",
-							stacked:"",
-							stackedType:""
 					};
 			for (var i = 0; i < $scope.categories.length; i++) {
 				if(i==0){
@@ -238,12 +233,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 							$scope.chartTemplate.VALUES.CATEGORY.orderType = $scope.categories[i].orderType;
 						}
 					}
-					if($scope.chartTemplate.VALUES.CATEGORY.stacked==""){
-						$scope.chartTemplate.VALUES.CATEGORY.stacked = $scope.categories[i].stacked;
-					}
-					if($scope.chartTemplate.VALUES.CATEGORY.stackedType==""){
-						$scope.chartTemplate.VALUES.CATEGORY.stackedType = $scope.categories[i].stackedType;
-					}
+
 				} else {
 					if($scope.chartTemplate.VALUES.CATEGORY.groupby==""){
 						$scope.chartTemplate.VALUES.CATEGORY.groupby = $scope.categories[i].column;

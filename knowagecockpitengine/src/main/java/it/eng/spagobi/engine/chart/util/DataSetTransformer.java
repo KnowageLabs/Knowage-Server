@@ -840,7 +840,8 @@ public class DataSetTransformer {
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGroupingBubble(List<Object> dataRows, Map<String, String> dataColumnsMapper,
-			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis) throws JSONException {
+			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory)
+			throws JSONException {
 
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
@@ -861,8 +862,17 @@ public class DataSetTransformer {
 			seria = categorieColumns.get("groupby");
 		} else {
 			seriaColumn = primColumn;
-			seria = categorieColumns.get("column");
+			seria = primCateg;
 		}
+		if (!coloredCategory.equals("") && coloredCategory.equals(primCateg)) {
+			String temp = seria;
+			String tempColumn = seriaColumn;
+			seriaColumn = primColumn;
+			seria = primCateg;
+			primCateg = temp;
+			primColumn = tempColumn;
+		}
+
 		String secCat = columnForGroupingSerie;
 
 		String z = dataColumnsMapper.get(serieForZAxis);

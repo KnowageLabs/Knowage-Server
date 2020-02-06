@@ -34,7 +34,6 @@ app.directive('chartstructureTab', function(sbiModule_config,chartDesignerBasePa
 	});
 
 function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices, sbiModule_messaging , StructureTabService,ChartDesignerData){
-
 	$scope.translate = sbiModule_translate;
 	$scope.structureDetailsShown = false;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
@@ -234,11 +233,11 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		var indexTooltip = findInArray($scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.categories,'column',item.alias);
 
 		if (index<0) {
-			$scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",tooltip:true});
+			$scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",tooltip:true});
 		}
 
 		if (indexTooltip<0){
-			$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",tooltip:true});
+			$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",tooltip:true});
 		}
 		//sesic
 
@@ -257,7 +256,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 					} else {
 						if(index<0){
-							  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",fakeCategory:false});
+							  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",fakeCategory:false});
 						}
 					}
 				}
@@ -268,7 +267,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				} else {
 					if(index<0){
 
-						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",});
 					  }
 				}
 			} else if(chartType.toUpperCase() == "CHORD" || chartType.toUpperCase() == "HEATMAP") {
@@ -277,11 +276,11 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				} else {
 					if(index<0){
 						if($scope.categories.length==1){
-							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",});
 							$scope.categories[0].groupby = item.alias;
 							$scope.categories[0].groupbyNames = item.alias;
 						} else {
-							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",});
 						}
 					 }
 				}
@@ -290,7 +289,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 							chartType.toUpperCase() == "PIE" ||
 							chartType.toUpperCase() == "RADAR" ) {
 				if(index<0){
-					  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+					  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",});
 				  }
 			}
 	  }
@@ -599,12 +598,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						//and groupbyNames is an array
 						if (categoryTag.groupbyNames.indexOf(",") > -1) {
 
-							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 
 							var groupBySplitArray = categoryTag.groupby.split(", ");
 							for (i=0; i<groupBySplitArray.length; i++) {
 
-								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", };
 								obj.column = groupBySplitArray[i];
 								var groupByNameSplitArray = categoryTag.groupbyNames.split(", ");
 								for (var j = 0; j < groupByNameSplitArray.length; j++) {
@@ -622,12 +621,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						//and groupbyNames is not an array
 						else {
 
-							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",});
 
 							var gbnCounter = 0;
 							var groupBySplitArray = categoryTag.groupby.split(", ");
 							for (i=0; i<groupBySplitArray.length; i++) {
-								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", };
 								//check if grpupByName is empty and case for first situation
 								 if(categoryTag.groupbyNames!="" && gbnCounter==0) {
 									 obj.column = groupBySplitArray[i];
@@ -647,19 +646,19 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 						//categoryTag.groupby is empty
 						if(categoryTag.groupby=="" && categoryTag.column!=""){
-							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 						} else {
 
 							 if(categoryTag.name=="" && categoryTag.column!=""){
-								 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+								 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",});
 								 } else if(categoryTag.name!="" && categoryTag.column!="") {
-									 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+									 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,});
 								 }
 
 							 if(categoryTag.groupbyNames!="") {
-								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",});
 							 } else if (categoryTag.column!="") {
-								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",});
 							 }
 						}
 					}
@@ -1047,8 +1046,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.categoriesContainerConfigDropDownExcludeTypes = ["wordcloud","treemap","parallel"];
 
     $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];
-    $scope.categoriesConfigExcludeTypes = ["pie","sunburst"];
-    $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord"];
+    $scope.categoriesConfigExcludeTypes = ["pie","sunburst", "bubble"];
+    $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord", "bubble"];
     $scope.categoriesDateTimeIncludedTypes = ["bar","line","radar","scatter"];
 
     $scope.seriesItemTypes = StructureTabService.getSeriesItemTypes();
@@ -1077,6 +1076,14 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 		else{
 			return item.name ;
+		}
+	}
+
+
+	$scope.removeProperties = function(){
+		if ($scope.chartTemplate.groupSeriesCateg==false){
+			delete $scope.chartTemplate.coloredCategory;
+			delete $scope.chartTemplate.groupedSerie;
 		}
 	}
 

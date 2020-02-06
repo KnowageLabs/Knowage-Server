@@ -1,6 +1,5 @@
 
 <md-tab-content class="knowage-grey-color" layout="column">
-
 	<div layout="row" md-content layout-padding ng-form name="structureForm" flex layout-align="center">
 	
 		<!-- 
@@ -294,7 +293,7 @@
 						    </md-menu>
 							
 							<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
-							<md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y'" 
+							<md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y' && seriesContainer.name!='Z' && seriesContainer.name!='X'" 
 										class="md-icon-button" ng-click="removeSeriesContainer(seriesContainer)" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Remove the series container" class="fa fa-times" style="display:inline"></md-icon>						
 							</md-button>
@@ -340,7 +339,7 @@
 							</md-button> -->
 							
 							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
-							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0" ng-if="disableHtmlElementForChartJs()">
+							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0" ng-if="disableHtmlElementForChartJs() && seriesContainer.name!='Z'">
 							    
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
 						      				ng-click="openMenu($mdOpenMenu, $event);"
@@ -476,7 +475,7 @@
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
-					   		<div ng-if="(selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'  ) && disableHtmlElementForChartJs() " >
+					   		<div ng-if="(selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'  && selectedChartType != 'bubble'  ) && disableHtmlElementForChartJs() " >
 					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" >
 					   			<!-- alternative: fa-comment-o -->
 						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>

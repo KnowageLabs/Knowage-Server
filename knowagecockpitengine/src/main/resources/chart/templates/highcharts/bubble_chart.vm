@@ -9,16 +9,13 @@
 	#end
 #end
 #set($rows = $data.rows) ## data in table rows
-
+#set ($aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct'])
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
 #end
 #if($chart.isCockpitEngine=="true")
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name.toLowerCase())) ## "product" -> "column_3"
-#end
-#if($chart.isCockpitEngine!="true")
-#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column.toLowerCase())) ## "product" -> "column_3"
 #end
 #set($drillable = "false")
 #set($cliccable = "false")
@@ -43,6 +40,10 @@
 		#else
 		#set($groupedSerie = $series.column)
 		#end
+	#end
+	#set($coloredCategory = "")
+	#if($chart.coloredCategory)
+	#set($coloredCategory = $chart.coloredCategory)
 	#end
 #end
 
@@ -84,9 +85,11 @@
 	#end
 #if($chart.isCockpitEngine && $chart.isCockpitEngine!="")
 	#set($isCockpit = $chart.isCockpitEngine)
-#else
-	#set($isCockpit = false)
 #end
+
+#set($styleOfDataLabels = $chart.dataLabels.style)
+#set($tooltip = $chart.TOOLTIP)
+#set($showCategoryValue = $chart.showCategoryValue)
 {
 
 
@@ -123,27 +126,9 @@
         type: 'bubble',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
 
-          #if(!$exportWebApp)
-        #if($chart.height != '' && $chart.isCockpitEngine!="true")
-        	height: $chart.height,
-        #end
-        
-
-     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
-       	 	heightDimType: '$chart.heightDimType',
-       	#else 
-      	 	heightDimType: 'pixels',
-        #end
-        
-        #if($chart.width != '' && $chart.isCockpitEngine!="true")
-    		width: $chart.width,
-    	#end
-    	
-    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
-        	widthDimType: '$chart.widthDimType',
-  	   	#else 
-	  	   	widthDimType: 'pixels',
-        #end
+        #if(!$exportWebApp)        
+     	heightDimType: 'pixels',
+		widthDimType: 'pixels',
     	#end
     	#*
         	Remove border around the chart if this property is set to true.
@@ -282,9 +267,18 @@
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
 		        labelFormatter:function() {
-		        if(this.userOptions.bubbleConf)
-					return this.userOptions.bubbleConf
-				return this.userOptions.name
+			        var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
+			        if(this.userOptions.bubbleConf) {
+			        	return this.userOptions.bubbleConf
+			        } else {
+			        	for(obj in aggFunct){
+			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
+			        		}
+			        	}
+			        }
+						
+					return this.userOptions.name
 		        },
 		    
 	    #end
@@ -299,9 +293,18 @@
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
 	            labelFormatter:function() {
-		        if(this.userOptions.bubbleConf)
-					return this.userOptions.bubbleConf
-				return this.userOptions.name
+		        	var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
+			        if(this.userOptions.bubbleConf) {
+			        	return this.userOptions.bubbleConf
+			        } else {
+			        	for(obj in aggFunct){
+			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
+			        		}
+			        	}
+			        }
+						
+					return this.userOptions.name
 		        },
 		    
 	 	#end
@@ -403,9 +406,18 @@
 	            layout: 'horizontal',
 	          	y: $totalDistanceLegend, 
 	          	labelFormatter:function() {
-		        if(this.userOptions.bubbleConf)
-					return this.userOptions.bubbleConf
-				return this.userOptions.name
+		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
+			        if(this.userOptions.bubbleConf) {
+			        	return this.userOptions.bubbleConf
+			        } else {
+			        	for(obj in aggFunct){
+			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
+			        		}
+			        	}
+			        }
+						
+					return this.userOptions.name
 		        },
 		    
 	 	#end
@@ -680,7 +692,7 @@
 		## Calling the method for reconfiguring the original data about the ordering column and its category values		
 		
 		#if($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
-		#set($map = $datasettransformer.prepareDataForGroupingBubble($rows, $dataColumnsMapper, $categorieColumns, $groupedSerie,$serieForZAxis,$serieForXAxis))
+		#set($map = $datasettransformer.prepareDataForGroupingBubble($rows, $dataColumnsMapper, $categorieColumns, $groupedSerie,$serieForZAxis,$serieForXAxis, $coloredCategory))
      
 		#end
 
@@ -991,9 +1003,6 @@
 			
 			name: "$escapeTool.javascript($relatedSerie.name)",
 			bubbleConf: '$serieForZAxis',
-	       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
-	    	
-	    	
 	    	dataLabels: {
 	    		allowOverlap: true,
 	    	},
@@ -1001,11 +1010,6 @@
 	    	connectNulls:true,
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	    	  	#if($chart.isCockpitEngine != 'true')
-	    	  	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	    	  	#end
-	    	  	
-	    	
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 
 	    		#foreach($row in $rows)
@@ -1034,9 +1038,12 @@
 							tooltipConf:{
 							#foreach($valueKey in $dataColumnsMapper.keySet())
 							#set ($col =  $dataColumnsMapper.get($valueKey))
-							#if($valueKey.lastIndexOf( '_' )>-1)
-							#set ($valueKey =  $valueKey.substring(0,$valueKey.lastIndexOf( '_' )))
-							#end
+
+							#foreach($agg in $aggFunct)
+			        			#if($valueKey.endsWith($agg))
+				        			#set ($valueKey = $valueKey.substring(0,$valueKey.lastIndexOf($agg)))
+			        			#end
+			        		#end
 							"$valueKey": "$row.get($col)",
 							#end
 							}
@@ -1046,7 +1053,7 @@
 					#end
 				#end
 	    	],    	
-	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+	    	
 			
 						
 						#*
@@ -1055,12 +1062,12 @@
 							it as a false.
 							@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						*#
-						#if ($relatedSerieShowValue == "" || $relatedSerieShowValue == "false")
-							#set($relatedSerieShowValue = false)
+						#if ($showCategoryValue == "" || $showCategoryValue == "false")
+							#set($showCategoryValue = false)
 						#else
-							#set($relatedSerieShowValue = true)
+							#set($showCategoryValue = true)
 						#end
-						selected:$relatedSerieShowValue,
+						selected:$showCategoryValue,
 						dataLabels: 
 						{
 							style:{
@@ -1070,7 +1077,7 @@
 			                	fontSize:"$styleOfDataLabels.fontSize",
 			                	fontStyle:"$styleOfDataLabels.fontStyle",
 	    					},
-		                    enabled: $relatedSerieShowValue,
+		                    enabled: $showCategoryValue,
 		                   
 		                    #set ($postfixValueAsString = '')
 		                     
@@ -1116,7 +1123,7 @@
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
 		                      	var precision = '${relatedSerie.precision}';
-		                      	var showPercentage = ${relatedSerie.showPercentage};
+		                      	
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
@@ -1178,30 +1185,30 @@
 				of the background color specified by the user.				
 				@author: danristo (danilo.ristovski@mht.net)
 			*#
-			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
-                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#if ($tooltip.backgroundColor!="")
+                ttBackColor: '$tooltip.backgroundColor',
             #else
             	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.color != '')
-				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#if ($tooltip.style.color != '')
+				ttColor: '$tooltip.style.color' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.align != '')
-				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#if ($tooltip.style.align != '')
+				ttAlign: '$tooltip.style.align' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
-				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#if ($tooltip.style.fontFamily && $tooltip.style.fontFamily != '')
+				ttFont: '$tooltip.style.fontFamily' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
-				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#if ($tooltip.style.fontWeight != '')
+				ttFontWeight: '$tooltip.style.fontWeight' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
-				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#if ($tooltip.style.fontSize != '')
+				ttFontSize: '$tooltip.style.fontSize' ,
 			#end
 			},
 			cropThreshold:$countXvalues,
@@ -1226,8 +1233,7 @@
 			    	yAxis: $yAxisPositions[$referencedAxis],
 					#end
 				
-			       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
-			       	#set($showValue= $chart.showCategoryValue)
+			       	
 			       	
 					data: [
 						#foreach($el in  $map.get($valueKey))
@@ -1254,10 +1260,13 @@
 							tooltipConf: {
 								#foreach($conf in  $el.tooltipConf.keys())
 									#set ($value =  $el.tooltipConf.get($conf))
-								#if($conf.lastIndexOf( '_' )>-1)
-								#set ($conf =  $conf.substring(0,$conf.lastIndexOf( '_' )))
-								#end
-								"$conf": "$value",
+									
+									#foreach($agg in $aggFunct)
+					        			#if($conf.endsWith($agg))
+						        			#set ($conf = $conf.substring(0,$conf.lastIndexOf($agg)))
+					        			#end
+			        				#end
+									"$conf": "$value",
 							
 								#end
 							},
@@ -1276,7 +1285,7 @@
 			                	fontSize:"$styleOfDataLabels.fontSize",
 			                	fontStyle:"$styleOfDataLabels.fontStyle",
 	    					},
-		                    enabled: $showValue,
+		                    enabled: $showCategoryValue,
 		                   
 		                   formatter: function() {
 			                    return this.key;                       
@@ -1309,30 +1318,30 @@
 				of the background color specified by the user.				
 				@author: danristo (danilo.ristovski@mht.net)
 			*#
-			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
-                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#if ($tooltip.backgroundColor!="")
+                ttBackColor: '$tooltip.backgroundColor',
             #else
             	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.color != '')
-				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#if ($tooltip.style.color != '')
+				ttColor: '$tooltip.style.color' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.align != '')
-				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#if ($tooltip.style.align != '')
+				ttAlign: '$tooltip.style.align' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
-				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#if ($tooltip.style.fontFamily && $tooltip.style.fontFamily != '')
+				ttFont: '$tooltip.style.fontFamily' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
-				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#if ($tooltip.style.fontWeight != '')
+				ttFontWeight: '$tooltip.style.fontWeight' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
-				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#if ($tooltip.style.fontSize != '')
+				ttFontSize: '$tooltip.style.fontSize' ,
 			#end
 			},
 				},
@@ -1584,15 +1593,9 @@
             cursor: 'pointer', 
             #if(!$exportWebApp)
             point: {
-               #if($chart.isCockpitEngine=="false")
-					events:{
-						click: scope.chartInitializer.handleCrossNavigationTo,
-					}
-		         #elseif($chart.isCockpitEngine=="true")
-		              	events:{
-		                	click: handleCockpitSelection
-		            	}
-		         #end
+               events:{
+					click: handleCockpitSelection
+				}
             }, 
             #end
             dataLabels: {

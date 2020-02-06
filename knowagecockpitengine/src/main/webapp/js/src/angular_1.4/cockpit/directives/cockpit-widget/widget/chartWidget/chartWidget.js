@@ -1150,7 +1150,7 @@ function setAggregationsOnChartEngine(wconf){
 
 				aggregations.push(obj);
 
-				if((chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
+				if(chartTemplate.CHART.type.toLowerCase()=="bubble" || (chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) {
 						subs = chartCategory.groupby
@@ -1159,19 +1159,22 @@ function setAggregationsOnChartEngine(wconf){
 					else {
 						subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
 					}
-					var groupby = {};
-					groupby['name'] = subs;
-					groupby['alias'] = subs;
-					groupby['aliasToShow'] = subs;
-					groupby['fieldType'] = "ATTRIBUTE";
-					if(chartCategory.drillOrder){
-						groupby['orderType'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderType : obj.orderType ;
-						groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : obj.orderColumn;
-					} else {
-						groupby['orderType'] = chartCategory.orderType;
-						groupby['orderColumn'] = chartCategory.orderColumn;
+					if(subs!=""){
+						var groupby = {};
+						groupby['name'] = subs;
+						groupby['alias'] = subs;
+						groupby['aliasToShow'] = subs;
+						groupby['fieldType'] = "ATTRIBUTE";
+						if(chartCategory.drillOrder){
+							groupby['orderType'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderType : obj.orderType ;
+							groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : obj.orderColumn;
+						} else {
+							groupby['orderType'] = chartCategory.orderType;
+							groupby['orderColumn'] = chartCategory.orderColumn;
+						}
+						aggregations.push(groupby);
 					}
-					aggregations.push(groupby);
+
 				}
 			};
 

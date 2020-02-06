@@ -17,39 +17,37 @@
 	      	</md-menu>
 		</div>	
 	</md-toolbar> 
+	<div layout="row" flex layout-margin flex=100 layout-align="start center">
+		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.split")}}</label>
+		<md-input-container class="small counter">
+			<md-checkbox  ng-model="chartTemplate.groupSeriesCateg" style="margin:0 8px" aria-label="groupSeriesCateg" name="generic_groupSeriesCateg" ng-click=removeProperties()></md-checkbox>
+		</md-input-container>
+	</div>
 	
-	<div layout="row">
-	 	<div layout="column"  flex=100 layout-margin>
 		
-			<label ng-if='categories.length>1'>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg")}}</label>
-			<label ng-if='categories.length==1'>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.one")}}</label>
-			<md-input-container class="small counter"> 
-				<md-checkbox  ng-model="chartTemplate.groupSeriesCateg" style="margin:0 8px" aria-label="groupSeriesCateg" name="generic_groupSeriesCateg" ></md-checkbox>
-			</md-input-container>
-		</div>	
+	<div layout="column" ng-if="chartTemplate.groupSeriesCateg">
 		
-		</div>
+		<md-input-container class="md-block">
+			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.coloredCategory")}}</label>
+			<md-select ng-model="chartTemplate.coloredCategory" >
+				<md-option ng-repeat="categ in categories" value="{{categ.column}}">{{categ.column}}</md-option>
+			</md-select> 
+		</md-input-container>
 		
-			<div layout="row" ng-if="chartTemplate.groupSeriesCateg">
-			<div layout="column" flex=100 layout-margin>
-			
-			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesToUse")}}</label>
-			<md-input-container class="md-block">
-				 <md-select ng-model="chartTemplate.groupedSerie" >
-				 	<md-option
-					ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.column}}">{{seriesItem.column}}
-					</md-option>
-				 </md-select> 
-			</md-input-container>
-			
-			</div>
-		</div>
-		<div layout="column"  flex=100 layout-margin>
-			<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.showCategoryValue")}} </label>
-			<md-input-container class="small counter"> 
-				<md-checkbox  ng-model="chartTemplate.showCategoryValue" style="margin:0 8px" aria-label="showCategoryValue" name="showCategoryValue" ></md-checkbox>
-			</md-input-container>
-		</div>
-		
+		<md-input-container class="md-block">
+			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.seriesToUse")}}</label>
+			<md-select ng-model="chartTemplate.groupedSerie" >
+				<md-option ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.column}}">{{seriesItem.column}}</md-option>
+			</md-select> 
+		</md-input-container>
+
+	</div>
+
+	<div layout="row" flex layout-margin flex=100 layout-align="start center">
+		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.showCategoryValue")}} </label>
+		<md-input-container class="small counter"> 
+			<md-checkbox  ng-model="chartTemplate.showCategoryValue" style="margin:0 8px" aria-label="showCategoryValue" name="showCategoryValue" ></md-checkbox>
+		</md-input-container>
+	</div>
 	
 </md-card>

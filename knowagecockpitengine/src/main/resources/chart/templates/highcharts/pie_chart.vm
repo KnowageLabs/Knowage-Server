@@ -72,8 +72,6 @@
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
-			categoryStacked: '$categorieColumns.stacked',
-			categoryStackedType: '$categorieColumns.stackedType'
 		},
 
    		#if($chart.style.backgroundColor != '')

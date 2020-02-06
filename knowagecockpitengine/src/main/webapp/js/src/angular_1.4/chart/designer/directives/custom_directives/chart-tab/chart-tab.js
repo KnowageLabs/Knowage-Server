@@ -404,7 +404,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			angular.copy(StructureTabService.getRadarTemplate(), $scope.chartTemplate);
 			break;
 		case 'bar':
-			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartRmeTemplate);
+			angular.copy(StructureTabService.getBaseTemplate(chart), $scope.chartTemplate);
 			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
 			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
