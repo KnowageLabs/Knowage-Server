@@ -328,9 +328,12 @@
 					if (source.getFeatures().length>0){
 						if (source.getFeatures()[0].get("isWKT")){
 
+							var toSum = function(a,b) {
+								return [a[0]+b[0], a[1]+b[1]];
+							};
+
 							var geometry = source.getFeatures()[0].getGeometry();
-							if ((geometry instanceof ol.geom.GeometryCollection)
-									|| (geometry instanceof ol.geom.Polygon)) {
+							if (geometry instanceof ol.geom.GeometryCollection) {
 
 								var coords = [];
 
@@ -347,9 +350,27 @@
 									}
 								}
 								var length = coords.length;
-								coord = coords.reduce(function(a,b) {
-										return [a[0]+b[0], a[1]+b[1]];
-									})
+								coord = coords.reduce(toSum)
+									.map(function(element, index, array) {
+										return array[index] / length;
+									});
+
+							} else if (geometry instanceof ol.geom.Polygon) {
+
+								var coordsMatrix = geometry.getCoordinates();
+								var coords = [];
+
+								for (var i in coordsMatrix) {
+									var currCoordArray = coordsMatrix[i];
+									for (var j in currCoordArray) {
+										var currCoord = currCoordArray[j];
+										coords.push(currCoord);
+									}
+
+								}
+
+								var length = coords.length;
+								coord = coords.reduce(toSum)
 									.map(function(element, index, array) {
 										return array[index] / length;
 									});
