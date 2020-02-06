@@ -41,9 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			v2 = versionToArray(v2);
 
 			for(var k in v1){
-				if(v1[k]>v2[k]) {
-					return false;
-				}
+				if(v1[k]>v2[k]) return false;
+				else if(v1[k]==v2[k]) continue;
+				else if(v1[k]<v2[k]) return true
 			}
 			//Check for literal versions
 			//if(!v1[3] && v2[3]) return false;
@@ -54,14 +54,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//to version 6.3
 			if(!self.compareVersion("6.3.0",template.knowageVersion)){
 				if(template.configuration && typeof(template.configuration.showScreenshot)=='undefined') template.configuration.showScreenshot = true;
-				template.knowageVersion = currentVersion;
 			}
+
+			//Cycle trough all widgets
+			for(var sheet in template.sheets){
+				for(var widget in template.sheets[sheet].widgets){
+					self.updateModel(template.sheets[sheet].widgets[widget],template.knowageVersion);
+				}
+			}
+
+			template.knowageVersion = currentVersion;
 			return template;
 		}
 
-		self.updateModel = function(model){
+		self.updateModel = function(model, version){
 			//to version 6.3
-			if(!self.compareVersion("6.3.0",model.knowageVersion)){
+			if(!self.compareVersion("6.3.0",version)){
 				if(model.type=='table'){
 					if(model.content && model.content.columnSelectedOfDataset){
 						for(var k in model.content.columnSelectedOfDataset){
@@ -74,10 +82,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			//to version 6.4
-			if(!self.compareVersion("6.4.3",model.knowageVersion)){
+			if(!self.compareVersion("6.4.3",version)){
 				model.content.name = model.type + '_' + model.id;
 			}
-			if(!self.compareVersion("6.4.4",model.knowageVersion)){
+			if(!self.compareVersion("6.4.4",version)){
 				if(model.type=='table'){
 					if(model.content && model.content.columnSelectedOfDataset){
 						for(var k in model.content.columnSelectedOfDataset){
@@ -92,9 +100,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			//to version 7.0
-			if(!self.compareVersion("7.0.0",model.knowageVersion)){
+			if(!self.compareVersion("7.0.0",version)){
 				if(model.type=='table'){
 					if(model.cross && model.cross.cross && !model.cross.cross.crossType) model.cross.cross.crossType = 'allRow';
+					if(model.style && model.style.tr && model.style.tr.height) model.style.tr.height = model.style.tr.height.replace(/px|rem|em|pt/g,'');
 					if(model.content && model.content.columnSelectedOfDataset){
 						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].fieldType == "ATTRIBUTE" && model.content.columnSelectedOfDataset[k].funcSummary) {
@@ -109,7 +118,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
-			if(!self.compareVersion("7.3.0",model.knowageVersion)){
+//			if(!self.compareVersion("7.1.1",version)){
+//				if(model.type=='map') {
+//					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
+//					var layers = model.content.layers;
+//					// Add content attribute to every layer
+//					for (var j in layers) {
+//						var currLayer = layers[j];
+//						currLayer.content = {};
+//					}
+//					// Selected columns are moved into the respective layers
+//					for (var i in colsSelectedFromAllLayers) {
+//						var currColSelSet = colsSelectedFromAllLayers[i];
+//
+//						// Move aggregation function of all the measures outside properties
+//						for (var k in currColSelSet) {
+//							var currCol = currColSelSet[k];
+//							if ("MEASURE" == currCol.fieldType) {
+//								currCol.aggregationSelected = currCol.properties.aggregationSelected;
+//								delete currCol.properties.aggregationSelected;
+//							}
+//						}
+//
+//						for (var j in layers) {
+//							var currLayer = layers[j];
+//							var currDsId = currLayer.dsId;
+//							if (currDsId == i) {
+//								currLayer.content.columnSelectedOfDataset = currColSelSet;
+//								break;
+//							}
+//						}
+//					}
+//
+//					// Add dataset to every layer
+//					for (var j in layers) {
+//						var currLayer = layers[j];
+//						var currDsId = currLayer.dsId;
+//						currLayer.dataset =
+//							cockpitModule_datasetServices.getDatasetById(currDsId);
+//						currLayer.dataset.dsId = currLayer.dataset.id.dsId;
+//					}
+//
+//					// Cleanup
+//					delete model.content.columnSelectedOfDataset;
+//				}
+//			}
+
+			if(!self.compareVersion("7.3.0",version)){
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
 						if(model.content.columnSelectedOfDataset[k].momentDateFormat){
@@ -129,7 +184,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
 
-			model.knowageVersion = currentVersion;
 			return model;
 		}
 	}
