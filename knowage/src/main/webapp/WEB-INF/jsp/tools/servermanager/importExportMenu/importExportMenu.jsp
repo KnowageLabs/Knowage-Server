@@ -1,6 +1,6 @@
 <%--
 	Knowage, Open Source Business Intelligence suite
-	Copyright (C) 2019 Engineering Ingegneria Informatica S.p.A.
+	Copyright (C) 2020 Engineering Ingegneria Informatica S.p.A.
 	
 	Knowage is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
