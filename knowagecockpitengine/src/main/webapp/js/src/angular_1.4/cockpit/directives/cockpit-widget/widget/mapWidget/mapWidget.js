@@ -346,6 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.map.setSize($scope.map.getSize());
 			}
 			$scope.map.renderSync();
+			$scope.resetFilter();
 		}
 
 		$scope.toggleSidenav = function(){
@@ -354,39 +355,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.sideNavOpened = optionSidenav.isOpen();
 		}
 
-	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
-	    	if (nature == 'fullExpand' || nature == 'resize'){
-	    		$timeout(function() {
+		$scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
+			if (nature == 'fullExpand' || nature == 'resize'){
+				$timeout(function() {
 					$scope.map.updateSize();
 				}, 500);
-	    		return;
-	    	}
+				return;
+			}
 
 			if (!options) options = {};
 			var layerName = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
 
-    		// save unfiltered data
-    		$scope.values[layerName] = data;
+			// save unfiltered data
+			$scope.values[layerName] = data;
 
-    		if($scope.realTimeSelections.length > 0){
-    			// save unfiltered data
-    			$scope.savedValues[layerName] = {};
-    			angular.copy(data, $scope.savedValues[layerName]);
+			if($scope.realTimeSelections.length > 0){
+				// save unfiltered data
+				$scope.savedValues[layerName] = {};
+				angular.copy(data, $scope.savedValues[layerName]);
 
-    			// calc & save filtered data
-    			$scope.filterDataset($scope.values[layerName], $scope.reformatSelections($scope.realTimeSelections));
-    		}
+				// calc & save filtered data
+				$scope.filterDataset($scope.values[layerName], $scope.reformatSelections($scope.realTimeSelections));
+			}
 
-    		// apply (filtered) data
-    		var tmpLayer = $scope.getLayerByName(layerName);
-    		if (!tmpLayer){
-    			tmpLayer = {};
-    			tmpLayer.isCluster = false;
-    			tmpLayer.isHeatmap = false;
-    		}
+			// apply (filtered) data
+			var tmpLayer = $scope.getLayerByName(layerName);
+			if (!tmpLayer){
+				tmpLayer = {};
+				tmpLayer.isCluster = false;
+				tmpLayer.isHeatmap = false;
+			}
 			$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
-
-	    }
+		}
 
 	    $scope.getOptions =function(){
 			var obj = {};
@@ -536,7 +536,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(
 					/* a little offset to get space for background */
 					10 + /* then */ layerDef.order*1000);
-			debugger;
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
@@ -1187,6 +1186,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.perLayerFiltersValues = {};
 		// Contains selected values by the user
 		$scope.selectedFilterValues = {};
+
+		$scope.resetFilter = function() {
+			$scope.perLayerFiltersValues = {};
+			$scope.selectedFilterValues = {};
+		}
 
 		$scope.getPerLayerFiltersValues = function(layer, col) {
 
