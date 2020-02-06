@@ -266,6 +266,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.selectedValues = $scope.savedParameters;
 				$scope.tempSelectedValues = $scope.savedParameters;
 				$scope.showUnlock = false;
+				$scope.showInfoBar = true;
 				delete $scope.savedParameters;
 			}
 
