@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/node_modules/@fortawesome/fontawesome-free/css/all.css"/>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css"/>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/all.css")%>"/>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>"/>
 
 <!-- angular reference-->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
