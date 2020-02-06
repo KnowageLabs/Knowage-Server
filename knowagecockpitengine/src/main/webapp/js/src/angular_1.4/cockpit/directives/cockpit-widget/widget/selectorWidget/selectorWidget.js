@@ -266,6 +266,7 @@ angular.module('cockpitModule')
 				$scope.selectedValues = $scope.savedParameters;
 				$scope.tempSelectedValues = $scope.savedParameters;
 				$scope.showUnlock = false;
+				$scope.showInfoBar = true;
 				delete $scope.savedParameters;
 			}
 
