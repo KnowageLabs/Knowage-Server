@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -116,11 +117,14 @@ public class PythonDataSet extends ConfigurableDataSet {
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {
-		String address = getProp(PythonDataSetConstants.PYTHON_ADDRESS, jsonConf, false);
-
+		String restAddress;
 		Map<String, String> requestHeaders;
 		try {
 			requestHeaders = getRequestHeadersPropMap(PythonDataSetConstants.REST_REQUEST_HEADERS, jsonConf);
+			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
+			String label = pythonEnv.get("label").toString();
+			String pythonAddress = SingletonConfig.getInstance().getConfigValue(label);
+			restAddress = "https://" + pythonAddress + "/dataset";
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
@@ -134,7 +138,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 		String parameters = getProp(PythonDataSetConstants.PYTHON_SCRIPT_PARAMETERS, jsonConf, true);
 
-		setDataProxy(new PythonDataProxy(address, pythonScript, dataframeName, parameters, requestHeaders, offset, fetchSize, maxResults));
+		setDataProxy(new PythonDataProxy(restAddress, pythonScript, dataframeName, parameters, requestHeaders, offset, fetchSize, maxResults));
 	}
 
 	private JSONObject getJSONConfig() {
