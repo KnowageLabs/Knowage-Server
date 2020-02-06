@@ -208,7 +208,7 @@
 								<div flex layout="row" >
 									<md-input-container flex class="md-block">
 										<label>{{::translate.load('sbi.cockpit.table.rows.height')}}</label>
-										<input class="input_class" ng-disabled="newModel.settings.autoRowsHeight" ng-model="newModel.style.tr.height" />
+										<input class="input_class" ng-disabled="newModel.settings.autoRowsHeight" ng-model="newModel.style.tr.height" type="number" min="0"/>
 									</md-input-container>
 								</div>
 							</div>

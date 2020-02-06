@@ -255,7 +255,7 @@ function cockpitWidgetControllerFunction(
 		sbiModule_config,
 		$filter,
 		$sce,
-		$mdDialog,cockpitModule_backwardCompatibility,
+		$mdDialog,
 		cockpitModule_exportWidgetService,
 		$httpParamSerializer,
 		cockpitModule_defaultTheme,
@@ -274,10 +274,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
-
-	if(!cockpitModule_backwardCompatibility.compareVersion(cockpitModule_properties.CURRENT_KNOWAGE_VERSION,$scope.ngModel.knowageVersion)){
-		$scope.ngModel = cockpitModule_backwardCompatibility.updateModel($scope.ngModel);
-	}
 
 	$scope.checkType = function(type,availableTypes){
 		return availableTypes.indexOf(type) != -1;
