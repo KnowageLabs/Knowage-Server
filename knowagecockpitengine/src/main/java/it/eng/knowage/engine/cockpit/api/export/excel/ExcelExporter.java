@@ -377,6 +377,9 @@ public class ExcelExporter {
 				columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 				rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
 				measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+				if (optionsObj != null) {
+					logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
+				}
 
 				Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
@@ -520,6 +523,10 @@ public class ExcelExporter {
 			JSONObject styleJSON = (!content.isNull("style") ? content.getJSONObject("style") : new JSONObject());
 
 			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
+
+			if (datastoreObjData != null) {
+				logger.debug("Export cockpit crosstab datastoreObjData.toString(): " + datastoreObjData.toString());
+			}
 
 			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
 					datastoreObjData.getJSONObject("metaData"), styleJSON);
