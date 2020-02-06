@@ -53,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}).then(function() {
 				deferred.promise.then(function(result){
 					if($scope.currentRow != undefined){
+						$scope.currentRow.name = result.alias;
 						$scope.currentRow.aliasToShow = result.alias;
 						$scope.currentRow.formula = result.formula;
 						$scope.currentRow.formulaEditor = result.formulaEditor;
@@ -230,6 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
 				$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
 				$scope.result.aliasToShow = $scope.result.alias;
+				$scope.result.name = $scope.result.alias;
 				$scope.result.fieldType = 'MEASURE';
 				$scope.result.isCalculated = true;
 				$scope.result.type = "java.lang.Double";
