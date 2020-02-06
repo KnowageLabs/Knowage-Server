@@ -922,21 +922,28 @@ function cockpitChartWidgetControllerFunction(
 			  			if(params.data.isCalculated){
 
 			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'"></calculated-field>' +
-			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 			  			}
 
 			  		}
 
 			  		$scope.deleteColumn = function(rowName,event) {
-						for(var k in $scope.localModel.columnSelectedOfDatasetAggregations){
-							if($scope.localModel.columnSelectedOfDatasetAggregations[k].name == rowName) var item = $scope.localModel.columnSelectedOfDatasetAggregations[k];
-						}
-				  		  var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
-						  $scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
-						  if($scope.localModel.settings.sortingColumn == item.aliasToShow){
-							  $scope.localModel.settings.sortingColumn = null;
-						  }
-					  }
+			  			if($scope.localModel.chartTemplate.VALUES.SERIE[0].column == rowName) {
+			  				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.deletingCFOnSerie"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+			    			  return;
+			  			} else {
+			  				for(var k in $scope.localModel.columnSelectedOfDatasetAggregations){
+								if($scope.localModel.columnSelectedOfDatasetAggregations[k].alias == rowName) {
+									var item = $scope.localModel.columnSelectedOfDatasetAggregations[k];
+									var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
+									$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+								}
+							}
+							if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == item.aliasToShow){
+								$scope.localModel.settings.sortingColumn = null;
+							}
+			  			}
+			  		}
 
 
 			  		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
