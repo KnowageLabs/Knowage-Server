@@ -326,6 +326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 					$scope.ngModel.settings.pagination.itemsNumber = $scope.ngModel.settings.pagination.itemsNumber || 15;
 					$scope.totalPages = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber) || 0;
+					$scope.hidePagination = $scope.totalPages < 2 ? true : false;
 					if($scope.totalRows > 0 && $scope.ngModel.settings.page > Math.ceil($scope.totalRows / $scope.ngModel.settings.pagination.itemsNumber)){
 						$scope.ngModel.settings.page = Math.ceil($scope.totalRows/$scope.ngModel.settings.pagination.itemsNumber);
 						$scope.refreshWidget();
