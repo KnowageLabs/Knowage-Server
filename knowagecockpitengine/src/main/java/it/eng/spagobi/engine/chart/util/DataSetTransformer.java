@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import it.eng.knowage.engine.cockpit.CockpitEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
@@ -738,182 +739,82 @@ public class DataSetTransformer {
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine, String groupSeries,
-			String groupSeriesCateg, Map<String, String> dataColumnsMapper, Map<String, String> categorieColumns, String groupedSerie) throws JSONException {
+			String groupSeriesCateg, Map<String, String> dataColumnsMapper, Map<String, String> categorieColumns, String groupedSerie,
+			Map<String, Object> drillOrder) {
+
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
-
-		String columnForGroupingSerie = "";
-		if (!groupSeriesBool) {
-			columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
-		}
-		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
-				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
-			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
-		}
-		String primCat;
-		String secCat;
-		String seria;
-		if (!isCockpit) {
-			if (groupSeriesBool) {
-				primCat = "column_1";
-				secCat = "column_2";
-				seria = "column_3";
-			} else {
-				primCat = dataColumnsMapper.get(categorieColumns.get("column").toLowerCase());
-				secCat = columnForGroupingSerie;
-				seria = dataColumnsMapper.get(categorieColumns.get("groupby").toLowerCase());
-			}
-		} else {
-			if (groupSeriesBool) {
-				primCat = "column_2";
-				secCat = "column_3";
-				seria = "column_1";
-
-			} else {
-				primCat = "column_1";
-				secCat = columnForGroupingSerie;
-				seria = "column_2";
-
+		try {
+			String columnForGroupingSerie = "";
+			if (!groupSeriesBool) {
+				columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 			}
 
-		}
-		logger.debug("primCat: " + primCat);
-		logger.debug("secCat: " + secCat);
-		logger.debug("seria: " + seria);
-		for (Object singleObject : dataRows) {
-			categories.add(((Map) singleObject).get(primCat));
-		}
-
-		Set<Object> categoriesSet = new LinkedHashSet<>(categories);
-		Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
-
-		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
-		for (int i = 0; i < categoriesList.length; i++) {
-			categoriesListIndexMap.put(categoriesList[i], i);
-		}
-
-		for (String key : dataColumnsMapper.keySet()) {
-			String newCol = "";
-
-			String serieValue = "";
-			for (Object singleObject : dataRows) {
-				if (!dataColumnsMapper.get(key).equals(primCat) && !dataColumnsMapper.get(key).equals(secCat)) {
-
-					if (!dataColumnsMapper.get(key).equals(seria)) {
-						newCol = key;
-						serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
-					} else {
-
-						newCol = ((Map) singleObject).get(seria).toString();
-						serieValue = ((Map) singleObject).get(secCat).toString();
-
-					}
+			removeOrderColumn(dataColumnsMapper, drillOrder, categorieColumns);
+			String primCat;
+			String secCat;
+			String seria;
+			if (!isCockpit) {
+				if (groupSeriesBool) {
+					primCat = "column_1";
+					secCat = "column_2";
+					seria = "column_3";
+				} else {
+					primCat = dataColumnsMapper.get(categorieColumns.get("column").toLowerCase());
+					secCat = columnForGroupingSerie;
+					seria = dataColumnsMapper.get(categorieColumns.get("groupby").toLowerCase());
+				}
+			} else {
+				if (groupSeriesBool) {
+					primCat = "column_2";
+					secCat = "column_3";
+					seria = "column_1";
 
 				} else {
-					continue;
-				}
-				ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
-				if (newListOfOrderColumnItems == null) {
-					newListOfOrderColumnItems = new ArrayList<JSONObject>();
-					for (int i = 0; i < categoriesList.length; i++) {
-						Object category = categoriesList[i];
-						JSONObject jo = new JSONObject();
-						jo.put("name", category);
-						jo.put("y", "");
-						newListOfOrderColumnItems.add(jo);
-					}
-					map.put(newCol, newListOfOrderColumnItems);
-				}
+					primCat = "column_1";
+					secCat = columnForGroupingSerie;
+					seria = "column_2";
 
-				JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
-				jo.put("y", serieValue);
+				}
 
 			}
-
-		}
-
-		logger.debug("map: " + map);
-		return map;
-
-	}
-
-	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGroupingBubble(List<Object> dataRows, Map<String, String> dataColumnsMapper,
-			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory)
-			throws JSONException {
-
-		ArrayList<Object> categories = new ArrayList<>();
-		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
-
-		String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
-
-		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
-				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
-			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
-		}
-
-		String primCateg = categorieColumns.get("column");
-		String primColumn = dataColumnsMapper.get((categorieColumns).get("column"));
-		String seriaColumn = null;
-		String seria = null;
-		if (categorieColumns.get("groupby") != null && categorieColumns.get("groupby") != "") {
-			seriaColumn = dataColumnsMapper.get(categorieColumns.get("groupby"));
-			seria = categorieColumns.get("groupby");
-		} else {
-			seriaColumn = primColumn;
-			seria = primCateg;
-		}
-		if (!coloredCategory.equals("") && coloredCategory.equals(primCateg)) {
-			String temp = seria;
-			String tempColumn = seriaColumn;
-			seriaColumn = primColumn;
-			seria = primCateg;
-			primCateg = temp;
-			primColumn = tempColumn;
-		}
-
-		String secCat = columnForGroupingSerie;
-
-		String z = dataColumnsMapper.get(serieForZAxis);
-		String x = dataColumnsMapper.get(serieForXAxis);
-
-		logger.debug("primCat: " + primColumn);
-		logger.debug("secCat: " + secCat);
-		logger.debug("seria: " + seriaColumn);
-
-		for (Object singleObject : dataRows) {
-			categories.add(((Map) singleObject).get(primColumn));
-		}
-
-		Set<Object> categoriesSet = new LinkedHashSet<>(categories);// bez duplikata
-		Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
-
-		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>(); // canada 0 maxico 1 usa 2
-		for (int i = 0; i < categoriesList.length; i++) {
-			categoriesListIndexMap.put(categoriesList[i], i);
-		}
-
-		for (String key : dataColumnsMapper.keySet()) {
-			String newCol = "";
-
-			String serieValue = "";
-			String zValue = "";
-			String xValue = "";
-
+			logger.debug("primCat: " + primCat);
+			logger.debug("secCat: " + secCat);
+			logger.debug("seria: " + seria);
 			for (Object singleObject : dataRows) {
-				if (key.equals(seria)) {
-					newCol = ((Map) singleObject).get(seriaColumn).toString();
-					serieValue = ((Map) singleObject).get(secCat).toString();
-				} else if (isDifferent(key, primCateg) && isDifferent(key, serieForXAxis) && isDifferent(key, serieForZAxis)
-						&& isDifferent(key, groupedSerie)) {
+				categories.add(((Map) singleObject).get(primCat));
+			}
 
-					newCol = key;
-					serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
+			Set<Object> categoriesSet = new LinkedHashSet<>(categories);
+			Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
 
-				}
+			Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
+			for (int i = 0; i < categoriesList.length; i++) {
+				categoriesListIndexMap.put(categoriesList[i], i);
+			}
 
-				if (!"".equals(newCol)) {
+			for (String key : dataColumnsMapper.keySet()) {
+				String newCol = "";
+
+				String serieValue = "";
+				for (Object singleObject : dataRows) {
+					if (!dataColumnsMapper.get(key).equals(primCat) && !dataColumnsMapper.get(key).equals(secCat)) {
+
+						if (!dataColumnsMapper.get(key).equals(seria)) {
+							newCol = key;
+							serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
+						} else {
+
+							newCol = ((Map) singleObject).get(seria).toString();
+							serieValue = ((Map) singleObject).get(secCat).toString();
+
+						}
+
+					} else {
+						continue;
+					}
 					ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
 					if (newListOfOrderColumnItems == null) {
 						newListOfOrderColumnItems = new ArrayList<JSONObject>();
@@ -921,33 +822,160 @@ public class DataSetTransformer {
 							Object category = categoriesList[i];
 							JSONObject jo = new JSONObject();
 							jo.put("name", category);
-							jo.put("x", "");
-							jo.put("z", "");
 							jo.put("y", "");
-							jo.put("tooltipConf", new JSONObject());
-
 							newListOfOrderColumnItems.add(jo);
 						}
 						map.put(newCol, newListOfOrderColumnItems);
 					}
 
-					JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primColumn)));
+					JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
 					jo.put("y", serieValue);
-					jo.put("x", ((Map) singleObject).get(x).toString());
-					jo.put("z", ((Map) singleObject).get(z).toString());
-					JSONObject tooltipConf = new JSONObject();
-					for (String column : dataColumnsMapper.keySet()) {
-						tooltipConf.put(column, ((Map) singleObject).get(dataColumnsMapper.get(column)));
-					}
-					jo.put("tooltipConf", tooltipConf);
 
 				}
 
 			}
 
-		}
+			logger.debug("map: " + map);
 
-		logger.debug("map: " + map);
+		} catch (Exception e) {
+			throw new CockpitEngineRuntimeException("Cannot group data", e);
+		}
+		return map;
+	}
+
+	/**
+	 * @param dataColumnsMapper
+	 * @param drillOrder
+	 * @param categorieColumns
+	 */
+	private void removeOrderColumn(Map<String, String> dataColumnsMapper, Map<String, Object> drillOrder, Map<String, String> categorieColumns) {
+		if (drillOrder != null) {
+			for (String key : drillOrder.keySet()) {
+				Map<String, String> keyMapper = (Map<String, String>) drillOrder.get(key);
+				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))) {
+					dataColumnsMapper.remove(keyMapper.get("orderColumn").toLowerCase());
+				}
+			}
+		} else {
+			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
+				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
+			}
+		}
+	}
+
+	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGroupingBubble(List<Object> dataRows, Map<String, String> dataColumnsMapper,
+			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory)
+		 {
+
+		ArrayList<Object> categories = new ArrayList<>();
+		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+		try {
+			String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+
+			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
+				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
+			}
+
+			String primCateg = categorieColumns.get("column");
+			String primColumn = dataColumnsMapper.get((categorieColumns).get("column"));
+			String seriaColumn = null;
+			String seria = null;
+			if (categorieColumns.get("groupby") != null && categorieColumns.get("groupby") != "") {
+				seriaColumn = dataColumnsMapper.get(categorieColumns.get("groupby"));
+				seria = categorieColumns.get("groupby");
+			} else {
+				seriaColumn = primColumn;
+				seria = primCateg;
+			}
+			if (!coloredCategory.equals("") && coloredCategory.equals(primCateg)) {
+				String temp = seria;
+				String tempColumn = seriaColumn;
+				seriaColumn = primColumn;
+				seria = primCateg;
+				primCateg = temp;
+				primColumn = tempColumn;
+			}
+
+			String secCat = columnForGroupingSerie;
+
+			String z = dataColumnsMapper.get(serieForZAxis);
+			String x = dataColumnsMapper.get(serieForXAxis);
+
+			logger.debug("primCat: " + primColumn);
+			logger.debug("secCat: " + secCat);
+			logger.debug("seria: " + seriaColumn);
+
+			for (Object singleObject : dataRows) {
+				categories.add(((Map) singleObject).get(primColumn));
+			}
+
+			Set<Object> categoriesSet = new LinkedHashSet<>(categories);// bez duplikata
+			Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
+
+			Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>(); // canada 0 maxico 1 usa 2
+			for (int i = 0; i < categoriesList.length; i++) {
+				categoriesListIndexMap.put(categoriesList[i], i);
+			}
+
+			for (String key : dataColumnsMapper.keySet()) {
+				String newCol = "";
+
+				String serieValue = "";
+				String zValue = "";
+				String xValue = "";
+
+				for (Object singleObject : dataRows) {
+					if (key.equals(seria)) {
+						newCol = ((Map) singleObject).get(seriaColumn).toString();
+						serieValue = ((Map) singleObject).get(secCat).toString();
+					} else if (isDifferent(key, primCateg) && isDifferent(key, serieForXAxis) && isDifferent(key, serieForZAxis)
+							&& isDifferent(key, groupedSerie)) {
+
+						newCol = key;
+						serieValue = ((Map) singleObject).get(dataColumnsMapper.get(key)).toString();
+
+					}
+
+					if (!"".equals(newCol)) {
+						ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
+						if (newListOfOrderColumnItems == null) {
+							newListOfOrderColumnItems = new ArrayList<JSONObject>();
+							for (int i = 0; i < categoriesList.length; i++) {
+								Object category = categoriesList[i];
+								JSONObject jo = new JSONObject();
+								jo.put("name", category);
+								jo.put("x", "");
+								jo.put("z", "");
+								jo.put("y", "");
+								jo.put("tooltipConf", new JSONObject());
+
+								newListOfOrderColumnItems.add(jo);
+							}
+							map.put(newCol, newListOfOrderColumnItems);
+						}
+
+						JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primColumn)));
+						jo.put("y", serieValue);
+						jo.put("x", ((Map) singleObject).get(x).toString());
+						jo.put("z", ((Map) singleObject).get(z).toString());
+						JSONObject tooltipConf = new JSONObject();
+						for (String column : dataColumnsMapper.keySet()) {
+							tooltipConf.put(column, ((Map) singleObject).get(dataColumnsMapper.get(column)));
+						}
+						jo.put("tooltipConf", tooltipConf);
+
+					}
+
+				}
+
+			}
+
+			logger.debug("map: " + map);
+		} catch (Exception e) {
+			throw new CockpitEngineRuntimeException("Cannot group data", e)
+		}
 		return map;
 
 	}
@@ -980,51 +1008,54 @@ public class DataSetTransformer {
 	 */
 
 	public LinkedHashMap<String, Set<ArrayList<Object>>> prepareDataForScater(List<Object> dataRows, String columnCategorie, String isCockpitEngine,
-			String columnSerie) throws JSONException {
+			String columnSerie) {
 		LinkedHashMap<String, Set<ArrayList<Object>>> map = new LinkedHashMap<>();
-		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
-		Map<String, Integer> mapOfIndex = new HashMap<>();
-		String columnX = !isCockpit ? "column_1" : "column_2";
-		for (Object singleObject : dataRows) {
-			Map mapObject = (Map) singleObject;
-			if (!map.containsKey(mapObject.get(columnCategorie))) {
-				Set<ArrayList<Object>> a = new HashSet<>();
-				ArrayList<Object> t = new ArrayList<>();
-				if (Number.class.isAssignableFrom(mapObject.get(columnCategorie).getClass())) {
-					t.add(mapObject.get(columnCategorie));
-				} else {
-					t.add("'" + mapObject.get(columnCategorie) + "'");
-				}
-				if (columnSerie == null) {
-					t.add(getStringOrNull(mapObject.get(columnX)));
-				} else {
-					t.add(getStringOrNull(mapObject.get(columnSerie)));
-				}
-
-				a.add(t);
-				mapOfIndex.put(getStringOrNull(mapObject.get(columnCategorie)), map.entrySet().size());
-				map.put(getStringOrNull(mapObject.get(columnCategorie)), a);
-			} else {
-				if (mapOfIndex.containsKey(mapObject.get(columnCategorie))) {
-					ArrayList<Object> a = new ArrayList<>();
+		try {
+			boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
+			Map<String, Integer> mapOfIndex = new HashMap<>();
+			String columnX = !isCockpit ? "column_1" : "column_2";
+			for (Object singleObject : dataRows) {
+				Map mapObject = (Map) singleObject;
+				if (!map.containsKey(mapObject.get(columnCategorie))) {
+					Set<ArrayList<Object>> a = new HashSet<>();
+					ArrayList<Object> t = new ArrayList<>();
 					if (Number.class.isAssignableFrom(mapObject.get(columnCategorie).getClass())) {
-						a.add(mapOfIndex.get(mapObject.get(columnCategorie)));
+						t.add(mapObject.get(columnCategorie));
 					} else {
-						a.add(mapOfIndex.get("'" + mapObject.get(columnCategorie) + "'"));
+						t.add("'" + mapObject.get(columnCategorie) + "'");
 					}
 					if (columnSerie == null) {
-						a.add(getStringOrNull(mapObject.get(columnX)));
+						t.add(getStringOrNull(mapObject.get(columnX)));
 					} else {
-						a.add(getStringOrNull(mapObject.get(columnSerie)));
+						t.add(getStringOrNull(mapObject.get(columnSerie)));
 					}
 
-					Set<ArrayList<Object>> valueOfMap = map.get(mapObject.get(columnCategorie));
-					valueOfMap.add(a);
+					a.add(t);
+					mapOfIndex.put(getStringOrNull(mapObject.get(columnCategorie)), map.entrySet().size());
+					map.put(getStringOrNull(mapObject.get(columnCategorie)), a);
+				} else {
+					if (mapOfIndex.containsKey(mapObject.get(columnCategorie))) {
+						ArrayList<Object> a = new ArrayList<>();
+						if (Number.class.isAssignableFrom(mapObject.get(columnCategorie).getClass())) {
+							a.add(mapOfIndex.get(mapObject.get(columnCategorie)));
+						} else {
+							a.add(mapOfIndex.get("'" + mapObject.get(columnCategorie) + "'"));
+						}
+						if (columnSerie == null) {
+							a.add(getStringOrNull(mapObject.get(columnX)));
+						} else {
+							a.add(getStringOrNull(mapObject.get(columnSerie)));
+						}
+
+						Set<ArrayList<Object>> valueOfMap = map.get(mapObject.get(columnCategorie));
+						valueOfMap.add(a);
+					}
 				}
+
 			}
-
+		} catch (Exception e) {
+			throw new CockpitEngineRuntimeException("Cannot group data", e);
 		}
-
 		return map;
 
 	}
