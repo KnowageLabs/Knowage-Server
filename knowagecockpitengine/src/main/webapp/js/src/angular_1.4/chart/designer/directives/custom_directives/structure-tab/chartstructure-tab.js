@@ -33,7 +33,7 @@ app.directive('chartstructureTab', function(sbiModule_config,chartDesignerBasePa
 		}
 	});
 
-function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices, sbiModule_messaging , StructureTabService,ChartDesignerData){
+function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices, sbiModule_messaging, sbiModule_util, StructureTabService,ChartDesignerData){
 	$scope.translate = sbiModule_translate;
 	$scope.structureDetailsShown = false;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
@@ -94,52 +94,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
 	$scope.showMaxNmbSerAxesExceeded = false;
-
-	// Get all metadata of the chart's dataset (all measures and attributes)
-
-	var urlForMetadata="";
-	if($scope.isCockpitEng){
-		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+$scope.datasetId;
-	}else{
-		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadata";
-	}
-	sbiModule_restServices.promiseGet(urlForMetadata, "")
-		.then(function(response) {
-
-			$scope.fieldsMetadata = response.data;
-
-			var results = $scope.fieldsMetadata.results;
-
-			for(var i=0; i<results.length; i++) {
-
-				if (results[i].nature=="measure") {
-					$scope.allMeasures.push(results[i]);
-				}
-				else {
-					$scope.allAttributes.push(results[i]);
-				}
-
-			}
-
-			$scope.checkCategories();
-			$scope.checkSeries();
-			$scope.checkAxis();
-
-
-		}, function(response) {
-
-			var message = "";
-
-			if (response.status==500) {
-				message = response.statusText;
-			}
-			else {
-				message = response.data.errors[0].message;
-			}
-
-			sbiModule_messaging.showErrorMessage(message, 'Error');
-
-		});
 
 	/**
 	 * Show/hide the Structure Details panel.
@@ -246,7 +200,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	 $scope.moveAttributeToCategories = function(item) {
 
 			var chartType = $scope.chartTemplate.type;
-			var index = findInArray($scope.categories,'column',item.alias);
+			var index = sbiModule_util.findInArray($scope.categories,'column',item.alias);
 
 			if (chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
 				if(chartType.toUpperCase() == "SCATTER" && item.colType=="String"){
@@ -427,12 +381,13 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					temp.axis = $scope.seriesContainers[i].name;
 					temp.column = item.alias;
 					temp.name = item.alias;
-					temp.precision = Number(item.precision);
+					temp.precision = 0;
+					temp.groupingFunction = item.aggregationSelected;
 					if($scope.chartTemplate.type.toUpperCase()=="SCATTER" || $scope.chartTemplate.type.toUpperCase()=="BUBBLE"){
 						temp.fakeSerie = false;
 					}
-					var checkForSameAxis = findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
-					var checkForSameColumn = findInArray($scope.chartTemplate.VALUES.SERIE,'column',temp.column);
+					var checkForSameAxis = sbiModule_util.findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
+					var checkForSameColumn = sbiModule_util.findInArray($scope.chartTemplate.VALUES.SERIE,'column',temp.column);
 					if( checkForSameAxis == -1 || checkForSameColumn == -1){
 						$scope.chartTemplate.VALUES.SERIE.push(temp);
 					}else if($scope.seriesLimit == false){
@@ -680,10 +635,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			$scope.categoriesExist = true;
 		}
 	 var cflag = 0;
-	 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
-		if($scope.fieldsMetadata.results[i].nature == 'attribute'){
+	 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
+		if($scope.fieldsMetadata[i].fieldType == 'ATTRIBUTE'){
 			for (var j = 0; j < $scope.categories.length; j++) {
-				if($scope.categories[j].column == $scope.fieldsMetadata.results[i].alias){
+				if($scope.categories[j].column == $scope.fieldsMetadata[i].alias){
 					cflag++;
 
 				}
@@ -720,7 +675,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			   else {
 			    chartSeries= $scope.chartTemplate.VALUES.SERIE;
 			   }
-			if(chartSeries[0].column==""){
+			if(chartSeries[0] && chartSeries[0].column==""){
 				$scope.chartTemplate.VALUES.SERIE = [];
 			}
 				if(chartSeries.length>0){
@@ -733,10 +688,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		}
 		var sflag = 0;
-		 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
-			if($scope.fieldsMetadata.results[i].nature == 'measure'){
+		 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
+			if($scope.fieldsMetadata[i].fieldType == 'MEASURE'){
 				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
-					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata.results[i].alias){
+					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata[i].alias){
 						sflag++;
 
 					}
@@ -781,24 +736,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		$scope.categories = [];
 	}
 
-	/**
-	 * Operations for series inside the Series container: move up, move down and delete item.
-	 */
-	var findInArray = function(array, attr, value) {
-	    for(var i = 0; i < array.length; i += 1) {
-	        if(array[i][attr] === value) {
-	            return i;
-	        }
-	    }
-	    return -1;
-	}
-
-
-
 	$scope.seriesItemMoveUp = function(item,seriesContainer) {
 		console.log("moving up");
 
-		var index = findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
+		var index = sbiModule_util.findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
 		var nextIndex = index-1;
 		var temp = $scope.chartTemplate.VALUES.SERIE[index];
 		$scope.chartTemplate.VALUES.SERIE[index] = $scope.chartTemplate.VALUES.SERIE[nextIndex];
@@ -823,7 +764,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.seriesItemMoveDown = function(item,seriesContainer) {
 		console.log("moving down");
 
-		var index = findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
+		var index = sbiModule_util.findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
 		var nextIndex = index+1;
 		var temp = $scope.chartTemplate.VALUES.SERIE[index];
 		$scope.chartTemplate.VALUES.SERIE[index] = $scope.chartTemplate.VALUES.SERIE[nextIndex];
@@ -1086,5 +1027,27 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			delete $scope.chartTemplate.groupedSerie;
 		}
 	}
+
+
+
+	$scope.getMetadata = function(){
+		$scope.allMeasures.length = 0;
+		$scope.allAttributes.length = 0;
+		$scope.fieldsMetadata = $scope.localMod.columnSelectedOfDatasetAggregations;
+		for(var i = 0; i < $scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType=="MEASURE") {
+				$scope.allMeasures.push($scope.fieldsMetadata[i]);
+			} else {
+				$scope.allAttributes.push($scope.fieldsMetadata[i]);
+			}
+		}
+
+		$scope.seriesContainers.length=0;
+
+		$scope.checkSeries();
+		$scope.checkAxis();
+	}
+	$scope.getMetadata();
+	$scope.checkCategories();
 
 }

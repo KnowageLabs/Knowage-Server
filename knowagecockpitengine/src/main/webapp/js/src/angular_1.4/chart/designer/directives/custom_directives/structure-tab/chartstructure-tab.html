@@ -469,14 +469,14 @@
    	 							<md-icon aria-label="Move series item down" class="fa fa-arrow-down" style="display:inline"></md-icon>
  	 						</md-button>
 						    
-						    <md-button 	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" 
+						    <md-button 	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig',seriesContainer.name);prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" 
 						    			style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 						    	<!-- alternative: fa-paint-brush -->
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
 					   		<div ng-if="(selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'  && selectedChartType != 'bubble'  ) && disableHtmlElementForChartJs() " >
-					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" >
+					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip',seriesContainer.name);prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" >
 					   			<!-- alternative: fa-comment-o -->
 						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>
 					   		</md-button>

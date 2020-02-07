@@ -20,8 +20,8 @@
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.series.aggrtype')}}</label>
 		
-		<md-select ng-model="detailsForSeriesItem.groupingFunction"> 
-			<md-option ng-repeat="option in seriesItemAggregationTypes  | filter: filterAgregations" value="{{option.value}}">{{option.name}}</md-option>
+		<md-select ng-model="detailsForSeriesItem.groupingFunction" ng-disabled="true"> 
+			<md-option ng-repeat="option in seriesItemAggregationTypes" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
 	</md-input-container>
 </div>

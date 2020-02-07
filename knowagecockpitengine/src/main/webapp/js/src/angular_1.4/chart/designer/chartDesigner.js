@@ -36,22 +36,13 @@ app.directive("chartDesigner" ,function(chartDesignerBasePath){
 	}
 });
 
-function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
+function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiModule_util,$scope,sbiModule_config, sbiModule_restServices, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.selectedChartType = "";
 	$scope.selectedTab = {'tab' : 0};
 	var urlForDataset="";
 	$scope.enterpriseEdition = sbiModule_user.functionalities.indexOf("SeeAdvancedTab")>-1;
-
-	var findInArray = function(array, attr, value) {
-	    for(var i = 0; i < array.length; i += 1) {
-	        if(array[i][attr] === value) {
-	            return i;
-	        }
-	    }
-	    return -1;
-	}
 
 	if($scope.isCockpitEng){
 		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+$scope.datasetId;
@@ -151,6 +142,10 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 		cockpitModule_widgetServices.validateForm($scope.chartDesignerForm.$valid)
 	})
 
+	$scope.$on('updateMeasuresWithCF', function(event,data) {
+		$scope.getMetadata();
+	})
+
 	$scope.refreshJsonTree = function() {
 		$scope.attachCategoriesToTemplate(true);
 
@@ -160,7 +155,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 		var valueSeries = $scope.chartTemplate.VALUES.SERIE;
 		var totalSeries = $scope.allMeasures;
 		for(var i = 0; i < totalSeries.length; i++){
-			var index = findInArray(valueSeries,'column',totalSeries[i].alias);
+			var index = sbiModule_util.findInArray(valueSeries,'column',totalSeries[i].alias);
 			if(index == -1){
 				valueSeries.push({axis:"Y",color:"",column:totalSeries[i].alias,groupingFunction:"NONE", name:totalSeries[i].alias,orderType:"",postfixChar:"",
 					precision:2,prefixChar:"",scaleFactor:"empty",showAbsValue:"false",showPercentage:false, showValue: "",type:"",fakeSerie:true})
@@ -307,7 +302,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,$sco
 		var valueSeries = $scope.chartTemplate.VALUES.SERIE;
 		var totalSeries = $scope.allMeasures;
 		for(var i = 0; i < valueSeries.length; i++){
-			var index = findInArray(totalSeries,'alias',valueSeries[i].bubbleDimension);
+			var index = sbiModule_util.findInArray(totalSeries,'alias',valueSeries[i].bubbleDimension);
 			if(index != -1){
 				valueSeries.push({axis:"Y",color:"",column:totalSeries[index].alias,groupingFunction:valueSeries[i].groupingFunction, name:totalSeries[index].alias,orderType:"",postfixChar:"",
 					precision:2,prefixChar:"",scaleFactor:"empty",showAbsValue:"false",showPercentage:false, showValue: "",type:"",fakeSerie:true})
