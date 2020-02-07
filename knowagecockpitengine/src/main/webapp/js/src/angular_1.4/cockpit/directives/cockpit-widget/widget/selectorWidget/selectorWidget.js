@@ -86,13 +86,13 @@ angular.module('cockpitModule')
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
 
-		$scope.isSelectedOrder = function(item){
-			var tempItem = item;
-			if(item.column_1) tempItem = item.column_1;
-			if($scope.isSelected(tempItem)) return 1;
-			if(!$scope.isDisabled(tempItem)) return 2;
-			return 3;
-		}
+//		$scope.isSelectedOrder = function(item){
+//			var tempItem = item;
+//			if(item.column_1) tempItem = item.column_1;
+//			if($scope.isSelected(tempItem)) return 1;
+//			if(!$scope.isDisabled(tempItem)) return 2;
+//			return 3;
+//		}
 
 		$scope.mapToColumn = function(x){
 			return x.column_1;
@@ -269,6 +269,15 @@ angular.module('cockpitModule')
 				$scope.showInfoBar = true;
 				delete $scope.savedParameters;
 			}
+
+			if($scope.datasetRecords.rows){
+				$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
+					if($scope.isSelected(item.column_1)) return 1;
+					if(!$scope.isDisabled(item.column_1)) return 2;
+					return 3;
+				})
+			}
+
 
 			if(nature == 'init'){
 				$timeout(function(){
@@ -492,7 +501,12 @@ angular.module('cockpitModule')
 			} else {
 				$scope.tempSelectedValues.push(parVal);
 			}
-			$scope.showInfoBar = ($scope.tempSelectedValues.length == 0) ? false : true;
+			if($scope.tempSelectedValues.length == 0){
+				if($scope.savedParameters && $scope.savedParameters.length != $scope.tempSelectedValues.length){
+					$scope.showInfoBar = true;
+				}
+				$scope.showInfoBar = false;
+			}else $scope.showInfoBar = true;
 		}
 
 		$scope.bulkSelect = function(){
