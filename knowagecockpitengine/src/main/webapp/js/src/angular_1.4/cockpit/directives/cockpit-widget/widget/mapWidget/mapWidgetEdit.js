@@ -32,8 +32,8 @@ function mapWidgetEditControllerFunction(
 		mdPanelRef,
 		$location,
 		knModule_fontIconsService,
-		$mdToast
-		){
+		$mdToast) {
+
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
@@ -42,9 +42,9 @@ function mapWidgetEditControllerFunction(
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
-  	$scope.getTemplateUrl = function(template){
-  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
-  	}
+	$scope.getTemplateUrl = function(template){
+		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
+	}
 
 	$scope.setTargetLayer = function(layer){
 		for(var t in $scope.newModel.content.layers){
@@ -54,19 +54,19 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
-  	$scope.setMarkersVisualizationType = function(layer,type){
-  		layer.visualizationType = type;
-  		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false;
-  		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false;
-  		if(type == 'clusters'){
-  			layer.clusterConf = layer.clusterConf || {};
-  			layer.clusterConf.enabled = true;
-  		}
-  		if(type == 'heatmap'){
-  			layer.heatmapConf = layer.heatmapConf || {};
-  			layer.heatmapConf.enabled = true;
-  		}
-  	}
+	$scope.setMarkersVisualizationType = function(layer,type){
+		layer.visualizationType = type;
+		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false;
+		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false;
+		if(type == 'clusters'){
+			layer.clusterConf = layer.clusterConf || {};
+			layer.clusterConf.enabled = true;
+		}
+		if(type == 'heatmap'){
+			layer.heatmapConf = layer.heatmapConf || {};
+			layer.heatmapConf.enabled = true;
+		}
+	}
 
 	$scope.expandRow = function(layer,content){
 		if(content == 'metadata'){
@@ -84,56 +84,56 @@ function mapWidgetEditControllerFunction(
 			}
 			if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded != content){
 				$scope.newModel.content.layers[t].expanded = content;
-	  		}else {
-	  			if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded == content){
-	  				delete $scope.newModel.content.layers[t].expanded;
-		  		}
-	  		}
+			}else {
+				if($scope.newModel.content.layers[t].dsId==layer.dsId && $scope.newModel.content.layers[t].expanded == content){
+					delete $scope.newModel.content.layers[t].expanded;
+				}
+			}
 		}
 	}
 
-  	$scope.addField = function(columns){
-  		columns.unshift({});
-  	}
+	$scope.addField = function(columns){
+		columns.unshift({});
+	}
 
-  	$scope.checkDs = function(column){
-  		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
-  			var confrontField = $scope.confrontationDs.metadata.fieldsMeta[i];
-  			if(confrontField.name == column.name && confrontField.alias == column.alias && confrontField.fieldType == column.fieldType){
-  				for(var k in $scope.confrontationDsList){
-  					if($scope.confrontationDsList[k].name == column.name){
-  						$scope.confrontationDsList.splice(k,1);
-  						break;
-  					}
-  				}
-  				return true
-  			}
-  		}
-  		return false;
-  	}
+	$scope.checkDs = function(column){
+		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
+			var confrontField = $scope.confrontationDs.metadata.fieldsMeta[i];
+			if(confrontField.name == column.name && confrontField.alias == column.alias && confrontField.fieldType == column.fieldType){
+				for(var k in $scope.confrontationDsList){
+					if($scope.confrontationDsList[k].name == column.name){
+						$scope.confrontationDsList.splice(k,1);
+						break;
+					}
+				}
+				return true
+			}
+		}
+		return false;
+	}
 
-  	$scope.updateDsList = function(column, dsId){
-  		for(var j in $scope.newModel.content.columnSelectedOfDataset[dsId]){
-  			if($scope.newModel.content.columnSelectedOfDataset[dsId][j].name == column.name){
-  				for(var k in $scope.confrontationDsList){
-  					if($scope.confrontationDsList[k].name == column.name){
-  						$scope.confrontationDsList.splice(k,1);
-  						break;
-  					}
-  				}
-  		  		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
-  		  			if(column.name == $scope.confrontationDs.metadata.fieldsMeta[i].name){
-  		  				angular.merge($scope.newModel.content.columnSelectedOfDataset[dsId][j],$scope.confrontationDs.metadata.fieldsMeta[i]);
-  		  				if(!$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow){
-  		  					$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[dsId][j].alias;
-  		  				}
-  		  				break;
-  		  			}
-  		  		}
-  		  		break;
-  			}
-  		}
-  	}
+	$scope.updateDsList = function(column, dsId){
+		for(var j in $scope.newModel.content.columnSelectedOfDataset[dsId]){
+			if($scope.newModel.content.columnSelectedOfDataset[dsId][j].name == column.name){
+				for(var k in $scope.confrontationDsList){
+					if($scope.confrontationDsList[k].name == column.name){
+						$scope.confrontationDsList.splice(k,1);
+						break;
+					}
+				}
+				for(var i in $scope.confrontationDs.metadata.fieldsMeta){
+					if(column.name == $scope.confrontationDs.metadata.fieldsMeta[i].name){
+						angular.merge($scope.newModel.content.columnSelectedOfDataset[dsId][j],$scope.confrontationDs.metadata.fieldsMeta[i]);
+						if(!$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow){
+							$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[dsId][j].alias;
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
 
 	$scope.hasShownDetails = function(layer){
 
@@ -161,9 +161,9 @@ function mapWidgetEditControllerFunction(
 
 	}
 
-  	$scope.deleteColumn = function(layer,column){
-  		layer.splice(layer.indexOf(column),1);
-  	}
+	$scope.deleteColumn = function(layer,column){
+		layer.splice(layer.indexOf(column),1);
+	}
 
 	$scope.deleteLayer = function(layer){
 		var index=$scope.newModel.content.layers.indexOf(layer);
@@ -265,29 +265,29 @@ function mapWidgetEditControllerFunction(
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: $scope.getTemplateUrl('mapWidgetAddLayerDialog'),
-	      targetEvent: ev,
-	      clickOutsideToClose:true,
-	      locals: {  }
-	    })
+		  templateUrl: $scope.getTemplateUrl('mapWidgetAddLayerDialog'),
+		  targetEvent: ev,
+		  clickOutsideToClose:true,
+		  locals: {  }
+		})
 //	    $scope.hideWidgetSpinner();
-	    $scope.widgetSpinner = false;
+		$scope.widgetSpinner = false;
 //		$scope.safeApply();
-  	}
+	}
 //  	$scope.colorPickerOptions = {format:'hex'};
-  	$scope.colorPickerOptions = {format:'rgb'};
-  	$scope.setIconType = function(layer,type) {
-  		if (!layer.markerConf) layer.markerConf={};
-  		layer.markerConf.type = type;
-  	}
+	$scope.colorPickerOptions = {format:'rgb'};
+	$scope.setIconType = function(layer,type) {
+		if (!layer.markerConf) layer.markerConf={};
+		layer.markerConf.type = type;
+	}
 
-  	$scope.getDimensionFromRadius = function(radius){
-  		return (radius * 2) + 'px';
-  	}
+	$scope.getDimensionFromRadius = function(radius){
+		return (radius * 2) + 'px';
+	}
 
-  	$scope.chooseIcon = function(ev, layer) {
+	$scope.chooseIcon = function(ev, layer) {
 
-  		$mdDialog.show({
+		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 				$scope.availableIcons = knModule_fontIconsService.icons;
 
@@ -310,20 +310,20 @@ function mapWidgetEditControllerFunction(
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: $scope.getTemplateUrl('mapWidgetAddIconDialog'),
-	      targetEvent: ev,
-	      clickOutsideToClose:true,
-	      locals: {  }
-	    })
-  	}
+		  templateUrl: $scope.getTemplateUrl('mapWidgetAddIconDialog'),
+		  targetEvent: ev,
+		  clickOutsideToClose:true,
+		  locals: {  }
+		})
+	}
 
-  	$scope.filterIcon = function (item) {
-  	    return item.className.startsWith('fa');
-  	};
+	$scope.filterIcon = function (item) {
+		return item.className.startsWith('fa');
+	};
 
-  	$scope.chooseImg = function(ev, layer) {
+	$scope.chooseImg = function(ev, layer) {
 
-  		$mdDialog.show({
+		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 
 				$scope.imagesList = [];
@@ -399,12 +399,12 @@ function mapWidgetEditControllerFunction(
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: $scope.getTemplateUrl('mapWidgetImagesLibrary'),
-	      targetEvent: ev,
-	      clickOutsideToClose:true,
-	      locals: {  }
-	    })
-  	}
+		  templateUrl: $scope.getTemplateUrl('mapWidgetImagesLibrary'),
+		  targetEvent: ev,
+		  clickOutsideToClose:true,
+		  locals: {  }
+		})
+	}
 
 
 	$scope.addToDatasets = function() {
@@ -423,9 +423,9 @@ function mapWidgetEditControllerFunction(
 	}
 
 
-  	$scope.getThresholds = function(ev, measure) {
+	$scope.getThresholds = function(ev, measure) {
 
-  		$mdDialog.show({
+		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 
 				$scope.activeMeasure = {};
@@ -453,15 +453,15 @@ function mapWidgetEditControllerFunction(
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: $scope.getTemplateUrl('mapWidgetMeasureThresholds'),
-	      targetEvent: ev,
-	      clickOutsideToClose:true,
-	      locals: {  }
-	    })
-  	}
+		  templateUrl: $scope.getTemplateUrl('mapWidgetMeasureThresholds'),
+		  targetEvent: ev,
+		  clickOutsideToClose:true,
+		  locals: {  }
+		})
+	}
 
 
-  	//MAIN DIALOG BUTTONS
+	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
 		for(var c in $scope.newModel.content.layers){
 			$scope.hasShownDetails($scope.newModel.content.layers[c])
@@ -476,12 +476,12 @@ function mapWidgetEditControllerFunction(
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);
 		finishEdit.resolve();
-  	}
+	}
 
 	$scope.cancelConfiguration=function(){
-  		mdPanelRef.close();
-  		finishEdit.reject();
-  	}
+		mdPanelRef.close();
+		finishEdit.reject();
+	}
 
 	$scope.reorder = function() {
 		for(var idx in $scope.newModel.content.layers) {
@@ -496,15 +496,14 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
-	$scope.calculateColumnOrderWeight = function(s1) {
-		return s1Val = (s1.isCalculated ? 100 : 0)
-			+ (s1.fieldType == "ATTRIBUTE" ? 10 : 0);
+	var currentColMenu;
+	$scope.openColumnMenu = function($mdOpenMenu,ev) {
+		currentColMenu = ev;
+		$mdOpenMenu(ev);
 	}
 
-	$scope.columnComparator = function(s1, s2) {
-		var s1Val = $scope.calculateColumnOrderWeight(s1);
-		var s2Val = $scope.calculateColumnOrderWeight(s2);
-		return s1Val - s2Val;
+	$scope.isDeletable = function(column) {
+		return column.isCalculated || !$scope.checkDs(column,false);
 	}
 
 	function loadAvailableLayers() {

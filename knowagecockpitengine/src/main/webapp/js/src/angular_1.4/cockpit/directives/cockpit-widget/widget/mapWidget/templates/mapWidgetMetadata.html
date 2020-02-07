@@ -69,12 +69,11 @@
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnMap')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.modalColumn')}}</th>
-												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}</th>
-												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.delete')}}</th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | orderBy:'fieldType':comparator track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+											<tr ng-repeat="column in layer.content.columnSelectedOfDataset track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
 												
 												<td>
 													<md-input-container ng-if="!column.isCalculated && !checkDs(column)" layout="row" layout-align="start center">
@@ -114,11 +113,33 @@
 													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
 												</td>
 												<td style="text-align:center" class="multiTableAction">
-													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
+
+													<md-menu ng-if="column.fieldType === 'MEASURE'">
+														<md-button aria-label="Column options" class="md-icon-button" ng-click="openColumnMenu($mdOpenMenu,$event)">
+															<md-icon md-menu-origin md-font-icon="fas fa-ellipsis-v"></md-icon>
+														</md-button>
+														<md-menu-content width="4">
+															<md-menu-item ng-if="column.fieldType === 'MEASURE'">
+																<md-button class="md-knowage-theme" ng-click="getThresholds($event,column)">
+																	<md-icon md-font-icon="fa fa-sliders"></md-icon>
+																	{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}
+																</md-button>
+															</md-menu-item>
+															<md-menu-item ng-if="column.isCalculated || !checkDs(column,false)">
+																<calculated-field ng-model="layer" selected-item="$index" inside-menu="true"></calculated-field><!--{{translate.load('sbi.cockpit.map.edit.metadata.upate')}}-->
+															</md-menu-item>
+															<md-menu-divider ng-if="isDeletable(column)"></md-menu-divider>
+															<md-menu-item ng-if="isDeletable(column)">
+																<md-button class="md-knowage-theme" ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)">
+																	<md-icon md-font-icon="fa fa-trash"></md-icon>
+																	{{translate.load('sbi.cockpit.map.edit.metadata.delete')}}
+																</md-button>
+															</md-menu-item>
+														</md-menu-content>
+													</md-menu>
+
 												</td>
-												<td style="text-align:center" class="multiTableAction">
-													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)" ng-if="column.isCalculated || !checkDs(column,false)"></md-icon>
-												</td>
+
 											</tr>
 										</tbody>
 									</table>	
