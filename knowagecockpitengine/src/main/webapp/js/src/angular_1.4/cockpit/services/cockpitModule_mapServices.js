@@ -53,55 +53,38 @@
 							geoFieldConfig.properties.coordFormat = 'lon lat';
 						}
 						if (geoFieldConfig.properties.coordType == 'json'){
-							if (IsJsonString(geoFieldValue)){
-								var jsonConf = JSON.parse(geoFieldValue);
-								if (jsonConf.type.toUpperCase() == 'POINT'){
-									jsonConf.coordinates = [jsonConf.coordinates];
-									isSimpleMarker = true;
+
+							feature = new ol.format.GeoJSON().readFeatures(geoFieldValue, {
+								dataProjection: 'EPSG:4326',
+								featureProjection: 'EPSG:3857'
+							});
+
+							if (Array.isArray(feature)) {
+								for (var i in feature) {
+									var currFeature = feature[i];
+
+									currFeature.set("parentLayer",  config.layerID);
+									currFeature.set("isWKT", false);
+									currFeature.set("isGeoJSON", true);
+									currFeature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+									featuresSource.addFeature(currFeature);
+
+									ms.addDsPropertiesToFeature(currFeature, row, configColumns, values.metaData.fields);
+
 								}
-								else
-									isSimpleMarker = false;
+							} else {
 
-								jsonConf.properties = geoFieldConfig.properties;
-								var isComplexFeature = false;
-								if (jsonConf.coordinates && jsonConf.coordinates.length > 1){
-									isComplexFeature = true;
-								}
+									feature.set("parentLayer",  config.layerID);
+									feature.set("isWKT", false);
+									feature.set("isGeoJSON", true);
+									feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+									featuresSource.addFeature(feature);
 
-								if (isComplexFeature){
-									//more features within the managed one: it loops on subfeature definition
-									var tmpJsonConf = angular.copy(jsonConf);
-									for (var f=0; f < jsonConf.coordinates.length; f++){
-
-										tmpJsonConf.coordinates = jsonConf.coordinates[f];
-										geometry = ms.getGeometry(null, tmpJsonConf, geoFieldConfig);
-										//set ol objects
-										feature = new ol.Feature(geometry)
-
-										if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-										//get config for thematize
-										if (selectedMeasure){
-											if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
-												cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
-											}
-										}
-								        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
-
-								       //at least add the layer owner
-								        feature.set("parentLayer",  config.layerID);
-								        feature.set("isSimpleMarker", isSimpleMarker);
-								        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-								        featuresSource.addFeature(feature);
-									}
-								}else
-									geometry = ms.getGeometry(null, jsonConf, geoFieldConfig);
-							}else{
-								console.log("Location got from dataset hasn't a valid json format. Please check it: ["+geoFieldValue+"]");
-								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
-								return null;
+									ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 							}
-						} else if (geoFieldConfig.properties.coordType == 'wkt'){
-							//test formato WKT
+
+
+						} else if (geoFieldConfig.properties.coordType == 'wkt') {
 
 							feature = new ol.format.WKT().readFeature(geoFieldValue, {
 								dataProjection: 'EPSG:4326',
@@ -111,39 +94,21 @@
 							feature.set("parentLayer",  config.layerID);
 //							feature.set("isSimpleMarker", isSimpleMarker);
 							feature.set("isWKT", true);
+							feature.set("isGeoJSON", false);
 							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
 							featuresSource.addFeature(feature);
 
 							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 
-						}else if (geoFieldConfig.properties.coordType == 'string'){
+						} else if (geoFieldConfig.properties.coordType == 'string') {
 							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
 								console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.stringInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
 								return null;
 							}
 							isSimpleMarker = true;
-						    geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
+							geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
 
-						    if (!isComplexFeature){
-								//set ol objects
-								feature = new ol.Feature(geometry);
-
-								if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-								//get config for thematize
-								if (selectedMeasure){
-									if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
-										cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
-									}
-								}
-						        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
-
-						       //at least add the layer owner
-						        feature.set("parentLayer",  config.layerID);
-						        feature.set("isSimpleMarker", isSimpleMarker);
-						        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-						        featuresSource.addFeature(feature);
-							}
 						}
 					}
 
@@ -203,27 +168,27 @@
 
 		ms.getGeometry = function(geocol, config, value){
 			var geometry;
-		    var coordinates = [];
-		    var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+			var coordinates = [];
+			var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
 
-		    if (config.properties.coordType.toUpperCase() == "STRING"){
-		    	coordinates =  transform(ms.getSimpleCoordinates(geocol, config, value));
-		    }else{
+			if (config.properties.coordType.toUpperCase() == "STRING") {
+				coordinates =  transform(ms.getSimpleCoordinates(geocol, config, value));
+			} else {
 				config.coordinates.forEach(function(coords){
 						for (var i in coords) {
 							var coordinate;
-							if (Array.isArray(coords[i])){
-								if (Array.isArray(coords[i][0])){
-									for (var j in coords[i]){
+							if (Array.isArray(coords[i])) {
+								if (Array.isArray(coords[i][0])) {
+									for (var j in coords[i]) {
 										coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i][j]));
 										coordinates.push(coordinate);
 									}
-								}else{
+								} else {
 									coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i]));
 									coordinates.push(coordinate);
 								}
 
-							 } else{
+							 } else {
 								 var coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords));
 								 coordinates = coordinate; //point has already an array
 								 break;
