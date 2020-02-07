@@ -501,7 +501,9 @@ angular.module('cockpitModule')
 		}
 
 		$scope.unlock = function(){
-			$scope.savedParameters = $scope.tempSelectedValues.length > 0 ? $scope.tempSelectedValues : $scope.selectedValues;
+			if($scope.ngModel.settings.modalityValue == 'multiValue'){
+				$scope.savedParameters = $scope.tempSelectedValues.length > 0 ? $scope.tempSelectedValues : $scope.selectedValues;
+			}
 			$scope.toggleParameter([]);
 		}
 
@@ -699,6 +701,11 @@ angular.module('cockpitModule')
 
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
+				return;
+			}
+
+			if(typeof $scope.model.settings.modalityValue == 'undefined'){
+				$scope.showAction($scope.translate.load('kn.table.nomodality'));
 				return;
 			}
 
