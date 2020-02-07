@@ -974,7 +974,7 @@ public class DataSetTransformer {
 
 			logger.debug("map: " + map);
 		} catch (Exception e) {
-			throw new CockpitEngineRuntimeException("Cannot group data", e)
+			throw new CockpitEngineRuntimeException("Cannot group data", e);
 		}
 		return map;
 
