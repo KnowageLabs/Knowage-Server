@@ -307,7 +307,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		d3.select("#main"+randomId).append("div").attr("id","clearButton"+randomId).style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
 		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",widthNormalized-widthCorrection).style("height",chartDivHeight);
 
-		var axesDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
+		var axesDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-20;
 
 		var svg = d3.select("#chart"+randomId)
 			.append("div").attr("class","d3chartclass")
