@@ -738,7 +738,8 @@ public class DataSetTransformer {
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine, String groupSeries,
-			String groupSeriesCateg, Map<String, String> dataColumnsMapper, Map<String, String> categorieColumns, String groupedSerie) throws JSONException {
+			String groupSeriesCateg, Map<String, String> dataColumnsMapper, Map<String, String> categorieColumns, String groupedSerie,
+			Map<String, Object> drillOrder) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
 		ArrayList<Object> categories = new ArrayList<>();
@@ -748,10 +749,7 @@ public class DataSetTransformer {
 		if (!groupSeriesBool) {
 			columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 		}
-		if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
-				&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
-			dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
-		}
+		removeOrderColumn(dataColumnsMapper, drillOrder, categorieColumns);
 		String primCat;
 		String secCat;
 		String seria;
@@ -837,6 +835,27 @@ public class DataSetTransformer {
 		logger.debug("map: " + map);
 		return map;
 
+	}
+
+	/**
+	 * @param dataColumnsMapper
+	 * @param drillOrder
+	 * @param categorieColumns
+	 */
+	private void removeOrderColumn(Map<String, String> dataColumnsMapper, Map<String, Object> drillOrder, Map<String, String> categorieColumns) {
+		if (drillOrder != null) {
+			for (String key : drillOrder.keySet()) {
+				Map<String, String> keyMapper = (Map<String, String>) drillOrder.get(key);
+				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))) {
+					dataColumnsMapper.remove(keyMapper.get("orderColumn").toLowerCase());
+				}
+			}
+		} else {
+			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
+				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
+			}
+		}
 	}
 
 	/**
