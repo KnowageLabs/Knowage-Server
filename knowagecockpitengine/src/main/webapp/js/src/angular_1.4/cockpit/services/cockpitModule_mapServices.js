@@ -14,6 +14,32 @@
 
 		var ms = this; //mapServices
 
+		ms.setUpGeoJSONFeature = function(currFeature, config, row, configColumns, values) {
+			currFeature.set("parentLayer",  config.layerID);
+			currFeature.set("isWKT", false);
+			currFeature.set("isGeoJSON", true);
+			currFeature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+			ms.addDsPropertiesToFeature(currFeature, row, configColumns, values.metaData.fields);
+		}
+
+		ms.setUpWKTFeature = function(currFeature, config, row, configColumns, values) {
+			feature.set("parentLayer",  config.layerID);
+			feature.set("isWKT", true);
+			feature.set("isGeoJSON", false);
+			feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+			ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+		}
+
+		ms.setUpSelectedMeasure = function(selectedMeasure, config, values) {
+			if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+			//get config for thematize
+			if (selectedMeasure){
+				if (!cockpitModule_mapThematizerServices.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+					cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
+				}
+			}
+		}
+
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values){
 			if (values != undefined){
 				var geoFieldName;
@@ -63,24 +89,17 @@
 								for (var i in feature) {
 									var currFeature = feature[i];
 
-									currFeature.set("parentLayer",  config.layerID);
-									currFeature.set("isWKT", false);
-									currFeature.set("isGeoJSON", true);
-									currFeature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+									ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
+									ms.setUpSelectedMeasure(selectedMeasure, config, values);
+
 									featuresSource.addFeature(currFeature);
-
-									ms.addDsPropertiesToFeature(currFeature, row, configColumns, values.metaData.fields);
-
 								}
 							} else {
 
-									feature.set("parentLayer",  config.layerID);
-									feature.set("isWKT", false);
-									feature.set("isGeoJSON", true);
-									feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-									featuresSource.addFeature(feature);
+								ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
+								ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-									ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+								featuresSource.addFeature(feature);
 							}
 
 
@@ -91,15 +110,10 @@
 								featureProjection: 'EPSG:3857'
 							});
 
-							feature.set("parentLayer",  config.layerID);
-//							feature.set("isSimpleMarker", isSimpleMarker);
-							feature.set("isWKT", true);
-							feature.set("isGeoJSON", false);
-							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+							ms.setUpWKTFeature(currFeature, config, row, configColumns, values);
+							ms.setUpSelectedMeasure(selectedMeasure, config, values);
+
 							featuresSource.addFeature(feature);
-
-							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
-
 						} else if (geoFieldConfig.properties.coordType == 'string') {
 							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
 								console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
@@ -108,6 +122,18 @@
 							}
 							isSimpleMarker = true;
 							geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
+
+							//set ol objects
+							feature = new ol.Feature(geometry);
+
+							//at least add the layer owner
+							feature.set("parentLayer",  config.layerID);
+							feature.set("isSimpleMarker", isSimpleMarker);
+							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+							ms.setUpSelectedMeasure(selectedMeasure, config, values);
+
+							featuresSource.addFeature(feature);
 
 						}
 					}
