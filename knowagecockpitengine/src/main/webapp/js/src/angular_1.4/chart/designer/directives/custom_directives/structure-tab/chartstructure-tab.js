@@ -918,8 +918,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.clearAxisMajorGridDetails = function () {
-				$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
-			}
+		$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
+	}
+
+	$scope.clearAxisMinorGridDetails = function () {
+		$scope.axisForDisplay.MINORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
+	}
 
 	$scope.removeSeriesContainer = function(seriesContainer) {
 
