@@ -56,8 +56,8 @@
 					       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
 					          		<md-select ng-model="newModel.settings.sortingColumn" multiple="false">
 					          			<md-option></md-option>
-					           			<md-option ng-repeat="sortingColumn in newModel.content.columnSelectedOfDataset" ng-value="sortingColumn.alias">
-					                			{{sortingColumn.alias}}
+					           			<md-option ng-repeat="sortingColumn in newModel.content.columnSelectedOfDataset" ng-value="sortingColumn.name">
+					                			{{sortingColumn.name}}
 					           			</md-option>
 					       			</md-select>
 							    </md-input-container>
