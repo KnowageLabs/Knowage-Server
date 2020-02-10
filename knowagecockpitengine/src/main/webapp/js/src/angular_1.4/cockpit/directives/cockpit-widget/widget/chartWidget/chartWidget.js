@@ -107,6 +107,7 @@ function cockpitChartWidgetControllerFunction(
 		cockpitModule_widgetServices,
 		cockpitModule_properties,
 		cockpitModule_template,
+		sbiModule_util,
 		$mdDialog){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
@@ -169,7 +170,7 @@ function cockpitChartWidgetControllerFunction(
 	}
 
 	$scope.$on('changeChart', function (event, data) {
-		setAggregationsOnChartEngine($scope.ngModel.content)
+		setAggregationsOnChartEngine($scope.ngModel.content,sbiModule_util)
 		$scope.$broadcast("changeChartType",data);
 	});
 
