@@ -86,14 +86,6 @@ angular.module('cockpitModule')
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
 
-//		$scope.isSelectedOrder = function(item){
-//			var tempItem = item;
-//			if(item.column_1) tempItem = item.column_1;
-//			if($scope.isSelected(tempItem)) return 1;
-//			if(!$scope.isDisabled(tempItem)) return 2;
-//			return 3;
-//		}
-
 		$scope.mapToColumn = function(x){
 			return x.column_1;
 		}
@@ -245,8 +237,20 @@ angular.module('cockpitModule')
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
+					$scope.tempSelectedValues = angular.copy($scope.ngModel.activeValues);
+					if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
+					if($scope.savedParameters && $scope.savedParameters.length > 0){
+						$scope.selectedValues = angular.copy($scope.savedParameters);
+						$scope.tempSelectedValues = angular.copy($scope.savedParameters);
+						$scope.showUnlock = false;
+						$scope.showInfoBar = true;
+					}
 				},function(error){
 					console.error("Unable to load active values");
+					$scope.selectedValues = [];
+					$scope.tempSelectedValues = [];
+					$scope.showUnlock = false;
+					$scope.showInfoBar = false;
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
@@ -259,24 +263,23 @@ angular.module('cockpitModule')
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
 				}, 0);
-			}
 
-			if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
-			if($scope.savedParameters){
-				$scope.selectedValues = $scope.savedParameters;
-				$scope.tempSelectedValues = $scope.savedParameters;
-				$scope.showUnlock = false;
-				$scope.showInfoBar = true;
-				delete $scope.savedParameters;
+				$scope.tempSelectedValues = $scope.ngModel.activeValues ? angular.copy($scope.ngModel.activeValues) : [];
+				if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
+				if($scope.savedParameters && $scope.savedParameters.length > 0){
+					$scope.selectedValues = angular.copy($scope.savedParameters);
+					$scope.tempSelectedValues = angular.copy($scope.savedParameters);
+					$scope.showUnlock = false;
+					$scope.showInfoBar = true;
+				}
 			}
-
 			if($scope.datasetRecords.rows){
-				$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
-					if($scope.isSelected(item.column_1)) return 1;
-					if(!$scope.isDisabled(item.column_1)) return 2;
-					return 3;
-				})
-			}
+					$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
+						if($scope.isSelected(item.column_1)) return 1;
+						if(!$scope.isDisabled(item.column_1)) return 2;
+						return 3;
+					})
+				}
 
 
 			if(nature == 'init'){
@@ -510,13 +513,15 @@ angular.module('cockpitModule')
 		}
 
 		$scope.bulkSelect = function(){
+			$scope.savedParameters = [];
 			$scope.toggleParameter($scope.tempSelectedValues);
 			$scope.cancelBulkSelection();
 		}
 
 		$scope.unlock = function(){
 			if($scope.ngModel.settings.modalityValue == 'multiValue'){
-				$scope.savedParameters = $scope.tempSelectedValues.length > 0 ? $scope.tempSelectedValues : $scope.selectedValues;
+				$scope.savedParameters = $scope.tempSelectedValues.length > 0 ? angular.copy($scope.tempSelectedValues) : angular.copy($scope.selectedValues);
+				$scope.tempSelectedValues = [];
 			}
 			$scope.toggleParameter([]);
 		}
