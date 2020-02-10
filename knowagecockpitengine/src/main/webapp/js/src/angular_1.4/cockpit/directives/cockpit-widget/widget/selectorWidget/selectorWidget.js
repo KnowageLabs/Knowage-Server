@@ -237,13 +237,20 @@ angular.module('cockpitModule')
 					$scope.hideWidgetSpinner();
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
-					$scope.tempSelectedValues = angular.copy($scope.ngModel.activeValues);
+					$scope.tempSelectedValues = angular.copy($scope.selectedValues);
 					if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
 					if($scope.savedParameters && $scope.savedParameters.length > 0){
 						$scope.selectedValues = angular.copy($scope.savedParameters);
 						$scope.tempSelectedValues = angular.copy($scope.savedParameters);
 						$scope.showUnlock = false;
 						$scope.showInfoBar = true;
+					}
+					if($scope.datasetRecords.rows){
+						$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
+							if($scope.isSelected(item.column_1)) return 1;
+							if(!$scope.isDisabled(item.column_1)) return 2;
+							return 3;
+						})
 					}
 				},function(error){
 					console.error("Unable to load active values");
@@ -264,7 +271,7 @@ angular.module('cockpitModule')
 					$scope.waitingForSelection = false;
 				}, 0);
 
-				$scope.tempSelectedValues = $scope.ngModel.activeValues ? angular.copy($scope.ngModel.activeValues) : [];
+				$scope.tempSelectedValues = $scope.selectedValues ? angular.copy($scope.selectedValues) : [];
 				if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
 				if($scope.savedParameters && $scope.savedParameters.length > 0){
 					$scope.selectedValues = angular.copy($scope.savedParameters);
@@ -272,14 +279,15 @@ angular.module('cockpitModule')
 					$scope.showUnlock = false;
 					$scope.showInfoBar = true;
 				}
-			}
-			if($scope.datasetRecords.rows){
+				if($scope.datasetRecords.rows){
 					$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
 						if($scope.isSelected(item.column_1)) return 1;
 						if(!$scope.isDisabled(item.column_1)) return 2;
 						return 3;
 					})
 				}
+			}
+
 
 
 			if(nature == 'init'){
