@@ -506,6 +506,17 @@ angular.module('cockpitModule')
 			$scope.showInfoBar = false;
 		}
 
+		function arraysEqual(a, b) {
+			  if (a === b) return true;
+			  if (a == null || b == null) return false;
+			  if (a.length != b.length) return false;
+
+			  for (var i = 0; i < a.length; ++i) {
+			    if (a[i] !== b[i]) return false;
+			  }
+			  return true;
+			}
+
 		$scope.prepareParameter = function(parVal){
 			if ($scope.tempSelectedValues.indexOf(parVal) > -1) {
 				$scope.tempSelectedValues.splice($scope.tempSelectedValues.indexOf(parVal), 1);
@@ -513,12 +524,15 @@ angular.module('cockpitModule')
 				$scope.tempSelectedValues.push(parVal);
 			}
 			if($scope.tempSelectedValues.length == 0){
-				if($scope.savedParameters && $scope.savedParameters.length != $scope.tempSelectedValues.length){
+				if($scope.selectedValues && $scope.selectedValues.length != $scope.tempSelectedValues.length){
 					$scope.showInfoBar = true;
-				}
+				}else $scope.showInfoBar = false;
+			}else if(arraysEqual($scope.selectedValues, $scope.tempSelectedValues)){
 				$scope.showInfoBar = false;
 			}else $scope.showInfoBar = true;
 		}
+
+
 
 		$scope.bulkSelect = function(){
 			$scope.savedParameters = [];
