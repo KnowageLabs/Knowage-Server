@@ -267,18 +267,22 @@
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
 		        labelFormatter:function() {
-			        var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
-			        if(this.userOptions.bubbleConf) {
-			        	return this.userOptions.bubbleConf
+		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct'];
+		       		var bubbleConf = this.userOptions.bubbleConf ? this.userOptions.bubbleConf : "";
+		       		var serieName = this.userOptions.name;
+		       		for(obj in aggFunct){		       			
+		        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+		        			serieName = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]));
+		        		}
+		        		if(this.userOptions.bubbleConf && this.userOptions.bubbleConf.endsWith(aggFunct[obj])){
+		        			bubbleConf = this.userOptions.bubbleConf.substring(0,this.userOptions.bubbleConf.lastIndexOf(aggFunct[obj]));
+		        		}
+		        	}
+			        if(this.chart.series.length==1 && this.userOptions.bubbleConf) {
+			        	return bubbleConf;
 			        } else {
-			        	for(obj in aggFunct){
-			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
-			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
-			        		}
-			        	}
-			        }
-						
-					return this.userOptions.name
+			        	return serieName;
+			        }				
 		        },
 		    
 	    #end
@@ -293,18 +297,22 @@
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
 	            labelFormatter:function() {
-		        	var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
-			        if(this.userOptions.bubbleConf) {
-			        	return this.userOptions.bubbleConf
+		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct'];
+		       		var bubbleConf = this.userOptions.bubbleConf ? this.userOptions.bubbleConf : "";
+		       		var serieName = this.userOptions.name;
+		       		for(obj in aggFunct){		       			
+		        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+		        			serieName = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]));
+		        		}
+		        		if(this.userOptions.bubbleConf && this.userOptions.bubbleConf.endsWith(aggFunct[obj])){
+		        			bubbleConf = this.userOptions.bubbleConf.substring(0,this.userOptions.bubbleConf.lastIndexOf(aggFunct[obj]));
+		        		}
+		        	}
+			        if(this.chart.series.length==1 && this.userOptions.bubbleConf) {
+			        	return bubbleConf;
 			        } else {
-			        	for(obj in aggFunct){
-			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
-			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
-			        		}
-			        	}
-			        }
-						
-					return this.userOptions.name
+			        	return serieName;
+			        }				
 		        },
 		    
 	 	#end
@@ -406,18 +414,22 @@
 	            layout: 'horizontal',
 	          	y: $totalDistanceLegend, 
 	          	labelFormatter:function() {
-		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct']
-			        if(this.userOptions.bubbleConf) {
-			        	return this.userOptions.bubbleConf
+		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct'];
+		       		var bubbleConf = this.userOptions.bubbleConf ? this.userOptions.bubbleConf : "";
+		       		var serieName = this.userOptions.name;
+		       		for(obj in aggFunct){		       			
+		        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+		        			serieName = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]));
+		        		}
+		        		if(this.userOptions.bubbleConf && this.userOptions.bubbleConf.endsWith(aggFunct[obj])){
+		        			bubbleConf = this.userOptions.bubbleConf.substring(0,this.userOptions.bubbleConf.lastIndexOf(aggFunct[obj]));
+		        		}
+		        	}
+			        if(this.chart.series.length==1 && this.userOptions.bubbleConf) {
+			        	return bubbleConf;
 			        } else {
-			        	for(obj in aggFunct){
-			        		if(this.userOptions.name.endsWith(aggFunct[obj])){
-			        			this.userOptions.name = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]))
-			        		}
-			        	}
-			        }
-						
-					return this.userOptions.name
+			        	return serieName;
+			        }				
 		        },
 		    
 	 	#end
@@ -431,6 +443,24 @@
 		        align: '$chart.LEGEND.position', 
 		        verticalAlign: 'middle',
 		        layout: 'vertical',
+		        labelFormatter:function() {
+		       		var aggFunct = ['_none','_sum', '_min','_max','_avg','_count','_count_distinct'];
+		       		var bubbleConf = this.userOptions.bubbleConf ? this.userOptions.bubbleConf : "";
+		       		var serieName = this.userOptions.name;
+		       		for(obj in aggFunct){		       			
+		        		if(this.userOptions.name.endsWith(aggFunct[obj])){
+		        			serieName = this.userOptions.name.substring(0,this.userOptions.name.lastIndexOf(aggFunct[obj]));
+		        		}
+		        		if(this.userOptions.bubbleConf && this.userOptions.bubbleConf.endsWith(aggFunct[obj])){
+		        			bubbleConf = this.userOptions.bubbleConf.substring(0,this.userOptions.bubbleConf.lastIndexOf(aggFunct[obj]));
+		        		}
+		        	}
+			        if(this.chart.series.length==1 && this.userOptions.bubbleConf) {
+			        	return bubbleConf;
+			        } else {
+			        	return serieName;
+			        }				
+		        },
 		    
 	    #end
 	    		
