@@ -258,6 +258,10 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 		 				}
 
 		 			}
+					var divsToClean = document.getElementsByClassName('show-for-canvas');
+ 					for(var k in divsToClean){
+ 						divsToClean[k].classList.remove('show-for-canvas');
+ 					}
 				}
 
 				 function getScreenshot(sheet){
@@ -269,24 +273,35 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				 		var element = document.querySelector('#w'+widget.id+' .placedWidget');
 				 		var xml = new XMLSerializer().serializeToString(angular.element(element).find('svg')[0]);
 						xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
+						document.getElementById('canvas_'+widget.id).classList.add('show-for-canvas');
 						canvg(document.getElementById('canvas_'+widget.id), xml);
 				 	}
 
 				 	function replaceIframe(widget){
 				 		var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
-				 		html2canvas(element,{
-				 			allowTaint: true,
-				 			useCORS: true,
-				 			foreignObjectRendering: true,
-				 			width: element.clientWidth,
-				 			height: element.scrollHeight
-				 		}).then(function(canvas){
-				 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
-				 			canvas.style.height = "100%";
-				 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
-				 		},function(error){
-				 			reject(error);
-				 		})
+				 		if(element.className && element.className == 'kn-svgviewer') {
+				 			element = element.querySelector('iframe');
+					 		var xml = new XMLSerializer().serializeToString(angular.element(element)[0].contentWindow.document.getElementsByTagName('svg')[0]);
+							xml = xml.replace(/xmlns=\"http:\/\/www\.w3\.org\/2000\/svg\"/, '');
+							document.getElementById('canvas_'+widget.id).classList.add('show-for-canvas');
+							canvg(document.getElementById('canvas_'+widget.id), xml);
+				 		}else{
+					 		html2canvas(element,{
+					 			allowTaint: true,
+					 			useCORS: true,
+					 			foreignObjectRendering: true,
+					 			async:false,
+					 			width: element.clientWidth,
+					 			height: element.scrollHeight
+					 		}).then(function(canvas){
+					 			document.querySelector('#divCanvas_'+widget.id).classList.add('show-for-canvas');
+					 			document.querySelector('#divCanvas_'+widget.id).innerHTML = '';
+					 			canvas.style.height = "100%";
+					 			document.querySelector('#divCanvas_'+widget.id).appendChild(canvas);
+					 		},function(error){
+					 			reject(error);
+					 		})
+				 		}
 				 	}
 
 				 	function getPage(sheet){
