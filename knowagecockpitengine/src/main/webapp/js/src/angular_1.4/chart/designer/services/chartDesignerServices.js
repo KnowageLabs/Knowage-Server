@@ -183,6 +183,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
                 {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.sequence"),value:"sequence"},
                 {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.exlpanation"),value:"explanation"}
                                              ]
+			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;
 			break;
@@ -942,32 +943,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		                  },
 				         "text":""
 				      },
-					"LEGEND": {
-						"layout": "",
-						"position": "top",
-						"show": false,
-						"style":{
-							"align":"",
-							"backgroundColor":"",
-							"color":"",
-							"fontFamily":"",
-							"fontWeight":"",
-							"fontSize":"",
-							"borderWidth":0
-						},
-						"x": 0,// todo
-						"y": 0,// todo
-						"TITLE": {
-							"style":{
-								"align":"",
-								"color":"",
-								"fontFamily":"",
-								"fontWeight":"",
-								"fontSize":""
-							},
-							"text": ""
-						}
-					},
 					"PANE": {
 						"endAngle": 120,
 						"startAngle": -120
