@@ -143,8 +143,10 @@
 	        			textDecoration: 'underline',
 					#elseif($styleName == 'align')
 	        			#set($labelAlign=$axisStyle)
+	        			align:'$labelAlign',
 	        		#elseif($styleName == 'rotate')
-	        			#set($rotation=$axisStyle)		        			
+	        			#set($rotation=$axisStyle)
+	        			rotate:"$rotation",		        			
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
