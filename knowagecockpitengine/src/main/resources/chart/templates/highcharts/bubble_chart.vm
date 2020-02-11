@@ -46,7 +46,7 @@
 	#set($coloredCategory = $chart.coloredCategory)
 	#end
 #end
-
+#set ($customColors = $chart.CUSTOMCOLORS.COLOR)
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 	#if($series.column == $groupedSerie)
@@ -1002,6 +1002,12 @@
 		{	
 			
 			name: "$escapeTool.javascript($relatedSerie.name)",
+			
+			#foreach($customColor in $customColors)
+			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+				color:'$customColor.customValue',
+			#end
+			#end
 			bubbleConf: '$serieForZAxis',
 	    	dataLabels: {
 	    		allowOverlap: true,
@@ -1035,6 +1041,14 @@
 								x: $row.get($colX),
 							#end								
 							name: "$serieCategoryName",
+							
+							#foreach($customColor in $customColors)
+							#if($customColor.customName.equalsIgnoreCase($serieCategoryName))
+								color:'$customColor.customValue',
+							#end
+							#end
+							
+							
 							tooltipConf:{
 							#foreach($valueKey in $dataColumnsMapper.keySet())
 							#set ($col =  $dataColumnsMapper.get($valueKey))
@@ -1232,7 +1246,11 @@
 			    	#set($referencedAxis = $relatedSerie.axis)
 			    	yAxis: $yAxisPositions[$referencedAxis],
 					#end
-				
+					#foreach($customColor in $customColors)
+	           		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
+	                color:'$customColor.customValue',
+		            #end
+		            #end
 			       	
 			       	
 					data: [
@@ -1250,8 +1268,13 @@
 								z: $el.z,
 							#end
 							#if($el.name!="")	
-								name: '$el.name',
+								name: "$escapeTool.javascript($el.name)",
 							#end
+							#foreach($customColor in $customColors)
+							#if($customColor.customName.equalsIgnoreCase($el.name))
+								color:'$customColor.customValue',
+							#end
+							#end	
 							#if($el.y!="")	
 								y: $el.y,
 							#end

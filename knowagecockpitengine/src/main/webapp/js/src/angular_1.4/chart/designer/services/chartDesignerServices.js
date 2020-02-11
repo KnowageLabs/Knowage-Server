@@ -244,7 +244,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			return data;
 			break;
 		case 'bubble':
-			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"}]
+			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"}]
+
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;

@@ -51,7 +51,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
  $scope.colors = [];
 
- $scope.chartsThatHaveCustomColors= ["bar","pie","line"];
+ $scope.chartsThatHaveCustomColors= ["bar","pie","line","bubble"];
  var checkForCustomColors = function (){
 	if($scope.chartsThatHaveCustomColors.indexOf($scope.selectedChartType) >-1 && !$scope.chartTemplate.CUSTOMCOLORS){
 		$scope.chartTemplate.CUSTOMCOLORS = {}
