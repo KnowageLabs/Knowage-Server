@@ -2102,32 +2102,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
               	  "fontSize":""
                 },
 				"width": 100,
-				"LEGEND": {
-					"layout": "",
-					"position": "",
-					"show": false,
-					"style":{
-	                	  "align":"",
-	                	  "color":"",
-	                	  "fontFamily":"",
-	                	  "fontWeight":"",
-	                	  "fontSize":"",
-	                	  "borderWidth":"",
-	                	  "backgroundColor":""
-	                  },
-					"x": 0,
-					"y": 0,
-					"TITLE":{
-			            "text":"",
-			            "style":{
-		                	  "align":"",
-		                	  "color":"",
-		                	  "fontFamily":"",
-		                	  "fontWeight":"",
-		                	  "fontSize":""
-		                  }
-			         }
-				},
 				"SUBTITLE":{
 			    	  "style":{
 	                	  "align":"",
@@ -2315,33 +2289,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                	  "fontSize":""
 	                  },
 			         "text":""
-			      },
-				"LEGEND": {
-					"layout": "",
-					"position": "",
-					"show": false,
-					"style":{
-	                	  "align":"",
-	                	  "color":"",
-	                	  "fontFamily":"",
-	                	  "fontWeight":"",
-	                	  "fontSize":"",
-	                	  "borderWidth":"",
-	                	  "backgroundColor":""
-	                  },
-					"x": 0,
-					"y": 0,
-					"TITLE":{
-			            "text":"",
-			            "style":{
-		                	  "align":"",
-		                	  "color":"",
-		                	  "fontFamily":"",
-		                	  "fontWeight":"",
-		                	  "fontSize":""
-		                  }
-			         }
-				}
+			      }
 			};
 
 		return wordCloudTemp;
