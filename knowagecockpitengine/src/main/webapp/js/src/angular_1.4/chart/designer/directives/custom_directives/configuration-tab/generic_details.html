@@ -22,7 +22,7 @@
 	</md-select> </md-input-container>
 
 
-	<md-input-container class="md-block" flex=100 ng-show="selectedChartType == 'bar' || selectedChartType == 'line'" ng-if="disableHtmlElementForChartJs()">
+	<md-input-container class="md-block" flex=100 ng-if="disableHtmlElementForChartJs() && (selectedChartType == 'bar' || selectedChartType == 'line')">
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.orientation")}}</label>
 	<md-select ng-model="chartTemplate.orientation" name="generic_orientation" > <md-option
 		ng-repeat="option in orientationType" value="{{option.value}}">{{option.name}}</md-option>

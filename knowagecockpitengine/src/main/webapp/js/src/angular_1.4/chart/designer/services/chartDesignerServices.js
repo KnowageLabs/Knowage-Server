@@ -907,7 +907,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					"height": 100,
 					"heightDimType": "percentage",
 					"isCockpitEngine": "",
-					"orientation": "",
 					"seriesStacking": false,
 					"style":{
 						"fontFamily":"",
@@ -1098,7 +1097,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"height": 100,
 				"heightDimType": "percentage",
 				"isCockpitEngine": "",
-				"orientation": "horizontal",
 				"seriesStacking": false,
 				"style":{
               	  "backgroundColor":"#FFFFFF",
@@ -1305,7 +1303,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"height": 100,
 				"heightDimType": "percentage",
 				"isCockpitEngine": "",
-				"orientation": "horizontal",
 				"seriesStacking": false,
 				"showTableParallel": false,
 				"style":{
@@ -1497,7 +1494,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				},
 				"height": 100,
 				"isCockpitEngine": "",
-				"orientation": "",
 				"style":{
               	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
@@ -1711,7 +1707,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"isCockpitEngine": "",
 				"dateTime":false,
 				"dateFormat":"day",
-				"orientation": "",
 				"seriesStacking": false,
 				"style":{
               	  "backgroundColor":"#FFFFFF",
@@ -1885,7 +1880,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"height": 100,
 				"isCockpitEngine": "",
 				"opacMouseOver": 0,
-				"orientation": "",
 				"style":{
               	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
@@ -2099,7 +2093,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				},
 				"height": 100,
 				"isCockpitEngine": "",
-				"orientation": "horizontal",
 				"style":{
               	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
@@ -2287,7 +2280,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"maxWords": 10,
 				"minAngle": 0,
 				"minFontSize": 5,
-				"orientation": "",
 				"preventOverlap": false,
 				"seriesStacking": false,
 				"sizeCriteria": "serie",
@@ -2361,7 +2353,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		var chordTemp = {
 				"height": 100,
 				"isCockpitEngine": "",
-				"orientation": "horizontal",
 				"style": {
 					"fontFamily": "",
 					"fontSize": "",
