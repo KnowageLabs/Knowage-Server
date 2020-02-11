@@ -11,7 +11,7 @@
 	           		<md-list style="overflow: auto;"" class="noPadding md-dense" ng-if="!calculatedField.datasetOrTableFlag || isSolrDataset()">
 		   		   		<md-list-item ng-class="{'md-2-line':!isSolrDataset()}" ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
 		   		   			<div ng-class="{'md-list-item-text':!isSolrDataset()}"><h3 ng-if="!isSolrDataset()">{{meas.aliasToShow}}</h3>
-		   		   			<span ng-if="isSolrDataset()">{{meas.aliasToShow}}</span>
+		   		   			<span ng-if="isSolrDataset()">{{meas.aliasToShow}} ({{meas.alias}})</span>
 		   		   			<p ng-if="!isSolrDataset()">{{meas.alias}} ({{meas.aggregationSelected}})</p></div>					   		   		 
 	   		   				<md-divider></md-divider>
 	   		   			</md-list-item>

@@ -52,8 +52,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
@@ -241,9 +239,12 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 		for (int i = 0; i < metadata.getFieldCount(); i++) {
 
-			if (formula.contains(metadata.getFieldName(i))) {
+			if (formula.contains(metadata.getFieldName(i)) || formula.contains(metadata.getFieldAlias(i))) {
 
-				formula = formula.replaceAll(metadata.getFieldName(i), record.getFieldAt(i).getValue().toString());
+				if (formula.contains(metadata.getFieldAlias(i))) {
+					formula = formula.replaceAll(metadata.getFieldAlias(i), record.getFieldAt(i).getValue().toString());
+				} else
+					formula = formula.replaceAll(metadata.getFieldName(i), record.getFieldAt(i).getValue().toString());
 
 			}
 
