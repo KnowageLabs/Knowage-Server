@@ -260,7 +260,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 		 			}
 					var divsToClean = document.getElementsByClassName('show-for-canvas');
  					for(var k in divsToClean){
- 						if(divsToClean[k].classList.contains('show-for-canvas')) divsToClean[k].classList.remove('show-for-canvas');
+ 						if(divsToClean[k].classList && divsToClean[k].classList.contains('show-for-canvas')) divsToClean[k].classList.remove('show-for-canvas');
  					}
 				}
 
