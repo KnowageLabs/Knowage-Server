@@ -1753,7 +1753,17 @@ public class ExcelExporter {
 					JSONArray values = new JSONArray();
 					for (int j = 0; j < filterVals.length(); j++) {
 						Object filterVal = filterVals.get(j);
-						values.put("('" + filterVal + "')");
+						String filterValString = (String) filterVal;
+						boolean hasComma = false;
+						if (filterValString.contains(",")) { // fixme: this workaround doesn't handle filters values with commas inside
+							hasComma = true;
+							String[] valuesToPut = filterValString.split(",");
+							for (int k = 0; k < valuesToPut.length; k++) {
+								values.put("('" + valuesToPut[k] + "')");
+							}
+						}
+						if (!hasComma)
+							values.put("('" + filterVal + "')");
 					}
 
 					String filterOperator = widgetFilter.getString("filterOperator");
