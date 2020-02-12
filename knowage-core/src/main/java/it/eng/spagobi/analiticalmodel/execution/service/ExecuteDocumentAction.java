@@ -18,11 +18,11 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
@@ -76,6 +76,9 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 						e.printStackTrace();
 					}
 					logger.error("User [" + profile.getUserId() + "] cannot see document [id: '" + obj.getId() + "', label: '" + obj.getLabel() + "'].");
+					Vector v = new Vector();
+					v.add(obj.getLabel());
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "1075", v, null);
 				} else {
 					// add the template version as object property if it's present into the request url
 					Integer objVersion = this.getAttributeAsInteger(ObjectsTreeConstants.OBJECT_VERSION);
@@ -112,36 +115,26 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					}
 				}
 			}
-		} catch (EMFInternalError e) {
+		} catch (EMFUserError error) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "ERR");
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (Exception e) {
+				logger.error("Audit log error", e);
 			}
-			logger.error("Service internal error", e);
-		} catch (SourceBeanException e) {
+			// we put error into error handler, it will be displayed in "error" Spago publisher
+			this.getErrorHandler().addError(error);
+		} catch (Exception exception) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "ERR");
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (Exception e) {
+				logger.error("Audit log error", e);
 			}
-			logger.error("Service internal error", e);
-		} catch (EMFUserError e) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "ERR");
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			logger.error("Service internal error", e);
+			logger.error("Service internal error", exception);
 		}
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Audit log error", e);
 		}
 		logger.debug("OUT");
 	}
