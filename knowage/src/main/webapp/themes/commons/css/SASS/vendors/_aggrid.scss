@@ -235,6 +235,7 @@ $aggrid-border-color: #d9dcde;
 			}
 		}
 		&.noPagination {
+			height: 100% !important;
 			div.ag-paging-panel.ag-unselectable {
 				display: none;
 			}
