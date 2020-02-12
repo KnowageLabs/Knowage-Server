@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 	.service("cockpitModule_backwardCompatibility", cockpitModule_backwardCompatibility);
 
-	function cockpitModule_backwardCompatibility(cockpitModule_properties){
+	function cockpitModule_backwardCompatibility(cockpitModule_datasetServices, cockpitModule_properties) {
 		var self=this;
 		var currentVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 
@@ -119,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
-//			if(!self.compareVersion("7.1.1",version)){
-//				if(model.type=='map') {
+			if(!self.compareVersion("7.1.1",version)){
+				if(model.type=='map') {
 //					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
 //					var layers = model.content.layers;
 //					// Add content attribute to every layer
@@ -151,19 +151,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //						}
 //					}
 //
-//					// Add dataset to every layer
-//					for (var j in layers) {
-//						var currLayer = layers[j];
-//						var currDsId = currLayer.dsId;
-//						currLayer.dataset =
-//							cockpitModule_datasetServices.getDatasetById(currDsId);
-//						currLayer.dataset.dsId = currLayer.dataset.id.dsId;
-//					}
+					// Add dataset to every layer
+					cockpitModule_datasetServices
+						.loadDatasetsFromTemplate()
+						.then(function() {
+							for (var j in layers) {
+								var currLayer = layers[j];
+								var currDsId = currLayer.dsId;
+								currLayer.dataset =
+									cockpitModule_datasetServices.getDatasetById(currDsId);
+								currLayer.name = currLayer.dataset.label;
+								currLayer.dataset.dsId = currLayer.dataset.id.dsId;
+							}
+						});
 //
 //					// Cleanup
 //					delete model.content.columnSelectedOfDataset;
-//				}
-//			}
+				}
+			}
 
 			if(!self.compareVersion("7.3.0",version)){
 				if(model.type=='table' || model.type=='discovery'){
