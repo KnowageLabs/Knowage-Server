@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		EMFAbstractError error = (EMFAbstractError) iter.next();
     		String description = error.getDescription();
     	%>
-		<%= description %>
+		<%= StringEscapeUtils.escapeHtml(description) %>
 		<br/>
 		<% } %>
 	</div>
