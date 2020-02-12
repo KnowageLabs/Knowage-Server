@@ -802,6 +802,21 @@
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
+  	
+  	
+  	<PUBLISHER name="ExecuteDocumentAngularPublisherJava">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.analiticalmodel.document.presentation.ExecuteDocumentAngularPublisherJava"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0"  resource="it.eng.spagobi.analiticalmodel.document.presentation.ExecuteDocumentAngularPublisherJava"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
   	<!-- ANGULAR DOCUMENT DETAIL -->
   	<PUBLISHER name="ExecuteDocumentAngularPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
