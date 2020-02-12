@@ -846,7 +846,8 @@ public class DataSetTransformer {
 		if (drillOrder != null) {
 			for (String key : drillOrder.keySet()) {
 				Map<String, String> keyMapper = (Map<String, String>) drillOrder.get(key);
-				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))) {
+				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))
+						&& !drillOrder.containsKey(keyMapper.get("orderColumn"))) {
 					dataColumnsMapper.remove(keyMapper.get("orderColumn").toLowerCase());
 				}
 			}
