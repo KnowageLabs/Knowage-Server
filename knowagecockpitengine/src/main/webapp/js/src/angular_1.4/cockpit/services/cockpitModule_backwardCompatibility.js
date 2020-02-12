@@ -169,6 +169,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var currDsId = currLayer.dsId;
 								currLayer.dataset =
 									cockpitModule_datasetServices.getDatasetById(currDsId);
+								currLayer.name = currLayer.dataset.label;
 								currLayer.dataset.dsId = currLayer.dataset.id.dsId;
 							}
 						});
