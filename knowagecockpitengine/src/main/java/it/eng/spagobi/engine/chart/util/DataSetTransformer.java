@@ -852,7 +852,8 @@ public class DataSetTransformer {
 		if (drillOrder != null) {
 			for (String key : drillOrder.keySet()) {
 				Map<String, String> keyMapper = (Map<String, String>) drillOrder.get(key);
-				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))) {
+				if (!keyMapper.get("orderColumn").equals("") && !keyMapper.get("orderColumn").equals(categorieColumns.get("column"))
+						&& !drillOrder.containsKey(keyMapper.get("orderColumn"))) {
 					dataColumnsMapper.remove(keyMapper.get("orderColumn").toLowerCase());
 				}
 			}
@@ -865,8 +866,7 @@ public class DataSetTransformer {
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGroupingBubble(List<Object> dataRows, Map<String, String> dataColumnsMapper,
-			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory)
-		 {
+			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory) {
 
 		ArrayList<Object> categories = new ArrayList<>();
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
