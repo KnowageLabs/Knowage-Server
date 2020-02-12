@@ -571,6 +571,7 @@ function cockpitChartWidgetControllerFunction(
 						        	  delete $scope.localModel.chartTemplate.CHART;
 						        	  $scope.localModel.chartTemplate.CHART = temp;
 						          }
+						          removeUnnecessarySeries();
 								  saveConfiguration();
 							  }
 						  }else if(event=='datasetChanged'){
@@ -763,6 +764,9 @@ function cockpitChartWidgetControllerFunction(
 			    		  $scope.$broadcast("attachCategories");
 			          };
 
+			          var removeUnnecessarySeries = function (){
+			        	  $scope.$broadcast("removeUnnecessarySeries");
+			          }
 			    	  var saveConfiguration=function(){
 
 			    		  if($scope.localModel.datasetId == undefined){

@@ -142,6 +142,15 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 		cockpitModule_widgetServices.validateForm($scope.chartDesignerForm.$valid)
 	})
 
+	$scope.$on('removeUnnecessarySeries',function(event,data){
+		if($scope.chartTemplate.CHART.type.toLowerCase()!='bubble'){
+   		 var indexX = sbiModule_util.findInArray($scope.chartTemplate.CHART.VALUES.SERIE, 'axis', 'X')
+   		 if(indexX>-1) $scope.chartTemplate.CHART.VALUES.SERIE.splice(indexX,1)
+   		 var indexZ = sbiModule_util.findInArray($scope.chartTemplate.CHART.VALUES.SERIE, 'axis', 'Z')
+   		 if(indexZ>-1) $scope.chartTemplate.CHART.VALUES.SERIE.splice(indexZ,1)
+   	  }
+	})
+
 	$scope.$on('updateMeasuresWithCF', function(event,data) {
 		$scope.getMetadata();
 	})

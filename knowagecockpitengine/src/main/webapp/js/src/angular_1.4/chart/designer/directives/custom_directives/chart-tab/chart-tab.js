@@ -427,10 +427,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		default:
 			break;
 		}
+		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
+		angular.merge($scope.chartTemplate.VALUES.SERIE,serie)
 		$scope.numberOfSeriesContainers = 0;
 		$scope.checkSeriesForContainers()
-		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-		$scope.chartTemplate.VALUES.SERIE = serie;
+
 		ifNeededTrimDownCategoriesToSizeNeededByChartType();
 		ifNeededTrimDownSeriesToSizeNeededByChartType();
 		$scope.changeStyle(styleName);
