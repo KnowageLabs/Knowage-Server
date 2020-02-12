@@ -260,7 +260,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 		 			}
 					var divsToClean = document.getElementsByClassName('show-for-canvas');
  					for(var k in divsToClean){
- 						divsToClean[k].classList.remove('show-for-canvas');
+ 						if(divsToClean[k].classList.contains('show-for-canvas')) divsToClean[k].classList.remove('show-for-canvas');
  					}
 				}
 
@@ -290,7 +290,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					 			allowTaint: true,
 					 			useCORS: true,
 					 			foreignObjectRendering: true,
-					 			async:false,
+					 			//FF trick or will throw error
+					 			async:true,
 					 			width: element.clientWidth,
 					 			height: element.scrollHeight
 					 		}).then(function(canvas){
