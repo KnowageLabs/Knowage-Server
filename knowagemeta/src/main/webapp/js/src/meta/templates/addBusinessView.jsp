@@ -91,7 +91,7 @@
 				{{translate.load("sbi.general.cancel")}}
 			</md-button> 
 			
-			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="!newBVForm.$valid || tmpBnssView.physicalModels.length==0" >
+			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="!newBVForm.$valid || tmpBnssView.physicalModels.length<2">
 				{{translate.load("sbi.generic.next")}}
 			</md-button>
 			<md-button ng-if="steps.current==1 && editMode!=true" ng-disabled="summary.length>0"  ng-click="back()"  >
