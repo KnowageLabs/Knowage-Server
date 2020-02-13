@@ -238,7 +238,7 @@
 				style = new ol.style.Style({
 					  text: new ol.style.Text({
 						  	text: config.icon.unicode,
-						    font: '' + config.icon.fontWeight + ' ' + ((2*size) + '% ') + '"' + config.icon.fontFamily + '"',
+						    font: 'normal ' + ((2*size) + '% ') + config.icon.family,
 						    fill: new ol.style.Fill({
 						    	 color: color,
 						    	 opacity: alpha

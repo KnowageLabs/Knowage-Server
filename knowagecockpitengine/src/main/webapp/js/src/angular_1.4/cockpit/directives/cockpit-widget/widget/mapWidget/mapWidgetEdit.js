@@ -290,6 +290,7 @@ function mapWidgetEditControllerFunction(
 				$scope.setIcon = function(family,icon){
 					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 					$scope.activeLayer.markerConf.icon = icon;
+					$scope.activeLayer.markerConf.icon.family = family.name;
 					$scope.choose();
 				}
 				$scope.choose = function(){
