@@ -1424,6 +1424,13 @@
         },
         formatter: function() { 
         	var prepareResult = function(point, result,key){
+        		var chartTemplateSeries = point.series.chart.widgetData.chartTemplate.CHART.VALUES.SERIE;
+        		var series = [];
+        		for (var i=0; i<chartTemplateSeries.length; i++) {
+				    if (chartTemplateSeries[i].axis!='X' && chartTemplateSeries[i].axis!='Z') {
+				    	series.push(chartTemplateSeries[i].column.toLowerCase())
+				    }
+				}
        			var ttColor = point.series.tooltipOptions.ttColor ? point.series.tooltipOptions.ttColor : '';
 				var ttBackColor = point.series.tooltipOptions.ttBackColor ? point.series.tooltipOptions.ttBackColor : '';
 					
@@ -1573,7 +1580,10 @@
 						+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
 						result += '<span>' + key +'</span><br/>';
 					for(prop in point.tooltipConf){
-						if(point.tooltipConf[prop]!=key){
+						if(series.indexOf(prop)>-1 && point.series.name.toLowerCase().indexOf(prop)==-1){
+							delete point.tooltipConf[prop]
+						}
+						if(point.tooltipConf[prop] && point.tooltipConf[prop]!=key){
 							result +=  prop + ': ' + point.tooltipConf[prop]+ '<br/>';
 						}
 					}
