@@ -428,7 +428,14 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		}
 		$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-		angular.merge($scope.chartTemplate.VALUES.SERIE,serie)
+		for (var s in serie) {
+			for (var property in $scope.chartTemplate.VALUES.SERIE[0]) {
+				if (!serie[s].hasOwnProperty(property)) {
+					serie[s][property] = $scope.chartTemplate.VALUES.SERIE[0][property]
+				}
+			}
+		}
+		$scope.chartTemplate.VALUES.SERIE =serie
 		$scope.numberOfSeriesContainers = 0;
 		$scope.checkSeriesForContainers()
 
