@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 	.service("cockpitModule_backwardCompatibility", cockpitModule_backwardCompatibility);
 
-	function cockpitModule_backwardCompatibility(cockpitModule_datasetServices, cockpitModule_properties) {
+	function cockpitModule_backwardCompatibility(
+			cockpitModule_datasetServices,
+			cockpitModule_properties,
+			knModule_fontIconsService) {
+
 		var self=this;
 		var currentVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 
@@ -29,12 +33,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			function versionToArray(v){
 				var snapshot = v.indexOf('-S');
 				var releaseCandidate = v.indexOf('-RC');
-			    if(snapshot != -1) v = v.substring(0,snapshot);
-			    if(releaseCandidate != -1) v = v.substring(0,releaseCandidate);
-			    v = v.split('.').map(Number);
-			    if(snapshot != -1) v.push('S');
-			    if(releaseCandidate != -1) v.push('RC');
-			    return v;
+				if(snapshot != -1) v = v.substring(0,snapshot);
+				if(releaseCandidate != -1) v = v.substring(0,releaseCandidate);
+				v = v.split('.').map(Number);
+				if(snapshot != -1) v.push('S');
+				if(releaseCandidate != -1) v.push('RC');
+				return v;
 			}
 
 			v1 = versionToArray(v1);
@@ -173,6 +177,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								currLayer.dataset.dsId = currLayer.dataset.id.dsId;
 							}
 						});
+
+					// Fix marker that use icons from Font Awesome
+					for (var j in layers) {
+						var currLayer = layers[j];
+						if (currLayer.markerConf
+								&& currLayer.markerConf.type == "icon") {
+
+							var markerConf = currLayer.markerConf;
+							var icon = markerConf.icon;
+							var family = icon.family;
+							var label = icon.label;
+
+							var familyArr = undefined;
+
+							for (var k in knModule_fontIconsService.icons) {
+								var currFamily = knModule_fontIconsService.icons[k];
+								if (currFamily.name == family) {
+									familyArr = currFamily.icons;
+									break;
+								}
+							}
+
+							for (var k in familyArr) {
+								var currIcon = familyArr[k];
+
+								if (currIcon.label == label) {
+									markerConf.icon = currIcon;
+									break;
+								}
+							}
+
+						}
+					}
 
 					// Cleanup
 					delete model.content.columnSelectedOfDataset;
