@@ -1016,7 +1016,7 @@ public class ExcelExporter {
 							if (!jsonobject.isNull("parameterValue")) {
 								Object values = jsonobject.get("parameterValue");
 								String valuesToChange = values.toString();
-								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE") && valuesToChange != null && valuesToChange.length() > 0) {
 
 									DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 									DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
@@ -1287,7 +1287,7 @@ public class ExcelExporter {
 						if (!jsonobject.isNull("parameterValue")) {
 							Object values = jsonobject.get("parameterValue");
 							String valuesToChange = values.toString();
-							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE") && valuesToChange != null && valuesToChange.length() > 0) {
 
 								DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 								DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
