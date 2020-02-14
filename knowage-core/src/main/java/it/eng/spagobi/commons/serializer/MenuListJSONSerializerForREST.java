@@ -54,6 +54,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	public static final String TITLE = "title";
 	public static final String TITLE_ALIGN = "titleAlign";
 	public static final String COLUMNS = "columns";
+	public static final String ICON = "icon";
+	public static final String CUST_ICON = "custIcon";
 	public static final String ICON_CLS = "iconCls";
 	public static final String ICON_ALIGN = "iconAlign";
 	public static final String SCALE = "scale";
@@ -69,6 +71,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	public static final String NAME = "name";
 	public static final String TEXT = "text";
+	public static final String DESCR = "descr";
 	public static final String ITEMS = "items";
 	public static final String LABEL = "itemLabel";
 	public static final String INFO = "INFO";
@@ -710,8 +713,40 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			temp2.put(XTYPE, "buttongroup");
 			temp2.put(ICON_CLS, childElem.getIconCls());
 		} else {
+			if (childElem.getIcon() != null) {
+				temp2.put(ICON, new JSONObject(childElem.getIcon()));
+			}
+			if (childElem.getCustIcon() != null) {
+				temp2.put(CUST_ICON, new JSONObject(childElem.getCustIcon()));
+			}
 
 			temp2.put(TEXT, text);
+
+			String descr = "";
+			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
+				// text = msgBuild.getI18nMessage(locale, childElem.getName());
+				descr = childElem.getDescr();
+			else {
+				if (childElem.getName().startsWith("#")) {
+					String titleCode = childElem.getDescr().substring(1);
+
+					try {
+						switch (titleCode) {
+						case "menu.ServerManager":
+						case "menu.CacheManagement":
+							Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+							break;
+						}
+					} catch (ClassNotFoundException e) {
+						return tempMenuList;
+					}
+
+					descr = msgBuild.getMessage(titleCode, locale);
+				} else {
+					descr = childElem.getDescr();
+				}
+			}
+			temp2.put(DESCR, descr);
 			temp2.put("style", "text-align: left;");
 			temp2.put(TARGET, "_self");
 			temp2.put(ICON_CLS, "bullet");

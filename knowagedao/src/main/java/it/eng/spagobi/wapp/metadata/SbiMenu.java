@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,6 +49,8 @@ public class SbiMenu extends SbiHibernateModel {
 	private Boolean hideToolbar;
 	private Boolean hideSliders;
 	private Integer prog;
+	private String icon;
+	private String custIcon;
 
 	// Constructors
 
@@ -61,8 +63,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * minimal constructor.
 	 *
-	 * @param menuId
-	 *            the menu id
+	 * @param menuId the menu id
 	 */
 	public SbiMenu(Integer menuId) {
 		this.menuId = menuId;
@@ -70,7 +71,7 @@ public class SbiMenu extends SbiHibernateModel {
 
 	public SbiMenu(Integer menuId, Integer objId, String objParameters, String subObjName, String snapshotName, Integer snapshotHistory, String functionality,
 			String initialPath, String name, String descr, String staticPage, String externalApplicationUrl, Integer parentId, Set sbiMenuRoles,
-			Boolean viewIcons, Boolean hideToolbar, Boolean hideSliders, Integer prog) {
+			Boolean viewIcons, Boolean hideToolbar, Boolean hideSliders, Integer prog, String icon, String custIcon) {
 		super();
 		this.menuId = menuId;
 		this.objId = objId;
@@ -90,6 +91,8 @@ public class SbiMenu extends SbiHibernateModel {
 		this.hideToolbar = hideToolbar;
 		this.hideSliders = hideSliders;
 		this.prog = prog;
+		this.icon = icon;
+		this.custIcon = custIcon;
 	}
 
 	// Property accessors
@@ -106,8 +109,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * Sets the menu id.
 	 *
-	 * @param menuId
-	 *            the new menu id
+	 * @param menuId the new menu id
 	 */
 	public void setMenuId(Integer menuId) {
 		this.menuId = menuId;
@@ -125,8 +127,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -144,8 +145,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -163,8 +163,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * Sets the parent id.
 	 *
-	 * @param parentId
-	 *            the new parent id
+	 * @param parentId the new parent id
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
@@ -182,8 +181,7 @@ public class SbiMenu extends SbiHibernateModel {
 	/**
 	 * Sets the sbi menu roles.
 	 *
-	 * @param sbiMenuRoles
-	 *            the new sbi menu roles
+	 * @param sbiMenuRoles the new sbi menu roles
 	 */
 	public void setSbiMenuRoles(Set sbiMenuRoles) {
 		this.sbiMenuRoles = sbiMenuRoles;
@@ -291,6 +289,22 @@ public class SbiMenu extends SbiHibernateModel {
 
 	public void setExternalApplicationUrl(String externalApplicationUrl) {
 		this.externalApplicationUrl = externalApplicationUrl;
+	}
+
+	public String getCustIcon() {
+		return custIcon;
+	}
+
+	public void setCustIcon(String custIcon) {
+		this.custIcon = custIcon;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 }

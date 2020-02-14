@@ -61,6 +61,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/catalogues/menuConfiguration.js")%>"></script>
 
+<script type="text/javascript" 
+	src="<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/commons/services/knModule.js")%>"></script>
+	
+<script type="text/javascript" 
+	src="<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/commons/services/knModule_fontIconsService.js")%>"></script>
+	
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title></title>
 </head>
@@ -181,22 +187,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-				
-				<div flex=100>
-					<md-input-container class="md-block"> <label>{{translate.load("sbi.menu.description")}}</label>
-					<input data-ng-model="selectedMenu.descr" 
-						name="description"   ng-maxlength="100" ng-change="setDirty()">
-					</md-input-container>
-				</div>
-			
-
-			<div>
-				<label class="md-block">{{translate.load("sbi.menu.icon")}}:</label>
-				<md-input-container class="small counter"> <md-checkbox
-					ng-disabled="readOnly" ng-change="setDirty()"
-					ng-model="selectedMenu.viewIcons" aria-label="View icon"></md-checkbox>
-				</md-input-container>
-			</div>
+				<div layout="row">
+					<div flex=50>
+						<md-input-container class="md-block"> <label>{{translate.load("sbi.menu.description")}}</label>
+						<input required data-ng-model="selectedMenu.descr" 
+							name="description" ng-maxlength="100" ng-change="setDirty()">
+							<div class="hint">{{translate.load("sbi.menu.descriptionHint")}}</div>
+						</md-input-container>
+					</div>
+					<div flex=50>
+						<div ng-if="selectedMenu.level == 1">
+							<div layout="row" layout-align="center center" class="kn-buttonBar">
+								<md-button class="md-raised md-button-empty kn-primaryButton" ng-click="chooseMenuIcon($event)">
+										<img ng-if="selectedMenu.custIcon" class="icon" ng-src="{{selectedMenu.custIcon.src}}" width="26" height="26"/>
+										<i ng-if="!selectedMenu.custIcon && selectedMenu.icon" class="icon" ng-class="[selectedMenu.icon.className]"></i>
+										<span ng-if="!selectedMenu.custIcon && !selectedMenu.icon">{{translate.load("sbi.menu.chooseIcon")}}</span>
+								</md-button>
+							
+						        <md-button ng-click="removeIcon()" class="toolbar-button-custom md-raised kn-functionButton">
+						        	<md-icon md-font-icon="fa fa-trash"></md-icon>
+						        </md-button>
+					      </div>
+					        <!-- <input type="file" id="files" name="files" onchange="angular.element(this).scope().insertMenu(this)"/> -->
+					        
+						</div>
+					</div>
+				</div>		
 			<div flex=100>
 					<md-input-container class="md-block"> 
 				<label>{{translate.load("sbi.menu.menuNodeContent")}}:</label>

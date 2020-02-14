@@ -56,6 +56,8 @@ public class Menu implements Serializable {
 	private String code;
 	private String url;
 	private String iconPath;
+	private MenuIcon icon;
+	private MenuIcon custIcon;
 	private String iconCls;
 	private String groupingMenu;
 	private String linkType;
@@ -417,4 +419,19 @@ public class Menu implements Serializable {
 		this.isClickable = isClickable;
 	}
 
+	public MenuIcon getCustIcon() {
+		return custIcon;
+	}
+
+	public void setCustIcon(MenuIcon custIcon) {
+		this.custIcon = custIcon;
+	}
+
+	public MenuIcon getIcon() {
+		return icon;
+	}
+
+	public void setIcon(MenuIcon icon) {
+		this.icon = icon;
+	}
 }

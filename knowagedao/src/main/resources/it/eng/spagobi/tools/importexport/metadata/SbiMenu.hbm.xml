@@ -62,6 +62,12 @@
 		<property name="prog" type="integer">
 			<column name="prog" />
 		</property>
+        <property name="icon" type="string">
+            <column name="ICON" />
+        </property>
+        <property name="custIcon" type="string">
+			<column name="CUST_ICON" />
+		</property>
 		<set name="sbiMenuRoles" inverse="true">
 			<key>
 				<column name="menu_id" not-null="true" />

@@ -31,6 +31,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -40,6 +44,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.bo.MenuIcon;
 import it.eng.spagobi.wapp.metadata.SbiMenu;
 import it.eng.spagobi.wapp.metadata.SbiMenuRole;
 import it.eng.spagobi.wapp.metadata.SbiMenuRoleId;
@@ -290,6 +295,19 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			hibMenu.setStaticPage(aMenu.getStaticPage());
 			hibMenu.setExternalApplicationUrl(aMenu.getExternalApplicationUrl());
+
+			if (aMenu.getIcon() == null) {
+				hibMenu.setIcon(null);
+
+			} else {
+				hibMenu.setIcon(new Gson().toJson(aMenu.getIcon()).toString());
+			}
+
+			if (aMenu.getCustIcon() == null) {
+				hibMenu.setCustIcon(null);
+			} else {
+				hibMenu.setCustIcon(new Gson().toJson(aMenu.getCustIcon()).toString());
+			}
 			updateSbiCommonInfo4Update(hibMenu);
 			tx.commit();
 
@@ -391,6 +409,19 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			else
 				hibMenu.setProg(new Integer(1));
 
+			if (aMenu.getIcon() == null) {
+				hibMenu.setIcon(null);
+
+			} else {
+				hibMenu.setIcon(new Gson().toJson(aMenu.getIcon()).toString());
+			}
+
+			if (aMenu.getCustIcon() == null) {
+				hibMenu.setCustIcon(null);
+			} else {
+				hibMenu.setCustIcon(new Gson().toJson(aMenu.getCustIcon()).toString());
+			}
+
 			updateSbiCommonInfo4Insert(hibMenu);
 			tmpSession.save(hibMenu);
 			aMenu.setMenuId(hibMenu.getMenuId());
@@ -455,6 +486,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		}
 	}
 
+	@Override
 	public void updateMenu(SbiMenu hibMenu) throws EMFUserError {
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -912,6 +944,47 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 		menu.setStaticPage(hibMenu.getStaticPage());
 		menu.setExternalApplicationUrl(hibMenu.getExternalApplicationUrl());
+
+		MenuIcon icon = null;
+		if (hibMenu.getIcon() != null) {
+			MenuIcon menuIcon = new MenuIcon();
+			try {
+				JSONObject jsonObject = new JSONObject(hibMenu.getIcon());
+				menuIcon.setId(jsonObject.getInt("id"));
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+				menuIcon.setSrc(null);
+				menuIcon.setUnicode(jsonObject.getString("unicode").replaceAll("\\", "\\\\"));
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+			} catch (JSONException e) {
+				// Error parsing JSON object
+				e.printStackTrace();
+			}
+
+			icon = menuIcon;
+		}
+		menu.setIcon(icon);
+
+		MenuIcon custIcon = null;
+		if (hibMenu.getCustIcon() != null) {
+			MenuIcon menuIcon = new MenuIcon();
+			try {
+				JSONObject jsonObject = new JSONObject(new String(hibMenu.getCustIcon()));
+				menuIcon.setId(null);
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+				menuIcon.setSrc(jsonObject.getString("src"));
+				menuIcon.setUnicode(null);
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+			} catch (JSONException e) {
+				// Error parsing JSON object
+				e.printStackTrace();
+			}
+			custIcon = menuIcon;
+		}
+		menu.setCustIcon(custIcon);
 
 		// set the dephts
 		/*

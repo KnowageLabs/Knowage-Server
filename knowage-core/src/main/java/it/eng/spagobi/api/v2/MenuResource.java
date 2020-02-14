@@ -57,6 +57,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.bo.MenuIcon;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 
 /**
@@ -88,8 +89,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 			List<Menu> allMenus = new ArrayList<>();
 
-			List<Menu> child = new ArrayList<>();
-			List<Menu> allMenus_new = new ArrayList<>();
 			allMenus = dao.loadAllMenues();
 
 			return Response.ok(allMenus).build();
@@ -454,6 +453,38 @@ public class MenuResource extends AbstractSpagoBIResource {
 			} else {
 
 				menu.setInitialPath(paramsObj.getString("initialPath"));
+			}
+
+			if (paramsObj.getString("icon").equals("null") || paramsObj.getString("icon").equals("")) {
+				menu.setIcon(null);
+			} else {
+				MenuIcon menuIcon = new MenuIcon();
+				JSONObject jsonObject = paramsObj.getJSONObject("icon");
+				menuIcon.setId(jsonObject.getInt("id"));
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+
+				menuIcon.setUnicode(jsonObject.getString("unicode"));
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+
+				menu.setIcon(menuIcon);
+			}
+
+			if (paramsObj.getString("custIcon").equals("null") || paramsObj.getString("custIcon").equals("")) {
+				menu.setCustIcon(null);
+			} else {
+				MenuIcon menuIcon = new MenuIcon();
+				JSONObject jsonObject = paramsObj.getJSONObject("custIcon");
+				menuIcon.setId(null);
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+				menuIcon.setSrc(jsonObject.getString("src"));
+				menuIcon.setUnicode(jsonObject.getString("unicode").replaceAll("\\", "\\\\"));
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+
+				menu.setCustIcon(menuIcon);
 			}
 
 			menu.setViewIcons(paramsObj.getBoolean("viewIcons"));
