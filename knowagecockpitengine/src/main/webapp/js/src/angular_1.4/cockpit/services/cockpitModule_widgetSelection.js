@@ -73,8 +73,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							}
 						}else{
 
-							obj["orderColumn"] = col.orderColumn === undefined ||  col.orderColumn == ""? col.name  : col.orderColumn;
-							obj["orderType"] = col.orderType === undefined || col.orderType == "" ? "ASC": col.orderType;
+							obj["orderColumn"] = col.orderColumn ? col.orderColumn : "";
+							obj["orderType"] = col.orderType ? col.orderType : "";
 						}
 					}
 				}
@@ -112,22 +112,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 					if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
 					obj["orderColumn"] = col.name;
-					measures.push(obj);
-				}
-			}
-
-			if(ngModel.type && ngModel.type.toUpperCase()=="CHART"){
-				if(!ngModel.content.chartTemplate.hasOwnProperty("CHART")){
-					ngModel.content.chartTemplate = {"CHART":ngModel.content.chartTemplate};
-				}
-				var arrayOfSeries = ngModel.content.chartTemplate.CHART.VALUES.SERIE;
-				for (var i = 0; i < arrayOfSeries.length; i++) {
-					for (var j = 0; j < measures.length; j++) {
-						if(arrayOfSeries[i].column == measures[j].columnName){
-							measures[j].orderType = arrayOfSeries[i].orderType;
-
-						}
+					if(obj.orderType!=undefined){
+						obj.orderType  = col.orderType;
 					}
+					measures.push(obj);
 				}
 			}
 		}
