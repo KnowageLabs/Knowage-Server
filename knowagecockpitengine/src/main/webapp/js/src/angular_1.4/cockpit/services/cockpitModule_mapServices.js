@@ -23,11 +23,11 @@
 		}
 
 		ms.setUpWKTFeature = function(currFeature, config, row, configColumns, values) {
-			feature.set("parentLayer",  config.layerID);
-			feature.set("isWKT", true);
-			feature.set("isGeoJSON", false);
-			feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-			ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+			currFeature.set("parentLayer",  config.layerID);
+			currFeature.set("isWKT", true);
+			currFeature.set("isGeoJSON", false);
+			currFeature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+			ms.addDsPropertiesToFeature(currFeature, row, configColumns, values.metaData.fields);
 		}
 
 		ms.setUpSelectedMeasure = function(selectedMeasure, config, values) {
@@ -110,7 +110,7 @@
 								featureProjection: 'EPSG:3857'
 							});
 
-							ms.setUpWKTFeature(currFeature, config, row, configColumns, values);
+							ms.setUpWKTFeature(feature, config, row, configColumns, values);
 							ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
 							featuresSource.addFeature(feature);
