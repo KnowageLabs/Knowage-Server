@@ -1303,7 +1303,8 @@ public class ExcelExporter {
 								newParameters.put(obj, valuesToChange);
 						} else {
 
-							newParameters.put(obj, "");
+							if (!(newParameters.has(obj) && !newParameters.getString(obj).isEmpty()))
+								newParameters.put(obj, "");
 
 						}
 					} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
