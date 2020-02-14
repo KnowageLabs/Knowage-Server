@@ -2,15 +2,15 @@
    @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
  */
 
-var app = angular.module("MenuConfigurationModule", ['angular-list-detail', 'ui.tree', 'sbiModule', 'angular_table' ]);
+var app = angular.module("MenuConfigurationModule", ['angular-list-detail', 'ui.tree', 'sbiModule', 'angular_table', 'knModule', 'ngMaterial', 'file_upload' ]);
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 } ]);
 
-app.controller('MenuConfigurationController', [ "$scope","sbiModule_restServices", "sbiModule_translate", "$mdDialog", "sbiModule_messaging",
-		MenuConfigurationFunction ]);
-function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_translate, $mdDialog,sbiModule_messaging) {
+app.controller('MenuConfigurationController', MenuConfigurationFunction);
+function MenuConfigurationFunction($scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_messaging, knModule_fontIconsService) {
+
 	// getting all menus
 	$scope.getListOfMenu = function() {
 		sbiModule_restServices.promiseGet("2.0/menu", "").then(
@@ -120,9 +120,11 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	$scope.files =[];
 	$scope.folders =[];
 
-
-
 	$scope.parent = {};
+	$scope.selectedMenu.icon = {};
+	$scope.selectedMenu.custIcon = null;
+	$scope.importFile = {};
+	$scope.customIcons = [];
 
 	$scope.cancel = function() { // on cancel button
 		$scope.selectedMenu ={};
@@ -131,10 +133,38 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.dirtyForm=false;
 
 	}
+	
+	$scope.existsANodeWithSameNameAtSameLevel = function() {
+		if ($scope.selectedMenu.parentId) {
+			var tmp = $scope.listOfMenu;
+			for (var i = 0; i < tmp.length; i++){
+				if (angular.equals(tmp[i].name,$scope.selectedMenu.name) 
+						&& tmp[i].menuId != $scope.selectedMenu.menuId 
+						&& tmp[i].parentId == $scope.selectedMenu.parentId) {
+					return false;
+				}
+			}
+		} else {
+			for (var i = 0; i < $scope.listOfMenu_copy.length; i++) {
+				if ($scope.listOfMenu_copy[i].level == 1 && angular.equals($scope.listOfMenu_copy[i].name,$scope.selectedMenu.name)
+						&& $scope.listOfMenu_copy[i].menuId!=$scope.selectedMenu.menuId) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
 	$scope.fake = {};
+	
 	$scope.save = function() {
+		if (!$scope.existsANodeWithSameNameAtSameLevel()) {
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.menu.brotherWithSameNameError"));
+		} else 
 		if ($scope.selectedMenu.hasOwnProperty("menuId")) {
 			// if item already exists do update PUT
+			
 			$scope.fake = {
 				menuId : $scope.selectedMenu.menuId,
 				descr : $scope.selectedMenu.descr,
@@ -153,11 +183,12 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				objParameters : $scope.selectedMenu.objParameters,
 				parentId : $scope.selectedMenu.parentId,
 				prog : $scope.selectedMenu.prog,
-				roles : $scope.selectedMenu.roles,
+				roles : $scope.selectedMenu.roles || [],
 				staticPage : $scope.selectedMenuItem.page,
 				viewIcons : $scope.selectedMenu.viewIcons,
-				adminsMenu : $scope.selectedMenu.adminsMenu
-
+				adminsMenu : $scope.selectedMenu.adminsMenu,
+				icon: $scope.selectedMenu.icon,
+				custIcon: $scope.selectedMenu.custIcon
 			}
 
 			sbiModule_restServices.promisePut("2.0/menu", $scope.fake.menuId,
@@ -199,10 +230,12 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				objParameters : $scope.selectedMenu.objParameters,
 				parentId : $scope.parentID,
 
-				roles : $scope.selectedMenu.roles,
+				roles : $scope.selectedMenu.roles || [],
 				staticPage : $scope.selectedMenuItem.page,
 				viewIcons : $scope.selectedMenu.viewIcons,
-				adminsMenu : $scope.selectedMenu.adminsMenu
+				adminsMenu : $scope.selectedMenu.adminsMenu,
+				icon: $scope.selectedMenu.icon,
+				custIcon: $scope.selectedMenu.custIcon
 
 			}
 
@@ -280,7 +313,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			hideTooltip : true
 		},
 	    {
-			"label" : "label",
+			"label" : " ",
 			"name" : "",
 			"size" : "50px",
 			hideTooltip : true,
@@ -876,8 +909,111 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			.ariaLabel('toast').ok(
 					sbiModule_translate.load("sbi.general.continue")).cancel(
 					sbiModule_translate.load("sbi.general.cancel"));
+	
+	$scope.chooseMenuIcon = function (e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+			
+		$mdDialog.show({ 
+			templateUrl:  
+				sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/menu/templates/menuTableWidgetAddIconDialog.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:false,
+			escapeToClose :false,
+			preserveScope: false,
+			autoWrap:false,
+			fullscreen: true,
+			controller: function (scope, $mdDialog, knModule_fontIconsService, sbiModule_translate) {
+				scope.translate = sbiModule_translate;
+				scope.availableIcons = [];
+				angular.copy(knModule_fontIconsService.icons, scope.availableIcons);
 
+				scope.searchVal = "";
+				
+				scope.setIcon = function(family,icon) {
+					scope.selectedIcon = icon;
+				}
+				
+				scope.chooseIcon = function(){					
+					$mdDialog.hide(scope.selectedIcon);
+				}
+				
+				scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+				
+				scope.removeIcon = function(){			
+					scope.selectedIcon = null;
+					$mdDialog.hide(scope.selectedIcon);
+				}
+				
+				scope.insertMenu = function(e){
 
+					var file = e.files[0];
+					if (file) {
+						
+						var validType = false;
+						
+						switch(file.type) {
+							case "image/svg+xml":
+							case "image/png":
+							case "image/x-icon":
+								validType = true;
+								break;
+							}
+						
+						if (!validType) {
+						
+							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.menu.fileTypeIncompatible"));
+							scope.selectedIcon = null;
+							
+						} else if(file.size > 50000) {
+							
+							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.menu.fileSizeIncompatible"));
+							scope.selectedIcon = null;
+							
+						} else {
+							var reader = new FileReader();
+					
+							reader.onload = function (e) {
+							   var b64 = e.target.result;
+							   scope.selectedIcon = {
+									   label: file.name, 
+									   src: b64, 
+									   visible: true, 
+									   className: "custom", 
+									   category :"custom", 
+									   id:null, 
+									   unicode: null
+							   		};
+							   scope.$apply();
+							};
+							
+							reader.readAsDataURL(file);
+							
+						}
+					}
+				}				
+			}
+			
+		}).then(function(icon) {
+			$scope.setDirty();
+			if (icon) {
+				if (icon.category == "custom") {
+					$scope.selectedMenu.custIcon = icon;
+					$scope.selectedMenu.icon = null;
+				} else {
+					$scope.selectedMenu.icon = icon;
+					$scope.selectedMenu.custIcon = null;
+				}
+			}
+		}, function() {});
+	};
+	
+	$scope.removeIcon = function(){			
+		$scope.selectedMenu.icon = null;
+		$scope.selectedMenu.custIcon = null;
+	}
 
 };
 
