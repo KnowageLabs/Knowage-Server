@@ -141,8 +141,8 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
 }
 
 .md-button.md-knowage-theme.md-raised.md-button-empty {
-  background-color: white;
-  color: $baseColor;
+  background-color: white !important;
+  color: $baseColor !important;
 }
 
 .md-button.md-knowage-theme.md-fab {
@@ -1145,6 +1145,23 @@ md-list.kn-smallList{
       
     }
   }
+  .kn-functionButton {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: 0;
+      min-width: 50px;
+      &:not([disabled]){
+        &:hover{
+          md-icon {
+            color: $lightTextColor !important;
+          }
+        }
+        md-icon {
+          color: $baseColor !important;
+        }
+      }
+      
+    }
 }
 
 span.functionDescription {
