@@ -530,7 +530,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			// Re-apply styles to all rows
 			// TODO : it's too heavy!
-			$scope.advancedTableGrid.api.redrawRows();
+			//$scope.advancedTableGrid.api.redrawRows();
 		}
 		function columnResized(params){
 			if(params.source != "sizeColumnsToFit"){
