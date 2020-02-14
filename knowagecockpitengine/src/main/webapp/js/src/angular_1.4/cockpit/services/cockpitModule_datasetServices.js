@@ -656,7 +656,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// apply sorting order on categories
 				for(var i=0; i<aggregations.categories.length; i++){
 					var category = aggregations.categories[i];
-					if(category.name == ngModel.settings.sortingColumn && category.orderType == ""){
+					if(category.columnName == ngModel.settings.sortingColumn && category.orderType == ""){
 						category.orderType = ngModel.settings.sortingOrder;
 						isSortingApplied = true;
 						break;
@@ -667,7 +667,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!isSortingApplied){
 					for(var i=0; i<aggregations.measures.length; i++){
 						var measure = aggregations.measures[i];
-						if(measure.name == ngModel.settings.sortingColumn && measure.orderType == ""){
+						if(measure.columnName == ngModel.settings.sortingColumn && measure.orderType == ""){
 							measure.orderType = ngModel.settings.sortingOrder;
 							isSortingApplied = true;
 							break;
@@ -680,10 +680,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					var isSortingAppliedCategory = false;
 					var isSortingAppliedMeasures = false;
-					
+
 					for(var i=0; i<aggregations.categories.length; i++){
 						var category = aggregations.categories[i];
-						if(category.name == ngModel.settings.sortingColumn){
+						if(category.columnName == ngModel.settings.sortingColumn){
 							category.orderType = ngModel.settings.sortingOrder;
 							isSortingAppliedCategory = true;
 							break;
@@ -702,7 +702,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					for(var i=0; i<aggregations.measures.length; i++){
 						var measure = aggregations.measures[i];
-						if(measure.name == ngModel.settings.sortingColumn){
+						if(measure.columnName == ngModel.settings.sortingColumn){
 							measure.orderType = ngModel.settings.sortingOrder;
 							isSortingAppliedMeasures = true;
 							break;
@@ -717,8 +717,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}
 						aggregations.measures.push(newMeas);
 					}
-					
-					
+
+
 				}
 			}
 		}
