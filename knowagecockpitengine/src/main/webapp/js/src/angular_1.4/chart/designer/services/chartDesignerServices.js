@@ -214,6 +214,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		case 'line':
 			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
 				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.customColors"),value:"customColors"},
+				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"},
 				  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.accessibility"),value:"accessibility"}]
 
 			Array.prototype.push.apply(data, legend);

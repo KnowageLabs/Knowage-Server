@@ -1,6 +1,6 @@
 <div layout="row" flex layout-margin
-	ng-show="selectedChartType == 'bar' || selectedChartType == 'line'" flex=100 layout-align="start center" 
-	ng-if="disableHtmlElementForChartJs()">
+	 flex=100 layout-align="start center" 
+	ng-if="disableHtmlElementForChartJs() && selectedChartType == 'bar'">
 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesstacking")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
@@ -10,7 +10,7 @@
 
 
 <div ng-form name="configuration-AdvancedSerieConfForm" layout="row" flex layout-margin
-	ng-show="selectedChartType == 'bar' || selectedChartType == 'pie'" flex=100 layout-align="start center"
+	flex=100 layout-align="start center"
 	ng-if="disableHtmlElementForChartJs()">
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.3d")}}</label>
 	<md-input-container class="small counter"> <md-checkbox

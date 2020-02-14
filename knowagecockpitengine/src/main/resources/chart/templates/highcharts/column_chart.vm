@@ -206,7 +206,6 @@
     	##  @author: radmila.selakovic@mht.net
 		##  adding options for 3D
 		#if($chart.show3D)
-	    	#if($chartType == 'column' || $chartType == 'bar')
 	    		options3d: {
 	                enabled: $chart.show3D,
 	                alpha:  $chart.alpha,
@@ -214,7 +213,6 @@
 	                depth:  $chart.depth,
 	                viewDistance:  $chart.viewDistance
 	            },
-	    	#end
     	
     	#end
     	#if(!$chart.show3D)
