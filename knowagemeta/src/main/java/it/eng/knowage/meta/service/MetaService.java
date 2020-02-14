@@ -311,6 +311,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			setProfileDialectThreadLocal(model);
 			JSONObject oldJsonModel = createJson(model);
 
 			applyDiff(jsonRoot, model);
