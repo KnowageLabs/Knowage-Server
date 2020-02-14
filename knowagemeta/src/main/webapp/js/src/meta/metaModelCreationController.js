@@ -315,6 +315,8 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			clickOutsideToClose:false,
 			escapeToClose :false,
 			fullscreen: true
+		}).then(function(){
+			$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
 		});
 	};
 
