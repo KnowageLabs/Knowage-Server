@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
-						tempCol.headerComponentParams = {template: headerTemplate()};
+						//tempCol.headerComponentParams = {template: headerTemplate()};
 
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 
@@ -149,24 +149,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		function headerTemplate() {
-			var cellClasses = 'cellContainer ';
+		//CUSTOM HEADER TEMPLATE RENDERER
+		function CustomHeader() {}
+
+		CustomHeader.prototype.init = function (params) {
+			var cellClasses = "cellcontainer ";
+			this.agParams = params;
+			this.agParams.enableSorting = false;
 			var headerStyle = {};
-			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = $scope.ngModel.style.th;
+			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = angular.copy($scope.ngModel.style.th);
 			if(headerStyle && headerStyle.multiline) cellClasses = 'cellContainer multiLineHeader';
-			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
-					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
-					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+headerStyle["justify-content"]+'">'+
-					'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
-					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+headerStyle.color+';font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'"></span></div>'+
-					'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
-					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
-					'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
-					'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" ></span>'+
-					'  		<span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" ></span>'+
-					'	</div>'+
-					'</div>';
+			if(params.column.colDef.style) {
+				var properties = ["justify-content","color","background-color","font-style","font-weight","font-size"];
+				properties.forEach(function(property){
+					if(!headerStyle[property] && params.column.colDef.style[property]) headerStyle[property] = params.column.colDef.style[property];
+				})
+			}
+		    this.eGui = document.createElement('div');
+		    this.eGui.style.width = '100%';
+		    this.eGui.innerHTML = '<div class="ag-cell-label-container customHeaderTemplate" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
+								'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="color:'+headerStyle.color+';justify-content:'+headerStyle["justify-content"]+'">'+
+								'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
+								'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'">'+params.displayName+'</span></div>'+
+								'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden" ><span class="ag-icon ag-icon-asc"></span></span>'+
+								'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon ag-hidden"><span class="ag-icon ag-icon-desc"></span></span>'+
+								'	</div>'+
+								'</div>';
+
+		    this.mySortAscButton = this.eGui.querySelector(".ag-cell-label-container");
+		    this.eSortDownButton = this.eGui.querySelector(".ag-sort-descending-icon");
+		    this.eSortUpButton = this.eGui.querySelector(".ag-sort-ascending-icon");
+
+		    this.onSortChangedListener = this.onSortChanged.bind(this);
+	        this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
+	        this.onSortChanged();
+
+		    this.mySortAscButton.addEventListener('click', function(event) {
+		    	if(params.column.sort == '') params.setSort('asc');
+		    	else params.setSort(params.column.sort == 'asc' ? 'desc' : 'asc');
+		    });
+		};
+
+		CustomHeader.prototype.onSortChanged = function () {
+			if (this.agParams.column.isSortAscending()) {
+	    		this.eSortUpButton.classList.add('ag-hidden');
+	    		this.eSortDownButton.classList.remove('ag-hidden');
+		    } else if (this.agParams.column.isSortDescending()) {
+		    	this.eSortUpButton.classList.remove('ag-hidden');
+		    	this.eSortDownButton.classList.add('ag-hidden');
+		    } else {
+		    	this.eSortUpButton.classList.add('ag-hidden');
+		    	this.eSortDownButton.classList.add('ag-hidden');
+		    }
 		}
+
+		CustomHeader.prototype.getGui = function () {
+		    return this.eGui;
+		};
 
 		function getCellStyle(params){
 			var tempStyle = params.colDef.style || {};
@@ -373,6 +412,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					resizable: cockpitModule_properties.EDIT_MODE,
 					sortable: true
 				},
+				components: {
+			        agColumnHeader: CustomHeader
+			    },
 				onColumnResized: columnResized,
 				getRowHeight: function(params){
 					if(_rowHeight > 0) return parseInt(_rowHeight);
