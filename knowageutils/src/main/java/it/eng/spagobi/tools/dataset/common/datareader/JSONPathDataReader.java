@@ -609,7 +609,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else if (fieldType.equals(Short.class)) {
 			return Short.valueOf(value);
 		} else if (fieldType.equals(Integer.class)) {
-			return Integer.valueOf(value);
+			/*
+			 * In Solr, an integer value like the number "7"
+			 * is returned as a value like "7.0": a good
+			 * way to prevent problems in this case is to
+			 * use the following.
+			 */
+			return new BigDecimal(value).intValue();
 		} else if (fieldType.equals(BigInteger.class)) {
 			return new BigInteger(value);
 		} else if (fieldType.equals(Float.class)) {
