@@ -88,6 +88,12 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textAlign.center"),value:'center'},
 			 {label:sbiModule_translate.load("sbi.cockpit.style.textAlign.right"),value:'flex-end'}
 		 ],
+		 flexAlignItems:	[
+			 {label:'',value:''},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.top"),value:'flex-start'},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.middle"),value:'center'},
+			 {label:sbiModule_translate.load("sbi.cockpit.style.textVerticalAlign.bottom"),value:'flex-end'}
+		 ],
 		 fieldsTypes:	[
 			 {label:'string',value:'java.lang.String'},
 			 {label:'integer',value:'java.lang.Integer'},

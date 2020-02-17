@@ -208,9 +208,15 @@
 							</div>
 					       <div layout="row">
 								<md-input-container class="md-block" flex>
-									<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
+									<label>{{::translate.load('sbi.chartengine.configuration.title.verticalAlignCombo')}}</label>
 									<md-select ng-model="selectedColumn.style['justify-content']">
 										<md-option ng-repeat="fs in cockpitModule_generalOptions.flexJustifyContent" ng-value="fs.value">{{fs.label}}</md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container class="md-block" flex>
+									<label>{{::translate.load("kn.table.verticalalign")}}Vertical Alignment</label>
+									<md-select ng-model="selectedColumn.style['align-items']">
+										<md-option ng-repeat="fs in cockpitModule_generalOptions.flexAlignItems" ng-value="fs.value">{{fs.label}}</md-option>
 									</md-select>
 								</md-input-container>
 								<md-input-container class="md-block" flex>
