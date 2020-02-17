@@ -31,7 +31,7 @@
             					<md-option value="right">{{::translate.load('sbi.cockpit.table.pinnedright')}}</md-option>
           					</md-select>
 	        			</md-input-container>
-						<md-switch ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
+						<md-switch ng-disabled="selectedColumn.widgetType!=undefined" ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
 						{{translate.load('sbi.cockpit.table.hiddencolumn')}}
 					</md-switch>
 					<md-switch ng-if="selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
@@ -39,6 +39,9 @@
 					</md-switch>
 					<md-switch ng-if="selectedColumn.fieldType=='MEASURE'" ng-model="selectedColumn.style.hideSummary" aria-label="Hide Summary" flex>
 						{{translate.load('sbi.cockpit.table.hidesummary')}}
+					</md-switch>
+					<md-switch ng-model="selectedColumn.style.hideHeader" aria-label="Hide header" flex>
+						{{translate.load('kn.table.hideheader')}}
 					</md-switch>
 					 </div>
 			       

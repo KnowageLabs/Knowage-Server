@@ -187,6 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			this.agParams = params;
 			this.agParams.enableSorting = false;
 			var headerStyle = {};
+			var headerText = (params.column.colDef.style && params.column.colDef.style.hideHeader) ? '' : params.displayName;
 			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = angular.copy($scope.ngModel.style.th);
 			if(headerStyle && headerStyle.multiline) cellClasses = 'cellContainer multiLineHeader';
 			if(params.column.colDef.style) {
@@ -200,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.innerHTML = '<div class="ag-cell-label-container customHeaderTemplate" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
 								'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="color:'+headerStyle.color+';justify-content:'+headerStyle["justify-content"]+'">'+
 								'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
-								'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'">'+params.displayName+'</span></div>'+
+								'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'">'+headerText+'</span></div>'+
 								'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden" ><span class="ag-icon ag-icon-asc"></span></span>'+
 								'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon ag-hidden"><span class="ag-icon ag-icon-desc"></span></span>'+
 								'	</div>'+
