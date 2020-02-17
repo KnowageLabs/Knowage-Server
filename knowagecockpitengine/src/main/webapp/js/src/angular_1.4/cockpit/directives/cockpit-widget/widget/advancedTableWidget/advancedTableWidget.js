@@ -86,8 +86,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header){
 						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
-								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType,
-								"headerTooltip": $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias};
+								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
+						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						//VARIABLES MANAGEMENT
@@ -116,8 +116,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
 							};
 						}
-						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
-						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].style) {
+							tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
+							if($scope.ngModel.content.columnSelectedOfDataset[c].style.hideHeader) delete tempCol.headerTooltip;
+						}
 						if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 							tempCol.pinnedRowCellRenderer = SummaryRowRenderer,
 							tempCol.pinnedRowCellRendererParams = {"summaryRows":$scope.ngModel.settings.summary.list, "style": $scope.ngModel.settings.summary.style};
