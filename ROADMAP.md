@@ -13,57 +13,67 @@ Knowage evolves to meet the latest analytical needs thanks to the innovation and
 
 ## Short term
 
-The following list of features is planned to be addressed in the short term, by Q1 2019:
+The following list of features is planned to be addressed in the short term, by Q1 2020 (release 7.2):
 
-* improvements on cross navigation to customize the target's name;
+* new dataset type Python
 
-* improvements on SDK JavaScript APIs to authenticate users by means of a JWT token;
+* AWS Redshift compatibility
 
-* news management system, to broadcast useful information to the users according to their roles;
+* cockpit enhancements:
 
-* capability to filter data dynamically on Registry document type according to data visilibity rules.
+	- capability to use a Solr dataset within all widgets
+	
+	- custom variables for dynamic behaviours and calculated fields
+	
+	- calculated fields on map and chart widgets
+	
+	- new chart type Bubble
+	
+	- new custom chart, where developer can exploit JS libraries
+	
+	- new Python widget
  
 
 
 ## Medium term
 
-The following list of features is planned to be addressed in the medium term, by Q2 2019:
+The following list of features is planned to be addressed in the medium term, by Q2 2020 (release 7.3):
 
-* cockpit enhancement: 
+* from data exploration tool (QbE) to cockpit designer in a seamless way 
 
-	- new map widget to display NGSI geo-layers;
+* AWS S3 compatibility
 
-	- quick steps to create spatial widgets in a few click;
+* NGSI-LD compatibility
 
-* data exploration: 
+* cockpit enhancements:
 
-	- new GUI for smart data inquiring and live data preview;
-
-	- full-text search on Solr index;
-
-* Metadata layer improvements:
-
-	- business model profiling according to the general Behavioural model rules;
-
-	- embedding custom function in business model usage (ex. for data encryption - decryption, security, ect.).
+	- map widgets: getting more than one layer from catalogue
+	
+	- gallery for chart, HTML and Python widgets for an easy reuse
+	
+	- calculated fields on Solr dataset
+	
+	- styles management for an easy reuse
 
 
 
 ## Long term
 
-In the following, Knowage will grow on other hot topics, such as:
+In the following, Knowage will grow on other topics, such as:
 
-* data discovery and advanced visualization over Elasticsearch for distributed indexes;
+* revision of functions catalogue
 
-* native R/phyton widget in self-service cockpits;
+* Google Big Table compatibility
 
-* open data publisher/analyser;
+* Azure Synapse compatibility
 
-* embedded analytical functions;
+* Elasticsearch dataset
 
-* pluggable widget.
+* new dataset type R (similarly to Python dataset)
 
- 
+* new cockpit widget type R (similarly to Python widget)
+
+
 
 Any contribution in these developments is very welcome!
 
