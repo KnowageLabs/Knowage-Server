@@ -528,6 +528,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 				$scope.showWidgetSpinner();
 				var sorting = $scope.advancedTableGrid.api.getSortModel();
+				sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');
