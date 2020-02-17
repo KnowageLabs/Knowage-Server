@@ -570,7 +570,10 @@
 	<CONFIG label="internal.exporting.pdf.landscape"      name="Landscape printing for PDF"
 		description="Boolean value (true or false) to set landscape mode for PDF printing." isActive="true"
 		valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION" />
-	<CONFIG label="PYTHON_MAIN_ENVIRONMENT"      name="Default python address"
+	<CONFIG label="python.virtualenv.0.backend.url"      name="Default python address"
+		description="Default IP address and port for python engine." isActive="true"
+		valueCheck="localhost:5000" valueType="STRING" category="PYTHON_CONFIGURATION" />
+	<CONFIG label="python.virtualenv.0.frontend.url"      name="Default python address"
 		description="Default IP address and port for python engine." isActive="true"
 		valueCheck="localhost:5000" valueType="STRING" category="PYTHON_CONFIGURATION" />
 	
