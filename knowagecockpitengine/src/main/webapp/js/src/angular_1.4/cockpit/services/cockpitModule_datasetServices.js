@@ -633,7 +633,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			// check if a sorting order is alredy defined on categories
 			for(var i=0; i<aggregations.categories.length; i++){
 				var category = aggregations.categories[i];
-				if(category.orderType.trim() != ""){
+				if(category.orderType && category.orderType.trim() != ""){
 					isSortingAlreadyDefined = true;
 					break;
 				}
@@ -643,7 +643,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if(!isSortingAlreadyDefined){
 				for(var i=0; i<aggregations.measures.length; i++){
 					var measure = aggregations.measures[i];
-					if(measure.orderType.trim() != ""){
+					if(measure.orderType && measure.orderType.trim() != ""){
 						isSortingAlreadyDefined = true;
 						break;
 					}
