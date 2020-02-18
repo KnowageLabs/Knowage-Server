@@ -101,11 +101,11 @@ angular.module('cockpitModule')
         			actionButtonItem.bind('mouseleave', mouseLeave );
         			ele.bind('mouseover', mouseOver );
         			ele.bind('mouseleave', mouseLeave );
-        			ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition');
+        			ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition');
         			$timeout(function(){
         				ele.removeClass('rightPosition');
 						ele.removeClass('leftPosition');
-        				ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition');
+        				ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition');
         			},1000);
 
 
@@ -115,7 +115,7 @@ angular.module('cockpitModule')
         					if(!newVal){
         						ele.removeClass('rightPosition');
         						ele.removeClass('leftPosition');
-        						ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
+        						ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition')
         					}
         				}
         			})
