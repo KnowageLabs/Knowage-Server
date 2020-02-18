@@ -347,6 +347,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			   sbiModule_restServices.promisePost("1.0/metaWeb",(isBusinessClass ? "deleteBusinessClass" : "deleteBusinessView"),metaModelServices.createRequestRest({name:$scope.selectedBusinessModel.uniqueName}))
 			   .then(function(response){
 					metaModelServices.applyPatch(response.data);
+					$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
 					$scope.selectedBusinessModel=undefined;
 			   },function(response){
 				   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
