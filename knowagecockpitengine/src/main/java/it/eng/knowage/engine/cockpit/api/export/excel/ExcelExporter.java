@@ -1030,28 +1030,66 @@ public class ExcelExporter {
 									valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 									valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 								}
-								newParameters.put(obj, valuesToChange);
-							}
+								if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0))
+									newParameters.put(obj, valuesToChange);
+							} else {
 
-							else {
-								newParameters.put(obj, "");
-							}
+								if (!(newParameters.has(obj) && !newParameters.getString(obj).isEmpty())) {
 
-						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) {
+									JSONObject jsonobjectVals = paramDatasets.getJSONObject(obj);
+
+									if (jsonobjectVals != null) {
+										Iterator<String> keys = jsonobjectVals.keys();
+										JSONObject jsonobjectValsOut = new JSONObject();
+										while (keys.hasNext()) {
+											String keyToAdd = keys.next();
+											jsonobjectValsOut.put(keyToAdd, "");
+										}
+
+										newParameters.put(obj, jsonobjectValsOut);
+									} else
+										newParameters.put(obj, "");
+
+								}
+
+							}
+						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
 							newParameters.put(obj, val);
 						}
 
 					}
 
 				}
-
-				paramDatasets.put(objToChange, newParameters);
-
 				JSONObject associativeSelectionsPayload = new JSONObject();
 				associativeSelectionsPayload.put("associationGroup", aggregation);
 				associativeSelectionsPayload.put("selections", selections);
-				associativeSelectionsPayload.put("datasets", paramDatasets);
-				associativeSelectionsPayload.put("nearRealtime", paramNearRealtime);
+
+				// paramNearRealTime has only datasets in associations
+				JSONArray nearRealArray = new JSONArray();
+
+				String[] paramss = toStringArray(paramNearRealtime);
+
+				String[] datasetsInAssociation = aggregation.getString("datasets").split(",");
+
+				for (int j = 0; j < paramss.length; j++) {
+
+					boolean found = false;
+					for (int j2 = 0; j2 < datasetsInAssociation.length; j2++) {
+						String stringToCheck = datasetsInAssociation[j2].replaceAll("\"", "");
+						stringToCheck = datasetsInAssociation[j2].replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "");
+						if (paramss[j].equals(stringToCheck)) {
+							found = true;
+							nearRealArray.put(paramss[j]);
+						}
+					}
+					if (!found) {
+						newParameters.remove(paramss[j]);
+					}
+
+				}
+
+				associativeSelectionsPayload.put("datasets", newParameters);
+				associativeSelectionsPayload.put("nearRealtime", nearRealArray);
 
 				AssociativeSelectionsClient client = new AssociativeSelectionsClient();
 				try {
@@ -1068,6 +1106,17 @@ public class ExcelExporter {
 				}
 			}
 		}
+	}
+
+	public static String[] toStringArray(JSONArray array) {
+		if (array == null)
+			return null;
+
+		String[] arr = new String[array.length()];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = array.optString(i);
+		}
+		return arr;
 	}
 
 	private void loadFiltersFromCockpitSelections(JSONObject cs) throws JSONException {
@@ -1748,7 +1797,8 @@ public class ExcelExporter {
 			for (int i = 0; i < widgetFilters.length(); i++) {
 				JSONObject widgetFilter = widgetFilters.getJSONObject(i);
 				JSONArray filterVals = widgetFilter.getJSONArray("filterVals");
-				if (filterVals.length() > 0) {
+
+				if (filterVals.length() > 0 || widgetFilter.has("filterOperator") && !widgetFilter.getString("filterOperator").isEmpty()) {
 					String colName = widgetFilter.getString("colName");
 
 					JSONArray values = new JSONArray();
@@ -1766,8 +1816,8 @@ public class ExcelExporter {
 						if (!hasComma)
 							values.put("('" + filterVal + "')");
 					}
-
 					String filterOperator = widgetFilter.getString("filterOperator");
+
 					if (filterOperator != null) {
 						JSONObject filter = new JSONObject();
 						filter.put("filterOperator", filterOperator);
