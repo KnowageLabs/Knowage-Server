@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from flask import Blueprint, request
-from app.utilities import security
+from app.utilities import security, utils
 
 dataset = Blueprint('dataset', __name__)
 #url: knowage_addr:port/dataset
@@ -76,3 +76,7 @@ def convertDataframe(df):
             element.update({df.columns[j]: df.loc[i][df.columns[j]]})
         knowage_json.append(element)
     return knowage_json
+
+@dataset.route('/libraries', methods = ['GET'])
+def python_libraries():
+    return utils.getEnvironmentLibraries(), 200

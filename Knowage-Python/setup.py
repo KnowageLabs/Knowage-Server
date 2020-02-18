@@ -9,6 +9,7 @@ setuptools.setup(
     license='AGPL v3',
     author="Marco Balestri",
     author_email="marco.balestri@eng.it",
+    url = "https://github.com/KnowageLabs/Knowage-Server/tree/master/Knowage-Python",
     description="Web service for Knowage python widget and python dataset",
     long_description=long_description,
     long_description_content_type="text/markdown",

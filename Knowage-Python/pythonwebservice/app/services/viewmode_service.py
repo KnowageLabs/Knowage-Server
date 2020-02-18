@@ -32,7 +32,7 @@ viewMode = Blueprint('view', __name__)
 def python_html():
     #retrieve input parameters
     output_variable = utils.retrieveScriptInfo(request.get_json())[1]
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
@@ -67,7 +67,7 @@ def python_html():
 def python_img():
     # retrieve input parameters
     img_file = utils.retrieveScriptInfo(request.get_json())[1]
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
@@ -106,7 +106,7 @@ def python_bokeh():
     # retrieve input parameters
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, user_id=user_id, document_id=document_id, widget_id=widget_id,
@@ -159,8 +159,8 @@ def python_bokeh():
     jscript = server_document("http://" + utils.getPythonAddress() + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
 
-# GET /widget/view/stub
+# GET /widget/view/savecert
 #save self signed certificate in the browser
-@viewMode.route('/stub', methods = ['GET'])
+@viewMode.route('/savecert', methods = ['GET'])
 def stub():
-    return "<div>ciao</div>"
+    return "<div>Certificate saved.</div>"

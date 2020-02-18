@@ -1137,6 +1137,8 @@ div.lower i  {
 		       						 	</div>
 		       						 	
 						        	</md-input-container>
+						        	
+						        	<md-button ng-click="openPythonEnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
 								
 								<div flex=100>
 									<md-input-container class="md-block">

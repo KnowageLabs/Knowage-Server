@@ -20,6 +20,8 @@ from app.utilities import constants, security, cuncurrency_manager as cm
 from datetime import datetime, timedelta
 import os
 import xml.etree.ElementTree as ET
+import json
+import pkg_resources
 
 def findFreePort():
     import socket
@@ -44,7 +46,7 @@ def retrieveScriptInfo(data):
     output_variable = data.get('output_variable')
     return script, output_variable
 
-def retrieveKnowageInfo(headers, data):
+def retrieveKnowageInfo(headers):
     user_id = headers['Authorization']
     return user_id
 
@@ -146,3 +148,10 @@ def getPortsRange():
     root = tree.getroot()
     range = root[0][3].text
     return range.split("-")
+
+def getEnvironmentLibraries():
+    to_return = []
+    for d in pkg_resources.working_set:
+        lib = str(d).split(" ")
+        to_return.append({"name": lib[0], "version": lib[1]})
+    return json.dumps(to_return)

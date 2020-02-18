@@ -16,9 +16,7 @@
 
 from flask import Blueprint, request, render_template
 import base64
-import json
 import os
-import pkg_resources
 from bokeh.embed import server_document
 from bokeh.server.server import Server
 from threading import Thread
@@ -34,7 +32,7 @@ editMode = Blueprint('editMode', __name__)
 def python_html():
     #retrieve input parameters
     script, output_variable = utils.retrieveScriptInfo(request.get_json())
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=output_variable, user_id=user_id,
@@ -70,7 +68,7 @@ def python_html():
 def python_img():
     # retrieve input parameters
     script, img_file = utils.retrieveScriptInfo(request.get_json())
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
@@ -112,7 +110,7 @@ def python_bokeh():
     script = request.get_json()['script']
     widget_id = request.get_json()['widget_id']
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id = utils.retrieveKnowageInfo(request.headers, request.get_json())
+    user_id = utils.retrieveKnowageInfo(request.headers)
     dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
     drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, user_id=user_id,
@@ -169,8 +167,4 @@ def python_bokeh():
 
 @editMode.route('/libraries', methods = ['GET'])
 def python_libraries():
-    to_return = []
-    for d in pkg_resources.working_set:
-        lib = str(d).split(" ")
-        to_return.append({"name": lib[0], "version": lib[1]})
-    return json.dumps(to_return), 200
+    return utils.getEnvironmentLibraries(), 200
