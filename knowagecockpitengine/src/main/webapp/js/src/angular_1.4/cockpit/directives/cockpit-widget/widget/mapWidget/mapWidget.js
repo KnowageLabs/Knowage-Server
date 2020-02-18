@@ -345,6 +345,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.resetFilter();
 		}
 
+		$mdSidenav($scope.optionSidenavId, true).then(
+			function(instance) {
+				var oldCloseFn = instance.close;
+
+				instance.close = function() {
+					oldCloseFn();
+					$scope.sideNavOpened = instance.isOpen();
+				};
+			}
+		);
+
 		$scope.toggleSidenav = function(){
 			var optionSidenav = $mdSidenav($scope.optionSidenavId);
 			optionSidenav.toggle();
