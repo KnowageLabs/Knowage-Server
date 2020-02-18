@@ -46,9 +46,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 						var bodyString = '{aggregations:{"measures":[],"categories":[{"id":"' + colName + '","alias":"' + colAliasToShow + '","columnName":"' + colAlias + '","orderType":"","funct":"NONE"}],"dataset":"' + dsName + '"},parameters:{},selections:{},indexes:[]}';
 
+						var params = "?";
+
+						params += "nearRealtime=true";
+
 						sbiModule_restServices.restToRootProject();
 						sbiModule_restServices
-							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" /*+ params*/, bodyString)
+							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" + params, bodyString)
 							.then(function(response) {
 
 								var ret = [];
