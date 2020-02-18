@@ -1444,6 +1444,27 @@
 		}        
 
         .gridster-item{
+        	.selectorUtilities {
+				transition: right 0.3s linear;
+				position: absolute;
+	        	top: 0;
+	        	right: -30px;
+	        	width: 32px;
+	        	background: lighten($secondaryColor,5%);
+	        	border: 1px solid #ccc;
+        		&.ng-enter.ng-enter-active, &.ng-leave{
+	        		right: -30px;
+        		}
+        		&.ng-enter, &.ng-leave.ng-leave-active {
+				  right: 0;
+				}
+				.md-icon-button {
+					padding: 0;
+    				width: 32px;
+    				height: 32px;
+    				min-height: 32px;
+				}
+        	}
         	&.hideUserMenu {
         		.viewModeMenu {
         			display: none !important;

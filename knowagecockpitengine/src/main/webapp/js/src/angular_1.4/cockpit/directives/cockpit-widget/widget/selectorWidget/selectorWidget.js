@@ -194,6 +194,10 @@ angular.module('cockpitModule')
 
 		}
 
+//		$scope.showUnlockButton = function(item){
+//			if($scope.isDisabled(item))	$scope.showUnlock = true;
+//		}
+
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();
