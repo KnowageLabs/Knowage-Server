@@ -377,6 +377,9 @@ public class ExcelExporter {
 				columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 				rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
 				measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+				if (optionsObj != null) {
+					logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
+				}
 
 				Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
@@ -440,6 +443,11 @@ public class ExcelExporter {
 			}
 
 			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			JSONArray summaryRow = getSummaryRowFromWidget(widget);
+			if (summaryRow != null) {
+				logger.debug("summaryRow = " + summaryRow);
+				cockpitSelections.put("summaryRow", summaryRow);
+			}
 
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 
@@ -447,13 +455,9 @@ public class ExcelExporter {
 				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
 			}
-
-			JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
-			if (summaryRow != null) {
-				logger.debug("summaryRow = " + summaryRow);
-				cockpitSelections.put("summaryRow", summaryRow);
+			if (body != null) {
+				logger.debug("Export single widget cockpitSelections.toString(): " + cockpitSelections.toString());
 			}
-
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
 
 			if (datastore != null) {
@@ -519,6 +523,10 @@ public class ExcelExporter {
 			JSONObject styleJSON = (!content.isNull("style") ? content.getJSONObject("style") : new JSONObject());
 
 			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
+
+			if (datastoreObjData != null) {
+				logger.debug("Export cockpit crosstab datastoreObjData.toString(): " + datastoreObjData.toString());
+			}
 
 			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
 					datastoreObjData.getJSONObject("metaData"), styleJSON);
@@ -815,7 +823,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
+					JSONArray summaryRow = getSummaryRowFromWidget(widget);
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -868,7 +876,7 @@ public class ExcelExporter {
 					logger.debug("parameters = " + parameters);
 					body.put("parameters", parameters);
 
-					JSONArray summaryRow = getSummaryRowFromWidget(widget, isSolrDataset(dataset));
+					JSONArray summaryRow = getSummaryRowFromWidget(widget);
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
 						body.put("summaryRow", summaryRow);
@@ -1008,7 +1016,7 @@ public class ExcelExporter {
 							if (!jsonobject.isNull("parameterValue")) {
 								Object values = jsonobject.get("parameterValue");
 								String valuesToChange = values.toString();
-								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+								if (jsonobject.has("type") && jsonobject.get("type").equals("DATE") && valuesToChange != null && valuesToChange.length() > 0) {
 
 									DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 									DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
@@ -1050,25 +1058,62 @@ public class ExcelExporter {
 								}
 							} else {
 
-							else {
-								newParameters.put(obj, "");
-							}
+								if (!(newParameters.has(obj) && !newParameters.getString(obj).isEmpty())) {
 
-						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) {
+									JSONObject jsonobjectVals = paramDatasets.getJSONObject(obj);
+
+									if (jsonobjectVals != null) {
+										Iterator<String> keys = jsonobjectVals.keys();
+										JSONObject jsonobjectValsOut = new JSONObject();
+										while (keys.hasNext()) {
+											String keyToAdd = keys.next();
+											jsonobjectValsOut.put(keyToAdd, "");
+										}
+
+										newParameters.put(obj, jsonobjectValsOut);
+									} else
+										newParameters.put(obj, "");
+
+								}
+
+							}
+						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
 							newParameters.put(obj, val);
 						}
 
 					}
 
 				}
-
-				paramDatasets.put(objToChange, newParameters);
-
 				JSONObject associativeSelectionsPayload = new JSONObject();
 				associativeSelectionsPayload.put("associationGroup", aggregation);
 				associativeSelectionsPayload.put("selections", selections);
-				associativeSelectionsPayload.put("datasets", paramDatasets);
-				associativeSelectionsPayload.put("nearRealtime", paramNearRealtime);
+
+				// paramNearRealTime has only datasets in associations
+				JSONArray nearRealArray = new JSONArray();
+
+				String[] paramss = toStringArray(paramNearRealtime);
+
+				String[] datasetsInAssociation = aggregation.getString("datasets").split(",");
+
+				for (int j = 0; j < paramss.length; j++) {
+
+					boolean found = false;
+					for (int j2 = 0; j2 < datasetsInAssociation.length; j2++) {
+						String stringToCheck = datasetsInAssociation[j2].replaceAll("\"", "");
+						stringToCheck = datasetsInAssociation[j2].replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "");
+						if (paramss[j].equals(stringToCheck)) {
+							found = true;
+							nearRealArray.put(paramss[j]);
+						}
+					}
+					if (!found) {
+						newParameters.remove(paramss[j]);
+					}
+
+				}
+
+				associativeSelectionsPayload.put("datasets", newParameters);
+				associativeSelectionsPayload.put("nearRealtime", nearRealArray);
 
 				AssociativeSelectionsClient client = new AssociativeSelectionsClient();
 				try {
@@ -1085,6 +1130,17 @@ public class ExcelExporter {
 				}
 			}
 		}
+	}
+
+	public static String[] toStringArray(JSONArray array) {
+		if (array == null)
+			return null;
+
+		String[] arr = new String[array.length()];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = array.optString(i);
+		}
+		return arr;
 	}
 
 	private void loadFiltersFromCockpitSelections(JSONObject cs) throws JSONException {
@@ -1150,7 +1206,7 @@ public class ExcelExporter {
 		JSONObject datasetObj = widget.getJSONObject("dataset");
 		int datasetId = datasetObj.getInt("dsId");
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-		String datasetLabel = dataset.getLabel();
+
 		boolean isSortingDefined = sortingColumn != null && !sortingColumn.isEmpty() && sortingOrder != null && !sortingOrder.isEmpty();
 		boolean isSortingUsed = false;
 
@@ -1215,15 +1271,7 @@ public class ExcelExporter {
 
 						String formula = column.optString("formula");
 						String name = formula.isEmpty() ? column.optString("name") : formula;
-						if (column.has("formula")) {
-							categoryOrMeasure.put("columnName", aliasToShow);
-							categoryOrMeasure.put("formula", formula);
-						} else {
-							categoryOrMeasure.put("columnName", name);
-						}
-						if (column.has("formula") && datasetLabel.equalsIgnoreCase("SolRDataset")) {
-							categoryOrMeasure.put("datasetOrTableFlag", false);
-						}
+						categoryOrMeasure.put("columnName", name);
 						if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 							categoryOrMeasure.put("orderType", sortingOrder);
 							isSortingUsed = true;
@@ -1312,7 +1360,7 @@ public class ExcelExporter {
 						if (!jsonobject.isNull("parameterValue")) {
 							Object values = jsonobject.get("parameterValue");
 							String valuesToChange = values.toString();
-							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE")) {
+							if (jsonobject.has("type") && jsonobject.get("type").equals("DATE") && valuesToChange != null && valuesToChange.length() > 0) {
 
 								DateTimeFormatter dateTime = ISODateTimeFormat.dateTime();
 								DateTime parsedDateTime = dateTime.parseDateTime(valuesToChange);
@@ -1328,7 +1376,8 @@ public class ExcelExporter {
 								newParameters.put(obj, valuesToChange);
 						} else {
 
-							newParameters.put(obj, "");
+							if (!(newParameters.has(obj) && !newParameters.getString(obj).isEmpty()))
+								newParameters.put(obj, "");
 
 						}
 					} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
@@ -1431,7 +1480,7 @@ public class ExcelExporter {
 		return newValue;
 	}
 
-	private JSONArray getSummaryRowFromWidget(JSONObject widget, boolean isSolrDataset) throws JSONException {
+	private JSONArray getSummaryRowFromWidget(JSONObject widget) throws JSONException {
 		JSONObject settings = widget.optJSONObject("settings");
 		JSONArray jsonArrayForSummary = new JSONArray();
 		if (settings != null) {
@@ -1772,16 +1821,27 @@ public class ExcelExporter {
 			for (int i = 0; i < widgetFilters.length(); i++) {
 				JSONObject widgetFilter = widgetFilters.getJSONObject(i);
 				JSONArray filterVals = widgetFilter.getJSONArray("filterVals");
-				if (filterVals.length() > 0) {
+
+				if (filterVals.length() > 0 || widgetFilter.has("filterOperator") && !widgetFilter.getString("filterOperator").isEmpty()) {
 					String colName = widgetFilter.getString("colName");
 
 					JSONArray values = new JSONArray();
 					for (int j = 0; j < filterVals.length(); j++) {
 						Object filterVal = filterVals.get(j);
-						values.put("('" + filterVal + "')");
+						String filterValString = (String) filterVal;
+						boolean hasComma = false;
+						if (filterValString.contains(",")) { // fixme: this workaround doesn't handle filters values with commas inside
+							hasComma = true;
+							String[] valuesToPut = filterValString.split(",");
+							for (int k = 0; k < valuesToPut.length; k++) {
+								values.put("('" + valuesToPut[k] + "')");
+							}
+						}
+						if (!hasComma)
+							values.put("('" + filterVal + "')");
 					}
-
 					String filterOperator = widgetFilter.getString("filterOperator");
+
 					if (filterOperator != null) {
 						JSONObject filter = new JSONObject();
 						filter.put("filterOperator", filterOperator);
