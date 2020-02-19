@@ -1022,8 +1022,33 @@ public class ExcelExporter {
 									valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 									valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 								}
-								newParameters.put(obj, valuesToChange);
-							}
+								if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0)) {
+
+									if (!jsonobject.isNull("urlName") && !jsonobject.isNull("parameterValue")) { // case when params come from cockpit document
+
+										JSONObject datasetVals = paramDatasets.getJSONObject(obj);
+										if (datasetVals != null) {
+											Iterator<String> keys = datasetVals.keys();
+											JSONObject jsnParam = new JSONObject();
+											while (keys.hasNext()) {
+												String keyToAdd = keys.next();
+												if (jsonobject.getString("urlName").equals(keyToAdd)) {
+
+													jsnParam.put(jsonobject.getString("urlName"), jsonobject.getString("parameterValue"));
+
+												} else {
+													jsnParam.put(datasetVals.getString(keyToAdd), "");
+												}
+
+											}
+											newParameters.put(obj, jsnParam);
+										}
+									} else {
+										newParameters.put(obj, valuesToChange);
+									}
+
+								}
+							} else {
 
 							else {
 								newParameters.put(obj, "");
