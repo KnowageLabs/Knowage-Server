@@ -194,6 +194,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 
+//		$scope.showUnlockButton = function(item){
+//			if($scope.isDisabled(item))	$scope.showUnlock = true;
+//		}
+
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();

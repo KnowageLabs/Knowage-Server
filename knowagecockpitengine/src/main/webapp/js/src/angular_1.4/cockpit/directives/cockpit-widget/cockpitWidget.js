@@ -271,6 +271,17 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
+	$scope.enter = function(e){
+		if($scope.widgetExitTimeout) $timeout.cancel($scope.widgetExitTimeout);
+		$timeout(function(){
+			$scope.mouseHover = true;
+		},300);
+
+		$scope.widgetExitTimeout = $timeout(function(){
+			$scope.mouseHover = false;
+		},3000);
+	}
+
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
 	    };
