@@ -431,7 +431,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.hasDefaultValues && (nature == "init" || nature == "refresh")){
 				var applyDefaultValues = false;
 
-				if($scope.ngModel.settings.defaultValue){
+				if($scope.ngModel.settings.defaultValue && $scope.datasetRecords && $scope.datasetRecords.rows){
 					switch($scope.ngModel.settings.defaultValue.toUpperCase()){
 					case 'FIRST':
 						$scope.defaultValues.push($scope.datasetRecords.rows[0].column_1);
