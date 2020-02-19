@@ -400,6 +400,7 @@ angular.module('cockpitModule')
 
 			scope.editSelection = function() {
 				scope.loading = true;
+				scope.hideUnlock = true;
 				scope.tempSelectables = selectables;
 				scope.tempActiveSelections = activeSelections;
 				for(var s in scope.availableItems){
