@@ -1448,26 +1448,49 @@
 
         .gridster-item{
         	.selectorUtilities {
-				transition: right 0.3s linear;
+        		transition: right 0.3s linear;
 				position: absolute;
 	        	top: 0;
-	        	right: -30px;
 	        	width: 32px;
 	        	background: lighten($secondaryColor,5%);
 	        	border: 1px solid #ccc;
-        		&.ng-enter.ng-enter-active, &.ng-leave{
-	        		right: -30px;
-        		}
-        		&.ng-enter, &.ng-leave.ng-leave-active {
-				  right: 0;
-				}
-				.md-icon-button {
+	        	.md-icon-button {
 					padding: 0;
     				width: 32px;
     				height: 32px;
     				min-height: 32px;
 				}
         	}
+        	&.leftPosition {
+	    		.selectorUtilities{
+	        		left: -30px;
+	        		&.ng-enter.ng-enter-active, &.ng-leave{
+		        		left: -30px;
+	        		}
+	        		&.ng-enter, &.ng-leave.ng-leave-active {
+					  left: 0;
+					}
+	        	}
+	    		.editModeMenu, .viewModeMenu {
+	    			border: {
+						top: 1px solid #ccc;
+						right: unset;
+						left: 1px solid #ccc;
+						bottom: 1px solid #ccc;
+					};
+	    		}
+	    	}
+	    	&.rightPosition {
+	    		.selectorUtilities {
+		        	right: -30px;
+	        		&.ng-enter.ng-enter-active, &.ng-leave{
+		        		right: -30px;
+	        		}
+	        		&.ng-enter, &.ng-leave.ng-leave-active {
+					  right: 0;
+					}
+	        	}
+	    	}
         	&.hideUserMenu {
         		.viewModeMenu {
         			display: none !important;
@@ -1601,16 +1624,6 @@
 						right: 1px solid #ccc;
 						bottom: 1px solid #ccc;
 					};
-            	}
-            	&.leftPosition {
-            		.editModeMenu, .viewModeMenu {
-            			border: {
-							top: 1px solid #ccc;
-							right: unset;
-							left: 1px solid #ccc;
-							bottom: 1px solid #ccc;
-						};
-            		}
             	}
 			}
         	&.fixedLeft, &.leftPosition {
