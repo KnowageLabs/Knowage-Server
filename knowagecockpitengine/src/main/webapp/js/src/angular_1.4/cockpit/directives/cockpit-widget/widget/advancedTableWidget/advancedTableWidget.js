@@ -179,6 +179,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function getColumnName(colNum){
 			for(var k in $scope.metadata.fields){
+				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) {
+					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == $scope.metadata.fields[k].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == $scope.metadata.fields[k].header) {
+							return $scope.ngModel.content.columnSelectedOfDataset[c].name;
+						}
+					}
+				}
+			}
+		}
+
+		function getColumnAlias(colNum){
+			for(var k in $scope.metadata.fields){
 				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
 			}
 		}
@@ -723,7 +735,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.advancedTableGrid.api.deselectAll();
 			var newValue = undefined;
 
-			column = getColumnName(column);
+			column = getColumnAlias(column);
 
 			var rows = [];
 			newValue = [];
