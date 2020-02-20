@@ -165,6 +165,7 @@
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
+			 
 		},
     
     	#*
@@ -1526,6 +1527,7 @@
 							#set($relatedSerieShowValue = true)
 						#end
 						selected:$relatedSerieShowValue,
+						initiallySelected: $relatedSerieShowValue,
 						dataLabels: 
 						{
 							style:{
@@ -1709,6 +1711,7 @@
     	
 		{	
 			selected: $selectedValue,
+			initiallySelected: $selectedValue,
 			name: "$escapeTool.javascript($valueKey)",
 			#if($seriesMapGroupingFunction.get($valueKey))
 			
@@ -2313,15 +2316,18 @@
         series: {
         #if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
         	events: {
-	        	checkboxClick: function(event) {
-		        	this.points.forEach(function(point) {
-			        	point.update({
-				        	dataLabels: {
-				        		enabled: event.checked
-				        	}
-			        	});
-		        	});
-	        	}
+	        	 checkboxClick: function(event) {
+	             	var updateObj = {};
+		            updateObj.dataLabels = {
+		              enabled: event.checked
+		            }
+		            this.update(updateObj, true);
+		            if (this.options.initiallySelected) {
+		            	return !event.checked;
+		            } else {
+		            	return event.checked;
+		            }
+         		}
         	},
         	
 			showCheckbox: true,
