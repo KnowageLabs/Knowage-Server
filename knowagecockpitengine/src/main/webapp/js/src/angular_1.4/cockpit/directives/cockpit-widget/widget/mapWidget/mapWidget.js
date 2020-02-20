@@ -932,28 +932,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
 
 		    	$scope.getLegend($scope.ngModel.id);
-	    	}
-
-	    	config.layerID = layerID;
-			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
-			if (config.clusterConf && config.clusterConf.enabled){
-				var clusterSource = new ol.source.Cluster({ source: newSource });
-				layer.setSource(clusterSource);
-			}else{
-				layer.setSource(newSource);
 			}
 
 			layer.getSource().changed();
+
 		}
-//
-//	    $scope.changeHeatmapValues = function(){
-//    		for (l in $scope.ngModel.content.layers){
-//		    	var layerDef =  $scope.ngModel.content.layers[l];
-//				var data = $scope.getValuesLayer(layerDef.name);
-//        		$scope.createLayerWithData(layerDef.name, data.values, false); //return to cluster view
-//    		}
-//
-//	    }
+
 	    //Utility functions
 	    $scope.getLayerByName = function(n){
 	    	var tmpName = n.split("|");
