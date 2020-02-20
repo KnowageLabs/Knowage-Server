@@ -69,7 +69,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 			String categoryAlias = getCategoryAlias(rawCategoryAlias);
 			JSONObject facet = facetContainer.getJSONObject(rawCategoryAlias);
 			String sort = facet.optString("sort");
-			if(!sort.isEmpty()){
+			if (!sort.isEmpty()) {
 				sortedCategories.put(categoryAlias, "index asc".equals(sort));
 			}
 			facetContainer = facet.optJSONObject("facet");
@@ -81,8 +81,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 			jsonObject.remove("facets");
 			JSONObject response = jsonObject.getJSONObject("response");
 			response.put("numFound", 0);
-		}
-		else {
+		} else {
 			JSONArray docs = getDocsFromFacetContainer(facets);
 			jsonObject.remove("facets");
 			JSONObject response = jsonObject.getJSONObject("response");
@@ -101,10 +100,10 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 
 	private JSONArray getDocsFromFacet(String categoryAlias, JSONObject facet) throws JSONException {
 		JSONArray docs = new JSONArray();
-		if(sortedCategories.containsKey(categoryAlias) && !sortedCategories.get(categoryAlias)){
+		if (sortedCategories.containsKey(categoryAlias) && !sortedCategories.get(categoryAlias)) {
 			addDocs(getBucketDocs(categoryAlias, facet), docs);
 			addDocs(getMissingDocs(categoryAlias, facet), docs);
-		}else{
+		} else {
 			addDocs(getMissingDocs(categoryAlias, facet), docs);
 			addDocs(getBucketDocs(categoryAlias, facet), docs);
 		}
@@ -166,7 +165,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 			if (isRawMeasureAlias(rawMeasureAlias)) {
 				String measureAlias = getMeasureAlias(rawMeasureAlias);
 				Object value = jsonObject.get(rawMeasureAlias);
-				if(value instanceof JSONObject){
+				if (value instanceof JSONObject) {
 					value = ((JSONObject) value).getLong("count");
 				}
 				doc.put(measureAlias, value);
@@ -238,7 +237,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 				newJsonPathAttributes.add(new JSONPathAttribute(categoryAlias, "$." + categoryAlias, jsonPathAttributeNameToTypeMap.get(categoryName)));
 				facetContainer = facet.optJSONObject("facet");
 			}
-			if(facetContainer != null) {
+			if (facetContainer != null) {
 				Pattern aggregatedMeasureDefinitionPattern = Pattern.compile("\\w+\\((\\w+)\\)");
 				Iterator<String> keys = facetContainer.keys();
 				while (keys.hasNext()) {

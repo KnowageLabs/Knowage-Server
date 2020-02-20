@@ -81,9 +81,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
 			$scope.columnsNameArray = [];
+			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
-					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header){
+					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header)  ){
 						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
