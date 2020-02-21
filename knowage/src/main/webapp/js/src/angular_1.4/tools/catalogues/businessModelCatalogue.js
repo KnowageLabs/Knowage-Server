@@ -199,6 +199,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	}
 	//Export Metamodel as a CWM Metamodel
+	/*
 	$scope.downloadCWMFile= function(id){
 		$scope.bmCWMProcessingShow = true;
 
@@ -214,6 +215,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			});
 
 	}
+	*/
 
 	 $scope.bmSpeedMenu= [
 		                      {
@@ -580,14 +582,16 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.fileClicked = true;  // tells that file input has been clicked
 		}
 
+		/*
 		$scope.fileCWMChange = function(){
 			$scope.fileCWMClicked = true;  // tells that file input has been clicked
 			$scope.bmCWMDisableImportButton = false;
 
 		}
+		*/
 
 
-
+		/*
 		//check if is name dirty
 		$scope.checkCWMChange = function(){
 
@@ -599,6 +603,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.isCWMDirty = true;
 			}
 		}
+		*/
 
 		//get item by id
 		getItemById = function(id){
@@ -659,6 +664,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			}
 		};
 
+		/*
 		//import CWM Metamodel informations
 		$scope.importCWMFile = function(bmId) {
 			var confirm = $mdDialog
@@ -703,6 +709,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 			}
 		}
+		*/
 
 
 		 $scope.confirm = $mdDialog

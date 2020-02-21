@@ -220,9 +220,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				      		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) {%>
 								<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
 							<%} %>
-							<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>	
+							<%-- if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>	
 								<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button></div>
-							<%} %>
+							<%} --%>
 						</div>
 						<div ng-show="bmImportingShow" >
 		    				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
@@ -230,14 +230,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						      <span>{{translate.load("sbi.catalogues.generic.import.progress")}}</span>
 						    </div>
 		      			</div> 
+		      			<!-- 
 		      			<div   ng-show="bmCWMProcessingShow" >
 		    				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
 		    				<div class="bottom-block">
 						      <span>{{translate.load("sbi.metadata.cwm.export.progress")}}</span>
 						    </div>
-		      			</div> 
+		      			</div>
+		      			--> 
 			      	</div>
-					<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>		      	 
+					<%-- if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>		      	 
 			      	<md-divider layout-margin></md-divider>
 			      	<div layout="row" layout-wrap layout-align="start center">
 						<label flex  class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
@@ -246,13 +248,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		               		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMDisableImportButton" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
 		            	</div>                  						 
 		      		</div>
-		      		<%} %>
+		      		<%} --%>
+		      		<!--
 		      		<div ng-show="bmCWMImportingShow" >
 		    			<md-progress-linear md-mode="indeterminate"></md-progress-linear>
 	   					<div class="bottom-block">
 				      		<span>{{translate.load("sbi.metadata.cwm.import.progress")}}</span>
 					    </div>
-	      			</div> 
+	      			</div>
+	      			--> 
 			      </md-card-content>
 		      	</md-card>
 			      

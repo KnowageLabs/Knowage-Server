@@ -426,27 +426,6 @@
 		-->
 		
 		<dependency>
-			<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
-			<artifactId>mdrapi</artifactId>
-			<version>20050711</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
-			<artifactId>nbmdr</artifactId>
-			<version>20050711</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.andromda.thirdparty.jmi</groupId>
-			<artifactId>mof</artifactId>
-			<version>20030918</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
 			<version>3.0.12.Final</version>
