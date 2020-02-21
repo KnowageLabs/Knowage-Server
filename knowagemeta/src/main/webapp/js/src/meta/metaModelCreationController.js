@@ -212,6 +212,11 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
     	rowData : $scope.meta.businessModels
 	};
 
+	$scope.$on('updateBusinessClassesGrid',function(event,data){
+		$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
+	})
+
+
 	function moveInArray(arr, fromIndex, toIndex) {
         var element = arr[fromIndex];
         arr.splice(fromIndex, 1);

@@ -213,6 +213,10 @@
 							});
 						} else {
 							//After the check if there aren't warnings, let's continue saving
+							if(JSON.parse(response.data.patch).length>0){
+								metaModelServices.applyPatch(JSON.parse(response.data.patch));
+								$scope.$broadcast("updateBusinessClassesGrid");
+							}
 							sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
 							.then(
 									function(response) {

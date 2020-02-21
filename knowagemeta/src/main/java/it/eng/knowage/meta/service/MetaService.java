@@ -214,7 +214,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-
+			JSONObject oldJsonModel = createJson(model);
 			applyDiff(jsonRoot, model);
 
 			BusinessModel businessModel = model.getBusinessModels().get(0);
@@ -238,7 +238,9 @@ public class MetaService extends AbstractSpagoBIResource {
 				checksArray.put(incorrectRelationship);
 			}
 			checksResult.put("incorrectRelationships", checksArray);
+			JSONObject jsonModel = createJson(model);
 
+			checksResult.put("patch", getPatch(oldJsonModel, jsonModel));
 			return Response.ok(checksResult.toString()).build();
 
 		} catch (IOException | JSONException e) {
