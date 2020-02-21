@@ -510,6 +510,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	        onCellEditingStopped: refreshRow,
 	        singleClickEdit: true,
 	        stopEditingWhenGridLosesFocus: true,
+	        domLayout: "autoHeight",
 	        columnDefs: [{"headerName":sbiModule_translate.load("sbi.generic.name"),"field":"name",rowDrag: true, "editable":true,cellRenderer:editableCellWithIcon, cellClass: 'editableCell',width: 90},
 	    		{"headerName":sbiModule_translate.load("sbi.meta.model.table.primaryKey"),"field":"identifier",cellRenderer:checkboxRenderer,width: 40},
 	    		{"headerName":sbiModule_translate.load("sbi.execution.subobjects.visibility"),"field":"Visibility",cellRenderer:visibilityCheckboxRenderer,width: 40},
