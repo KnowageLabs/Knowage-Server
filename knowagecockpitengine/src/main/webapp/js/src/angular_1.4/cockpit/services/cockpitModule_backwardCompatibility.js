@@ -121,8 +121,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if(!self.compareVersion("7.1.1",version)){
 				if(model.type=='map') {
-//					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
-//					var layers = model.content.layers;
+					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
+					var layers = model.content.layers;
 //					// Add content attribute to every layer
 //					for (var j in layers) {
 //						var currLayer = layers[j];

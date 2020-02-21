@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
-						tempCol.headerComponentParams = {template: headerTemplate()};
+						//tempCol.headerComponentParams = {template: headerTemplate()};
 
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 
@@ -138,35 +138,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
-					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, headerComponentParams : {template: headerTemplate()}});
+					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
 			return columns
 		}
 
 		function getColumnName(colNum){
 			for(var k in $scope.metadata.fields){
+				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) {
+					for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == $scope.metadata.fields[k].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow == $scope.metadata.fields[k].header) {
+							return $scope.ngModel.content.columnSelectedOfDataset[c].name;
+						}
+					}
+				}
+			}
+		}
+
+		function getColumnAlias(colNum){
+			for(var k in $scope.metadata.fields){
 				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
 			}
 		}
 
-		function headerTemplate() {
-			var cellClasses = 'cellContainer ';
+		//CUSTOM HEADER TEMPLATE RENDERER
+		function CustomHeader() {}
+
+		CustomHeader.prototype.init = function (params) {
+			var cellClasses = "cellcontainer ";
+			this.agParams = params;
+			this.agParams.enableSorting = false;
 			var headerStyle = {};
-			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = $scope.ngModel.style.th;
+			if($scope.ngModel.style && $scope.ngModel.style.th) headerStyle = angular.copy($scope.ngModel.style.th);
 			if(headerStyle && headerStyle.multiline) cellClasses = 'cellContainer multiLineHeader';
-			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
-					'	 <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>'+
-					'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="justify-content:'+headerStyle["justify-content"]+'">'+
-					'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
-					'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="color:'+headerStyle.color+';font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'"></span></div>'+
-					'       <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>'+
-					'       <span ref="eSortOrder" class="ag-header-icon ag-sort-order" ></span>'+
-					'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" ></span>'+
-					'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" ></span>'+
-					'  		<span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" ></span>'+
-					'	</div>'+
-					'</div>';
+			if(params.column.colDef.style) {
+				var properties = ["justify-content","color","background-color","font-style","font-weight","font-size"];
+				properties.forEach(function(property){
+					if(!headerStyle[property] && params.column.colDef.style[property]) headerStyle[property] = params.column.colDef.style[property];
+				})
+			}
+		    this.eGui = document.createElement('div');
+		    this.eGui.style.width = '100%';
+		    this.eGui.innerHTML = '<div class="ag-cell-label-container customHeaderTemplate" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
+								'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="color:'+headerStyle.color+';justify-content:'+headerStyle["justify-content"]+'">'+
+								'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
+								'			<span ref="eText" class="ag-header-cell-text" role="columnheader" style="font-style:'+headerStyle["font-style"]+';font-size:'+headerStyle["font-size"]+';font-weight:'+headerStyle["font-weight"]+'">'+params.displayName+'</span></div>'+
+								'    	<span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden" ><span class="ag-icon ag-icon-asc"></span></span>'+
+								'   	<span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon ag-hidden"><span class="ag-icon ag-icon-desc"></span></span>'+
+								'	</div>'+
+								'</div>';
+
+		    this.mySortAscButton = this.eGui.querySelector(".ag-cell-label-container");
+		    this.eSortDownButton = this.eGui.querySelector(".ag-sort-descending-icon");
+		    this.eSortUpButton = this.eGui.querySelector(".ag-sort-ascending-icon");
+
+		    this.onSortChangedListener = this.onSortChanged.bind(this);
+	        this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
+	        this.onSortChanged();
+
+		    this.mySortAscButton.addEventListener('click', function(event) {
+		    	if(params.column.sort == '') params.setSort('asc');
+		    	else params.setSort(params.column.sort == 'asc' ? 'desc' : 'asc');
+		    });
+		};
+
+		CustomHeader.prototype.onSortChanged = function () {
+			if (this.agParams.column.isSortAscending()) {
+	    		this.eSortUpButton.classList.add('ag-hidden');
+	    		this.eSortDownButton.classList.remove('ag-hidden');
+		    } else if (this.agParams.column.isSortDescending()) {
+		    	this.eSortUpButton.classList.remove('ag-hidden');
+		    	this.eSortDownButton.classList.add('ag-hidden');
+		    } else {
+		    	this.eSortUpButton.classList.add('ag-hidden');
+		    	this.eSortDownButton.classList.add('ag-hidden');
+		    }
 		}
+
+		CustomHeader.prototype.getGui = function () {
+		    return this.eGui;
+		};
 
 		function getCellStyle(params){
 			var tempStyle = params.colDef.style || {};
@@ -373,6 +424,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					resizable: cockpitModule_properties.EDIT_MODE,
 					sortable: true
 				},
+				components: {
+			        agColumnHeader: CustomHeader
+			    },
 				onColumnResized: columnResized,
 				getRowHeight: function(params){
 					if(_rowHeight > 0) return parseInt(_rowHeight);
@@ -401,13 +455,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 				$scope.showWidgetSpinner();
 				var sorting = $scope.advancedTableGrid.api.getSortModel();
+				sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');
 			}
 			// Re-apply styles to all rows
 			// TODO : it's too heavy!
-			$scope.advancedTableGrid.api.redrawRows();
+			//$scope.advancedTableGrid.api.redrawRows();
 		}
 		function columnResized(params){
 			if(params.source != "sizeColumnsToFit"){
@@ -594,7 +649,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.advancedTableGrid.api.deselectAll();
 			var newValue = undefined;
 
-			column = getColumnName(column);
+			column = getColumnAlias(column);
 
 			var rows = [];
 			newValue = [];

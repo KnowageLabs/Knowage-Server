@@ -16,7 +16,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'hideUserMenu': cockpitModule_template.configuration.hideUserMenu, 'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable, 'expandedWidget':widExp, 'fixedLeft':ngModel.type === 'selection', 'screenShottingWidget':cockpitModule_properties.LOADING_SCREENSHOT}"  ng-mouseleave="closeWidgetActionButtons()"
-	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
+	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton" ng-mouseover="enter($event)" >
+	
+	<div ng-if="checkType(ngModel.type, ['selector']) && ngModel.settings.modalityValue!='multiDropdown' && mouseHover && (showUnlock || showInfoBar)" class="selectorUtilities">
+		<md-button ng-if="showInfoBar" class="md-icon-button noMargin" ng-click="bulkSelect()">
+			<md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-tooltip>
+			<md-icon md-font-icon="fa fa-play"></md-icon>
+		</md-button>
+		<md-button ng-if="showUnlock" class="md-icon-button noMargin" ng-click="unlock()">
+			<md-tooltip md-delay="500">{{::translate.load('kn.cockpit.selector.unlock')}}</md-tooltip>
+			<md-icon md-font-icon="fa fa-unlock"></md-icon>
+		</md-button>
+	</div>
 	
 	<div id="editModeMenuSpeedDial" style="position:absolute;bottom:0;left:0" ng-if="cockpitModule_properties.EDIT_MODE">
  		<md-fab-speed-dial md-direction="{{coords()}}" class="md-scale">
@@ -193,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
 					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
-					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">New Widget</span>
+					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">{{::translate.load("kn.cockpit.widget.title")}}</span>
 				</div>
 			</md-toolbar>
 		</md-card-title>

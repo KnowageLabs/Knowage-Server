@@ -46,9 +46,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 						var bodyString = '{aggregations:{"measures":[],"categories":[{"id":"' + colName + '","alias":"' + colAliasToShow + '","columnName":"' + colAlias + '","orderType":"","funct":"NONE"}],"dataset":"' + dsName + '"},parameters:{},selections:{},indexes:[]}';
 
+						var params = "?";
+
+						params += "nearRealtime=true";
+
 						sbiModule_restServices.restToRootProject();
 						sbiModule_restServices
-							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" /*+ params*/, bodyString)
+							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" + params, bodyString)
 							.then(function(response) {
 
 								var ret = [];
@@ -325,15 +329,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.createMap();
 			} else {
 				// Delete all layers
-				$scope.removeBaseLayer();
-				$scope.removeBackgroundLayer();
-				for (l in $scope.layers){
-					//remove old layers
-					var previousLayer = $scope.getLayerByName($scope.layers[l].name);
-					if (previousLayer) {
-						$scope.map.removeLayer(previousLayer);
-					}
-				}
+				$scope.map.getLayers().clear();
 				$scope.clearInternalData();
 			}
 
@@ -347,6 +343,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			$scope.map.renderSync();
 		}
+
+		$mdSidenav($scope.optionSidenavId, true).then(
+			function(instance) {
+				var oldCloseFn = instance.close;
+
+				instance.close = function() {
+					oldCloseFn();
+					$scope.sideNavOpened = instance.isOpen();
+				};
+			}
+		);
 
 		$scope.toggleSidenav = function(){
 			var optionSidenav = $mdSidenav($scope.optionSidenavId);
@@ -911,28 +918,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
 
 		    	$scope.getLegend($scope.ngModel.id);
-	    	}
-
-	    	config.layerID = layerID;
-			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
-			if (config.clusterConf && config.clusterConf.enabled){
-				var clusterSource = new ol.source.Cluster({ source: newSource });
-				layer.setSource(clusterSource);
-			}else{
-				layer.setSource(newSource);
 			}
 
 			layer.getSource().changed();
+
 		}
-//
-//	    $scope.changeHeatmapValues = function(){
-//    		for (l in $scope.ngModel.content.layers){
-//		    	var layerDef =  $scope.ngModel.content.layers[l];
-//				var data = $scope.getValuesLayer(layerDef.name);
-//        		$scope.createLayerWithData(layerDef.name, data.values, false); //return to cluster view
-//    		}
-//
-//	    }
+
 	    //Utility functions
 	    $scope.getLayerByName = function(n){
 	    	var tmpName = n.split("|");
@@ -1005,24 +996,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var BACKGROUND_LAYER_TYPE = "backgroundLayer";
 		var PROPERTY_LAYER_TYPE = "layerType";
 
-		function getBackgroundLayer() {
-			var ret = undefined;
-			$scope.map.getLayers().forEach(function(el) {
-					if (el.get(PROPERTY_LAYER_TYPE) === BACKGROUND_LAYER_TYPE) {
-						ret = el;
-					}
-				}
-			);
-			return ret;
-		}
-
 		// Base layer
+		$scope.baseLayer = undefined;
 		$scope.addBaseLayer = function() {
 			if ($scope.needsBaseLayer()) {
 
-				var baseLayer = $scope.createBaseLayer();
+				$scope.baseLayer = $scope.createBaseLayer();
 
-				$scope.map.addLayer(baseLayer);
+				$scope.map.addLayer($scope.baseLayer);
 			}
 		}
 
@@ -1033,31 +1014,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return ret;
 		}
 
-		function getBaseLayer() {
-			var ret = undefined;
-			$scope.map.getLayers().forEach(function(el) {
-					if (el.get(PROPERTY_LAYER_TYPE) === BACKGROUND_LAYER_TYPE) {
-						ret = el;
-					}
-				}
-			);
-			return ret;
-		}
-
 		$scope.needsBaseLayer = function() {
 			return $scope.ngModel.content.enableBaseLayer;
 		}
 
-		$scope.removeBaseLayer = function() {
-			if (!$scope.needsBaseLayer()) {
-				var currBaseLayer = getBaseLayer();
-				if (currBaseLayer) {
-					$scope.map.removeLayer(currBaseLayer);
-				}
-			}
-		}
-
 		// Background layer
+		$scope.backgroundLayer = undefined;
 		$scope.addBackgroundLayer = function() {
 
 			if ($scope.needsBackgroundLayer()) {
@@ -1074,7 +1036,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				layer.set(PROPERTY_LAYER_TYPE, BACKGROUND_LAYER_TYPE);
 				layer.set("layerId", backgroundLayerId);
 
-				$scope.map.addLayer(layer);
+				$scope.backgroundLayer = layer;
+
+				$scope.map.addLayer($scope.backgroundLayer);
 
 			}
 		}
@@ -1102,19 +1066,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			return backgroundLayerId != undefined
 				&& backgroundLayerId != "";
-		}
-
-		$scope.removeBackgroundLayer = function() {
-
-			var currBackgroundLayer = getBackgroundLayer();
-			var backgroundLayerId = $scope.ngModel.content.backgroundLayerId;
-			if (!backgroundLayerId
-					|| (backgroundLayerId
-							&& currBackgroundLayer
-							&& currBackgroundLayer.get("layerId") != backgroundLayerId)) {
-				$scope.map.removeLayer(currBackgroundLayer);
-			}
-
 		}
 
 		$scope.isFilterableCol = function(currCol) {

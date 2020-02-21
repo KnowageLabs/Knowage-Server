@@ -101,11 +101,11 @@ angular.module('cockpitModule')
         			actionButtonItem.bind('mouseleave', mouseLeave );
         			ele.bind('mouseover', mouseOver );
         			ele.bind('mouseleave', mouseLeave );
-        			ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition');
+        			ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition');
         			$timeout(function(){
         				ele.removeClass('rightPosition');
 						ele.removeClass('leftPosition');
-        				ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition');
+        				ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition');
         			},1000);
 
 
@@ -115,7 +115,7 @@ angular.module('cockpitModule')
         					if(!newVal){
         						ele.removeClass('rightPosition');
         						ele.removeClass('leftPosition');
-        						ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
+        						ele.addClass(scope.$eval(attrs.widgetXPosition)<=10 ? 'rightPosition': 'leftPosition')
         					}
         				}
         			})
@@ -270,6 +270,17 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	var MAXMENUWIDTH = 425;
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
+
+	$scope.enter = function(e){
+		if($scope.widgetExitTimeout) $timeout.cancel($scope.widgetExitTimeout);
+		$timeout(function(){
+			$scope.mouseHover = true;
+		},300);
+
+		$scope.widgetExitTimeout = $timeout(function(){
+			$scope.mouseHover = false;
+		},3000);
+	}
 
 	$scope.openMenu = function($mdMenu, ev) {
 	      $mdMenu.open(ev);
@@ -1220,9 +1231,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}
 //		// update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
-			if($scope.ngModel.content.name && $scope.extendedStyle.title){
-				$scope.extendedStyle.title.label = $scope.extendedStyle.title.label ? $scope.extendedStyle.title.label : $scope.ngModel.content.name;
-			}
 			if($scope.extendedStyle.title && !$scope.extendedStyle.title.font){
 				$scope.extendedStyle.title.font = {};
 				$scope.ngModel.style.title.font = {};

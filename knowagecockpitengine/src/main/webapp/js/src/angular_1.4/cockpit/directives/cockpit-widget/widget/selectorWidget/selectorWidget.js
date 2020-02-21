@@ -194,6 +194,10 @@ angular.module('cockpitModule')
 
 		}
 
+//		$scope.showUnlockButton = function(item){
+//			if($scope.isDisabled(item))	$scope.showUnlock = true;
+//		}
+
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();
@@ -396,6 +400,7 @@ angular.module('cockpitModule')
 
 			scope.editSelection = function() {
 				scope.loading = true;
+				scope.hideUnlock = true;
 				scope.tempSelectables = selectables;
 				scope.tempActiveSelections = activeSelections;
 				for(var s in scope.availableItems){
@@ -431,7 +436,7 @@ angular.module('cockpitModule')
 			if($scope.hasDefaultValues && (nature == "init" || nature == "refresh")){
 				var applyDefaultValues = false;
 
-				if($scope.ngModel.settings.defaultValue){
+				if($scope.ngModel.settings.defaultValue && $scope.datasetRecords && $scope.datasetRecords.rows){
 					switch($scope.ngModel.settings.defaultValue.toUpperCase()){
 					case 'FIRST':
 						$scope.defaultValues.push($scope.datasetRecords.rows[0].column_1);

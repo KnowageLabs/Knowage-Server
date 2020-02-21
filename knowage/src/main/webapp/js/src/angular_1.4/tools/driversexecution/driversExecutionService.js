@@ -223,7 +223,7 @@
 					}else {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
-							parameter.parameterDescription = {};
+							parameter.parameterDescription = '';
 						} else {
 							parameter.parameterValue = '';
 							parameter.parameterDescription = {};
