@@ -629,7 +629,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			timing.stop();
 			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
 					options, columns);
-		} catch (JSONException e) {
+		} catch (Exception e) {
+			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		}
 	}
