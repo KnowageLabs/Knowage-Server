@@ -648,6 +648,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			}
 
+			// insert relation with ds for data lineage
+			// KNOWAGE-4819
+			DAOFactory.getSbiObjDsDAO().insertRelationsFromObj(biObject);
+
 			logger.debug("OUT");
 		} catch (HibernateException he) {
 			logger.error(he);
