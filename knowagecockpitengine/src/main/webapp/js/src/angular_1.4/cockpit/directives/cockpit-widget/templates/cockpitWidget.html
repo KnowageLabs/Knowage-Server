@@ -204,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
 					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
-					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">New Widget</span>
+					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">{{::translate.load("kn.cockpit.widget.title")}}</span>
 				</div>
 			</md-toolbar>
 		</md-card-title>
