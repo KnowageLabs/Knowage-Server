@@ -765,6 +765,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 		   .then(function(response){
 				metaModelServices.applyPatch(response.data);
 				$scope.attributesGrid.api.setRowData($scope.selectedBusinessModel.columns);
+				$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
 		   },function(response){
 			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 		   })
@@ -775,6 +776,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 		.then(function(response){
 			metaModelServices.applyPatch(response.data);
 			$scope.attributesGrid.api.setRowData($scope.selectedBusinessModel.columns);
+			$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 		})
