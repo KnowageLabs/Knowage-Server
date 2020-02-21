@@ -1234,9 +1234,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}
 //		// update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
-			if($scope.ngModel.content.name && $scope.extendedStyle.title){
-				$scope.extendedStyle.title.label = $scope.extendedStyle.title.label ? $scope.extendedStyle.title.label : $scope.ngModel.content.name;
-			}
 			if($scope.extendedStyle.title && !$scope.extendedStyle.title.font){
 				$scope.extendedStyle.title.font = {};
 				$scope.ngModel.style.title.font = {};
