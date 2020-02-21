@@ -1000,6 +1000,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		if (model.eAdapters().isEmpty())
+			model.eAdapters().add(new ECrossReferenceAdapter());
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) model.eAdapters().get(0); // req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 
@@ -1053,6 +1055,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
+		if (model.eAdapters().isEmpty())
+			model.eAdapters().add(new ECrossReferenceAdapter());
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) model.eAdapters().get(0); // req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 		physicalModelInitializer.setRootModel(model);
