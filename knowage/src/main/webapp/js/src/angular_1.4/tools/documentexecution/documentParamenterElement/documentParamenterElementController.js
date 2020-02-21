@@ -215,7 +215,11 @@
 	        	// in case the element is removed recalculate description
 	        	parameter.parameterValue.splice(idx, 1);
 	        	//recalculate descriptions
-				addParameterValueDescription(parameter);
+	        	if(parameter.parameterValue.length == 0) {
+	        		parameter.parameterDescription = '';
+	        	} else {
+	        		addParameterValueDescription(parameter);
+	        	}
 
 	        }
 	        else {
