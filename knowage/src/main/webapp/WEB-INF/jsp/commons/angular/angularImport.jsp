@@ -68,8 +68,8 @@ if (!String.prototype.endsWith) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/polyfills/includes-polyfill/includes-polyfill.js")%>"></script>
 
 <!-- angular-material-->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-material/angular-material.min.js")%>"></script> 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-material/angular-material.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
 
 <!-- angular tree -->
 <link rel="stylesheet" 	href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">

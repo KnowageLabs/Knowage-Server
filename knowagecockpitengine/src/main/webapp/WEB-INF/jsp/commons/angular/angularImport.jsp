@@ -55,8 +55,8 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/append-polyfill/append-polyfill.js")%>"></script>
 
 <!-- angular-material-->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-material/angular-material.min.js")%>"></script>
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-material/angular-material.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
 
 <!-- angular tree -->
 <link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
