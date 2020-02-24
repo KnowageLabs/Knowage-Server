@@ -172,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
-					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, headerComponentParams : {template: headerTemplate()}});
+					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
 			return columns
 		}
