@@ -91,6 +91,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
+						//ROWSPAN MANAGEMENT
+						if(c == 0){
+							tempCol.rowSpanDimensions = {};
+							for(var r in $scope.tempRows){
+								if(!tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]]) tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]] = {value: 1};
+								else tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]].value ++;
+							}
+							tempCol.rowSpan = RowSpanCalculator;
+							tempCol.cellClassRules = {
+								'cell-span': function(params) {
+									return params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.value].value > 1
+								}
+					        }
+						}
+
 						//VARIABLES MANAGEMENT
 						if($scope.ngModel.content.columnSelectedOfDataset[c].variables && $scope.ngModel.content.columnSelectedOfDataset[c].variables.length>0){
 							for(var k in $scope.ngModel.content.columnSelectedOfDataset[c].variables){
@@ -172,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
-					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, headerComponentParams : {template: headerTemplate()}});
+					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
 			return columns
 		}
@@ -425,6 +440,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return params.valueFormatted || params.value;
 		}
 
+		function RowSpanCalculator(params) {
+			if(params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.data[params.colDef.field]] && !params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled){
+				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
+				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled = true;;
+				return params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
+			}else return 1;
+        };
+
 		$scope.init=function(element,width,height){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].isCalculated && $scope.ngModel.content.columnSelectedOfDataset[k].formulaEditor){
@@ -449,6 +472,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(datasetRecords){
 				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
+				$scope.tempRows = datasetRecords.rows;
 				if($scope.ngModel.style && $scope.ngModel.style.tr && $scope.ngModel.style.tr.height){
 					_rowHeight = $scope.ngModel.style.tr.height;
 					$scope.advancedTableGrid.api.resetRowHeights();
@@ -511,6 +535,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				onGridReady: readyResizeColumns,
 				onSortChanged: changeSorting,
 				pagination : true,
+				suppressRowTransform: true,
 				onCellClicked: onCellClicked,
 				defaultColDef: {
 					resizable: cockpitModule_properties.EDIT_MODE,
