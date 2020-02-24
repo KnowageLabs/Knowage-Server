@@ -97,7 +97,7 @@ angular
             	 }
              }
 
-             driversService.rederedDrivers = self.drivers;
+             driversService.renderedDrivers = self.drivers;
              self.required = true;
 
              var setSelectedDriver = function(driver){
@@ -355,10 +355,9 @@ angular
             	 }
             	 var selectedConditionIndex = selectedCondition;
             	 $scope.driversService = DriversService;
-                 $scope.document = driversService.driverRelatedObject;
                  $scope.drivers = $scope.driversService.driversOnObject;
                  var selectedDriverName = selectedDriver.label;
-                 $scope.selectedDriver = $filter('filter')(driversService.rederedDrivers,{label:selectedDriverName})[0];
+                 $scope.selectedDriver = $filter('filter')(driversService.renderedDrivers,{label:selectedDriverName})[0];
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
                  $scope.availableOperators = ['contains','not contains'];
                  driversService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedDriver.id][selectedCondition];
@@ -415,7 +414,6 @@ angular
             	 $scope.translate = sbiModule_translate;
             	 var selectedConditionIndex = selectedDataCondition;
             	 $scope.driversService = DriversService;
-                 $scope.document = driversService.driverRelatedObject;
                  $scope.drivers = [];
                  angular.copy(driversService.driversOnObject,  $scope.drivers);
                  var labelSelected = selectedDriver.label

@@ -26,8 +26,7 @@
 	      		  driversResource.visualDependenciesForDeleting = [];
 	      		  driversResource.driverRelatedObject = {};
 	    		  driversResource.driversOnObject = [];
-	    		  driversResource.driversNum =0;
-	    		  driversResource.renderedDrivers = [];
+	    		  driversResource.driversNum = 0;
 
 	      		driversResource.getParusesByAnaliticalDriverId = function (driverId){
 	    			   var base = "2.0/analyticalDrivers";
@@ -129,9 +128,9 @@
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
 	           				driversResource.driversPerModel.push(response.data);
-		           				for(var i = 0;i < driversResource.rederedDrivers.length; i++){
-		           					if(response.data.label == driversResource.rederedDrivers[i].label)
-		           						driversResource.rederedDrivers[i] = response.data;
+		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
+		           					if(response.data.label == driversResource.renderedDrivers[i].label)
+		           						driversResource.renderedDrivers[i] = response.data;
 		           				}
 		           				driversResource.setSelectedDriver(response.data);
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
