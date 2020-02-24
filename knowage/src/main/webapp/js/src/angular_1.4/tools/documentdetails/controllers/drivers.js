@@ -194,68 +194,37 @@ angular
                	});
              }
 
-             var getLovsByAnalyticalDriverId = function(driverId){
-            	 var requiredPath = "2.0/analyticalDrivers";
-            	 var basePath = driverId + "/lovs";
-            	 crudService.get(requiredPath,basePath).then(function(response){
-            		for(var i = 0;i<response.data.length;i++){
-            			driversService.lovIdAndColumns.push( setLovColumns(response.data[i]));
-            		 }
-            	 });
-             }
-
-             var setLovColumns = function(lov){
-            	 var lovIdAndColumns = {}
-            	 var lovColumns = [];
-            	 var lovObject = JSON.parse(lov.lovProviderJSON);
-            	 	if(lovObject != [] && lovObject.QUERY){
-            	 	var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
-		            	 if(stringColumns.includes(",")){
-		            		  lovColumns = stringColumns.split(',')
-		            		  lovIdAndColumns.id = lov.id;
-		            		  lovIdAndColumns.columns = lovColumns;
-		            	 }else{
-		            		  lovColumns.push(stringColumns);
-		            		  lovIdAndColumns.id = lov.id;
-		            		  lovIdAndColumns.columns = lovColumns;
-		            	 }
-            	 }
-            	 return lovIdAndColumns;
-             }
-
              self.selectDriver = function(priority) {
             	 if( self.analyticalDrivers.length == 0)
             		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
-            	  var querryParams = "";
-            	  var basePath = driversService.visualDependencies;
-            	  var baseDataPath = driversService.dataDependenciesName;
-	                 for (var i in self.drivers) {
-	                     if (self.drivers[i].priority == priority) {
-	                    	 self.setParameterInfo(self.drivers[i]);
-	                         self.selectedDriver = self.drivers[i];
-	                     	 driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
-							 if(self.selectedDriver.parID)
-	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);
-	                         	if(self.selectedDriver.id ){
-			                         querryParams = setQuerryParameters(self.selectedDriver.id);
-			                         basePath = self.driverRelatedObject.id + "/" + basePath + querryParams;
-			                         baseDataPath = self.driverRelatedObject.id + "/" + baseDataPath + querryParams;
-
-//			                         if (!(driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0))
-			                         getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
-
-//			                         if(!(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0))
-			                         getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
-			                         break;
-	                            }
-	                        return;
-	                     }
-	                     self.selectedDriver = self.drivers[self.drivers.length - 1];
-	                 }
+            	 var querryParams = "";
+            	 var basePath = driversService.visualDependencies;
+            	 var baseDataPath = driversService.dataDependenciesName;
+                 for (var i in self.drivers) {
+                	 if (self.drivers[i].priority == priority) {
+                    	self.setParameterInfo(self.drivers[i]);
+                        self.selectedDriver = self.drivers[i];
+						if(self.selectedDriver.parID) {
+							driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
+							driversService.getLovsByAnalyticalDriverId(self.selectedDriver.parID);
+						}
+                     	if(self.selectedDriver.id ){
+	                        querryParams = setQuerryParameters(self.selectedDriver.id);
+	                        basePath = self.driverRelatedObject.id + "/" + basePath + querryParams;
+	                        baseDataPath = self.driverRelatedObject.id + "/" + baseDataPath + querryParams;
+//			                if (!(driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0))
+	                        getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
+//			                if(!(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0))
+	                        getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
+	                        break;
+                        }
+                        return;
+                     }
+                     self.selectedDriver = self.drivers[self.drivers.length - 1];
+                 }
              }
 
              self.deleteDriver = function(driver,name) {
-
                  var index;
                  for (var i = 0; i< self.drivers.length;i++) {
                      if (self.drivers[i].id == driver.id) {
@@ -278,6 +247,7 @@ angular
 	                 }
                  }
              }
+
              self.movePriority = function(priority, direction) {
                  var cur, next, prev;
                  for (var p in self.drivers) {
@@ -306,61 +276,61 @@ angular
             	 var tempParameter = selectedDriver.parameter;
             	 var labelSelected = selectedDriver.label
                  $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0];
-            	  $scope.selectedDriver.parameter = tempParameter;
+            	 $scope.selectedDriver.parameter = tempParameter;
                  self.selectedDriver = $scope.selectedDriver
                  if (!selectedCondition && selectedCondition != 0) {
                      if (driversService.visusalDependencyObjects[ $scope.selectedDriver.id]) {
                     	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id].push({'newDependency':'true'})
                          self.visibilityConditions = driversService.visusalDependencyObjects;
-                     } else {
+                     }else{
                     	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id] = [];
                     	 driversService.visusalDependencyObjects[ $scope.selectedDriver.id].push({'newDependency':'true'})
                      }
                      if(driversService.visusalDependencyObjects[ $scope.selectedDriver.id].length >0){
                          selectedCondition = driversService.visusalDependencyObjects[ $scope.selectedDriver.id].length - 1;
-                         }else{
-                        	 selectedCondition = 0;
-                         }
+                     }else{
+                    	 selectedCondition = 0;
+                     }
                  }
-             $mdDialog.show({
-                         controller: CorrelationDialogController,
-                         templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDialog.html',
-                         targetEvent: ev,
-                         clickOutsideToClose: true,
-                         locals: {
-                             selectedDriver:  $scope.selectedDriver,
-                             selectedCondition: selectedCondition
-                         }
-                     })
-                     .then(
-                         function(answer) {},
-                         function() {});
+                 $mdDialog.show({
+                     controller: CorrelationDialogController,
+                     templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDialog.html',
+                     targetEvent: ev,
+                     clickOutsideToClose: true,
+                     locals: {
+                         selectedDriver:  $scope.selectedDriver,
+                         selectedCondition: selectedCondition
+                     }
+                 })
+                 .then(
+                     function(answer) {},
+                     function() {});
              };
 
              self.editDataCondition = function(ev, selectedDriver, transformKey) {
             	 var tempParameter = selectedDriver.parameter;
             	 var labelSelected = selectedDriver.label
                  $scope.selectedDriver = $filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
-            	  $scope.selectedDriver.parameter = tempParameter;
+            	 $scope.selectedDriver.parameter = tempParameter;
                  self.selectedDriver = $scope.selectedDriver
                  selectedDataCondition = angular.copy(self.transformedObj[transformKey]);
 
-             $mdDialog.show({
-                         controller: CorrelationDataDialogController,
-                         templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
-                         targetEvent: ev,
-                         clickOutsideToClose: true,
-                         locals: {
-                        	 columns: $scope.paruseColumns,
-                             selectedDriver: $scope.selectedDriver,
-                             selectedDataCondition: selectedDataCondition,
-                             getLovColumns: $scope.getLovColumnsForParuse,
-                             transformKey: transformKey
-                         }
-                     })
-                     .then(
-                         function(answer) {},
-                         function() {});
+                 $mdDialog.show({
+                     controller: CorrelationDataDialogController,
+                     templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
+                     targetEvent: ev,
+                     clickOutsideToClose: true,
+                     locals: {
+                    	 columns: $scope.paruseColumns,
+                         selectedDriver: $scope.selectedDriver,
+                         selectedDataCondition: selectedDataCondition,
+                         getLovColumns: $scope.getLovColumnsForParuse,
+                         transformKey: transformKey
+                     }
+                 })
+                 .then(
+                     function(answer) {},
+                     function() {});
              };
 
              self.deleteVisualCondition = function(index,name,driver) {
@@ -405,6 +375,7 @@ angular
                 	 if(driversService.changedVisualDependencies.indexOf(visualDependency) == -1)
                 		 driversService.changedVisualDependencies.push(visualDependency);
                  }
+
                  var setVisualDependencyProperties = function(visualDependency){
                 	// var driverIndex = $scope.driversService.driversOnObject.findIndex(i => i.priority ==selectedDriver.priority);
                 	 var driverIndex;
@@ -461,7 +432,7 @@ angular
 
                  if(columns.length > 0){
                 	 $scope.paruseColumns = columns;
-                }else
+                 }else
                 	$scope.paruseColumns = {};
                 	$scope.paruseColumns[ $scope.selectedDriver.id] = {};
 
@@ -505,6 +476,7 @@ angular
                 		 $scope.drivers.splice(j,1);
                 	 }
                  }
+
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.dataDependencyObjects[ $scope.selectedDriver.id].length;i++){
 	                	 if( $scope.selectedDataCondition.newDependency && selectedConditionIndex == i)
@@ -513,22 +485,24 @@ angular
                 	 }
                 	 $mdDialog.cancel();
                 }
+
                  $scope.hide = function() {
                 	 setDataDependencyProperties($scope.selectedDataCondition);
                 	 $mdDialog.hide();
-                	 }
+                 }
+
                  $scope.addToChangedDataDepedencies = function(dataDependency,driver){
                 	 setDataDependencyProperties(dataDependency)
                 	 if(driversService.changedDataDependencies.indexOf(dataDependency) == -1)
                 		 driversService.changedDataDependencies.push(dataDependency);
-                 		}
-                 $scope.getLovColumnsForParuse = function(paruse){
-                	 for(var i = 0; i < driversService.lovIdAndColumns.length;i++){
-                		 if(paruse.idLov && paruse.idLov == driversService.lovIdAndColumns[i].id)
-                			 return driversService.lovIdAndColumns[i].columns;
+                 }
 
-                	 }
-                		 return ["VALUE","DESCRIPTION"]
+                 $scope.getLovColumnsForParuse = function(paruse){
+                	for(var i = 0; i < driversService.lovIdAndColumns.length;i++){
+                		if(paruse.idLov && paruse.idLov == driversService.lovIdAndColumns[i].id)
+                			return driversService.lovIdAndColumns[i].columns;
+                	}
+                	return ["VALUE","DESCRIPTION"]
                  }
 
                  var setDataDependencyProperties = function(){
@@ -596,15 +570,15 @@ angular
                 }
 
              self.setParameterInfo = function(driver){
-            	 if(driversService.analyticalDrivers){
-               	 for(var i = 0 ; i<driversService.analyticalDrivers.length; i++){
-               		 if((driver.parameter && driversService.analyticalDrivers[i].id==driver.parID) || (driver.parameter && driversService.analyticalDrivers[i].name==driver.parameter.name) ){
-               			 driver.parameter =angular.copy( driversService.analyticalDrivers[i]);
-               		 	 driver.parID = driversService.analyticalDrivers[i].id;
-               		 }
-               	 }
-                }
-             }
+	        	 if(driversService.analyticalDrivers){
+		           	 for(var i = 0 ; i<driversService.analyticalDrivers.length; i++){
+		           		 if((driver.parameter && driversService.analyticalDrivers[i].id==driver.parID) || (driver.parameter && driversService.analyticalDrivers[i].name==driver.parameter.name) ){
+		           			 driver.parameter =angular.copy( driversService.analyticalDrivers[i]);
+		           		 	 driver.parID = driversService.analyticalDrivers[i].id;
+		           		 }
+		           	}
+	            }
+            }
 
              self.setInfoForChangedDriver = function(driver){
             	 if(driversService.analyticalDrivers){
@@ -618,19 +592,18 @@ angular
              }
 
              self.hasDependencies = function(driverName){
-
-            	 var driver = {}
-		            for(var i = 0; i< driversService.analyticalDrivers.length;i++){
-		            	if(driversService.analyticalDrivers[i].name == driverName){
-		            		driver = driversService.analyticalDrivers[i]
-		            	}
-		            }
-            	 var paruses = $filter('filter')(driversService.driverParuses, {id:driver.id},true);
-            	 for(var i = 0; i < paruses.length; i++){
-            		 if( $scope.getLovColumnsForParuse(paruses[i]))
-            			 return true;
-            	 }
-
+            	var driver = {}
+	            for(var i = 0; i< driversService.analyticalDrivers.length;i++){
+	            	if(driversService.analyticalDrivers[i].name == driverName){
+	            		driver = driversService.analyticalDrivers[i]
+	            	}
+	            }
+            	var paruses = $filter('filter')(driversService.driverParuses, {id:driver.id},true);
+            	for(var i = 0; i < paruses.length; i++){
+            		if( $scope.getLovColumnsForParuse(paruses[i]))
+            			return true;
+            	}
              }
+
         }]);
 })();

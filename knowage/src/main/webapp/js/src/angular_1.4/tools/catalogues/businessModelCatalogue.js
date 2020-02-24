@@ -15,11 +15,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 	var d = this;
 	$scope.regex = kn_regex;
-	//variables
-	///////////////////////////////////////////////////////////
 	$scope.isDirty = false;
 	$scope.isCWMDirty = false;
-	$scope.showMe = false;				//boolean
+	$scope.showMe = false;
 	$scope.versionLoadingShow;
 	$scope.bmImportingShow;
 	$scope.bmCWMProcessingShow;
@@ -59,15 +57,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
         $scope.getData();
     });
 
-	//methods
-	//////////////////////////////////////////////////////////
-
 	 $scope.getData = function(){
 		 $scope.getBusinessModels();
 		 $scope.getDataSources();
 		 $scope.getCategories();
 	 }
-
 
 	$scope.createBusinessModel = function(){
 		if(angular.equals($scope.savedBusinessModel,$scope.selectedBusinessModel)){
@@ -269,7 +263,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 
 	 //functions that use services
-	 //////////////////////////////////////////////////////////////////
 
 	 //calling service for getting Business Models @GET
 	 $scope.getBusinessModels = function(){
@@ -311,73 +304,59 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	 //Calling service for file versions @GET
 	 $scope.getVersions = function (id){
-
 		 sbiModule_restServices.promiseGet("2.0/businessmodels/"+id+"/versions","")
 			.then(function(response) {
 				$scope.versionLoadingShow = true;
-					$scope.bmVersions = [];
-					setTimeout(function(){
-						$scope.togenerate=response.data.togenerate
+				$scope.bmVersions = [];
+				setTimeout(function(){
+					$scope.togenerate=response.data.togenerate
 
-						$scope.bmVersions = response.data.versions;
-	  					activeFlagStyle();
-	  					millisToDate($scope.bmVersions);
-	  					$scope.versionLoadingShow = false;
-	  					$scope.$apply();
-					 },600);
+					$scope.bmVersions = response.data.versions;
+  					activeFlagStyle();
+  					millisToDate($scope.bmVersions);
+  					$scope.versionLoadingShow = false;
+  					$scope.$apply();
+				 },600);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-
 			});
 	 }
+
 	 // TODO fix this
 	 $scope.saveBusinessModelFile = function(){
-			multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.fileObj).success(
-
-					function(data,status,headers,config){
-						if(data.hasOwnProperty("errors")){
-
-							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
-
-						}else{
-
-							console.log("[UPLOAD]: SUCCESS!");
-							$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
-							console.log($scope.bmVersions);
-							document.getElementById("businessModelFile").value = "";
-							$scope.isDirty = false;
-							$scope.fileObj.fileName = "";
-							$scope.fileObj = {};
-
-						}
-					}).error(function(data, status, headers, config) {
-								console.log("[UPLOAD]: FAIL!"+status);
-							});
+		multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.fileObj).success(
+			function(data,status,headers,config){
+				if(data.hasOwnProperty("errors")){
+					console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+				}else{
+					console.log("[UPLOAD]: SUCCESS!");
+					$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
+					console.log($scope.bmVersions);
+					document.getElementById("businessModelFile").value = "";
+					$scope.isDirty = false;
+					$scope.fileObj.fileName = "";
+					$scope.fileObj = {};
+				}
+			}).error(function(data, status, headers, config) {
+				console.log("[UPLOAD]: FAIL!"+status);
+			});
 	 }
+
 	 //calling service for saving BM @POST and @PUT
 	 $scope.saveBusinessModel = function(){
 		 	if($scope.selectedBusinessModel.modelLocked === undefined)
 		 		$scope.selectedBusinessModel.modelLocked = false;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
-
 				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
 			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 
 				sbiModule_restServices.promisePost("2.0/businessmodels","",$scope.selectedBusinessModel)
 				.then(function(response) {
-
 					$scope.selectedBusinessModel.id = response.data.id;
 					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
 					DriversService.driverRelatedObject = $scope.selectedBusinessModel;
-					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
-//					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
-					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
-//					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
-
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
@@ -385,11 +364,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-
 				});
-			}
-			else{
-
+			}else{
 				$scope.varTablePrefixLikeValue=$scope.selectedBusinessModel.tablePrefixLike;
 			    $scope.varTablePrefixNotLikeValue=$scope.selectedBusinessModel.tablePrefixNotLike;
 
@@ -400,7 +376,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 						$scope.saveBusinessModelFile();
 
 					if($scope.bmVersionsActive != null){
-
 						sbiModule_restServices.promisePut("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
 						.then(function(response) {
 							angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
@@ -408,8 +383,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 						});
-						}
-
+					}
 					$scope.businessModelList=[];
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
@@ -417,17 +391,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
-//					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
-//					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
 
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
-
-
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-
 				});
 			}
 	 }
@@ -501,7 +470,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			});
 		}
 		//my util functions
-		//////////////////////////////////////////////////
+
 
 		//make path
 
@@ -856,8 +825,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				 if ($scope.selectedBusinessModel && $scope.selectedBusinessModel.tablePrefixNotLike) delete $scope.selectedBusinessModel.tablePrefixNotLike;
 			 }
 		 }
-
-
 
 };
 
