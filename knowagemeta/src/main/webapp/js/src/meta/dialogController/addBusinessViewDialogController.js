@@ -139,11 +139,11 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 				for(var rel=0;rel< tmpColObj.links.length;rel++){
 
 					//check if column  has has target table object
-					if(!colObj.hasOwnProperty(tmpColObj.links[rel].$parent.name)){
-						colObj[tmpColObj.links[rel].$parent.name]=[];
+					if(!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)){
+						colObj[tmpColObj.links[rel].tableName]=[];
 					}
 
-					var targetTableObj=colObj[tmpColObj.links[rel].$parent.name];
+					var targetTableObj=colObj[tmpColObj.links[rel].tableName];
 					targetTableObj.push(tmpColObj.links[rel].name);
 				}
 			}

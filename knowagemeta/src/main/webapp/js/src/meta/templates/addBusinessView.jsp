@@ -56,8 +56,7 @@
 						target-column-label="translate.load('sbi.meta.business.relationship.target.attributes')"
 						drag-options="dragOptionsFunct"
 						after-delete-association=afterClearItem(item)
-						multivalue=true
-						associated-parent-path="$parent.name"
+						multivalue=true						
 						>
 					</associator-directive>
 				
