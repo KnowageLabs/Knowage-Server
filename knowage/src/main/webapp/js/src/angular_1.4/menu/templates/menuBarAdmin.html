@@ -51,7 +51,7 @@
 			<li ng-repeat="custom in customs track by $index">
 				<a href="#" ng-click="menuCall($event,custom.src,custom.linkType,custom.menu,$index)" layout="row"> 
 
-					<img ng-if="custom.custIcon" src="{{custom.custIcon.src}}" class="icon"/>
+					<img ng-if="custom.custIcon && custom.custIcon.src" ng-src="{{custom.custIcon.src}}" class="icon"/>
 					<i ng-if="!custom.custIcon && custom.icon" class="icon {{custom.icon.className}} fa-2x"></i>
 					<i ng-if="!custom.custIcon && !custom.icon && custom.menu" class="icon fa fa-2x fa-list-ul"></i> 
 					<i ng-if="!custom.custIcon && !custom.icon && !custom.menu" class="icon fa fa-2x fa-file-o"></i>

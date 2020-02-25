@@ -465,7 +465,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));
 
-				menuIcon.setUnicode(jsonObject.getString("unicode"));
+//				menuIcon.setUnicode(jsonObject.getString("unicode"));
+				// Set to null because of problems to read
+				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 
 				menu.setIcon(menuIcon);
@@ -481,7 +483,8 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));
 				menuIcon.setSrc(jsonObject.getString("src"));
-				menuIcon.setUnicode(jsonObject.getString("unicode").replaceAll("\\", "\\\\"));
+				// unicode value not used. Set to null because of problems to read
+				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 
 				menu.setCustIcon(menuIcon);

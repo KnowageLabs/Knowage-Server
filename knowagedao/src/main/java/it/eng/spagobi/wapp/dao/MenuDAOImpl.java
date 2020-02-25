@@ -946,7 +946,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		menu.setExternalApplicationUrl(hibMenu.getExternalApplicationUrl());
 
 		MenuIcon icon = null;
-		if (hibMenu.getIcon() != null) {
+		if (hibMenu.getIcon() != null && !hibMenu.getIcon().equals("")) {
 			MenuIcon menuIcon = new MenuIcon();
 			try {
 				JSONObject jsonObject = new JSONObject(hibMenu.getIcon());
@@ -955,7 +955,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));
 				menuIcon.setSrc(null);
-				menuIcon.setUnicode(jsonObject.getString("unicode").replaceAll("\\", "\\\\"));
+				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
 				// Error parsing JSON object
@@ -967,7 +967,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		menu.setIcon(icon);
 
 		MenuIcon custIcon = null;
-		if (hibMenu.getCustIcon() != null) {
+		if (hibMenu.getCustIcon() != null && !hibMenu.getCustIcon().equals("")) {
 			MenuIcon menuIcon = new MenuIcon();
 			try {
 				JSONObject jsonObject = new JSONObject(new String(hibMenu.getCustIcon()));
@@ -976,6 +976,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));
 				menuIcon.setSrc(jsonObject.getString("src"));
+				// unicode value not used. Set to null because of problems to read
 				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
