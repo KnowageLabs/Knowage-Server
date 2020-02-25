@@ -75,8 +75,9 @@
 
                 <md-input-container>
                     <label>{{dd.translate.load("sbi.documentdetails.drivers.url")}}</label>
-                    <input ng-required="true" name="url" ng-model="dd.selectedDriver.parameterUrlName" ng-change="dd.addToChangedDrivers(dd.selectedDriver)"type="text">
-                      <span ng-if="drivers.url.$error.required">{{translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    <input ng-required="true" name="url" ng-model="dd.selectedDriver.parameterUrlName" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text" unique-url-name>
+                      <span ng-if="drivers.url.$error.required">{{dd.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                      <span ng-if="drivers.url.$error.notUnique">{{dd.translate.load("sbi.documentdetails.drivers.notUnique")}}</span>
                       <span style="color:red" ng-if="drivers.url.$dirty && drivers.url.$invalid">
                 </md-input-container>
 

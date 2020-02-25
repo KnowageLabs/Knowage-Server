@@ -18,6 +18,40 @@
 (function () {
 angular
         .module('DriversModule')
+        .directive('uniqueUrlName', function() {
+			return {
+				require: 'ngModel',
+				link: function(scope, element, attr, mCtrl) {
+
+					function validate(value) {
+
+						var driverUrlNames = new Set();
+
+						for (var i in scope.dd.drivers) {
+
+							var currDriver = scope.dd.drivers[i];
+							if (currDriver.parameterUrlName) {
+								var currUrl = currDriver.parameterUrlName;
+								if (!driverUrlNames.has(currUrl)) {
+									driverUrlNames.add(currUrl);
+								}
+							}
+
+						}
+
+						if (driverUrlNames.has(value)) {
+							mCtrl.$setValidity('notUnique', false);
+						} else {
+							mCtrl.$setValidity('notUnique', true);
+							return value;
+						}
+
+					}
+
+					mCtrl.$parsers.push(validate);
+				}
+			};
+        })
         .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config',
         										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config){
 
