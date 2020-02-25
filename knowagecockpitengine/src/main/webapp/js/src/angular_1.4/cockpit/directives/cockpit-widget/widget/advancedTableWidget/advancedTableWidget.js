@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						//ROWSPAN MANAGEMENT
-						if(c == 0){
+						if($scope.ngModel.content.columnSelectedOfDataset[c].rowSpan){
 							tempCol.rowSpanDimensions = {};
 							for(var r in $scope.tempRows){
 								if(!tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]]) tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]] = {value: 1};
@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.rowSpan = RowSpanCalculator;
 							tempCol.cellClassRules = {
 								'cell-span': function(params) {
-									return params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.value].value > 1
+									return params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.value] && params.colDef.rowSpanDimensions[params.value].value > 1
 								}
 					        }
 						}
@@ -442,8 +442,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function RowSpanCalculator(params) {
 			if(params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.data[params.colDef.field]] && !params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled){
-				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
-				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled = true;;
+				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled = true;
 				return params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
 			}else return 1;
         };
@@ -481,7 +480,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
 					else $scope.advancedTableGrid.api.setHeaderHeight(0);
 				}
-				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
+				if(nature != 'sorting') {
+					$scope.advancedTableGrid.api.setRowData([])
+					$scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
+				}
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 					var rowsNumber = 1;
 					if($scope.ngModel.settings.summary.list) rowsNumber = $scope.ngModel.settings.summary.list.length;

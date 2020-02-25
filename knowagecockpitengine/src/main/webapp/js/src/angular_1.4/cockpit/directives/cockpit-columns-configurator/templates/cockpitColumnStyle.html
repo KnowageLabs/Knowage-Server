@@ -43,7 +43,10 @@
 					<md-switch ng-model="selectedColumn.style.hideHeader" aria-label="Hide header" flex>
 						{{translate.load('kn.table.hideheader')}}
 					</md-switch>
-					 </div>
+					<md-switch ng-model="selectedColumn.rowSpan" aria-label="Row Span" flex>
+						Row Span common values
+					</md-switch>
+					</div>
 			       
 			       <div ng-if="selectedColumn.fieldType=='MEASURE'">
 			       		<!-- both simple table and static pivot table -->
