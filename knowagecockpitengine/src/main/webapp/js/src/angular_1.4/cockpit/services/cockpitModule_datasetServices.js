@@ -891,15 +891,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			return deferred.promise;
 		}
 	}
-	this.repalceVariables = function (chartTemplate){
-		if(chartTemplate.type.toLowerCase()=='gauge' && chartTemplate.AXES_LIST.AXIS[0].TARGET){
-			if(typeof chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value =='string')
-				chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value =  chartTemplate.AXES_LIST.AXIS[0].TARGET[0].value.replace(/(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
-					return cockpitModule_properties.VARIABLES[p2];
-				})
+	this.repalceVariables = function (obj){
+		for (var attrname in obj) {
+			if(!(typeof obj[attrname] == 'object')){
+				if(typeof obj[attrname] =='string')
+					obj[attrname]  =  obj[attrname].replace(/(\$V\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
+						return cockpitModule_properties.VARIABLES[p2];
+					})
+			} else {
+				this.repalceVariables(obj[attrname]);
+			}
 		}
-
 	}
+
 	// Returns Selections with Filters for Single Widget
 	this.getWidgetSelectionsAndFilters = function(widgetObject, dataset, loadDomainValues) {
 		var filtersToSend = {};

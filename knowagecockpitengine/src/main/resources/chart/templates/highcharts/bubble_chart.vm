@@ -595,8 +595,16 @@
 	    		align :"$xAxis.plotBands.get(0).label.align",
     		},
     		color: "$xAxis.plotBands.get(0).color",
-    		from : $xAxis.plotBands.get(0).from,
-    		to : $xAxis.plotBands.get(0).to,
+			#if($xAxis.plotBands.get(0).from=="")
+    			from :0,
+    		#else
+    			from : $xAxis.plotBands.get(0).from,
+    		#end
+    		#if($xAxis.plotBands.get(0).to=="")
+    			to :0,
+    		#else
+    			to : $xAxis.plotBands.get(0).to,
+    		#end
     	},			
     	],
    		plotLines : [
@@ -611,7 +619,11 @@
    			},
    			color: "$xAxis.plotLines.get(0).color",
    			dashStyle: "$xAxis.plotLines.get(0).dashStyle",
-   			value: $xAxis.plotLines.get(0).value,
+   			#if($xAxis.plotLines.get(0).value=="")
+    			value :0,
+    		#else
+    			value: '$xAxis.plotLines.get(0).value',
+    		#end
    			width: $xAxis.plotLines.get(0).width,
    		},			
    		],
@@ -749,8 +761,16 @@
     			align :"$yAxis.plotBands.get(0).label.align",
     		},
     		color: "$yAxis.plotBands.get(0).color",
-    		from : $yAxis.plotBands.get(0).from,
-    		to : $yAxis.plotBands.get(0).to,
+    		#if($yAxis.plotBands.get(0).from=="")
+    			from :0,
+    		#else
+    			from : $yAxis.plotBands.get(0).from,
+    		#end
+    		#if($yAxis.plotBands.get(0).to=="")
+    			to :0,
+    		#else
+    			to : $yAxis.plotBands.get(0).to,
+    		#end
     	},			
     	],
    		plotLines : [
@@ -765,7 +785,11 @@
    			},
    			color: "$yAxis.plotLines.get(0).color",
    			dashStyle: "$yAxis.plotLines.get(0).dashStyle",
-   			value: $yAxis.plotLines.get(0).value,
+   			#if($yAxis.plotLines.get(0).value=="")
+    			value :0,
+    		#else
+    			value: '$yAxis.plotLines.get(0).value',
+    		#end
    			width: $yAxis.plotLines.get(0).width,
             	zIndex: 1
    		},			

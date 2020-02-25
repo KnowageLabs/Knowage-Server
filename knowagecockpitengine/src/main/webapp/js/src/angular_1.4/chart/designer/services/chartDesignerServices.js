@@ -504,8 +504,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
            var chartType = type.toUpperCase();
 
 		   var tempPlots = {
-			   "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-	    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}]
+			   "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+	    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}]
 			}
 
            var tempXAxis = {
@@ -657,8 +657,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 									   "precision":2,
 										"scaleFactor": "empty",
 					               },
-					               "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-						    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+					               "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+						    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
 
 					               "MAJORGRID":{
 					                  "interval":"",
@@ -688,8 +688,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						            	   "fontFamily":"",
 						            	   "fontSize":"",
 						            	   "fontWeight":""
-						               },"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-							    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+						               },"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+							    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
 
 						               "TITLE":{
 							                  "text":"",
@@ -1603,8 +1603,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"type": "SCATTER",
 				"AXES_LIST": {
 					"AXIS": [{
-						"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-			    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+						"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+			    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
 						"alias": "Y",
 						"type": "Serie",
 						"position": "",
@@ -1646,8 +1646,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						}
 					},
 					{
-						"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":0,"to":0}],
-			    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":0,"width":0}],
+						"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+			    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
 						"alias": "X",
 						"type": "Category",
 						"position": "",
