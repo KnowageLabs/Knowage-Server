@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!$scope.ngModel.settings.summary.list) $scope.ngModel.settings.summary.list = [{"label":$scope.ngModel.settings.summary.title}];
 		}
 		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
-		function getColumns(fields) {
+		function getColumns(fields,sortedDefault) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
 			$scope.columnsNameArray = [];
@@ -90,6 +90,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
+						if(sortedDefault && sortedDefault[0].colId == fields[f].name){
+							tempCol.sort = sortedDefault[0].sort;
+						}
 
 						//ROWSPAN MANAGEMENT
 						if($scope.ngModel.content.columnSelectedOfDataset[c].rowSpan){
@@ -146,7 +149,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
-						//tempCol.headerComponentParams = {template: headerTemplate()};
 
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 
@@ -480,10 +482,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
 					else $scope.advancedTableGrid.api.setHeaderHeight(0);
 				}
-				if(nature != 'sorting') {
-					$scope.advancedTableGrid.api.setRowData([])
-					$scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
-				}
+				$scope.advancedTableGrid.api.setRowData([])
+				if(nature == 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields,$scope.advancedTableGrid.api.getSortModel()));
+				else $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 					var rowsNumber = 1;
 					if($scope.ngModel.settings.summary.list) rowsNumber = $scope.ngModel.settings.summary.list.length;
