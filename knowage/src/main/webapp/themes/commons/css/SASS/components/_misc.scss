@@ -1195,6 +1195,20 @@ filter-by-tags {
   }
 }
 
+.iconGallery {
+  md-grid-tile {
+    transition: background .3s linear;
+    &:hover {
+      outline: 2px solid $baseColor;
+      background: rgba($baseColor,.2);
+    }
+    &.selected {
+      outline: 4px solid $baseColor;
+      background: rgba($baseColor,.5);
+    }
+  }
+}
+
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
     overflow-y: hidden;

@@ -17,13 +17,13 @@
 			<input type="file" id="files" name="files" onclick="this.value=null" onchange="angular.element(this).scope().insertMenu(this)"/>
 			<img ng-if="selectedIcon.src" src="{{selectedIcon.src}}" width="26" height="26"/>
 		</div>
-	   	<div ng-repeat="family in availableIcons">
+	   	<div ng-repeat="family in availableIcons" class="iconGallery"> 
     		<h3>{{family.name}}</h3>
 	    	<md-grid-list md-cols="12" md-row-height="1:1" md-gutter="4px" style="font-family:family.name">
 		      <md-grid-tile 
 		      	ng-repeat="icon in family.icons | filter: searchVal track by $index"
 		      	class="iconContainer" 
-		      	ng-class="{'selected':img == selectedImg}"
+		      	ng-class="{'selected':icon == selectedIcon}"
 		      	ng-click="setIcon(family,icon)"
 		      	title="{{icon.label}}">
 		      	<i ng-class="[family.className, icon.className]"></i>
