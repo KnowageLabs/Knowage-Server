@@ -234,7 +234,47 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		}, function() {
 			console.log("Selected column:", $scope.selectedColumn);
 		});
-	},
+	}
+	
+	$scope.openColumnGroups = function(){
+		$mdDialog.show({
+			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsGroup.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			locals: {model:$scope.newModel},
+			fullscreen: true,
+			controller: columnsGroupController
+		}).then(function(model) {
+			$scope.newModel = model;
+			}, function() {
+			});
+	}
+	
+	function columnsGroupController(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,model){
+		scope.translate=sbiModule_translate;
+		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
+		scope.model = angular.copy(model);
+		
+		scope.addGroup = function(){
+			if(scope.model.groups) scope.model.groups.push({});
+			else scope.model.groups = [{}];
+		}
+		
+		scope.deleteGroup = function(i){
+			scope.model.groups.splice(i,1);
+			if(scope.model.groups.length == 0) delete scope.model.groups;
+		}
+		
+		scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+		
+		scope.saveGroups = function(){
+			$mdDialog.hide(scope.model);
+		}
+		
+	}
 
 	$scope.openListColumn = function(){
 		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined){
