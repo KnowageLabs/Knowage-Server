@@ -3893,7 +3893,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     	if ($scope.selectedDataSet.id) {
 
-    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns, $scope.selectedDataSet.dsTypeCd);
+    		$scope.fieldsMetadata = [];
+
+    		// If there are metadata...
+    		if ($scope.selectedDataSet.meta) {
+    			$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns, $scope.selectedDataSet.dsTypeCd);
+    		}
 
         	$mdDialog
     		   .show({
