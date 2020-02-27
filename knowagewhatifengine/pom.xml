@@ -142,6 +142,19 @@
 			<artifactId>pivot4j-core</artifactId>
 			<version>0.9</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jflex</groupId>
+					<artifactId>jflex</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.jflex</groupId>
+			<artifactId>jflex</artifactId>
+			<version>1.5.0</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
