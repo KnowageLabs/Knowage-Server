@@ -47,16 +47,32 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         arr.splice(fromIndex, 1);
         arr.splice(toIndex, 0, element);
     }
-
-	$scope.columnsDefition = [
-    	{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
-    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
-    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
-    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
-    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
-    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
-    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false,
-    			headerComponent: CustomHeader,headerClass:'header-cell-buttons'}];
+	
+	function getColumnsDefinition() {
+		$scope.availableGroups = [''];
+		for(var g in $scope.newModel.groups){
+			$scope.availableGroups.push($scope.newModel.groups[g].name);
+		}
+		 
+		$scope.columnsDefinition = [
+			{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
+	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",
+	    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}},{headerName: 'Data Type', field: 'type',cellRenderer:typeCell},
+	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
+	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+	    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false,
+	    			headerComponent: CustomHeader,headerClass:'header-cell-buttons'}];
+		if($scope.newModel.groups && $scope.newModel.groups.length > 0){
+			delete $scope.columnsDefinition[0].rowDrag;
+			$scope.columnsDefinition.unshift({headerName: 'Group', field:'group',"editable":isInputEditable,cellRenderer:groupRenderer, cellClass: 'editableCell',rowDrag: true,cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableGroups}});
+		}
+		if($scope.columnsGrid && $scope.columnsGrid.api) {
+			$scope.columnsGrid.api.setColumnDefs($scope.columnsDefinition);
+			resizeColumns();
+		}
+	}
+	getColumnsDefinition();
 
 	$scope.columnsGrid = {
 		angularCompileRows: true,
@@ -72,7 +88,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         onCellEditingStopped: refreshRow,
         singleClickEdit: true,
         stopEditingWhenGridLosesFocus: true,
-        columnDefs: $scope.columnsDefition,
+        columnDefs: $scope.columnsDefinition,
 		rowData: $scope.newModel.content.columnSelectedOfDataset
 	}
 
@@ -103,7 +119,10 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	function aggregationRenderer(params) {
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
         return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
-
+	}
+	
+	function groupRenderer(params) {
+		return '<i class="fa fa-edit"></i> <i>'+ (typeof params.value != 'undefined' ? params.value : '') +'</i>';
 	}
 
 	function buttonRenderer(params){
@@ -247,6 +266,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			controller: columnsGroupController
 		}).then(function(model) {
 			$scope.newModel = model;
+			getColumnsDefinition();
 			}, function() {
 			});
 	}
@@ -450,10 +470,6 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
             $scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
             return;
         }
-//        if(!$scope.checkAggregation()){
-//            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
-//            return;
-//        }
         if(!$scope.checkAliases()){
             $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
             return;
