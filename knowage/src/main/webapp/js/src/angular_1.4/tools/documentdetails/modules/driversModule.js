@@ -133,6 +133,8 @@
 		           						driversResource.renderedDrivers[i] = response.data;
 		           				}
 		           				driversResource.setSelectedDriver(response.data);
+		           				driversResource.getParusesByAnaliticalDriverId(response.data.parID);
+		           				driversResource.getDataDependenciesByDriverId(requiredPath, driversResource.dataDependenciesName, response.data);
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
 	           					var driverIndex = -1;
 	                       	 for(var i = 0; i < driversResource.driversOnObject.length;i++){

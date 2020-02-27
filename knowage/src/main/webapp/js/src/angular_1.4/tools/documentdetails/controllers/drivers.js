@@ -219,7 +219,7 @@ angular
                	});
              }
 
-             var getDataDependenciesByDriverId = function(requiredPath,basePath,driver){
+             driversService.getDataDependenciesByDriverId = function(requiredPath,basePath,driver){
             	 crudService.get(requiredPath,basePath).then(function(response){
             		 driversService.dataDependencyObjects[driver.id] = response.data;
             		 self.dataConditions = driversService.dataDependencyObjects;
@@ -249,7 +249,7 @@ angular
 //			                if (!(driversService.visusalDependencyObjects[self.selectedDriver.id] && driversService.visusalDependencyObjects[self.selectedDriver.id].length == 0))
 	                        getVisualDependenciesByDriverId(requiredPath,basePath, self.selectedDriver);
 //			                if(!(driversService.dataDependencyObjects[self.selectedDriver.id]  && driversService.dataDependencyObjects[self.selectedDriver.id].length == 0))
-	                        getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
+	                        driversService.getDataDependenciesByDriverId(requiredPath,baseDataPath, self.selectedDriver);
 	                        break;
                         }
                         return;
@@ -342,13 +342,8 @@ angular
              };
 
              self.editDataCondition = function(ev, selectedDriver, transformKey) {
-            	 var tempParameter = selectedDriver.parameter;
-            	 var labelSelected = selectedDriver.label
-                 $scope.selectedDriver = $filter('filter')(driversService.driversOnObject,{label:labelSelected})[0] ;
-            	 $scope.selectedDriver.parameter = tempParameter;
-                 self.selectedDriver = $scope.selectedDriver
+            	 $scope.selectedDriver = selectedDriver;
                  selectedDataCondition = angular.copy(self.transformedObj[transformKey]);
-
                  $mdDialog.show({
                      controller: CorrelationDataDialogController,
                      templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentdetails/templates/correlationDataDialog.html',
@@ -449,9 +444,8 @@ angular
             	 var selectedConditionIndex = selectedDataCondition;
             	 $scope.driversService = DriversService;
                  $scope.drivers = [];
-                 angular.copy(driversService.driversOnObject,  $scope.drivers);
-                 var labelSelected = selectedDriver.label
-                 $scope.selectedDriver =$filter('filter')(driversService.driversOnObject,{label:labelSelected})[0];
+                 angular.copy(driversService.renderedDrivers,  $scope.drivers);
+                 $scope.selectedDriver = selectedDriver;
                  $scope.driverName = $scope.selectedDriver.label;
                  $scope.analyticalDrivers = driversService.analyticalDrivers;
                  $scope.lovIdAndColumns = driversService.lovIdAndColumns;
