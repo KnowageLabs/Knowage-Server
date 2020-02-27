@@ -382,8 +382,8 @@ public class CrossTabHTMLSerializer {
 							if (!text.equalsIgnoreCase(labelTotal) &&  !text.equalsIgnoreCase(labelSubTotal)) {
 								Column columnObj = ((Column)getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(), "columns"));
 								String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
-//								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
-//										+ StringEscapeUtils.escapeJavaScript(text) + "')");
+								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
+										+ StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
 								String completeText = CrossTab.PATH_SEPARATOR;
