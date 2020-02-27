@@ -852,7 +852,7 @@ public class CrossTabHTMLSerializer {
 						measureRef = crossTab.PATH_SEPARATOR + measuresInfo.get(pos).getId() +  crossTab.PATH_SEPARATOR + measuresInfo.get(pos).getName();
 
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
-								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "','" + measureRef + "')");
+								"selectMeasure('" + StringEscapeUtils.escapeJavaScript(rowHeaders) + "','" + StringEscapeUtils.escapeJavaScript(rowCord) + "','" + StringEscapeUtils.escapeJavaScript(columnsHeaders) + "','" + StringEscapeUtils.escapeJavaScript(columnCord) + "','" + StringEscapeUtils.escapeJavaScript(measureRef) + "')");
 						internalserializeData5.stop();
 					}
 				} catch (NumberFormatException e) {
