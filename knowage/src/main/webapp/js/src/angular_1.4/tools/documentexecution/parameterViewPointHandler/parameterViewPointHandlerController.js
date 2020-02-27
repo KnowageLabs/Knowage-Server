@@ -78,7 +78,7 @@
 						);
 					$mdDialog.show(confirm).then(function() {
 						var index = driversExecutionService.gvpCtrlViewpoints.indexOf(item);
-						if($scope.execProperties.documentUrl){
+						if($scope.execProperties.executionInstance.OBJECT_TYPE_CODE){
 							var deletePath = "1.0/documentviewpoint";
 						} else {
 							var deletePath = "1.0/metamodelviewpoint";
