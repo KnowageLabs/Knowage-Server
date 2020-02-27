@@ -60,14 +60,28 @@
 		self.dateFormat='MM/dd/yyyy';
 
 		// array object to define the registry configuration
+
 		self.configuration = {
 			title: "Registry Document",
 			itemsPerPage: 15,
-			enableButtons: registryConfiguration.configurations[0].value == "true",
+			//enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters,
 			pagination: registryConfiguration.pagination,
 			pivot: false
 		};
+
+		 for(var i = 0 ; i < registryConfiguration.configurations.length;i++){
+			 if(registryConfiguration.configurations[i].name=="enableButtons"){
+				 self.configuration.enableButtons = registryConfiguration.configurations[i].value == "true"
+			 } else {
+				 if(registryConfiguration.configurations[i].name=="enableDeleteRecords"){
+					 self.configuration.enableDeleteRecords = registryConfiguration.configurations[i].value == "true"
+				 }
+				 if(registryConfiguration.configurations[i].name=="enableAddRecords"){
+					 self.configuration.enableAddRecords = registryConfiguration.configurations[i].value == "true"
+				 }
+			 }
+		 }
 
 		//Getting initial data from server
         var loadInitialData = function(){
@@ -488,11 +502,11 @@
 	        			self.selectedRow[i][property].setTime(self.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
 	    	        }
 	        	}
-				registryCRUD.update(self.selectedRow[i]).then(function(response) {});
-				if (i == (self.selectedRow.length - 1)) {
+				registryCRUD.update(self.selectedRow[i]).then(function(response) {
 					sbiMessaging.showInfoMessage( self.sbiTranslate.load("kn.registry.registryDocument.update.success")
-							+' '+ (i + 1) + ' ' + self.sbiTranslate.load("kn.registry.registryDocument.row"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
-				}
+							+' '+ (response.data.ids.length) + ' ' + self.sbiTranslate.load("kn.registry.registryDocument.row"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
+				});
+
 			}
 			self.selectedRow = [];
 		};

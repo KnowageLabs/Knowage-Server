@@ -59,11 +59,11 @@
                                 </md-menu>
                             </div>
                         </th>
-<!--                         <th class="tableAction">
-                          <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableButtons">
+                        <th class="tableAction">
+                          <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAddRecords || rc.configuration.enableButtons">
                                Add row
                           </md-button>  
-                        </th> -->
+                        </th> 
                     </tr>
                 </thead>                
                 <tbody>                
@@ -104,9 +104,9 @@
                                 </md-menu>
                             </div>                                            
                         </td>
-                     <!-- <td style="text-align:center">
-                            <md-icon md-font-icon="fa fa-trash" class="delete-row" ng-click="rc.deleteRowFromDB(row, $event)"></md-icon>
-                        </td> -->   
+                     <td style="text-align:center">
+                            <md-icon md-font-icon="fa fa-trash" class="delete-row" ng-click="rc.deleteRowFromDB(row, $event)" ng-if="rc.configuration.enableDeleteRecords || rc.configuration.enableButtons"></md-icon>
+                        </td>    
                     </tr>               	
                 </tbody>
             </table>
