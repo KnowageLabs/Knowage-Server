@@ -309,7 +309,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			text: chartConf.subtitle.text,
 			align: chartConf.subtitle.style.align,
 			style: {
-				color: chartConf.subtitle.style.fontColor,
+				color: chartConf.subtitle.style.color,
 				fontSize: chartConf.subtitle.style.fontSize,
 				fontFamily: chartConf.subtitle.style.fontFamily,
 				fontStyle: chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none",
@@ -321,7 +321,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			text: chartConf.title.text,
 			align: chartConf.title.style.align,
 			style: {
-				color: chartConf.title.style.fontColor,
+				color: chartConf.title.style.color,
 				fontWeight: chartConf.title.style.fontWeight,
 				fontSize: chartConf.title.style.fontSize,
 				fontFamily: chartConf.title.style.fontFamily,
@@ -335,7 +335,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 		},
 		noData: {
 			style: {
-                color: chartConf.emptymessage.style.fontColor,
+                color: chartConf.emptymessage.style.color,
                 fontSize: chartConf.emptymessage.style.fontSize,
                 fontFamily: chartConf.emptymessage.style.fontFamily,
                 fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
