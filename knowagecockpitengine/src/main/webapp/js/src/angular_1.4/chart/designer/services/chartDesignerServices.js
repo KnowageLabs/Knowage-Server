@@ -22,6 +22,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 	this.getFontSizeOptions = function(){
 		var data = [
+			{name:"",value:""},
 			{name:"8px",value:"8px"},
 			{name:"9px",value:"9px"},
 			{name:"10px",value:"10px"},
@@ -60,6 +61,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 	this.getAlignTypeOptions = function(){
 		var data = [
+			  {name:"",value:""},
 			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.left"),value:"left"},
 			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.center"),value:"center"},
 			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.right"),value:"right"},
@@ -107,6 +109,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 	this.getFontFamilyOptions = function(){
 		var data = [
+			{name:"",value:""},
 			{name:"Inherit",value:"inherit"},
 			{name:"Roboto",value:"Roboto"},
            	{name:"Arial",value:"Arial"},
@@ -124,7 +127,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 
 	this.getFontStyleOptions = function(){
 		var data = [
-        	{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.nostyle"),value:""},
+        	{name:"",value:""},
         	{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.bold"),value:"bold"},
         	{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.normal"),value:"normal"},
         	{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.italic"),value:"italic"},
