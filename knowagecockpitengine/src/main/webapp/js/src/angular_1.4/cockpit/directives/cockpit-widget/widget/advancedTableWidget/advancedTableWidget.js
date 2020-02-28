@@ -286,7 +286,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		CustomHeaderGroupRenderer.prototype.init = function (params) {
 			this.eGui = document.createElement('div');
-			this.eGui.innerHTML = 'ciao';
+			this.eGui.classList.add('customHeaderTemplate');
+			for(var k in $scope.ngModel.groups[params.columnGroup.groupId]){
+				if(k != 'name') this.eGui.style[k] = $scope.ngModel.groups[params.columnGroup.groupId][k];
+			}
+			this.eGui.innerHTML = params.displayName;
 		}
 		
 		CustomHeaderGroupRenderer.prototype.getGui = function () {
