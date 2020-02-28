@@ -80,6 +80,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function getColumns(fields,sortedDefault) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
+			
+			var testColumn = {
+		        headerName: "Test group",
+		        headerGroupComponent: CustomHeaderGroupRenderer,
+		        children: []
+		    }
+			
 			$scope.columnsNameArray = [];
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
@@ -180,7 +187,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.visType = $scope.ngModel.content.columnSelectedOfDataset[c].visType;
 							if($scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'chart' || $scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'text & chart') tempCol.chart = $scope.ngModel.content.columnSelectedOfDataset[c].barchart;
 						}
-						columns.push(tempCol);
+						if(c == 0 || c == 1) {
+							testColumn.children.push(tempCol);
+						}
+						else columns.push(tempCol);
 						break;
 					}
 				}
@@ -191,6 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
 					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
+			columns.unshift(testColumn);
 			return columns
 		}
 
@@ -268,6 +279,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		CustomHeader.prototype.getGui = function () {
+		    return this.eGui;
+		};
+		
+		function CustomHeaderGroupRenderer() {}
+		
+		CustomHeaderGroupRenderer.prototype.init = function (params) {
+			this.eGui = document.createElement('div');
+			this.eGui.innerHTML = 'ciao';
+		}
+		
+		CustomHeaderGroupRenderer.prototype.getGui = function () {
 		    return this.eGui;
 		};
 
