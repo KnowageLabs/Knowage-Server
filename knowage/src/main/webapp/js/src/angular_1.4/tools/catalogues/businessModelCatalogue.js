@@ -183,7 +183,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		driversService.getDriversOnRelatedObject(requiredPath, $scope.driverPostBasePath);
 		$scope.analyticalDrivers = driversService.analyticalDrivers;
 		d.selected = $scope.selectedBusinessModel;
-		$scope.$broadcast('changedModel', d.selected);
+		if(driversService.loadingDriversOnBM) {
+			driversService.loadingDriversOnBM(d.selected);
+		}
 	}
 
 	$scope.downloadFile = function(item,ev,filetype){
@@ -270,7 +272,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
 			.then(function(response) {
 				angular.copy(response.data,$scope.businessModelList)
-				driversService.fillAllDriversPerModel(requiredPath,response.data)
 			}, function(response) {
 				sbiModule_restServices.errorHandler(response.data, 'Error');
 			});
@@ -381,14 +382,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 						}, function(response) {
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-
 						});
 					}
 					$scope.businessModelList=[];
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
-
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);

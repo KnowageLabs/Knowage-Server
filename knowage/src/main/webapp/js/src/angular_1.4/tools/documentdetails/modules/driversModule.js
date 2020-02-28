@@ -46,34 +46,25 @@
 	                   });
 	    		   }
 
-
-	      		driversResource.driversPerModel = [];
-
-	      		driversResource.fillAllDriversPerModel = function(basePath,list){
-	      			for(var i = 0; i < list.length; i++){
-	      				var endPath = list[i].id + '/drivers';
-		      			crudService.get(basePath,endPath).then(function(response){
-
-		      				for(var i = 0; i < response.data.length; i++){
-		      					var isNotContained = true;
-		      					if(driversResource.driversPerModel.length == 0){
-		      						driversResource.driversPerModel.push(response.data[i])
-		      						continue;
-		      					}
-		      					for(var j = 0; j < driversResource.driversPerModel.length;j++){
-		      						if(driversResource.driversPerModel[j].id == response.data[i].id ){
-		      							isNotContained = false;
-		      							break;
-		      						}
-		      					}
-		      						if(isNotContained)driversResource.driversPerModel.push(response.data[i]);
-		      					}
-		      			//		if(driversResource.driversPerModel.findIndex(index => index.id == response.data[i].id) == -1)
-
-		      			//	}
-
-		      			});
-	      			}
+	      		driversResource.fillAllDriversPerModel = function(basePath,businessModel){
+	      			driversResource.renderedDrivers.length = 0;
+      				var endPath = businessModel.id + '/drivers';
+	      			crudService.get(basePath,endPath).then(function(response){
+	      				for(var i = 0; i < response.data.length; i++){
+	      					var isNotContained = true;
+	      					if(driversResource.renderedDrivers.length == 0){
+	      						driversResource.renderedDrivers.push(response.data[i])
+	      						continue;
+	      					}
+	      					for(var j = 0; j < driversResource.renderedDrivers.length;j++){
+	      						if(driversResource.renderedDrivers[j].id == response.data[i].id ){
+	      							isNotContained = false;
+	      							break;
+	      						}
+	      					}
+	      					if(isNotContained) driversResource.renderedDrivers.push(response.data[i]);
+	      				}
+	      			});
 	      		}
 
 	      		driversResource.getAllAnalyticalDrivers = function (){
@@ -126,8 +117,7 @@
 	           				if(response.data.errors){
 	               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	               			}else
-	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
-	           				driversResource.driversPerModel.push(response.data);
+	               				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
 		           				for(var i = 0;i < driversResource.renderedDrivers.length; i++){
 		           					if(response.data.label == driversResource.renderedDrivers[i].label)
 		           						driversResource.renderedDrivers[i] = response.data;
@@ -137,18 +127,20 @@
 		           				driversResource.getDataDependenciesByDriverId(requiredPath, driversResource.dataDependenciesName, response.data);
 	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
 	           					var driverIndex = -1;
-	                       	 for(var i = 0; i < driversResource.driversOnObject.length;i++){
-	                       		 if(driversResource.driversOnObject[i].priority == response.data.priority)
-	                       			 driverIndex = i;
-	                       	 }
+		                       	 for(var i = 0; i < driversResource.driversOnObject.length;i++){
+		                       		 if(driversResource.driversOnObject[i].priority == response.data.priority)
+		                       			 driverIndex = i;
+		                       	 }
 	           					if(driverIndex == -1){
 	           						driversResource.driversOnObject.push(response.data);
-	           					}else{driversResource.driversOnObject[driverIndex].id = response.data.id}
-		           					 driversResource.driversNum = (driversResource.driversOnObject.length > 1);
-	    	        				 querryParams = setQuerryParameters(response.data.id);
-	    	        				 basePath =driverableObjectId +"/" + basePath + querryParams;
-	    	        	             baseDataPath = driverableObjectId +"/" + baseDataPath + querryParams;
-	    	        	             driversResource.getLovsByAnalyticalDriverId(response.data.parID);
+	           					}else{
+	           						driversResource.driversOnObject[driverIndex].id = response.data.id
+	           					}
+	           					 driversResource.driversNum = (driversResource.driversOnObject.length > 1);
+		        				 querryParams = setQuerryParameters(response.data.id);
+		        				 basePath =driverableObjectId +"/" + basePath + querryParams;
+		        	             baseDataPath = driverableObjectId +"/" + baseDataPath + querryParams;
+		        	             driversResource.getLovsByAnalyticalDriverId(response.data.parID);
 	           			});
 	           		}else{
 	           			prepareDriverForPersisting(driversResource.changedDrivers[i]);
@@ -157,7 +149,7 @@
 	           				if(response.data.errors){
 	               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
 	               			}else
-	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.driverupdated"), 'Success!');
+	               				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.driverupdated"), 'Success!');
 	           			});
 	           		}
 	           	}

@@ -68,7 +68,6 @@ angular
              $scope.paruseColumns = {}
              self.analyticalDrivers = [];
              self.hasParuse = true;
-             self.driversPerModel = driversService.driversPerModel;
              driversService.lovColumns=[];
              self.selectedDataCondition = driversService.selectedDataCondition;
              self.selectedVisualCondition = driversService.selectedVisualCondition;
@@ -126,7 +125,7 @@ angular
             		 self.driversNum = self.drivers != null && self.drivers.length > 1;
             	 } else {
             		 requiredPath = "2.0/businessmodels";
-            		 self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);
+//            		 self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);
             		 self.driversNum = self.drivers.length > 1
             	 }
              }
@@ -194,15 +193,19 @@ angular
             		 driversService.changedDrivers.push(driver);
              }
 
-             $scope.$on('changedModel', function(event, data) {
-            	   self.driverRelatedObject = data;
-            	   driversService.renderedDrivers =  $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
-            	   driversService.driverRelatedObject =  self.driverRelatedObject;
-            	   self.selectedDriver = undefined;
-            	   self.drivers = driversService.renderedDrivers;
-            	   requiredPath = "2.0/businessmodels";
-            	   self.driversNum = self.drivers.length > 1;
-             });
+			driversService.loadingDriversOnBM = function(selectedBusinessModel) {
+				self.driverRelatedObject = selectedBusinessModel;
+				requiredPath = "2.0/businessmodels";
+				driversService.fillAllDriversPerModel(requiredPath, selectedBusinessModel);
+				driversService.driverRelatedObject = self.driverRelatedObject;
+				self.selectedDriver = undefined;
+				self.drivers = driversService.renderedDrivers;
+				self.driversNum = self.drivers.length > 1;
+			}
+
+			if(!self.driverRelatedObject.engine) {
+				driversService.loadingDriversOnBM(driversService.driverRelatedObject);
+			}
 
              $scope.$on('setDocumentPath', function(event, data) {
             	 requiredPath = data;
@@ -268,10 +271,10 @@ angular
                     	 self.drivers.splice(i, 1);
                      }
                  }
-                 for (var i = 0; i< driversService.driversPerModel.length;i++) {
-                	 if (driversService.driversPerModel[i].id == driver.id)
-                		 driversService.driversPerModel.splice(i,1);
-                 }
+//                 for (var i = 0; i< driversService.renderedDrivers.length;i++) {
+//                	 if (driversService.renderedDrivers[i].id == driver.id)
+//                		 driversService.renderedDrivers.splice(i,1);
+//                 }
                  if(self.drivers.length > 0){
 	                 self.priorityOfDeletedDriver = driversService.driversForDeleting[driversService.driversForDeleting.length-1].priority;
 	                 for (var d in self.drivers) {
