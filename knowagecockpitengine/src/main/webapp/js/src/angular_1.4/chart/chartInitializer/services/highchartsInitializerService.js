@@ -128,6 +128,11 @@ angular.module('chartInitializer')
 
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
+			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
+				var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
+				if(orderType=='asc') sortAsc(chartConf.series);
+				else sortDesc(chartConf.series);
+			}
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
@@ -364,7 +369,27 @@ angular.module('chartInitializer')
 
 	}
 
+	var sortAsc = function (array){
+		array.sort(function(a, b){
+		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+		    if (nameA < nameB) //sort string ascending
+		        return -1
+		    if (nameA > nameB)
+		        return 1
+		    return 0 //default return value (no sorting)
+		})
+	}
 
+	var sortDesc = function (array){
+		array.sort(function(a, b){
+		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+		    if (nameA > nameB) //sort string ascending
+		        return -1
+		    if (nameA < nameB)
+		        return 1
+		    return 0 //default return value (no sorting)
+		})
+	}
 
 	this.handleCrossNavigationTo =function(e) {
 		var date = new Date(e.point.x);
@@ -847,6 +872,9 @@ angular.module('chartInitializer')
 
 		return output;
 	};
+
+
+
 
 	/*this.cancelSonify = function () {
 		//this is for speed
