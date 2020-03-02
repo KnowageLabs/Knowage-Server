@@ -47,13 +47,13 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         arr.splice(fromIndex, 1);
         arr.splice(toIndex, 0, element);
     }
-	
+
 	function getColumnsDefinition() {
 		$scope.availableGroups = [''];
 		for(var g in $scope.newModel.groups){
 			$scope.availableGroups.push($scope.newModel.groups[g].name);
 		}
-		 
+
 		$scope.columnsDefinition = [
 			{headerName: 'Name', field:'alias',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},
 	    	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'aliasToShow',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
@@ -69,6 +69,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		}
 		if($scope.columnsGrid && $scope.columnsGrid.api) {
 			$scope.columnsGrid.api.setColumnDefs($scope.columnsDefinition);
+			$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 			resizeColumns();
 		}
 	}
@@ -120,7 +121,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
         return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
 	}
-	
+
 	function groupRenderer(params) {
 		return '<i class="fa fa-edit"></i> <i>'+ (typeof params.value != 'undefined' ? params.value : '') +'</i>';
 	}
@@ -254,7 +255,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			console.log("Selected column:", $scope.selectedColumn);
 		});
 	}
-	
+
 	$scope.openColumnGroups = function(){
 		$mdDialog.show({
 			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsGroup.html',
@@ -270,30 +271,30 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			}, function() {
 			});
 	}
-	
+
 	function columnsGroupController(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,model){
 		scope.translate=sbiModule_translate;
 		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		scope.model = angular.copy(model);
-		
+
 		scope.addGroup = function(){
 			if(scope.model.groups) scope.model.groups.push({});
 			else scope.model.groups = [{}];
 		}
-		
+
 		scope.deleteGroup = function(i){
 			scope.model.groups.splice(i,1);
 			if(scope.model.groups.length == 0) delete scope.model.groups;
 		}
-		
+
 		scope.cancel = function(){
 			$mdDialog.cancel();
 		}
-		
+
 		scope.saveGroups = function(){
 			$mdDialog.hide(scope.model);
 		}
-		
+
 	}
 
 	$scope.openListColumn = function(){

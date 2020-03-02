@@ -65,11 +65,11 @@
 				</md-input-container>
 				<md-input-container flex class="md-block">
 					<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
-					<color-picker options="colorPickerPropertyTh" ng-model="group.color"/>
+					<color-picker options="{format:'rgb'}" ng-model="group.color"/>
 				</md-input-container>
 				<md-input-container flex class="md-block">
 					<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-					<color-picker options="colorPickerPropertyTh" ng-model="group['background-color']"/>
+					<color-picker options="{format:'rgb'}" ng-model="group['background-color']"/>
 				</md-input-container>
 				
 			</div>

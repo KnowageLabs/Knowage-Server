@@ -329,6 +329,10 @@ $aggrid-border-color: #d9dcde;
 	    			}
 	    		}
 			}
+			&.cell-span {
+				background-color: $lightTextColor;
+				border-bottom: 1px solid $aggrid-border-color !important;
+			}
 		}
 	}
 	.ag-header-cell {

@@ -80,15 +80,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function getColumns(fields,sortedDefault) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
-			
-			var testColumn = {
-		        headerName: "Test group",
-		        headerGroupComponent: CustomHeaderGroupRenderer,
-		        children: []
-		    }
-			
+
 			$scope.columnsNameArray = [];
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
+			var columnGroups = {};
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header)  ){
@@ -187,8 +182,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.visType = $scope.ngModel.content.columnSelectedOfDataset[c].visType;
 							if($scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'chart' || $scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'text & chart') tempCol.chart = $scope.ngModel.content.columnSelectedOfDataset[c].barchart;
 						}
-						if(c == 0 || c == 1) {
-							testColumn.children.push(tempCol);
+
+						//Columns group managament
+						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
+							$scope.ngModel.groups.forEach(function(group){
+								if(group.name == $scope.ngModel.content.columnSelectedOfDataset[c].group){
+									if(columnGroups[group.name]) {
+										columns[columnGroups[group.name]].children.push(tempCol);
+									}else {
+										columns.push({
+									        headerName: group.name,
+									        headerGroupComponent: CustomHeaderGroupRenderer,
+									        headerParams: group,
+									        children: [tempCol]
+									    });
+									    columnGroups[group.name] = c;
+									}
+								}
+							})
 						}
 						else columns.push(tempCol);
 						break;
@@ -201,7 +212,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
 					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
-			columns.unshift(testColumn);
 			return columns
 		}
 
@@ -281,18 +291,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		CustomHeader.prototype.getGui = function () {
 		    return this.eGui;
 		};
-		
+
+		//CUSTOM HEADER GROUP TEMPLATE RENDERER
 		function CustomHeaderGroupRenderer() {}
-		
+
 		CustomHeaderGroupRenderer.prototype.init = function (params) {
 			this.eGui = document.createElement('div');
 			this.eGui.classList.add('customHeaderTemplate');
-			for(var k in $scope.ngModel.groups[params.columnGroup.groupId]){
-				if(k != 'name') this.eGui.style[k] = $scope.ngModel.groups[params.columnGroup.groupId][k];
+			for(var k in params.columnGroup.originalColumnGroup.colGroupDef.headerParams){
+				if(k != 'name') this.eGui.style[k] = params.columnGroup.originalColumnGroup.colGroupDef.headerParams[k];
 			}
 			this.eGui.innerHTML = params.displayName;
 		}
-		
+
 		CustomHeaderGroupRenderer.prototype.getGui = function () {
 		    return this.eGui;
 		};
