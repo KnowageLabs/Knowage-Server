@@ -42,7 +42,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"up","className":"fa fa-chevron-up","unicode":"\uf077"},{"label":"arrow down","className":"fa fa-arrow-down","unicode":"\uf063"},{"label":"arrow up","className":"fa fa-arrow-up","unicode":"\uf062"},
 						{"label":"arrow right","className":"fa fa-arrow-right","unicode":"\uf061"},{"label":"arrow left","className":"fa fa-arrow-left","unicode":"\uf060"},{"label":"thumbs up","className":"fa fa-thumbs-up","unicode":"\uf164"},
 						{"label":"thumbs down","className":"fa fa-thumbs-down","unicode":"\uf165"},{"label":"folder open","className":"fa fa-folder-open","unicode":"\uf07c"},
-						{"label":"filter","className":"fa fa-filter","unicode":"\uf0b0"},{"label":"external link","className":"fa fa-external-link","unicode":"\uf08e"}]
+						{"label":"filter","className":"fa fa-filter","unicode":"\uf0b0"},{"label":"external link","className":"fa fa-external-link","unicode":"\uf08e"},
+						{"label":"hourglass half","className":"fa fa-hourglass-half","unicode":"\uf252"},{"label":"hourglass","className":"fa fa-hourglass-o","unicode":"\uf250"},
+						{"label":"spinner","className":"fa fa-spinner","unicode":"\uf110"},{"label":"repeat","className":"fa fa-repeat","unicode":"\uf01e"},
+						{"label":"pause","className":"fa fa-pause-circle","unicode":"\uf28b"},{"label":"play","className":"fa fa-play-circle","unicode":"\uf144"}]
 				},{"name":"Appliances","className":"ai",
 					"icons":[
 						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"aways on","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"},
