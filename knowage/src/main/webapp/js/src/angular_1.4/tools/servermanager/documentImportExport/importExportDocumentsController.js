@@ -30,6 +30,9 @@ app.factory("importExportDocumentModule_importConf", function() {
 			exportedDatasources : [],
 			associatedDatasources : {}
 		},
+		objects : {
+			notImportable : []
+		},
 		associationsFileName:"",
 		logFileName:"",
 		folderName:"",
@@ -171,6 +174,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			viewDownload : false
 	}
 	var selectedFiles = [];
+	$scope.showWarningRequiredLicenses = false;
 
 	$scope.checkboxs={
 			exportSubObj : false,
@@ -183,7 +187,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 
 	$scope.filterDocuments = function(){
 		if($scope.filterDate!=undefined){
-			$scope.restServices.get("2.0", "folders","dateFilter="+$scope.filterDate)
+//			$scope.restServices.get("2.0", "folders","dateFilter="+$scope.filterDate)
+			$scope.restServices.get("1.0/serverManager/importExport/folders", "","dateFilter="+$scope.filterDate)
 			.success(function(data){
 				//if not errors in response, copy the data
 				if (data.errors === undefined){
@@ -206,7 +211,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	$scope.removeFilter = function(){
 		$scope.filterDate = undefined;
 		$scope.selected=[];
-		$scope.restServices.get("2.0", "folders","includeDocs=true")
+		$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
+//		$scope.restServices.get("2.0", "folders","includeDocs=true")
 		.success(function(data){
 			//if not errors in response, copy the data
 			if (data.errors === undefined){
@@ -221,8 +227,9 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		});
 	}
 
-	$scope.restServices.get("2.0", "folders","includeDocs=true")
+	$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
 	.success(function(data){
+
 		//if not errors in response, copy the data
 		if (data.errors === undefined){
 //			$scope.folders=angular.copy(data);
@@ -233,6 +240,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 					$scope.folders.push(data[d]);
 				}
 			}
+			
+			$scope.setShowWarningRequiredLicenses(data);
 
 			//tempFolders = angular.copy($scope.folders);
 		}else{
@@ -249,7 +258,30 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			test: "",
 			released: ""
 	};
-
+	
+	$scope.setShowWarningRequiredLicenses = function (data) {
+		var tmp = false;
+		for (d in data){
+			if (!data[d].exportable) {
+				tmp = true;
+				break;
+			} else if (data[d].biObjects.length > 0) {
+				for (doc in data[d].biObjects){
+					if (!data[d].biObjects[doc].exportable) {
+						tmp = true;
+						break;
+					}
+				}
+				
+				if (tmp) {
+					break;
+				}
+			}
+		}
+		
+		$scope.showWarningRequiredLicenses = tmp;
+	}
+	
 	function filteringDocuments(object) {
 
 		var value = "";
@@ -301,53 +333,63 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		};
 
 		goingThroughTree($scope.folders);
-
-		if(!$scope.checkboxs.exportSelFunc){
-			for (var i =0 ; i < $scope.selected.length;i++){
-				if ($scope.selected[i].type == "biObject")
-					config.DOCUMENT_ID_LIST.push(""+$scope.selected[i].id);
+		
+		var proceedToExport = true;
+		for (var i =0 ; i < $scope.selected.length;i++){
+			if ($scope.selected[i].exportable && $scope.selected[i].exportable == false) {
+				proceedToExport = false;
+				sbiModule_restServices.errorHandler("sbi.generic.toastr.title.error");
+				break;
 			}
 		}
 
-		if($scope.checkboxs.exportSelFunc) {
-			config.DOCUMENT_ID_LIST = [];
-			for(var i=0; i<selectedFiles.length; i++) {
-				//if($scope.selected[i].type == "biObject") {
-					config.DOCUMENT_ID_LIST.push(selectedFiles[i]);
-				//}
+		if (proceedToExport) {
+			if(!$scope.checkboxs.exportSelFunc){
+				for (var i =0 ; i < $scope.selected.length;i++){
+					if ($scope.selected[i].type == "biObject")
+						config.DOCUMENT_ID_LIST.push(""+$scope.selected[i].id);
+				}
 			}
-
-		}
-
-		$scope.flags.waitExport=true;
-//		sbiModule_restServices.post("1.0/serverManager/importExport/document","export",config)
-//		.success(function(data, status, headers, config) {
-//			if (data.hasOwnProperty("errors")) {
-//				$scope.showToast(data.errors[0].message,4000);
-//			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
-//				$scope.flags.viewDownload = true;
-//				$scope.downloadedFileName=$scope.exportName;
-//			}
-//			$scope.flags.waitExport=false;
-//		}).error(function(data, status, headers, config) {
-//			$scope.flags.waitExport=false;
-//			$scope.showToast("ERRORS "+status,4000);
-//		})
-
-		sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","export",config)
-		.then(function(response) {
-			if (response.data.hasOwnProperty("errors")) {
+	
+			if($scope.checkboxs.exportSelFunc) {
+				config.DOCUMENT_ID_LIST = [];
+				for(var i=0; i<selectedFiles.length; i++) {
+					//if($scope.selected[i].type == "biObject") {
+						config.DOCUMENT_ID_LIST.push(selectedFiles[i]);
+					//}
+				}
+	
+			}
+	
+			$scope.flags.waitExport=true;
+	//		sbiModule_restServices.post("1.0/serverManager/importExport/document","export",config)
+	//		.success(function(data, status, headers, config) {
+	//			if (data.hasOwnProperty("errors")) {
+	//				$scope.showToast(data.errors[0].message,4000);
+	//			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
+	//				$scope.flags.viewDownload = true;
+	//				$scope.downloadedFileName=$scope.exportName;
+	//			}
+	//			$scope.flags.waitExport=false;
+	//		}).error(function(data, status, headers, config) {
+	//			$scope.flags.waitExport=false;
+	//			$scope.showToast("ERRORS "+status,4000);
+	//		})
+	
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","export",config)
+			.then(function(response) {
+				if (response.data.hasOwnProperty("errors")) {
+					sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+				}else if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
+					$scope.flags.viewDownload = true;
+					$scope.downloadedFileName=$scope.exportName;
+				}
+				$scope.flags.waitExport=false;
+			}, function(response) {
+				$scope.flags.waitExport=false;
 				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
-			}else if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
-				$scope.flags.viewDownload = true;
-				$scope.downloadedFileName=$scope.exportName;
-			}
-			$scope.flags.waitExport=false;
-		}, function(response) {
-			$scope.flags.waitExport=false;
-			sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
-		});
-
+			});
+		}
 
 	}
 

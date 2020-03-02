@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,16 +27,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -56,62 +45,11 @@ public class FolderResource extends AbstractSpagoBIResource {
 	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
 			@QueryParam("dateFilter") String dateFilter) {
 		logger.debug("IN");
+		FolderManagementAPI folderManagementUtilities = new FolderManagementAPI();
 
-		try {
-			UserProfile profile = getUserProfile();
-			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
-			dao.setUserProfile(profile);
-			List<LowFunctionality> allFolders = new ArrayList<>();
-			if (dateFilter != null) {
-				allFolders = dao.loadAllLowFunctionalities(dateFilter);
-			} else {
-				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
-			}
-			List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
+		String jsonObjects = folderManagementUtilities.getFoldersAsString(recoverBIObjects, permissionOnFolder, dateFilter);
 
-			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
-				for (LowFunctionality lf : allFolders) {
-					if (ObjectsAccessVerifier.canSee(lf, profile) && checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
-						folders.add(lf);
-					}
-				}
-			} else {
-				for (LowFunctionality lf : allFolders) {
-					if (ObjectsAccessVerifier.canSee(lf, profile)) {
-						folders.add(lf);
-					}
-				}
-			}
-			String jsonObjects = JsonConverter.objectToJson(folders, folders.getClass());
-
-			return Response.ok(jsonObjects).build();
-		} catch (Exception e) {
-			String errorString = "Error while getting the list of folders";
-			logger.error(errorString, e);
-			throw new SpagoBIRuntimeException(errorString, e);
-		} finally {
-			logger.debug("OUT");
-		}
+		return Response.ok(jsonObjects).build();
 	}
 
-	private boolean checkPermissionOnFolder(String permission, LowFunctionality lf, UserProfile profile) {
-		boolean result = false;
-
-		switch (permission.toUpperCase()) {
-		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP:
-			result = ObjectsAccessVerifier.canDev(lf, profile);
-			break;
-		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST:
-			result = ObjectsAccessVerifier.canTest(lf, profile);
-			break;
-		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE:
-			result = ObjectsAccessVerifier.canExec(lf, profile);
-			break;
-		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE:
-			result = ObjectsAccessVerifier.canCreate(lf, profile);
-			break;
-		}
-
-		return result;
-	}
 }
