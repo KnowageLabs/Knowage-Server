@@ -267,7 +267,9 @@ angular
                      if (self.drivers[i].id == driver.id) {
                         	// delete self.selectedDriver;
                     	 index = i;
-                    	 driversService.driversForDeleting.push(driver);
+                    	 if(!driver.newDriver) {
+                    		 driversService.driversForDeleting.push(driver);
+                    	 }
                     	 self.drivers.splice(i, 1);
                      }
                  }
