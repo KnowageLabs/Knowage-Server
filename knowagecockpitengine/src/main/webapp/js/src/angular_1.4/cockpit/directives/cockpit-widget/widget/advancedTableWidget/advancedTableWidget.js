@@ -77,11 +77,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!$scope.ngModel.settings.summary.list) $scope.ngModel.settings.summary.list = [{"label":$scope.ngModel.settings.summary.title}];
 		}
 		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
-		function getColumns(fields) {
+		function getColumns(fields,sortedDefault) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			var columns = [];
+
 			$scope.columnsNameArray = [];
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
+			var columnGroups = {};
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header)  ){
@@ -90,6 +92,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
+						if(sortedDefault && sortedDefault[0].colId == fields[f].name){
+							tempCol.sort = sortedDefault[0].sort;
+						}
+
+						//ROWSPAN MANAGEMENT
+						if($scope.ngModel.content.columnSelectedOfDataset[c].rowSpan){
+							tempCol.rowSpanDimensions = {};
+							for(var r in $scope.tempRows){
+								if(!tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]]) tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]] = {value: 1};
+								else tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]].value ++;
+							}
+							tempCol.rowSpan = RowSpanCalculator;
+							tempCol.cellClassRules = {
+								'cell-span': function(params) {
+									return params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.value] && params.colDef.rowSpanDimensions[params.value].value > 1
+								}
+					        }
+						}
 
 						//VARIABLES MANAGEMENT
 						if($scope.ngModel.content.columnSelectedOfDataset[c].variables && $scope.ngModel.content.columnSelectedOfDataset[c].variables.length>0){
@@ -131,7 +151,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.suppressSizeToFit = true;
 						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].ranges) tempCol.ranges = $scope.ngModel.content.columnSelectedOfDataset[c].ranges;
-						//tempCol.headerComponentParams = {template: headerTemplate()};
 
 						tempCol.cellStyle = $scope.ngModel.content.columnSelectedOfDataset[c].style || {};
 
@@ -163,7 +182,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.visType = $scope.ngModel.content.columnSelectedOfDataset[c].visType;
 							if($scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'chart' || $scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'text & chart') tempCol.chart = $scope.ngModel.content.columnSelectedOfDataset[c].barchart;
 						}
-						columns.push(tempCol);
+
+						//Columns group managament
+						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
+							$scope.ngModel.groups.forEach(function(group){
+								if(group.name == $scope.ngModel.content.columnSelectedOfDataset[c].group){
+									if(columnGroups[group.name]) {
+										columns[columnGroups[group.name]].children.push(tempCol);
+									}else {
+										columnGroups[group.name] = columns.length;
+										columns.push({
+									        headerName: group.name,
+									        headerGroupComponent: CustomHeaderGroupRenderer,
+									        headerParams: group,
+									        children: [tempCol]
+									    });
+									}
+								}
+							})
+						}
+						else columns.push(tempCol);
 						break;
 					}
 				}
@@ -251,6 +289,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		CustomHeader.prototype.getGui = function () {
+		    return this.eGui;
+		};
+
+		//CUSTOM HEADER GROUP TEMPLATE RENDERER
+		function CustomHeaderGroupRenderer() {}
+
+		CustomHeaderGroupRenderer.prototype.init = function (params) {
+			this.eGui = document.createElement('div');
+			this.eGui.classList.add('customHeaderTemplate');
+			for(var k in params.columnGroup.originalColumnGroup.colGroupDef.headerParams){
+				if(k != 'name') this.eGui.style[k] = params.columnGroup.originalColumnGroup.colGroupDef.headerParams[k];
+			}
+			this.eGui.innerHTML = params.displayName;
+		}
+
+		CustomHeaderGroupRenderer.prototype.getGui = function () {
 		    return this.eGui;
 		};
 
@@ -425,6 +479,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return params.valueFormatted || params.value;
 		}
 
+		function RowSpanCalculator(params) {
+			if(params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.data[params.colDef.field]] && !params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled){
+				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled = true;
+				return params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
+			}else return 1;
+        };
+
 		$scope.init=function(element,width,height){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].isCalculated && $scope.ngModel.content.columnSelectedOfDataset[k].formulaEditor){
@@ -449,6 +510,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(datasetRecords){
 				$scope.metadata = datasetRecords.metaData;
 				$scope.totalRows = datasetRecords.results;
+				$scope.tempRows = datasetRecords.rows;
 				if($scope.ngModel.style && $scope.ngModel.style.tr && $scope.ngModel.style.tr.height){
 					_rowHeight = $scope.ngModel.style.tr.height;
 					$scope.advancedTableGrid.api.resetRowHeights();
@@ -457,7 +519,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
 					else $scope.advancedTableGrid.api.setHeaderHeight(0);
 				}
-				if(nature != 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
+				$scope.advancedTableGrid.api.setRowData([])
+				if(nature == 'sorting') $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields,$scope.advancedTableGrid.api.getSortModel()));
+				else $scope.advancedTableGrid.api.setColumnDefs(getColumns(datasetRecords.metaData.fields));
 				if($scope.ngModel.settings.summary && $scope.ngModel.settings.summary.enabled) {
 					var rowsNumber = 1;
 					if($scope.ngModel.settings.summary.list) rowsNumber = $scope.ngModel.settings.summary.list.length;
@@ -511,6 +575,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				onGridReady: readyResizeColumns,
 				onSortChanged: changeSorting,
 				pagination : true,
+				suppressRowTransform: true,
 				onCellClicked: onCellClicked,
 				defaultColDef: {
 					resizable: cockpitModule_properties.EDIT_MODE,

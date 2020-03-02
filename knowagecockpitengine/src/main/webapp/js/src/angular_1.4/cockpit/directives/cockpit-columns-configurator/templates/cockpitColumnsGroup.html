@@ -1,0 +1,113 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
+	<md-toolbar class="secondaryToolbar" layout="row">
+		<div class="md-toolbar-tools">
+			<h1>Groups Management</h1>
+		</div>
+	</md-toolbar>
+	<md-dialog-content flex layout="column" style="min-height:250px">
+	
+	<md-button style="position:absolute; right:10px; top:10px;" class="md-fab md-mini" ng-click="addGroup()">			
+ 		<md-icon md-font-icon="fa fa-plus"></md-icon>
+	</md-button>
+	
+	<div layout="row" layout-align="center center" ng-if="!model.groups">
+		<div class="kn-info" flex="60">No group defined</div>
+	</div>
+	
+	<md-card ng-repeat="group in model.groups track by $index">
+		<md-subheader class="noPadding">
+			<div layout="row" layout-align="start center">
+			 	<span layout-padding>{{group.name || 'New Group'}}</span>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="deleteGroup($index)">
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
+					<md-tooltip md-delay="500">Delete group</md-tooltip>
+				</md-button>
+			</div>
+		</md-subheader>
+		<md-card-content layout="column">
+			<div layout="row" layout-align="start center">
+				<md-input-container flex class="md-block" class="small counter">
+					<label>Group Name</label>
+					<input ng-model="group.name" /> 
+				</md-input-container>
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+					<md-select aria-label="aria-label" ng-model="group['font-family']">
+						<md-option ng-repeat="fam in cockpitModule_generalOptions.fontFamily" value="{{fam.value}}"><span ng-style="{'font-family':fam.value}">{{fam.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container flex class="md-block" >
+					<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+					<input ng-model="group['font-size']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+				</md-input-container>
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+					<md-select aria-label="aria-label" ng-model="group['font-weight']">
+						<md-option ng-repeat="weight in cockpitModule_generalOptions.fontWeight" value="{{weight.value}}"><span ng-style="{'font-weight':weight.value}">{{weight.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+			<div flex layout="row" layout-align="start center">
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.style.font.style')}}</label>
+					<md-select aria-label="aria-label" ng-model="group['font-style']">
+						<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
+					<md-select aria-label="aria-label" ng-model="group['justify-content']">
+						<md-option ng-repeat="fjc in cockpitModule_generalOptions.flexJustifyContent" ng-value="fjc.value">{{fjc.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+					<color-picker options="{format:'rgb'}" ng-model="group.color"/>
+				</md-input-container>
+				<md-input-container flex class="md-block">
+					<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+					<color-picker options="{format:'rgb'}" ng-model="group['background-color']"/>
+				</md-input-container>
+				
+			</div>
+			<div flex layout="row" layout-align="start center">			
+				<md-input-container>
+					<label>{{::translate.load("sbi.cockpit.style.radius.bordertopleft")}}</label>
+					<input ng-model="group['border-top-left-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex >
+					<label>{{::translate.load("sbi.cockpit.style.radius.bordertopright")}}</label>
+					<input ng-model="group['border-top-right-radius']" type="text" />
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.radius.borderbottomleft")}}</label>
+					<input ng-model="group['border-bottom-left-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.radius.borderbottomright")}}</label>
+					<input ng-model="group['border-bottom-right-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+			</div>
+				
+		</md-card-content>
+	</md-card>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()" >
+        {{::translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="saveGroups()" >
+        {{::translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+</div>
