@@ -31,7 +31,7 @@
     		   };
 
     		   crud.update = function(record) {
-    			   delete record.id;
+    			   //delete record.id;
     			   delete record.selected;
     			   var records = [];
     			   var loadRegistryAction = this.action.getActionBuilder('POST');
