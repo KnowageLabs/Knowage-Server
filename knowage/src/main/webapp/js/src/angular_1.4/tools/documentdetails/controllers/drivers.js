@@ -125,8 +125,6 @@ angular
             		 self.driversNum = self.drivers != null && self.drivers.length > 1;
             	 } else {
             		 requiredPath = "2.0/businessmodels";
-//            		 self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: self.driverRelatedObject.id},true);
-            		 self.driversNum = self.drivers.length > 1
             	 }
              }
 
@@ -200,7 +198,6 @@ angular
 				driversService.driverRelatedObject = self.driverRelatedObject;
 				self.selectedDriver = undefined;
 				self.drivers = driversService.renderedDrivers;
-				self.driversNum = self.drivers.length > 1;
 			}
 
 			if(!self.driverRelatedObject.engine) {
@@ -259,6 +256,7 @@ angular
                      }
                      self.selectedDriver = self.drivers[self.drivers.length - 1];
                  }
+                 self.driversNum = self.drivers.length > 1;
              }
 
              self.deleteDriver = function(driver,name) {
