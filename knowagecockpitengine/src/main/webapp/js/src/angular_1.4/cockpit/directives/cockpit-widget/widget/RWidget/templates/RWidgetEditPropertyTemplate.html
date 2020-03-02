@@ -1,0 +1,152 @@
+<md-card  class="flexCard RWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>{{translate.load('kn.cockpit.R.configuration')}}</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+		 
+	    <md-content flex layout="column">
+			<md-tabs flex md-border-bottom md-selected="1">
+			
+			<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		        	<md-card>
+		        		<md-card-content>
+		   					<dataset-selector ng-model="newModel.dataset.dsId" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
+		   				</md-card-content>
+		   			</md-card>	
+			</md-tab>
+		
+				<!-- INIZIO EDITOR -->
+			
+				<md-tab label="R Editor">
+					
+					<md-content class="noPadding" layout="row" layout-fill>
+						<div layout="column" flex>
+						
+							<md-card>
+						     	<md-card-content layout="row" layout-align="space-around center">
+						     		<md-input-container flex class="md-block">
+									  <label>{{translate.load('kn.cockpit.R.outputType')}}</label>
+									  <md-select ng-model="newModel.ROutputType">
+								          <md-option ng-repeat="key in newModel.outputTypesKeys" value="{{newModel.outputTypes[key]}}">{{key}}</md-option>
+								      </md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block" ng-if="newModel.ROutputType == 'img'">
+									  <label>{{translate.load('kn.cockpit.R.outputFileName')}}</label>
+									  <input type="text" ng-model="newModel.ROutput">
+									</md-input-container>
+									<md-input-container flex class="md-block" ng-if="newModel.ROutputType == 'html'">
+									  <label>{{translate.load('kn.cockpit.R.outputVariableName')}}</label>
+									  <input type="text" ng-model="newModel.ROutput">
+									</md-input-container>
+								</md-card-content>
+							</md-card>
+						
+							<md-card class="REditor">
+								<md-toolbar class="ternaryToolbar"> 
+							      <div class="md-toolbar-tools"> 
+							        <h2>{{translate.load('kn.cockpit.R.RScript')}}</h2>
+							        <span flex></span>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding">
+								<textarea id="R" ui-codemirror="editorOptionsR" ng-model="newModel.RCode" ui-refresh="newModel.RCode" flex></textarea>
+								</md-card-content>
+							</md-card>
+						</div>
+						<div class="availableFunctions" flex="20">
+					      <md-toolbar class="secondaryToolbar">
+					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.R.availabletags')}}</h1>
+					      </md-toolbar>
+					  		<md-subheader class="expandableSubheader" ng-repeat-start="tag in helper" layout="row" ng-click="toggleTag(tag)">{{tag.label}}<i class="fa" ng-class="{'fa-chevron-up':tag.opened,'fa-chevron-down':!tag.opened}"></i></md-subheader>
+					  		<div layout="column" style="background-color: white;" ng-if="tag.opened">
+						  		<p layout-padding class="description">
+						          {{tag.description}}
+						        </p>
+						        <div class="kn-noItems" ng-if="tag.hidden">{{tag.hiddenMessage}}</div>
+				  				<div layout="row" ng-if="!tag.hidden" style="padding:8px" layout-wrap>
+					  				<md-input-container ng-repeat="input in tag.inputs" class="md-block" ng-class="input.flex">
+										<label ng-if="input.type != 'check'">{{input.label || input.name}}</label>
+										<md-select ng-if="input.type == 'select'" ng-model="helper[tag.name][input.name]" >
+											<md-option ng-repeat="opt in input.options" ng-value="opt.name">{{opt.name}}</md-option>
+										</md-select>
+										<input ng-if="input.type == 'number'" type="number" ng-model="helper[tag.name][input.name]"/>
+										<input ng-if="input.type == 'text'" type="text" ng-model="helper[tag.name][input.name]"/>
+										<textarea ng-if="input.type == 'area'" ng-model="helper[tag.name][input.name]" md-maxlength="150" rows="3"></textarea>
+										<md-checkbox ng-if="input.type == 'check'" ng-model="helper[tag.name][input.name]">{{input.label || input.name}}</md-checkbox>
+									</md-input-container>
+								</div>
+								<div layout="row" ng-if="!tag.hidden">
+									<md-button style="width: 100%;line-height: 22px;height: 30px;" ng-click="insertCode(tag)">
+				  					Insert
+				  					</md-button>
+								</div>
+							</div>
+							<md-divider ng-repeat-end></md-divider>
+					    </div>
+				    </md-content>
+
+		        </md-tab>
+		        
+		        <!-- FINE EDITOR -->
+		        
+		        <md-tab label="{{translate.load('sbi.cockpit.widget.R.environment')}}">
+		        	<md-card>
+					     	<md-card-content flex layout="row" layout-align="space-around center">
+					     	
+					     		<md-input-container flex class="md-block">
+								  <label>{{translate.load('kn.cockpit.R.environment')}}</label>
+								  <md-select ng-model="newModel.RAddress" ng-change="setLibraries()">
+							          <md-option ng-repeat="key in newModel.REnvsKeys" value="{{newModel.REnvs[key]}}">{{key}}</md-option>
+							      </md-select>
+								</md-input-container>
+							</md-card-content>
+					</md-card>
+					
+					<md-card>
+						<md-card-content flex layout="row" layout-align="space-around center">
+								
+						
+							<table flex class="kn-table kn-table-alternated-rows kn-table-medium-rows">
+								<thead>
+									<tr>
+										<th>{{translate.load('sbi.cockpit.widget.R.library')}}</th>
+										<th>{{translate.load('sbi.cockpit.widget.R.version')}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="lib in newModel.libraries" ng-if="newModel.libraries">
+										<td>{{lib.name}}</td>
+										<td>{{lib.version}}</td>
+									</tr>
+								</tbody>
+							</table>
+								
+							</md-card-content>
+					</md-card>
+		        </md-tab>
+		        
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
+					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
+				</md-tab>
+		     	
+		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
+				</md-tab>
+	      	</md-tabs>
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>
