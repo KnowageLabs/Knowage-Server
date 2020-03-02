@@ -190,13 +190,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									if(columnGroups[group.name]) {
 										columns[columnGroups[group.name]].children.push(tempCol);
 									}else {
+										columnGroups[group.name] = columns.length;
 										columns.push({
 									        headerName: group.name,
 									        headerGroupComponent: CustomHeaderGroupRenderer,
 									        headerParams: group,
 									        children: [tempCol]
 									    });
-									    columnGroups[group.name] = c;
 									}
 								}
 							})

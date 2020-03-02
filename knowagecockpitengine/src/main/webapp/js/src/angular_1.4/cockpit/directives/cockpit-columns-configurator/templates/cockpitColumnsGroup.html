@@ -73,6 +73,28 @@
 				</md-input-container>
 				
 			</div>
+			<div flex layout="row" layout-align="start center">			
+				<md-input-container>
+					<label>{{::translate.load("sbi.cockpit.style.radius.bordertopleft")}}</label>
+					<input ng-model="group['border-top-left-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex >
+					<label>{{::translate.load("sbi.cockpit.style.radius.bordertopright")}}</label>
+					<input ng-model="group['border-top-right-radius']" type="text" />
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.radius.borderbottomleft")}}</label>
+					<input ng-model="group['border-bottom-left-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.radius.borderbottomright")}}</label>
+					<input ng-model="group['border-bottom-right-radius']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.radius.hint')}}</div>
+				</md-input-container>
+			</div>
 				
 		</md-card-content>
 	</md-card>
