@@ -73,10 +73,10 @@
 
 		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 			#if($serie.axis=='Z')
-			#set($serieForZAxis = $withgroup)
+			#set($serieForZAxis = $withgroup.toLowerCase())
 			#end
 			#if($serie.axis=='X')
-			#set($serieForXAxis = $withgroup)
+			#set($serieForXAxis = $withgroup.toLowerCase())
 			#set($xAxisTitle = $serie.name)
 			#end
 		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
