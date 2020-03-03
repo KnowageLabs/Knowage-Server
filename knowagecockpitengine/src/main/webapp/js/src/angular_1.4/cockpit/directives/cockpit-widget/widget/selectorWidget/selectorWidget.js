@@ -344,7 +344,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if ($scope.ngModel.settings.enableAll) {
 					return false;
 				}
-				return selectables && selectables.indexOf(p.name) == -1;
+				return selectables && selectables.indexOf(p.name) == -1 && activeSelections.indexOf(p) == -1;
 			}
 
 			scope.checkActiveSelections = function() {
