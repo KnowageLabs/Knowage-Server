@@ -1323,17 +1323,30 @@
 			.pivotTableDesigner{
 				padding:0px;
 				min-height: calc(100% - 134px);
+				.contentElementBox {
+					padding: 8px 4px;
+					&:first-child {
+						padding-left: 8px;
+					}
+					&:last-child {
+						padding-right: 8px;
+					}
+				}
 				.measureAttributeTab{
 					min-width:250px;
 				}
-				.contentElementTab{
-					.contentElementBox{
-						border: $cockpitDefaultBorder;
-						margin: 5px;
-						}
-				}
 				md-list[dnd-list]{
 					min-height:42px;
+					md-list-item {
+						min-height: 32px;
+						height: 32px;
+						font-size: $baseFontSize;
+						border-bottom: 1px solid lighten($bordersColor,10%);
+						cursor: grab;
+						&:hover {
+							background-color: lighten($secondaryColor, 10%);
+						}
+					}
 				}
 				
 				.dropZone{
