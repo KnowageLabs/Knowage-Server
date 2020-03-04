@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					if (dsName in cache
 							&& colName in cache[dsName]
-							&& cache[dsName].length > 0) {
+							&& cache[dsName][colName].length > 0) {
 						var ret = [];
 						ret = cache[dsName][colName];
 
