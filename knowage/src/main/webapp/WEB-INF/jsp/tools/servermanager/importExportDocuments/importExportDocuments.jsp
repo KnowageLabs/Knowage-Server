@@ -134,9 +134,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									selected-item="selected" multi-select="true" show-files="true">
 								</document-tree>
 								-->
-								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true" leaf-key="biObjects" text-search="test" fields-search="['stateCode']"
-									selected-item="selected" multi-select="true" show-files="true" force-visibility="true">
+								<div layout="row" layout-align="center center" ng-if="showWarningRequiredLicenses">
+									<div class="kn-warning" flex="60">
+										{{translate.load("sbi.impexpdoc.oneOrMoreNotExportableDocs")}}
+									</div>
+								</div>
+ 								<component-tree 
+ 									ng-model="folders" remove-empty-folder=true  id="impExpTree" 
+ 									create-tree="true" leaf-key="biObjects" text-search="test" 
+ 									fields-search="['stateCode']" selected-item="selected" multi-select="true" 
+									show-files="true" force-visibility="true" import-export-tree="true">
 								</component-tree>
+								
 							</div>
 						</div>
 				</md-content>

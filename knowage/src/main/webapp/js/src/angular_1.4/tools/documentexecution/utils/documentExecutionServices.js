@@ -271,7 +271,7 @@
 						postObject.url = documentUrl.split('?')[0];
 						var paramsFromUrl = documentUrl.split('?')[1].split('&');
 						for(var i in paramsFromUrl){
-							postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
+							if(typeof paramsFromUrl[i] != 'function')postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
 						}
 						var postForm = document.getElementById("postForm_"+postObject.params.document);
 						if(!postForm){

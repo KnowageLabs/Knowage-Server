@@ -200,8 +200,8 @@
 						//adaptExecutionProperties();
 						/*  TODO : For Behairoval Model and datasets preview
 						 */
-						$scope.executionParameters = "1.0/businessModelOpening";
-						$scope.parametersPath = "getParameters";
+						var executionParameters = "1.0/businessModelOpening";
+						var parametersPath = "getParameters";
 
 					}
 

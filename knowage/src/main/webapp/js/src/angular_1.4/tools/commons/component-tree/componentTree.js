@@ -12,7 +12,7 @@
 
 //	debugger;
 
-	angular.module('componentTreeModule', [ 'ngMaterial', 'ui.tree'])
+	angular.module('componentTreeModule', [ 'ngMaterial', 'ui.tree', 'sbiModule'])
 	.directive('componentTree', function($compile) {
 		return {
 			templateUrl: componentTreePath + 'template/component-tree.html',
@@ -59,6 +59,7 @@
 				, forceVisibility: "=?" //boolean value
 				, checkChildren: '=?'	//boolean value
 				, uncheckParent: '=?'	//boolean value
+				, importExportTree : '@?'
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -332,38 +333,44 @@
 		};
 	});
 
-	function componentTreeControllerFunction($scope,$timeout,$mdDialog) {
+	function componentTreeControllerFunction($scope,$timeout,$mdDialog,sbiModule_translate) {
 //		debugger;
+		
+		$scope.translate = sbiModule_translate;
 
 		$scope.toogleSelected = function(element, parent) {
 			if (element !== undefined && $scope.multiSelect) {
-				//check the element as the parent. If not the parent doesn't exist, toggle the element check
-//				element.checked = parent === undefined ? !element.checked : parent.checked;
-				if(parent !== undefined && $scope.checkChildren) {
-					element.checked = parent.checked;
-				}
-
-				//different insertion if the multi-selection is allowed
-				if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
-					$scope.selectedItem.push(element);
-				}else{
-					var idx = $scope.selectedItem.indexOf(element);
-					$scope.selectedItem.splice(idx, 1);
-					if($scope.uncheckParent) {
-						$scope.deselectParent(element);
+				
+				if ($scope.importExportTree && element.exportable) {
+					//check the element as the parent. If not the parent doesn't exist, toggle the element check
+	//				element.checked = parent === undefined ? !element.checked : parent.checked;
+					if(parent !== undefined && $scope.checkChildren) {
+						element.checked = parent.checked;
 					}
-
-				}
-
-				if (element.type == 'folder') {
-					for (var i = 0; element[$scope.subfoldersId] && i < element[$scope.subfoldersId].length; i++) {
-						$scope.toogleSelected(element[$scope.subfoldersId][i], element);
+	
+					
+					//different insertion if the multi-selection is allowed
+					if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
+						$scope.selectedItem.push(element);
+					}else{
+						var idx = $scope.selectedItem.indexOf(element);
+						$scope.selectedItem.splice(idx, 1);
+						if($scope.uncheckParent) {
+							$scope.deselectParent(element);
+						}
+	
 					}
-//					for (var j = 0; element.biObjects !== undefined && j < element.biObjects.length ; j++ ) {
-//						$scope.toogleSelected(element.biObjects[j],element);
-//					}
-					for (var j = 0; element[$scope.leafKey] !== undefined && j < element[$scope.leafKey].length ; j++ ) {
-						$scope.toogleSelected(element[$scope.leafKey][j], element);
+	
+					if (element.type == 'folder') {
+						for (var i = 0; element[$scope.subfoldersId] && i < element[$scope.subfoldersId].length; i++) {
+							$scope.toogleSelected(element[$scope.subfoldersId][i], element);
+						}
+	//					for (var j = 0; element.biObjects !== undefined && j < element.biObjects.length ; j++ ) {
+	//						$scope.toogleSelected(element.biObjects[j],element);
+	//					}
+						for (var j = 0; element[$scope.leafKey] !== undefined && j < element[$scope.leafKey].length ; j++ ) {
+							$scope.toogleSelected(element[$scope.leafKey][j], element);
+						}
 					}
 				}
 			}
@@ -390,7 +397,7 @@
 		$scope.setSelected = function (item) {
 			var selectableNodes = ($scope.isInternalSelectionAllowed || item.leaf);
 			if (!$scope.multiSelect && selectableNodes) {
-				$scope.selectedItem = item;
+					$scope.selectedItem = item;
 			}
 
 			//if present a click function, use it

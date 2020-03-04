@@ -40,7 +40,8 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 					}else if(response.data.STATUS=="OK"){
 							importExportDocumentModule_importConf.roles.currentRoles=response.data.currentRoles;
 							importExportDocumentModule_importConf.roles.exportedRoles=response.data.exportedRoles;
-							importExportDocumentModule_importConf.roles.associatedRoles=response.data.associatedRoles;				
+							importExportDocumentModule_importConf.roles.associatedRoles=response.data.associatedRoles;
+							importExportDocumentModule_importConf.objects.notImportable=response.data.notImportableObjs;
 							$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 					}
 				}, function(response) {

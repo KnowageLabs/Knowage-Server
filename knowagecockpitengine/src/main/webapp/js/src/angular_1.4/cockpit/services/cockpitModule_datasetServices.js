@@ -1091,7 +1091,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				for(var i=0;i<columns.length;i++){
 					var col = columns[i];
 
-					if(col.fieldType!="ATTRIBUTE" && !(col.style && col.style.hideSummary)){
+					if(col.fieldType!="ATTRIBUTE"){
 						var obj = {};
 						obj["id"] = col.name || col.alias;
 						obj["alias"] = col.aliasToShow || col.alias;

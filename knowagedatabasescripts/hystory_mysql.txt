@@ -869,7 +869,7 @@ VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOM
 -- 6/10/2011 Giulio
 ALTER TABLE sbi_data_set_history MODIFY COLUMN DS_METADATA TEXT;
 
--- 20/10/2011 Davide : il motore worksheet pu� lavorare con i dataset
+-- 20/10/2011 Davide : il motore worksheet puo' lavorare con i dataset
 UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
 
 -- 06/12/2011 Davide : exporter XLSX per Qbe e Worksheet
@@ -1723,7 +1723,7 @@ RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
 ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
 
---per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire cos� lo stmt di drop (per ora manualemnte!)
+--per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire cosi' lo stmt di drop (per ora manualemnte!)
 select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
 referenced_table_name = 'SBI_DATA_SET'  and table_name = 'SBI_KPI';
 ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
@@ -4573,3 +4573,7 @@ ALTER TABLE SBI_CROSS_NAVIGATION ADD CONSTRAINT FOREIGN KEY FK_SBI_CROSS_NAVIGAT
 
 --02/12/2019 Davide Vernassa
 ALTER TABLE SBI_CROSS_NAVIGATION ADD COLUMN POPUP_OPTIONS VARCHAR(4000) NULL DEFAULT NULL AFTER BREADCRUMB;
+
+-- 14/02/2020 Alberto Nale
+ALTER TABLE SBI_MENU ADD ICON VARCHAR(1000) NULL;
+ALTER TABLE SBI_MENU ADD CUST_ICON VARCHAR(4000) NULL;
