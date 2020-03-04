@@ -672,7 +672,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/parameterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model ={
 							"pars": pars,
@@ -732,12 +731,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     $scope.showVisualization = function (filters, advancedFilters, expression) {
 		var finishEdit=$q.defer();
-		$scope.show = false;
+		//$scope.show = false;
 		var config = {
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterVisualizationTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model = {"filters":filters,"advancedFilters":advancedFilters,"expression":expression,"mdPanelRef":mdPanelRef};
 				},

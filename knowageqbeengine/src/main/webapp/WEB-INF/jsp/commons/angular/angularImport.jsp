@@ -76,11 +76,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- AG GRID -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ag-grid-community/dist/ag-grid-community.min.js")%>"></script>
 
+<!-- font-awesome -->
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/all.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>"> 
+
 <!-- main css -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>">
-
-<!-- font-awesome -->
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/font-awesome/css/font-awesome.min.css")%>">		 
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModule.jspf"%>
 

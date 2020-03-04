@@ -1,14 +1,13 @@
-<md-card  layout-fill layout="column" class="flexCard" style="position:absolute">
+<md-card  layout-fill layout="column" class="flexCard" style="position:absolute;">
 	<md-card-content flex layout="column" class="noPadding">
-		<md-toolbar class="secondaryToolbar" layout-padding>
+		<md-toolbar class="secondaryToolbar">
 			<div class="md-toolbar-tools">
-				<h2><span>{{translate.load("kn.qbe.filters.parameters")}}</span></h2>
+				<h2>{{translate.load("kn.qbe.filters.parameters")}}</h2>
 				<span flex></span>
-					<md-button class="md-fab md-mini" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()">
-			            <md-icon md-font-icon="fa fa-plus" ></md-icon>
-			            <md-tooltip>{{translate.load("kn.qbe.params.add")}}</md-tooltip>
-			        </md-button> 					
-				
+				<md-button class="md-fab md-mini" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()">
+		            <md-icon md-font-icon="fa fa-plus" ></md-icon>
+		            <md-tooltip>{{translate.load("kn.qbe.params.add")}}</md-tooltip>
+		        </md-button> 					
 			</div>
 		</md-toolbar>						         
 												
