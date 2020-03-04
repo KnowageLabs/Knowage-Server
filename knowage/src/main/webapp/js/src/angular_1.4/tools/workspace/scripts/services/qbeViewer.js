@@ -244,10 +244,11 @@ angular
 				$scope.currentView = driverableObject.currentView;
 				$scope.parameterView = driverableObject.parameterView;
 				if(driverableObject.dsTypeCd ){
-					    $scope.drivers = driverableObject.drivers
-						queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems :  driverableObject.pars ;
+				    $scope.drivers = driverableObject.drivers
+					queryParamObj.PARAMS = $scope.parameterItems ? $scope.parameterItems : driverableObject.pars ;
 				}else{
-						$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+					$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
+					driverableObject.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
 				}
 
 				driversExecutionService.hasMandatoryDrivers($scope.drivers);
@@ -342,6 +343,37 @@ angular
 								break;
 							}
 
+						}
+					}
+				},true);
+
+				/*
+				  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
+				  */
+				$scope.$watch( function() {
+					return driversDependencyService.parametersWithDataDependency;
+				},
+				// new value and old Value are the whole parameters
+				function(newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						for(var i=0; i<newValue.length; i++){
+
+							var oldValPar = oldValue[i];
+							var newValPar = newValue[i];
+
+							//only new value different old value
+							if(oldValPar && (!angular.equals(newValPar, oldValPar)) ){
+
+								var oldParValue = oldValPar.parameterValue;
+								var newParValue = newValPar.parameterValue;
+
+								if(oldParValue == undefined || oldParValue == "" ||
+										(oldParValue && (!angular.equals(newParValue, oldParValue)))
+										){
+									driversDependencyService.updateDependencyValues(newValPar,driverableObject);
+								}
+								break;
+							}
 						}
 					}
 				},true);

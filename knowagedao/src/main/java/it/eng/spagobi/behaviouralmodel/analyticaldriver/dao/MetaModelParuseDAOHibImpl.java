@@ -31,7 +31,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql = "from SbiMetamodelParuse s where s.id=? " + " order by s.prog";
+			String hql = "from SbiMetamodelParuse s where s.sbiMetaModelPar=? " + " order by s.prog";
 
 			Query query = session.createQuery(hql);
 			query.setInteger(0, metaModelParuseId.intValue());
@@ -63,12 +63,15 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 	/**
 	 * Load obj paruse.
 	 *
-	 * @param objParId the obj par id
-	 * @param paruseId the paruse id
+	 * @param objParId
+	 *            the obj par id
+	 * @param paruseId
+	 *            the paruse id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuse(java.lang.Integer, java.lang.Integer)
 	 */

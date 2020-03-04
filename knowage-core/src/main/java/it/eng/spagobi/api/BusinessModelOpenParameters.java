@@ -88,8 +88,8 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 	public static String LIMIT = "limit";
 
 	private static final String ROLE = "ROLE";
+	private static final String OBJECT_LABEL = "OBJECT_LABEL";
 	private static final String OBJECT_NAME = "OBJECT_NAME";
-
 	private static final String DESCRIPTION_FIELD = "description";
 
 	private static final String VALUE_FIELD = "value";
@@ -140,7 +140,11 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		try {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			role = (String) requestVal.opt(ROLE);
-			name = (String) requestVal.opt(OBJECT_NAME);
+			if ((String) requestVal.opt(OBJECT_LABEL) != null) {
+				name = (String) requestVal.opt(OBJECT_LABEL);
+			} else {
+				name = (String) requestVal.opt(OBJECT_NAME);
+			}
 			metaModelParameterId = (String) requestVal.opt(PARAMETER_ID);
 			selectedParameterValuesJSON = (JSONObject) requestVal.opt(SELECTED_PARAMETER_VALUES);
 			if (requestVal.opt(FILTERS) != null) {
@@ -148,6 +152,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 			}
 			mode = (requestVal.opt(MODE) == null) ? MODE_SIMPLE : (String) requestVal.opt(MODE);
 			// contest = (String) requestVal.opt(CONTEST);
+
 			if (requestVal.opt(NODE) != null) {
 				treeLovNodeValue = (String) requestVal.opt(NODE);
 				if (treeLovNodeValue.contains("lovroot")) {

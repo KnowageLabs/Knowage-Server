@@ -45,9 +45,10 @@
 							businessModel.parametersData = {};
 							businessModel.parametersData.documentParameters = [];
 							angular.copy(response.data.filterStatus, businessModel.parametersData.documentParameters);
+							businessModel.drivers = businessModel.parametersData.documentParameters;
 							serviceScope.businessModel = {};
-							angular.copy(businessModel, serviceScope.businessModel);
-							angular.copy(serviceScope.businessModel.parametersData.documentParameters, serviceScope.listOfDrivers);
+							serviceScope.businessModel = businessModel;
+							serviceScope.listOfDrivers = serviceScope.businessModel.parametersData.documentParameters;
 							//check if document has parameters
 							if(response && response.data.filterStatus && response.data.filterStatus.length>0) {
 
@@ -60,7 +61,7 @@
 									//setting default value
 									serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
 
-									angular.copy(serviceScope.businessModel.parametersData.documentParameters, serviceScope.listOfDrivers);
+//									angular.copy(serviceScope.businessModel.parametersData.documentParameters, serviceScope.listOfDrivers);
 
 									// keep track of start value for reset!
 									if(serviceScope.businessModel.parametersData.documentParameters != undefined){
