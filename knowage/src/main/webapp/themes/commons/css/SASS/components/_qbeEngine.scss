@@ -236,6 +236,11 @@
                     line-height: 1.5rem;
                     height: 1.5rem;
                     cursor: grab;
+                    .itemType {
+                        width:16px;
+                        text-align:center;
+                        margin-right: 10px;
+                    }
                     button {
                         margin: 0;
                         padding: 0;

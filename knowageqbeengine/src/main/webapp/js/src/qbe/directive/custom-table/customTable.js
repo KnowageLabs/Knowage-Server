@@ -77,11 +77,40 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.previewModel = [];
 
+	// PAGINATION METHODS
 	$scope.pageChanged = function(newPageNumber){
 		$rootScope.$broadcast('start',{"itemsPerPage":$scope.itemsPerPage, "currentPageNumber":newPageNumber});
-		}
-	$scope.start = 0;
+	}
 
+	$scope.maxPageNumber = function(){
+		if(($scope.start + 1) * $scope.itemsPerPage < $scope.totalPages) return ($scope.start + 1) * $scope.itemsPerPage;
+		else return $scope.results;
+  	}
+
+  	$scope.disableFirst = function(){
+  		return $scope.start == 0;
+  	}
+
+  	$scope.disableLast = function(){
+  		return ($scope.start + 1) == $scope.totalPages;
+  	}
+
+  	$scope.first = function(){
+  		$scope.pageChanged(1);
+	}
+
+  	$scope.prev = function(){
+  		$scope.pageChanged($scope.start);
+	}
+
+  	$scope.next = function(){
+  		$scope.pageChanged($scope.start + 2);
+	}
+
+  	$scope.last = function(){
+  		$scope.pageChanged($scope.totalPages);
+	}
+	$scope.start = 0;
 	$scope.itemsPerPage = 25;
 
 	$scope.firstExecution = true;
@@ -243,6 +272,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		angular.copy(data.columns, $scope.completeResultsColumns);
 		angular.copy(data.data, $scope.previewModel);
 		$scope.results = data.results;
+		$scope.totalPages = Math.ceil($scope.results / $scope.itemsPerPage) || 0;
 		if($scope.firstExecution&& !query_service.smartView){
 			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
 			$scope.firstExecution = false;
@@ -254,6 +284,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		if(data.currentPageNumber>1){
 			start = (data.currentPageNumber - 1) * data.itemsPerPage;
 		}
+		$scope.start = (data.currentPageNumber - 1);
+		//$scope.currentPage = (data.currentPageNumber - 1);
 		$rootScope.$broadcast('executeQuery', {"start":start, "itemsPerPage":data.itemsPerPage});
 	});
 
@@ -404,10 +436,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.$watch('ngModel',function(newValue,oldValue){
 		if(newValue[0]){
 			$scope.isChecked = newValue[0].distinct;
-
 		}
 	},true);
 
+	$scope.hiddenColumns = function() {
+		for ( var field in $scope.ngModel) {
+			if(!$scope.ngModel[field].visible) return true;
+		}
+		return false;
+	}
 
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {

@@ -84,20 +84,6 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     }
                 }
 
-//                scope.checkDescription = function (field){
-//            		var desc = 0;
-//            		for (var i = 0; i < scope.$parent.filters.length; i++) {
-//            			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
-//            				desc++;
-//            			}
-//            		}
-//            		if(desc == 0) {
-//            			return "No filters";
-//            		} else {
-//            			return desc + " filters";
-//            		}
-//                }
-
                 scope.countFilters = function (field) {
                 	var filt = 0;
                 	for (var i = 0; i < scope.$parent.filters.length; i++) {
@@ -107,7 +93,35 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             		}
                 	return filt;
                 }
-                
+
+                scope.getIconCls = function (field){
+                	var icon = scope.fontIcons + ' ';
+                	switch (field.iconCls) {
+                	  case 'measure':
+                		icon += 'fa-ruler';
+                	    break;
+                	  case 'cube':
+                		icon += 'fa-cube';
+                		break;
+                	  case 'dimension':
+                  		icon += 'fa-ruler-horizontal';
+                  		break;
+                	  case 'geographic dimension':
+                		  icon += 'fa-map-marked-alt';
+                		  break;
+                	  case 'attribute':
+                		icon += 'fa-font';
+                		break;
+                	  case 'generic':
+                		icon += 'fa-layer-group';
+                		break;
+                	  default:
+                	    icon += 'fa-cube';
+                	    break;
+                	}
+                	return icon;
+                }
+
                 scope.countHavings = function (field) {
                 	var hav = 0;
                 	for (var i = 0; i < scope.$parent.havings.length; i++) {
@@ -122,7 +136,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 	var filt = scope.countFilters(field);
                 	var hav = scope.countHavings(field);
                 	var total = filt + hav;
-                	
+
                 	return total;
                 }
 
@@ -136,7 +150,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 			}
                 		}
                 	}
-                	
+
                 }
 
 

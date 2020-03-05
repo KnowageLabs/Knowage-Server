@@ -13,8 +13,8 @@
 												
 		<md-content flex layout="column">
 			<div layout="row" layout-align="center center" ng-if="!parameterItems || parameterItems.length == 0">
-				<div class="kn-noItems" flex="60" flex-xs="100">
-					<p class="ng-binding">{{translate.load("kn.qbe.params.noparameters")}}</p>
+				<div class="kn-noItems" flex="60">
+					{{translate.load("kn.qbe.params.noparameters")}}
 				</div>
 			</div>
 			<md-card ng-if="parameterItems && parameterItems.length > 0">
