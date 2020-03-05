@@ -32,51 +32,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var dsName = ds.name;
 				var colName = col.name;
 
-				return $q(function(resolve, reject) {
+				var deferred = $q.defer();
 
-					if (dsName in cache
-							&& colName in cache[dsName]
-							&& cache[dsName][colName].length > 0) {
-						var ret = [];
-						ret = cache[dsName][colName];
+				if (dsName in cache
+						&& colName in cache[dsName]
+						&& cache[dsName][colName].length > 0) {
+					var ret = [];
+					ret = cache[dsName][colName];
 
-						resolve(ret);
-					} else {
+					deferred.resolve(ret);
+				} else {
 
-						// Remove all cols except the one that we want
-						var newDs = angular.copy(ds);
-						newDs.content
-							.columnSelectedOfDataset = newDs.content
-								.columnSelectedOfDataset
-								.filter(function(elem) {
-									return elem.name == col.name
-								});
-
-						cockpitModule_datasetServices
-							.loadDatasetRecordsById(dsId, 0, -1, undefined, undefined, newDs, undefined)
-							.then(function(response) {
-								var ret = [];
-
-								var rows = response.rows;
-								for (var i in rows) {
-									var currVal = rows[i];
-									ret.push(currVal["column_1"]);
-								}
-
-								if(!cache[dsName]) {
-									cache[dsName] = {};
-								}
-								cache[dsName][colName] = ret;
-
-								resolve(ret);
-
-							},function(error) {
-								console.error(sbiModule_translate.load("sbi.glossary.load.error"));
+					// Remove all cols except the one that we want
+					var newDs = angular.copy(ds);
+					newDs.content
+						.columnSelectedOfDataset = newDs.content
+							.columnSelectedOfDataset
+							.filter(function(elem) {
+								return elem.name == col.name
 							});
 
-					}
+					cockpitModule_datasetServices
+						.loadDatasetRecordsById(dsId, 0, -1, undefined, undefined, newDs, undefined)
+						.then(function(response) {
+							var ret = [];
 
-				});
+							var rows = response.rows;
+							for (var i in rows) {
+								var currVal = rows[i];
+								ret.push(currVal["column_1"]);
+							}
+
+							if(!cache[dsName]) {
+								cache[dsName] = {};
+							}
+							cache[dsName][colName] = ret;
+
+							deferred.resolve(ret);
+
+						},function(error) {
+							console.error(sbiModule_translate.load("sbi.glossary.load.error"));
+							deferred.reject();
+						});
+
+				}
+
+				return deferred.promise;
 			}
 
 		})
@@ -546,6 +547,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
 			layer.isCluster = isCluster;
+			layer.filterBy = {};
 
 			if ($scope.map){
 				$scope.map.addLayer(layer); 			//add layer to ol.Map
@@ -1136,6 +1138,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.perLayerFiltersValues = {};
 		// Contains selected values by the user
 		$scope.selectedFilterValues = {};
+		// Current search value
+		$scope.searchFilterValue = "";
+
+		$scope.clearSearchFilterValue = function() {
+			$scope.searchFilterValue = "";
+		}
 
 		$scope.resetFilter = function() {
 			$scope.perLayerFiltersValues = {};
@@ -1180,8 +1188,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var propVal = feature.get(i).value;
 
 					if (currFilterVal != undefined
-							&& currFilterVal != ""
-							&& currFilterVal != propVal) {
+							&& currFilterVal.length > 0
+							&& currFilterVal.indexOf(propVal) == -1) {
 						currStyle = new ol.style.Style({ visibility: 'hidden' });
 						break;
 					}
@@ -1192,6 +1200,93 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 
 			source.changed();
+
+		}
+
+		$scope.openMultiSelectFilterValueDialog = function(ev, currLayer, currCol){
+			var olLayer = $scope.getLayerByName(currLayer.name);
+			var filterBy = olLayer.filterBy;
+
+			$mdDialog.show({
+				controller: MultiSelectFilterValueDialogController,
+				fullscreen: false,
+				templateUrl: $scope.getTemplateUrl('mapWidgetMultiSelectFilterValueDialogTemplate'),
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose: true,
+				bindToController: true,
+				locals: {
+					actualSelection: filterBy[currCol.name] || [],
+					perLayerFiltersValues: $scope.perLayerFiltersValues,
+					currLayer: currLayer,
+					currCol: currCol,
+					title: currCol.name
+				}
+			}).then(function(selectedFields) {
+				filterBy[currCol.name] = selectedFields;
+				$scope.filterLayerBy(currLayer)
+			},function(pendingSelection){
+			});
+
+
+		}
+
+		function MultiSelectFilterValueDialogController(
+				$rootScope,
+				scope,
+				$mdDialog,
+				$filter,
+				sbiModule_translate,
+				actualSelection,
+				perLayerFiltersValues,
+				currLayer,
+				currCol,
+				title) {
+
+			scope.translate = sbiModule_translate;
+			scope.perLayerFiltersValues = perLayerFiltersValues;
+			scope.currLayer = currLayer;
+			scope.currCol = currCol;
+
+			scope.selectables = [];
+			scope.allSelected = false;
+
+			scope.loading = true;
+
+			$scope.getPerLayerFiltersValues(currLayer, currCol)
+				.then(function() {
+					scope.selectables =
+						perLayerFiltersValues[currLayer.name][currCol.name].map(function(elem) {
+							return {
+								value: elem,
+								selected: actualSelection.indexOf(elem) != -1
+							};
+						});
+					scope.loading = false;
+				});
+
+			scope.close = function() {
+				var ret = scope.selectables
+					.filter(function(elem) {
+						return elem.selected;
+					})
+					.map(function(elem) {
+						return elem.value;
+					});
+
+				$mdDialog.hide(ret);
+			};
+
+			scope.cancel = function(){
+				$mdDialog.cancel();
+			};
+
+			scope.selectAll = function(){
+				scope.allSelected = !scope.allSelected;
+				for(var s in scope.selectables) {
+					scope.selectables[s].selected = scope.allSelected;
+				}
+			}
 
 		}
 
