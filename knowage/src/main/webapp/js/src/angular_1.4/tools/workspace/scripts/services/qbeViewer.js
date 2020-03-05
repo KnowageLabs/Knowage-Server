@@ -309,7 +309,7 @@ angular
 				if($scope.drivers){
 					drivers = driversExecutionService.prepareDriversForSending($scope.drivers);
 				}
-
+				queryParamObj.PARAMS = $scope.driverableObject.pars;
 				queryDriverObj.DRIVERS = drivers;
 				urlBuilderService.addQueryParams(queryParamObj);
 				urlBuilderService.addQueryParams(queryDriverObj);
