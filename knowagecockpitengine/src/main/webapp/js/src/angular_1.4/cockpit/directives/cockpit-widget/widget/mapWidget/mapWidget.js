@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
-		.service('perLayerFilterService',function($q, sbiModule_restServices) {
+		.service('perLayerFilterService',function($q, cockpitModule_datasetServices) {
 			/*
 			 * Cache data for per-layer filter.
 			 */
@@ -28,10 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 * Return a promise to supply filter values.
 			 */
 			this.getFilterValues = function(ds, col) {
+				var dsId = ds.dsId;
 				var dsName = ds.name;
 				var colName = col.name;
-				var colAlias = col.alias;
-				var colAliasToShow = col.aliasToShow;
 
 				return $q(function(resolve, reject) {
 
@@ -44,21 +43,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						resolve(ret);
 					} else {
 
-						var bodyString = '{aggregations:{"measures":[],"categories":[{"id":"' + colName + '","alias":"' + colAliasToShow + '","columnName":"' + colAlias + '","orderType":"","funct":"NONE"}],"dataset":"' + dsName + '"},parameters:{},selections:{},indexes:[]}';
+						// Remove all cols except the one that we want
+						var newDs = angular.copy(ds);
+						newDs.content
+							.columnSelectedOfDataset = newDs.content
+								.columnSelectedOfDataset
+								.filter(function(elem) {
+									return elem.name == col.name
+								});
 
-						var params = "?";
-
-						params += "nearRealtime=true";
-
-						sbiModule_restServices.restToRootProject();
-						sbiModule_restServices
-							.post("2.0/datasets", encodeURIComponent(dsName) + "/data" + params, bodyString)
+						cockpitModule_datasetServices
+							.loadDatasetRecordsById(dsId, 0, -1, undefined, undefined, newDs, undefined)
 							.then(function(response) {
-
 								var ret = [];
-								var data = response.data;
 
-								var rows = data.rows;
+								var rows = response.rows;
 								for (var i in rows) {
 									var currVal = rows[i];
 									ret.push(currVal["column_1"]);
