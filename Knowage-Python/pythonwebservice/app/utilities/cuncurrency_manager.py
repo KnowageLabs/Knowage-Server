@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from threading import Lock
 
 active_servers = {} #{widget_id : bokeh_server}
