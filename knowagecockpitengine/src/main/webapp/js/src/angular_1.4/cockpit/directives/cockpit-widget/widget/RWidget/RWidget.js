@@ -238,6 +238,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	/**
 	 * register the widget in the cockpitModule_widgetConfigurator factory
 	 */
-	addWidgetFunctionality("R", {'initialDimension': {'width':5, 'height':5}, 'updatable':true, 'clickable':true});
+	addWidgetFunctionality("r", {'initialDimension': {'width':5, 'height':5}, 'updatable':true, 'clickable':true});
 
 })();
