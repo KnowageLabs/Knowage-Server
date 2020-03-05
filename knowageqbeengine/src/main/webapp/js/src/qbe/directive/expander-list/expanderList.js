@@ -103,6 +103,9 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 	  case 'cube':
                 		icon += 'fa-cube';
                 		break;
+                	  case 'calculation':
+                  		icon += 'fa-calculator';
+                  		break;
                 	  case 'dimension':
                   		icon += 'fa-ruler-horizontal';
                   		break;
