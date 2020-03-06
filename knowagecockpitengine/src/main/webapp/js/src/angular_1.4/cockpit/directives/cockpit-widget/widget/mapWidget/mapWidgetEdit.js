@@ -242,6 +242,9 @@ function mapWidgetEditControllerFunction(
 							if(!exists) cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
 							if(!$scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = {};
 							$scope.newModel.content.columnSelectedOfDataset[tempLayer.id.dsId] = columnSelected;
+							// Requested by calculated fields
+							newLayer.content = {}
+							newLayer.content.columnSelectedOfDataset = columnSelected;
 						}
 					}
 
