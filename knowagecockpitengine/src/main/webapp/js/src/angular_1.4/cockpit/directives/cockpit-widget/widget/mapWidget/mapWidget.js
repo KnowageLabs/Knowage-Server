@@ -1180,8 +1180,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.filterLayerBy = function(currLayer) {
 
-			debugger;
-
 			var layerName = currLayer.name;
 			var layer = $scope.getLayerByName(layerName);
 
