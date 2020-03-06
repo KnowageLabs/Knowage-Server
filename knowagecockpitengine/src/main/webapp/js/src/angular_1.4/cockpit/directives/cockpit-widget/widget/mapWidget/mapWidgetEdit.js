@@ -32,8 +32,8 @@ function mapWidgetEditControllerFunction(
 		mdPanelRef,
 		$location,
 		knModule_fontIconsService,
-		$mdToast
-		){
+		$mdToast) {
+
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
@@ -136,6 +136,7 @@ function mapWidgetEditControllerFunction(
   	}
 
   	$scope.hasShownDetails = function(layer){
+
   		layer.hasShownDetails = false;
   		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
   		for(var i in columnsList){
@@ -219,8 +220,12 @@ function mapWidgetEditControllerFunction(
 								"dsId": tempLayer.id.dsId,
 								"alias": tempLayer.name,
 								"name": tempLayer.label,
-								"defaultVisible": true
+								"defaultVisible": true,
+								"dataset": angular.copy(tempLayer)
 							}
+							// Requested by calculated fields
+							newLayer.dataset.dsId = tempLayer.id.dsId;
+
 							for(var i in tempLayer.metadata.fieldsMeta){
 								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
 								columnSelected.push(tempLayer.metadata.fieldsMeta[i]);

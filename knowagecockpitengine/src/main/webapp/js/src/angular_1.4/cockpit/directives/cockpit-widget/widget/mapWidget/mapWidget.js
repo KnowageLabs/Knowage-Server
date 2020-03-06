@@ -251,7 +251,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		/**
 		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 		 */
-		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
+		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName) {
 			for (i = 0; i < columnSelectedOfDataset.length; i++){
 				if (columnSelectedOfDataset[i].name === originalName){
 					return columnSelectedOfDataset[i];
@@ -333,6 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.clearInternalData();
 			}
 
+			$scope.resetFilter();
 			$scope.addAllLayers();
 
 			if (!$scope.map.getSize()){
@@ -588,6 +589,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.values[layerDef.name] = data; //add values to internal object
 			cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
 
+			$scope.getPerLayerFilters(layerDef);
 	    }
 
 
@@ -647,6 +649,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            }
 	    	}
             $scope.map.on('singleclick', function(evt) {
+				$scope.selectedLayer = undefined;
+				$scope.selectedFeature = undefined;
     			$scope.props = {};
     			$scope.clickOnFeature = false;
 
@@ -668,6 +672,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             		$scope.closer.onclick();
             		return;
             	}
+
+				//when a feature is clicked
     	        if ($scope.clickOnFeature && $scope.selectedFeature) {
 	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
 	        		$scope.$apply()
@@ -679,12 +685,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        		$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
     	        	}
 
-	        		$scope.layerConfig.dsId = $scope.selectedLayer.dsId;
-	        		$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
     	            var geometry = $scope.selectedFeature.getGeometry();
     	            var coordinate = evt.coordinate;
     	            overlay.setPosition(coordinate);
     	        }
+
+				//when no feature is clicked, close the details popup
+				if ($scope.selectedFeature == undefined) {
+					$scope.closer.onclick();
+					return;
+				}
+
              });
 
     		$scope.map.on('dblclick', function(evt) {
@@ -731,13 +742,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
     		var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
-    		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
     		for (f in columnsForData){
     			var tmpField = columnsForData[f];
-    			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
+				if (tmpField.fieldType == "SPATIAL_ATTRIBUTE") {
     				geoColumn = tmpField.name;
-    			else if (tmpField.properties.showMap) 	{ //first measure
+				} else if (tmpField.properties
+						&& tmpField.properties.showMap) {
+					//first measure
     				selectedMeasure = tmpField.aliasToShow;
     				if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
     			}
@@ -1070,7 +1083,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.isFilterableCol = function(currCol) {
-			if (currCol.properties.showFilter) {
+			if (currCol.properties
+					&& currCol.properties.showFilter) {
 				return true;
 			}
 			return false;
@@ -1092,30 +1106,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
+
 			return false;
 		}
 
 		$scope.getPerLayerFilters = function(ds) {
-			var ret = [];
 
-			var cols = $scope.ngModel.content.columnSelectedOfDataset;
-			for (var i in cols) {
+			var dsName = ds.name;
 
-				if (i != ds.dsId) {
-					continue;
-				}
+			if (!(dsName in $scope.perLayerFilters)) {
+				var dsId = ds.dsId;
+				var ret = [];
 
-				var currColsList = cols[i];
-				for (var j=0; j < currColsList.length; j++) {
-					var currCol = currColsList[j];
+				var cols = $scope.getColumnSelectedOfDataset(dsId);
+				for (var currColIdx in cols) {
+					var currCol = cols[currColIdx];
 					if ($scope.isFilterableCol(currCol)) {
 						ret.push(currCol);
 					}
 				}
+				$scope.perLayerFilters[dsName] = ret;
 			}
-			return ret;
+
+			return $scope.perLayerFilters[dsName];
 		}
 
+		// Filterable columns
+		$scope.perLayerFilters = {};
 		// Cache filter values
 		$scope.perLayerFiltersValues = {};
 		//Contains selected values by the user
@@ -1125,6 +1142,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.clearSearchFilterValue = function() {
 			$scope.searchFilterValue = "";
+		}
+
+		$scope.resetFilter = function() {
+			$scope.perLayerFilters = {};
+			$scope.perLayerFiltersValues = {};
+			$scope.selectedFilterValues = {};
 		}
 
 		$scope.getPerLayerFiltersValues = function(layer, col) {
@@ -1148,6 +1171,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var layerName = currLayer.name;
 			var layer = $scope.getLayerByName(layerName);
 
+			var filtersOrder = $scope.getPerLayerFilters(currLayer)
+				.map(function(elem) { return elem.name; });
+
 			var filters = layer.filterBy;
 
 			var source = layer.getSource();
@@ -1156,19 +1182,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				var currStyle = null;
 
-				// Filters are in AND-condition
-				//
-				// A feature is visible only when all filters
-				// are respected.
-				for (var i in filters) {
-					var currFilterVal = filters[i];
-					var propVal = feature.get(i).value;
+				// Respect the order set by the user
+				for (var j in filtersOrder) {
+					var currFilterName = filtersOrder[j];
 
-					if (currFilterVal != undefined
-							&& currFilterVal.length > 0
-							&& currFilterVal.indexOf(propVal) == -1) {
-						currStyle = new ol.style.Style({ visibility: 'hidden' });
-						break;
+					if (!(currFilterName in filters)) {
+						continue;
+					}
+
+					// Filters are in AND-condition
+					//
+					// A feature is visible only when all filters
+					// are respected.
+					for (var i in filters) {
+						var currFilterVal = filters[i];
+						var propVal = feature.get(i).value;
+	
+						if (currFilterVal != undefined
+								&& currFilterVal.length > 0
+								&& currFilterVal.indexOf(propVal) == -1) {
+							currStyle = new ol.style.Style({ visibility: 'hidden' });
+							break;
+						}
 					}
 				}
 
@@ -1265,6 +1300,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
+		}
+
+		$scope.dragUtils = { dragObjectType:undefined };
+		$scope.dropCallback = function(event, newIndex, list, item, external, type, currLayer) {
+			$scope.perLayerFilters[currLayer.name] = $scope.perLayerFilters[currLayer.name]
+				.filter(function(elem) {
+					return elem.name != item.name;
+				});
+			$scope.perLayerFilters[currLayer.name].splice(newIndex, 0, item);
+
+			$scope.filterLayerBy(currLayer)
 		}
 
 		// $scope.reinit();
