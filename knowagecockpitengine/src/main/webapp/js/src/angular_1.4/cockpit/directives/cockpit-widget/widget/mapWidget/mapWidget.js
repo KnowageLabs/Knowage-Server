@@ -45,12 +45,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					// Remove all cols except the one that we want
 					var newDs = angular.copy(ds);
-					newDs.content
-						.columnSelectedOfDataset = newDs.content
+					
+					// TODO : to remove after version 7.2.0
+					if (!newDs.content) {
+						newDs.content = {};
+						newDs.content
+							.columnSelectedOfDataset = [];
+						newDs.content
 							.columnSelectedOfDataset
-							.filter(function(elem) {
-								return elem.name == col.name
-							});
+							.push(col);
+					} else {
+						newDs.content
+							.columnSelectedOfDataset = newDs.content
+								.columnSelectedOfDataset
+								.filter(function(elem) {
+									return elem.name == col.name
+								});
+					}
 
 					cockpitModule_datasetServices
 						.loadDatasetRecordsById(dsId, 0, -1, undefined, undefined, newDs, undefined)
