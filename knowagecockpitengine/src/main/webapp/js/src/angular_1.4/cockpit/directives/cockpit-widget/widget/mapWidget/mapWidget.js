@@ -333,6 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.clearInternalData();
 			}
 
+			$scope.resetFilter();
 			$scope.addAllLayers();
 
 			if (!$scope.map.getSize()){
@@ -342,7 +343,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.map.setSize($scope.map.getSize());
 			}
 			$scope.map.renderSync();
-			$scope.resetFilter();
 		}
 
 		$mdSidenav($scope.optionSidenavId, true).then(
@@ -588,7 +588,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.values[layerDef.name] = data; //add values to internal object
 			cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
 
-	    }
+			$scope.getPerLayerFilters(layerDef);
+		}
 
 
 		$scope.getColumnSelectedOfDataset = function(dsId) {
@@ -1122,18 +1123,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getPerLayerFilters = function(ds) {
-			var ret = [];
 
-			var cols = $scope.getColumnSelectedOfDataset(ds.dsId);
-			for (var currColIdx in cols) {
-				var currCol = cols[currColIdx];
-				if ($scope.isFilterableCol(currCol)) {
-					ret.push(currCol);
+			var dsName = ds.name;
+
+			if (!(dsName in $scope.perLayerFilters)) {
+				var dsId = ds.dsId;
+				var ret = [];
+
+				var cols = $scope.getColumnSelectedOfDataset(dsId);
+				for (var currColIdx in cols) {
+					var currCol = cols[currColIdx];
+					if ($scope.isFilterableCol(currCol)) {
+						ret.push(currCol);
+					}
 				}
+				$scope.perLayerFilters[dsName] = ret;
 			}
-			return ret;
+
+			return $scope.perLayerFilters[dsName];
 		}
 
+		// Filterable columns
+		$scope.perLayerFilters = {};
 		// Cache filter values
 		$scope.perLayerFiltersValues = {};
 		// Contains selected values by the user
@@ -1146,6 +1157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.resetFilter = function() {
+			$scope.perLayerFilters = {};
 			$scope.perLayerFiltersValues = {};
 			$scope.selectedFilterValues = {};
 		}
@@ -1168,8 +1180,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.filterLayerBy = function(currLayer) {
 
+			debugger;
+
 			var layerName = currLayer.name;
 			var layer = $scope.getLayerByName(layerName);
+
+			var filtersOrder = $scope.getPerLayerFilters(currLayer)
+				.map(function(elem) { return elem.name; });
 
 			var filters = layer.filterBy;
 
@@ -1179,19 +1196,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				var currStyle = null;
 
-				// Filters are in AND-condition
-				//
-				// A feature is visible only when all filters
-				// are respected.
-				for (var i in filters) {
-					var currFilterVal = filters[i];
-					var propVal = feature.get(i).value;
+				// Respect the order set by the user
+				for (var j in filtersOrder) {
+					var currFilterName = filtersOrder[j];
 
-					if (currFilterVal != undefined
-							&& currFilterVal.length > 0
-							&& currFilterVal.indexOf(propVal) == -1) {
-						currStyle = new ol.style.Style({ visibility: 'hidden' });
-						break;
+					if (!(currFilterName in filters)) {
+						continue;
+					}
+
+					// Filters are in AND-condition
+					//
+					// A feature is visible only when all filters
+					// are respected.
+					for (var i in filters) {
+						var currFilterVal = filters[i];
+						var propVal = feature.get(i).value;
+
+						if (currFilterVal != undefined
+								&& currFilterVal.length > 0
+								&& currFilterVal.indexOf(propVal) == -1) {
+							currStyle = new ol.style.Style({ visibility: 'hidden' });
+							break;
+						}
 					}
 				}
 
@@ -1288,6 +1314,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
+		}
+
+		$scope.dragUtils = { dragObjectType:undefined };
+		$scope.dropCallback = function(event, newIndex, list, item, external, type, currLayer) {
+			$scope.perLayerFilters[currLayer.name] = $scope.perLayerFilters[currLayer.name]
+				.filter(function(elem) {
+					return elem.name != item.name;
+				});
+			$scope.perLayerFilters[currLayer.name].splice(newIndex, 0, item);
+
+			$scope.filterLayerBy(currLayer)
 		}
 
 		// $scope.reinit();
