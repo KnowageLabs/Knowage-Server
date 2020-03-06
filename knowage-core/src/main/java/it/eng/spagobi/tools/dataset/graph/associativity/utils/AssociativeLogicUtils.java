@@ -20,7 +20,12 @@ package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.metamodel.data.DataSet;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -37,7 +42,7 @@ public class AssociativeLogicUtils {
 
 	public static Set<Tuple> getTupleOfValues(FacetField facetField) {
 		Set<Tuple> tuples = new HashSet<>(facetField.getValueCount());
-		for(FacetField.Count distinctValue : facetField.getValues()) {
+		for (FacetField.Count distinctValue : facetField.getValues()) {
 			Tuple tuple = new Tuple(1);
 			tuple.add(distinctValue.getName());
 			tuples.add(tuple);
@@ -101,12 +106,14 @@ public class AssociativeLogicUtils {
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-									 List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
-		return buildConfig(strategy, graph, datasetToAssociations, selections, new ArrayList<SimpleFilter>(), nearRealtimeDatasets, datasetParameters, documents);
+			List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+		return buildConfig(strategy, graph, datasetToAssociations, selections, new ArrayList<SimpleFilter>(), nearRealtimeDatasets, datasetParameters,
+				documents);
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			List<SimpleFilter> selections, List<SimpleFilter> filters, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+			List<SimpleFilter> selections, List<SimpleFilter> filters, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters,
+			Set<String> documents) {
 		Config config = new Config();
 		config.setStrategy(strategy);
 		config.setGraph(graph);

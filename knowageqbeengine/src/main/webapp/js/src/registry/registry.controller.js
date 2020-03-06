@@ -29,13 +29,12 @@
 								$httpProvider.interceptors
 										.push('httpInterceptor');
 
-							} ]).controller('RegistryController', ['registryConfigService', 'registryCRUDService',
+							} ]).controller('RegistryController', ['$scope','registryConfigService', 'registryCRUDService',
 								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_config', '$mdDialog', '$filter', 'orderByFilter','registryPaginationService',
 					RegistryController])
 
-	function RegistryController(registryConfigService, registryCRUDService,
+	function RegistryController($scope,registryConfigService, registryCRUDService,
 			regFilterGetData, sbiModule_messaging, sbiModule_translate, sbiModule_config, $mdDialog, $filter, orderBy, registryPaginationService) {
-		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
 		var registryConfiguration = registryConfigurationService
@@ -44,57 +43,71 @@
 		var sbiMessaging = sbiModule_messaging;
 		var pagination = registryPaginationService;
 		var dateColumns=[];
-		self.sbiTranslate = sbiModule_translate;
-		self.data = [];
-		self.resultsNumber = 0;
-		self.comboColumnOptions = {};
-		self.columns = [];
-		self.columnSizeInfo = [];
-		self.columnFieldTypes = [];
-		self.selectedRow = [];
-		self.formParams = {};
-		self.filters = {};
-		self.page = 1;
-		self.propertyName = '';
-		self.reverse = false;
-		self.dateFormat='MM/dd/yyyy';
+		$scope.sbiTranslate = sbiModule_translate;
+		$scope.data = [];
+		$scope.resultsNumber = 0;
+		$scope.comboColumnOptions = {};
+		$scope.columns = [];
+		$scope.columnSizeInfo = [];
+		$scope.columnFieldTypes = [];
+		$scope.selectedRow = [];
+		$scope.formParams = {};
+		$scope.filters = {};
+		$scope.page = 1;
+		$scope.propertyName = '';
+		$scope.reverse = false;
+		$scope.dateFormat='MM/dd/yyyy';
 
 		// array object to define the registry configuration
-		self.configuration = {
+
+		$scope.configuration = {
 			title: "Registry Document",
 			itemsPerPage: 15,
-			enableButtons: registryConfiguration.configurations[0].value == "true",
+			//enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters,
 			pagination: registryConfiguration.pagination,
 			pivot: false
 		};
 
+		 for(var i = 0 ; i < registryConfiguration.configurations.length;i++){
+			 if(registryConfiguration.configurations[i].name=="enableButtons"){
+				 $scope.configuration.enableButtons = registryConfiguration.configurations[i].value == "true"
+			 } else {
+				 if(registryConfiguration.configurations[i].name=="enableDeleteRecords"){
+					 $scope.configuration.enableDeleteRecords = registryConfiguration.configurations[i].value == "true"
+				 }
+				 if(registryConfiguration.configurations[i].name=="enableAddRecords"){
+					 $scope.configuration.enableAddRecords = registryConfiguration.configurations[i].value == "true"
+				 }
+			 }
+		 }
+
 		//Getting initial data from server
         var loadInitialData = function(){
-        	if(self.configuration.pagination == 'true') {
-        		self.formParams.start = 0;
-        		self.formParams.limit = self.configuration.itemsPerPage;
+        	if($scope.configuration.pagination == 'true') {
+        		$scope.formParams.start = 0;
+        		$scope.formParams.limit = $scope.configuration.itemsPerPage;
         	} else {
-        		self.formParams.start = 0;
+        		$scope.formParams.start = 0;
         	}
-        	readData(self.formParams);
+        	readData($scope.formParams);
         };
 
         var readData = function(formParameters) {
-        	 self.formatNumber= 0;
+        	 $scope.formatNumber= 0;
         	registryCRUD.read(formParameters).then(function(response) {
-	           	 self.data = response.data.rows;
-	           	 if(self.configuration.pagination != 'true'){
-	           	 self.data = orderBy(self.data,self.propertyName,self.reverse);
+	           	 $scope.data = response.data.rows;
+	           	 if($scope.configuration.pagination != 'true'){
+	           	 $scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
 	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
-	           	self.data = dateRowsFilter(dateColumns,response.data.rows);
-	           	 self.resultsNumber = response.data.results;
-	           	self.initalizePagination();
-	           	 if(self.columnSizeInfo.length == 0) {
-	           		self.columnSizeInfo = response.data.metaData.columnsInfos;
-	           		self.columnFieldTypes = response.data.metaData.fields;
-	           		self.columns.length=0
+	           	$scope.data = dateRowsFilter(dateColumns,response.data.rows);
+	           	 $scope.resultsNumber = response.data.results;
+	           	$scope.initalizePagination();
+	           	 if($scope.columnSizeInfo.length == 0) {
+	           		$scope.columnSizeInfo = response.data.metaData.columnsInfos;
+	           		$scope.columnFieldTypes = response.data.metaData.fields;
+	           		$scope.columns.length=0
 	           		addColumnsInfo();
 	           	 }
 
@@ -107,38 +120,38 @@
 		// Filling columns
 		var addColumnsInfo = function() {
 			columnsInfo.forEach(function(column) {
-				self.columnSizeInfo.forEach(function(columnSize) {
+				$scope.columnSizeInfo.forEach(function(columnSize) {
 					if(columnSize.sizeColumn === column.field) {
 						column.size = columnSize.size;
 					}
 				});
 
-				self.columnFieldTypes.forEach(function(columnType) {
+				$scope.columnFieldTypes.forEach(function(columnType) {
 					if(columnType.name === column.field) {
 						column.dataType = columnType.type;
 					}
 				});
 
 				if(column.type && column.type === 'merge') {
-					self.configuration.pivot = true;
+					$scope.configuration.pivot = true;
 				}
 				if(column.visible == true) {
 					column.position = columnsInfo.indexOf(column);
-					self.columns.push(column);
+					$scope.columns.push(column);
 				}
 			});
 		};
 
 		//Sorting Columns
-		self.sortBy = function(propertyName){
-			if(self.configuration.pagination != 'true'){
-			self.reverse = (propertyName !== null && self.propertyName === propertyName) ? !self.reverse : false;
-			self.propertyName = propertyName;
-		 	self.data = orderBy(self.data,self.propertyName,self.reverse);
+		$scope.sortBy = function(propertyName){
+			if($scope.configuration.pagination != 'true'){
+			$scope.reverse = (propertyName !== null && $scope.propertyName === propertyName) ? !$scope.reverse : false;
+			$scope.propertyName = propertyName;
+		 	$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
 			}
 		};
 
-		self.setDataType = function(columnDataType) {
+		$scope.setDataType = function(columnDataType) {
 			switch(columnDataType) {
 			   case 'string':
 				   return 'text';
@@ -158,9 +171,9 @@
 			}
 		};
 
-		self.getDecimalPlaces = function(colName){
+		$scope.getDecimalPlaces = function(colName){
             var decimalPlaces;
-            var floatColumns = $filter('filter')(self.columnFieldTypes, {type: 'float'}, true);
+            var floatColumns = $filter('filter')($scope.columnFieldTypes, {type: 'float'}, true);
             floatColumns.forEach(function(col){
                 if(col.name == colName) {
                     var format = col.format.split(',');
@@ -170,7 +183,7 @@
             });
         };
 
-        self.getStep = function(dataType){
+        $scope.getStep = function(dataType){
             if(dataType == 'float'){
                 return '.01';
             } else if(dataType == 'int') {
@@ -181,7 +194,7 @@
         };
 
 		/* Pivot Table */
-		self.setRowspan = function(rows,rowIndex,columnIndex,columns){
+		$scope.setRowspan = function(rows,rowIndex,columnIndex,columns){
 
             // count columns to be merged
             var rowsToMergeCounter = 0;
@@ -222,7 +235,7 @@
              }
         };
 
-	    self.compareRowsForRowspanPrint = function(rows,rowIndex,columnIndex,columns){
+	    $scope.compareRowsForRowspanPrint = function(rows,rowIndex,columnIndex,columns){
 
 	    	 if( columns[columnIndex].type !== 'merge'){
 	            	return true;
@@ -266,7 +279,7 @@
 	        }
 	    };
 
-	    self.setSummaryRowColor = function(rows,index,columns){
+	    $scope.setSummaryRowColor = function(rows,index,columns){
 			//counter to check is there summaryFunction and type='measure' atributes
 			var counter = 0;
 			var summaryFunctionIndex = 0;
@@ -297,7 +310,7 @@
                 return;
         };
 
-        self.isItSummaryRow = function(rows,indexF,index,columns){
+        $scope.isItSummaryRow = function(rows,indexF,index,columns){
         		var row = rows[indexF];
         		var columnField = columns[index].field;
         		if(index > 0){
@@ -314,39 +327,39 @@
 
 	  //Adding options to combo columns
         var clicked = 0;
-        self.dependentColumns = [];
+        $scope.dependentColumns = [];
 
-        self.addColumnOptions = function(column, row, $mdOpenMenu) {
+        $scope.addColumnOptions = function(column, row, $mdOpenMenu) {
             $mdOpenMenu();
             row.selected = true;
 
             //regular independent combo columns
-            if(column.editor === 'COMBO' && !self.isDependentColumn(column)) {
-            	if(!self.comboColumnOptions[column.field]) {
-            		self.comboColumnOptions[column.field] = {};
+            if(column.editor === 'COMBO' && !$scope.isDependentColumn(column)) {
+            	if(!$scope.comboColumnOptions[column.field]) {
+            		$scope.comboColumnOptions[column.field] = {};
             		var promise = regFilterGetData.getData(column.field);
                     promise.then(function(response) {
-                        self.comboColumnOptions[column.field] = response;
+                        $scope.comboColumnOptions[column.field] = response;
                     });
                     return promise;
             	}
             }
 
             //dependent combo columns
-            if(column.editor === 'COMBO' && self.isDependentColumn(column)) {
-            	if(!self.comboColumnOptions[column.field]) {
-            		self.comboColumnOptions[column.field] = {};
+            if(column.editor === 'COMBO' && $scope.isDependentColumn(column)) {
+            	if(!$scope.comboColumnOptions[column.field]) {
+            		$scope.comboColumnOptions[column.field] = {};
 
             		var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
                 	dependencesPromise.then(function(response) {
-                		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
+                		$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                 	});
                 	return dependencesPromise;
             	} else {
-            		if(!self.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
+            		if(!$scope.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
             			var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
                     	dependencesPromise.then(function(response) {
-                    		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
+                    		$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
                     	});
                     	return dependencesPromise;
             		}
@@ -354,45 +367,45 @@
             }
         };
 
-        self.stopShow = false;
+        $scope.stopShow = false;
 
-        self.notifyAboutDependency = function(column, event) {
+        $scope.notifyAboutDependency = function(column, event) {
         	clicked++;
         	if(clicked == 1) {
         		fillDependencyColumns(column);
-        		createDialog(self.dependentColumns);
+        		createDialog($scope.dependentColumns);
         	}
 
-        	if(self.dependentColumns.length != 0 && !self.stopShow) {
+        	if($scope.dependentColumns.length != 0 && !$scope.stopShow) {
 
-        		$mdDialog.show(self.confirm)
+        		$mdDialog.show($scope.confirm)
         				.then(function(result){
-						 self.stopShow = result;
+						 $scope.stopShow = result;
 					 }, function(result){
-						 self.stopShow = result;
+						 $scope.stopShow = result;
 					 });
         	}
         };
 
         var fillDependencyColumns = function(column) {
-        	for(var i = 0; i < self.columns.length; i++) {
-        		var col = self.columns[i];
+        	for(var i = 0; i < $scope.columns.length; i++) {
+        		var col = $scope.columns[i];
         		if(col.dependsFrom === column.field) {
         			var dependent = col.title;
-        			self.dependentColumns.push(dependent);
+        			$scope.dependentColumns.push(dependent);
         		}
         	}
         };
 
         var createDialog = function(dependentColumns) {
-        	self.confirm = $mdDialog.prompt(
+        	$scope.confirm = $mdDialog.prompt(
         			{
     					controller: DialogController,
     					parent: angular.element(document.body),
     					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
     					locals: {
-    						dontShowAgain: self.stopShow,
-    						columns: self.dependentColumns
+    						dontShowAgain: $scope.stopShow,
+    						columns: $scope.dependentColumns
     					},
     					targetEvent: event,
     				    clickOutsideToClose: false,
@@ -414,7 +427,7 @@
 
         };
 
-        self.isDependentColumn = function(column) {
+        $scope.isDependentColumn = function(column) {
         	if(column.hasOwnProperty('dependsFrom')) {
         		return true;
         	} else {
@@ -423,14 +436,14 @@
         };
 
 		//Filters handling
-		self.addFilterOptions = function(filterField){
+		$scope.addFilterOptions = function(filterField){
 			var promise = regFilterGetData.getData(filterField);
 			promise.then(function(response) {
 				addOptions(filterField,response);
 			});
 		};
 
-		self.checkIfFilterColumnExists = function(){
+		$scope.checkIfFilterColumnExists = function(){
 			var filters = [];
 			for (var i = 0; i < registryConfiguration.filters.length; i++) {
 				var filter = registryConfiguration.filters[i];
@@ -450,55 +463,56 @@
 		};
 
 
-		self.getFilteredData = function(params) {
-        	self.formParams = Object.assign({}, params);
-        	if(self.configuration.pagination == 'true') {
-        		self.formParams.start = 0;
-        		self.formParams.limit = self.configuration.itemsPerPage;
-            	self.page = 1;
+		$scope.getFilteredData = function(params) {
+        	$scope.formParams = Object.assign({}, params);
+        	if($scope.configuration.pagination == 'true') {
+        		$scope.formParams.start = 0;
+        		$scope.formParams.limit = $scope.configuration.itemsPerPage;
+            	$scope.page = 1;
         	} else {
-        		self.formParams.start = 0;
+        		$scope.formParams.start = 0;
         	}
-     	   	readData(self.formParams);
+     	   	readData($scope.formParams);
         };
 
-        self.deleteFilterValues = function(){
-			self.filters = {};
-			self.formParams = {};
-			self.page = 1;
-			for(var i = 0 ; i<(self.configuration.filters).length; i++){
-            	self.configuration.filters[i].value = null;
+        $scope.deleteFilterValues = function(){
+			$scope.filters = {};
+			$scope.formParams = {};
+			$scope.page = 1;
+			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
+            	$scope.configuration.filters[i].value = null;
 			}
-			loadInitialData(self.formParams);
+			loadInitialData($scope.formParams);
 		};
 
 		// Update
-		self.setSelected = function(selectedRow) {
+		$scope.setSelected = function(selectedRow) {
 
-			if((self.selectedRow).indexOf(selectedRow) === -1){
-				self.selectedRow.push(selectedRow);
+			if(($scope.selectedRow).indexOf(selectedRow) === -1){
+				$scope.selectedRow.push(selectedRow);
 			}
 
 		};
 
-        self.updateRow = function() {
-			for (var i = 0; i < self.selectedRow.length; i++) {
-				for(var property in self.selectedRow[i]) {
-	        		if(!self.selectedRow[i].id && self.selectedRow[i][property] && typeof self.selectedRow[i][property].getMonth === 'function') {
-	        			self.selectedRow[i][property].setTime(self.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
+        $scope.updateRow = function() {
+			for (var i = 0; i < $scope.selectedRow.length; i++) {
+				for(var property in $scope.selectedRow[i]) {
+	        		if(!$scope.selectedRow[i].id && $scope.selectedRow[i][property] && typeof $scope.selectedRow[i][property].getMonth === 'function') {
+	        			$scope.selectedRow[i][property].setTime($scope.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
 	    	        }
 	        	}
-				registryCRUD.update(self.selectedRow[i]).then(function(response) {});
-				if (i == (self.selectedRow.length - 1)) {
-					sbiMessaging.showInfoMessage( self.sbiTranslate.load("kn.registry.registryDocument.update.success")
-							+' '+ (i + 1) + ' ' + self.sbiTranslate.load("kn.registry.registryDocument.row"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
-				}
+				registryCRUD.update($scope.selectedRow[i]).then(function(response) {
+					sbiMessaging.showInfoMessage( $scope.sbiTranslate.load("kn.registry.registryDocument.update.success")
+							+' '+ (response.data.ids.length) + ' ' + $scope.sbiTranslate.load("kn.registry.registryDocument.row"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
+					$scope.selectedRow = [];
+				});
+
 			}
-			self.selectedRow = [];
+
 		};
 
 		// Delete
-		self.deleteRowFromDB = function(row, event) {
+		$scope.deleteRowFromDB = function(row, event) {
 			if(row.id) {
 				var confirm = $mdDialog.confirm()
 	            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
@@ -509,92 +523,92 @@
 
 				$mdDialog.show(confirm).then(function() {
 						registryCRUD.delete(row).then(function(response) {
-							sbiMessaging.showInfoMessage(self.sbiTranslate.load("kn.registry.registryDocument.delete.success"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
-							self.deleteRow(row.$$hashKey);
+							sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
+							$scope.deleteRow(row.$$hashKey);
 						});
 					});
 			} else {
-				self.deleteRow(row.$$hashKey);
+				$scope.deleteRow(row.$$hashKey);
 			}
 
 		};
 
-		self.isArray = angular.isArray;
+		$scope.isArray = angular.isArray;
 
-		self.deleteRow = function(hash) {
-			angular.forEach(self.data, function(value, key) {
+		$scope.deleteRow = function(hash) {
+			angular.forEach($scope.data, function(value, key) {
 				if (value.$$hashKey == hash) {
-					self.data.splice(key, 1);
+					$scope.data.splice(key, 1);
 					return;
 				}
 			});
 		};
 
-		self.addRow = function() {
-			var tmpRow = angular.copy(self.data[0], {});
+		$scope.addRow = function() {
+			var tmpRow = angular.copy($scope.data[0], {});
 			for ( var i in tmpRow) {
 				tmpRow[i] = "";
 			};
-			self.data.unshift(tmpRow);
+			$scope.data.unshift(tmpRow);
 		};
 
 		// reordering columns function
-		self.move = function(position, direction) {
+		$scope.move = function(position, direction) {
 			var prev, cur, next;
 			if (direction == 'left') {
-				angular.forEach(self.columns, function(value, key) {
+				angular.forEach($scope.columns, function(value, key) {
 					if (value.position == (position - 1))
 						prev = key;
 					if (value.position == (position))
 						cur = key;
 				})
-				self.columns[cur].position--;
-				self.columns[prev].position++;
+				$scope.columns[cur].position--;
+				$scope.columns[prev].position++;
 			} else {
-				angular.forEach(self.columns, function(value, key) {
+				angular.forEach($scope.columns, function(value, key) {
 					if (value.position == (position + 1))
 						next = key;
 					if (value.position == (position))
 						cur = key;
 				})
-				self.columns[cur].position++;
-				self.columns[next].position--;
+				$scope.columns[cur].position++;
+				$scope.columns[next].position--;
 			}
 
 		}
 
-		self.addToFilters = function(filter) {
-			self.filters[filter.field] = filter.value;
+		$scope.addToFilters = function(filter) {
+			$scope.filters[filter.field] = filter.value;
 		}
 
 		//Pagination
-		self.initalizePagination=function(){
+		$scope.initalizePagination=function(){
 
-			self.getTotalPages = pagination.getTotalPages(self.resultsNumber,self.configuration.itemsPerPage);
-			self.hasNext = pagination.hasNext(self.page,self.configuration.itemsPerPage,self.resultsNumber);
-			self.hasPrevious = pagination.hasPrevious(self.page);
-			self.min = pagination.min(self.resultsNumber,self.page,self.configuration.itemsPerPage);
-			self.max = pagination.max(self.page,self.configuration.itemsPerPage,self.resultsNumber);
-			self.next = function() {
-				 self.page++;
-				 self.formParams = pagination.next(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
-				 readData(self.formParams);
+			$scope.getTotalPages = pagination.getTotalPages($scope.resultsNumber,$scope.configuration.itemsPerPage);
+			$scope.hasNext = pagination.hasNext($scope.page,$scope.configuration.itemsPerPage,$scope.resultsNumber);
+			$scope.hasPrevious = pagination.hasPrevious($scope.page);
+			$scope.min = pagination.min($scope.resultsNumber,$scope.page,$scope.configuration.itemsPerPage);
+			$scope.max = pagination.max($scope.page,$scope.configuration.itemsPerPage,$scope.resultsNumber);
+			$scope.next = function() {
+				 $scope.page++;
+				 $scope.formParams = pagination.next($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				 readData($scope.formParams);
 			};
-			self.previous = function() {
-				 self.page--;
-				 self.formParams = pagination.previous(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
-				 readData(self.formParams);
+			$scope.previous = function() {
+				 $scope.page--;
+				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				 readData($scope.formParams);
 			};
-			self.goToPage = function() {
-				self.formParams = pagination.goToPage(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
-				 readData(self.formParams);
+			$scope.goToPage = function() {
+				$scope.formParams = pagination.goToPage($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				 readData($scope.formParams);
 			}
 		};
 
 
-        self.checkIfSelected = function(row) {
+        $scope.checkIfSelected = function(row) {
 
-        	if((self.selectedRow).indexOf(row) !== -1 ){
+        	if(($scope.selectedRow).indexOf(row) !== -1 ){
         		return 'blue';
         	}
         }
@@ -618,6 +632,20 @@
         	}
         	return rows;
         }
+
+    	$scope.$watch('data',function(newValue,oldValue){
+			if (newValue.length==oldValue.length){
+				for(var i = 0 ; i <newValue.length ; i++){
+					for (var attrname in newValue[i]) {
+						if(oldValue[i][attrname]!=undefined){
+							if((newValue[i][attrname] instanceof Date && newValue[i][attrname].getTime()!=oldValue[i][attrname].getTime()) || (!(newValue[i][attrname] instanceof Date) && newValue[i][attrname]!=oldValue[i][attrname])){
+								$scope.setSelected(newValue[i])
+							}
+						}
+					}
+				}
+			}
+  		}, true);
 
 	}
 })();

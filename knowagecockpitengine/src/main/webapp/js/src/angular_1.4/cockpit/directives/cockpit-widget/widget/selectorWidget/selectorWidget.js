@@ -194,10 +194,6 @@ angular.module('cockpitModule')
 
 		}
 
-//		$scope.showUnlockButton = function(item){
-//			if($scope.isDisabled(item))	$scope.showUnlock = true;
-//		}
-
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();
@@ -242,14 +238,14 @@ angular.module('cockpitModule')
 					$scope.showSelection = true;
 					$scope.waitingForSelection = false;
 					$scope.tempSelectedValues = angular.copy($scope.selectedValues);
-					if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
+					if($scope.selectedValues && $scope.selectedValues.length > 0 && !$scope.ngModel.settings.enableAll) $scope.showUnlock = true;
 					if($scope.savedParameters && $scope.savedParameters.length > 0){
 						$scope.selectedValues = angular.copy($scope.savedParameters);
 						$scope.tempSelectedValues = angular.copy($scope.savedParameters);
 						$scope.showUnlock = false;
 						$scope.showInfoBar = true;
 					}
-					if($scope.datasetRecords.rows){
+					if($scope.datasetRecords.rows && $scope.ngModel.settings.modalityValue != 'singleValue'){
 						$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
 							if($scope.isSelected(item.column_1)) return 1;
 							if(!$scope.isDisabled(item.column_1)) return 2;
@@ -276,7 +272,7 @@ angular.module('cockpitModule')
 				}, 0);
 
 				$scope.tempSelectedValues = $scope.selectedValues ? angular.copy($scope.selectedValues) : [];
-				if($scope.selectedValues && $scope.selectedValues.length > 0) $scope.showUnlock = true;
+				if($scope.selectedValues && $scope.selectedValues.length > 0 && !$scope.ngModel.settings.enableAll) $scope.showUnlock = true;
 				if($scope.savedParameters && $scope.savedParameters.length > 0){
 					$scope.selectedValues = angular.copy($scope.savedParameters);
 					$scope.tempSelectedValues = angular.copy($scope.savedParameters);
@@ -348,7 +344,7 @@ angular.module('cockpitModule')
 				if ($scope.ngModel.settings.enableAll) {
 					return false;
 				}
-				return selectables && selectables.indexOf(p.name) == -1;
+				return selectables && selectables.indexOf(p.name) == -1 && activeSelections.indexOf(p) == -1;
 			}
 
 			scope.checkActiveSelections = function() {

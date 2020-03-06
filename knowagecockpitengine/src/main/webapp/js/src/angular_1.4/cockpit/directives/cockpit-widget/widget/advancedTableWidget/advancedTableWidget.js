@@ -268,7 +268,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
 						if (typeof params.value != "undefined" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-							if(params.colDef.ranges[k]['background-color']) params.eParentOfValue.style.backgroundColor = params.colDef.ranges[k]['background-color'];
+							if(params.colDef.ranges[k]['background-color']) {
+								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
+									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
+										return 'background-color:'+params.colDef.ranges[k]['background-color']+';';
+									})
+								}else params.eParentOfValue.style.backgroundColor = params.colDef.ranges[k]['background-color'];
+							}
 							if(params.colDef.ranges[k]['color']) params.eParentOfValue.style.color = params.colDef.ranges[k]['color'];
 							if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>';
 							else tempValue += '<i class="'+params.colDef.ranges[k].icon+'"></i>';

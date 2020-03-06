@@ -143,26 +143,47 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				result.clearValues(group);
 
 				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
-
-				logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
-				group.addValues(distinctValues);
-				result.addValues(group, distinctValues);
-
-				logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
-				Set<String> children = result.getEdgeGroupToDataset().get(group);
-
-				for (String child : children) {
-					if (!documentsAndExcludedDatasets.contains(child)) {
-						IAssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-						List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
-						childContainer.update(group, columns, distinctValues);
+				if (!distinctValues.isEmpty()) {
+					if (columnNames != null && !columnNames.isEmpty()) {
+						for (String column : columnNames) {
+							logger.debug("Columns involved: " + column);
+						}
 					}
-				}
-				totalChildren.addAll(children);
+					boolean exitNull = false;
+					Iterator<Tuple> ite = distinctValues.iterator();
+					while (ite.hasNext()) {
+						Tuple tup = ite.next();
+						if (tup != null && tup.getValues() != null) {
+							for (int i = 0; i < tup.getValues().size(); i++) {
+								if (tup.get(i) == null) {
+									exitNull = true;
+								}
+							}
 
-				logger.debug("e. Setting all the children dataset as processed");
-				logger.debug("f. Declaring the dataset as resolved");
-				resolveDatasets(children);
+						}
+					}
+					if (exitNull)
+						continue;
+					logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
+					group.addValues(distinctValues);
+					result.addValues(group, distinctValues);
+
+					logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
+					Set<String> children = result.getEdgeGroupToDataset().get(group);
+
+					for (String child : children) {
+						if (!documentsAndExcludedDatasets.contains(child)) {
+							IAssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
+							List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
+							childContainer.update(group, columns, distinctValues);
+						}
+					}
+					totalChildren.addAll(children);
+
+					logger.debug("e. Setting all the children dataset as processed");
+					logger.debug("f. Declaring the dataset as resolved");
+					resolveDatasets(children);
+				}
 			}
 
 			logger.debug("f. Declaring the associative group as resolved");
@@ -195,29 +216,31 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 						if (!ParametersUtilities.isParameter(columnNames.get(0))) {
 							Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
-							if (columnNames != null && !columnNames.isEmpty()) {
-								for (String column : columnNames) {
-									logger.debug("Columns involved: " + column);
-								}
-							}
-							boolean exitNull = false;
-							Iterator<Tuple> ite = distinctValues.iterator();
-							while (ite.hasNext()) {
-								Tuple tup = ite.next();
-								if (tup != null && tup.getValues() != null) {
-									for (int i = 0; i < tup.getValues().size(); i++) {
-										if (tup.get(i) == null) {
-											exitNull = true;
-										}
+							if (!distinctValues.isEmpty()) {
+								if (columnNames != null && !columnNames.isEmpty()) {
+									for (String column : columnNames) {
+										logger.debug("Columns involved: " + column);
 									}
-
 								}
+								boolean exitNull = false;
+								Iterator<Tuple> ite = distinctValues.iterator();
+								while (ite.hasNext()) {
+									Tuple tup = ite.next();
+									if (tup != null && tup.getValues() != null) {
+										for (int i = 0; i < tup.getValues().size(); i++) {
+											if (tup.get(i) == null) {
+												exitNull = true;
+											}
+										}
+
+									}
+								}
+								if (exitNull)
+									continue;
+								logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
+								group.addValues(distinctValues);
+								result.addValues(group, distinctValues);
 							}
-							if (exitNull)
-								continue;
-							logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
-							group.addValues(distinctValues);
-							result.addValues(group, distinctValues);
 						}
 					}
 				}
