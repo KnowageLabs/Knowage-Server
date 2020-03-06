@@ -128,11 +128,13 @@ angular.module('chartInitializer')
 
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
-			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
-				var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
-				if(orderType=='asc') sortAsc(chartConf.series);
-				else sortDesc(chartConf.series);
-			}
+			if(renderObj.chartTemplate.groupSeriesCateg && 
+				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby]!=undefined && 
+				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
+					var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
+					if(orderType=='asc') sortAsc(chartConf.series);
+					else sortDesc(chartConf.series);
+				}
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
@@ -884,9 +886,12 @@ angular.module('chartInitializer')
 	this.playSonify = function () {
 		chartSonifyService.playSonify()
 	};
-	this.pauseSonify = function () {		chartSonifyService.pauseSonify();
+
+	this.pauseSonify = function () {
+		chartSonifyService.pauseSonify();
 	};
-	this.rewindSonify = function () {		chartSonifyService.rewindSonify();
+	this.rewindSonify = function () {
+		chartSonifyService.rewindSonify();
 	};*/
 
 }])
