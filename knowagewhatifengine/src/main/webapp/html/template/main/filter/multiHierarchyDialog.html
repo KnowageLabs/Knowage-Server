@@ -1,25 +1,20 @@
-<md-dialog class="multi-hier-dialog" layout="column">
+<md-dialog class="multi-hier-dialog">
 	
-	<md-toolbar class="knowage-blue toolbar">
-      <div>
+	<md-toolbar class="primaryToolbar">
+      <div class="md-toolbar-tools">
       		{{member.caption}}
-      	<span flex></span>
-        <md-button class="md-icon-button x-btn" ng-click="closeDialog(ev)">
-          <md-icon class="fa fa-times icon-color-white" aria-label="Close dialog"></md-icon>
-        </md-button>
       </div>
     </md-toolbar>
     
-    <md-dialog-content class="content">
-    	<span>
-    	The selected hierarchy is <b>{{member.hierarchies[member.selectedHierarchyPosition].caption}}</b>.
-    	You can change it acting on the form below.
-    	</span>
-    	<br/>
-    	<label>Available hierarchies:</label>
-    	<md-input-container class="mh-input">    		
+    <md-dialog-content layout-padding style="width:100%;height:100%">
+    	<p>
+    		The selected hierarchy is <b>{{member.hierarchies[member.selectedHierarchyPosition].caption}}</b>.
+    		You can change it acting on the form below.
+    	</p>
+    	<h4 class="noMargin">Available hierarchies:</h4>
+    	<md-input-container>    		
     		<select ng-model="selecetedMultiHierUN" class="multi-hier-combo">
-    			<option  ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}">
+    			<option ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}">
     				<span>{{hier.caption}}</span>
     			</option>
     		</select>
@@ -27,10 +22,10 @@
     </md-dialog-content>
     
     <md-dialog-actions layout="row">
-    	<md-button ng-click="closeDialog(ev)" class="action-btn">
+    	<md-button ng-click="closeDialog(ev)" class="md-raised">
 			Cancel
 		</md-button>
-		<md-button ng-click="updateHierarchie(ev)" class="action-btn">
+		<md-button ng-click="updateHierarchie(ev)" class="md-raised md-primary">
 			Save
 		</md-button>
     </md-dialog-actions>

@@ -1,13 +1,20 @@
-
 <div class="filter-panel" layout="row" flex>
 	<div class="new-filter-card" 
 			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters:index" 
 			ng-drag="true" ng-drag-data="filter" 
 			ng-drag-success="dragSuccess('filter',$index)"
 			id="filter-{{filter.name}}"
+			layout="row"
 			>
 			
-		<div layout="row" class="top">
+			<md-button ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" ng-show="filter.hierarchies.length > 1">
+				<md-icon class="fa fa-sitemap" ></md-icon>
+			</md-button>
+			<span>{{filter.caption}}</span>
+			<md-button class="md-icon-button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
+				<md-icon md-font-icon="fa fa-filter"></md-icon>
+			</md-button>
+		<!-- div layout="row" class="top">
 			<div class="button-area" >
 				<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" ng-show="filter.hierarchies.length > 1">
 					<md-icon class="fa fa-sitemap icon-color-white" ></md-icon>
@@ -26,6 +33,6 @@
 					<md-icon md-font-icon="fa fa-filter"></md-icon>
 				</md-button>
 			</div>
-		</div>
+		</div-->
 	</div>
 </div>
