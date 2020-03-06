@@ -150,7 +150,6 @@ function mapWidgetEditControllerFunction(
 
 	$scope.setModalColumn = function(column, layer){
 		var columnsList = layer.content.columnSelectedOfDataset;
-		debugger;
 		layer.modalSelectionColumn = (column.properties.modal) ? column.alias : undefined;
 
 		for(var i in columnsList){
