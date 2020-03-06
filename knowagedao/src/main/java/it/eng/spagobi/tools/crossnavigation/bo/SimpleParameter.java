@@ -44,6 +44,11 @@ public class SimpleParameter implements Serializable {
 		this.type = type;
 	}
 
+	public SimpleParameter(Integer id, String name, Integer type, String parType) {
+		this(id, name, type);
+		this.parType = parType;
+	}
+
 	/**
 	 * @return the name
 	 */
@@ -52,8 +57,7 @@ public class SimpleParameter implements Serializable {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -67,8 +71,7 @@ public class SimpleParameter implements Serializable {
 	}
 
 	/**
-	 * @param type
-	 *            the type to set
+	 * @param type the type to set
 	 */
 	public void setType(Integer type) {
 		this.type = type;
@@ -82,8 +85,7 @@ public class SimpleParameter implements Serializable {
 	}
 
 	/**
-	 * @param links
-	 *            the links to set
+	 * @param links the links to set
 	 */
 	public void setLinks(List<SimpleParameter> links) {
 		this.links = links;
@@ -97,8 +99,7 @@ public class SimpleParameter implements Serializable {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -112,8 +113,7 @@ public class SimpleParameter implements Serializable {
 	}
 
 	/**
-	 * @param fixedValue
-	 *            the fixedValue to set
+	 * @param fixedValue the fixedValue to set
 	 */
 	public void setFixedValue(String fixedValue) {
 		this.fixedValue = fixedValue;

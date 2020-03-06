@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import java.util.List;
+
+import org.hibernate.Session;
+import org.json.JSONArray;
+
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -24,11 +29,6 @@ import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
-
-import java.util.List;
-
-import org.hibernate.Session;
-import org.json.JSONArray;
 
 public interface ICrossNavigationDAO extends ISpagoBIDao {
 
@@ -49,7 +49,11 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
 			Session session);
 
+	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId);
+
 	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session);
+
+	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId);
 
 	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session);
 
@@ -60,5 +64,9 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 	public void deleteByDocument(BIObject document, Session session);
 
 	public SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session);
+
+	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId);
+
+	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId, Session session);
 
 }

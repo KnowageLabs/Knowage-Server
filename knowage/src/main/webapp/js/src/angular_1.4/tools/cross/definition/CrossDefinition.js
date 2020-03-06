@@ -293,8 +293,8 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 							var toType = ctr.detail.toPars[ctr.selectedItem].parType;
 							var toName = ctr.detail.toPars[ctr.selectedItem].name;
 
-							if(fromType && toType && fromType == 'NUM' && toType == 'STRING'){
-								sbiModule_messaging.showErrorMessage(fromName +' '+ sbiModule_translate.load("sbi.crossnavigation.crossparameters.typeProblem") + ' ' +toName);
+							if (fromType && toType && fromType != toType) {
+								sbiModule_messaging.showErrorMessage(fromName +' '+ sbiModule_translate.load("sbi.crossnavigation.crossparameters.typeProblem") + ' ' +toName, "Incompatible types");
 							}
 							else{
 								ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];
@@ -333,7 +333,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			};
 
 			ctr.unselectAll = function(){
-				ctr.selectedItem = '';
+				ctr.selectedItem = -1;
 			};
 
 			ctr.removeLink = function(id){

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
@@ -217,6 +218,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						case TYPE_INPUT:
 							SbiObjPar inputParameter = (SbiObjPar) session.get(SbiObjPar.class, cnp.getFromKeyId());
 							fromSp.setName(inputParameter.getLabel());
+							fromSp.setParType(inputParameter.getSbiParameter().getParameterTypeCode());
 							if (fromDoc == null) {
 								fromDoc = inputParameter.getSbiObject();
 							}
@@ -224,6 +226,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						case TYPE_OUTPUT:
 							SbiOutputParameter outputParameter = (SbiOutputParameter) session.get(SbiOutputParameter.class, cnp.getFromKeyId());
 							fromSp.setName(outputParameter.getLabel());
+							fromSp.setParType(outputParameter.getParameterType().getValueCd());
 							if (fromDoc == null) {
 								fromDoc = outputParameter.getSbiObject();
 							}
@@ -243,19 +246,22 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						for (Object o : fromDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
 							// nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
-							checkAndAddToList(nd.getFromPars(), new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+							checkAndAddToList(nd.getFromPars(),
+									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
 						List outputParameterList = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", fromDoc.getBiobjId()))
 								.list();
 						for (Object object : outputParameterList) {
 							SbiOutputParameter outPar = (SbiOutputParameter) object;
 							// nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
-							checkAndAddToList(nd.getFromPars(), new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
+							checkAndAddToList(nd.getFromPars(),
+									new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT, outPar.getParameterType().getValueCd()));
 						}
 						for (Object o : toDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
 							// nd.getToPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
-							checkAndAddToList(nd.getToPars(), new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+							checkAndAddToList(nd.getToPars(),
+									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
 
 						int i = nd.getToPars().indexOf(toSp);
@@ -500,18 +506,54 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	}
 
 	@Override
+	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId) {
+		return listNavigationsByInputParameters(paramId, getSession());
+	}
+
+	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session) {
 		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
-		return session.createCriteria(SbiCrossNavigationPar.class).add(
+		Session aSession = session;
+		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
 				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 1))))
 				.list();
 
 	}
 
 	@Override
+	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId) {
+		return listNavigationsByAnalyticalDriverID(analyticalDriverId, getSession());
+	}
+
+	@Override
+	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId, Session session) {
+		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
+		Session aSession = session;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(" select t1");
+		sb.append(" from SbiCrossNavigation t, SbiCrossNavigationPar t1, SbiObjPar t2");
+		sb.append(" where t.id=t1.sbiCrossNavigation.id");
+		sb.append(" and t1.toKey=t2.objParId");
+		sb.append(" and t2.sbiParameter.parId=" + analyticalDriverId);
+
+		Query hibQuery = session.createQuery(sb.toString());
+		List hibList = hibQuery.list();
+
+		return hibList;
+
+	}
+
+	@Override
+	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId) {
+		return listNavigationsByOutputParameters(paramId, getSession());
+	}
+
+	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session) {
 		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
-		return session.createCriteria(SbiCrossNavigationPar.class).add(
+		Session aSession = session;
+		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
 				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 0))))
 				.list();
 
