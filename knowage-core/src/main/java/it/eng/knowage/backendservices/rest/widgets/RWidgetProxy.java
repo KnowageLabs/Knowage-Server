@@ -23,16 +23,21 @@ import java.util.HashMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /*
  Answers on: https://localhost:8080/knowage/restful-services/2.0/backendservices/widgets/RWidget
@@ -43,66 +48,57 @@ public class RWidgetProxy {
 	static protected Logger logger = Logger.getLogger(RWidgetProxy.class);
 
 	@POST
-	@Path("/view/img")
+	@Path("/view/{output_type}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String view(HashMap<String, String> requestBody) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response view(@PathParam("output_type") String outputType, HashMap<String, String> requestBody) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
-		String documentId = requestBody.get("document_id");
-		String script = requestBody.get("script");
-		String outputVariable = requestBody.get("output_variable");
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
-		Content content;
+		String script, documentId = null, outputVariable;
 		try {
-			content = supplier.readTemplate(userId, documentId, null);
+			documentId = requestBody.get("document_id");
+			outputVariable = requestBody.get("output_variable");
+			script = getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent());
 		} catch (Exception e) {
-			logger.error("error while retrieving template for userId [" + userId + "] and documentId [" + documentId + "]");
-			return null;
-		} finally {
-			logger.debug("OUT");
+			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-		String rCode = getRCodeFromTemplate(content.getContent());
 		try {
 			String toReturn = new JSONObject().put("result", "<div> ciao </div>").toString();
-			return toReturn;
+			return Response.ok(toReturn).build();
 		} catch (Exception e) {
-			logger.error("error while creating response json");
-			return "";
+			logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-
 	}
 
 	@POST
-	@Path("/edit/img")
+	@Path("/edit/{output_type}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String edit(HashMap<String, String> requestBody) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	public Response edit(@PathParam("output_type") String outputType, HashMap<String, String> requestBody) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
-		String documentId = requestBody.get("document_id");
-		String script = requestBody.get("script");
-		String outputVariable = requestBody.get("output_variable");
-		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
-		Content content;
-		System.out.println(requestBody);
+		String script, documentId = null, outputVariable;
 		try {
-			content = supplier.readTemplate(userId, documentId, null);
+			documentId = requestBody.get("document_id");
+			outputVariable = requestBody.get("output_variable");
+			script = requestBody.get("script");
 		} catch (Exception e) {
-			logger.error("error while retrieving template for userId [" + userId + "] and documentId [" + documentId + "]");
-			return null;
-		} finally {
-			logger.debug("OUT");
+			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-		String rCode = getRCodeFromTemplate(content.getContent());
 		try {
 			String toReturn = new JSONObject().put("result", "<div> ciao </div>").toString();
-			return toReturn;
+			return Response.ok(toReturn).build();
 		} catch (Exception e) {
-			logger.error("error while creating response json");
-			return "";
+			logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-
 	}
 
 	private String getRCodeFromTemplate(String base64template) {
