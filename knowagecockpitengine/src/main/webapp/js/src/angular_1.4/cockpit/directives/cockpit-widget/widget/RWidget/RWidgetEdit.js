@@ -42,17 +42,12 @@ function RWidgetEditControllerFunction(
 	$scope.formattedAnalyticalDrivers = [];
 
 	$scope.setLibraries = function () {
-		$http({
-	        url: "https://" + $scope.newModel.knowageAddress + "widgets/Rwidget/libraries",
-	        method: "GET",
-	        headers: {'Content-Type': 'application/json',
-	        		  'Authorization': $scope.encodedUserId}
-	    })
-	    .then(function(response) { //success
-	            $scope.newModel.libraries = response.data;
-	    },
-	    function(response) { //failed
-	    });
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', '')
+		.then(function(response){
+			$scope.newModel.libraries = response.data;
+		}, function(error){
+		});
   	}
 
 	sbiModule_restServices.restToRootProject();

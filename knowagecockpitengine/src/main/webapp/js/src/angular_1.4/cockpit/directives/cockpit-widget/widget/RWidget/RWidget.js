@@ -153,51 +153,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendDataEditMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-		    $http({
-		        url: "https://" + $scope.ngModel.knowageAddress + "widgets/Rwidget/edit/" + $scope.ngModel.ROutputType,
-		        method: "POST",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
-
-		        data: { 'dataset': $scope.dataset_label,
-		        		'script' : $scope.ngModel.RCode,
-		        		'output_variable' : $scope.ngModel.ROutput,
-		        		'widget_id' :  $scope.ngModel.id,
-		        		'document_id' :  $scope.documentId,
-		        		"drivers" : $scope.drivers,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections})}
-		    })
-		    .then(function(response) { //success
-		            $scope.ROutput = $sce.trustAsHtml(response.data);
-		    },
-		    function(response) { //failed
-		    	$scope.ROutput = 'Error: ' + $sce.trustAsHtml(response.data);
-		    });
+			data = { 'dataset': $scope.dataset_label,
+	        		'script' : $scope.ngModel.RCode,
+	        		'output_variable' : $scope.ngModel.ROutput,
+	        		'widget_id' :  $scope.ngModel.id,
+	        		'document_id' :  $scope.documentId,
+	        		"drivers" : JSON.stringify($scope.drivers),
+	        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections}) }
+			requestBody = JSON.stringify(data)
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/edit', $scope.ngModel.ROutputType, requestBody)
+				.then(function(response) {
+					$scope.ROutput = $sce.trustAsHtml(response.data.result);
+				}, function(response) {
+					$scope.ROutput = 'R Error';
+				});
 
 		}
 
 		$scope.sendDataViewMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-		    $http({
-		        url: "https://" + $scope.ngModel.knowageAddress + "widgets/Rwidget/view/" + $scope.ngModel.ROutputType,
-		        method: "POST",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
-
-		        data: { 'dataset': $scope.dataset_label,
-		        		'output_variable' : $scope.ngModel.ROutput,
-		        		'widget_id' :  $scope.ngModel.id,
-		        		'document_id' :  $scope.documentId,
-		        		"drivers" : $scope.drivers,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters, 'selections': $scope.selections})}
-		    })
-		    .then(function(response) { //success
-		            $scope.ROutput = $sce.trustAsHtml(response.data);
-		    },
-		    function(response) { //failed
-		    	$scope.ROutput = 'R Error';
-		    });
-
+			requestBody = JSON.stringify({'document_id' :  $scope.documentId, 'script' : $scope.ngModel.RCode, 'output_variable' : $scope.ngModel.ROutput})
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/view', $scope.ngModel.ROutputType, requestBody)
+				.then(function(response) {
+					$scope.ROutput = $sce.trustAsHtml(response.data.result);
+				}, function(response) {
+					$scope.ROutput = 'R Error';
+				});
 		}
 
 		$scope.init = function (element, width, height) {
