@@ -1290,7 +1290,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					// If sizes match, all items are already selected
 					var allAvailablesValuesSize = allAvailablesValues.length;
-					var selectablesSize = scope.selectables.length;
+					var selectablesSize = scope.selectables
+						.filter(function(elem) { return elem.selected; })
+						.length;
 
 					scope.allSelected = allAvailablesValuesSize == selectablesSize;
 
