@@ -1,22 +1,22 @@
-
-<md-dialog style='height:30%; width:30%;' layout="column" ng-dragg=true>
+<md-dialog layout="column" ng-dragg=true>
 	
-	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
-		<p>Set Value Formula</p>
+	<md-toolbar class="primaryToolbar">
+		<div class="md-toolbar-tools">
+			<h2>Set Value Formula</h2>
+		</div>
 	</md-toolbar>
 	
-	<md-content class="dialog-style">
+	<md-dialog-content class="olapDialogContent">
+		<textarea ng-model='cellValue' md-autofocus layout-fill></textarea>
+	</md-dialog-content>
 	
-	<textarea ng-model='cellValue' md-autofocus style=height:50%;width:100%;'></textarea>
 	<md-dialog-actions layout="row">
-			<md-button ng-click="sendFormula()">
-				Save
-			</md-button>
-			<md-button ng-click="closeFormulaDialog()">
-				Cancel
-			</md-button>
-		</md-dialog-actions>
-		
-	</md-content>
+		<md-button class="md-raised" ng-click="closeFormulaDialog()">
+			Cancel
+		</md-button>
+		<md-button class="md-raised md-primary" ng-click="sendFormula()">
+			Save
+		</md-button>
+	</md-dialog-actions>
 	
 </md-dialog>

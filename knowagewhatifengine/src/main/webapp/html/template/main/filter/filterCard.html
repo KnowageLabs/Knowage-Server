@@ -1,38 +1,19 @@
 <div class="filter-panel" layout="row" flex>
 	<div class="new-filter-card" 
-			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters:index" 
-			ng-drag="true" ng-drag-data="filter" 
-			ng-drag-success="dragSuccess('filter',$index)"
-			id="filter-{{filter.name}}"
-			layout="row"
-			>
+		ng-repeat="filter in filterCardList|limitTo:numVisibleFilters:index" 
+		ng-drag="true" ng-drag-data="filter" 
+		ng-drag-success="dragSuccess('filter',$index)"
+		id="filter-{{filter.name}}"
+		layout="row">
 			
-			<md-button ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" ng-show="filter.hierarchies.length > 1">
-				<md-icon class="fa fa-sitemap" ></md-icon>
-			</md-button>
-			<span>{{filter.caption}}</span>
-			<md-button class="md-icon-button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
-				<md-icon md-font-icon="fa fa-filter"></md-icon>
-			</md-button>
-		<!-- div layout="row" class="top">
-			<div class="button-area" >
-				<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" ng-show="filter.hierarchies.length > 1">
-					<md-icon class="fa fa-sitemap icon-color-white" ></md-icon>
-				</md-button>
-			</div>
-			<div class="name-area">{{filter.caption}}</div>
-		</div>
-	
-	 	<div layout="row" class="bottom">
-			<div class="name-area"  layout="row" title="{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}">
-				<div class="name-area" flex>{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}</div>
-			</div>
-			
-			<div class="button-area">
-				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
-					<md-icon md-font-icon="fa fa-filter"></md-icon>
-				</md-button>
-			</div>
-		</div-->
+		<md-button ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" class="md-icon-button noMargin" ng-show="filter.hierarchies.length > 1">
+			<md-icon class="fa fa-sitemap" ></md-icon>
+		</md-button>
+		<span flex>{{filter.caption}}</span>
+		<md-button class="md-icon-button noMargin" ng-class="{'activeFilters' : FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName) != ''}" aria-label="filter" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
+			<md-icon md-font-icon="fa fa-filter"></md-icon>
+			<md-tooltip>{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}</md-tooltip>
+		</md-button>
+
 	</div>
 </div>

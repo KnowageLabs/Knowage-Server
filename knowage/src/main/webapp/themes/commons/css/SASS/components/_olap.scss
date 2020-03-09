@@ -1,10 +1,25 @@
 .kn-olap {
+	angular-table {
+		.fakeTable {
+			display: none;
+		}
+	}
+	#filterPanel {
+		min-height: 45px;
+	}
 	.md-toolbar-tools {
 		.md-icon-button {
 			md-icon {
 				line-height: 24px;
 			}
 		}
+	}
+	.showMdxVar {
+		background-color: $pageBackground;
+	    margin: 8px;
+	    border-radius: 4px;
+	    padding-bottom: 16px;
+	    font-size: $baseFontSize;
 	}
 	.pivot-table{
 		position:absolute;
@@ -415,11 +430,6 @@
 	height:100%;
 }
 
-.top-alignment-auto-height{
-	min-height:85px;
-	max-height:85px
-}
-
 .table-alignment {
      position:absolute;
      top:0px;
@@ -616,18 +626,10 @@
 /*new stuff end*/
 
 
-md-card{
-  border-radius: 10px 10px;
-}
 
 md-tabs .md-tab.md-active{
   color:$baseColor !important;
 }
-
-.dialog-style{
-    padding: 10px;
-}
-
 
 /*.tree css*/
 
@@ -665,13 +667,6 @@ md-tabs .md-tab.md-active{
 	}
 	
 }
-
-
-.mdx-dialog{
-	padding-left: 32px;
-	padding-right: 32px;
-}
-
 
 
 .highlight-filter-result{
@@ -812,6 +807,13 @@ md-dialog.fullscreen-dialog {
 	font-size: $mediumFontSize;
 	display: flex;
 	align-items: center;
+	.md-button {
+		&.activeFilters {
+			md-icon {
+				color: $fabPrimaryColor;
+			}
+		}
+	}
 }
 
 .multi-hierarachy-btn:hover{
@@ -955,7 +957,11 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .filter-panel{
-/* 	width:100%; */
+	.new-filter-card {
+		span {
+			padding-left: 8px
+		}
+	}
 }
 
 .multi-hier-dialog{
@@ -1011,10 +1017,6 @@ md-option[selected], md-select-menu md-option[selected]{
     min-width:350px; 
     width: 80%; 
     height: 60%;
-}
-
-.designer-buttons-dialog-content {  
-    overflow:hidden;
 }
 
 .designer-buttons-dialog-angular-table-height {  

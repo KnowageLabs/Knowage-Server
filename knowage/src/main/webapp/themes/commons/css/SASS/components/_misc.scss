@@ -274,7 +274,7 @@ md-tabs.md-knowage-theme md-ink-bar {
 md-card.md-knowage-theme {
     background-color: $tabBackground;
     display: block; 
-    max-height: none !important;
+    //max-height: none !important;
     &.flexCard{
       display: flex;
     }
@@ -1088,6 +1088,11 @@ md-list.kn-smallList{
     height:32px;
     min-height: 32px;
   }
+}
+
+.olapDialogContent {
+  min-height: 400px;
+  min-width: 600px;
 }
 
 .toastify {

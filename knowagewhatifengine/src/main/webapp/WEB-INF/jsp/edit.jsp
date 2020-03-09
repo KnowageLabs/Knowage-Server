@@ -9,6 +9,7 @@
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/olap/olapImport.jsp"%>
+<base href="/" />
 <title>OLAP Designer</title>
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
