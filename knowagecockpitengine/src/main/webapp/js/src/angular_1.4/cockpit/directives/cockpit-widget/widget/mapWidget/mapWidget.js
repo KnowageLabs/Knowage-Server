@@ -1278,13 +1278,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			$scope.getPerLayerFiltersValues(currLayer, currCol)
 				.then(function() {
+					var allAvailablesValues = perLayerFiltersValues[currLayer.name][currCol.name];
+
 					scope.selectables =
-						perLayerFiltersValues[currLayer.name][currCol.name].map(function(elem) {
+						allAvailablesValues.map(function(elem) {
 							return {
 								value: elem,
 								selected: actualSelection.indexOf(elem) != -1
 							};
 						});
+
+					// If sizes match, all items are already selected
+					var allAvailablesValuesSize = allAvailablesValues.length;
+					var selectablesSize = scope.selectables.length;
+
+					scope.allSelected = allAvailablesValuesSize == selectablesSize;
+
 					scope.loading = false;
 				});
 
