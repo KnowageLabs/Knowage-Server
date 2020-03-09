@@ -1,8 +1,8 @@
 <div class="central-panel" layout="row" flex >
 	<div id="leftaxis" leftaxis class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
-		<div class="left-axis-shift">
-			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-if="leftSliderNeeded">
+		<div class="left-axis-shift" ng-if="leftSliderNeeded">
+			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" >
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
 			</md-button>
 		</div>	
@@ -39,12 +39,11 @@
 			</div>
 		</div>
 	
-		<div class="left-axis-shift">
+		<div class="left-axis-shift" ng-if="leftSliderNeeded">
 			<md-button style="right:10px;"
 					   class="md-icon-button" 
 					   aria-label="Favorite" 
-					   ng-click="dimensionShift('up')" 
-					   ng-if="leftSliderNeeded">
+					   ng-click="dimensionShift('up')">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
 			</md-button>
 		</div>
@@ -73,18 +72,6 @@
 	></table-scroller>
 		
 		</div>
-	
-<!-- 		<md-content ng-if = "modelConfig.pagination" scrolly  > -->
-	
-<!-- 	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-150}" ></div>	background-color: #3b678c; -->
-<!-- 	 	</md-content> -->
-<!-- 	 	<md-content flex ng-if = "!modelConfig.pagination"> -->
-<!-- 	 		<div ng-bind-html="table" compile-template flex " > -->
-	 		
-<!-- 	 		</div> -->
-<!-- 	 	</md-content> -->
-	 		
-	
 	</div>
 
 </div>

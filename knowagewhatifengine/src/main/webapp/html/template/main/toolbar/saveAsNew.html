@@ -1,9 +1,11 @@
 <md-dialog style='height:45%; width:40%;' layout="column">
 	
-	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
-		<p>{{translate.load("sbi.olap.toolbar.export.wizard.title")}}</p>
+	<md-toolbar class="primaryToolbar">
+		<div class="md-toolbar-tools">
+			<h2>{{translate.load("sbi.olap.toolbar.export.wizard.title")}}</h2>
+		</div>
 	</md-toolbar>
-	<md-content class="dialog-style">
+	<md-dialog-content layout-padding class="olapDialogContent">
 		{{translate.load("sbi.olap.toolbar.save.as.description")}}
 		<br/>
 		<label>{{translate.load("sbi.olap.toolbar.save.as.version.name")}}</label>
@@ -12,14 +14,15 @@
 		<label>{{translate.load("sbi.olap.toolbar.save.as.version.description")}}</label>
 		<textarea  ng-model="saveAsDescription">
 		</textarea>
-		<md-dialog-actions layout="row">
-			<md-button ng-click="saveAsFunction()">
-				Save
-			</md-button>
-			<md-button ng-click="closeDialogToolbarRight()">
-				Cancel
-			</md-button>
-		</md-dialog-actions>
 	</md-content>
+	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeDialogToolbarRight()">
+			Cancel
+		</md-button>
+		<md-button ng-click="saveAsFunction()">
+			Save
+		</md-button>
+	</md-dialog-actions>
 	
 </md-dialog>

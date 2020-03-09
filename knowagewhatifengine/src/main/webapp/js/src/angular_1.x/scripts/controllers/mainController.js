@@ -24,6 +24,10 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
+olapMod.config(['$locationProvider', function($locationProvider) { 
+	$locationProvider.html5Mode({ enabled: true, requireBase: false }); }]
+)
+
 olapMod.controller("olapController", [ "$scope", '$rootScope',"$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav', 'sbiModule_config',
 		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',

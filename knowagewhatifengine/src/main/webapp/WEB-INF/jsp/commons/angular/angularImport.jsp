@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 	<meta name="viewport" content="width=device-width">
 	
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/all.css")%>"/>
+	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>"/>
 
 	<!-- angular reference-->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
@@ -64,5 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- scroll pagination -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/kn-scroll-pagination/knScrollPagination.js"></script>	
 	
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/themes/commons/css/customStyle.css")%>">
 	
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
