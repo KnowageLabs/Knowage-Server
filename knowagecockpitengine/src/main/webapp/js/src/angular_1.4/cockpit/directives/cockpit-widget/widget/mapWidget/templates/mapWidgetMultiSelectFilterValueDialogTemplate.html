@@ -24,7 +24,7 @@
 		</div>
 		<md-list>
 			<md-virtual-repeat-container id="vertical-container">
-				<md-list-item class="selectableList" md-virtual-repeat="item in (availableItems = (selectables | filter:searchText)) | orderBy : item.value">
+				<md-list-item class="selectableList" md-virtual-repeat="item in (availableItems = (selectables | filter:searchText)) | orderBy : 'value'">
 					<p class="truncated"> {{ item.value }} </p>
 					<md-checkbox class="md-secondary" ng-model="item.selected"></md-checkbox>
 				</md-list-item>

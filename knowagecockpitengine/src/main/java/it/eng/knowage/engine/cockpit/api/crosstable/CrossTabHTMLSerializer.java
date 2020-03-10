@@ -380,7 +380,7 @@ public class CrossTabHTMLSerializer {
 								Column columnObj = ((Column) getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(),
 										"columns"));
 								String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
-								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','"
+								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','"
 										+ StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
@@ -781,7 +781,7 @@ public class CrossTabHTMLSerializer {
 						String rowHeaders = "";
 						String measureRef = "";
 						if (crossTab.getRowsSpecification().size() > 0) {
-							List rowsDef = crossTab.getRowsHeaderList();
+							List rowsDef = crossTab.getRowsHeaderIdList();
 							for (int r = 0; r < rowsDef.size(); r++) {
 								rowHeaders += crossTab.PATH_SEPARATOR + rowsDef.get(r);
 							}
@@ -820,7 +820,7 @@ public class CrossTabHTMLSerializer {
 						String columnsHeaders = "";
 
 						if (columnsSpecification.size() > 0) {
-							List<String> columnsDef = crossTab.getColumnsHeaderList();
+							List<String> columnsDef = crossTab.getColumnsHeaderIdList();
 							for (int c = 0; c < columnsDef.size(); c++) {
 								columnsHeaders += crossTab.PATH_SEPARATOR + columnsDef.get(c);
 							}
