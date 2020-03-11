@@ -4,7 +4,7 @@
 		&nbsp;
 	</md-toolbar>
 	
-	<md-toolbar id="topaxis" topaxis class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" layout="row">
+	<md-toolbar id="topaxis" flex topaxis class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" layout="row">
 
 		<div class="top-shift" ng-show="topSliderNeeded">
 			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ><!-- topSliderNeeded -->
@@ -42,17 +42,12 @@
 				<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x" ></md-icon>
 			</md-button>
 		</div>
-			
-	</md-toolbar>
-	
-	<div style="width:2px"></div>
-	
-	<md-toolbar class='primaryToolbar' flex>
-		<div class="md-toolbar-tools" layout="row" layout-align="center center">
+		
+		<div style="width:2px;height:100%;background-color: white;"></div>
+		<div layout="row" layout-align="center center" style="width:50px;">
 			<md-button class="md-icon-button" ng-click="toggleRight()" id="right-sidenav-open-btn">
 				<md-icon class="fa fa-bars"></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
-	
 </div>

@@ -7,7 +7,7 @@
 		layout="row">
 			
 		<md-button ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" class="md-icon-button noMargin" ng-show="filter.hierarchies.length > 1">
-			<md-icon class="fa fa-sitemap" ></md-icon>
+			<md-icon md-font-icon="fa fa-sitemap" ></md-icon>
 		</md-button>
 		<span flex>{{filter.caption}}</span>
 		<md-button class="md-icon-button noMargin" ng-class="{'activeFilters' : FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName) != ''}" aria-label="filter" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
