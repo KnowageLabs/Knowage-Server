@@ -16,15 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	angular.module('cockpitModule').directive('calculatedField',function(){
 		return{
-			template: '<span><button ng-if="!selectedItem" class="md-button md-knowage-theme" ng-click="addNewCalculatedField()">{{translate.load("sbi.cockpit.widgets.table.calculatedFields.add")}}</button>'+
-			'<md-button ng-if="selectedItem" class="md-icon-button" ng-click="addNewCalculatedField()">'+
-			'<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button><span>',
+			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCalculatedField()" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
+						'	<md-icon md-font-icon="fa fa-calculator" ng-if="selectedItem"></md-icon>'+
+						'	<span ng-if="!selectedItem || insideMenu">{{::translate.load("sbi.cockpit.widgets.table.calculatedFields.add")}}</span>'+
+						'	<md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip>'+
+						'</button>',
 			replace: true,
 			scope:{
 				ngModel: "=",
 				selectedItem : "=?",
 				callbackUpdateGrid : "&?",
-				callbackUpdateAlias : "&?"
+				callbackUpdateAlias : "&?",
+				insideMenu : "=?"
 			},
 			controller: calculatedFieldController,
 		}

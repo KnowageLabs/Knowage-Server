@@ -465,7 +465,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for (l in $scope.ngModel.content.layers){
 					var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
 					for ( c in columns){
-						if (columns[c].properties.showMap){
+						if (columns[c].properties && columns[c].properties.showMap){
 							$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
 							break;
 						}
