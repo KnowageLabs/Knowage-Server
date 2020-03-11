@@ -803,6 +803,7 @@ public class UserUtilities {
 	private static List<String> freeFunctionalities() {
 		List<String> ret = new ArrayList<>();
 		ret.add(DOCUMENT_WIDGET_USE);
+		ret.add("MapWidgetUse");
 		return  ret;
 	}
 
