@@ -529,10 +529,9 @@
 
 			var action = function() {
 				docExecute_urlViewPointService.frameLoaded=false;
-				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,
-						driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
+				cockpitEditing.documentMode="VIEW";
+				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
 				docExecute_paramRolePanelService.toggleParametersPanel(false);
-				$scope.cockpitEditing.documentMode="VIEW";
 			};
 
 			if($scope.cockpitEditing.documentMode == "EDIT"){
