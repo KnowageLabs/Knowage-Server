@@ -255,36 +255,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		else {
-		for(var i in $scope.model.content.columnSelectedOfDataset){
-			var obj = $scope.model.content.columnSelectedOfDataset[i];
-			if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-				$scope.measuresList.push(obj);
+			for(var i in $scope.model.content.columnSelectedOfDataset){
+				var obj = $scope.model.content.columnSelectedOfDataset[i];
+				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+					$scope.measuresList.push(obj);
+				}
 			}
 		}
-		}
 		$scope.saveColumnConfiguration=function(){
-			$scope.validateFormula(true)
-			.then(function(success){
-				if(!$scope.calculatedField.alias){
-					$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noalias"));
+			if($scope.aliasForm.alias.$valid){
+				$scope.validateFormula(true)
+				.then(function(success){
+					if(!$scope.calculatedField.alias){
+						$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noalias"));
+						return;
+					}
+					$scope.result = angular.copy($scope.calculatedField);
+					if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
+					$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
+					$scope.result.aliasToShow = $scope.result.alias;
+					$scope.result.name = $scope.result.alias;
+					$scope.result.fieldType = 'MEASURE';
+					$scope.result.isCalculated = true;
+					$scope.result.type = "java.lang.Double";
+					promise.resolve($scope.result);
+					$mdDialog.hide();
+
+				},function(error){
+					$scope.toastifyMsg('warning',error);
 					return;
-				}
-				$scope.result = angular.copy($scope.calculatedField);
-				if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
-				$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
-				$scope.result.aliasToShow = $scope.result.alias;
-				$scope.result.name = $scope.result.alias;
-				$scope.result.fieldType = 'MEASURE';
-				$scope.result.isCalculated = true;
-				$scope.result.type = "java.lang.Double";
-				promise.resolve($scope.result);
-				$mdDialog.hide();
-
-			},function(error){
-				$scope.toastifyMsg('warning',error);
-				return;
-			})
-
+				})
+			}else $scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.invalidalias"));
 		}
 		$scope.cancelConfiguration=function(){
 			$mdDialog.cancel();
