@@ -92,6 +92,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
+						
+						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){
+							tempCol.isCalculated = $scope.ngModel.content.columnSelectedOfDataset[c].isCalculated;
+						}
+						
 						if(sortedDefault && sortedDefault[0].colId == fields[f].name){
 							tempCol.sort = sortedDefault[0].sort;
 						}
@@ -460,11 +465,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	var title = params.summaryRows[params.rowIndex].label;
             	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
-            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
-            			var tempValue = $filter('number')(params.value,0);
-            		}else var tempValue = params.valueFormatted || params.value;
-            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
-            		this.eGui.innerHTML += tempValue;
+            		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
+	            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
+	            			var tempValue = $filter('number')(params.value,0);
+	            		}else var tempValue = params.valueFormatted || params.value;
+	            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+	            		this.eGui.innerHTML += tempValue;
+            		}
 	    		}
             }
 		};

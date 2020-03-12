@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.validation.ValidationException;
@@ -86,6 +87,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.MultipleProjectionSimpleFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -97,6 +99,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
+	private static final String REGEX_FIELDS_VALIDATION = "(?:\\\"[a-zA-Z0-9\\-\\_\\s]*\\\")";
 	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
 	private static final String VALIDATION_OK = "OK";
@@ -422,7 +425,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("datasetOrTableFlag")) {
 				String formula = jsonObject.optString("formula");
-				String response = validateFormula(formula);
+//				String response = validateFormula(formula);
 				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName, formula);
 				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
 			} else {
@@ -432,7 +435,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		} else {
 			if (jsonObject.has("datasetOrTableFlag")) {
 				String formula = jsonObject.optString("formula");
-				String response = validateFormula(formula);
+//				String response = validateFormula(formula);
 
 				projection = new DataStoreCalculatedField(function, dataSet, columnAlias, columnAlias, formula);
 			} else {
@@ -442,7 +445,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projection;
 	}
 
-	public String validateFormula(String formula) throws ValidationException {
+	public String validateFormula(String formula, List<SimpleSelectionField> columns) throws ValidationException, JSONException {
+
+		validateFields(formula, columns);
 
 		formula = "select ".concat(formula);
 		CharStream inputStream = CharStreams.fromString(formula);
@@ -463,6 +468,27 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 
 		return VALIDATION_OK;
+	}
+
+	private void validateFields(String formula, List<SimpleSelectionField> columns) {
+		String regex = REGEX_FIELDS_VALIDATION;
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(formula);
+
+		while (m.find()) {
+			boolean found = false;
+			for (SimpleSelectionField simpleSelectionField : columns) {
+
+				if (simpleSelectionField.getName().equals(m.group(0).replace("\"", ""))) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+				throw new ValidationException();
+		}
+
 	}
 
 	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {

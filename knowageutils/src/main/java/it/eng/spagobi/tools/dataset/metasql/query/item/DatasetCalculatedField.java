@@ -10,7 +10,6 @@ public class DatasetCalculatedField extends AbstractCalculatedField {
 
 	private IAggregationFunction aggregationFunction;
 	private IDataSet dataSet;
-	private String name;
 	private String alias;
 	@SuppressWarnings("rawtypes")
 	private Class type;

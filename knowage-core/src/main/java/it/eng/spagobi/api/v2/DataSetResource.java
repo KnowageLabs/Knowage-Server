@@ -96,6 +96,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.PlaceholderFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
@@ -804,9 +805,17 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONObject jsonBody = new JSONObject(body);
 
 				formulaString = jsonBody.getString("formula");
+				JSONArray columns = jsonBody.getJSONArray("datasetColumnsList");
+				List<SimpleSelectionField> l = new ArrayList<SimpleSelectionField>();
+
+				for (int i = 0; i < columns.length(); i++) {
+					SimpleSelectionField a = new SimpleSelectionField();
+					a.setName(((JSONObject) columns.get(i)).getString("name"));
+					l.add(a);
+				}
 
 				try {
-					String toReturn = validateFormula(formulaString);
+					String toReturn = validateFormula(formulaString, l);
 					JSONObject okResponse = new JSONObject();
 					okResponse.put("msg", "ok");
 					return okResponse.toString();
@@ -822,4 +831,5 @@ public class DataSetResource extends AbstractDataSetResource {
 		return null;
 
 	}
+
 }

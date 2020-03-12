@@ -20,6 +20,14 @@ package it.eng.spagobi.tools.dataset.metasql.query.item;
 
 public abstract class AbstractSelectionField {
 
+	protected String name;
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 }

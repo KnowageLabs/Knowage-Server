@@ -215,21 +215,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
 				})
 				if(!$scope.calculatedField.formulaEditor) {
-					$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
+					if(!save) $scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
 					reject();
 					return;
 				}
 				$scope.formulaLoading = true;
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
-					"formula": $scope.calculatedField.formula.trim()
+					"formula": $scope.calculatedField.formula.trim(),
+					"datasetColumnsList" : $scope.datasetColumnsList
 				})
 				.then(function(response){
 					if(!save) $scope.toastifyMsg('success',$scope.translate.load("kn.cockpit.calculatedfield.validation.success"));
 					$scope.formulaLoading = false;
 					resolve();
 				},function(response){
-					$scope.toastifyMsg('warning',$scope.translate.load(response.data.errors[0].message));
+					if(!save) $scope.toastifyMsg('warning',$scope.translate.load(response.data.errors[0].message));
 					$scope.formulaLoading = false;
 					reject(response.data.errors[0].message);
 				})

@@ -75,6 +75,20 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 		}
 	}
 
+	@Override
+	protected IDataStore executeTotalsFunctions(Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
+		try {
+			String[] totalFunctionsProjectionsString = new String[totalFunctionsProjections.size()];
+			totalFunctionsProjections.toArray(totalFunctionsProjectionsString);
+			String totalFunctionsQuery = new SelectQuery(dataSet).select(totalFunctionsProjectionsString).from(getTableName()).where(filter)
+					.toSql(getDataSource());
+			logger.info("Total functions query [ " + totalFunctionsQuery + " ]");
+			return getDataSource().executeStatement(totalFunctionsQuery, -1, -1, maxRowCount, false);
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	protected abstract String getTableName() throws DataBaseException;
 
 	protected abstract IDataSource getDataSource();
