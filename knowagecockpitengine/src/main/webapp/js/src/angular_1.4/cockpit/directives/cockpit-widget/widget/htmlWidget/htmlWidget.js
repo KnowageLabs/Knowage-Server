@@ -227,7 +227,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
 		$scope.getColumnFromName = function(name,ds,aggregation){
 			for(var i in ds.metaData.fields){
-				if(typeof ds.metaData.fields[i].header != 'undefined' && ds.metaData.fields[i].header == (aggregation ? name+'_'+aggregation : name)){
+				if(typeof ds.metaData.fields[i].header != 'undefined' && ds.metaData.fields[i].header.toLowerCase() == (aggregation ? name+'_'+aggregation : name).toLowerCase()){
 					return {'name':ds.metaData.fields[i].name,'type':ds.metaData.fields[i].type };
 				}
 			}
