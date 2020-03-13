@@ -3269,8 +3269,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
 			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
 				$scope.dataset = $scope.selectedDataSet;
-				$scope.drivers = $scope.dataset.drivers;
-				$scope.showDrivers = $scope.drivers.length > 0 || $scope.selectedDataSet.pars.length > 0;
+				if($scope.dataset.drivers) {
+					$scope.drivers = $scope.dataset.drivers;
+					$scope.showDrivers = $scope.drivers.length > 0 || $scope.selectedDataSet.pars.length > 0;
+				}
 				$scope.dataset.executed = !$scope.showDrivers;
 
 				$scope.executeParameter = function(){

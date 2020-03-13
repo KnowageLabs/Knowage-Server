@@ -250,9 +250,10 @@ angular
 					$scope.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
 					driverableObject.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
 				}
-
-				driversExecutionService.hasMandatoryDrivers($scope.drivers);
-				$scope.showDrivers = $scope.drivers.length > 0;
+				if($scope.drivers) {
+					driversExecutionService.hasMandatoryDrivers($scope.drivers);
+					$scope.showDrivers = $scope.drivers.length > 0;
+				}
 				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 			}
 
