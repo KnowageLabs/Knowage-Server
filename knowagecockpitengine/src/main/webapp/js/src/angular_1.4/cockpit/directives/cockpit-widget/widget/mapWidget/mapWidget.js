@@ -760,6 +760,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			var model = {content: {columnSelectedOfDataset: columnsForData }};
+			if($scope.ngModel.filters) model.filters = $scope.ngModel.filters;
 			var features = [];
 			var layer =  new ol.layer.Vector();
 
