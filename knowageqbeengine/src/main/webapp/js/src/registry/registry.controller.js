@@ -442,6 +442,19 @@
 				addOptions(filterField,response);
 			});
 		};
+		
+		$scope.checkIfFiltersHaveValues = function() {
+			for (var i = 0; i < registryConfiguration.filters.length; i++) {
+				var filter = registryConfiguration.filters[i];
+				for (var j = 0; j < registryConfiguration.columns.length; j++) {
+					var column = registryConfiguration.columns[j];
+					if(filter.presentation != 'DRIVER' && filter.field == column.field){
+						if(filter.value) return true;
+					}
+				}
+			}
+			return false;
+		}
 
 		$scope.checkIfFilterColumnExists = function(){
 			var filters = [];
@@ -599,6 +612,16 @@
 				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
 				 readData($scope.formParams);
 			};
+			$scope.last = function() {
+				 $scope.page= $scope.getTotalPages.length + 1;
+				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				 readData($scope.formParams);
+			};
+			$scope.first = function() {
+				$scope.page= 1;
+				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				 readData($scope.formParams);
+			}
 			$scope.goToPage = function() {
 				$scope.formParams = pagination.goToPage($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
 				 readData($scope.formParams);

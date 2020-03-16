@@ -1,42 +1,29 @@
-.kn-registry .clickable {
-   cursor: pointer;
-   min-width: 100px;
-   min-height: 20px;
-}
+.kn-registry {
+	.clickable {
+	   cursor: pointer;
+	   min-width: 100px;
+	   min-height: 20px;
+	}
 
-.md-scroll-mask {
-	z-index: 1 !important;
-}
+	.md-scroll-mask {
+		z-index: 1 !important;
+	}
 
-.kn-registry .md-open-menu-container {
-    z-index: 80;
-}
+	.md-open-menu-container {
+	    z-index: 80;
+	}
 
-.kn-registry md-backdrop {
-    z-index: 10;
-}
+	md-backdrop {
+    	z-index: 10;
+	}
 
 .kn-registry .registryFilters {
-    background: white;
-    box-shadow: 0px 2px 5px #ccc;
-    z-index: 9;
-    position: relative;
-    margin: 5px;
-    border: 4px solid #A9C3DB;
+	.registryFilter {
+	    min-width: 200px;
+	    margin-bottom: 4px;
+	}
 }
 
-.kn-registry .registryFilters .registryFilter {
-    min-width: 200px;
-    margin-bottom: 4px;
-}
-
-.kn-table {
-	width: auto;
-}
-
-.kn-table.alternatedRows tbody tr:nth-child(odd) {
-    background-color: #f0f0f0;
-}
 
 .kn-table tbody tr md-icon {
     line-height: 20px;
@@ -47,11 +34,33 @@
 
 .recNo {
 	width: 50px;
-	border-right: 2px solid #e6e6e6;
 }
 
-.kn-table thead th.tableAction {
-    width: 50px;
+.kn-table {
+	td {
+		md-menu div, md-menu span{
+			line-height: 20px;
+			vertical-align: middle;
+		}
+	}
+	thead {
+		tr {
+			height: 1.5rem;
+		}
+		th {
+			border-right: 1px solid $bordersColor;
+			padding-left: 8px;
+			&>div {
+				outline: none;
+				.md-button {
+					margin: 0;
+				}
+			}
+			&.tableAction {
+			    width: 50px;
+			}
+		}
+	}
 }
 
 .kn-table .innerTable {
@@ -93,14 +102,6 @@ md-select {
 	cursor: pointer;
 }
 
-.filter-clear, .filter {
-	margin: 0 10px;
-}
-
-.save-btn {
-    position: absolute;
-    right: 20px;
-}
 .sortorder:hover:after {
   content: '\25b2';   /* BLACK UP-POINTING TRIANGLE */
 }
@@ -119,4 +120,5 @@ md-select {
     font-weight: bold;
     border: none;
     float: right;
+}
 }
