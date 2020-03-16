@@ -61,7 +61,7 @@
 		}
 
 		this.getSlicers = function(hierachyUniqueName){
-			return this.getHierarchyByUniqueName(hierachyUniqueName).slicers;
+			return (this.getHierarchyByUniqueName(hierachyUniqueName) ? this.getHierarchyByUniqueName(hierachyUniqueName).slicers : []);
 		}
 
 		this.isSlicer = function(hierachyUniqueName,memberUniqueName){
