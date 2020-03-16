@@ -278,23 +278,42 @@
 							postForm.action = postObject.url;
 							postForm.method = "post";
 						    postForm.target = "documentFrame";
-						    for (var k in postObject.params) {
-						        var element = document.createElement("input");
+						    document.body.appendChild(postForm);
+						} 
+						for (var k in postObject.params) {
+							inputElement = document.getElementById("postForm_"+k);
+							if(inputElement) {
+								inputElement.value = decodeURIComponent(postObject.params[k]);
+								inputElement.value = inputElement.value.replace(/\+/g,' ');
+							}else{
+								var element = document.createElement("input");
 						        element.type = "hidden";
 						        element.id= 'postForm_' + k;
 						        element.name = k;
 						        element.value = decodeURIComponent(postObject.params[k]);
 						        element.value = element.value.replace(/\+/g,' ');
 						        postForm.appendChild(element);
-						    }
-						    document.body.appendChild(postForm);
-						}else{
-							for (var k in postObject.params) {
-								inputElement = document.getElementById("postForm_"+k);
-								inputElement.value = decodeURIComponent(postObject.params[k]);
-								inputElement.value = inputElement.value.replace(/\+/g,' ');
 							}
+						        
 						}
+						    
+//						}else{
+//							for (var k in postObject.params) {
+//								inputElement = document.getElementById("postForm_"+k);
+//								if(inputElement) {
+//									inputElement.value = decodeURIComponent(postObject.params[k]);
+//									inputElement.value = inputElement.value.replace(/\+/g,' ');
+//								}else {
+//									var element = document.createElement("input");
+//							        element.type = "hidden";
+//							        element.id= 'postForm_' + k;
+//							        element.name = k;
+//							        element.value = decodeURIComponent(postObject.params[k]);
+//							        element.value = element.value.replace(/\+/g,' ');
+//							        postForm.appendChild(element);
+//								}
+//							}
+//						}
 						postForm.submit();
 
 						console.log("1.0/documentexecution/url -> " + documentUrl);
