@@ -1,16 +1,18 @@
 <md-dialog  layout="column">
 	
-	<md-toolbar class="knowage-blue dialog-toolbar" style="max-height:64px" flex=20>
-		<p>Current MDX Query</p>
+	<md-toolbar class="primaryToolbar">
+		<div class="md-toolbar-tools">
+			<h2>Current MDX Query</h2>
+		</div>
 	</md-toolbar>
 	
-	<md-content class="mdx-dialog">
-		<div ng-bind-html="showMdxVar"></div>
-	</md-content>	
+	<md-dialog-content class="olapDialogContent">
+		<pre class="showMdxVar" ng-bind-html="showMdxVar"></pre>
+	</md-dialog-content>	
 	
 	
 	<md-dialog-actions layout="row" >
-		<md-button ng-click="closeDialogToolbarRight()">
+		<md-button class="md-raised md-primary" ng-click="closeDialogToolbarRight()">
 			Close
 		</md-button>	
 	</md-dialog-actions>

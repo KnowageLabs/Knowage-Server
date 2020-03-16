@@ -1,8 +1,8 @@
 <md-card ng-if="!params" layout-fill layout="column" class="flexCard" style="position:absolute">
 	<md-card-content flex layout="column" class="noPadding">
-		<md-toolbar class="secondaryToolbar" layout-padding>
+		<md-toolbar class="secondaryToolbar">
 			<div class="md-toolbar-tools">
-		   		<h2><span>{{translate.load("kn.qbe.general.filters")}}</span></h2>
+		   		<h2>{{translate.load("kn.qbe.general.filters")}}</h2>
 				<span flex></span>
 				<md-button class="md-icon-button" aria-label="Add new filter" ng-show="isloadTemporalFiltersVisible(field.dataType)" ng-click="loadTemporalFilters()" 
 						title='{{translate.load("kn.qbe.general.field")}}'>
@@ -17,8 +17,8 @@
 		<md-content flex layout="column" >
 		
 			<div layout="row" layout-align="center center" ng-if="(filters | filter:{leftOperandAlias:field.name}).length==0">
-				<div class="kn-noItems" flex="60" flex-xs="100">
-					<p class="ng-binding">{{translate.load("kn.qbe.filters.nofilters")}}</p>
+				<div class="kn-noItems" flex="60">
+					{{translate.load("kn.qbe.filters.nofilters")}}
 				</div>
 			</div>
 			<md-card ng-if="(filters | filter:{leftOperandAlias:field.name}).length > 0">

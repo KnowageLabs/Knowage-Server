@@ -76,6 +76,8 @@ import it.eng.spagobi.utilities.cache.UserProfileCache;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
+
 public class UserUtilities {
 
 	static Logger logger = Logger.getLogger(UserUtilities.class);
@@ -785,9 +787,24 @@ public class UserUtilities {
 			}
 		} catch (Exception e) {
 			logger.debug("Server Manager not installed or not installer correctly.", e);
+			licenseFunctionalities.addAll(freeFunctionalities());
+			logger.debug("Add following free functionalities: " + licenseFunctionalities, e);
 		}
 		logger.debug("OUT");
 		return licenseFunctionalities;
+	}
+
+	/**
+	 * Add commons functionalities availables only in the Enterprise to
+	 * the Community for free.
+	 *
+	 * @return List of functionalities
+	 */
+	private static List<String> freeFunctionalities() {
+		List<String> ret = new ArrayList<>();
+		ret.add(DOCUMENT_WIDGET_USE);
+		ret.add("MapWidgetUse");
+		return  ret;
 	}
 
 	public static String getUserId(HttpServletRequest req) {

@@ -213,7 +213,7 @@
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
 			,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast,docExecute_sessionParameterService,sbiModule_i18n,
-			driversExecutionService,driversDependencyService ) {
+			driversExecutionService,driversDependencyService, cockpitEditing ) {
 
 		var serviceScope = this;
 		serviceScope.showOlapMenu = false;
@@ -224,8 +224,7 @@
 		serviceScope.i18n = sbiModule_i18n;
 
 		serviceScope.executionProcesRestV1 = function(role, params) {
-			console.log('params')
-			console.log(params)
+			console.log('params', params)
 			params = typeof params === 'undefined' ? {} : params;
 
 			var dataPost = {
@@ -254,11 +253,9 @@
 
 			// memorize parameters in session
 			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
-			console.log('params')
-			console.log(parametersDetail)
+			console.log('params', parametersDetail);
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
-			console.log('dataPost')
-			console.log(dataPost)
+			console.log('dataPost', dataPost);
 			var postObject = {
 				params: {}
 			};
@@ -273,6 +270,7 @@
 						for(var i in paramsFromUrl){
 							if(typeof paramsFromUrl[i] != 'function')postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
 						}
+						if(cockpitEditing.documentMode) postObject.params.documentMode = cockpitEditing.documentMode;
 						var postForm = document.getElementById("postForm_"+postObject.params.document);
 						if(!postForm){
 							postForm = document.createElement("form");

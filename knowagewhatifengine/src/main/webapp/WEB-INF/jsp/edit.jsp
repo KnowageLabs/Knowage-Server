@@ -9,9 +9,7 @@
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/olap/olapImport.jsp"%>
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/olap.css">
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/whatIf.css">
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/customStyle.css">
+<base href="/" />
 <title>OLAP Designer</title>
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
@@ -20,7 +18,7 @@
 	
 </script>
 </head>
-<body ng-controller="olapController" >
+<body ng-controller="olapController" class="kn-olap">
 
 	<rest-loading></rest-loading>
 	<olap-designer></olap-designer>

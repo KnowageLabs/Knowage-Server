@@ -30,7 +30,7 @@ angular.module('olap_designer', ['sbiModule'])
 				});
 
 
-function olapDesignerController($scope, channelMessaging, $timeout, $window, $mdDialog, $http, $sce,
+function olapDesignerController($scope, channelMessaging, $timeout, $window, $location, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
@@ -135,8 +135,12 @@ $scope.saveMDX = function(){
       	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
     	.then(function(response) {
     		
+    		var context = $location.search().SBICONTEXT;
+    		
     		var url = sbiModule_config.contextName + "/restful-services/pages/execute?SBI_EXECUTION_ID="
-    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name+"&ENGINE="+engineName+"&currentContentId="+$scope.selectedSchema.currentContentId;
+    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="
+    		+$scope.selectedSchema.name+"&ENGINE="+engineName+"&currentContentId="+$scope.selectedSchema.currentContentId+
+    		'&SBICONTEXT='+context;
    
     		$window.location = url;
 		

@@ -237,12 +237,12 @@ if(executionRoleNames.size() > 0) {
                     
         <% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
                             && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
-                    <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
+                    <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="cockpitEditing.stopCockpitEditing()"
                             aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
                             <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}</md-tooltip>
                          <md-icon md-font-icon="fa fa-eye"></md-icon>
                     </md-button>
-                    <md-button ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.startCockpitEditing()"
+                    <md-button ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="cockpitEditing.startCockpitEditing()"
                             aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
                             <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}</md-tooltip>
                          <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
@@ -596,7 +596,6 @@ if(executionRoleNames.size() > 0) {
 						var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
 						execProperties.documentUrl = newUrl;
 					};*/
-					cockpitEditingService.documentMode = 'VIEW';
 					
 					if(document.getElementById('postForm_documentMode').value == 'EDIT'){
 						var confirm = $mdDialog.confirm()
@@ -606,6 +605,7 @@ if(executionRoleNames.size() > 0) {
 								.ok(sbiModule_translate.load("sbi.general.continue"))
 								.cancel(sbiModule_translate.load("sbi.general.cancel"));
 						$mdDialog.show(confirm).then(function(){
+							cockpitEditingService.documentMode = 'VIEW';
 							document.getElementById('postForm_documentMode').value = cockpitEditingService.documentMode;
 							document.getElementById('postForm_'+execProperties.executionInstance.OBJECT_ID).submit();
 						});

@@ -56,11 +56,9 @@ public class AssociativeLogicUtils {
 			int n = rs.getMetaData().getColumnCount();
 			Tuple tuple = new Tuple(n);
 			for (int i = 1; i <= n; i++) {
-				if (rs.getObject(i) != null)
-					tuple.add(rs.getObject(i));
+				tuple.add(rs.getObject(i));
 			}
-			if (tuple.dimension() != 0)
-				tuples.add(tuple);
+			tuples.add(tuple);
 		}
 		return tuples;
 	}

@@ -140,7 +140,7 @@ function mapWidgetEditControllerFunction(
 		layer.hasShownDetails = false;
 		var columnsList = layer.content.columnSelectedOfDataset;
 		for(var i in columnsList){
-			if(columnsList[i].properties.showDetails){
+			if(columnsList[i].properties && columnsList[i].properties.showDetails){
 				layer.hasShownDetails = true;
 				return;
 			}
@@ -150,7 +150,6 @@ function mapWidgetEditControllerFunction(
 
 	$scope.setModalColumn = function(column, layer){
 		var columnsList = layer.content.columnSelectedOfDataset;
-		debugger;
 		layer.modalSelectionColumn = (column.properties.modal) ? column.alias : undefined;
 
 		for(var i in columnsList){

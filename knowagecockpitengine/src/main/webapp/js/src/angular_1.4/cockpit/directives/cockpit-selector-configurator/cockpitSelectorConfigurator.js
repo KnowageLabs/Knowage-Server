@@ -82,7 +82,7 @@
 				}
 
 				for(i in $scope.model.content.columnSelectedOfDataset){
-				    if($scope.model.content.columnSelectedOfDataset[i] && $scope.model.content.columnSelectedOfDataset[i].alias == $scope.model.content.selectedColumn.alias){
+				    if($scope.model.content.columnSelectedOfDataset[i] && $scope.model.content.columnSelectedOfDataset[i].alias == $scope.model.content.selectedColumn && $scope.model.content.selectedColumn.alias){
 				        $scope.model.content.columnSelectedOfDataset[i] = $scope.model.content.selectedColumn;
 				        break;
 				    }

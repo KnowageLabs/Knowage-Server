@@ -15,9 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<%--
-author:...
---%>
 
 <%@page import= "it.eng.spagobi.engines.whatif.common.WhatIfConstants" %>
 <%@page import= "java.util.Enumeration" %>
@@ -45,6 +42,7 @@ author:...
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineStartServletIOManager"%>
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 
 
@@ -55,6 +53,10 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
+	   String spagoBiContext = request.getParameter("SBICONTEXT");			
+	   String thisContext = request.getContextPath();
+	   UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, thisContext);
+	   
        WhatIfEngineInstance whatIfEngineInstance;
        //UserProfile profile;
        Locale locale =null;

@@ -1,28 +1,23 @@
 <md-dialog style='width:50%;'>
-   <form>
-	   <md-toolbar class="knowage-blue dialog-toolbar">
-	   		<h2 flex="flex" class="md-title">Pagination Wizard</h2>
-	   </md-toolbar>
+   <md-toolbar class="primaryToolbar">
+   		<div class="md-toolbar-tools">
+   			<h2>Pagination Wizard</h2>
+   		</div>
+   </md-toolbar>
 	   
-	   <md-dialog-content class="designer-buttons-dialog-content">
-	   
-	  <div style="padding: 5px;">
-	   		<md-checkbox ng-show="true" ng-model="pagination" aria-label="use table pagination">
-					<span >Use table pagination</span>
-				</md-checkbox>
-	   </div>
-	   		  
-	   		  
-		   
-	   </md-dialog-content>
+   <md-dialog-content layout-padding style="min-height:200px">
+  		<md-checkbox ng-show="true" ng-model="pagination" aria-label="use table pagination">
+			<span>Use table pagination</span>
+		</md-checkbox>
+   </md-dialog-content>
 	
-	    <md-dialog-actions layout="row">
-	     <md-button ng-click="savePagination()" class="md-raised"  md-autofocus>
-	        Save
-	      </md-button>
-	      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
-	       Cancel
-	      </md-button>
-	    </md-dialog-actions>
-    </form>
+    <md-dialog-actions layout="row">
+     	<span flex></span>
+      	<md-button ng-click="closeDialogOlapDesigner()" class="md-raised">
+       		Cancel
+      	</md-button>
+      	<md-button ng-click="savePagination()" class="md-raised md-primary" md-autofocus>
+        	Save
+      	</md-button>
+    </md-dialog-actions>
 </md-dialog>

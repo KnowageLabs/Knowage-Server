@@ -126,8 +126,10 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	for(var i = 0; i < $scope.cockpitDatasets.length;i++){
-		var meta = $scope.cockpitDatasets[i].metadata.fieldsMeta;
-		$scope.allCockpitDatasetsColumns[$scope.cockpitDatasets[i].label] = meta;
+		if($scope.cockpitDatasets[i].metadata && $scope.cockpitDatasets[i].metadata.fieldsMeta){
+			var meta = $scope.cockpitDatasets[i].metadata.fieldsMeta;
+			$scope.allCockpitDatasetsColumns[$scope.cockpitDatasets[i].label] = meta;
+		}
 	}
 
 	$scope.getTemplateUrl = function(template){

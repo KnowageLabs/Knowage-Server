@@ -1,0 +1,44 @@
+<md-dialog class="multiselectionDialog">
+	<div ng-if="loading" layout-fill style='position:absolute;z-index: 800;background:rgba(0,0,0, 0.3);'>
+		<md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+	</div>
+	<md-toolbar class="secondaryToolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="text-transform-none">{{title}}</h2>
+			<span flex=""></span>
+			<md-button class="md-icon-button" ng-click="selectAll()">
+				<md-icon ng-if="!allSelected" md-font-icon="fa fa-check-square-o"></md-icon>
+				<md-icon ng-if="allSelected" md-font-icon="fa fa-eraser"></md-icon>
+				<md-tooltip md-delay="500">{{::translate.load('kn.cockpit.selector.selectall')}}</md-tooltip>
+			</md-button>
+		</div>
+	</md-toolbar>
+
+	<md-dialog-content style="min-width:400px;">
+		<div layout-align="start center" layout="row">
+			<md-input-container class="md-icon-float md-block" flex="">
+				<label>{{::translate.load('kn.cockpit.selector.search')}}</label>
+				<md-icon md-font-icon="fa fa-search"></md-icon>
+				<input type="text" ng-model="searchText">
+			</md-input-container>
+		</div>
+		<md-list>
+			<md-virtual-repeat-container id="vertical-container">
+				<md-list-item class="selectableList" md-virtual-repeat="item in (availableItems = (selectables | filter:searchText)) | orderBy : 'value'">
+					<p class="truncated"> {{ item.value }} </p>
+					<md-checkbox class="md-secondary" ng-model="item.selected"></md-checkbox>
+				</md-list-item>
+			</md-virtual-repeat-container>
+		</md-list>
+	</md-dialog-content>
+
+	<md-dialog-actions layout="row" style="padding-left: 8px">
+		<span flex=""></span>
+		<md-button class="md-raised" ng-click="cancel()">
+			{{::translate.load('kn.cockpit.selector.cancel')}}
+		</md-button>
+		<md-button class="md-raised md-primary" ng-click="close()">
+			{{::translate.load('kn.cockpit.selector.select')}}
+		</md-button>
+	</md-dialog-actions>
+</md-dialog>

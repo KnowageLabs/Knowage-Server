@@ -38,6 +38,7 @@ import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
@@ -135,7 +136,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 			QueryCatalogue catalogue = getCatalogue(jsonQuery, qbeDataSource);
 			Query query = catalogue.getFirstQuery();
 			setQuery(query);
-			initDs(qbeDataSource, query);
+			Query filteredQuery = filterQueryWithProfileAttributes(qbeDataSource, query);
+			initDs(qbeDataSource, filteredQuery);
 		}
 	}
 
@@ -156,6 +158,12 @@ public class QbeDataSet extends ConfigurableDataSet {
 		ds.setDataSourceForReading(this.getDataSourceForReading());
 		ds.setDataSourceForWriting(this.getDataSourceForWriting());
 		ds.setDrivers(this.getDrivers());
+	}
+
+	public Query filterQueryWithProfileAttributes(it.eng.qbe.datasource.IDataSource qbeDataSource, Query query) {
+		IModelAccessModality accessModality = qbeDataSource.getModelAccessModality();
+		Query filteredQuery = accessModality.getFilteredStatement(query, qbeDataSource, getUserProfile().getUserAttributes());
+		return filteredQuery;
 	}
 
 	@Override

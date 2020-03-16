@@ -553,7 +553,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		return isInLineCalculatedField(inLineCalculatedField) && inLineCalculatedField.attributes.formState.nature === columnType
 	}
 
-	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
+	$scope.colors = ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
 
     $scope.droppedFunction = function(data) {
         console.log(data)
@@ -672,7 +672,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/parameterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model ={
 							"pars": pars,
@@ -732,12 +731,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     $scope.showVisualization = function (filters, advancedFilters, expression) {
 		var finishEdit=$q.defer();
-		$scope.show = false;
+		//$scope.show = false;
 		var config = {
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterVisualizationTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model = {"filters":filters,"advancedFilters":advancedFilters,"expression":expression,"mdPanelRef":mdPanelRef};
 				},
@@ -777,7 +775,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/filterTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries, "expression":expression, "advancedFilters":advancedFilters};
 				},
@@ -812,7 +809,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			templateUrl : sbiModule_config.dynamicResourcesEnginePath
 					+ '/qbe/templates/havingTemplate.html',
 			position : $mdPanel.newPanelPosition().absolute().center(),
-			fullscreen : true,
 			controller : function($scope, havings, tree, subqueries, selectedFields, mdPanelRef) {
 				$scope.model = {
 					"havings" : havings,

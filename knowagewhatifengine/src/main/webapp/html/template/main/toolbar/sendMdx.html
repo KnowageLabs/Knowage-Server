@@ -1,25 +1,25 @@
-<md-dialog style='height:40%; width:50%;' layout="column">
+<md-dialog layout="column">
 	
-	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
-		<p>Insert MDX Query</p>
+	<md-toolbar class="primaryToolbar">
+		<div class="md-toolbar-tools">
+			<h2>Insert MDX Query</h2>
+		</div>
 	</md-toolbar>
 	
-	<md-content class="mdx-dialog">
+	<md-dialog-content class="olapDialogContent">
 		<md-input-container class="md-block">
        		<label>MDX Query</label>
        		<textarea ng-model="mdxQuery" columns="1" rows="15"></textarea>
      	</md-input-container>
-	
-	
-	</md-content>
+	</md-dialog-content>
 	
 	<md-dialog-actions layout="row">
-			<md-button ng-click="closeDialogToolbarRight()">
-				Cancel
-			</md-button>
-			<md-button ng-click="sendMdxQuery(mdxQuery)">
-				Save
-			</md-button>		
-		</md-dialog-actions>
+		<md-button class="md-raised" ng-click="closeDialogToolbarRight()">
+			Cancel
+		</md-button>
+		<md-button class="md-raised md-primary" ng-click="sendMdxQuery(mdxQuery)">
+			Save
+		</md-button>		
+	</md-dialog-actions>
 	
 </md-dialog>

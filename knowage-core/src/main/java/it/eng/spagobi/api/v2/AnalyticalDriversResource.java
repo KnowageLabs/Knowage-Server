@@ -35,8 +35,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.knowage.analyticalDriver.api.AnalyticalDriverManagementAPI;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -325,11 +329,31 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 
 		try {
+			JSONObject response = new JSONObject();
+			JSONArray warnings = new JSONArray();
+
 			driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
+
+			Parameter oldDriver = driversDao.loadForDetailByParameterID(driver.getId());
+			if (oldDriver.getTypeId().compareTo(driver.getTypeId()) != 0) {
+				AnalyticalDriverManagementAPI analyticalDriverManagementAPI = new AnalyticalDriverManagementAPI();
+				if (analyticalDriverManagementAPI.isUsedInCrossNavigations(driver)) {
+					warnings.put("Analitycal driver " + driver.getName() + " is used in one or more cross navigations");
+				}
+				response.put("warnings", warnings);
+			}
+
 			driversDao.modifyParameter(driver);
+
 			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
-			return Response.created(new URI("2.0/analyticalDrivers/" + encodedDriver)).entity(encodedDriver).build();
+
+			JSONArray jsonArray = new JSONArray();
+			response.put("encodedDriver", encodedDriver);
+
+			jsonArray.put(response);
+
+			return Response.created(new URI("2.0/analyticalDrivers/" + encodedDriver)).entity(response.toString()).build();
 		} catch (Exception e) {
 			logger.error("Error while modifying resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);

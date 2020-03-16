@@ -53,6 +53,8 @@ public class SelectQueryVisitorFactory {
 			return new OrientDbSelectQueryVisitor(database);
 		case TERADATA:
 			return new TeradataSelectQueryVisitor(database);
+		case REDSHIFT:
+			return new RedShiftSelectQueryVisitor(database);
 		default:
 			throw new IllegalArgumentException("Dialect [" + dataSource.getHibDialectClass() + "] not supported");
 		}

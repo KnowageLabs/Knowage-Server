@@ -504,11 +504,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						dataColumnList=row.querySelectorAll(".dataNoStandardStyle"); //personal user settings
 					}
 					if(dataColumnList.length>0){
-						//alternateRow
-						if ($scope.ngModel.content.style.showAlternateRows){
-							if(tmpOddRow && $scope.ngModel.content.style.measuresRow["odd-background-color"]!= ""){
+						// alternateRow only if there are not thresholds
+						if ($scope.ngModel.content.style.showAlternateRows
+								&& angular.element(dataColumnList).css("background-color") == "") {
+							if (tmpOddRow
+							    && $scope.ngModel.content.style.measuresRow["odd-background-color"] != "") {
 								angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["odd-background-color"])
-							}else if ($scope.ngModel.content.style.measuresRow["even-background-color"]!= ""){
+							} else if ($scope.ngModel.content.style.measuresRow["even-background-color"] != "") {
 								angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["even-background-color"])
 							}
 							tmpOddRow=!tmpOddRow;

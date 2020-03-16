@@ -184,7 +184,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				         }
 				      ],
 				      "output":"Number",
-				      "type":"aggregation"
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
 				      "syntax":"MIN( Field )",
@@ -203,7 +203,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				         }
 				      ],
 				      "output":"Number",
-				      "type":"aggregation"
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
 				      "syntax":"MAX( Field )",
@@ -222,7 +222,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				         }
 				      ],
 				      "output":"Number",
-				      "type":"aggregation"
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
 				      "syntax":"COUNT( Field )",
@@ -241,7 +241,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				         }
 				      ],
 				      "output":"Integer",
-				      "type":"aggregation"
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
 				      "syntax":"AVG( Field )",
@@ -260,8 +260,101 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				         }
 				      ],
 				      "output":"Number",
-				      "type":"aggregation"
-				   },/*
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
+				   },
+				   {
+					   "syntax":"TOTAL_SUM( Field )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.sum"),
+					      "body":"TOTAL_SUM(field)",
+					      "name":"Total Sum",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   },{
+					   "syntax":"TOTAL_AVG( Field )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.avg"),
+					      "body":"TOTAL_AVG(field)",
+					      "name":"Total Average",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   },{
+					   "syntax":"TOTAL_MIN( Field )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.min"),
+					      "body":"TOTAL_MIN(field)",
+					      "name":"Total Minimum",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   },{
+					   "syntax":"TOTAL_MAX( Field )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.max"),
+					      "body":"TOTAL_MAX(field)",
+					      "name":"Total Maximum",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   },{
+					   "syntax":"TOTAL_COUNT( Field )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.count"),
+					      "body":"TOTAL_COUNT(field)",
+					      "name":"Total Count",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   }
+				   
+				   /*
 				   {
 				      "syntax":"Concat(expression1, expression2, expression3,...)",
 				      "description":"If expression is a numeric value, it will be converted to a binary string. \n\t\t\tIf all expressions are nonbinary strings, this function will return a nonbinary string. \n\t\t\tIf any of the expressions is a binary string, this function will return a binary string. \n\t\t\tIf any of the expressions is a NULL, this function will return a NULL value..",

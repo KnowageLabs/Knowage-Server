@@ -235,7 +235,12 @@
                     border-bottom: 1px solid $ternaryColor;
                     line-height: 1.5rem;
                     height: 1.5rem;
-                    cursor: move;
+                    cursor: grab;
+                    .itemType {
+                        width:16px;
+                        text-align:center;
+                        margin-right: 10px;
+                    }
                     button {
                         margin: 0;
                         padding: 0;
@@ -637,4 +642,9 @@
         background-color: $pageBackground;
     }
 	
+    md-icon {
+        &.fa, &.fas, &.fab, &.far {
+            font-size: 14px;
+        }
+    }
 }

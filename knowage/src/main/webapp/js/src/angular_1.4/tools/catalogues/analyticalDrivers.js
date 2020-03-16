@@ -489,6 +489,9 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					
+					if (response.data.warnings && response.data.warnings.length > 0)
+						sbiModule_messaging.showErrorMessage(response.data.warnings[0], 'Warning');
 
 					//$scope.selectedDriver={};
 					if(path == 'usemode'){

@@ -106,7 +106,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				if (databaseDialect.equals(DatabaseDialect.HIVE) || databaseDialect.equals(DatabaseDialect.HIVE2)
 						|| databaseDialect.equals(DatabaseDialect.CASSANDRA) || databaseDialect.equals(DatabaseDialect.IMPALA)
 						|| databaseDialect.equals(DatabaseDialect.ORIENT) || databaseDialect.equals(DatabaseDialect.SPARKSQL)
-						|| databaseDialect.equals(DatabaseDialect.VERTICA)) {
+						|| databaseDialect.equals(DatabaseDialect.VERTICA) || databaseDialect.equals(DatabaseDialect.REDSHIFT)) {
 					stmt = connection.createStatement();
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

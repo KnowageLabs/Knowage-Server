@@ -73,6 +73,8 @@ public abstract class DataBaseFactory {
 					return new MongoDataBase(dataSource);
 				case VERTICA:
 					return new VerticaDataBase(dataSource);
+				case REDSHIFT:
+					return new RedShiftDataBase(dataSource);
 				default:
 					throw new DataBaseException("Impossible to find a database implementation for [" + sqlDialect.toString() + "]");
 				}

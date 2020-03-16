@@ -10,10 +10,12 @@
 	   	</md-toolbar>
         
         <div class="expandableEntities" ng-repeat="entity in value" >
-            <h4 ng-click="toggleExpander(entity)" ng-class="{'expanded':entity.expanded, 'filterEntityColor':isThereAFilter(entity)}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
-                <i ng-class="[fontIcons, entity.iconCls]" ng-style="{'color':entity.color}"></i>
+            <h4 ng-click="toggleExpander(entity)" ng-style="{'border-left': '10px solid '+entity.color}" ng-class="{'expanded':entity.expanded, 'filterEntityColor':isThereAFilter(entity)}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
+                <i ng-class="getIconCls(entity)">
+                	<md-tooltip md-delay="500">{{entity.iconCls}}</md-tooltip>
+                </i>
                 <span>{{entity.text}}</span>
-                 <span>{{entity.name}}</span>
+                <span>{{entity.name}}</span>
                 <span flex></span>
                 
                 <md-button class="md-icon-button" ng-repeat="entAction in entitiesActions" ng-click="$event.stopPropagation();entAction.action(entity,$event)">
@@ -54,20 +56,25 @@
 	            	</div>
             	</div>
             		
-                <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
-                    <i ng-class="[fontIcons, field.iconCls]"></i>
-                    <span>{{field["text"]}}</span>
-                     <md-tooltip md-direction="top">{{field.qtip}}</md-tooltip>
+                <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf" ng-style="{'border-left': '5px solid '+entity.color}">
+                    <i ng-class="getIconCls(field)" class="itemType">
+                    	<md-tooltip md-delay="500">{{field.iconCls}}</md-tooltip>
+                    </i>
+                    <span>
+                    	{{field["text"]}}
+                    	<md-tooltip md-direction="top">{{field.qtip}}</md-tooltip>
+                    </span>
+                     
                    <span>{{field["alias"]}}</span>
-                    <span flex></span>
+                   <span flex></span>
                     
-                    <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-if="$event.stopPropagation();fieldAction.visible(field,$event)" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
-                        <md-icon ng-class="{'temporal-filter-avaliable':field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' , 
-                        '':field.iconCls!='the_date'||fieldAction.icon!='fa fa-filter',
-                        'filterColor':countFilters(field)>0 && fieldAction.icon=='fa fa-filter', 
-                        'havingColor':countHavings(field)>0 && fieldAction.icon=='fa fa-check-square-o'}" md-font-icon="{{fieldAction.icon}}"></md-icon>
-                        <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
-                    </md-button>
+                   <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-if="$event.stopPropagation();fieldAction.visible(field,$event)" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
+                       <md-icon ng-class="{'temporal-filter-avaliable':field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' , 
+                       '':field.iconCls!='the_date'||fieldAction.icon!='fa fa-filter',
+                       'filterColor':countFilters(field)>0 && fieldAction.icon=='fa fa-filter', 
+                       'havingColor':countHavings(field)>0 && fieldAction.icon=='fa fa-check-square-o'}" md-font-icon="{{fieldAction.icon}}"></md-icon>
+                       <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
+                   </md-button>
                
                 </li>
             </ul>

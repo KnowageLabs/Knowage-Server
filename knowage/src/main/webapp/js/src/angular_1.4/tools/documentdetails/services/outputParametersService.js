@@ -29,11 +29,31 @@
     	        		if(!DocumentService.document.outputParameters[i].id) {
     	        			delete DocumentService.document.outputParameters[i].$$hashKey;
     	        			var outputParametersPostBasePath = documentService.document.id + '/outputparameters';
-    	        			resourceService.post(requiredPath, outputParametersPostBasePath, DocumentService.document.outputParameters[i]);
+    	        			
+    	        			resourceService.post(requiredPath, outputParametersPostBasePath, DocumentService.document.outputParameters[i])
+    	        			.then(
+    	        					function(response) {
+    	        			
+	    	        					if (response.data.usedInCrossNavigations && response.data.usedInCrossNavigations == true) {
+	    	        						var message = "Output parameter used in one or more cross navigations";
+	    	    							sbiModule_messaging.showErrorMessage(message, 'Warning');
+	    	        					}
+    	        					}
+    	        			);
+    	        			
     	        		} else {
     	        			delete DocumentService.document.outputParameters[i].$$hashKey;
     	        			var outputParametersPutBasePath = documentService.document.id + "/outputparameters/" + DocumentService.document.outputParameters[i].id;
-    	        			resourceService.put(requiredPath, outputParametersPutBasePath, DocumentService.document.outputParameters[i]);
+    	        			resourceService.put(requiredPath, outputParametersPutBasePath, DocumentService.document.outputParameters[i])
+    	        			.then(
+    	        					function(response) {
+    	        			
+	    	        					if (response.data.usedInCrossNavigations && response.data.usedInCrossNavigations == true) {
+	    	        						var message = "Output parameter used in one or more cross navigations";
+	    	    							sbiModule_messaging.showErrorMessage(message, 'Warning');
+	    	        					}
+    	        					}
+    	        			);
     	        		}
     	        	}
     	        };

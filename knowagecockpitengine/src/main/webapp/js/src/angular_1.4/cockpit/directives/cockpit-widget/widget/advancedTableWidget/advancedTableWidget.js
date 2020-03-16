@@ -206,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			if((crossEnabled &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
+			if((crossEnabled &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},

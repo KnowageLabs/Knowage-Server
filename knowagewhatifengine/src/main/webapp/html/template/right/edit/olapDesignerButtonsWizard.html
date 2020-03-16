@@ -1,21 +1,19 @@
 <md-dialog style='width:50%;'>
-   <form>
-	   <md-toolbar class="knowage-blue dialog-toolbar">
-	   		<h2 flex="flex" class="md-title">Buttons Wizard</h2>
-	   </md-toolbar>
+   <md-toolbar class="primaryToolbar">
+   		<div class="md-toolbar-tools">
+   			<h2>Buttons Wizard</h2>
+   		</div>
+   </md-toolbar>
 	   
-	   <md-dialog-content class="designer-buttons-dialog-content" layout="column">
-	   		<md-card >
+	   <md-dialog-content class="olapDialogContent" layout="column">
+	   		<md-card>
 	   			<md-card-content layout="row" >
     				<md-checkbox aria-label="Select All Visible"
                          ng-checked="isVisibleChecked()"
                          ng-click="toggleAllVisible()">
               			<span ng-if="isVisibleChecked()">Un-</span>Select All Visible
             		</md-checkbox>
-            	
-            	
-  			
-			
+            		
 	   				<md-checkbox aria-label="Select All Clicked"
                          ng-checked="isClickedChecked()"
                          ng-click="toggleAllClicked()">
@@ -23,29 +21,27 @@
             		</md-checkbox>
 	   			 </md-card-content>
 	   		</md-card>
-	   	<md-content flex layout="column">
+	   		<md-content flex layout="column">
 	   		   <angular-table
 							flex
 							id="olapDesignerButtonsList"
 							ng-model="toolbar"
-							columns='olapDesignerButtonsColumns'
-							show-search-bar=false
-							highlights-selected-item=false
-							no-pagination=true
+							columns="olapDesignerButtonsColumns"
+							show-search-bar="false"
+							highlights-selected-item="false"
+							no-pagination="true"
 							class="designer-buttons-dialog-angular-table-height"
-							scope-functions=tableFunction
-						>
+							scope-functions="tableFunction">
 				</angular-table>	   
 		   </md-content>
 	   </md-dialog-content>
 	
 	    <md-dialog-actions layout="row">
-	     <md-button ng-click="saveTemplateButtons()" class="md-raised"  md-autofocus>
-	        Save
-	      </md-button>
-	      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
-	       Cancel
-	      </md-button>
+	    	<md-button ng-click="closeDialogOlapDesigner()" class="md-raised">
+	       		Cancel
+	      	</md-button>
+	      	<md-button ng-click="saveTemplateButtons()" class="md-raised md-primary" md-autofocus>
+	        	Save
+	      	</md-button>
 	    </md-dialog-actions>
-    </form>
 </md-dialog>
