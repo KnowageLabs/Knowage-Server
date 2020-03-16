@@ -1,7 +1,7 @@
 <ul ng-model="item.children" ng-show="item.collapsed">
 
 	<li ng-repeat="item in item.children">
-	<div ng-class="item.leaf ? 'leaf-paddin-filter no-wrap':'no-wrap'">
+	<div class="no-wrap">
 		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" 
@@ -19,7 +19,7 @@
 			</span>
 			</md-checkbox>
 		</span>
-		<span ng-click="" ng-show=" item.leaf" style="padding-left:35px;">
+		<span ng-click="" ng-show=" item.leaf">
 			<md-checkbox ng-model="item.visible" >
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
 				{{item.name}}
