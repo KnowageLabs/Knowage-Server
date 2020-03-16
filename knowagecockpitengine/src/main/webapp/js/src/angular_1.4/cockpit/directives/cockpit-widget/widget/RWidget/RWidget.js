@@ -153,13 +153,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendDataEditMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-			data = { 'dataset': $scope.dataset_label,
+			data = {'dataset': $scope.dataset_label,
 	        		'script' : $scope.ngModel.RCode,
 	        		'output_variable' : $scope.ngModel.ROutput,
 	        		'widget_id' :  $scope.ngModel.id,
 	        		'document_id' :  $scope.documentId,
 	        		"drivers" : JSON.stringify($scope.drivers),
-	        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections}) }
+	        		"aggregations": JSON.stringify($scope.aggregations),
+	        		'parameters': JSON.stringify($scope.parameters),
+	        		'selections': JSON.stringify($scope.selections)}
 			requestBody = JSON.stringify(data)
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/edit', $scope.ngModel.ROutputType, requestBody)
@@ -173,7 +175,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendDataViewMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-			requestBody = JSON.stringify({'document_id' :  $scope.documentId, 'script' : $scope.ngModel.RCode, 'output_variable' : $scope.ngModel.ROutput})
+			data = {'dataset': $scope.dataset_label,
+	        		'output_variable' : $scope.ngModel.ROutput,
+	        		'widget_id' :  $scope.ngModel.id,
+	        		'document_id' :  $scope.documentId,
+	        		"drivers" : JSON.stringify($scope.drivers),
+	        		"aggregations": JSON.stringify($scope.aggregations),
+	        		'parameters': JSON.stringify($scope.parameters),
+	        		'selections': JSON.stringify($scope.selections)}
+			requestBody = JSON.stringify(data)
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/view', $scope.ngModel.ROutputType, requestBody)
 				.then(function(response) {

@@ -19,6 +19,7 @@
 package it.eng.knowage.backendservices.rest.widgets;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -30,20 +31,29 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 /*
- Answers on: https://localhost:8080/knowage/restful-services/2.0/backendservices/widgets/RWidget
+ https://localhost:8080/knowage/restful-services/2.0/backendservices/widgets/RWidget
  */
+
 @Path("/2.0/backendservices/widgets/RWidget")
-public class RWidgetProxy {
+public class RWidgetProxy extends AbstractDataSetResource {
+
+	String rAddress = "http://localhost:5000/REngine";
+	Map<String, String> headers;
+	HttpMethod methodPost = HttpMethod.valueOf("Post");
 
 	static protected Logger logger = Logger.getLogger(RWidgetProxy.class);
 
@@ -56,18 +66,26 @@ public class RWidgetProxy {
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
-		String script, documentId = null, outputVariable;
+		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
+				selections = null, widgetId = null;
 		try {
+			dsLabel = requestBody.get("dataset");
 			documentId = requestBody.get("document_id");
+			widgetId = requestBody.get("widget_id");
 			outputVariable = requestBody.get("output_variable");
-			script = getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent());
+			parameters = requestBody.get("parameters");
+			drivers = requestBody.get("drivers");
+			aggregations = requestBody.get("aggregations");
+			selections = requestBody.get("selections");
+			script = getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent(), widgetId);
 		} catch (Exception e) {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
+		String dataset = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
 		try {
-			String toReturn = new JSONObject().put("result", "<div> ciao </div>").toString();
-			return Response.ok(toReturn).build();
+			JSONObject toReturn = new JSONObject().put("result", "<div> ciao </div>");
+			return Response.ok(toReturn.toString()).build();
 		} catch (Exception e) {
 			logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
@@ -83,37 +101,77 @@ public class RWidgetProxy {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
-		String script, documentId = null, outputVariable;
+		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
+				selections = null;
 		try {
+			dsLabel = requestBody.get("dataset");
 			documentId = requestBody.get("document_id");
 			outputVariable = requestBody.get("output_variable");
+			parameters = requestBody.get("parameters");
+			drivers = requestBody.get("drivers");
+			aggregations = requestBody.get("aggregations");
+			selections = requestBody.get("selections");
 			script = requestBody.get("script");
 		} catch (Exception e) {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
+		String dataset = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String toReturn = new JSONObject().put("result", "<div> ciao </div>").toString();
-			return Response.ok(toReturn).build();
+			String body = createREngineRequestBody(dataset, script);
+			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress, headers, body);
 		} catch (Exception e) {
-			logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
-			throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
+			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]", e);
+		}
+		if (rEngineResponse == null || rEngineResponse.getStatusCode() != 200) {
+			return Response.status(400).build();
+		} else {
+			JSONObject toReturn;
+			try {
+				toReturn = new JSONObject().put("result", rEngineResponse.getResponseBody());
+			} catch (Exception e) {
+				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
+				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
+			}
+			return Response.ok(toReturn.toString()).build();
 		}
 	}
 
-	private String getRCodeFromTemplate(String base64template) {
+	private String createREngineRequestBody(String dataset, String script) {
+		JSONObject jsonBody = new JSONObject();
+		try {
+			jsonBody.put("dataset", dataset);
+			jsonBody.put("script", script);
+		} catch (Exception e) {
+			logger.error("error while creating request body for R engine");
+			throw new SpagoBIRuntimeException("error while creating request body for R engine", e);
+		}
+		return jsonBody.toString();
+	}
+
+	private String getRCodeFromTemplate(String base64template, String widgetId) {
 		JSONObject templateJson;
 		try {
 			byte[] decodedBytes = Base64.decodeBase64(base64template);
 			String template = new String(decodedBytes, "UTF-8");
 			templateJson = new JSONObject(new String(decodedBytes, "UTF-8"));
-//		    for sheet in template["sheets"]:
-//		        for widget in sheet["widgets"]:
-//		            if widget["id"] == python_widget.widget_id:
-//		                return widget["pythonCode"]
+			JSONArray sheets = (JSONArray) templateJson.get("sheets");
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject sheet = sheets.getJSONObject(i);
+				JSONArray widgets = (JSONArray) sheet.get("widgets");
+				for (int j = 0; j < widgets.length(); j++) {
+					JSONObject widget = widgets.getJSONObject(j);
+					String id = widget.getString("id");
+					if (id.equals(widgetId)) {
+						return widget.get("RCode").toString();
+					}
+				}
+			}
 		} catch (Exception e) {
 			logger.error("error while retrieving code from template");
-			return "";
+			throw new SpagoBIRuntimeException("error while retrieving code from template", e);
 		}
 		return "";
 	}
