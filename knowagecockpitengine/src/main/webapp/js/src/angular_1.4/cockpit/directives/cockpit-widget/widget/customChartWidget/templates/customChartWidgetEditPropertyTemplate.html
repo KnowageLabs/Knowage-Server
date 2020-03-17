@@ -1,0 +1,21 @@
+<md-card  class="flexCard htmlWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>{{translate.load('kn.cockpit.customchart.editwidget')}}</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+	    <md-content flex layout="column">
+			
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>

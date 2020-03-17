@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- services -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_widgetServices.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_customWidgetServices.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_backwardCompatibility.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_datasetServices.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/services/cockpitModule_documentServices.js")%>"></script>
@@ -92,6 +93,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/documentWidget/documentWidget.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/staticPivotTableWidget/staticPivotTableWidget.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/selectionWidget/selectionWidget.js")%>"></script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/customChartWidget/customChartWidget.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/customChartWidget/customChartWidgetEdit.js")%>"></script>
 
 
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/cockpit-general-configurator/cockpitGeneralConfiguratorController.js")%>"></script>
