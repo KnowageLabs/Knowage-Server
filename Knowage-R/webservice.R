@@ -25,8 +25,8 @@ function(spec){
        main=title, xlab="Sepal Length", ylab="Petal Length")
 }
 
-#' @get /hello
-#' @html
-function(){
-  "<html><h1>hello world</h1></html>"
+#' @post /img
+function(dataset, script, output_variable){
+  
+  "<div>ciao</div>"
 }

@@ -51,7 +51,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 @Path("/2.0/backendservices/widgets/RWidget")
 public class RWidgetProxy extends AbstractDataSetResource {
 
-	String rAddress = "http://localhost:5000/REngine";
+	String rAddress = "http://localhost:5000/";
 	Map<String, String> headers;
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
 
@@ -83,12 +83,25 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
 		String dataset = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			JSONObject toReturn = new JSONObject().put("result", "<div> ciao </div>");
-			return Response.ok(toReturn.toString()).build();
+			String body = createREngineRequestBody(dataset, script, outputVariable);
+			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
-			logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
-			throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
+			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
+			throw new SpagoBIRuntimeException("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]", e);
+		}
+		if (rEngineResponse == null || rEngineResponse.getStatusCode() != 200) {
+			return Response.status(400).build();
+		} else {
+			JSONObject toReturn;
+			try {
+				toReturn = new JSONObject().put("result", rEngineResponse.getResponseBody());
+			} catch (Exception e) {
+				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
+				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
+			}
+			return Response.ok(toReturn.toString()).build();
 		}
 	}
 
@@ -119,8 +132,8 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		String dataset = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String body = createREngineRequestBody(dataset, script);
-			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress, headers, body);
+			String body = createREngineRequestBody(dataset, script, outputVariable);
+			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
 			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]", e);
@@ -139,11 +152,12 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		}
 	}
 
-	private String createREngineRequestBody(String dataset, String script) {
+	private String createREngineRequestBody(String dataset, String script, String outputVariable) {
 		JSONObject jsonBody = new JSONObject();
 		try {
 			jsonBody.put("dataset", dataset);
 			jsonBody.put("script", script);
+			jsonBody.put("output_variable", outputVariable);
 		} catch (Exception e) {
 			logger.error("error while creating request body for R engine");
 			throw new SpagoBIRuntimeException("error while creating request body for R engine", e);
@@ -173,7 +187,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			logger.error("error while retrieving code from template");
 			throw new SpagoBIRuntimeException("error while retrieving code from template", e);
 		}
-		return "";
+		throw new SpagoBIRuntimeException("Couldn't retrieve code from template for widgetId [" + widgetId + "]");
 	}
 
 }
