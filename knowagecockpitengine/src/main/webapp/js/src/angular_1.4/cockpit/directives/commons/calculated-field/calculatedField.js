@@ -223,7 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
 					"formula": $scope.calculatedField.formula.trim(),
-					"datasetColumnsList" : $scope.datasetColumnsList
+					"measuresList" : $scope.measuresList
 				})
 				.then(function(response){
 					if(!save) $scope.toastifyMsg('success',$scope.translate.load("kn.cockpit.calculatedfield.validation.success"));

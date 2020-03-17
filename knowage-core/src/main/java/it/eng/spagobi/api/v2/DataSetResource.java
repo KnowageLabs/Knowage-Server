@@ -805,7 +805,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONObject jsonBody = new JSONObject(body);
 
 				formulaString = jsonBody.getString("formula");
-				JSONArray columns = jsonBody.getJSONArray("datasetColumnsList");
+				JSONArray columns = jsonBody.getJSONArray("measuresList");
 				List<SimpleSelectionField> l = new ArrayList<SimpleSelectionField>();
 
 				for (int i = 0; i < columns.length(); i++) {
@@ -815,7 +815,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 
 				try {
-					String toReturn = validateFormula(formulaString, l);
+					validateFormula(formulaString, l);
 					JSONObject okResponse = new JSONObject();
 					okResponse.put("msg", "ok");
 					return okResponse.toString();
