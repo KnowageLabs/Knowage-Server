@@ -128,7 +128,7 @@ angular.module('chartInitializer')
 
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
-			if(renderObj.chartTemplate.groupSeriesCateg && 
+			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder!=undefined &&
 				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby]!=undefined && 
 				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
 					var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
