@@ -352,6 +352,24 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      ],
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+				   },{
+					   "syntax":"NULLIF( Field , Value)",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.nullif"),
+					      "body":"NULLIF(field, 0)",
+					      "name":"NullIf",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.functions") 
 				   }
 				   
 				   /*

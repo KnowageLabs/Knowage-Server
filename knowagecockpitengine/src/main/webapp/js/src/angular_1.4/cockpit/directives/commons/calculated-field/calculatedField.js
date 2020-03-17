@@ -147,6 +147,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			_editor.on("beforeChange", function() {});
 			_editor.on("change", function() {});
 		};
+		
+		$scope.$watch('calculatedField.formulaEditor', function(newValue,oldValue){
+			if(newValue && newValue.match("/")){
+				$scope.showWarning = $scope.translate.load('kn.cockpit.calculatedfield.validation.division');
+			}else {
+				$scope.showWarning = false;
+			}
+		})
 
 		//codemirror options
 		$scope.editorOptions = {

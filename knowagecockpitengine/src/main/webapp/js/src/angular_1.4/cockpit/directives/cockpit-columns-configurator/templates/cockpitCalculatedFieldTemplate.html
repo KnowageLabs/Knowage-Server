@@ -48,6 +48,9 @@
                        		</md-tooltip>
 						</md-switch>
 	            	</div>
+	            	<div layout="row" layout-align="center center" ng-if="showWarning">
+		    			<div class="kn-warning" flex="60">{{showWarning}}</div> 
+		    		</div>
 		             <md-menu-bar>
 		                <md-menu ng-repeat="type in availableFormulaTypes track by $index">
 		                    <button ng-click="$mdOpenMenu()">{{type}}</button>
