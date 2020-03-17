@@ -229,7 +229,7 @@ public class DatasetManagementAPI {
 			}
 			return dataSet;
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]", t);
+			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]. " + t.getMessage(), t);
 		} finally {
 			logger.debug("OUT");
 		}

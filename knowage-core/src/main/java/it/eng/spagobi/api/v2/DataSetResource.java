@@ -738,7 +738,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {
 			logger.error("Error while previewing dataset " + label, e);
-			throw new SpagoBIRuntimeException("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
 	}
 
