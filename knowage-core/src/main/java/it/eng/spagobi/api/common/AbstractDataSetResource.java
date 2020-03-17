@@ -447,6 +447,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	public String validateFormula(String formula, List<SimpleSelectionField> columns) throws ValidationException, JSONException {
 
+		validateBrackets(formula);
 		validateFields(formula, columns);
 
 		formula = "select ".concat(formula);
@@ -468,6 +469,42 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 
 		return VALIDATION_OK;
+	}
+
+	private void validateBrackets(String formula) {
+		int roundBrackets = 0;
+		int squareBrackets = 0;
+		int curlyBrackets = 0;
+
+		for (int i = 0; i < formula.length(); i++) {
+			switch (formula.charAt(i)) {
+			case '(':
+				roundBrackets++;
+				break;
+			case ')':
+				roundBrackets--;
+				break;
+			case '[':
+				squareBrackets++;
+				break;
+			case ']':
+				squareBrackets--;
+				break;
+			case '{':
+				curlyBrackets++;
+				break;
+			case '}':
+				curlyBrackets--;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (roundBrackets != 0 || squareBrackets != 0 || curlyBrackets != 0)
+			throw new ValidationException();
+
 	}
 
 	private void validateFields(String formula, List<SimpleSelectionField> columns) {
