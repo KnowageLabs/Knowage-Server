@@ -64,8 +64,9 @@
                             </div>
                         </th>
                         <th class="tableAction">
-                          <md-button class="" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
-                               Add row
+                          <md-button class="md-fab md-mini" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
+                               <md-icon md-font-icon="fa fa-plus"></md-icon>
+                               <md-tooltip md-delay="500">Add Row</md-tooltip>
                           </md-button>  
                         </th> 
                     </tr>

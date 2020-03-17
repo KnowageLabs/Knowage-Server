@@ -48,12 +48,21 @@
 			height: 1.5rem;
 		}
 		th {
+			&:last-child {
+				padding-left: 0;
+			}
 			border-right: 1px solid $bordersColor;
 			padding-left: 8px;
+			.md-button {
+				&.md-fab {
+					top: 0;
+				}
+			}
 			&>div {
 				outline: none;
 				.md-button {
 					margin: 0;
+
 				}
 			}
 			&.tableAction {
