@@ -1,32 +1,12 @@
-# plumber.R
-
-#' Echo the parameter that was sent in
-#' @param msg The message to echo back.
-#' @get /echo
-function(msg=""){
-  list(msg = paste0("The message is: '", msg, "'"))
-}
-
-#' Plot out data from the iris dataset
-#' @param spec If provided, filter the data to only this species (e.g. 'setosa')
-#' @get /plot
-#' @png
-function(spec){
-  myData <- iris
-  title <- "All Species"
-  
-  # Filter if the species was specified
-  if (!missing(spec)){
-    title <- paste0("Only the '", spec, "' Species")
-    myData <- subset(iris, Species == spec)
-  }
-  
-  plot(myData$Sepal.Length, myData$Petal.Length,
-       main=title, xlab="Sepal Length", ylab="Petal Length")
-}
+library("jsonlite")
+library("base64enc")
 
 #' @post /img
-function(dataset, script, output_variable){
-  
-  "<div>ciao</div>"
+function(dataset, dataset_name, script, output_variable){
+  env <- new.env()
+  script <- gsub(dataset_name,"df_",script)
+  env$df_ <- as.data.frame(fromJSON(dataset))
+  eval(parse(text=script), envir = env)
+  enc_img <- base64encode(output_variable)
+  paste0('<img src="data:image/;base64, ', enc_img, '" style="width:100%;height:100%;">')
 }
