@@ -1387,7 +1387,10 @@ public class ExcelExporter {
 				}
 
 			}
-
+			for (int i = 0; i < parameters.length(); i++) {
+				if (!newParameters.has(parameters.names().getString(i)))
+					newParameters.put(parameters.names().getString(i), "");
+			}
 			return newParameters;
 		} else
 			return getReplacedParameters(parameters, datasetId);
