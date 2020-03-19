@@ -77,7 +77,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	}
 
 	function rowDragEnter(event){
-		if($scope.startingDragRow) $scope.startingDragRow = event.overIndex;
+		if(!$scope.startingDragRow) $scope.startingDragRow = event.overIndex;
 	}
 	function onRowDragEnd(event){
 		moveInArray($scope.newModel.content.columnSelectedOfDataset, $scope.startingDragRow, event.overIndex);
