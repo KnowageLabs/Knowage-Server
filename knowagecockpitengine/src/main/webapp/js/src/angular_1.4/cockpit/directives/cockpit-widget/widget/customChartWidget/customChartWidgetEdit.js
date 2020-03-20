@@ -23,8 +23,37 @@ function customChartWidgetEditControllerFunction(
 	$scope,
 	finishEdit,
 	mdPanelRef,
-	sbiModule_translate){
-
+	sbiModule_translate,
+	datastore){
+	
+	var sort1 = datastore.filter({'city':'Santa Fe'}).sort('city').getDataArray(function(record){
+        return {
+            name :record.city,
+            y:record.total_children
+        }
+    });;
+	
+	console.log('sort1',sort1)
+    
+	var sort2 = datastore.filter({'total_children':'!2'}).sort('city').getDataArray(function(record){
+        return {
+            name :record.city,
+            z:record.total_children
+        }
+    });
+    console.log('sort2', sort2)
+    
+    var column = datastore.sort('city').getColumn('city');
+    console.log('column',column)
+    
+    var seriesAndData = datastore.getSeriesAndData(function(record){
+        return {
+            name :record.city,
+            children:record.total_children
+        }
+    },'city');
+    console.log('seriesAndData',seriesAndData);
+    
 	$scope.translate = sbiModule_translate;
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();

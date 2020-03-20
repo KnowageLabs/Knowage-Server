@@ -63,7 +63,7 @@ function cockpitCustomChartControllerFunction(
 		$sce,
 		$filter,
 		cockpitModule_generalServices,
-		cockpitModule_customWidgetServices
+		datastore
 		){
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('customChartWidget',template);

@@ -20,105 +20,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @authors Radmila Selakovic (radmila.selakovic@eng.it)
  *
  */
-angular.module("cockpitModule").service("cockpitModule_customWidgetServices",function(cockpitModule_datasetServices,sbiModule_util, datastoreService){
-	this.metadata = [];
-	this.dataset = null;
-
-	this.getDataSet = function (id){
-		return this.dataset;
-	};
-
-	this.setDataSet = function (dsId){
-		this.dataset = cockpitModule_datasetServices.getDatasetById(dsId);
-	};
-
-	this.setMetadata = function (dsId){
-		this.metadata = this.dataset.metadata.fieldsMeta;
-	};
-
-	this.getMetadata = function (){
-		return this.metadata;
-	};
-
-	this.createColumnSelectedOfDataset = function(){
-		var columnSelectedOfDataset = [];
-		if(arguments.length==0){
-			columnSelectedOfDataset = this.metadata;
-		} else {
-			for(var i=0; i<arguments.length; i++){
-
-				var index = sbiModule_util.findInArray(this.metadata, 'alias', arguments[i]);
-				if(index>-1){
-					columnSelectedOfDataset.push(this.metadata[index]);
-				}
-			}
-		}
-
-		return columnSelectedOfDataset;
-	}
-
-	this.transformDataStore = function (){
+angular.module("cockpitModule").factory("datastore",function($filter,cockpitModule_datasetServices,sbiModule_util, datastoreService){
+	
+	var transformDataStore = function (datastore){
 		var newDataStore = {};
-		newDataStore.metaData = datastoreService.datastore6.metaData;
-		newDataStore.results = datastoreService.datastore6.results;
+		newDataStore.metaData = datastore.metaData;
+		newDataStore.results = datastore.results;
 		newDataStore.rows = [];
 
-		for(var i=0; i<datastoreService.datastore6.rows.length; i++){
+		for(var i=0; i<datastore.rows.length; i++){
 			var obj = {};
-			for(var j=1; j<datastoreService.datastore6.metaData.fields.length; j++){
-				if(datastoreService.datastore6.rows[i][datastoreService.datastore6.metaData.fields[j].name]!=undefined){
-					obj[datastoreService.datastore6.metaData.fields[j].header] = datastoreService.datastore6.rows[i][datastoreService.datastore6.metaData.fields[j].name];
+			for(var j=1; j<datastore.metaData.fields.length; j++){
+				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
+					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
 				}
 			}
 			newDataStore.rows.push(obj);
 		}
 		return newDataStore;
 	}
-
-	this.getDataArray = function (getDataArrayFn){
-		var newDataStore = this.transformDataStore(datastoreService.datastore6) ;
+		
+	function datastore(data) {
+		this.data = data || transformDataStore(datastoreService.datastore6);
+	}
+	
+	datastore.prototype.getDataArray = function (getDataArrayFn){
 		var dataArray = [];
-		for(var i=0; i<newDataStore.rows.length; i++){
-			var dataObj = getDataArrayFn(newDataStore.rows[i]);
+		for(var i=0; i<this.data.rows.length; i++){
+			var dataObj = getDataArrayFn(this.data.rows[i]);
 			dataArray.push(dataObj)
 		}
 		return dataArray;
-
 	}
-
-	this.getColumn = function (categoryName){
-
+	
+	datastore.prototype.getColumn = function (column){
 		var categArray = [];
-		var fields = datastoreService.datastore6.metaData.fields;
-		var categoryColumn = datastoreService.datastore6.metaData.fields;
-		for(var i=1; i<fields.length; i++){
-
-			if(fields[i].header==categoryName){
-				categoryColumn = fields[i].name;
-			}
-		}
-		for(var i=0; i<datastoreService.datastore6.rows.length; i++){
-			var dataObj = datastoreService.datastore6.rows[i][categoryColumn];
+		for(var i=0; i<this.data.rows.length; i++){
+			var dataObj = this.data.rows[i][column];
 			categArray.push(dataObj)
 		}
-
-		categArray = categArray.filter(function(item, pos) {
-			return categArray.indexOf(item) == pos;
-		})
 		return categArray;
-
 	}
-
-	this.getSeriesAndData = function (getDataArrayFn,column){
-
-		var newDataStore = this.transformDataStore(datastoreService.datastore6);
+	
+	datastore.prototype.getSeriesAndData = function (getDataArrayFn,column){
 		var seriesMap = {};
-		for(var i=0; i<newDataStore.rows.length; i++){
-			if(seriesMap[newDataStore.rows[i][column]]==undefined){
-				seriesMap[newDataStore.rows[i][column]] = []
+		for(var i=0; i<this.data.rows.length; i++){
+			if(seriesMap[this.data.rows[i][column]]==undefined){
+				seriesMap[this.data.rows[i][column]] = []
 			}
-
-			seriesMap[newDataStore.rows[i][column]].push(getDataArrayFn(newDataStore.rows[i]))
+			seriesMap[this.data.rows[i][column]].push(getDataArrayFn(this.data.rows[i]))
 		}
 		var series = []
 		for (var property in seriesMap) {
@@ -126,33 +76,78 @@ angular.module("cockpitModule").service("cockpitModule_customWidgetServices",fun
 			serieObj.name = property;
 			serieObj.id = property;
 			serieObj.data = seriesMap[property];
-			series.push(serieObj)
+			series.push(serieObj);
 		}
 		return series;
 	}
-
-	var sortAsc = function (array){
-		array.sort(function(a, b){
-		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-		    if (nameA < nameB) //sort string ascending
-		        return -1
-		    if (nameA > nameB)
-		        return 1
-		    return 0 //default return value (no sorting)
-		})
+	
+	datastore.prototype.sort = function(sortingObject){
+		var newData = angular.copy(this.data);
+		newData.rows = $filter('orderBy')(newData.rows, sortingObject);
+		return new datastore(newData);
+	},
+	
+	datastore.prototype.filter = function(filterObject){
+		var newData = angular.copy(this.data);
+		newData.rows = $filter('filter')(newData.rows, filterObject);
+		return new datastore(newData);
 	}
+	
+	return new datastore;
 
-	var sortDesc = function (array){
-		array.sort(function(a, b){
-		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-		    if (nameA > nameB) //sort string ascending
-		        return -1
-		    if (nameA < nameB)
-		        return 1
-		    return 0 //default return value (no sorting)
-		})
-	}
-
-
+//	return function datastore(){
+//		// TODO insert correct datastore linkage here
+//		var data = transformDataStore(datastoreService.datastore6);
+//	  
+//		return {
+//			getDataArray: function (getDataArrayFn){
+//				var dataArray = [];
+//				for(var i=0; i<data.rows.length; i++){
+//					var dataObj = getDataArrayFn(data.rows[i]);
+//					dataArray.push(dataObj)
+//				}
+//				return dataArray;
+//			},
+//			
+//			getColumn: function (column){
+//				var categArray = [];
+//				for(var i=0; i<data.rows.length; i++){
+//					var dataObj = data.rows[i][column];
+//					categArray.push(dataObj)
+//				}
+//				return categArray;
+//			},
+//			
+//			getSeriesAndData: function (getDataArrayFn,column){
+//				var seriesMap = {};
+//				for(var i=0; i<data.rows.length; i++){
+//					if(seriesMap[data.rows[i][column]]==undefined){
+//						seriesMap[data.rows[i][column]] = []
+//					}
+//					seriesMap[data.rows[i][column]].push(getDataArrayFn(data.rows[i]))
+//				}
+//				var series = []
+//				for (var property in seriesMap) {
+//					var serieObj = {};
+//					serieObj.name = property;
+//					serieObj.id = property;
+//					serieObj.data = seriesMap[property];
+//					series.push(serieObj);
+//				}
+//				return series;
+//			},
+//			
+//			sort: function(sortingObject){
+//				// {name:"M", phone:"1"}
+//				data.rows = $filter('orderBy')(data.rows, sortingObject);
+//				return this
+//			},
+//			
+//			filter: function(filterObject){
+//				// {name:"M", phone:"1"}
+//				data.rows = $filter('filter')(data.rows, filterObject);
+//				return this
+//			}
+//		}
+//	}
 });
-
