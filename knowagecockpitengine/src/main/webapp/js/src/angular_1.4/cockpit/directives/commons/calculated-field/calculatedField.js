@@ -27,7 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				selectedItem : "=?",
 				callbackUpdateGrid : "&?",
 				callbackUpdateAlias : "&?",
-				insideMenu : "=?"
+				insideMenu : "=?",
+				additionalInfo: "=?"
 			},
 			controller: calculatedFieldController,
 		}
@@ -66,7 +67,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					model:$scope.ngModel,
 					actualItem : $scope.currentRow,
 					callbackUpdateGrid: $scope.callbackUpdateGrid,
-					callbackUpdateAlias: $scope.callbackUpdateAlias
+					callbackUpdateAlias: $scope.callbackUpdateAlias,
+					additionalInfo: $scope.additionalInfo
 				},
 				//fullscreen: true,
 				controller: calculatedFieldDialogController
@@ -103,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
@@ -132,10 +134,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		})
 
 		$scope.availableFormulaTypes = [];
+		
+		if(additionalInfo && additionalInfo.nullifFunction && additionalInfo.nullifFunction.length > 0) $scope.nullifWarningLabel = additionalInfo.nullifFunction[0];
+		
 		angular.forEach($scope.functions, function(value, key) {
-			if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
+			if(value.type == $scope.translate.load("kn.cockpit.functions.type.functions")){
+				if(additionalInfo && additionalInfo.availableFunctions && additionalInfo.availableFunctions.length != 0){
+					if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
+				}
+			}else if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
 		});
-
+		
+		$scope.checkFormulaAvailability = function(formula){
+			if(formula.type == $scope.translate.load("kn.cockpit.functions.type.functions") && additionalInfo){
+				if(additionalInfo.availableFunctions.lenght > 0 && additionalInfo.availableFunctions.indexOf(formula.name) === -1) return false;
+			}
+			return true;
+		}
+	
+		
 
 		//codemirror initializer
 		$scope.reloadCodemirror = false;
@@ -149,8 +166,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		$scope.$watch('calculatedField.formulaEditor', function(newValue,oldValue){
-			if(newValue && newValue.match("/")){
-				$scope.showWarning = $scope.translate.load('kn.cockpit.calculatedfield.validation.division');
+			if(newValue && newValue.match("/") && $scope.nullifWarningLabel){
+				$scope.showWarning = $scope.translate.load('kn.cockpit.calculatedfield.validation.division').replace("{0}", $scope.nullifWarningLabel);
 			}else {
 				$scope.showWarning = false;
 			}

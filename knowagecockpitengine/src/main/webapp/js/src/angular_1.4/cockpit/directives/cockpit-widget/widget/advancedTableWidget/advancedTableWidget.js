@@ -331,8 +331,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 		}
 
+		/*
+		 * The number formatter prepares the data to show the number correctly in the user locale format.
+		 * If a precision is set will use it, otherwise will set the precision to 2 if float, 0 if int.
+		 * In case of a returning empty string that one will be displayed.
+		 */
 		function numberFormatter(params){
-			if(params.value != "" && !params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
+			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;

@@ -168,10 +168,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 		 conditions : ['>','<','==','>=','<=','!='],
 		 calculatedFieldsFunctions: [
 			   {
-				      "syntax":"SUM( Field )",
+				      "syntax":"SUM( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.sum"),
-				      "body":"SUM(field)",
-				      "name":"Sum",
+				      "body":"SUM("+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"SUM",
 				      "arguments":[
 				         {
 				            "name":"Field",
@@ -187,10 +187,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
-				      "syntax":"MIN( Field )",
+				      "syntax":"MIN( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.min"),
-				      "body":"MIN(field)",
-				      "name":"Min",
+				      "body":"MIN("+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"MIN",
 				      "arguments":[
 				         {
 				            "name":"Field",
@@ -206,10 +206,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
-				      "syntax":"MAX( Field )",
+				      "syntax":"MAX( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.max"),
-				      "body":"MAX(field)",
-				      "name":"Max",
+				      "body":"MAX("+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"MAX",
 				      "arguments":[
 				         {
 				            "name":"Field",
@@ -225,10 +225,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
-				      "syntax":"COUNT( Field )",
+				      "syntax":"COUNT( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.count"),
-				      "body":"COUNT(field)",
-				      "name":"Count",
+				      "body":"COUNT("+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"COUNT",
 				      "arguments":[
 				         {
 				            "name":"Field",
@@ -244,10 +244,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
-				      "syntax":"AVG( Field )",
+				      "syntax":"AVG( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.avg"),
-				      "body":"AVG(field)",
-				      "name":"Average",
+				      "body":"AVG("+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"AVG",
 				      "arguments":[
 				         {
 				            "name":"Field",
@@ -263,10 +263,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
 				   {
-					   "syntax":"TOTAL_SUM( Field )",
+					   "syntax":"TOTAL_SUM( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.sum"),
-					      "body":"TOTAL_SUM(field)",
-					      "name":"Total Sum",
+					      "body":"TOTAL_SUM("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_SUM",
 					      "arguments":[
 					         {
 					            "name":"Field",
@@ -281,10 +281,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
 				   },{
-					   "syntax":"TOTAL_AVG( Field )",
+					   "syntax":"TOTAL_AVG( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.avg"),
-					      "body":"TOTAL_AVG(field)",
-					      "name":"Total Average",
+					      "body":"TOTAL_AVG("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_AVG",
 					      "arguments":[
 					         {
 					            "name":"Field",
@@ -299,10 +299,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
 				   },{
-					   "syntax":"TOTAL_MIN( Field )",
+					   "syntax":"TOTAL_MIN( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.min"),
-					      "body":"TOTAL_MIN(field)",
-					      "name":"Total Minimum",
+					      "body":"TOTAL_MIN("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_MIN",
 					      "arguments":[
 					         {
 					            "name":"Field",
@@ -317,10 +317,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
 				   },{
-					   "syntax":"TOTAL_MAX( Field )",
+					   "syntax":"TOTAL_MAX( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.max"),
-					      "body":"TOTAL_MAX(field)",
-					      "name":"Total Maximum",
+					      "body":"TOTAL_MAX("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_MAX",
 					      "arguments":[
 					         {
 					            "name":"Field",
@@ -335,10 +335,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
 				   },{
-					   "syntax":"TOTAL_COUNT( Field )",
+					   "syntax":"TOTAL_COUNT( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.count"),
-					      "body":"TOTAL_COUNT(field)",
-					      "name":"Total Count",
+					      "body":"TOTAL_COUNT("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_COUNT",
 					      "arguments":[
 					         {
 					            "name":"Field",
@@ -353,15 +353,23 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
 				   },{
-					   "syntax":"NULLIF( Field , Value)",
+					   "syntax":"NULLIF( "+sbiModule_translate.load("kn.generic.field")+" , "+sbiModule_translate.load("kn.generic.expression")+")",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.nullif"),
-					      "body":"NULLIF(field, 0)",
-					      "name":"NullIf",
+					      "body":"NULLIF("+sbiModule_translate.load("kn.generic.field")+", 0)",
+					      "name":"NULLIF",
 					      "arguments":[
 					         {
 					            "name":"Field",
 					            "expected_value":"",
 					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         },{
+					        	"name":"Expression",
+					            "expected_value":"",
+					            "default_value": 0,
 					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
 					            "hidden":false,
 					            "type":null,
