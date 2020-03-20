@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 @Path("/2.0/backendservices/widgets/RWidget")
 public class RWidgetProxy extends AbstractDataSetResource {
 
-	String rAddress = "http://localhost:5000/";
+	String rAddress = "http://localhost:5001/";
 	Map<String, String> headers;
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
 
@@ -157,7 +157,8 @@ public class RWidgetProxy extends AbstractDataSetResource {
 
 	private String getFinalResult(it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse) {
 		String rString = rEngineResponse.getResponseBody();
-		String toReturn = rString.substring(2, rString.length() - 2);
+		String b64img = rString.substring(2, rString.length() - 2);
+		String toReturn = "<img src=\"data:image/;base64, " + b64img + "\" style=\"width:100%;height:100%;\">";
 		System.out.println(toReturn);
 		return toReturn;
 	}
