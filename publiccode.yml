@@ -123,12 +123,9 @@ maintenance:
     - email: davide.zerbetto@eng.it
       name: Davide Zerbetto
   contractors:
-    - name: ENAV S.p.A.
-      until: '2020-12-31'
-      website: 'https://www.enav.it/sites/public/it/Home.html'
-    - name: Azienda Unità Sanitaria Locale di Modena
-      until: '2020-12-31'
-      website: 'http://www.ausl.mo.it/home'
+    - name: Engineering Ingegneria Informatica S.p.A.
+      until: '2021-12-31'
+      website: 'https://www.eng.it/'
   type: contract
 name: Knowage Server
 platforms:
