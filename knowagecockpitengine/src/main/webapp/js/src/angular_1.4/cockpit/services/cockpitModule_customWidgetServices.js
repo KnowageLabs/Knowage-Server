@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @authors Radmila Selakovic (radmila.selakovic@eng.it)
  *
  */
-angular.module("cockpitModule").service("cockpitModule_customWidgetServices",function(cockpitModule_datasetServices,sbiModule_util){
+angular.module("cockpitModule").service("cockpitModule_customWidgetServices",function(cockpitModule_datasetServices,sbiModule_util, datastoreService){
 	this.metadata = [];
 	this.dataset = null;
 
@@ -57,17 +57,17 @@ angular.module("cockpitModule").service("cockpitModule_customWidgetServices",fun
 		return columnSelectedOfDataset;
 	}
 
-	this.transformDataStore = function (datastore){
+	this.transformDataStore = function (){
 		var newDataStore = {};
-		newDataStore.metaData = datastore.metaData;
-		newDataStore.results = datastore.results;
+		newDataStore.metaData = datastoreService.datastore6.metaData;
+		newDataStore.results = datastoreService.datastore6.results;
 		newDataStore.rows = [];
 
-		for(var i=0; i<datastore.rows.length; i++){
+		for(var i=0; i<datastoreService.datastore6.rows.length; i++){
 			var obj = {};
-			for(var j=1; j<datastore.metaData.fields.length; j++){
-				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
-					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
+			for(var j=1; j<datastoreService.datastore6.metaData.fields.length; j++){
+				if(datastoreService.datastore6.rows[i][datastoreService.datastore6.metaData.fields[j].name]!=undefined){
+					obj[datastoreService.datastore6.metaData.fields[j].header] = datastoreService.datastore6.rows[i][datastoreService.datastore6.metaData.fields[j].name];
 				}
 			}
 			newDataStore.rows.push(obj);
@@ -75,8 +75,8 @@ angular.module("cockpitModule").service("cockpitModule_customWidgetServices",fun
 		return newDataStore;
 	}
 
-	this.getDataArray = function (getDataArrayFn,dataStore){
-		var newDataStore = this.transformDataStore(dataStore) ;
+	this.getDataArray = function (getDataArrayFn){
+		var newDataStore = this.transformDataStore(datastoreService.datastore6) ;
 		var dataArray = [];
 		for(var i=0; i<newDataStore.rows.length; i++){
 			var dataObj = getDataArrayFn(newDataStore.rows[i]);
@@ -86,19 +86,19 @@ angular.module("cockpitModule").service("cockpitModule_customWidgetServices",fun
 
 	}
 
-	this.getColumn = function (categoryName, dataStore){
+	this.getColumn = function (categoryName){
 
 		var categArray = [];
-		var fields = dataStore.metaData.fields;
-		var categoryColumn = dataStore.metaData.fields;
+		var fields = datastoreService.datastore6.metaData.fields;
+		var categoryColumn = datastoreService.datastore6.metaData.fields;
 		for(var i=1; i<fields.length; i++){
 
 			if(fields[i].header==categoryName){
 				categoryColumn = fields[i].name;
 			}
 		}
-		for(var i=0; i<dataStore.rows.length; i++){
-			var dataObj = dataStore.rows[i][categoryColumn];
+		for(var i=0; i<datastoreService.datastore6.rows.length; i++){
+			var dataObj = datastoreService.datastore6.rows[i][categoryColumn];
 			categArray.push(dataObj)
 		}
 
@@ -109,9 +109,9 @@ angular.module("cockpitModule").service("cockpitModule_customWidgetServices",fun
 
 	}
 
-	this.getSeriesAndData = function (getDataArrayFn,column,dataStore){
+	this.getSeriesAndData = function (getDataArrayFn,column){
 
-		var newDataStore = this.transformDataStore(dataStore);
+		var newDataStore = this.transformDataStore(datastoreService.datastore6);
 		var seriesMap = {};
 		for(var i=0; i<newDataStore.rows.length; i++){
 			if(seriesMap[newDataStore.rows[i][column]]==undefined){
