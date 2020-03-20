@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
+import org.geotools.data.DataSourceException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +56,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -66,6 +68,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
@@ -80,6 +84,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DatasetFunctionsConfig;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -103,7 +108,9 @@ import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -143,6 +150,52 @@ public class DataSetResource extends AbstractDataSetResource {
 		} catch (SerializationException e) {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
+	}
+
+	@GET
+	@Path("/availableFunctions/{dsId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
+			throws JSONException, DataBaseException, EMFUserError, DataSourceException {
+		logger.debug("IN");
+
+		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
+
+		JSONObject jo = new JSONObject();
+
+		DatasetFunctionsConfig datasetFunctionsConfig = new DatasetFunctionsConfig();
+
+		if (useCache) {
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+
+			if (dataSource == null)
+				throw new DataSourceException("No data source found for cache");
+
+			String dataBaseDialect = dataSource.getDialectName();
+			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
+			jo.put("availableFunctions", availableFunctions);
+
+			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
+			jo.put("nullifFunction", nullIfFunction);
+
+		} else {
+			Tenant tenantManager = TenantManager.getTenant();
+			SbiDataSet sbiDataSet = dsDAO.loadSbiDataSetByIdAndOrganiz(Integer.valueOf(datasetId), tenantManager.getName());
+			IDataSet iDataSet = DataSetFactory.toDataSet(sbiDataSet);
+			IDataBase database = DataBaseFactory.getDataBase(iDataSet.getDataSource());
+			String dataBaseDialect = database.getDatabaseDialect().getValue();
+
+			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
+			jo.put("availableFunctions", availableFunctions);
+
+			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
+			jo.put("nullifFunction", nullIfFunction);
+		}
+
+		logger.debug("OUT");
+		return jo.toString();
 	}
 
 	@GET

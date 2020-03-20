@@ -58,3 +58,7 @@ public String split(String attrName, String splitter) {
 	strBuf.append("</ROWS>");
 	return strBuf.toString();
 };
+
+public String NULLIF(BigDecimal expression1, Integer expression2) {
+	return expression1.compareTo(expression2)==0 ? null : expression1;
+};

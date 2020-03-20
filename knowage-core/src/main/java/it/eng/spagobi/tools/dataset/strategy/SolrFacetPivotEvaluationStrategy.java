@@ -165,7 +165,12 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 				Object o = scriptManager.runScript(resultingCalculation, "groovy", bindings, imports);
 				String data = (o == null) ? "" : o.toString();
 
-				IField fieldNew = new Field(new BigDecimal(data));
+				IField fieldNew = null;
+				if (data != null && data.isEmpty()) {
+					fieldNew = new Field();
+				} else {
+					fieldNew = new Field(new BigDecimal(data));
+				}
 				newRecord.appendField(fieldNew);
 
 				datastoresToAdd.appendRecord(newRecord);
