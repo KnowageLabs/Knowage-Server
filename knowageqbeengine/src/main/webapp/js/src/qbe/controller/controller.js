@@ -108,9 +108,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		Array.prototype.push.apply($scope.formulas, $scope.customTransformedFormulas);
 	});
 
-	formulaService.getExportLimitation().then(function(response) {
+	exportService.getExportLimitation().then(function(response) {
 		if(response.data){
-			formulaService.exportLimit = response.data;
+			exportService.setExportLimit(response.data);
 		};
 	});
 

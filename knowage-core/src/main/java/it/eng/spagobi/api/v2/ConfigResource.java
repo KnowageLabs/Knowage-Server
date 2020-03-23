@@ -248,9 +248,9 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/EXPORT.LIMITATION/{dataSourceId}")
+	@Path("/EXPORT.LIMITATION")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getKnowageCalculatedFunctionConfigLimitExport(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
+	public String getExportLimit() {
 		String limitExport = SingletonConfig.getInstance().getConfigValue("query.export.limitResultData");
 		return limitExport;
 	}
