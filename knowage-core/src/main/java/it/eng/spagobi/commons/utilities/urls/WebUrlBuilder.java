@@ -44,6 +44,8 @@ public class WebUrlBuilder implements IUrlBuilder {
 	private String baseResourceURL = "";
 	private String KNOWAGE_VERSION = Version.getCompleteVersion();
 	private Environment ENVIRONMENT = Version.getEnvironment();
+	
+	private String[] regExpResources = { "/js/(src)", "/themes/commons/(css)/" };
 
 	/**
 	 * Inits the.
@@ -163,12 +165,15 @@ public class WebUrlBuilder implements IUrlBuilder {
 
 	private String concatSrcWithKnowageVersion(String url) {
 		logger.debug("IN");
-		Pattern srcPattern = Pattern.compile("/js/(src)");
-		Matcher srcMatcher = srcPattern.matcher(url);
+		for (int i = 0; i < regExpResources.length; i++) {
+			String pattern = regExpResources[i];
+			Pattern srcPattern = Pattern.compile(pattern);
+			Matcher srcMatcher = srcPattern.matcher(url);
 
-		if (srcMatcher.find()) {
-			String src = srcMatcher.group(1);
-			url = url.replace(src, src + "-" + KNOWAGE_VERSION);
+			if (srcMatcher.find()) {
+				String src = srcMatcher.group(1);
+				url = url.replaceFirst(src, src + "-" + KNOWAGE_VERSION);
+			}
 		}
 
 		logger.debug("OUT");
