@@ -19,7 +19,6 @@
 package it.eng.knowage.backendservices.rest.widgets;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -30,9 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.common.AbstractDataSetResource;
@@ -78,16 +75,16 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			drivers = requestBody.get("drivers");
 			aggregations = requestBody.get("aggregations");
 			selections = requestBody.get("selections");
-			script = getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent(), widgetId);
+			script = RUtils.getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent(), widgetId);
 		} catch (Exception e) {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
 		String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-		String rDataframe = DataSet2DataFrame(knowageDs);
+		String rDataframe = RUtils.DataSet2DataFrame(knowageDs);
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String body = createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
 			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
@@ -98,7 +95,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		} else {
 			JSONObject toReturn;
 			try {
-				toReturn = new JSONObject().put("result", getFinalResult(rEngineResponse));
+				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse));
 			} catch (Exception e) {
 				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
 				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
@@ -132,10 +129,10 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
 		String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-		String rDataframe = DataSet2DataFrame(knowageDs);
+		String rDataframe = RUtils.DataSet2DataFrame(knowageDs);
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String body = createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
 			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
@@ -146,92 +143,13 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		} else {
 			JSONObject toReturn;
 			try {
-				toReturn = new JSONObject().put("result", getFinalResult(rEngineResponse));
+				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse));
 			} catch (Exception e) {
 				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
 				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
 			}
 			return Response.ok(toReturn.toString()).build();
 		}
-	}
-
-	private String getFinalResult(it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse) {
-		String rString = rEngineResponse.getResponseBody();
-		String b64img = rString.substring(2, rString.length() - 2);
-		String toReturn = "<img src=\"data:image/;base64, " + b64img + "\" style=\"width:100%;height:100%;\">";
-		System.out.println(toReturn);
-		return toReturn;
-	}
-
-	private String DataSet2DataFrame(String knowageDs) {
-		JSONObject oldDataset;
-		JSONArray newDataframe = new JSONArray();
-		try {
-			oldDataset = new JSONObject(knowageDs);
-			Map<String, String> columnNames = new HashMap<String, String>();
-			JSONObject metaData = oldDataset.getJSONObject("metaData");
-			JSONArray fields = (JSONArray) metaData.get("fields");
-			for (int i = 1; i < fields.length(); i++) {
-				JSONObject col = fields.getJSONObject(i);
-				columnNames.put(col.get("name").toString(), col.get("header").toString());
-			}
-			JSONArray rows = (JSONArray) oldDataset.get("rows");
-			for (int j = 0; j < rows.length(); j++) {
-				JSONObject row = rows.getJSONObject(j);
-				Iterator<String> keys = row.keys();
-				JSONObject newDataframeRow = new JSONObject();
-				while (keys.hasNext()) {
-					String key = keys.next();
-					if (columnNames.get(key) != null) {
-						newDataframeRow.put(columnNames.get(key), row.get(key));
-					}
-				}
-				newDataframe.put(newDataframeRow);
-			}
-		} catch (Exception e) {
-			logger.error("error while converting json to dataframe format");
-			throw new SpagoBIRuntimeException("error while converting json to dataframe format", e);
-		}
-		return newDataframe.toString();
-	}
-
-	private String createREngineRequestBody(String dataset, String dsLabel, String script, String outputVariable) {
-		JSONObject jsonBody = new JSONObject();
-		try {
-			jsonBody.put("dataset", dataset);
-			jsonBody.put("script", script);
-			jsonBody.put("output_variable", outputVariable);
-			jsonBody.put("dataset_name", dsLabel);
-		} catch (Exception e) {
-			logger.error("error while creating request body for R engine");
-			throw new SpagoBIRuntimeException("error while creating request body for R engine", e);
-		}
-		return jsonBody.toString();
-	}
-
-	private String getRCodeFromTemplate(String base64template, String widgetId) {
-		JSONObject templateJson;
-		try {
-			byte[] decodedBytes = Base64.decodeBase64(base64template);
-			String template = new String(decodedBytes, "UTF-8");
-			templateJson = new JSONObject(new String(decodedBytes, "UTF-8"));
-			JSONArray sheets = (JSONArray) templateJson.get("sheets");
-			for (int i = 0; i < sheets.length(); i++) {
-				JSONObject sheet = sheets.getJSONObject(i);
-				JSONArray widgets = (JSONArray) sheet.get("widgets");
-				for (int j = 0; j < widgets.length(); j++) {
-					JSONObject widget = widgets.getJSONObject(j);
-					String id = widget.getString("id");
-					if (id.equals(widgetId)) {
-						return widget.get("RCode").toString();
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("error while retrieving code from template");
-			throw new SpagoBIRuntimeException("error while retrieving code from template", e);
-		}
-		throw new SpagoBIRuntimeException("Couldn't retrieve code from template for widgetId [" + widgetId + "]");
 	}
 
 }
