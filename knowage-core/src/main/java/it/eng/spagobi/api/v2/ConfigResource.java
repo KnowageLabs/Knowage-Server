@@ -43,6 +43,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -244,6 +245,14 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		return toReturn.toString();
 
+	}
+
+	@GET
+	@Path("/EXPORT.LIMITATION/{dataSourceId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getKnowageCalculatedFunctionConfigLimitExport(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
+		String limitExport = SingletonConfig.getInstance().getConfigValue("query.export.limitResultData");
+		return limitExport;
 	}
 
 	@POST

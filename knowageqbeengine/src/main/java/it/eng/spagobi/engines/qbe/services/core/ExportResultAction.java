@@ -80,6 +80,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	public static final String QUERY = "query";
 	public static final String RESPONSE_TYPE = "RESPONSE_TYPE";
 	public static final String PARS = "pars";
+	public static final String LIMIT = "limit";
 
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
@@ -96,6 +97,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String responseType = null;
 		boolean writeBackResponseInline = false;
 		String mimeType = null;
+		String exportLimit = null;
 		JSONObject queryJSON = null;
 		String fileExtension = null;
 		IStatement statement = null;
@@ -121,6 +123,9 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			mimeType = getAttributeAsString(MIME_TYPE);
 			logger.debug(MIME_TYPE + ": " + mimeType);
+
+			exportLimit = getAttributeAsString(LIMIT);
+			logger.debug(LIMIT + ": " + exportLimit);
 
 			responseType = getAttributeAsString(RESPONSE_TYPE);
 			logger.debug(RESPONSE_TYPE + ": " + responseType);
@@ -202,11 +207,11 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			if ("application/vnd.ms-excel".equalsIgnoreCase(mimeType)) {
 				// export into XLS
-				exportIntoXLS(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields);
+				exportIntoXLS(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
 
 			} else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equalsIgnoreCase(mimeType)) {
 				// export into XLSX
-				exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields);
+				exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
 
 			} else if ("text/csv".equalsIgnoreCase(mimeType)) {
 				// export into CSV
@@ -281,9 +286,9 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields)
-			throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
-		IDataStore dataStore = getDataStore(statement, sqlQuery);
+	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
+			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
+		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
 		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
@@ -310,9 +315,9 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields)
-			throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
-		IDataStore dataStore = getDataStore(statement, sqlQuery);
+	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
+			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
+		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
 
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
 		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore, locale);
@@ -340,7 +345,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private IDataStore getDataStore(IStatement statement, String sqlQuery) throws EMFInternalError {
+	private IDataStore getDataStore(IStatement statement, String sqlQuery, String exportLimit) throws EMFInternalError {
 		IDataStore dataStore = null;
 
 		boolean isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
@@ -349,7 +354,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			IDataSet dataSet = null;
 
-			Integer limit = 0;
+			Integer limit;
+			if (exportLimit != null) {
+				limit = Integer.parseInt(exportLimit);
+			} else {
+				limit = 0;
+			}
+
 			Integer start = 0;
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();

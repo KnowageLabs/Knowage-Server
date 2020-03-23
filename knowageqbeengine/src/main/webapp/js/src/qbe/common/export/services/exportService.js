@@ -18,7 +18,7 @@
 
 (function(){
 
-	angular.module('exportModule').factory('exportService', function(sbiModule_action_builder,sbiModuleDownloadService,sbiModule_messaging, sbiModule_restServices, sbiModule_config){
+	angular.module('exportModule').factory('exportService', function(sbiModule_action_builder,sbiModuleDownloadService,sbiModule_messaging, sbiModule_restServices, sbiModule_config, formulaService){
 
 		var exporters = [];
 		exporters.push(new Exporter('csv','text/csv'));
@@ -53,6 +53,7 @@
 					exportResultAction.formParams.query = query;
 					exportResultAction.formParams.pars = bodySend.pars;
 					exportResultAction.conf.responseType = 'arraybuffer';
+					exportResultAction.queryParams.limit = formulaService.exportLimit;
 					exportResultAction.executeAction().then(function(response){
 
 						sbiModuleDownloadService.getBlob(response);
