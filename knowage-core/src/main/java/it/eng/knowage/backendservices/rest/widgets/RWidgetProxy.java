@@ -95,7 +95,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		} else {
 			JSONObject toReturn;
 			try {
-				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse));
+				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse, outputType));
 			} catch (Exception e) {
 				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
 				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);
@@ -143,7 +143,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		} else {
 			JSONObject toReturn;
 			try {
-				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse));
+				toReturn = new JSONObject().put("result", RUtils.getFinalResult(rEngineResponse, outputType));
 			} catch (Exception e) {
 				logger.error("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]");
 				throw new SpagoBIRuntimeException("error while creating response json for userId [" + userId + "] and documentId [" + documentId + "]", e);

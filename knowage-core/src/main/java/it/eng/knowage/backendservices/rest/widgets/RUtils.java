@@ -18,11 +18,14 @@ public class RUtils {
 	private RUtils() {
 	}
 
-	static String getFinalResult(it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse) {
+	static String getFinalResult(it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse, String outputType) {
 		String rString = rEngineResponse.getResponseBody();
-		String b64img = rString.substring(2, rString.length() - 2);
-		String toReturn = "<img src=\"data:image/;base64, " + b64img + "\" style=\"width:100%;height:100%;\">";
-		return toReturn;
+		String rOutput = rString.substring(2, rString.length() - 2);
+		if (outputType.equals("img")) {
+			return "<img src=\"data:image/;base64, " + rOutput + "\" style=\"width:100%;height:100%;\">";
+		} else {
+			return rOutput;
+		}
 	}
 
 	static String DataSet2DataFrame(String knowageDs) {
