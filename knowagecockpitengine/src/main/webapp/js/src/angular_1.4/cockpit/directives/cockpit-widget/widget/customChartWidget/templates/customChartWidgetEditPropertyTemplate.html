@@ -1,4 +1,4 @@
-<md-card  class="flexCard htmlWidgetConfiguration" >
+<md-card  class="flexCard customWidgetConfiguration" >
 	<md-card-content flex layout="column" class="noPadding">
 	    <md-toolbar> 
 	      <div class="md-toolbar-tools">
@@ -7,7 +7,85 @@
 	      </div>
 	    </md-toolbar>
 	    <md-content flex layout="column">
-			
+			<md-tabs flex md-border-bottom md-selected="1">
+				<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		        	<md-card>
+		        		<md-card-content>
+		   					<dataset-selector ng-model="newModel.dataset.dsId" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
+		   				</md-card-content>
+		   			</md-card>	
+		     	</md-tab>
+		     	
+		     	<md-tab label="Editor">
+					<section layout="row">
+					<md-content class="noPadding" layout="row" layout-fill>
+						<div layout="column" flex>
+							<md-card class="cssEditor" ng-class="{'flex':newModel.css.opened}">
+								<md-toolbar class="ternaryToolbar clickable" ng-click="toggleLanguage('css')"> 
+							      <div class="md-toolbar-tools">
+							        <i class="language fab fa-css3"></i>
+							        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
+							        <span flex></span>
+							        <md-button class="md-icon-button" >
+							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.css.opened,'fa-chevron-up':newModel.css.opened}"></md-icon>
+							        </md-button>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding" ng-if="newModel.css.opened">
+								<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.css.code" ui-refresh="reloadCodemirror" flex></textarea>
+								</md-card-content>
+							</md-card>
+							
+							<md-card class="htmlEditor" ng-class="{'flex':newModel.html.opened}">
+								<md-toolbar class="ternaryToolbar clickable" ng-click="toggleLanguage('html')"> 
+							      <div class="md-toolbar-tools">
+							      	<i class="language fab fa-html5"></i>
+							        <h2>{{translate.load('kn.cockpit.html.html')}}</h2>
+							        <span flex></span>
+							        <md-button class="md-icon-button" >
+							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.html.opened,'fa-chevron-up':newModel.html.opened}"></md-icon>
+							        </md-button>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding" ng-if="newModel.html.opened">
+								<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.html.code" ui-refresh="newModel.html.code" flex></textarea>
+								</md-card-content>
+							</md-card>
+							
+							<md-card class="jsEditor" ng-class="{'flex':newModel.js.opened}">
+								<md-toolbar class="ternaryToolbar clickable" ng-click="toggleLanguage('js')"> 
+							      <div class="md-toolbar-tools"> 
+							      	<i class="language fab fa-js"></i>
+							        <h2>Javascript</h2>
+							        <span flex></span>
+							        <md-button class="md-icon-button" >
+							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.js.opened,'fa-chevron-up':newModel.js.opened}"></md-icon>
+							        </md-button>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding" ng-if="newModel.js.opened">
+								<div layout="row" style="padding: 0 8px;">
+									<md-input-container flex>
+							          <label>Chart Library</label>
+							          <md-select ng-model="newModel.js.library">
+							            <md-option ng-value="">None</md-option>
+							            <md-option ng-value="highcharts">HighCharts</md-option>
+							            <md-option ng-value="chartjs">Chart.Js</md-option>
+							          </md-select>
+							        </md-input-container>
+								</div>
+								<textarea id="js" ui-codemirror="editorOptionsJs" ng-model="newModel.js.code" ui-refresh="newModel.js.code" flex></textarea>
+								</md-card-content>
+							</md-card>
+						</div>
+						
+				    </md-content>
+				    
+					    </section>
+		        </md-tab>
+		     	
+		     	
+	     	</md-tabs>
 	    </md-content>
     </md-card-content>
     <md-card-actions layout="row"  layout-align="end center">

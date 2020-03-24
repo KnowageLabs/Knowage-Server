@@ -1236,7 +1236,7 @@
         }
     }
 
-	.htmlWidgetConfiguration {
+	.htmlWidgetConfiguration, .customWidgetConfiguration {
 		section {
 			height: 100%;
 		}
@@ -1272,7 +1272,24 @@
 				}
 			}
 		}
+		.language {
+			margin-right: 8px;
+			font-size: $largeFontSize;
+		}
 	}    
+
+	.customWidgetConfiguration {
+		.jsEditor {
+			.CodeMirror {
+				height: calc(100% - 102px);
+			}
+		}
+		.htmlEditor, .cssEditor {
+			.CodeMirror {
+				height: calc(100% - 32px);
+			}
+		}
+	}
 	
 	cockpit-python-widget {
 		height: 100%;

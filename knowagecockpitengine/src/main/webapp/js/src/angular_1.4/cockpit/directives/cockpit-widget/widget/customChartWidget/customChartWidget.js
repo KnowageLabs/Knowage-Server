@@ -1,5 +1,5 @@
 /*
-Knowage, Open Source Business Intelligence suite
+ùKnowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
 Knowage is free software: you can redistribute it and/or modify
@@ -35,24 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	})
 
-		/*.directive('bindHtmlCompile', ['$compile', function ($compile) {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                scope.$watch(function () {
-                    return scope.$eval(attrs.bindHtmlCompile);
-                }, function (value) {
-                    element.html(value && value.toString());
-                    var compileScope = scope;
-                    if (attrs.bindHtmlScope) {
-                        compileScope = scope.$eval(attrs.bindHtmlScope);
-                    }
-                    $compile(element.contents())(compileScope);
-                });
-            }
-        };
-    }])*/
-
 function cockpitCustomChartControllerFunction(
 		$scope,
 		$mdDialog,
@@ -68,8 +50,34 @@ function cockpitCustomChartControllerFunction(
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('customChartWidget',template);
 	}
+	
+	if(!$scope.ngModel.style) $scope.ngModel.style = {};
+	
+	if(!$scope.ngModel.js) {
+		$scope.ngModel.css = {};
+		$scope.ngModel.html = {};
+		$scope.ngModel.js = {};	
+	}
+	
+	$scope.init=function(element,width,height){
+		$scope.refreshWidget(null, 'init');
+	}
 
-
+	$scope.refresh = function(element,width,height, datasetRecords,nature){
+		$timeout(function(){
+			try {
+				if($scope.ngModel.js) eval($scope.ngModel.js.code);
+			} catch(e){
+				console.log(e);
+			}
+		},1000)
+	}
+	
+	$scope.reinit = function(){
+		$scope.refreshWidget();
+	}
+	
+	
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
