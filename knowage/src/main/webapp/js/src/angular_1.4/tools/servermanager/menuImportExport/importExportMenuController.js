@@ -5,12 +5,12 @@ var app = angular.module('importExportMenuModule',
 app.run(function($templateCache, sbiModule_config) {
 	$templateCache.put('knTreeControlTemplate.html', '<ul {{options.ulClass}} > '+
 			'<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}"'+ 
-				'ng-class="headClass(node)" {{options.liClass}} set-node-to-data> '+
+				'ng-class="headClass(node)" {{options.liClass}} set-node-to-data><div class="liContent"> '+
 				'<md-checkbox ng-model="node.checked" ng-change="selectNodeLabel(node)"></md-checkbox> '+
 				'<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i> '+
 				'<i class="tree-leaf-head {{options.iLeafClass}}"></i> '+
 				'<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)"   rcLabel  ctxMenuId   tree-transclude></div>'+ 
-				'<treeitem ng-if="nodeExpanded()"></treeitem> '+
+				'</div><treeitem ng-if="nodeExpanded()"></treeitem> '+
 			'</li> '+
 		'</ul>');
 });
