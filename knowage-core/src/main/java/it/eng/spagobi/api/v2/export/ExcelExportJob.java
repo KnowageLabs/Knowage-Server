@@ -35,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -124,7 +125,9 @@ public class ExcelExportJob extends AbstractExportJob {
 				}
 			}
 			// FILL CELL RECORD
-			dataSet.loadData();
+			String limitExp = SingletonConfig.getInstance().getConfigValue("query.export.limitResultData");
+			Integer limitExport = Integer.parseInt(limitExp);
+			dataSet.loadData(0, limitExport, -1);
 			IDataStore dataStore = dataSet.getDataStore();
 			for (int i = 0; i < Integer.MAX_VALUE && i < dataStore.getRecordsCount(); i++) {
 				try {
@@ -192,9 +195,9 @@ public class ExcelExportJob extends AbstractExportJob {
 			logger.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
-//			if (iterator != null) {
-//				iterator.close();
-//			}
+			// if (iterator != null) {
+			// iterator.close();
+			// }
 			if (exportFileOS != null) {
 				try {
 					exportFileOS.close();
