@@ -47,6 +47,7 @@ function cockpitCustomChartControllerFunction(
 		cockpitModule_generalServices,
 		datastore
 		){
+	$scope.datastore = datastore;
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('customChartWidget',template);
 	}
@@ -64,13 +65,17 @@ function cockpitCustomChartControllerFunction(
 	}
 
 	$scope.refresh = function(element,width,height, datasetRecords,nature){
-		$timeout(function(){
+		$scope.showWidgetSpinner();
+		if(datasetRecords){
 			try {
+				datastore.setData(datasetRecords);
 				if($scope.ngModel.js) eval($scope.ngModel.js.code);
+				$scope.hideWidgetSpinner();
 			} catch(e){
+				$scope.hideWidgetSpinner();
 				console.log(e);
 			}
-		},1000)
+		}
 	}
 	
 	$scope.reinit = function(){

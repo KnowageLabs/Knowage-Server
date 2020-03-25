@@ -76,23 +76,23 @@ function customChartWidgetEditControllerFunction(
     };
 	
 //*************************START STUBBED DATA
-	var sort1 = datastore.filter({'city':'Santa Fe','total': 2}).sort('city').getDataArray(function(record){
+	var sort1 = datastore.filter({'first_name':'Pippo'}).sort('gender').getDataArray(function(record){
         return {
-            name :record.city,
-            y:record.total_children
+            name :record.first_name,
+            gender:record.gender
         }
     });;
 	console.log('sort1',sort1)
   
-	var sort2 = datastore.filter({'total_children':'!2'}).sort('city').getDataArray(function(record){
+	var sort2 = datastore.filter().sort('email').getDataArray(function(record){
         return {
-            name :record.city,
-            z:record.total_children
+            name :record.email,
+            z:record.int
         }
     });
     console.log('sort2', sort2)
     
-    var column = datastore.sort('city').getColumn('city');
+    var column = datastore.sort('first_name').getColumn('email');
     console.log('column',column)
     
 //    var seriesAndData = datastore.getSeriesAndData({'dataLabel':'myData','series':[{'name':'city'},{'desc':'city_desc'}]}, function(record){

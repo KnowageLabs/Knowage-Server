@@ -41,7 +41,11 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 	}
 		
 	function datastore(data) {
-		this.data = data || transformDataStore(datastoreService.datastore6);
+		this.data = data ? transformDataStore(data) : transformDataStore(datastoreService.datastore6);
+	}
+	
+	datastore.prototype.setData = function (data) {
+		this.data = data;
 	}
 	
 	datastore.prototype.getDataArray = function (getDataArrayFn){

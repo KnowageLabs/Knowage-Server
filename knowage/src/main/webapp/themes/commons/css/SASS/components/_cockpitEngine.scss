@@ -1279,12 +1279,7 @@
 	}    
 
 	.customWidgetConfiguration {
-		.jsEditor {
-			.CodeMirror {
-				height: calc(100% - 102px);
-			}
-		}
-		.htmlEditor, .cssEditor {
+		.htmlEditor, .cssEditor,.jsEditor {
 			.CodeMirror {
 				height: calc(100% - 32px);
 			}
