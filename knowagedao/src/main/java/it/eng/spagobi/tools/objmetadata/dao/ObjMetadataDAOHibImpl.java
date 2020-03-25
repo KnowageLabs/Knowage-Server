@@ -156,7 +156,6 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	 */
 	@Override
 	public ObjMetadata loadObjMetadataByLabel(String label) throws EMFUserError {
-
 		logger.debug("IN");
 		ObjMetadata toReturn = null;
 		Session tmpSession = null;
@@ -164,9 +163,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label", label);
+			Criterion labelCriterion = null;
+			labelCriterion = Expression.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
-			criteria.add(labelCriterrion);
+			criteria.add(labelCriterion);
 			SbiObjMetadata hibMeta = (SbiObjMetadata) criteria.uniqueResult();
 			if (hibMeta == null)
 				return null;
@@ -277,6 +277,59 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		}
 		logger.debug("OUT");
 		return realResult;
+
+	}
+
+	/**
+	 * Load all metadata filtered by label comparison.
+	 *
+	 * @return the list
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
+	 */
+	@Override
+	public List loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError {
+		logger.debug("IN");
+		List toReturn = new ArrayList<SbiObjMetadata>();
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterion = null;
+			if (caseSensitive) {
+				labelCriterion = Expression.eq("label", label);
+			} else {
+				labelCriterion = Expression.eq("label", label).ignoreCase();
+
+			}
+			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
+			criteria.add(labelCriterion);
+			List hibMeta = criteria.list();
+			if (hibMeta == null)
+				return null;
+
+			for (Object object : hibMeta) {
+
+				toReturn.add(toObjMetadata((SbiObjMetadata) object));
+			}
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the metadata with label " + label, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
 
 	}
 

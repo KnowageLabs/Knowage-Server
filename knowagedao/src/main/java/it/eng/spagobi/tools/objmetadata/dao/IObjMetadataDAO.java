@@ -126,4 +126,15 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 
 	public List loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError;
 
+	/**
+	 * Load all metadata filtered by label comparison.
+	 *
+	 * @return the list
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
+	 */
+	public List loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError;
+
 }

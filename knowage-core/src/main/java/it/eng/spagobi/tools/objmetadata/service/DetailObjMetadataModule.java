@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.objmetadata.service;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -35,17 +44,8 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-
 /**
- * This class implements a module which  handles data source management. 
+ * This class implements a module which handles data source management.
  */
 public class DetailObjMetadataModule extends AbstractModule {
 	static private Logger logger = Logger.getLogger(DetailObjMetadataModule.class);
@@ -54,25 +54,29 @@ public class DetailObjMetadataModule extends AbstractModule {
 	public static final String OBJMETA_DATA_TYPE = "dataTypes";
 
 	private String modalita = "";
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void init(SourceBean config) {
 	}
 
 	/**
 	 * Reads the operation asked by the user and calls the insertion, updation or deletion methods.
-	 * 
-	 * @param request The Source Bean containing all request parameters
+	 *
+	 * @param request  The Source Bean containing all request parameters
 	 * @param response The Source Bean containing all response parameters
-	 * 
+	 *
 	 * @throws exception If an exception occurs
 	 * @throws Exception the exception
 	 */
+	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		String message = (String) request.getAttribute("MESSAGEDET");
-		logger.debug("begin of detail Data Source service with message =" +message);
+		logger.debug("begin of detail Data Source service with message =" + message);
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
 			if (message == null) {
@@ -101,25 +105,20 @@ public class DetailObjMetadataModule extends AbstractModule {
 			return;
 		}
 	}
-	
-	 
-	
+
 	/**
-	 * Gets the detail of a obj metadata choosed by the user from the 
-	 * obj metadata list. It reaches the key from the request and asks to the DB all detail
+	 * Gets the detail of a obj metadata choosed by the user from the obj metadata list. It reaches the key from the request and asks to the DB all detail
 	 * objmetadata information, by calling the method <code>loadObjMetadataByID</code>.
-	 *   
-	 * @param key The choosed metadata id key
+	 *
+	 * @param key      The choosed metadata id key
 	 * @param response The response Source Bean
 	 * @throws EMFUserError If an exception occurs
-	 */   
-	private void getObjMetadata(SourceBean request, SourceBean response) throws EMFUserError {		
-		try {		 									
-			ObjMetadata meta = DAOFactory.getObjMetadataDAO().loadObjMetaDataByID(new Integer((String)request.getAttribute("ID")));		
+	 */
+	private void getObjMetadata(SourceBean request, SourceBean response) throws EMFUserError {
+		try {
+			ObjMetadata meta = DAOFactory.getObjMetadataDAO().loadObjMetaDataByID(new Integer((String) request.getAttribute("ID")));
 			this.modalita = SpagoBIConstants.DETAIL_MOD;
-			if (request.getAttribute("SUBMESSAGEDET") != null &&
-				((String)request.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK))
-			{
+			if (request.getAttribute("SUBMESSAGEDET") != null && ((String) request.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)) {
 				response.setAttribute("loopback", "true");
 				return;
 			}
@@ -129,41 +128,40 @@ public class DetailObjMetadataModule extends AbstractModule {
 			response.setAttribute("modality", modalita);
 			response.setAttribute("metaObj", meta);
 		} catch (Exception ex) {
-			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+			logger.error("Cannot fill response container" + ex.getLocalizedMessage());
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 13003, new Vector(), params);
 		}
-		
+
 	}
-	 /**
-	 * Inserts/Modifies the detail of a object metadta according to the user request. 
-	 * When a metadata is modified, the <code>modifyObjMetadata</code> method is called; when a new
-	 * metadata is added, the <code>insertObjMetadata</code>method is called. These two cases are 
-	 * differentiated by the <code>mod</code> String input value .
-	 * 
-	 * @param request The request information contained in a SourceBean Object
-	 * @param mod A request string used to differentiate insert/modify operations
-	 * @param response The response SourceBean 
-	 * @throws EMFUserError If an exception occurs
+
+	/**
+	 * Inserts/Modifies the detail of a object metadta according to the user request. When a metadata is modified, the <code>modifyObjMetadata</code> method is
+	 * called; when a new metadata is added, the <code>insertObjMetadata</code>method is called. These two cases are differentiated by the <code>mod</code>
+	 * String input value .
+	 *
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
 	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
-	private void modifyObjMetadata(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
-		throws EMFUserError, SourceBeanException {
-		
+	private void modifyObjMetadata(SourceBean serviceRequest, String mod, SourceBean serviceResponse) throws EMFUserError, SourceBeanException {
+
 		try {
 			RequestContainer reqCont = getRequestContainer();
 			SessionContainer sessCont = reqCont.getSessionContainer();
 			SessionContainer permSess = sessCont.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			 
-			IObjMetadataDAO dao=DAOFactory.getObjMetadataDAO();
+			IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+			IObjMetadataDAO dao = DAOFactory.getObjMetadataDAO();
 			dao.setUserProfile(profile);
-			
+
 			ObjMetadata metaNew = recoverObjMetadataDetails(serviceRequest);
-			
+
 			EMFErrorHandler errorHandler = getErrorHandler();
-			 
+
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
 			if (errors != null && errors.size() > 0) {
@@ -177,113 +175,103 @@ public class DetailObjMetadataModule extends AbstractModule {
 					}
 				}
 			}
-			
-			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {			
-				//if a ds with the same label not exists on db ok else error
-				if (dao.loadObjMetadataByLabel(metaNew.getLabel()) != null){
+
+			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {
+				// if a ds with the same label not exists on db ok else error
+				List metadataWithSameLabel = dao.loadAllObjMetadataByLabelAndCase(metaNew.getLabel(), false);
+				if (metadataWithSameLabel != null && metadataWithSameLabel.size() > 0) {
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
-					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 13004, new Vector(), params );
+					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 13004, new Vector(), params);
 					getErrorHandler().addError(error);
 					return;
-				}	 		
+				}
 
 				dao.insertObjMetadata(metaNew);
-				
+
 				ObjMetadata tmpMeta = dao.loadObjMetadataByLabel(metaNew.getLabel());
 				metaNew.setObjMetaId(tmpMeta.getObjMetaId());
-				mod = SpagoBIConstants.DETAIL_MOD; 
-			} else {				
-				//update metadata
-				dao.modifyObjMetadata(metaNew);			
-			}  
+				mod = SpagoBIConstants.DETAIL_MOD;
+			} else {
+				// update metadata
+				dao.modifyObjMetadata(metaNew);
+			}
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dataTypes = domaindao.loadListDomainsByType("OBJMETA_DATA_TYPE");
 			serviceResponse.setAttribute(OBJMETA_DATA_TYPE, dataTypes);
-			
-			if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
-				((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVE)) {	
+
+			if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && ((String) serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVE)) {
 				serviceResponse.setAttribute("modality", mod);
-				serviceResponse.setAttribute("metaObj", metaNew);				
+				serviceResponse.setAttribute("metaObj", metaNew);
+				return;
+			} else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null
+					&& ((String) serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)) {
+				serviceResponse.setAttribute("loopback", "true");
 				return;
 			}
-			else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
-					((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)){
-					serviceResponse.setAttribute("loopback", "true");
-				    return;
-			}					     
-		} catch (EMFUserError e){
+		} catch (EMFUserError e) {
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 13005, new Vector(), params);
-			
+
 		}
-		
-		catch (Exception ex) {		
-			logger.error("Cannot fill response container" , ex);		
+
+		catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		}			
+		}
 	}
 
 	/**
 	 * Deletes an obj metadata choosed by user from the metadata list.
-	 * 
-	 * @param request	The request SourceBean
-	 * @param mod	A request string used to differentiate delete operation
-	 * @param response	The response SourceBean
-	 * @throws EMFUserError	If an Exception occurs
+	 *
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
 	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
-	private void deleteObjMetadata(SourceBean request, String mod, SourceBean response)
-		throws EMFUserError, SourceBeanException {
-		
+	private void deleteObjMetadata(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+
 		try {
 			String id = (String) request.getAttribute("ID");
 //			if the metadata is associated with any BIObjects or BISuobjets, creates an error
-			/*boolean bObjects =  DAOFactory.getObjMetadataDAO().hasBIObjAssociated(id);
-			boolean bSubobjects =  DAOFactory.getObjMetadataDAO().hasSubObjAssociated(id);
-			if (bObjects || bSubobjects){
-				HashMap params = new HashMap();
-				params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
-				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 13007, new Vector(), params );
-				getErrorHandler().addError(error);
-				return;
-			}*/
-			
-			//delete the metadata
+			/*
+			 * boolean bObjects = DAOFactory.getObjMetadataDAO().hasBIObjAssociated(id); boolean bSubobjects =
+			 * DAOFactory.getObjMetadataDAO().hasSubObjAssociated(id); if (bObjects || bSubobjects){ HashMap params = new HashMap();
+			 * params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE); EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 13007, new
+			 * Vector(), params ); getErrorHandler().addError(error); return; }
+			 */
+
+			// delete the metadata
 			ObjMetadata meta = DAOFactory.getObjMetadataDAO().loadObjMetaDataByID(new Integer(id));
 			DAOFactory.getObjMetadataDAO().eraseObjMetadata(meta);
-		}
-		catch (EMFUserError e){
-			  logger.error("Cannot fill response container" + e.getLocalizedMessage());
-			  HashMap params = new HashMap();		  
-			  params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
-			  throw new EMFUserError(EMFErrorSeverity.ERROR, 13006, new Vector(), params);
-				
-		}
-	    catch (Exception ex) {		
-		    ex.printStackTrace();
-			logger.error("Cannot fill response container" ,ex);
+		} catch (EMFUserError e) {
+			logger.error("Cannot fill response container" + e.getLocalizedMessage());
+			HashMap params = new HashMap();
+			params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 13006, new Vector(), params);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			logger.error("Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-	    }
-	    response.setAttribute("loopback", "true");			
+		}
+		response.setAttribute("loopback", "true");
 	}
 
-
-
 	/**
-	 * Instantiates a new <code>objmetadata<code> object when a new metadata insertion is required, in order
-	 * to prepare the page for the insertion.
-	 * 
+	 * Instantiates a new <code>objmetadata<code> object when a new metadata insertion is required, in order to prepare the page for the insertion.
+	 *
 	 * @param response The response SourceBean
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	private void newObjMetadata(SourceBean response) throws EMFUserError {
-		
+
 		try {
-			
+
 			ObjMetadata meta = null;
 			this.modalita = SpagoBIConstants.DETAIL_INS;
 			response.setAttribute("modality", modalita);
@@ -295,38 +283,36 @@ public class DetailObjMetadataModule extends AbstractModule {
 			meta.setName("");
 			meta.setCreationDate(null);
 			response.setAttribute("metaObj", meta);
-			
+
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dataTypes = domaindao.loadListDomainsByType("OBJMETA_DATA_TYPE");
 			response.setAttribute(OBJMETA_DATA_TYPE, dataTypes);
-			
+
 		} catch (Exception ex) {
-			logger.error("Cannot prepare page for the insertion" , ex);		
+			logger.error("Cannot prepare page for the insertion", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
-		
+
 	}
 
+	private ObjMetadata recoverObjMetadataDetails(SourceBean serviceRequest) throws EMFUserError, SourceBeanException, IOException {
+		ObjMetadata meta = new ObjMetadata();
 
-	private ObjMetadata recoverObjMetadataDetails (SourceBean serviceRequest) throws EMFUserError, SourceBeanException, IOException  {
-		ObjMetadata meta  = new ObjMetadata();
-		
-		String idStr = (String)serviceRequest.getAttribute("ID");
+		String idStr = (String) serviceRequest.getAttribute("ID");
 		Integer id = new Integer(idStr);
-		String description = (String)serviceRequest.getAttribute("DESCR");	
-		String label = (String)serviceRequest.getAttribute("LABEL");
-		String name = (String)serviceRequest.getAttribute("NAME");
-		String dataType = (String)serviceRequest.getAttribute("DATA_TYPE");
-		//String creationDate = (String)serviceRequest.getAttribute("USER");
-		
+		String description = (String) serviceRequest.getAttribute("DESCR");
+		String label = (String) serviceRequest.getAttribute("LABEL");
+		String name = (String) serviceRequest.getAttribute("NAME");
+		String dataType = (String) serviceRequest.getAttribute("DATA_TYPE");
+		// String creationDate = (String)serviceRequest.getAttribute("USER");
+
 		meta.setObjMetaId(id.intValue());
 		meta.setDescription(description);
 		meta.setLabel(label);
 		meta.setDataType(Integer.valueOf(dataType));
 		meta.setName(name);
-		//meta.setCreationDate(creationDate);
-		
-				
+		// meta.setCreationDate(creationDate);
+
 		return meta;
 	}
 
