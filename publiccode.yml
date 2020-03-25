@@ -15,22 +15,6 @@ dependsOn:
       version: '8'
       versionMax: ''
       versionMin: ''
-    - name: MySQL
-      optional: true
-      version: '5.7'
-      versionMax: ''
-      versionMin: ''
-    - name: PostgreSQL
-      optional: true
-      version: '9'
-      versionMax: ''
-      versionMin: ''
-  proprietary:
-    - name: Oracle
-      optional: true
-      version: '11,12'
-      versionMax: ''
-      versionMin: ''
 description:
   it:
     apiDocumentation: 'https://knowage.docs.apiary.io/'
@@ -38,33 +22,51 @@ description:
       - OW2CON '18 Best Project - Market award
     documentation: 'https://knowage-suite.readthedocs.io/'
     features:
-      - Enterprise Reporting per la produzione e distribuzione di report statici
       - >-
-        Big Data per unire i dati strutturati aziendali con quelli esterni multi
+        La suite è composta da diversi moduli, ognuno concepito per uno
+        specifico dominio analitico:
+      - >-
+        sono utilizzabili singolarmente o combinati garantendo maggior copertura
+        dei requisiti dell'utente.
+      - >-
+        BIG DATA per unire i dati strutturati aziendali con quelli esterni multi
         strutturati
       - >-
-        Location Intelligence per unire business data con informazioni inerenti
-        allo spazio o geografiche
+        SMART INTELLIGENCE per la tipica BI su dati strutturati, incentrata su
+        selfservice/ad-hoc reporting
+      - ENTERPRISE REPORTING per la produzione e distribuzione di report statici
       - >-
-        Performance Management per gestire i KPI e organizzare scorecard, per il
-        monitoraggio in real-time
+        LOCATION INTELLIGENCE per unire business data con informazioni
+        geografiche o spaziali
       - >-
-        Predictive Analysis per analisi avanzate, ad esempio previsionali o
+        PERFORMANCE MANAGEMENT per gestire i KPI e organizzare scorecards, per
+        il monitoraggio in realtime
+      - >-
+        PREDICTIVE ANALYSIS per analisi avanzate, ad esempio previsionali o
         prescrittive
-      - >-
-        Smart Intelligence per la tipica BI su dati strutturati, incentrata su
-        self-service/ad-hoc reporting
     genericName: Business Analytics suite
     longDescription: >
-      Knowage è la suite open source completa per la moderna Business Analytics
-      su fonti dati tradizionali e sistemi big data. Le sue funzionalità, come
-      la federazione, il mash-up, il data/text mining e la visualizzazione
-      avanzata dei dati, offrono un supporto completo per un'analisi ricca in
-      grado di combinare informazioni provenienti da diverse fonti. La suite è
-      composta da diversi moduli, ognuno concepito per uno specifico dominio
-      analitico. Possono essere utilizzati singolarmente come soluzione completa
-      per un determinato compito o combinati tra loro per garantire la piena
-      copertura dei requisiti dell'utente.
+      Knowage è la suite open source per la business analytics moderna che
+      affianca alle tradizionali capacità di business intelligence, strumenti
+      agili che promuovono l’autonomia degli utenti business e funzionalità
+      avanzate rivolte al segmento emergente dei data scientist. E’ quindi un
+      prodotto per la piena valorizzazione del patrimonio dati aziendale, anche
+      in relazione a sorgenti informative esterne ed eterogenee, cogliendo in
+      pieno il significato del fenomeno dei big data. La suite Knowage è
+      supportata dal Gruppo Engineering, uno dei principali players nel campo
+      della digital transformation per il settore pubblico e privato, con oltre
+      11.000 professionisti e 65 sedi nel mondo.
+    screenshots:
+      - >-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-cockpit.jpg
+      - >-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-discovery.jpg
+      - >-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-kpi.jpg
+      - >-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-map.jpg
+      - >-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-responsive2.jpg
     shortDescription: Suite open source completa per la moderna Business Analytics
     videos:
       - 'https://www.youtube.com/watch?v=-fZIsVh_qsc'
@@ -96,7 +98,7 @@ it:
   conforme:
     gdpr: false
     lineeGuidaDesign: false
-    misureMinimeSicurezza: true
+    misureMinimeSicurezza: false
     modelloInteroperabilita: false
   countryExtensionVersion: '0.2'
   piattaforme:
@@ -116,6 +118,8 @@ localisation:
     - fr
     - es
   localisationReady: true
+logo: >-
+  https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/logo/logo.svg
 maintenance:
   contacts:
     - email: angelo.bernabei@eng.it
@@ -133,10 +137,10 @@ platforms:
   - windows
   - mac
   - linux
-releaseDate: '2020-02-24'
+releaseDate: '2020-03-24'
 roadmap: 'https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md'
 softwareType: standalone/web
-softwareVersion: 7.1.3
+softwareVersion: 7.1.5
 url: 'https://github.com/KnowageLabs/Knowage-Server.git'
 usedBy:
   - Azienda Unità Locale Sanitaria di Modena
