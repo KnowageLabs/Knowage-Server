@@ -74,7 +74,7 @@
                                 <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
                                 <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
                                 <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
-                                <md-menu ng-if="col.editable && col.dataType !== 'boolean'">                                
+                                <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">                                
                                     <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
 	                                    <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
 	                                    <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
@@ -83,7 +83,7 @@
 	                                    <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
 	                                    <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
                                     </div>
-                                    <md-menu-content width="5" class="customContentMenu" ng-click="setSelected(row)">
+                                    <md-menu-content width="5" class="customContentMenu" >
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">                                               
                                                	 <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
