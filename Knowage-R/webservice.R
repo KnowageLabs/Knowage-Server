@@ -26,3 +26,11 @@ function(dataset, dataset_name, script, output_variable){
   file.remove(output_variable)
   html
 }
+
+#' @get /libraries
+function(){
+  str(allPackages <- installed.packages(.Library, priority = "high"))
+  lib_matrix <- allPackages[, c(1,3:5)]
+  lib_info <- lib_matrix[,c(1,2)]
+  lib_info
+}

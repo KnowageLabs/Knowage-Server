@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities.Response;;
 
 public class RUtils {
 
@@ -18,7 +19,7 @@ public class RUtils {
 	private RUtils() {
 	}
 
-	static String getFinalResult(it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse, String outputType) {
+	static String getFinalResult(Response rEngineResponse, String outputType) {
 		String rString = rEngineResponse.getResponseBody();
 		String rOutput = rString.substring(2, rString.length() - 2);
 		if (outputType.equals("img")) {

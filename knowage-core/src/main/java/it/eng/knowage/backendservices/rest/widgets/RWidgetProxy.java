@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -52,6 +53,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 	String rAddress = "http://localhost:5001/";
 	Map<String, String> headers;
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
+	HttpMethod methodGet = HttpMethod.valueOf("Get");
 
 	static protected Logger logger = Logger.getLogger(RWidgetProxy.class);
 
@@ -152,4 +154,30 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/libraries")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	public Response libraries() {
+		logger.debug("IN");
+		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
+		try {
+			rEngineResponse = RestUtilities.makeRequest(methodGet, rAddress + "libraries", headers, null);
+		} catch (Exception e) {
+			logger.error("cannot retrieve list of available libraries from R engine");
+			throw new SpagoBIRuntimeException("cannot retrieve list of available libraries from R engine", e);
+		}
+		if (rEngineResponse == null || rEngineResponse.getStatusCode() != 200) {
+			return Response.status(400).build();
+		} else {
+			JSONObject toReturn;
+			try {
+				toReturn = new JSONObject().put("result", rEngineResponse.getResponseBody());
+			} catch (Exception e) {
+				logger.error("error while creating response json containing available R libraries");
+				throw new SpagoBIRuntimeException("error while creating response json containing available R libraries", e);
+			}
+			return Response.ok(toReturn.toString()).build();
+		}
+	}
 }

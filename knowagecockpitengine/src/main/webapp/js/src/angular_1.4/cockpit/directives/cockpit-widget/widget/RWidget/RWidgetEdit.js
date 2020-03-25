@@ -45,7 +45,14 @@ function RWidgetEditControllerFunction(
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', '')
 		.then(function(response){
-			$scope.newModel.libraries = response.data;
+			$scope.newModel.libraries = [];
+			var librariesArray = JSON.parse((response.data.result));
+			for (idx in librariesArray) {
+				lib = librariesArray[idx];
+				name = lib[0];
+				version = lib[1];
+				$scope.newModel.libraries.push({"name": name, "version": version})
+			}
 		}, function(error){
 		});
   	}
