@@ -75,36 +75,6 @@ function customChartWidgetEditControllerFunction(
         onLoad: $scope.codemirrorLoaded
     };
 	
-//*************************START STUBBED DATA
-	var sort1 = datastore.filter({'first_name':'Pippo'}).sort('gender').getDataArray(function(record){
-        return {
-            name :record.first_name,
-            gender:record.gender
-        }
-    });;
-	console.log('sort1',sort1)
-  
-	var sort2 = datastore.filter().sort('email').getDataArray(function(record){
-        return {
-            name :record.email,
-            z:record.int
-        }
-    });
-    console.log('sort2', sort2)
-    
-    var column = datastore.sort('first_name').getColumn('email');
-    console.log('column',column)
-    
-//    var seriesAndData = datastore.getSeriesAndData({'dataLabel':'myData','series':[{'name':'city'},{'desc':'city_desc'}]}, function(record){
-//        return {
-//            name :record.city,
-//            children:record.total_children
-//        }
-//    });
-//    console.log('seriesAndData',seriesAndData);
-//*************************END STUBBED DATA
-    
-	
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();
 		 angular.copy($scope.newModel,model);

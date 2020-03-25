@@ -45,7 +45,7 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 	}
 	
 	datastore.prototype.setData = function (data) {
-		this.data = data;
+		this.data = transformDataStore(data);
 	}
 	
 	datastore.prototype.getDataArray = function (getDataArrayFn){
@@ -65,7 +65,7 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 		}
 		return categArray;
 	}
-	
+
 	datastore.prototype.getSeriesAndData = function (getDataArrayFn,column){
 		var seriesMap = {};
 		for(var i=0; i<this.data.rows.length; i++){
@@ -79,7 +79,7 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 			var serieObj = {};
 			serieObj.name = property;
 			serieObj.id = property;
-			serieObj.data = seriesMap[property];
+			serieObj[datalabel || 'data'] = seriesMap[property];
 			series.push(serieObj);
 		}
 		return series;
