@@ -186,6 +186,19 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				measures.push(obj);
 			}
+
+			// add a count for the weighted arithmetic mean
+			if (crosstabDef.measures.length > 0) {
+				var currMeasure = crosstabDef.measures[0];
+				var obj = {};
+				obj["id"] = "___COUNT";
+				obj["alias"] = "___COUNT";
+				obj["columnName"] = currMeasure.id;
+				obj["funct"] = "COUNT";
+				obj["orderType"] = "";
+
+				measures.push(obj);
+			}
 		}
 
 		var result = {};
