@@ -24,7 +24,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 	    }return true;
 	}
 
-	self.htmlHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets){
+	self.htmlHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets,variables){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag1'),
@@ -183,6 +183,19 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'select',
 						'options': !datasetId || meta,
 						'flex':'flex-100'}]
+				},
+			{
+				'label':sbiModule_translate.load('kn.cockpit.html.tag11'),
+				'name': 'active-selection',
+				'description': sbiModule_translate.load('kn.cockpit.html.tag11.desc'),
+				'hidden': !variables ? true : false,
+				'hiddenMessage': 'no variable present',
+				'tag':"[kn-variable='%%variable%%']",
+				'inputs': [
+					{	'name':'variable',
+						'type': 'select',
+						'flex':'flex-100',
+						'options': variables}]
 				}
 		]
 	}
