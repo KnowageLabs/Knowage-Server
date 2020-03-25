@@ -286,6 +286,14 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
+	private int getResultNumber(IDataStore dataStore) {
+		int resultNumber;
+		Object propertyRawValue;
+		propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
+		resultNumber = ((Integer) propertyRawValue).intValue();
+		return resultNumber;
+	}
+
 	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
 			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
@@ -293,7 +301,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
 
-		Workbook wb = exp.export();
+		int resultNumber = getResultNumber(dataStore);
+		Integer limit = parseExportLimit(exportLimit);
+		boolean showLimitExportMessage = false;
+		if (resultNumber > limit) {
+			showLimitExportMessage = true;
+		}
+		Workbook wb = exp.export(exportLimit, showLimitExportMessage);
 
 		File file = File.createTempFile("workbook", ".xls");
 		FileOutputStream stream = new FileOutputStream(file);
@@ -318,12 +332,17 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
 			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
-
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
 		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
 
-		Workbook wb = exp.export();
+		int resultNumber = getResultNumber(dataStore);
+		Integer limit = parseExportLimit(exportLimit);
+		boolean showLimitExportMessage = false;
+		if (resultNumber > limit) {
+			showLimitExportMessage = true;
+		}
+		Workbook wb = exp.export(exportLimit, showLimitExportMessage);
 
 		File file = File.createTempFile("workbook", ".xlsx");
 		FileOutputStream stream = new FileOutputStream(file);
@@ -354,12 +373,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			IDataSet dataSet = null;
 
-			Integer limit;
-			if (exportLimit != null) {
-				limit = Integer.parseInt(exportLimit);
-			} else {
-				limit = 0;
-			}
+			Integer limit = parseExportLimit(exportLimit);
 
 			Integer start = 0;
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
@@ -400,6 +414,18 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 
 		return dataStore;
+	}
+
+	private Integer parseExportLimit(String exportLimit) {
+		Integer limit;
+		try {
+			limit = Integer.parseInt(exportLimit);
+		} catch (NumberFormatException e) {
+			String msg = "Export limit cannot be parsed, check if value set for dataset.export.xls.resultsLimit in Configuration Management is numeric";
+			logger.error(msg, e);
+			limit = 10000;
+		}
+		return limit;
 	}
 
 	private void decorateExtractedFields(List extractedFields, Query query) {

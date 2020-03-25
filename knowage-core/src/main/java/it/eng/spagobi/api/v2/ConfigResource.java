@@ -251,7 +251,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@Path("/EXPORT.LIMITATION")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getExportLimit() {
-		String limitExport = SingletonConfig.getInstance().getConfigValue("query.export.limitResultData");
+		String limitExport = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
 		return limitExport;
 	}
 
