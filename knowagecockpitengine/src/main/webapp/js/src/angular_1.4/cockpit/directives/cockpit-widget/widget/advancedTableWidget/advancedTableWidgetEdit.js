@@ -55,7 +55,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         	$scope.showAction(response.data.errors[0].message);
         });
 	}
-	if($scope.newModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.newModel.dataset.dsId);
+	if($scope.newModel.dataset && $scope.newModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.newModel.dataset.dsId);
 
 	function moveInArray(arr, fromIndex, toIndex) {
         var element = arr[fromIndex];
