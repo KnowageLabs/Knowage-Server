@@ -504,6 +504,14 @@ function mapWidgetEditControllerFunction(
 		return column.isCalculated || !$scope.checkDs(column,false);
 	}
 
+	$scope.setAggregateBy = function(column,layer) {
+		if (!column.properties.aggregateBy) {
+			column.properties.showDetails = false;
+			column.properties.showFilter = false;
+			column.properties.modal = false;
+		}
+	}
+
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get(".", "layers")

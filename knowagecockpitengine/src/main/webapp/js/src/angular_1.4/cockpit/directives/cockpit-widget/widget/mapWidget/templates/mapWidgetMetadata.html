@@ -65,6 +65,7 @@
 												<th>{{translate.load('sbi.cockpit.map.edit.metadata.alias')}}</th>
 												<th>{{translate.load('sbi.cockpit.map.edit.metadata.type')}}</th>
 												<th>{{translate.load('sbi.cockpit.map.edit.metadata.aggregationFunction')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.aggregateBy')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnDetail')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnMap')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
@@ -101,13 +102,16 @@
 													</md-input-container>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
+													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE'" ng-change="setAggregateBy(column,layer)"/>
+												</td>
+												<td style="text-align:center">
+													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"  ng-disabled="column.fieldType=='ATTRIBUTE' && !column.properties.aggregateBy"/>
 												</td>
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showMap" aria-label="Show column on map" ng-if="column.fieldType=='MEASURE'"/>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.showFilter" aria-label="Show column on filter" ng-if="column.fieldType=='ATTRIBUTE'"/>
+													<md-checkbox ng-model="column.properties.showFilter" aria-label="Show column on filter" ng-if="column.fieldType=='ATTRIBUTE'" ng-disabled="!column.properties.aggregateBy"/>
 												</td>
 												<td style="display: flex;justify-content: center;">
 													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
