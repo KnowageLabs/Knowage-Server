@@ -82,8 +82,11 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-		String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-		String rDataframe = RUtils.DataSet2DataFrame(knowageDs);
+		String rDataframe = null;
+		if (dsLabel != null) {
+			String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			rDataframe = RUtils.DataSet2DataFrame(knowageDs);
+		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
 			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
@@ -130,8 +133,11 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
-		String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-		String rDataframe = RUtils.DataSet2DataFrame(knowageDs);
+		String rDataframe = null;
+		if (dsLabel != null) {
+			String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			rDataframe = RUtils.DataSet2DataFrame(knowageDs);
+		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
 			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
