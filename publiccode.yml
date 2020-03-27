@@ -24,10 +24,10 @@ description:
     features:
       - >-
         La suite è composta da diversi moduli, ognuno concepito per uno
-        specifico dominio analitico:
+        specifico dominio analitico
       - >-
-        sono utilizzabili singolarmente o combinati garantendo maggior copertura
-        dei requisiti dell'utente.
+        Sono utilizzabili singolarmente o combinati garantendo maggior copertura
+        dei requisiti dell'utente
       - >-
         BIG DATA per unire i dati strutturati aziendali con quelli esterni multi
         strutturati
