@@ -128,7 +128,7 @@ maintenance:
       name: Davide Zerbetto
   contractors:
     - name: Engineering Ingegneria Informatica S.p.A.
-      until: '2021-12-31'
+      until: '2050-12-31'
       website: 'https://www.eng.it/'
   type: contract
 name: Knowage Server
