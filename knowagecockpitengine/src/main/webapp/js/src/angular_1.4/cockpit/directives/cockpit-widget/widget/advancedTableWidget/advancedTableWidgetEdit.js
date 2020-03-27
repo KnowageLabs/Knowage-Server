@@ -45,8 +45,11 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	
 	$scope.getDatasetAdditionalInfo = function(dsId){
         for(var k in cockpitModule_template.configuration.datasets){
-        	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) $scope.localDataset = cockpitModule_template.configuration.datasets[k];
-        	break;
+        	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
+        		$scope.localDataset = cockpitModule_template.configuration.datasets[k];
+        		break;
+        	}
+        
         }
         sbiModule_restServices.restToRootProject();
         sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.localDataset.useCache).then(function(response){
