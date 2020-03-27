@@ -2,6 +2,7 @@ package it.eng.knowage.backendservices.rest.widgets;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
@@ -9,8 +10,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.api.v2.ConfigResource;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities.Response;;
+import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class RUtils {
 
@@ -59,6 +62,17 @@ public class RUtils {
 			throw new SpagoBIRuntimeException("error while converting json to dataframe format", e);
 		}
 		return newDataframe.toString();
+	}
+
+	static String getRAddress(String envLabel) {
+		ConfigResource configResource = new ConfigResource();
+		List<Config> allRConfigs = configResource.getConfigsByCategory("R_CONFIGURATION");
+		for (Config cfg : allRConfigs) {
+			if (cfg.getLabel().equals(envLabel)) {
+				return "http://" + cfg.getValueCheck() + "/";
+			}
+		}
+		throw new SpagoBIRuntimeException("Cannot retrieve R address from label [" + envLabel + "]");
 	}
 
 	static String createREngineRequestBody(String dataset, String dsLabel, String script, String outputVariable) {

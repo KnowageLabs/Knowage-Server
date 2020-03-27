@@ -50,7 +50,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 @Path("/2.0/backendservices/widgets/RWidget")
 public class RWidgetProxy extends AbstractDataSetResource {
 
-	String rAddress = "http://localhost:5001/";
 	Map<String, String> headers;
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
 	HttpMethod methodGet = HttpMethod.valueOf("Get");
@@ -67,8 +66,9 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
 		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
-				selections = null, widgetId = null;
+				selections = null, widgetId = null, envLabel = null;
 		try {
+			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
 			documentId = requestBody.get("document_id");
 			widgetId = requestBody.get("widget_id");
@@ -90,6 +90,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
 			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String rAddress = RUtils.getRAddress(envLabel);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
 			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
@@ -119,8 +120,9 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
-				selections = null;
+				selections = null, envLabel = null;
 		try {
+			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
 			documentId = requestBody.get("document_id");
 			outputVariable = requestBody.get("output_variable");
@@ -141,6 +143,7 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
 			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String rAddress = RUtils.getRAddress(envLabel);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
 			logger.error("error while making request to R engine for userId [" + userId + "] and documentId [" + documentId + "]");
@@ -161,13 +164,14 @@ public class RWidgetProxy extends AbstractDataSetResource {
 	}
 
 	@GET
-	@Path("/libraries")
+	@Path("/libraries/{env_label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
-	public Response libraries() {
+	public Response libraries(@PathParam("env_label") String envLabel) {
 		logger.debug("IN");
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
+			String rAddress = RUtils.getRAddress(envLabel);
 			rEngineResponse = RestUtilities.makeRequest(methodGet, rAddress + "libraries", headers, null);
 		} catch (Exception e) {
 			logger.error("cannot retrieve list of available libraries from R engine");

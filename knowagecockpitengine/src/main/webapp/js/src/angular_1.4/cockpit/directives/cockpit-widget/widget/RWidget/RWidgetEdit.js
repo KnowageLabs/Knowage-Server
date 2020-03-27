@@ -43,7 +43,7 @@ function RWidgetEditControllerFunction(
 
 	$scope.setLibraries = function () {
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', '')
+		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', $scope.ngModel.RAddress)
 		.then(function(response){
 			$scope.newModel.libraries = [];
 			var librariesArray = JSON.parse((response.data.result));

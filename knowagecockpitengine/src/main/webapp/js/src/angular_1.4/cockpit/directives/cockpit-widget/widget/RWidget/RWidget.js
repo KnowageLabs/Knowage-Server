@@ -132,8 +132,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.setRParameters = function () {
 			//get user_id from parameters and use it for authentication
-			url_string = window.location.href
-			url = new URL(url_string);
 			$scope.encodedUserId = sbiModule_user.userUniqueIdentifier;
 	        $scope.drivers = cockpitModule_analyticalDrivers;
 			//if there is a dataset selected save its label
@@ -153,7 +151,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendDataEditMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-			data = {'dataset': $scope.dataset_label,
+			data = {'r_environment': $scope.ngModel.RAddress,
+					'dataset': $scope.dataset_label,
 	        		'script' : $scope.ngModel.RCode,
 	        		'output_variable' : $scope.ngModel.ROutput,
 	        		'widget_id' :  $scope.ngModel.id,
@@ -175,7 +174,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendDataViewMode = function () { //send code and data and retrieve result as img or html/js
 			$scope.setRParameters();
-			data = {'dataset': $scope.dataset_label,
+			data = {'r_environment': $scope.ngModel.RAddress,
+					'dataset': $scope.dataset_label,
 	        		'output_variable' : $scope.ngModel.ROutput,
 	        		'widget_id' :  $scope.ngModel.id,
 	        		'document_id' :  $scope.documentId,

@@ -99,7 +99,7 @@
 					     		<md-input-container flex class="md-block">
 								  <label>{{translate.load('kn.cockpit.R.environment')}}</label>
 								  <md-select ng-model="newModel.RAddress" ng-change="setLibraries()">
-							          <md-option ng-repeat="key in newModel.REnvsKeys" value="{{newModel.REnvs[key]}}">{{key}}</md-option>
+							          <md-option ng-repeat="key in newModel.REnvsKeys" value="{{key}}">{{key}}</md-option>
 							      </md-select>
 								</md-input-container>
 							</md-card-content>
