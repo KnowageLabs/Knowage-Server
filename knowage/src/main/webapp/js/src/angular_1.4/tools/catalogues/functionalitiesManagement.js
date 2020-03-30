@@ -300,55 +300,40 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			$scope.unCheckAllRolesInRow(item)
 
 		}
+	} ];
+
+	 $scope.isCheckable = function(row, criteria) {
+		var checkable = false;
+	 	if($scope.parent[criteria] && $scope.parent[criteria].length > 0) {
+			for(var i = 0; i < $scope.parent[criteria].length; i++) {
+				if($scope.parent[criteria][i].name == row.name){
+					checkable = true;
+				}
+			}
+		}
+	 	return checkable;
+	 }
+
+	$scope.checkRoleForCriteria = function(row, criteria) {
+		var checkable = false;
+		checkable = $scope.isCheckable(row, criteria);
+		if ($scope.selectedFolder[criteria].length == 0 && checkable) {
+			$scope.selectedFolder[criteria].push(row);
+		} else {
+			for (var j = 0; j < $scope.selectedFolder[criteria].length; j++) {
+				if ($scope.selectedFolder[criteria][j].name != row.name && $scope.selectedFolder[criteria].indexOf(row) == -1 && checkable) {
+					$scope.selectedFolder[criteria].push(row);
+				}
+			}
+		}
+		$scope.selectedFolder[criteria] = $scope.remove($scope.selectedFolder[criteria],"id");
 	}
 
-	 ];
-
 	$scope.checkAllRolesInRow = function(row) {
-		if ($scope.selectedFolder.createRoles.length == 0) {
-			$scope.selectedFolder.createRoles.push(row);
-		} else {
-			for (var j = 0; j < $scope.selectedFolder.createRoles.length; j++) {
-
-				if ($scope.selectedFolder.createRoles[j].name != row.name && $scope.selectedFolder.createRoles.indexOf(row) == -1) {
-					$scope.selectedFolder.createRoles.push(row);
-				}
-
-			}
+		var criterias = ['createRoles', 'execRoles', 'devRoles', 'testRoles'];
+		for(var i = 0; i < criterias.length; i++) {
+			$scope.checkRoleForCriteria(row, criterias[i]);
 		}
-		$scope.selectedFolder.createRoles = $scope.remove($scope.selectedFolder.createRoles,"id");
-		if ($scope.selectedFolder.execRoles.length == 0 ) {
-			$scope.selectedFolder.execRoles.push(row);
-		} else {
-			for (var j = 0; j < $scope.selectedFolder.execRoles.length; j++) {
-
-				if ($scope.selectedFolder.execRoles[j].name != row.name && $scope.selectedFolder.execRoles.indexOf(row) == -1) {
-					$scope.selectedFolder.execRoles.push(row);
-				}
-			}
-		}
-		$scope.selectedFolder.execRoles = $scope.remove($scope.selectedFolder.execRoles,"id");
-		if ($scope.selectedFolder.devRoles.length == 0) {
-			$scope.selectedFolder.devRoles.push(row);
-		} else {
-			for (var n = 0; n < $scope.selectedFolder.devRoles.length; n++) {
-				if ($scope.selectedFolder.devRoles[n].name != row.name && $scope.selectedFolder.devRoles.indexOf(row) == -1) {
-					$scope.selectedFolder.devRoles.push(row);
-				}
-			}
-		}
-		$scope.selectedFolder.devRoles = $scope.remove($scope.selectedFolder.devRoles,"id");
-		if ($scope.selectedFolder.testRoles.length == 0) {
-			$scope.selectedFolder.testRoles.push(row);
-		} else {
-			for (var s = 0; s < $scope.selectedFolder.testRoles.length; s++) {
-				if ($scope.selectedFolder.testRoles[s].name != row.name && $scope.selectedFolder.testRoles.indexOf(row) == -1) {
-					$scope.selectedFolder.testRoles.push(row);
-				}
-			}
-		}
-		$scope.selectedFolder.testRoles = $scope.remove($scope.selectedFolder.testRoles, "id");
-
 	}
 
 	$scope.remove = function (arr, prop){
