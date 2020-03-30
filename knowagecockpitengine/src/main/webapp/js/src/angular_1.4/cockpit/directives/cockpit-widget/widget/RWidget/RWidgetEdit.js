@@ -43,7 +43,7 @@ function RWidgetEditControllerFunction(
 
 	$scope.setLibraries = function () {
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', $scope.ngModel.RAddress)
+		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', $scope.newModel.RAddress)
 		.then(function(response){
 			$scope.newModel.libraries = [];
 			var librariesArray = JSON.parse((response.data.result));
@@ -109,7 +109,7 @@ function RWidgetEditControllerFunction(
 		if (newValue) {
 			ds_label = cockpitModule_datasetServices.getDatasetById(newValue).label;
 		}
-		$scope.helper = cockpitModule_helperDescriptors.RHelperJSON(newValue, ds_label, $scope.dataset ? $scope.dataset.metadata.fieldsMeta : null, $scope.formattedAnalyticalDrivers, $scope.aggregations, $scope.newModel.cross, $scope.availableDatasets);
+		$scope.helper = cockpitModule_helperDescriptors.rHelperJSON(newValue, ds_label, $scope.dataset ? $scope.dataset.metadata.fieldsMeta : null, $scope.formattedAnalyticalDrivers, $scope.aggregations, $scope.newModel.cross, $scope.availableDatasets);
 
 	})
 

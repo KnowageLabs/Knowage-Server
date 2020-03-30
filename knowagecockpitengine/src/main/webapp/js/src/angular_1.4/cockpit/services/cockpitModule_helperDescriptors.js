@@ -230,4 +230,35 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'tag':"$P{%%parameter%%}"}
 		]
 	}
+
+	self.rHelperJSON = function(datasetId,datasetLabel,meta,parameters,aggregations,cross,availableDatasets){
+		return [
+			{
+				'label':sbiModule_translate.load('kn.cockpit.R.tag1'),
+				'name': 'column',
+				'description': sbiModule_translate.load('kn.cockpit.R.tag1.desc'),
+				'hidden': !datasetId ? true : false,
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.R.nodataset'),
+				'inputs': [
+					{	'name':'column',
+						'type': 'select',
+						'options': !datasetId || meta,
+						'flex':'flex-100'}
+				],
+				'tag': datasetLabel + "[\"%%column%%\"]"},
+			{
+				'label':sbiModule_translate.load('kn.cockpit.R.tag2'),
+				'name': 'parameter',
+				'description':sbiModule_translate.load('kn.cockpit.R.tag2.desc'),
+				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
+				'hiddenMessage': 'no parameter available',
+				'inputs': [
+					{	'name':'parameter',
+						'type': 'select',
+						'options': parameters,
+						'flex':'flex-100'}
+				],
+				'tag':"$P{%%parameter%%}"}
+		]
+	}
 });
