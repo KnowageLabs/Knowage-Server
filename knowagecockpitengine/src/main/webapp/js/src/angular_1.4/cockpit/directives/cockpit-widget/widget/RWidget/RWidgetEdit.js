@@ -117,7 +117,7 @@ function RWidgetEditControllerFunction(
         theme: 'eclipse',
         lineWrapping: true,
         lineNumbers: true,
-        mode: {name: "R"},
+        mode: {name: "r"},
         onLoad: $scope.codemirrorLoaded
 	};
 
