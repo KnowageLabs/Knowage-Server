@@ -107,7 +107,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	private List<Config> filterConfigsByCategory(List<Config> allConfigs, String category) {
 		ArrayList<Config> filteredConfigs = new ArrayList<>();
 		for (Config cfg : allConfigs) {
-			if (cfg.getCategory().equals("PYTHON_CONFIGURATION")) {
+			if (cfg.getCategory().equals(category)) {
 				filteredConfigs.add(cfg);
 			}
 		}

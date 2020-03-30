@@ -163,6 +163,9 @@ public class EngineResource extends AbstractCockpitEngineResource {
 					.withCssClass("fab fa-python").withType("python").withTag("python").build());
 		}
 
+		ret.add(Widget.builder().withName("r").withDescKey("sbi.cockpit.editor.newwidget.description.R").withImg("11.png").withCssClass("fab fa-r-project")
+				.withType("r").withTag("r").build());
+
 		if (functionalities.contains(DISCOVERY_WIDGET_USE)) {
 
 			ret.add(Widget.builder().withName("Discovery").withDescKey("sbi.cockpit.editor.newwidget.description.discovery")/* TODO : .withImg(???) */

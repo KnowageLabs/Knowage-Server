@@ -26,10 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		.config(function($locationProvider) {
 			$locationProvider.html5Mode(true);
 		})
-		.directive('cockpitPythonWidget', function () {
+		.directive('cockpitRWidget', function () {
 			return {
-				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/pythonWidget/templates/pythonWidgetTemplate.html',
-				controller: cockpitPythonWidgetControllerFunction,
+				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/RWidget/templates/RWidgetTemplate.html',
+				controller: cockpitRWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
     }])
 
-	function cockpitPythonWidgetControllerFunction(
+	function cockpitRWidgetControllerFunction(
 			$scope,
 			$mdDialog,
 			$mdPanel,
@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_user) {
 
 		$scope.getTemplateUrl = function (template) {
-	  		return cockpitModule_generalServices.getTemplateUrl('pythonWidget', template);
+	  		return cockpitModule_generalServices.getTemplateUrl('RWidget', template);
 	  	}
 
 		$scope.refresh = function (element, width, height, datasetRecords, nature) {
@@ -93,11 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}, 500);
 			}
 			$scope.documentId = cockpitModule_properties.DOCUMENT_ID;
-			if ($scope.ngModel.pythonAddress == undefined) {
-				$scope.pythonOutput = 'Configure python address';
-			} else {
-				$scope.sendData();
-			}
+			$scope.sendData();
 			$scope.hideWidgetSpinner();
 		}
 
@@ -107,22 +103,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.crossNavigation = function () {
 			$scope.doSelection(null, null, null, null, null, null, $scope.ngModel.dataset.dsId, null);
-		}
-
-		$scope.createIframe = function () {
-			// get <div> associated to this bokeh application
-			var element = angular.element(document.querySelector('#w' + $scope.ngModel.id + ' #bokeh'));
-			// create an iframe and append it to the <div>
-			var iframe = document.createElement('iframe');
-			iframe.height="100%";
-			iframe.width="100%";
-			iframe.id = "bokeh_" + $scope.ngModel.id;
-			iframe.classList.add("layout-fill");
-			element.append(iframe);
-			// write content inside the iframe
-			document.getElementById(iframe.id).contentWindow.document.open();
-			document.getElementById(iframe.id).contentWindow.document.write($scope.pythonOutput);
-			document.getElementById(iframe.id).contentWindow.document.close();
 		}
 
 		$scope.buildAggregations = function (meta, dataset_label) {
@@ -150,8 +130,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 		}
 
-		$scope.setPythonParameters = function () {
-			//get user_id from parameters and use it for authentication in python
+		$scope.setRParameters = function () {
+			//get user_id from parameters and use it for authentication
 			$scope.encodedUserId = sbiModule_user.userUniqueIdentifier;
 	        $scope.drivers = cockpitModule_analyticalDrivers;
 			//if there is a dataset selected save its label
@@ -169,59 +149,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
-			$scope.setPythonParameters();
-		    $http({
-		        url: "https://" + $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
-		        method: "POST",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
-
-		        data: { 'dataset': $scope.dataset_label,
-		        		'script' : $scope.ngModel.pythonCode,
-		        		'output_variable' : $scope.ngModel.pythonOutput,
-		        		'widget_id' :  $scope.ngModel.id,
-		        		'document_id' :  $scope.documentId,
-		        		"drivers" : $scope.drivers,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections})}
-		    })
-		    .then(function(response) { //success
-		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-		            if ($scope.ngModel.pythonOutputType == 'bokeh') {
-						$scope.createIframe();
-					}
-		    },
-		    function(response) { //failed
-		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
-		    });
+		$scope.sendDataEditMode = function () { //send code and data and retrieve result as img or html/js
+			$scope.setRParameters();
+			data = {'r_environment': $scope.ngModel.RAddress,
+					'dataset': $scope.dataset_label,
+	        		'script' : $scope.ngModel.RCode,
+	        		'output_variable' : $scope.ngModel.ROutput,
+	        		'widget_id' :  $scope.ngModel.id,
+	        		'document_id' :  $scope.documentId,
+	        		"drivers" : JSON.stringify($scope.drivers),
+	        		"aggregations": JSON.stringify($scope.aggregations),
+	        		'parameters': JSON.stringify($scope.parameters),
+	        		'selections': JSON.stringify($scope.selections)}
+			requestBody = JSON.stringify(data)
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/edit', $scope.ngModel.ROutputType, requestBody)
+				.then(function(response) {
+					$scope.ROutput = $sce.trustAsHtml(response.data.result);
+				}, function(response) {
+					$scope.ROutput = 'R Error';
+				});
 
 		}
 
-		$scope.sendDataViewMode = function () { //send code and data to python and retrieve result as img or html/js
-			$scope.setPythonParameters();
-		    $http({
-		        url: "https://" + $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonOutputType,
-		        method: "POST",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
-
-		        data: { 'dataset': $scope.dataset_label,
-		        		'output_variable' : $scope.ngModel.pythonOutput,
-		        		'widget_id' :  $scope.ngModel.id,
-		        		'document_id' :  $scope.documentId,
-		        		"drivers" : $scope.drivers,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters, 'selections': $scope.selections})}
-		    })
-		    .then(function(response) { //success
-		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-		            if ($scope.ngModel.pythonOutputType == 'bokeh') {
-						$scope.createIframe();
-					}
-		    },
-		    function(response) { //failed
-		    	$scope.pythonOutput = 'Python Error';
-		    });
-
+		$scope.sendDataViewMode = function () { //send code and data and retrieve result as img or html/js
+			$scope.setRParameters();
+			data = {'r_environment': $scope.ngModel.RAddress,
+					'dataset': $scope.dataset_label,
+	        		'output_variable' : $scope.ngModel.ROutput,
+	        		'widget_id' :  $scope.ngModel.id,
+	        		'document_id' :  $scope.documentId,
+	        		"drivers" : JSON.stringify($scope.drivers),
+	        		"aggregations": JSON.stringify($scope.aggregations),
+	        		'parameters': JSON.stringify($scope.parameters),
+	        		'selections': JSON.stringify($scope.selections)}
+			requestBody = JSON.stringify(data)
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promisePost('2.0/backendservices/widgets/RWidget/view', $scope.ngModel.ROutputType, requestBody)
+				.then(function(response) {
+					$scope.ROutput = $sce.trustAsHtml(response.data.result);
+				}, function(response) {
+					$scope.ROutput = 'R Error';
+				});
 		}
 
 		$scope.init = function (element, width, height) {
@@ -233,7 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var obj = {};
 			obj["page"] = 0;
 			obj["itemPerPage"] = 10;
-			obj["type"] = 'python';
+			obj["type"] = 'R';
 			return obj;
 		}
 
@@ -241,9 +210,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var finishEdit=$q.defer();
 			var config = {
 				attachTo:  angular.element(document.body),
-				controller: pythonWidgetEditControllerFunction,
+				controller: RWidgetEditControllerFunction,
 				disableParentScroll: true,
-				templateUrl: $scope.getTemplateUrl('pythonWidgetEditPropertyTemplate'),
+				templateUrl: $scope.getTemplateUrl('RWidgetEditPropertyTemplate'),
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				hasBackdrop: true,
@@ -262,6 +231,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	/**
 	 * register the widget in the cockpitModule_widgetConfigurator factory
 	 */
-	addWidgetFunctionality("python", {'initialDimension': {'width':5, 'height':5}, 'updatable':true, 'clickable':true});
+	addWidgetFunctionality("r", {'initialDimension': {'width':5, 'height':5}, 'updatable':true, 'clickable':true});
 
 })();

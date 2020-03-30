@@ -1292,6 +1292,25 @@
 			width: 100%;
 		}
 	}
+	
+	cockpit-R-widget {
+		height: 100%;
+	}
+	
+	.RWidgetConfiguration {
+		position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+   		.REditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
+		.CodeMirror {
+			width: 100%;
+		}
+	}
 
 	.customTableWidgetConfiguration {
 	    position: absolute;
