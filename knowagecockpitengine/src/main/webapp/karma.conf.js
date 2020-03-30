@@ -15,7 +15,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'js/tests/*.test.js'
+    	'node_modules/angular/angular.js',
+    	'node_modules/angular-mocks/angular-mocks.js',
+    	'js/src/angular_1.4/cockpit/services/cockpitModule_customWidgetServices.js',
+    	'js/tests/*.test.js',
     ],
 
 
@@ -55,7 +58,16 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'IE'],
+    browsers: [
+	  'ChromeDebugging'
+	],
+    	
+	customLaunchers: {
+	  ChromeDebugging: {
+	    base: 'Chrome',
+	    flags: [ '--remote-debugging-port=9333' ]
+	  }
+	},
 
 
     // Continuous Integration mode

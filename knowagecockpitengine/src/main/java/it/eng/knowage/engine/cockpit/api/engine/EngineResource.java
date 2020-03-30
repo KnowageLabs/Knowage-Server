@@ -169,7 +169,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 					.withCssClass("fa fa-rocket").withType("discovery").withTag("discovery").build());
 		}
 		ret.add(Widget.builder().withName("Custom Chart").withDescKey("sbi.cockpit.editor.newwidget.description.custom.chart").withImg("4.png")
-				.withCssClass("fas fa-chart-pie").withType("customchart").withTag("customChart").build());
+				.withCssClass("fas fa-bezier-curve").withType("customchart").withTag("customChart").build());
 
 		return ret;
 	}

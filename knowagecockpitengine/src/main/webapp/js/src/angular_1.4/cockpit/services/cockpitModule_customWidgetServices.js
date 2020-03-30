@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @authors Radmila Selakovic (radmila.selakovic@eng.it)
  *
  */
-angular.module("cockpitModule").factory("datastore",function($filter,cockpitModule_datasetServices,sbiModule_util, datastoreService){
+angular.module("customWidgetAPI",[]).factory("datastore",function($filter, datastoreService){
 	
 	var transformDataStore = function (datastore){
 		var newDataStore = {};
@@ -41,7 +41,7 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 	}
 		
 	function datastore(data) {
-		this.data = data ? transformDataStore(data) : transformDataStore(datastoreService.datastore6);
+		this.data = data;
 	}
 	
 	datastore.prototype.setData = function (data) {
@@ -98,60 +98,4 @@ angular.module("cockpitModule").factory("datastore",function($filter,cockpitModu
 	}
 	
 	return new datastore;
-
-//	return function datastore(){
-//		// TODO insert correct datastore linkage here
-//		var data = transformDataStore(datastoreService.datastore6);
-//	  
-//		return {
-//			getDataArray: function (getDataArrayFn){
-//				var dataArray = [];
-//				for(var i=0; i<data.rows.length; i++){
-//					var dataObj = getDataArrayFn(data.rows[i]);
-//					dataArray.push(dataObj)
-//				}
-//				return dataArray;
-//			},
-//			
-//			getColumn: function (column){
-//				var categArray = [];
-//				for(var i=0; i<data.rows.length; i++){
-//					var dataObj = data.rows[i][column];
-//					categArray.push(dataObj)
-//				}
-//				return categArray;
-//			},
-//			
-//			getSeriesAndData: function (getDataArrayFn,column){
-//				var seriesMap = {};
-//				for(var i=0; i<data.rows.length; i++){
-//					if(seriesMap[data.rows[i][column]]==undefined){
-//						seriesMap[data.rows[i][column]] = []
-//					}
-//					seriesMap[data.rows[i][column]].push(getDataArrayFn(data.rows[i]))
-//				}
-//				var series = []
-//				for (var property in seriesMap) {
-//					var serieObj = {};
-//					serieObj.name = property;
-//					serieObj.id = property;
-//					serieObj.data = seriesMap[property];
-//					series.push(serieObj);
-//				}
-//				return series;
-//			},
-//			
-//			sort: function(sortingObject){
-//				// {name:"M", phone:"1"}
-//				data.rows = $filter('orderBy')(data.rows, sortingObject);
-//				return this
-//			},
-//			
-//			filter: function(filterObject){
-//				// {name:"M", phone:"1"}
-//				data.rows = $filter('filter')(data.rows, filterObject);
-//				return this
-//			}
-//		}
-//	}
 });
