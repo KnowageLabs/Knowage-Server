@@ -30,7 +30,7 @@ describe("customWidgetAPI", function() {
 	});
 	
 	it('should contain columns "QUARTER" list',function (){
-	    expect(customChartDatastore.getColumn('QUARTER')).toEqual(["Q1","Q2","Q3","Q4"])
+	    expect(customChartDatastore.sort('QUARTER').getColumn('QUARTER')).toEqual(["Q1","Q2","Q3","Q4"])
 	});
 	
 	describe("filter method", function() {

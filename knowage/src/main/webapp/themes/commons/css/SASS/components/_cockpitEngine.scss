@@ -1281,6 +1281,7 @@
 	.customWidgetConfiguration {
 		.htmlEditor, .cssEditor,.jsEditor {
 			.CodeMirror {
+				min-height: 300px;
 				height: calc(100% - 32px);
 			}
 		}

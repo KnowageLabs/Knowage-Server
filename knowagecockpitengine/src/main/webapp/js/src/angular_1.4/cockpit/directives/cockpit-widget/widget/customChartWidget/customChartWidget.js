@@ -51,32 +51,32 @@ function cockpitCustomChartControllerFunction(
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('customChartWidget',template);
 	}
-
+	
 	if(!$scope.ngModel.style) $scope.ngModel.style = {};
-
+	
 	if(!$scope.ngModel.js) {
 		$scope.ngModel.css = {};
 		$scope.ngModel.html = {};
-		$scope.ngModel.js = {};
+		$scope.ngModel.js = {};	
 	}
-
+	
 	$scope.init=function(element,width,height){
 		$scope.showWidgetSpinner();
 		$scope.refreshWidget(null, 'init');
 	}
-
+	
 	datastore.clickManager = function(column,value){
 		$scope.doSelection(column,value);
 	}
 
 	$scope.refresh = function(element,width,height, datasetRecords,nature){
 		$scope.showWidgetSpinner();
+		var thisElement = angular.element( document.querySelector( '#w'+$scope.ngModel.id+' .htmlRenderer' ) )[0];
+		thisElement.innerHTML = '';
+		thisElement.innerHTML = $sce.trustAsHtml($scope.ngModel.html.code);
 		if(datasetRecords){
 			try {
 				datastore.setData(datasetRecords);
-				var h = datastore.hierarchy({levels:['gender','country','city'], measures:["total_children"]})
-				var child = h.getChild(0)
-				var value = h.getValue(child,'total_children')
 				if($scope.ngModel.js) eval($scope.ngModel.js.code);
 				$scope.hideWidgetSpinner();
 			} catch(e){
@@ -85,12 +85,12 @@ function cockpitCustomChartControllerFunction(
 			}
 		}
 	}
-
+	
 	$scope.reinit = function(){
 		$scope.showWidgetSpinner();
 		$scope.refreshWidget();
 	}
-
+	
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
