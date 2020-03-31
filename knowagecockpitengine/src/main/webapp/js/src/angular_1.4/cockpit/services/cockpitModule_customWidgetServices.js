@@ -21,15 +21,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 angular.module("customWidgetAPI",[]).service("datastore",function($filter){
-	
+
 	function datastore(data) {
 		this.data = data;
 	}
-	
+
+	function hierarchy(tree) {
+		this.tree = tree;
+	}
+
 	datastore.prototype.setData = function (data) {
 		this.data = transformDataStore(data);
 	}
-	
+
 	datastore.prototype.getDataArray = function (getDataArrayFn){
 		var dataArray = [];
 		for(var i=0; i<this.data.rows.length; i++){
@@ -38,17 +42,18 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		}
 		return dataArray;
 	}
-	
+
 	datastore.prototype.getColumn = function (column){
 		var categArray = [];
 		for(var i=0; i<this.data.rows.length; i++){
 			var dataObj = this.data.rows[i][column];
-			categArray.push(dataObj)
+			if(categArray.indexOf(dataObj)==-1)
+				categArray.push(dataObj)
 		}
 		return categArray;
 	}
 
-	datastore.prototype.getSeriesAndData = function (getDataArrayFn,column){
+	datastore.prototype.getSeriesAndData = function (column,getDataArrayFn){
 		var seriesMap = {};
 		for(var i=0; i<this.data.rows.length; i++){
 			if(seriesMap[this.data.rows[i][column]]==undefined){
@@ -66,22 +71,164 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		}
 		return series;
 	}
-	
+
 	datastore.prototype.sort = function(sortingObject){
 		var newData = angular.copy(this.data);
 		newData.rows = $filter('orderBy')(newData.rows, sortingObject);
 		return new datastore(newData);
 	},
-	
+
 	datastore.prototype.filter = function(filterObject){
 		var newData = angular.copy(this.data);
 		newData.rows = $filter('filter')(newData.rows, filterObject);
 		return new datastore(newData);
 	}
-	
+
+	datastore.prototype.hierarchy = function(config){
+		var args = [];
+		var paths = getHierarchyList(arguments[0],this.data )
+		var tree = [];
+
+		for (var i = 0; i < paths.length; i++) {
+			var path = paths[i];
+			var currentLevel = tree;
+			for (var j = 0; j < path.length; j++) {
+				var part = path[j];
+
+				var existingPath = findWhere(currentLevel, 'name', part);
+
+				if (existingPath) {
+					currentLevel = existingPath.children;
+				} else {
+
+					if(path.length-j==2 && path[j+1]!=undefined &&  path[j+1] instanceof Object){
+						var newPart = {
+							name: part,
+							children: [],
+						}
+						for (var property in path[j+1]) {
+							newPart[property] = Number(path[j+1][property])
+						}
+						j++
+					} else {
+						var newPart = {
+							name: part,
+							children: [],
+						}
+
+					}
+					currentLevel.push(newPart);
+					currentLevel = newPart.children;
+				}
+			}
+		}
+
+		var measures = arguments[0].measures;
+		if(measures){
+			countLevelsTotal(tree, measures)
+
+
+		}
+		return new hierarchy(tree);
+
+		function findWhere(array, key, value) {
+			t = 0; // t is used as a counter
+			while (t < array.length && array[t][key] !== value) { t++; };
+
+			if (t < array.length) {
+				return array[t]
+			} else {
+				return false;
+			}
+		}
+
+		function getHierarchyList (args,data) {
+			var array = [];
+
+			var datastore = data;
+			for(var i=0; i<datastore.rows.length; i++){
+				var obj = {};
+				var newArray =[]
+				var counter =0;
+				for (var property in datastore.rows[i]) {
+					if(property!='id' && args.levels.indexOf(property)>-1){
+						newArray.push(datastore.rows[i][property])
+					}
+					if(args.measures){
+						for (var j=0; j<args.measures.length; j++) {
+							if(args.measures[j] !='id' && args.measures[j]==property && args.measures[j]==property){
+								if(counter ==0){
+									newArray.push({[property]:datastore.rows[i][property]})
+									counter++
+								} else {
+									newArray[newArray.length-1][property] = datastore.rows[i][property]
+								}
+							}
+
+						}
+					}
+
+
+				}
+				array.push(newArray);
+			}
+
+			return array;
+
+		}
+
+		function countLevelsTotal (tree, measures){
+			for (var j=0; j<measures.length; j++) {
+				tree.reduce(function x(r, a) {
+					a[measures[j]] = a[measures[j]] || Array.isArray(a.children) && a.children.reduce(x, 0) || 0;
+					return r + a[measures[j]];
+				}, 0);
+			}
+		}
+
+
+	}
+
+	hierarchy.prototype.getChild = function(index){
+		return this.tree[index]
+	//	this.tree
+	}
+
+	hierarchy.prototype.getValue = function(node, measure){
+		return node[measure];
+	}
+
+/*	hierarchy.prototype.getLevel = function (level, tree){
+		var nodes = []
+		var depth = 1
+		for (var j=0; j<tree.length; j++) {
+			depth = 1
+			if(depth!=level){depth++
+				iterate(tree[j]);
+			} else{
+				nodes.push(tree[j])
+			}
+
+			function iterate(tree) {
+				var children = tree.children;
+				for (var i = 0, len = children.length; i < len; i++) {
+					if(depth!=level){
+						depth++
+						iterate(children[i] )
+					} else{
+						nodes.push(children[i])
+					}
+				}
+			}
+
+		}
+		return nodes;
+
+	}*/
+
+
 	return new datastore;
-	
-	
+
 	function transformDataStore (datastore){
 		var newDataStore = {};
 		newDataStore.metaData = datastore.metaData;
