@@ -20,26 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @authors Radmila Selakovic (radmila.selakovic@eng.it)
  *
  */
-angular.module("customWidgetAPI",[]).factory("datastore",function($filter, datastoreService){
+angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 	
-	var transformDataStore = function (datastore){
-		var newDataStore = {};
-		newDataStore.metaData = datastore.metaData;
-		newDataStore.results = datastore.results;
-		newDataStore.rows = [];
-
-		for(var i=0; i<datastore.rows.length; i++){
-			var obj = {};
-			for(var j=1; j<datastore.metaData.fields.length; j++){
-				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
-					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
-				}
-			}
-			newDataStore.rows.push(obj);
-		}
-		return newDataStore;
-	}
-		
 	function datastore(data) {
 		this.data = data;
 	}
@@ -98,4 +80,23 @@ angular.module("customWidgetAPI",[]).factory("datastore",function($filter, datas
 	}
 	
 	return new datastore;
+	
+	
+	function transformDataStore (datastore){
+		var newDataStore = {};
+		newDataStore.metaData = datastore.metaData;
+		newDataStore.results = datastore.results;
+		newDataStore.rows = [];
+
+		for(var i=0; i<datastore.rows.length; i++){
+			var obj = {};
+			for(var j=1; j<datastore.metaData.fields.length; j++){
+				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
+					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
+				}
+			}
+			newDataStore.rows.push(obj);
+		}
+		return newDataStore;
+	}
 });

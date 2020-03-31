@@ -61,7 +61,12 @@ function cockpitCustomChartControllerFunction(
 	}
 	
 	$scope.init=function(element,width,height){
+		$scope.showWidgetSpinner();
 		$scope.refreshWidget(null, 'init');
+	}
+	
+	datastore.clickManager = function(column,value){
+		$scope.doSelection(column,value);
 	}
 
 	$scope.refresh = function(element,width,height, datasetRecords,nature){
@@ -79,9 +84,9 @@ function cockpitCustomChartControllerFunction(
 	}
 	
 	$scope.reinit = function(){
+		$scope.showWidgetSpinner();
 		$scope.refreshWidget();
 	}
-	
 	
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
