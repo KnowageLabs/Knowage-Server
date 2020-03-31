@@ -310,6 +310,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					checkable = true;
 				}
 			}
+		} else if($scope.parent.name == 'Functionalities') {
+			checkable = true;
 		}
 	 	return checkable;
 	 }
