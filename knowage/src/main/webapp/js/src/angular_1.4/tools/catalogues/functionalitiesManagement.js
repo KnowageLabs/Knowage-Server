@@ -58,9 +58,14 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 	}
 	$scope.fake = {};
+
+
+
 	$scope.save = function() {
 	     if($scope.selectedFolder.hasOwnProperty("id")){
 	    	 // if item already exists do update PUT
+	    	 $scope.index = $scope.selectedFolder.path.lastIndexOf("/");
+	    	 $scope.selectedFolder.path = $scope.selectedFolder.path.slice(0, $scope.index);
 	    	 $scope.fake = {
 	    			 id : $scope.selectedFolder.id,
 	    			 codeType : $scope.selectedFolder.codType,
@@ -71,7 +76,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 devRoles :  $scope.selectedFolder.devRoles,
 	    			 description :  $scope.selectedFolder.description,
 	    			 name :  $scope.selectedFolder.name,
-	    			 path :  $scope.selectedFolder.path,
+	    			 path :  $scope.selectedFolder.path+"/"+$scope.selectedFolder.name,
 	    			 prog :  $scope.selectedFolder.prog,
 	    			 parentId : $scope.selectedFolder.parentId
 
