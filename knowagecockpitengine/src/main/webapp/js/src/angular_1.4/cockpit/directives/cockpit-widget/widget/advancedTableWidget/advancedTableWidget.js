@@ -192,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
 							$scope.ngModel.groups.forEach(function(group){
 								if(group.name == $scope.ngModel.content.columnSelectedOfDataset[c].group){
-									if(columnGroups[group.name]) {
+									if(typeof columnGroups[group.name] != 'undefined') {
 										columns[columnGroups[group.name]].children.push(tempCol);
 									}else {
 										columnGroups[group.name] = columns.length;
