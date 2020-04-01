@@ -193,7 +193,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 
 				Projection pr = (Projection) measure;
 				IAggregationFunction aggregationFunction = pr.getAggregationFunction();
-				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getName();
+				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getAliasOrName();
 				if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
 					JSONObject value = new JSONObject();
 					value.put("type", "query");
@@ -209,7 +209,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 
 				DataStoreCalculatedField pr = (DataStoreCalculatedField) measure;
 				IAggregationFunction aggregationFunction = pr.getAggregationFunction();
-				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getName();
+				String key = FACET_PIVOT_MEASURE_ALIAS_PREFIX + pr.getAliasOrName();
 				if (AggregationFunctions.COUNT.equals(aggregationFunction.getName())) {
 					JSONObject value = new JSONObject();
 					value.put("type", "query");
@@ -261,11 +261,11 @@ public class ExtendedSolrQuery extends SolrQuery {
 		String field = "";
 		if (projection instanceof Projection) {
 			Projection proj = (Projection) projection;
-			fieldFacets = proj.getName();
+			fieldFacets = proj.getAliasOrName();
 			field = proj.getName();
 		} else {
 			DataStoreCalculatedField proj = (DataStoreCalculatedField) projection;
-			fieldFacets = proj.getName();
+			fieldFacets = proj.getAliasOrName();
 			field = proj.getName();
 		}
 		JSONObject innerFacet = new JSONObject();
@@ -285,7 +285,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	private JSONObject getJsonFacet(Sorting sorting, JSONObject jsonFacet) throws JSONException {
 		Projection projection = sorting.getProjection();
 		JSONObject outerFacet = getJsonFacet(projection, jsonFacet);
-		JSONObject innerFacet = outerFacet.getJSONObject(projection.getName() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
+		JSONObject innerFacet = outerFacet.getJSONObject(projection.getAliasOrName() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
 		innerFacet.put("sort", "index " + (sorting.isAscending() ? "asc" : "desc"));
 		return outerFacet;
 	}
