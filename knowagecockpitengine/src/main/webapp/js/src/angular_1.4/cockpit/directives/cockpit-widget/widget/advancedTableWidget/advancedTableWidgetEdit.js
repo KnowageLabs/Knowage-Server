@@ -478,7 +478,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 
 	$scope.$watch('newModel.settings.summary.enabled',function(newValue,oldValue){
 		if(newValue){
-			if($scope.newModel.settings.summary.style.pinnedOnly){
+			if($scope.newModel.settings.summary.style && $scope.newModel.settings.summary.style.pinnedOnly){
 				$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns($scope.newModel.content.columnSelectedOfDataset);
 			}
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
@@ -486,7 +486,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	})
 
 	$scope.$watch('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
-		if($scope.newModel.settings.summary.style.pinnedOnly){
+		if($scope.newModel.settings.summary && $scope.newModel.settings.summary.style && $scope.newModel.settings.summary.style.pinnedOnly){
 			$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns(newValue);
 		}
 		if($scope.columnsGrid.api && newValue){
