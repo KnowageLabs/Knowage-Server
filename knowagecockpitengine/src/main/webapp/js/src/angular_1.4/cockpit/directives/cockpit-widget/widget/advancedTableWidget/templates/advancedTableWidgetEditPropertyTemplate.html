@@ -85,6 +85,9 @@
 		   						</div>
 							</md-subheader>
 							<div ng-if="newModel.settings.summary.enabled && newModel.settings.summary && newModel.settings.summary.list.length > 0" layout="column">
+								<div layout="row" ng-if="newModel.settings.summary.style.pinnedOnly && showNoPinnedColumnWarning" layout-align="center center">
+									<div class="kn-warning" flex="60">{{::translate.load('sbi.cockpit.widget.table.summary.noPinnedColumnsWarning')}}</div>
+								</div>
 								<div ng-repeat="summaryRow in newModel.settings.summary.list track by $index" layout="row" style="padding:8px;" layout-align="start center">
 									<md-input-container flex class="md-block">
 					       				<label>{{::translate.load('sbi.generic.label')}}</label>

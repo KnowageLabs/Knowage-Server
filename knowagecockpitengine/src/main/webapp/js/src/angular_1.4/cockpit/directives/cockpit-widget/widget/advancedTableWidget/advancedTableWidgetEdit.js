@@ -388,14 +388,27 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.removeSummaryRow = function(i){
 		$scope.newModel.settings.summary.list.splice(i,1);
 	}
+	
+	$scope.checkForPinnedColumns = function(columns){
+		for(var k in columns){
+			if(columns[k].pinned) return false;
+		}
+		return true;
+	}
 
 	$scope.$watch('newModel.settings.summary.enabled',function(newValue,oldValue){
 		if(newValue){
+			if($scope.newModel.settings.summary.style.pinnedOnly){
+				$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns($scope.newModel.content.columnSelectedOfDataset);
+			}
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
 		}
 	})
 
 	$scope.$watch('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+		if($scope.newModel.settings.summary.style.pinnedOnly){
+			$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns(newValue);
+		}
 		if($scope.columnsGrid.api && newValue){
 			$scope.columnsGrid.api.setRowData(newValue);
 			$scope.columnsGrid.api.sizeColumnsToFit();
