@@ -309,14 +309,14 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 	 $scope.isCheckable = function(row, criteria) {
 		var checkable = false;
-	 	if($scope.parent[criteria] && $scope.parent[criteria].length > 0) {
+		if($scope.parent.name == 'Functionalities') {
+			checkable = true;
+		} else if($scope.parent[criteria] && $scope.parent[criteria].length > 0) {
 			for(var i = 0; i < $scope.parent[criteria].length; i++) {
 				if($scope.parent[criteria][i].name == row.name){
 					checkable = true;
 				}
 			}
-		} else if($scope.parent.name == 'Functionalities') {
-			checkable = true;
 		}
 	 	return checkable;
 	 }
