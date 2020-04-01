@@ -57,20 +57,21 @@ angular
              var pathForFolderLocation = [];
 
              var initializeDataset = function() {
-            	 if(!self.document.hasOwnProperty('dataSetId') || !self.document.datasetId)
-            		 self.selectedDataset.name = "";
-            	 else {
-            		 crudService.get("1.0/datasets/dataset/id", self.document.dataSetId)
+            	 if(self.document.hasOwnProperty('dataSetId') || self.document.datasetId) {
+            	     crudService.get("1.0/datasets/dataset/id", self.document.dataSetId)
             		 	.then(function(response){
-            		 		if(response.data.errors) sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-            		 		else{
+            		 		if(response.data.errors) {
+            		 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+            		 		} else {
             		 			var dataset = response.data[0];
                 		 		self.selectedDataset.name = dataset.name;
             		 		}
             		 	}, function(response){
             		 		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
             		 	});
-            	 }
+            	} else {
+            		 self.selectedDataset.name = "";
+            	}
              }
 
              initializeDataset();
