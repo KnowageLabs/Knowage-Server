@@ -1355,6 +1355,7 @@
     },
     
     plotOptions: {     
+     column: {},     
 		series: {
        
             cursor: 'pointer', 
